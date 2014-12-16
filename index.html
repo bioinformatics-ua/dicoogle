@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Dicoogle by bioinformatics-ua</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Dicoogle</h1>
+        <h2>Dicoogle - Open Source PACS</h2>
+        <a href="https://github.com/bioinformatics-ua/dicoogle" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a id="dicoogle" class="anchor" href="#dicoogle" aria-hidden="true"><span class="octicon octicon-link"></span></a>dicoogle</h1>
+
+<p>Project  Medical Imaging Repositories using Indexing System and P2P mechanisms</p>
+
+<h1>
+<a id="brief-documentation" class="anchor" href="#brief-documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Brief Documentation</h1>
+
+<h4>
+<a id="setup-dicoogle-platform-environment" class="anchor" href="#setup-dicoogle-platform-environment" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setup Dicoogle Platform Environment</h4>
+
+<ol>
+<li>Copy Dicoogle.jar to the installation folder. For example DicoogleDir/</li>
+<li>
+<p>Create the Folder DicoogleDir/Plugins.</p>
+
+<p>This folder will hold the plugins used by our instance of the Dicoogle Platform.</p>
+</li>
+<li>
+<p>Next, copy the desired plugins into the DicoogleDir/Plugins Folder.</p>
+
+<p>The typical setup of Dicoogle involves the deployment of an Index and a Query Plugin. 
+  We supply an implementation of such plugin based in the Lucene Search Engine (Lucene-plugin.jar). </p>
+</li>
+<li>
+<p>Run Dicoogle.</p>
+
+<p>Dicoogle may be run as a server: <code>java -jar Dicoogle.jar -s</code></p>
+
+<p>or using the RMI Graphical Interface: <code>java -jar Dicoogle.jar</code></p>
+</li>
+</ol>
+
+<h4>
+<a id="available-plugins" class="anchor" href="#available-plugins" aria-hidden="true"><span class="octicon octicon-link"></span></a>Available Plugins</h4>
+
+<ul>
+<li>
+<p>Lucene Index/Query Plugin - (Lucene.jar)</p>
+
+<p>Plugin Based on lucene to support index and query of DICOM Meta-data.</p>
+</li>
+<li>
+<p>File Storage Plugin - (filestorage.jar)</p>
+
+<p>Plugin used in the storage of DICOM Files. This plugin is necessary in order to use Dicoogle as a DICOM Storage Provider.</p>
+
+<p>Our file storage plugin maps the DICOM hierarchical organization (Patient-&gt;Study-&gt;Series-&gt;Image) into a directory tree in the file system. Every object in the Dicoogle Platform may be traced back to its storage location by an URI, similar to file:///tmp/file. In order to support multiple providers, every Storage plugin must define a unique schema, i.e protocol. </p>
+
+<ul>
+<li>
+<p>Settings Parameters</p>
+
+<ul>
+<li>root-dir: is the root directory where DICOM Files will be stored</li>
+<li> schema: Specifies the schema/protocol of the file plugin. This value is arbitrary, however it must be unique, as such avoid using well known protocol names such as http or file.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Dicoogle Wan Plugin - (wan-plugin.jar)</p>
+
+<p>The WAN Plugin may be used to federate instances of the Dicoogle Repository. The google app engine is used to federate and relay communications between the multiple instances.
+  It is possible to call reservices on remote instances of the Dicoogle Platform seamlessly, such as, Query or Retrieval of studies.</p>
+</li>
+</ul>
+
+<h4>
+<a id="configuring-plugins" class="anchor" href="#configuring-plugins" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuring Plugins</h4>
+
+<p>Plugins configurations are accessible via /DicoogleDir/Plugins/settings/PluginName.xml. Where PluginName stands for the name of the plugin.
+  Upon initialization, if no configurations file is supplied the Dicoogle Platform creates one with the default Values.</p>
+
+<h4>
+<a id="using-the-web-interface" class="anchor" href="#using-the-web-interface" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using the Web interface</h4>
+
+<ul>
+<li>
+<p>Configuring Services</p>
+
+<p>In the Management Page, Services and Plugins settings, it is possible to stard and/or stop plugins in real time. Moreover, some configurations like the web-services port or the interface port may be set.</p>
+</li>
+<li>
+<p>Index a Directory</p>
+
+<p>Indexing a directory is done simply by accessing the Management page, in the top right corner. 
+  In the Management page, we are able to select which root directory we want to index (Dicoogle Drectory Monitorization). We may also enable the (Dicoogle Directory Watcher), this creates a daemon that listens for new Files in the root Directory.
+  After selecting the configurations, the apply settings button must be pressed.</p>
+
+<p>When the right settings are saved, the Start buttons fires the process of indexing. Please note that this process may take considerable time, as such, be patient until the progress bar fill up.</p>
+</li>
+<li>
+<p>Using the Search Interface</p>
+
+<p>The search page enables users to execute queries about the indexed meta-data.
+  The query syntax is similar to the Lucene's, Tag:Value. There are numerous tutorials online explaining this format. For inexperienced users, and advanced input module may also be used.</p>
+
+<p>In the search interface it is also possible to selected which providers to query. Query providers are actually Query Plugins, that are installed either in the local instance of Dicoogle, or in remote instances if the platform is using the WAN-Plugin. Therefore, be careful and selected exactly which providers to you want to query, in order to retrieve more accurate and faster results.</p>
+</li>
+<li>
+<p>Export Results </p>
+
+<p>After running a query, the Query Browser shows up, giving the user an intuitive hierarchical view of the results. On the button of the Browser there is the export button. The export button is used in order to export the query results into a CSV file. When the export button is clicked, the user has to select which Tags he wants to export in the CSV file. This selection is heavily assisted by the interface, on which the user may type an incomplete tag and have presented the available candidates that match the inserted term. Moreover, the text box allows users to copy a list of tags directly from another CSV file, enabling easy generation of reports.</p>
+</li>
+</ul>
+
+<h4>
+<a id="using-the-web-services" class="anchor" href="#using-the-web-services" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using the Web Services</h4>
+
+<p>Lets assume that the Web Services for our instance of Dicoogle are running in <a href="http://www.dicoogle.com/services/dws/">http://www.dicoogle.com/services/dws/</a></p>
+
+<ul>
+<li>
+<p>Search by Date Range, Access images in date 2005/03/29:</p>
+
+<p><code>URL: http://www.dicoogle.com/services/dws/dim?advq=StudyDate:[20050329 TO 20050329]</code></p>
+</li>
+<li>
+<p>Access images in date 2005/03/29 and Modality CT (Computer Tomography):</p>
+
+<p><code>URL: http://www.dicoogle.com/services/dws/dim?advq=Modality:CT AND StudyDate:[20050329 TO 20050329]</code></p>
+</li>
+<li>
+<p>Access parameters for each image (use uid):</p>
+
+<p><code>URL: http://www.dicoogle.com/services/dws/dump?uid=1.3.12.2.1107.5.1.4.54023.30000005032914013107800000965</code></p>
+</li>
+<li>
+<p>Search Free Text, Looking for CT keyword:</p>
+
+<p><code>URL http://www.dicoogle.com/services/dws/dim?q=CT</code></p>
+</li>
+<li>
+<p>Get a DICOM File</p>
+
+<p><code>URL: http://www.dicoogle.com/services/dws/file?uid=1.3.12.2.1107.5.1.4.54023.30000005032914013107800000965</code></p>
+</li>
+<li>
+<p>Query Return Raw Documents in JSON Format (useful for queries on indexers that do not follow DIM)</p>
+
+<p><code>URL: http://localhost:6060/dim?advq=Modality:NM&amp;type=raw&amp;provider=lucene&amp;provider=mongo</code></p>
+
+<pre><code>Parameters:
+  advq : Query String
+  type: Type of rendering used to format results : opticional
+       dim: default - uses the DICOM DIM Model - Output --&gt; XML
+       raw: Renders the full search results in JSON format Output --&gt; JSON
+  provider: name of the query providers - multiple - optional
+       all: default - asks all available providers.
+       provider_name: name of the provider, ex lucene.
+</code></pre>
+</li>
+<li>
+<p>Force DICOOGLE to index a given Resource. (useful when conventional notification systems (DICOM Services, DirectoryMonitoring, Human Interface) fail to start the index procedure)</p>
+
+<p><code>URL: http://localhost:6060/doIndex?uri=file:///tmp/dataset-ieeta/</code></p>
+
+<pre><code>Parameters:
+  uri: URI of the resource to index - multiple
+       The identifier of the resources that will be indexed. Please note that DICOOGLE will fectch these resources from a StoragePlugin. Therefore, a plugin capable of handling these resources must be enabled.
+</code></pre>
+
+<p>These examples are a live demo, fell free to access these services.</p>
+</li>
+</ul>
+
+<h4>
+<a id="create-your-own-plugins" class="anchor" href="#create-your-own-plugins" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create your own Plugins</h4>
+
+<p>In order to integrate new functionality in Dicoogle, you may create your own PluginSet. A PluginSet is a set of plugins that developed with the intent of supporting a given functionality</p>
+
+<h1>
+<a id="web-site" class="anchor" href="#web-site" aria-hidden="true"><span class="octicon octicon-link"></span></a>Web site</h1>
+
+<p><a href="http://www.dicoogle.com">www.dicoogle.com</a></p>
+
+<h1>
+<a id="authors" class="anchor" href="#authors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors</h1>
+
+<ul>
+<li>Luís Bastião</li>
+<li>Frederico Valente</li>
+<li>Luís Ribeiro</li>
+<li>Carlos Ferreira</li>
+<li>Eriksson Monteiro</li>
+<li>Tiago Godinho</li>
+<li>Samuel Campos</li>
+</ul>
+
+<h1>
+<a id="project-leaders" class="anchor" href="#project-leaders" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project leaders</h1>
+
+<ul>
+<li>Carlos Costa</li>
+<li>José Luis Oliveira</li>
+</ul>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/bioinformatics-ua/dicoogle/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/bioinformatics-ua/dicoogle/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/bioinformatics-ua/dicoogle"></a> is maintained by <a href="https://github.com/bioinformatics-ua">bioinformatics-ua</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
