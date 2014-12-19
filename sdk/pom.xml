@@ -1,0 +1,192 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>pt.ua.ieeta</groupId>
+	<artifactId>dicoogle-sdk</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>dicoogle-sdk</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<repositories>
+
+		<repository>
+			<id>mavencentral</id>
+			<url>http://repo1.maven.org/maven2/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>dcm4che</id>
+			<url>http://www.dcm4che.org/maven2/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>mi</id>
+			<url>http://bioinformatics.ua.pt/maven/content/repositories/mi</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>maven-restlet</id>
+			<name>Public online Restlet repository</name>
+			<url>http://maven.restlet.org</url>
+		</repository>
+	</repositories>
+
+	<build>
+		<finalName>${project.artifactId}</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.3</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>**/*.SF</exclude>
+										<exclude>**/*.DSA</exclude>
+										<exclude>**/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.4.3</version>
+				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<header>../short-license.txt</header>
+					<includes>
+						<include>**/*.java</include>
+					</includes>
+					<excludes>
+						<exclude>**/package-info.java</exclude>
+					</excludes>
+
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<version>1.9</version>
+		</dependency>
+
+		<dependency>
+			<groupId>dcm4che</groupId>
+			<artifactId>dcm4che-core</artifactId>
+			<version>2.0.27</version>
+		</dependency>
+
+		<dependency>
+			<groupId>dcm4che</groupId>
+			<artifactId>dcm4che-net</artifactId>
+			<version>2.0.27</version>
+		</dependency>
+
+		<dependency>
+			<groupId>fakepath</groupId>
+			<artifactId>jspf.core</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.restlet.jse</groupId>
+			<artifactId>org.restlet</artifactId>
+			<version>2.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.restlet.jse</groupId>
+			<artifactId>org.restlet.ext.simple</artifactId>
+			<version>2.1.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.swinglabs</groupId>
+			<artifactId>swing-layout</artifactId>
+			<version>1.0.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>9.0.3.v20130506</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlets</artifactId>
+			<version>9.0.3.v20130506</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlet</artifactId>
+			<version>9.0.3.v20130506</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>4.0</version>
+		</dependency>
+	</dependencies>
+</project>

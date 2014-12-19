@@ -1,0 +1,116 @@
+package pt.ua.dicoogle.server.web;
+
+import java.io.IOException;
+import java.util.HashMap;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import pt.ua.dicoogle.plugins.PluginController;
+import pt.ua.dicoogle.sdk.GenericPluginInterface;
+import dicoogle.experimental.ExportsHttpData;
+import dicoogle.experimental.ExportsHttpPage;
+import dicoogle.experimental.HookPointAction;
+
+/**
+ * Handles the requests for plugins data and pages.
+ *
+ * @author António Novo <antonio.novo@ua.pt>
+ */
+public class PluginsServlet extends HttpServlet
+{
+	private HashMap<String, HookPointAction[]> hooks;
+
+	/**
+	 * Creates a plugin services servlet.
+	 *
+	 * @param hooks the global array of hooks for all the plugins and embeded services.
+	 */
+	public PluginsServlet(HashMap<String, HookPointAction[]> hooks)
+	{
+		this.hooks = hooks;
+	}
+
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException
+	{
+		// FIXME should the process of performing requests for plugins data and pages need authentication? maybe each one can have a flag or something
+
+		String pluginName = ""; // the URLEncoded name of the plugin requested
+		String method = "data"; // the method requested: data, xslt or pages
+
+		// get the plugin and information requested
+		String tmp = request.getPathInfo();
+		if (tmp != null)
+		{
+			String[] parts = tmp.split("/");
+
+			if (parts.length > 1)
+				pluginName = parts[1]; // the URLEncoded name of the plugin requested
+			if (parts.length > 2)
+				method = parts[2]; // the method requested: data, xslt or pages
+		}
+
+		// check for the required plugin
+		GenericPluginInterface plugin = PluginController.getInstance().getPluginFromName(pluginName);
+		if (plugin == null)
+		{
+			response.sendError(HttpServletResponse.SC_NOT_FOUND, "Plugin not found!");
+			return;
+		}
+
+		// check if the plugin is running
+		if (! plugin.isRunning())
+		{
+			response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "The plugin is not running!");
+			return;
+		}
+
+		// check for data request
+		if (method.equalsIgnoreCase("data"))
+		{
+			// check if the plugin has the method
+			if (plugin instanceof ExportsHttpData)
+			{
+				((ExportsHttpData) plugin).getData(request, response);
+				return;
+			}
+
+			// plugins does not provide method
+			response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED, "The plugin lacks the required method!");
+			return;
+		}
+
+		// check for xslt request
+		if (method.equalsIgnoreCase("xslt"))
+		{
+			// check if the plugin has the method
+			if (plugin instanceof ExportsHttpData)
+			{
+				((ExportsHttpData) plugin).getXSLT(request, response);
+				return;
+			}
+
+			// plugins does not provide method
+			response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED, "The plugin lacks the required method!");
+			return;
+		}
+
+		// check for page request
+		if (method.equalsIgnoreCase("page"))
+		{
+			// check if the plugin has the method
+			if (plugin instanceof ExportsHttpData)
+			{
+				((ExportsHttpPage) plugin).getPage(request, response, hooks);
+				return;
+			}
+
+			// plugins does not provide method
+			response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED, "The plugin lacks the required method!");
+			return;
+		}
+
+		// no valid method used
+		response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED, "Invalid method requested!");
+	}
+}

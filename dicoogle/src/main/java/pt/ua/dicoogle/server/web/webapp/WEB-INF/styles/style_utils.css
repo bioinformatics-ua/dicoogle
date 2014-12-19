@@ -1,0 +1,11 @@
+/*   
+  Style Utils by Tiago Marques Godinho.
+*/
+.fitLastCol td:last-child{
+    width:1%;
+    white-space:nowrap;
+}
+
+.forceFirstContainer{
+   padding-top: 60px;
+}

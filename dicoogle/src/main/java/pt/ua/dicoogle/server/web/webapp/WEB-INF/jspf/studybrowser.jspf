@@ -1,0 +1,442 @@
+<!-- This is our study browser -->
+<link href="styles/smart_wizard_vertical.css" rel="stylesheet"
+	type="text/css">
+<link href="styles/blue/style.css" rel="stylesheet"
+	type="text/css">
+<link href="styles/style_utils.css" rel="stylesheet"
+	type="text/css">
+<script type="text/javascript" src="scripts/jquery.smartWizard.js"></script>
+<script type="text/javascript" src="scripts/jquery.tablesorter.js"></script>
+<link rel="stylesheet" href="scripts/ladda/dist/ladda-themeless.min.css">
+<script src="scripts/ladda/dist/spin.min.js"></script>
+<script src="scripts/ladda/dist/ladda.min.js"></script>
+<script src="scripts/multiselect/jquery.multi-select.js"></script>
+
+<script src="scripts/quicksearch-master/jquery.quicksearch.js"></script>
+		
+
+<script type="text/javascript">
+	function trom(v) {
+		if (v == undefined)
+			return "---";
+
+		return v;
+	}
+
+	function formatDate(rawDate) {
+		if (rawDate == undefined)
+			return "---";
+
+		if (rawDate.length < 8)
+			return "---";
+
+		return rawDate.substr(0, 4) + "-" + rawDate.substr(4, 2) + "-"
+				+ rawDate.substr(6, 2);
+	}
+
+	function showSeriesInBrowser(ca, id) {
+		var images = patients[selectedPatient].studies[selectedStudy].series[id].images;
+
+		var loading = Ladda.create(ca);
+		loading.start();
+		
+		if (images.length > 0) {
+			$(viewer).trigger("openViewer", [{uid:images[0].uid , status:loading}]);
+		}
+	}
+	
+	function showImageInBrowser(ca, id) {
+		var i = patients[selectedPatient].studies[selectedStudy].series[selectedSerie].images;	
+		
+		var loading = Ladda.create(ca);
+		loading.start();
+				
+		if (i.length > id) {
+			$(viewer).trigger("openViewer", [{uid:i[id].uid , status:loading}]);
+		}
+	}
+	
+	function showDump(ca, id){
+		var image = patients[selectedPatient].studies[selectedStudy].series[selectedSerie].images[id];
+		$('#dumpTable').html("");
+		//console.log("Dumping Image: "+image.uid);
+		
+		var loading = Ladda.create(ca);
+		loading.start();
+		
+		var resp = $.get( "dictags?SOPInstanceUID="+image.uid, function( data ) {
+			//console.log("Executed");
+			
+			$("tag", data).each(function(){				
+				var text = $(this).text();
+				var name = $(this).attr("name");
+				
+				addToDumpTable(name, text);
+			});			
+			
+			$("#tableModal").tablesorter();
+			$('#dumpModal').modal();
+			loading.stop();
+		}, "xml" );		
+		
+	}
+	function addToDumpTable(name, text) {
+		$('#dumpTable').append("<tr><td>"+trom(name)
+								+ "</td><td>"+ trom(text)
+								+ "</td></tr>");
+	}
+	function closeModal(){
+		$('#dumpModal').modal('hide')
+	}
+
+	var patients = new Array();
+	var viewer;
+	var emptyViewer = null;
+	var context;
+	
+	function $$( selector) {
+		  // I added the possibility to overwrite the context here, but you could delete
+		  return $( selector, context);
+	}
+	
+	function testFunct(){
+		
+		$(viewer).trigger("export",{});
+		
+	}
+	
+	function studyViewer(patientList) {
+		if(emptyViewer == null){
+			emptyViewer = $("#wizard").clone().attr("id", "cp");
+		}else{
+			$("#wizard").replaceWith( $(emptyViewer).clone().attr("id", "wizard") );
+		}
+		context = $("#wizard");
+		viewer = new Object();
+		
+		//console.log($("#wizard").html());
+		var otherButtonsVar = [{label:"Export", className:"exportBtnClass", funct: testFunct}];
+		$('#wizard').smartWizard({
+			transitionEffect : 'slide',
+			keyNavigation : false,
+			includeFinishButton : false, 
+			onShowStep : function(obj, context) {
+				if (context.toStep == 1 && selectedPatient == -1) {
+					$(".buttonNext").addClass("buttonDisabled");
+				}
+				
+				/*if (context.toStep == 1 && selectedPatient == -1) {
+					$(".buttonNext").addClass("buttonDisabled");
+				}
+				if (context.toStep == 2 && selectedStudy == -1) {
+					$(".buttonNext").addClass("buttonDisabled");
+				}
+				if (context.toStep == 3 && selectedSerie == -1) {
+					$(".buttonNext").addClass("buttonDisabled");
+				}*/
+				return true; // return false to stay on step and true to continue navigation 
+			},
+			onLeaveStep : function(obj, context) {
+				//alert("Leaving step " + context.fromStep + " to go to step " + context.toStep);~	 
+				if(context.fromStep > context.toStep)
+					return true;
+					
+				if (context.fromStep == 1 && selectedPatient == -1) {
+					return false;
+				}
+				if (context.fromStep == 2 && selectedStudy == -1) {
+					return false;
+				}
+				if (context.fromStep == 3 && selectedSerie == -1) {
+					return false;
+				}
+				if (context.fromStep == 4) {
+					return false;
+				}
+
+				return true; // return false to stay on step and true to continue navigation 
+			},
+			otherButtons: otherButtonsVar
+		});	
+			
+			
+		patients = patientList;
+		//console.log(patients);
+		for (p in patients) {
+			//console.log(patients[p]);
+			addPatientToTable(p, patients[p]);
+			console.log("Added Patient");
+		}
+
+		$("#t1").tablesorter({ 
+		    }); 
+		
+		return viewer;
+	}
+
+	function addPatientToTable(id, patient) {
+		$$('#patientTable')
+				.append(
+						"<tr id=\"pr"+id+"\"><td>"
+								+ trom(patient.id)
+								+ "</td><td>"
+								+ trom(patient.name)
+								+ "</td><td>"
+								+ trom(patient.sex)
+								+ "</td><td>"
+								+ patient.studies.length
+								+ "</td><td><a class=\"btn btn-small\"  onclick=\"selectPatient("
+								+ id
+								+ ");\"><i class=\"icon-circle-arrow-right\"></i></a></td></tr>");
+	}
+	function addStudyToTable(id, study) {
+		var modalities = "";
+		for (i in study.series) {
+			if (modalities.indexOf(study.series[i].mod) == -1) {
+				//console.log(study.series[i].mod);
+				modalities += " " + study.series[i].mod;
+			}
+		}
+
+		$$('#studyTable')
+				.append(
+						"<tr id=\"sr"+id+"\"><td>"
+								+ formatDate(study.data)
+								+ "</td><td>"
+								+ trom(study.descr)
+								+ "</td><td>"
+								+ trom(study.iname)
+								+ "</td><td>"
+								+ trom(modalities)
+								+ "</td><td><a class=\"btn btn-small\"  onclick=\"selectStudy("
+								+ id
+								+ ");\"><i class=\"icon-circle-arrow-right\"></i></a></td></tr>");
+	}
+	function addSerieToTable(id, s) {
+
+		$$('#seriesTable')
+				.append(
+						"<tr id=\"ser"+id+"\"><td>"
+								+ s.number
+								+ "</td><td>"
+								+ trom(s.mod)
+								+ "</td><td>"
+								+ trom(s.descr)
+								+ "</td><td>"
+								+ s.images.length
+								+ "</td><td><a class=\"btn btn-small\"  onclick=\"selectSeries("
+								+ id
+								+ ");\"><i class=\"icon-circle-arrow-right\"></i></a><a class=\"btn btn-small tip ladda-button\" onclick=\"showSeriesInBrowser(this,"
+								+ id
+								+ ");\" data-toggle=\"tooltip\" title=\"View in Browser\" data-style=\"zoom-in\" data-spinner-color=\"#000000\" ><i class=\"icon-film\"></i></a></td></tr>");
+
+		$(".tip").tooltip(); 
+	}
+	function addImageToTable(id, image) {
+		//console.log("img: " + id);
+		//console.log("uid: " + image.uid);
+
+		var fname = image.uri.substring(image.uri.lastIndexOf("/") + 1);
+		
+
+		$$('#imageTable')
+				.append(
+						"<tr><td>"+ fname + "</td><td>"	+ trom(image.uid)
+								+ "</td><td></td><td><a class=\"btn btn-small tip ladda-button\" onclick=\"showImageInBrowser(this, "
+								+ id
+								+ ");\" data-toggle=\"tooltip\" title=\"View in Browser\" data-style=\"zoom-in\" data-spinner-color=\"#000000\"><i class=\"icon-film\"></i></a><a class=\"btn btn-small tip ladda-button\"  data-toggle=\"modal\" onclick=\"showDump(this, "+id+");\" data-toggle=\"tooltip\" title=\"Dump Meta-data\" data-style=\"zoom-in\" data-spinner-color=\"#000000\"><i class=\"icon-tags\"></i></a></td></tr>");
+	
+		$(".tip").tooltip();
+	}
+
+	var selectedPatient = -1;
+	var selectedStudy = -1;
+	var selectedSerie = -1;
+	function selectPatient(id) {
+		if (selectedPatient != -1) {
+			$("#pr" + selectedPatient).removeClass("success");
+			if (selectedPatient != id) {
+				selectedStudy = -1;
+				selectedSerie = -1;
+			}
+			//console.log("remove class:");
+		}
+		selectedPatient = id;
+		//console.log("PatientSelected: " + id);
+
+		$("#pr" + id).addClass("success");
+		populateStudyTable(id);
+
+		$('#wizard').smartWizard('goForward');
+		$('#pDscr').html(patients[id].name);
+	}
+	function selectStudy(id) {
+		if (selectedStudy != id)
+			selectedSerie = -1;
+
+		selectedStudy = id;
+		//console.log("PatientSelected: " + selectedPatient);
+		//console.log("Study: " + selectedStudy);
+
+		$("#sr" + id).addClass("success");
+		populateSeriesTable(id);
+
+		$('#sDscr')
+				.html(
+						formatDate(patients[selectedPatient].studies[selectedStudy].data));
+		$('#wizard').smartWizard('goForward');
+	}
+	function selectSeries(id) {
+		selectedSerie = id;
+		//console.log("PatientSelected: " + selectedPatient);
+		//console.log("Study: " + selectedStudy);
+		//console.log("Serie: " + selectedSerie);
+
+		$("#ser" + id).addClass("success");
+		populateImagesTable(id);
+
+		$('#seriesDscr')
+				.html(
+						trom(patients[selectedPatient].studies[selectedStudy].series[id].mod));
+		$('#wizard').smartWizard('goForward');
+	}
+
+	function populateStudyTable(id) {
+		var patient = patients[id];
+		var studies = patient.studies;
+		$$('#studyTable').html("");
+		for (i in studies) {
+			addStudyToTable(i, studies[i]);
+		}
+		$("#t2").tablesorter(); 
+	}
+	function populateSeriesTable(id) {
+		var series = patients[selectedPatient].studies[id].series;
+		$$('#seriesTable').html("");
+		for (i in series) {
+			addSerieToTable(i, series[i]);
+		}
+		$("#t3").tablesorter(); 
+	}
+	function populateImagesTable(id) {
+		var images = patients[selectedPatient].studies[selectedStudy].series[id].images;
+		$$('#imageTable').html("");
+		for (i in images) {
+			addImageToTable(i, images[i]);
+		}
+		$("#t4").tablesorter(); 
+	}
+</script>
+
+<div id="wizard" class="swMain">
+	<ul>
+		<li><a href="#1patient"> <label class="stepNumber">1</label>
+				<span class="stepDesc"> Patient<br /> <small id="pDscr">Patient
+						Description</small>
+			</span>
+
+		</a></li>
+		<li><a href="#2date"> <label class="stepNumber">2</label> <span
+				class="stepDesc">Study<br /> <small id="sDscr">Select
+						a study</small>
+			</span>
+		</a></li>
+		<li><a href="#3moda"> <label class="stepNumber">3</label> <span
+				class="stepDesc">Modality<br /> <small id="seriesDscr">Study
+						Modality</small>
+			</span>
+		</a></li>
+		<li><a href="#4image"> <label class="stepNumber">4</label> <span
+				class="stepDesc"> Image<br /> <small id="iDscr">File</small>
+			</span>
+		</a></li>
+	</ul>
+	<div id="1patient">
+		<h2 id="id0" class="StepTitle">Choose Patient</h2>
+		<table id="t1" class="table table-hover tablesorter fitLastCol">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Name</th>
+					<th>Sex</th>
+					<th># Studies</th>
+				</tr>
+			</thead>
+			<tbody id="patientTable">
+
+			</tbody>
+		</table>
+	</div>
+	<div id="2date">
+		<h2 class="StepTitle">Choose the Study Date</h2>
+		<table id="t2" class="table table-hover tablesorter fitLastCol" >
+			<thead>
+				<tr>
+					<th>Data</th>
+					<th>Description</th>
+					<th>Institution Name</th>
+					<th>Modalities</th>
+				</tr>
+			</thead>
+			<tbody id="studyTable">
+
+			</tbody>
+		</table>
+	</div>
+	<div id="3moda">
+		<h2 class="StepTitle">Choose the Modality</h2>
+		<table id="t3" class="table table-hover tablesorter fitLastCol">
+			<thead>
+				<tr>
+					<th>Number</th>
+					<th>Modality</th>
+					<th>Description</th>
+					<th># Images</th>
+				</tr>
+			</thead>
+			<tbody id="seriesTable">
+
+			</tbody>
+		</table>
+	</div>
+	<div id="4image">
+		<h2 class="StepTitle">Choose the Image</h2>
+		<table id="t4" class="table table-hover tablesorter fitLastCol">
+			<thead>
+				<tr>
+					<th>Filename</th>
+					<th>SopInstanceUID</th>
+					<th>Thumbnail</th>
+				</tr>
+			</thead>
+			<tbody id="imageTable">
+
+			</tbody>
+		</table>
+
+	</div>
+</div>
+
+<div id="dumpModal" class="modal hide fade" style="max-width: 80%; width: auto">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal"
+			aria-hidden="true">&times;</button>
+		<h3>DICOM Meta-Data</h3>
+	</div>
+	<div class="modal-body" style="overflow-x: hidden">
+		<table id="tableModal" class="table table-hover tablesorter">
+			<thead>
+				<tr>
+					<th>Attribute</th>
+					<th>Field</th>
+				</tr>
+			</thead>
+			<tbody id="dumpTable">
+
+			</tbody>
+		</table>
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn" onclick="closeModal()">Close</a>
+	</div>
+</div>

@@ -1,0 +1,214 @@
+
+<%@page import="pt.ua.dicoogle.core.ServerSettings"%>
+<%@page import="net.sf.json.JSONArray"%>
+<%@page import="net.sf.json.JSONObject"%>
+<%@page import="net.sf.json.JSONObject"%>
+<script type="text/javascript">
+<!--
+
+//-->
+
+	var cstate = "";
+	function changeState(state){
+		cstate = state;
+		switch(state){
+			case "unselected": 
+				$("#unselectBtn").hide();
+				$("#removeEntryBtn","#storageForm").hide();
+				$("#addEntryBtn","#storageForm").text("Add Entry");
+	
+				$("#inputAETitle").val("");
+				$("#inputIP").val("");
+				$("#inputPORT").val("");
+				
+				break;
+				
+			case "selected":
+				$("#unselectBtn").show();
+				$("#addEntryBtn","#storageForm").text("Update Entry");
+				$("#removeEntryBtn","#storageForm").show();
+			
+				break;
+		}
+	}
+	
+	$(document).ready( function(){
+		$(".hide-me").hide();
+		changeState("unselected");	
+	
+		console.log(moveDestinations);
+		var output2 = [];
+		
+		for(var i = 0 in moveDestinations){
+			var str = moveDestinations[i].AETitle + "@" +moveDestinations[i].ipAddrs +":"+moveDestinations[i].port;
+			output2.push('<option value="'+ str +'" >'+ str  +'</option>');
+			tempDest[str] = moveDestinations[i];
+		}			
+		
+		$("#storageForm select").html(output2.join(""));
+		
+		$("#storageForm select").change(function(){
+			selectedID = $(this).val();
+			console.log($(this).val());
+			console.log(tempDest[$(this).val()].AETitle);
+			
+			var selMove = tempDest[$(this).val()];
+			
+			$("#inputAETitle").val(selMove.AETitle);
+			$("#inputIP").val(selMove.ipAddrs);
+			$("#inputPORT").val(selMove.port);
+			
+			changeState("selected");
+	
+			
+		});
+		
+		$("#storageForm").submit(function(){
+			
+			console.log(tempDest);
+			var arr = [];
+			for(var i = 0 in tempDest){
+				if(tempDest[i] != undefined)
+					arr.push(tempDest[i]);			
+			}
+			
+			$.ajax({
+              type: 'POST',
+              url: '/settings?action=setstorageservices',
+              data: "MOVES=" + JSON.stringify(arr),
+              success: function (r) {
+              		console.log("Successfully Sent...");						
+              		$(".hide-me").show();
+              }
+          });
+			
+		
+			return false;
+		});
+		
+		$("#addEntryBtn","#storageForm").click(function(){
+			console.log("Clicked");
+			
+			if(cstate == "selected"){
+				var moveStr = $("#storageForm select").val();
+				tempDest[moveStr] = undefined;
+				$("#storageForm select option[value=\""+moveStr+"\"]").remove();	
+							
+			}
+			
+			var moveStr = $("#inputAETitle").val() +"@"+ $("#inputIP").val() +":"+$("#inputPORT").val();
+			
+			if( tempDest[moveStr] == undefined){
+				tempDest[moveStr] = {AETitle: $("#inputAETitle").val(), ipAddrs: $("#inputIP").val(), port: $("#inputPORT").val()};
+				$("#storageForm select").append('<option value="'+ moveStr +'" >'+ moveStr  +'</option>');		
+			}
+			
+			changeState("unselected");
+			return true;
+		});
+		
+		$("#removeEntryBtn","#storageForm").click(function(){
+			var moveStr = $("#storageForm select").val();
+			
+			if( tempDest[moveStr] != undefined){
+				tempDest[moveStr] = undefined;
+				$("#storageForm select option[value=\""+moveStr+"\"]").remove();	
+				
+				changeState("unselected");
+				
+			}
+			return true;
+		});
+		
+		$("#unselectBtn","#storageForm").click(function(){
+			$("#storageForm select").val(undefined);
+			
+			changeState("unselected");
+			
+			return true;
+		});
+		
+		
+		
+	});
+	
+	function compareMoveDestinations(moveDestA, moveDestB){
+		if(moveDestA.AETitle != moveDestB.AETitle)
+			return false;
+			
+		if(moveDestA.ipAddrs != moveDestB.ipAddrs)
+			return false;
+			
+		if(moveDestA.port != moveDestB.port)
+			return false;
+			
+		return true;
+	}
+
+var moveDestinations = <% JSONArray arr = new JSONArray();
+						  arr.addAll(ServerSettings.getInstance().getMoves());
+						  out.print(arr.toString());
+						  arr = null;
+						     %>;
+						     
+var tempDest = [];
+						     
+var selectedID = -1;
+						     
+</script>
+    		
+
+	<%@page import="pt.ua.dicoogle.core.MoveDestination"%>
+<%@page import="pt.ua.dicoogle.core.ServerSettings"%>
+<div class="row-fluid">
+	<div class="span10">
+		<form id="storageForm" class="form-horizontal" method="post">
+    	<div class="control-group">
+    		<label class="control-label" for="selectedProviders">Storage Providers</label>
+    	<div class="controls">
+    		<select multiple="true" name="selectedProviders">
+    			
+			</select>
+		</div>
+    </div>
+    <div class="control-group">
+    	<div class="controls">
+    	<button type="button" class="btn btn-mini" id="unselectBtn">Unselect</button>
+		</div>
+    </div>
+    <div class="control-group">
+    	<label class="control-label" for="inputAETitle">AETitle</label>
+    	<div class="controls">
+    	<input type="text" id="inputAETitle" placeholder="AETitle">
+   	 	</div>
+    </div>
+    <div class="control-group">
+    	<label class="control-label" for="inputIP">IP</label>
+    	<div class="controls">
+    	<input type="text" id="inputIP" placeholder="IP">
+   	 	</div>
+    </div>
+    <div class="control-group">
+    	<label class="control-label" for="inputPORT">Port</label>
+    	<div class="controls">
+    	<input type="text" id="inputPORT" placeholder="Port">
+   	 	</div>
+    </div>
+    <div class="control-group">
+    	<div class="controls">
+    		<a class="btn btn-small btn-success" href="#" id="addEntryBtn"><i class="icon-search"></i> Add Entry</a>
+    		<a class="btn btn-small btn-danger" id="removeEntryBtn">Remove Entry</a>
+    	</div>
+    </div>
+    <div class="control-group">
+    	<div class="controls">
+    		<button type="submit" class="btn btn-primary" id="applySettingsBtn">Apply Settings</button>
+    		<strong class="hide-me">Sucessfully Saved</strong>
+          
+    	</div>
+    </div>
+    </form>
+		
+	</div>
+</div>
+       		

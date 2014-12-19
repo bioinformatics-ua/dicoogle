@@ -1,0 +1,61 @@
+<%@page import="pt.ua.dicoogle.server.web.utils.Pages" %>
+<%@page import="pt.ua.dicoogle.server.web.auth.Session" %>
+<%@page import="pt.ua.dicoogle.server.web.auth.LoggedIn" %>
+<%@page import="org.apache.commons.lang3.StringEscapeUtils"%>
+<div class="navbar navbar-fixed-top">
+	<div class="navbar-inner">
+		<div class="container">
+			<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="brand" href="index.jsp">Dicoogle</a>
+			<%
+			{ // added curlies so that "page" is only available here (this scope, avoiding further error)
+				String pageFileName = Pages.getCurrentPageFileName(request);
+			%>
+			<div class="nav-collapse collapse" style="height: 0px;">
+				<ul class="nav">
+					<!-- <li <%= ((pageFileName == null) || pageFileName.equalsIgnoreCase("index.jsp")) ? "class=\"active\"" : "" %>>
+						<a href="index.jsp">Home</a>
+					</li>-->
+					<li <%= pageFileName.equalsIgnoreCase("search.jsp") ? "class=\"active\"" : "" %>>
+						<a href="newsearch.jsp">Search</a>
+					</li>
+					<!-- <li <%= pageFileName.equalsIgnoreCase("viewer.jsp") ? "class=\"active\"" : "" %>>
+						<a href="newviewer.jsp">Viewer<sup style="color: forestgreen;">&alpha;</sup></a>
+					</li> -->
+				</ul>
+				<ul class="nav pull-right">
+					<li <%= pageFileName.equalsIgnoreCase("management.jsp") ? "class=\"active\"" : "" %>>
+						<a href="management.jsp">Management</a>
+					</li>
+				</ul>
+				<%
+					if (Session.isUserLoggedIn(session))
+					{
+				%>
+				<p class="navbar-text pull-right" style="padding: 0px 10px 0px 10px;">
+					Logged in as <strong><%= StringEscapeUtils.escapeHtml4(Session.getUserLoggedIn(session).getUserName()) %></strong>, <a href="logout.jsp">Logout</a>
+				</p>
+				<%
+					}
+					else
+					{
+				%>
+				<ul class="nav pull-right" style="text-align: right;">
+					<li <%= pageFileName.equalsIgnoreCase("login.jsp") ? "class=\"active\"" : "" %>>
+						<a href="login.jsp">Login</a>
+					</li>
+				</ul>
+				<%
+					}
+				%>
+			</div>
+			<%
+			}
+			%>
+		</div>
+	</div>
+</div>
