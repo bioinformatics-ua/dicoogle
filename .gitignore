@@ -3,3 +3,14 @@ dist
 .tmp
 .sass-cache
 app/bower_components
+
+#eclipse
+.project
+.settings/*
+dicoogle/.classpath
+dicoogle/.settings/*
+sdk-ext/.classpath
+sdk-ext/.settings/*
+sdk/.classpath
+sdk/.project
+sdk/.settings/*
