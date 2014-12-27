@@ -54,7 +54,12 @@ public class SearchServlet extends HttpServlet {
         String query = request.getParameter("query");
         String provider = request.getParameter("provider");
         boolean keyword = Boolean.parseBoolean(request.getParameter("keyword"));
-
+      
+        if (StringUtils.isEmpty(query)) {
+            response.sendError(400, "No query supplied!");
+            return;
+        }
+        
         if (!keyword) {
             QueryExpressionBuilder q = new QueryExpressionBuilder(query);
             query = q.getQueryString();
@@ -66,10 +71,7 @@ public class SearchServlet extends HttpServlet {
             providerList = Arrays.asList(provider.split(";"));
         }
 
-        if (StringUtils.isEmpty(query)) {
-            response.sendError(400, "No query supplied!");
-            return;
-        }
+       
 
         boolean queryAllProviders = false;
         if (providerList == null || providerList.isEmpty()) {
