@@ -22,7 +22,7 @@ import pt.ua.dicoogle.server.web.servlets.search.SearchServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.UserServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.LoginServlet;
 import pt.ua.dicoogle.core.ServerSettings;
-import pt.ua.dicoogle.server.web.servlets.management.SettingsServlet;
+import pt.ua.dicoogle.server.web.servlets.management.IndexerSettingsServlet;
 
 import java.io.File;
 import java.net.URL;
@@ -195,8 +195,11 @@ public class DicoogleWeb {
             logout,
             user,
             dump,
-            createServletHandler(new SettingsServlet(SettingsServlet.SettingsType.path) , "/management/settings/index/path"),
-            createServletHandler(new SettingsServlet(SettingsServlet.SettingsType.zip), "/management/settings/index/zip")
+            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.path) , "/management/settings/index/path"),
+            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.zip), "/management/settings/index/zip"),
+            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.effort), "/management/settings/index/effort"),
+            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnail), "/management/settings/index/thumbnail"),
+            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnailSize), "/management/settings/index/thumbnail/size")
             ,
             webpages
 

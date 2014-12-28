@@ -31,15 +31,15 @@ import pt.ua.dicoogle.core.ServerSettings;
  *
  * @author Frederico Silva <fredericosilva@ua.pt>
  */
-public class SettingsServlet extends HttpServlet {
+public class IndexerSettingsServlet extends HttpServlet {
 
     public enum SettingsType {
 
-        path, zip, effort;
+        path, zip, effort, thumbnail,thumbnailSize;
     }
     private SettingsType type;
 
-    public SettingsServlet(SettingsType type) {
+    public IndexerSettingsServlet(SettingsType type) {
         this.type = type;
     }
 
@@ -66,6 +66,15 @@ public class SettingsServlet extends HttpServlet {
                 ServerSettings.getInstance().setIndexerEffort(effort);
                 resp.getWriter().append("index effort set to: " + effort);
                 break;
+            case thumbnail:
+            	boolean saveThumbanail = Boolean.parseBoolean(param);
+            	ServerSettings.getInstance().setSaveThumbnails(saveThumbanail);
+            	break;
+            case thumbnailSize:
+            	//TODO: Should be a int
+            	//int thumbSize = Integer.parseInt(param);
+            	ServerSettings.getInstance().setThumbnailsMatrix(param);
+            	break;
         }
 
     }
@@ -83,6 +92,12 @@ public class SettingsServlet extends HttpServlet {
             case effort:
                 result = String.valueOf(ServerSettings.getInstance().getIndexerEffort());
                 break;
+            case thumbnail:
+            	result = String.valueOf(ServerSettings.getInstance().getSaveThumbnails());
+            	break;
+            case thumbnailSize:
+            	result = String.valueOf(ServerSettings.getInstance().getThumbnailsMatrix());
+            	break;
         }
 
         resp.getWriter().append(result);
