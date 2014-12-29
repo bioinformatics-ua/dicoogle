@@ -129,7 +129,11 @@ public class XMLSupport extends DefaultHandler
     private SOPList list;
     private ServerSettings s;
     private TransfersStorage LocalTS;
-    private DefaultListModel m;
+    public TransfersStorage getLocalTS() {
+		return LocalTS;
+	}
+
+	private DefaultListModel m;
     
     
     private boolean isIndexAnonymous = false;
