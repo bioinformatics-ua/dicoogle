@@ -23,6 +23,7 @@ import pt.ua.dicoogle.server.web.servlets.accounts.UserServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.LoginServlet;
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.server.web.servlets.management.IndexerSettingsServlet;
+import pt.ua.dicoogle.server.web.servlets.management.TransferenceOptionsServlet;
 
 import java.io.File;
 import java.net.URL;
@@ -36,13 +37,15 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 import java.util.logging.Logger;
+
 import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServlet;
+
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlets.GzipFilter;
+
 import pt.ua.dicoogle.server.web.servlets.accounts.LogoutServlet;
 import pt.ua.dicoogle.server.web.servlets.search.DumpServlet;
-
 import pt.ua.dicoogle.server.web.utils.LocalImageCache;
 
 /**
@@ -152,54 +155,27 @@ public class DicoogleWeb {
         webpages.addServlet(new ServletHolder(new SearchHolderServlet()), "/search/holders");
         FilterHolder filter = webpages.addFilter(GzipFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
 
-        //Setup account login servlet
-        final ServletContextHandler login = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        login.setContextPath(CONTEXTPATH);
-        login.addServlet(new ServletHolder(new LoginServlet()), "/login");
-        
-        //Setup account login servlet
-        final ServletContextHandler logout = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        logout.setContextPath(CONTEXTPATH);
-        logout.addServlet(new ServletHolder(new LogoutServlet()), "/logout");
-        
-        //Setup account login servlet
-        final ServletContextHandler user = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        user.setContextPath(CONTEXTPATH);
-        user.addServlet(new ServletHolder(new UserServlet()), "/user");
-        
-        //Setup account login servlet
-        final ServletContextHandler dump = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        dump.setContextPath(CONTEXTPATH);
-        dump.addServlet(new ServletHolder(new DumpServlet()), "/dump");
-        
-        /*
-        MANAGEMENT SERVLETS
-        */
-        //Setup account login servlet
-        /*final ServletContextHandler path = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        path.setContextPath(CONTEXTPATH);
-        path.addServlet(new ServletHolder(new SettingsServlet(SettingsServlet.SettingsType.path)), "/management/settings/index/path");
-        */
 
         // list the all the handlers mounted above
         Handler[] handlers = new Handler[]{
             dic2png,
             dictags,
-            search,
             plugin,
             indexer,
             indexeres,
            // settings,
             csvServletHolder,
-            login,
-            logout,
-            user,
-            dump,
+            createServletHandler(new LoginServlet(), "/login"),
+            createServletHandler(new LogoutServlet(), "/logout"),
+            createServletHandler(new UserServlet(), "/user"),
+            createServletHandler(new SearchServlet(), "/search"),
+            createServletHandler(new DumpServlet(), "/dump"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.path) , "/management/settings/index/path"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.zip), "/management/settings/index/zip"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.effort), "/management/settings/index/effort"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnail), "/management/settings/index/thumbnail"),
-            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnailSize), "/management/settings/index/thumbnail/size")
+            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnailSize), "/management/settings/index/thumbnail/size"),
+            createServletHandler(new TransferenceOptionsServlet(), "/management/settings/transfer")
             ,
             webpages
 
