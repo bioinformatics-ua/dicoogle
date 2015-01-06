@@ -19,6 +19,7 @@
 package pt.ua.dicoogle.server.web;
 
 import pt.ua.dicoogle.server.web.servlets.search.SearchServlet;
+import pt.ua.dicoogle.server.web.servlets.search.WadoServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.UserServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.LoginServlet;
 import pt.ua.dicoogle.core.ServerSettings;
@@ -141,10 +142,10 @@ public class DicoogleWeb {
         indexer.addServlet(new ServletHolder(new IndexControlServlet()), "/indexamos");
 
         // setup the general/advanced Dicoogle settings servlet
-        /*final ServletContextHandler settings = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
+        final ServletContextHandler settings = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
         settings.setContextPath(CONTEXTPATH);
         settings.addServlet(new ServletHolder(new SettingsServlet()), "/settings");
-*/
+
         // setup the web pages/scripts app
         final WebAppContext webpages = new WebAppContext(warUrlString, CONTEXTPATH);
         webpages.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false"); // disables directory listing
@@ -163,7 +164,7 @@ public class DicoogleWeb {
             plugin,
             indexer,
             indexeres,
-           // settings,
+            settings,
             csvServletHolder,
             createServletHandler(new LoginServlet(), "/login"),
             createServletHandler(new LogoutServlet(), "/logout"),
@@ -175,7 +176,8 @@ public class DicoogleWeb {
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.effort), "/management/settings/index/effort"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnail), "/management/settings/index/thumbnail"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnailSize), "/management/settings/index/thumbnail/size"),
-            createServletHandler(new TransferenceOptionsServlet(), "/management/settings/transfer")
+            createServletHandler(new TransferenceOptionsServlet(), "/management/settings/transfer"),
+            createServletHandler(new WadoServlet(), "/wado")
             ,
             webpages
 
