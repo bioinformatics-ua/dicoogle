@@ -18,6 +18,7 @@
  */
 package pt.ua.dicoogle.server.web;
 
+import pt.ua.dicoogle.server.web.servlets.search.ProvidersServlet;
 import pt.ua.dicoogle.server.web.servlets.search.SearchServlet;
 import pt.ua.dicoogle.server.web.servlets.search.WadoServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.UserServlet;
@@ -177,7 +178,8 @@ public class DicoogleWeb {
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnail), "/management/settings/index/thumbnail"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnailSize), "/management/settings/index/thumbnail/size"),
             createServletHandler(new TransferenceOptionsServlet(), "/management/settings/transfer"),
-            createServletHandler(new WadoServlet(), "/wado")
+            createServletHandler(new WadoServlet(), "/wado"),
+            createServletHandler(new ProvidersServlet(), "/providers")
             ,
             webpages
 
