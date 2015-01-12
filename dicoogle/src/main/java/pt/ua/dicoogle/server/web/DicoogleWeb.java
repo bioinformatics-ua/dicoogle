@@ -24,6 +24,7 @@ import pt.ua.dicoogle.server.web.servlets.search.WadoServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.UserServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.LoginServlet;
 import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.server.web.servlets.management.DicomSettingsServlet;
 import pt.ua.dicoogle.server.web.servlets.management.IndexerSettingsServlet;
 import pt.ua.dicoogle.server.web.servlets.management.TransferenceOptionsServlet;
 
@@ -179,7 +180,8 @@ public class DicoogleWeb {
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnailSize), "/management/settings/index/thumbnail/size"),
             createServletHandler(new TransferenceOptionsServlet(), "/management/settings/transfer"),
             createServletHandler(new WadoServlet(), "/wado"),
-            createServletHandler(new ProvidersServlet(), "/providers")
+            createServletHandler(new ProvidersServlet(), "/providers"),
+            createServletHandler(new DicomSettingsServlet(), "/management/settings/dicom/query")
             ,
             webpages
 

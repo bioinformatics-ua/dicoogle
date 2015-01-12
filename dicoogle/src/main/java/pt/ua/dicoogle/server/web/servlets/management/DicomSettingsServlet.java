@@ -19,10 +19,113 @@
 
 package pt.ua.dicoogle.server.web.servlets.management;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
+
+import pt.ua.dicoogle.core.ServerSettings;
+
+import com.google.gson.Gson;
+
 /**
  *
  * @author Frederico Silva <fredericosilva@ua.pt>
  */
-public class DicomServlet {
-    
+public class DicomSettingsServlet extends HttpServlet {
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		ServerSettings ss = ServerSettings.getInstance();
+
+		int responseTimeout = ss.getRspDelay();
+		int connectionTimeout = ss.getConnectionTimeout();
+		int idleTimeout = ss.getIdleTimeout();
+		int acceptTimeout = ss.getAcceptTimeout();
+		int maxPduSend = ss.getMaxPDULenghtSend();
+		int maxPduReceive = ss.getMaxPDULengthReceive();
+		int maxAssociations = ss.getMaxClientAssoc();
+
+		QueryRetrieveSettingsObject queryRetrieveSettings = new QueryRetrieveSettingsObject(
+				responseTimeout, connectionTimeout, idleTimeout, acceptTimeout,
+				maxPduSend, maxPduReceive, maxAssociations);
+
+		resp.getWriter().write(queryRetrieveSettings.getJSON());
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		String responseTimeout = req.getParameter("responseTimeout");
+		String connectionTimeout = req.getParameter("connectionTimeout");
+		String idleTimeout = req.getParameter("idleTimeout");
+		String acceptTimeout = req.getParameter("acceptTimeout");
+		String maxPduSend = req.getParameter("maxPduSend");
+		String maxPduReceive = req.getParameter("maxPduReceive");
+		String maxAssociations = req.getParameter("maxAssociations");
+
+		ServerSettings ss = ServerSettings.getInstance();
+
+		if (StringUtils.isNotEmpty(responseTimeout)) {
+			int intV = Integer.parseInt(responseTimeout);
+			ss.setRspDelay(intV);
+		}
+		if (StringUtils.isNotEmpty(connectionTimeout)) {
+			int intV = Integer.parseInt(connectionTimeout);
+			ss.setConnectionTimeout(intV);
+		}
+		if (StringUtils.isNotEmpty(idleTimeout)) {
+			int intV = Integer.parseInt(idleTimeout);
+			ss.setIdleTimeout(intV);
+		}
+		if (StringUtils.isNotEmpty(acceptTimeout)) {
+			int intV = Integer.parseInt(acceptTimeout);
+			ss.setAcceptTimeout(intV);
+		}
+		if (StringUtils.isNotEmpty(maxPduSend)) {
+			int intV = Integer.parseInt(maxPduSend);
+			ss.setMaxPDULengthSend(intV);
+		}
+		if (StringUtils.isNotEmpty(maxPduReceive)) {
+			int intV = Integer.parseInt(maxPduReceive);
+			ss.setMaxPDULengthReceive(intV);
+		}
+		if (StringUtils.isNotEmpty(maxAssociations)) {
+			int intV = Integer.parseInt(maxAssociations);
+			ss.setMaxClientAssoc(intV);
+		}
+
+	}
+
+	/*
+	 * MODEL FOR QUERY RETRIEVE SETTINGS
+	 */
+	private class QueryRetrieveSettingsObject {
+		int responseTimeout, connectionTimeout, idleTimeout, acceptTimeout,
+				maxPduSend, maxPduReceive, maxAssociations;
+
+		public QueryRetrieveSettingsObject(int responseTimeout,
+				int connectionTimeout, int idleTimeout, int acceptTimeout,
+				int maxPduSend, int maxPduReceive, int maxAssociations) {
+			super();
+			this.responseTimeout = responseTimeout;
+			this.connectionTimeout = connectionTimeout;
+			this.idleTimeout = idleTimeout;
+			this.acceptTimeout = acceptTimeout;
+			this.maxPduSend = maxPduSend;
+			this.maxPduReceive = maxPduReceive;
+			this.maxAssociations = maxAssociations;
+		}
+
+		public String getJSON() {
+			Gson gson = new Gson();
+			return gson.toJson(this);
+		}
+
+	}
 }
