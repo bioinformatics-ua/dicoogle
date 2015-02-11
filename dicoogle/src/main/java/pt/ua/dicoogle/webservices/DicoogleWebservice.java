@@ -18,17 +18,26 @@
  */
 package pt.ua.dicoogle.webservices;
 
-import deletion.RestCountQueryResults;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.restlet.Application;
 import org.restlet.Component;
+import org.restlet.Request;
+import org.restlet.Response;
 import org.restlet.Restlet;
 import org.restlet.Server;
+import org.restlet.data.Form;
+import org.restlet.data.Method;
 import org.restlet.data.Protocol;
+import org.restlet.engine.header.Header;
+import org.restlet.engine.header.HeaderConstants;
 import org.restlet.resource.ServerResource;
+import org.restlet.routing.Filter;
 import org.restlet.routing.Router;
+import org.restlet.util.Series;
 import pt.ua.dicoogle.core.ServerSettings;
 
 /**
@@ -83,6 +92,7 @@ public class DicoogleWebservice extends Application {
 
      /**
      * Creates a root Restlet that will receive all incoming calls.
+     * @return a restlet 
      */
     @Override
     public synchronized Restlet createInboundRoot() {
@@ -91,7 +101,6 @@ public class DicoogleWebservice extends Application {
         Router router = new Router(getContext());
 
         // Defines routing to resources
-        
         router.attach("/dim", RestDimResource.class);//search resource
         router.attach("/file", RestFileResource.class);//file download resource
         router.attach("/dump", RestDumpResource.class);//dump resource
@@ -105,6 +114,8 @@ public class DicoogleWebservice extends Application {
         //Advanced Dicoogle Features
         router.attach("/doIndex", ForceIndexing.class);
         
+        // OPTIONS method with CORS support
+        router.attach("/", CORSResource.class);
         
         //lets add plugin registred services
         //this is still a little brittle... :(
@@ -113,7 +124,23 @@ public class DicoogleWebservice extends Application {
             router.attach("/"+resource.toString(), resource.getClass());
         }
         
-        return router;
+        // add CORS support to all resources
+        Filter corsFilter = new Filter(getContext(), router) {
+
+            @Override
+            protected void afterHandle(Request request, Response response) {
+                Series<Header> responseHeaders = (Series) response.getAttributes()
+                        .get(HeaderConstants.ATTRIBUTE_HEADERS);
+                if (responseHeaders == null) {
+                    responseHeaders = new Series(Header.class);
+                    response.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS, responseHeaders);
+                }
+                responseHeaders.add("Access-Control-Allow-Origin", "*");
+            }
+            
+        };
+
+        return corsFilter;
     }
     
     public static void attachRestPlugin(ServerResource resource){
