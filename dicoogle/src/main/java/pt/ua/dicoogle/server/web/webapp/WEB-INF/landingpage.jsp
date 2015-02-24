@@ -66,7 +66,7 @@
                         </div>
                     </div>-->
 <p style="text-align: left; width: 100%;margin-left: 5px;color: white">Sign In</p>
-<input type="text" id="username" name="username" placeholder="Username" style="width: 100%;margin: 5px;margin-top: 0px"/>
+<input type="text" id="username" name="username" placeholder="Username" style="width: 100%;margin: 5px;margin-top: 0px" autofocus />
 <input type="password" id="password" name="password" placeholder="Password" style="width: 100%; margin: 5px" />
 <button type="submit" class="btn submit myButton">Login</button>
                 </form>
