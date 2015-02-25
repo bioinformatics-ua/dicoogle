@@ -42,7 +42,7 @@
 				<form id="search-form-normal" class="form-search" method='post' action="newsearch.jsp">		
 					<input type="hidden" name="queryProviders" value="FFF" />			
 					<input id="formMethod" type="hidden" name="method" value="default" />
-					<input id="query" name="query" type="text" class="input-medium search-query" list="tagslist" placeholder="Search" <%=qr%> />
+					<input id="query" name="query" type="text" class="input-medium search-query" list="tagslist" placeholder="Search" <%=qr%> autofocus />
 					<button id="searchButton0" type="button" class="btn btn-primary"  value="Search" onclick="submitForm()">Search</button>
 					<datalist id="tagslist">
 					<%
