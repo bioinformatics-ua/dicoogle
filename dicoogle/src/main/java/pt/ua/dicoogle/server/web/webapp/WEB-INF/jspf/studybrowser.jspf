@@ -7,13 +7,12 @@
 	type="text/css">
 <script type="text/javascript" src="scripts/jquery.smartWizard.js"></script>
 <script type="text/javascript" src="scripts/jquery.tablesorter.js"></script>
-<link rel="stylesheet" href="scripts/ladda/dist/ladda-themeless.min.css">
-<script src="scripts/ladda/dist/spin.min.js"></script>
-<script src="scripts/ladda/dist/ladda.min.js"></script>
+<link rel="stylesheet" href="scripts/ladda/ladda-themeless.min.css">
+<script src="scripts/ladda/spin.min.js"></script>
+<script src="scripts/ladda/ladda.min.js"></script>
 <script src="scripts/multiselect/jquery.multi-select.js"></script>
 
 <script src="scripts/quicksearch-master/jquery.quicksearch.js"></script>
-		
 
 <script type="text/javascript">
 	function trom(v) {
