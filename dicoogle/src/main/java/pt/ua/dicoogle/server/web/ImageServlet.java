@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.ServletOutputStream;
 
@@ -80,6 +82,8 @@ public class ImageServlet extends HttpServlet
 			response.sendError(400, "Invalid SOP Instance UID!");
 			return;
 		}
+		String[] providerArray = request.getParameterValues("provider");
+        List<String> providers = providerArray == null ? null : Arrays.asList(providerArray);
 		String sFrame = request.getParameter("frame");
 		if (sFrame == null)
 			sFrame = "0";
@@ -87,7 +91,7 @@ public class ImageServlet extends HttpServlet
 
 		// get the .dcm file for that SOP Instance UID
 		//File dcmFile = Information.getFileFromSOPInstanceUID(sopInstanceUID);
-		StorageInputStream dcmFile = Information.getFileFromSOPInstanceUID(sopInstanceUID);
+		StorageInputStream dcmFile = Information.getFileFromSOPInstanceUID(sopInstanceUID, providers);
 		
 		// if no .dcm file was found tell the client
 		if ((dcmFile == null))
