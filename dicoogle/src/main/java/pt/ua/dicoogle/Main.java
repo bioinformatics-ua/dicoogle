@@ -18,12 +18,15 @@
  */
 package pt.ua.dicoogle;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.SocketException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -130,12 +133,30 @@ public class Main
                 {
                     LaunchGUIClient();
                 }
+                else if (args[0].equals("-w") || args[0].equals("--web") || args[0].equals("--webapp")) {
+                    // open browser
+                    LaunchDicoogle();
+                    if (!Desktop.isDesktopSupported() || !Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                        System.err.println("Desktop browsing is not supported in this machine!\n"
+                                + "Request to open web application ignored.");
+                    } else {
+                        try {
+                            ServerSettings settings = ServerSettings.getInstance();
+                            URI uri = new URI("http://localhost:" + settings.getWeb().getServerPort());
+                            Desktop.getDesktop().browse(uri);
+                        } catch (IOException | URISyntaxException ex) {
+                            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                            System.err.println("Request to open web application ignored: " + ex.getMessage());
+                        }
+                    }
+                }
                 else if (args[0].equals("-h") || args[0].equals("--h") || args[0].equals("-help") || args[0].equals("--help"))
                 {
                     
                     System.out.println("Dicoogle PACS: help");
                     System.out.println("-c : Run Client version");
                     System.out.println("-s : Run Server version");
+                    System.out.println("-w : Run Server version and load web application in default browser");
                     System.out.println("without any option run a standalone version.");  
                 }
                 
