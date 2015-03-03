@@ -32,6 +32,7 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 import com.google.common.base.CharMatcher;
+import java.util.List;
 
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.StorageInputStream;
@@ -45,25 +46,45 @@ import pt.ua.dicoogle.sdk.task.Task;
  * Provides several helper functions for retrieving information about a DICOM file.
  *
  * @author António Novo <antonio.novo@ua.pt>
+ * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 public class Information
 {
 	/**
-	 * Based on a SOP Instance UID returns a File handler for the respective .dcm file.
+	 * Based on a SOP Instance UID, returns a File handler for the respective .dcm file. This method
+     * issues all available query providers, see {@link Information#getFileFromSOPInstanceUID(java.lang.String, java.util.List)}
+     * to select specific providers
 	 *
 	 * @param sopInstanceUID a String containing a valid/indexed SOP Instance UID.
 	 * @return a File handler for the respective .dcm file if the SOP Instance UID is valid and indexed, null otherwise.
 	 */
 	public static StorageInputStream getFileFromSOPInstanceUID(String sopInstanceUID)
 	{
+        return getFileFromSOPInstanceUID(sopInstanceUID, null);
+	}
+
+    /**
+	 * Based on a SOP Instance UID, returns a File handler for the respective .dcm file.
+	 *
+	 * @param sopInstanceUID a String containing a valid/indexed SOP Instance UID.
+     * @param providers a list of query sources to issue the file handler (if null, all enabled providers are queried)
+	 * @return a File handler for the respective .dcm file if the SOP Instance UID is valid and indexed, null otherwise.
+	 */
+	public static StorageInputStream getFileFromSOPInstanceUID(String sopInstanceUID, List<String> providers)
+	{
+        System.err.printf("getFileFromSOPInstanceUID(%s, %s)\n", sopInstanceUID, providers);
 		if (sopInstanceUID == null)
 			return null;
+        
+        if (providers == null) {
+            providers = PluginController.getInstance().getQueryProvidersName(true);
+        }
 
 		String query = "SOPInstanceUID:" + sopInstanceUID;
 
 		CountDownLatch latch = new CountDownLatch(1);	
 		MyHolder holder= new MyHolder(latch);
-		PluginController.getInstance().queryAll(holder , query, new HashMap<String, String>());
+		PluginController.getInstance().query(holder, providers, query, new HashMap<String, String>());
 
 		try {
 			latch.await();
@@ -137,17 +158,34 @@ public class Information
 			return ret;
 		}
 	}
-
 	/**
-	 * Based on a SOP Instance UID returns a Hashtables containing all name and value tag pairs for the respective .dcm file.
+	 * Based on a SOP Instance UID returns a hash table containing all name and value tag pairs for the respective .dcm file.
+     * This method issues all available query providers, see {@link Information#getFileFromSOPInstanceUID(java.lang.String, java.util.List)}
+     * to select specific providers.
 	 *
 	 * @param sopInstanceUID a String containing a valid/indexed SOP Instance UID.
 	 * @return a Hashtables containing all name and value tag pairs for the respective .dcm file if the SOP Instance UID is valid and indexed, null otherwise.
 	 */
-	public static HashMap<String, Object> searchForFileIndexedMetaData(String sopInstanceUID) // XXX SOP Instance UID should always be set within a DICOM file, I think...
+	public static HashMap<String, Object> searchForFileIndexedMetaData(String sopInstanceUID)
+	{
+        return searchForFileIndexedMetaData(sopInstanceUID, null);
+    }
+
+	/**
+	 * Based on a SOP Instance UID returns a hash table containing all name and value tag pairs for the respective .dcm file.
+	 *
+	 * @param sopInstanceUID a String containing a valid/indexed SOP Instance UID.
+     * @param providers a list of query sources to issue the tables
+	 * @return a Hashtables containing all name and value tag pairs for the respective .dcm file if the SOP Instance UID is valid and indexed, null otherwise.
+	 */
+	public static HashMap<String, Object> searchForFileIndexedMetaData(String sopInstanceUID, List<String> providers) // XXX SOP Instance UID should always be set within a DICOM file, I think...
 	{
 		if (sopInstanceUID == null)
 			return null;
+        
+        if (providers == null) {
+            providers = PluginController.getInstance().getQueryProvidersName(true);
+        }
 
 		// add all those tags to the extra fields that will be retried on a search query
 		HashMap<String, String> extraFields = new HashMap<>();
@@ -190,7 +228,7 @@ public class Information
 					
 				}
 			};
-			itResults = PluginController.getInstance().queryAll(holder , query, extraFields).get();
+			itResults = PluginController.getInstance().query(holder, providers, query, extraFields).get();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -212,17 +250,29 @@ public class Information
 
 	private static final char start = 0;
 	private static final char end = 31;
-	
-	/**
+
+   	/**
 	 * Based on a SOP Instance UID returns a String containing a XML document filled with all name and value tag pairs for the respective .dcm file.
-	 *
+	 * This method will query all enabled sources.
+     * 
 	 * @param sopInstanceUID a String containing a valid/indexed SOP Instance UID.
 	 * @return a String containing a XML document filled with all name and value tag pairs for the respective .dcm file if the SOP Instance UID is valid and indexed, null otherwise.
 	 */
-	public static String getXMLTagListFromFile(String sopInstanceUID)
+	public static String getXMLTagListFromFile(String sopInstanceUID) {
+        return getXMLTagListFromFile(sopInstanceUID, null);
+    }
+
+    /**
+	 * Based on a SOP Instance UID returns a String containing a XML document filled with all name and value tag pairs for the respective .dcm file.
+	 *
+	 * @param sopInstanceUID a String containing a valid/indexed SOP Instance UID.
+     * @param providers a list of query sources to issue the document
+	 * @return a String containing a XML document filled with all name and value tag pairs for the respective .dcm file if the SOP Instance UID is valid and indexed, null otherwise.
+	 */
+	public static String getXMLTagListFromFile(String sopInstanceUID, List<String> providers)
 	{
 		// get all the tags and their values present on the file
-		HashMap<String, Object> tags = searchForFileIndexedMetaData(sopInstanceUID);
+		HashMap<String, Object> tags = searchForFileIndexedMetaData(sopInstanceUID, providers);
 		if (tags == null)
 		{
 			return null;

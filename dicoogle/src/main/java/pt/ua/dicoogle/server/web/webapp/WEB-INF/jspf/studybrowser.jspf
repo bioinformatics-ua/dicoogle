@@ -63,7 +63,13 @@
 		var loading = Ladda.create(ca);
 		loading.start();
 		
-		var resp = $.get( "dictags?SOPInstanceUID="+image.uid, function( data ) {
+                var providerqs = '';
+                for (var i = 0 ; i < providers.length ; i++) {
+                    if (providers[i].selected) {
+                        providerqs += '&provider=' + providers[i].name;
+                    }
+                }
+		var resp = $.get( "dictags?SOPInstanceUID="+image.uid + providerqs, function( data ) {
 			//console.log("Executed");
 			
 			$("tag", data).each(function(){				

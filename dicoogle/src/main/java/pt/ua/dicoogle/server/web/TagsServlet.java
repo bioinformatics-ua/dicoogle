@@ -23,6 +23,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import javax.servlet.ServletOutputStream;
 import pt.ua.dicoogle.server.web.dicom.Information;
 
@@ -42,9 +44,12 @@ public class TagsServlet extends HttpServlet
 			response.sendError(400, "Invalid SOP Instance UID!");
 			return;
 		}
+        
+        String[] providerArray = request.getParameterValues("provider");
+        List<String> providers = providerArray == null ? null : Arrays.asList(providerArray);
 
 		// get the XML document containing the tags for that SOP Instance UID file
-		String xml = Information.getXMLTagListFromFile(sopInstanceUID);
+		String xml = Information.getXMLTagListFromFile(sopInstanceUID, providers);
 
 		// if no xml was retrieved, tell the client
 		if (xml == null)
