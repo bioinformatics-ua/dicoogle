@@ -18,8 +18,6 @@
  */
 package pt.ua.dicoogle.server.web.servlets.search;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +28,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
