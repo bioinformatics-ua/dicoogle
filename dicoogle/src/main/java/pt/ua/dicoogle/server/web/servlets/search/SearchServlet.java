@@ -147,8 +147,11 @@ public class SearchServlet extends HttpServlet {
             rj.put("uri", r.getURI().toString());
 
             JSONObject fields = new JSONObject();
-            fields.accumulateAll(r.getExtraData());
-
+            for (HashMap.Entry<String,Object> f : r.getExtraData().entrySet()) {
+                // remove padding from string representations before accumulating
+                fields.accumulate(f.getKey(), f.getValue().toString().trim());
+            }
+            
             rj.put("fields", fields);
 
             resp.accumulate("results", rj);
