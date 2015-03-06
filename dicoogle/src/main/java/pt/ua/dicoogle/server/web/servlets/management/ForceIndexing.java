@@ -101,11 +101,11 @@ public class ForceIndexing extends HttpServlet{
             	Report r = t.get();
                 done.add(r);
                 builder.append(r).append("\n");
-            }catch(InterruptedException | ExecutionException ex){
-//            	log.error("UNKNOW ERROR", ex);
-            	ex.printStackTrace();
-            }
-        }
+      } catch (InterruptedException | ExecutionException ex) {
+        // log.error("UNKNOW ERROR", ex);
+        ex.printStackTrace();
+      }
+    }
         //System.out.println("Exporting Results");
         
 //        log.info("Finished forced indexing procedure: {}", reports.size());
