@@ -115,6 +115,7 @@ public class SearchServlet extends HttpServlet {
         };
 
         Iterable<SearchResult> results = null;
+        long elapsedTime = System.currentTimeMillis();
         try {
             if (queryAllProviders) {
                 results = PluginController.getInstance().queryAll(queryTaskHolder, query, extraFields).get();
@@ -124,7 +125,8 @@ public class SearchServlet extends HttpServlet {
         } catch (InterruptedException | ExecutionException ex) {
             Logger.getLogger(SearchServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        elapsedTime = System.currentTimeMillis()-elapsedTime;
+        
         if (results == null) {
             response.sendError(500, "Could not generate results!");
             //return;
@@ -134,7 +136,8 @@ public class SearchServlet extends HttpServlet {
         for (SearchResult r : results) {
             resultsArr.add(r);
         }
-        String json = processJSON(resultsArr, 0);
+                
+        String json = processJSON(resultsArr, elapsedTime);
 
         response.setContentType("application/json");
         response.getWriter().append(json);
@@ -157,7 +160,7 @@ public class SearchServlet extends HttpServlet {
             resp.accumulate("results", rj);
         }
         resp.put("numResults", results.size());
-        resp.put("elapsedTime", "NA");
+        resp.put("elapsedTime", elapsedTime);
 
         return resp.toString();
     }
