@@ -20,7 +20,16 @@
 package pt.ua.dicoogle.server.web.utils;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
+
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.collections.map.HashedMap;
+
+import com.google.gson.JsonObject;
+
 import net.sf.json.JSONObject;
 
 /**
@@ -30,10 +39,42 @@ import net.sf.json.JSONObject;
  */
 public class ResponseUtil {
 
-    public static void simpleResponse(HttpServletResponse resp, boolean success) throws IOException {
+    public static void simpleResponse(HttpServletResponse resp, String name ,boolean state) throws IOException {
         JSONObject object = new JSONObject();
-        object.put("success", success);
+        object.put(name, state);
 
         object.write(resp.getWriter());
+    }
+    
+    public static void objectResponse(HttpServletResponse resp, List<Pair> pairs) throws IOException {
+    	JSONObject object = new JSONObject();
+    	
+    	for(Pair entry: pairs){
+    		object.put(entry.getKey(), entry.getValue().toString());	
+    	}
+    	
+    	object.write(resp.getWriter());
+    	
+    }
+    
+    /*
+     * Generic Pair Util for Json response
+     */
+    public static class Pair<String, V>{
+    	String key;
+    	V value;
+		public Pair(String key, V value) {
+			super();
+			this.key = key;
+			this.value = value;
+		}
+		public String getKey() {
+			return key;
+		}
+		public V getValue() {
+			return value;
+		}
+    	
+    	
     }
 }

@@ -39,7 +39,7 @@ public class LogoutServlet extends HttpServlet{
        
         boolean logout = Session.logout(req);
         
-        ResponseUtil.simpleResponse(resp, logout);
+        ResponseUtil.simpleResponse(resp,"success", logout);
               
         
         

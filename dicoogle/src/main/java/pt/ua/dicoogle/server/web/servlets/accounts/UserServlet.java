@@ -49,7 +49,7 @@ public class UserServlet extends HttpServlet {
             isRemoved = UsersStruct.getInstance().removeUser(usernameToRemove);
         }
 
-        ResponseUtil.simpleResponse(resp, isRemoved);
+        ResponseUtil.simpleResponse(resp, "success",isRemoved);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class UserServlet extends HttpServlet {
         String Hash = HashService.getSHA1Hash(user + admin + passHash);   //user Hash
 
         boolean wasAdded = UsersStruct.getInstance().addUser(new User(user, Hash, admin));
-        ResponseUtil.simpleResponse(resp, wasAdded );
+        ResponseUtil.simpleResponse(resp, "success",wasAdded );
     }
 
     @Override
