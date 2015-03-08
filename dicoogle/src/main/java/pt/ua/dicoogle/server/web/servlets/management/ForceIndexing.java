@@ -17,7 +17,6 @@
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package pt.ua.dicoogle.server.web.servlets.management;
 
 import java.io.IOException;
@@ -44,75 +43,68 @@ import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.task.Task;
 
 /**
-*
-* @author Frederico Silva <fredericosilva@ua.pt>
-*/
-public class ForceIndexing extends HttpServlet{
+ *
+ * @author Frederico Silva <fredericosilva@ua.pt>
+ */
+public class ForceIndexing extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		  
-	        
+
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-	
-		//System.out.println("Fetching Data");
-        String uriArrayJson = req.getParameter("uris");
-        String pluginName = req.getParameter("plugin");
-        
-        Gson gson = new Gson();
-        
-        List<String> uris = gson.fromJson(uriArrayJson, new TypeToken<ArrayList<String>>(){}.getType());
-        if(uris==null || uris.size()==0)
-        {
-        	resp.sendError(400, "No uri provided");
-        	return;
-        }
-        
-        PluginController pc = PluginController.getInstance();
-        //System.out.println("Generating Tasks");
-        List<Task<Report>> reports  = new ArrayList<>(uris.size());
-        for(String uri : uris){
-            URI u = null;
-            try {
-                u = new URI(uri.replaceAll(" ","%20"));
-            } catch (URISyntaxException ex) {
-//            	log.error("Could not create URI", ex);
-                ex.printStackTrace();
-            } 
-            if(u != null){
-//            	log.info("Sent Index Request: {}, {}",pluginName, u.toString());
-            	if(pluginName == null)
-            		reports.addAll(pc.index(u));
-            	else
-            		reports.addAll(pc.index(pluginName,u));
-            }
-        }
-        
-        //System.out.println("Waiting for Results");
-        List<Report> done = new ArrayList<>(reports.size());
-        StringBuilder builder = new StringBuilder();
-        for(Task<Report> t : reports){
-            try {
-            	Report r = t.get();
-                done.add(r);
-                builder.append(r).append("\n");
-            }catch(InterruptedException | ExecutionException ex){
-//            	log.error("UNKNOW ERROR", ex);
-            	ex.printStackTrace();
-            }
-        }
-        //System.out.println("Exporting Results");
-        
-//        log.info("Finished forced indexing procedure: {}", reports.size());
-        
-resp.getWriter().write(new StringRepresentation(builder.toString(), MediaType.TEXT_PLAIN).toString());
+
+		// System.out.println("Fetching Data");
+		String uriArrayJson = req.getParameter("uris");
+		String pluginName = req.getParameter("plugin");
+
+		Gson gson = new Gson();
+
+		List<String> uris = gson.fromJson(uriArrayJson,
+				new TypeToken<ArrayList<String>>() {
+				}.getType());
+		if (uris == null || uris.size() == 0) {
+			resp.sendError(400, "No uri provided");
+			return;
+		}
+
+		PluginController pc = PluginController.getInstance();
+
+		List<Task<Report>> reports = new ArrayList<>(uris.size());
+		for (String uri : uris) {
+			URI u = null;
+			try {
+				u = new URI(uri.replaceAll(" ", "%20"));
+			} catch (URISyntaxException ex) {
+				ex.printStackTrace();
+			}
+			if (u != null) {
+				if (pluginName == null)
+					reports.addAll(pc.index(u));
+				else
+					reports.addAll(pc.index(pluginName, u));
+			}
+		}
+
+		List<Report> done = new ArrayList<>(reports.size());
+		StringBuilder builder = new StringBuilder();
+		for (Task<Report> t : reports) {
+			try {
+				Report r = t.get();
+				done.add(r);
+				builder.append(r).append("\n");
+			} catch (InterruptedException | ExecutionException ex) {
+				ex.printStackTrace();
+			}
+		}
+		
+		resp.getWriter().write(
+				new StringRepresentation(builder.toString(),
+						MediaType.TEXT_PLAIN).toString());
 	}
-	
-	
 
 }
