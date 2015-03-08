@@ -57,7 +57,6 @@ public class ForceIndexing extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-
 		// System.out.println("Fetching Data");
 		String uriArrayJson = req.getParameter("uris");
 		String pluginName = req.getParameter("plugin");
@@ -105,6 +104,7 @@ public class ForceIndexing extends HttpServlet {
 		resp.getWriter().write(
 				new StringRepresentation(builder.toString(),
 						MediaType.TEXT_PLAIN).toString());
+
 	}
 
 }
