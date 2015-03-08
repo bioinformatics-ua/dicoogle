@@ -78,7 +78,7 @@ public class TransferenceOptionsServlet extends HttpServlet {
 		ts.setTS(value, index);
 		xmlSupport.printXML();
 
-		ResponseUtil.simpleResponse(resp, true);
+		ResponseUtil.simpleResponse(resp, "success", true);
 	}
 
 }
