@@ -100,6 +100,7 @@ public class DicoogleWebservice extends Application {
         //router.attach("/enumField", RestEnumField.class);
         //router.attach("/countResuls", RestCountQueryResults.class);
         router.attach("/wado", RestWADOResource.class);
+        router.attach("/img", RestDcmImageResource.class);
         router.attach("/examTime", ExamTimeResource.class);
         
         //Advanced Dicoogle Features
