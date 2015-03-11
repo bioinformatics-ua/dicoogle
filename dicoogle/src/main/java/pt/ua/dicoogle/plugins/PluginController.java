@@ -39,6 +39,7 @@ import org.apache.logging.log4j.Logger;
 import org.restlet.resource.ServerResource;
 
 import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
 import pt.ua.dicoogle.rGUI.server.controllers.ControlServices;
 import pt.ua.dicoogle.sdk.GraphicalInterface;
 import pt.ua.dicoogle.sdk.IndexerInterface;
@@ -56,6 +57,7 @@ import pt.ua.dicoogle.sdk.settings.ConfigurationHolder;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
 import pt.ua.dicoogle.server.web.DicoogleWeb;
+import pt.ua.dicoogle.plugins.webui.WebUIPluginManager;
 import pt.ua.dicoogle.taskManager.TaskManager;
 import pt.ua.dicoogle.webservices.DicoogleWebservice;
 
@@ -70,7 +72,8 @@ import pt.ua.dicoogle.webservices.DicoogleWebservice;
  * @author Carlos Ferreira
  * @author Frederico Valente
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
- * @author Tiago Marques Godinho.
+ * @author Tiago Marques Godinho
+ * @author Eduardo Pinho
  */
 public class PluginController{
 
@@ -84,16 +87,16 @@ public class PluginController{
         }
         return instance;
     }
-    private Collection<PluginSet> pluginSets;
+    private final Collection<PluginSet> pluginSets;
     private File pluginFolder;
     private TaskQueue tasks = null;
 
 	private PluginSet remoteQueryPlugins = null;
+    private final WebUIPluginManager webUI;
     
     public PluginController(File pathToPluginDirectory) {
     	logger.info("Creating PluginController Instance");
         pluginFolder = pathToPluginDirectory;
-        pluginSets = new ArrayList<>();
 
         tasks = new TaskQueue();
 
@@ -105,6 +108,10 @@ public class PluginController{
 
         //loads the plugins
         pluginSets = PluginFactory.getPlugins(pathToPluginDirectory);
+        //load web UI plugins (they are not Java, so the process is delegated to another entity)
+        this.webUI = new WebUIPluginManager();
+        this.webUI.loadAll();
+        
         logger.info("Loaded Local Plugins");
 
         //loads plugins' settings and passes them to the plugin
@@ -138,6 +145,8 @@ public class PluginController{
                 e.printStackTrace();
             }
         }
+        logger.info("Settings pushed to plugins");
+        webUI.loadSettings(settingsFolder);
         logger.info("Settings pushed to plugins");
         
         pluginSets.add(new DefaultFileStoragePlugin());
@@ -457,20 +466,19 @@ public class PluginController{
         for(IndexerInterface indexer : indexers){            
         	
         	Task<Report> task = indexer.index(store.at(path));
-                task.onCompletion(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                        System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                        System.out.println("Task accomplished " + pathF);
-                        System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                        System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                    }
-                });
-                
-                
             if(task == null) continue;
+            task.onCompletion(new Runnable() {
+
+                @Override
+                public void run() {
+                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
+                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
+                    System.out.println("Task accomplished " + pathF);
+                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
+                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
+                }
+            });
+            
             taskManager.dispatch(task);
             rettasks.add(task);
         }
@@ -493,6 +501,7 @@ public class PluginController{
         ArrayList<Task<Report>> rettasks = new ArrayList<>();
         final  String pathF = path.toString();
     	Task<Report> task = indexer.index(store.at(path));
+        if(task != null){
             task.onCompletion(new Runnable() {
 
                 @Override
@@ -504,10 +513,8 @@ public class PluginController{
                     System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
                 }
             });
-            
-            
-        if(task != null){
-	        taskManager.dispatch(task);
+
+            taskManager.dispatch(task);
 	        rettasks.add(task);
 	        logger.info("FIRED INDEXER: {} FOR URI: {}", pluginName, path.toString());
         }
@@ -633,7 +640,39 @@ public class PluginController{
         }
         return items;
     }
+
+    // Methods for Web UI 
+
+    /** Retrieve all web UI plugin descriptors of the given type.
+     * 
+     * @param type the type of slot for the plugin ("query", "result", "other", ...), null for all
+     * @return a collection of web UI plugins.
+     */
+    public Collection<WebUIPlugin> getWebUIPlugins(String type) {
+        System.out.println("getWebUIPlugins");
+        List<WebUIPlugin> plugins = new ArrayList<>();
+
+        for (WebUIPlugin plugin : webUI.pluginSet()) {
+            if (!plugin.isEnabled()) {
+                continue;
+            }
+            if (type == null || type.equals(plugin.getSlotType())) {
+                plugins.add(plugin);
+            }
+        }
+        return plugins;
+    }
     
+    /** Retrieve the web UI plugin descriptor of the plugin with the given name.
+     * 
+     * @param name the unique name of the plugin
+     * @return a web UI plugin descriptor object, or null if no such plugin exists or is inactive
+     */
+    public WebUIPlugin getWebUIPlugin(String name) {
+        WebUIPlugin plugin = webUI.get(name);
+        return plugin.isEnabled() ? plugin : null;
+    }
+
     //METHODS FOR SERVICE:JAVA
     /**
      *
