@@ -21,7 +21,6 @@ package pt.ua.dicoogle.plugins.webui;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
 
 /** A POJO data type containing the full description of a Web UI plugin.
  *
@@ -32,7 +31,6 @@ public class WebUIPlugin implements Cloneable {
     private String description;
     private String version;
     private String slotId;
-    private String slotType;
     private String moduleFile;
     private JSONObject settings;
     private boolean enabled = true;
@@ -44,6 +42,11 @@ public class WebUIPlugin implements Cloneable {
         return (WebUIPlugin)super.clone();
     }
 
+    /** Make a copy of the descriptor.
+     * @return a copy of this descriptor
+     * @todo The settings are shallowly copied at the moment. Hopefully this will not be a problem, but
+     * bear this in mind.
+     */
     public WebUIPlugin copy() {
         try {
             return clone();
@@ -52,11 +55,27 @@ public class WebUIPlugin implements Cloneable {
             return new WebUIPlugin();
         }
     }
-    
-    public static WebUIPlugin fromPackageJSON(String jsonText) {
-        JSONSerializer.toJSON(jsonText);
+
+    /** Retrieve a web UI plugin descriptor out of the contents of a "package.json".
+     * 
+     * @param obj a JSON object of the plugin description
+     * @return a web UI plugin descriptor out of the JSON object
+     * @throws PluginFormatException if the JSON text contains bad information, or not enough of it
+     */
+    public static WebUIPlugin fromPackageJSON(JSONObject obj) throws PluginFormatException {
         WebUIPlugin plugin = new WebUIPlugin();
-        plugin.setName(jsonText);
+        plugin.name = obj.getString("name");
+        plugin.version = obj.getString("version");
+        plugin.description = obj.getString("description");
+        
+        JSONObject objDicoogle = obj.getJSONObject("dicoogle");
+        if (objDicoogle == null) {
+            throw new PluginFormatException("Missing dicoogle object in package.json");
+        }
+        
+        plugin.slotId = objDicoogle.getString("slot-id");
+        plugin.moduleFile = objDicoogle.getString("module-file");
+        
         return plugin;
     }
 
@@ -82,14 +101,6 @@ public class WebUIPlugin implements Cloneable {
 
     public void setSlotId(String slotId) {
         this.slotId = slotId;
-    }
-
-    public String getSlotType() {
-        return slotType;
-    }
-
-    public void setSlotType(String slotType) {
-        this.slotType = slotType;
     }
 
     public String getModuleFile() {
@@ -127,4 +138,12 @@ public class WebUIPlugin implements Cloneable {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+        
+    @Override
+    public String toString() {
+        return "WebUIPlugin{" + "name=" + name + ", description=" + description
+                + ", version=" + version + ", slotId=" + slotId
+                + ", moduleFile=" + moduleFile + ", enabled=" + enabled + '}';
+    }
+    
 }
