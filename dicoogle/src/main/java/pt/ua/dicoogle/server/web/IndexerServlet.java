@@ -288,8 +288,7 @@ public class IndexerServlet extends HttpServlet {
 
 			if (uri != null) {
 				System.out.println("URI: " + uri.toString());
-				List<Task<Report>> report = PluginController.getInstance()
-						.index(uri);
+				List<Task<Report>> report = PluginController.getInstance().index(uri);
 				System.out.println("Report Length: " + report.size());
 				if (this.ongoingTasks == null)
 					this.ongoingTasks = report;
