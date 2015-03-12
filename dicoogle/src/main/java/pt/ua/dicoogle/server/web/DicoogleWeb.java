@@ -189,8 +189,7 @@ public class DicoogleWeb {
             createServletHandler(new ServicesServlet(ServicesServlet.STORAGE), "/management/dicom/storage"),
             createServletHandler(new ServicesServlet(ServicesServlet.QUERY), "/management/dicom/query"),
             createServletHandler(new ServicesServlet(ServicesServlet.PLUGIN), "/management/plugins/"),
-            createServletHandler(new AETitleServlet(), "/management/settings/dicom")
-            ,
+            createServletHandler(new AETitleServlet(), "/management/settings/dicom"),
             webpages
 
         };

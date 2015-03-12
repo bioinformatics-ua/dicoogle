@@ -54,6 +54,7 @@ import pt.ua.ieeta.emailreport.Configuration;
 
 /**
  * Main class for Dicoogle
+ * @author Frederico Valente
  * @author Filipe Freitas
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Samuel Campos <samuelcampos@ua.pt>
@@ -120,7 +121,7 @@ public class Main
                     isFixedClient = true;
                     //DebugManager.getInstance().setDebug(true);
                     LaunchDicoogle();
-                    //DebugManager.getInstance().debug("Starting Client Thread");
+                    //DebugManager.getInstance().debug("Stextensionarting Client Thread");
                     LaunchGUIClient();
                 }
                 if (args[0].equals("-s"))
