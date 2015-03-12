@@ -691,7 +691,7 @@ public class PluginController{
      * @param name the unique name of the plugin
      * @return the full contents of the module file, null if the plugin is not available
      */
-    public String getModuleJS(String name) {
+    public String getWebUIModuleJS(String name) {
         logger.log(Level.INFO, "getWebUIPackageJSON(name: {0})", name);
         try {
             return webUI.retrieveModuleJS(name);
@@ -700,6 +700,7 @@ public class PluginController{
             return null;
         }
     }
+
 
     //METHODS FOR SERVICE:JAVA
     /**
@@ -719,4 +720,5 @@ public class PluginController{
     public HashMap<String, String> getAdvancedSettingsHelp(String pluginName) {
         return null;
     }
+
 }

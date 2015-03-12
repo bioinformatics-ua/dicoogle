@@ -52,6 +52,7 @@ import org.eclipse.jetty.servlets.GzipFilter;
 
 import pt.ua.dicoogle.server.web.servlets.accounts.LogoutServlet;
 import pt.ua.dicoogle.server.web.servlets.search.DumpServlet;
+import pt.ua.dicoogle.server.web.servlets.webui.WebUIServlet;
 import pt.ua.dicoogle.server.web.utils.LocalImageCache;
 
 /**
@@ -86,7 +87,7 @@ public class DicoogleWeb {
      * Initializes and starts the Dicoogle Web service.
      */
     public DicoogleWeb(int port) throws Exception {
-        log.info("Starting Web Services... in DicoogleWeb. POrt: " + port);
+        log.info("Starting Web Services... in DicoogleWeb. Port: " + port);
         System.setProperty("org.apache.jasper.compiler.disablejsr199", "true");
       //  System.setProperty("org.mortbay.jetty.webapp.parentLoaderPriority", "true");
         // System.setProperty("production.mode", "true");
@@ -189,8 +190,9 @@ public class DicoogleWeb {
             createServletHandler(new ServicesServlet(ServicesServlet.STORAGE), "/management/dicom/storage"),
             createServletHandler(new ServicesServlet(ServicesServlet.QUERY), "/management/dicom/query"),
             createServletHandler(new ServicesServlet(ServicesServlet.PLUGIN), "/management/plugins/"),
-            createServletHandler(new AETitleServlet(), "/management/settings/dicom")
-            ,
+            createServletHandler(new AETitleServlet(), "/management/settings/dicom"),
+
+            createServletHandler(new WebUIServlet(), "/webui"),
             webpages
 
         };

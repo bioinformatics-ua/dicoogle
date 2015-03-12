@@ -1,24 +1,25 @@
 /**
- * Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+ * Copyright (C) 2014  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
  *
  * This file is part of Dicoogle/dicoogle.
  *
- * Dicoogle/dicoogle is free software: you can redistribute it and/or modify it under the terms of the GNU
- * General Public License as published by the Free Software Foundation, either version 3 of the License, or
+ * Dicoogle/dicoogle is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Dicoogle/dicoogle is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
- * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
- * License for more details.
+ * Dicoogle/dicoogle is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with Dicoogle. If not, see
- * <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
 package pt.ua.dicoogle.plugins.webui;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collection;
@@ -55,10 +56,26 @@ public class WebUIPluginManager {
     
     public void loadAll(File directory) {
         assert directory != null;
+        if (directory.exists() && !directory.isDirectory()) {
+            logger.error("Can't load web UI plugins, file " + directory + " is not a directory");
+            return;
+        }
+        if (!directory.exists()) {
+            logger.info("No web plugins in " + directory);
+            directory.mkdir();
+            return;
+        }
+        
         for (File f : directory.listFiles()) {
             if (!f.isDirectory()) continue;
             try {
-                this.load(f);
+                WebUIPlugin plugin = this.load(f);
+                if (!f.getName().equals(plugin.getName())) {
+                    logger.warn("Plugin " + plugin.getName() + " does not match directory name, ignoring plugin");
+                    this.unload(plugin.getName());
+                } else {
+                  logger.info("Loaded web plugin: " + plugin.getName());
+                }
             } catch (IOException ex) {
                 logger.error("Attempt to load plugin at '" + f.getName() + "' failed", ex);
             } catch (PluginFormatException ex) {
@@ -66,13 +83,19 @@ public class WebUIPluginManager {
             }
         }
     }
+    
+    public void unload(String name) {
+        this.plugins.remove(name);
+    }
 
     public void loadAll() {
         this.loadAll(new File(webBaseDir));
     }
 
-    public void load(File directory) throws IOException, PluginFormatException {
-        File packageJSON = new File(directory.getAbsolutePath() + File.pathSeparatorChar + "package.json");
+    public WebUIPlugin load(File directory) throws IOException, PluginFormatException {
+        assert directory != null;
+        assert directory.isDirectory();
+        File packageJSON = new File(directory.getAbsolutePath() + File.separatorChar + "package.json");
         try (BufferedReader reader = new BufferedReader(new FileReader(packageJSON))) {
             String acc = "";
             String line;
@@ -80,11 +103,12 @@ public class WebUIPluginManager {
                 acc += line;
             }
             WebUIPlugin plugin = WebUIPlugin.fromPackageJSON((JSONObject)JSONSerializer.toJSON(acc));
-            File moduleFile = new File(directory.getAbsolutePath() + File.pathSeparatorChar + plugin.getModuleFile());
-            if (moduleFile.canRead()) {
+            File moduleFile = new File(directory.getAbsolutePath() + File.separatorChar + plugin.getModuleFile());
+            if (!moduleFile.canRead()) {
                 throw new IOException("Module file " + moduleFile.getName() + " cannot be read");
             }
             this.plugins.put(plugin.getName(), plugin);
+            return plugin;
         }
     }
     
@@ -103,7 +127,7 @@ public class WebUIPluginManager {
      * @throws IOException on error reading "package.json"
      */
     public JSONObject retrieveJSON(String name) throws IOException {
-        File packageJSON = new File(name + File.pathSeparatorChar + "package.json");
+        File packageJSON = new File(this.webBaseDir + File.separatorChar + name + File.separatorChar + "package.json");
         try (BufferedReader reader = new BufferedReader(new FileReader(packageJSON))) {
             String acc = "";
             String line;
@@ -116,7 +140,7 @@ public class WebUIPluginManager {
 
     public String retrieveModuleJS(String name) throws IOException {
         String moduleFile = this.plugins.get(name).getModuleFile();
-        File moduleJS = new File(name + File.pathSeparatorChar + moduleFile);
+        File moduleJS = new File(this.webBaseDir + File.separatorChar + name + File.separatorChar + moduleFile);
         try (BufferedReader reader = new BufferedReader(new FileReader(moduleJS))) {
             String acc = "";
             String line;
@@ -135,6 +159,10 @@ public class WebUIPluginManager {
         for (WebUIPlugin plugin : pluginSet()) {
             try {
                 File pluginSettingsFile = new File(settingsFolder + "/" + plugin.getName() + ".json");
+                if (!pluginSettingsFile.exists()) { 
+                    logger.log(Level.INFO, "Web plugin " + plugin.getName() + " has no settings file");
+                    continue;
+                }
                 BufferedReader reader = new BufferedReader(new FileReader(pluginSettingsFile));
                 String acc = "";
                 String line;
