@@ -20,15 +20,9 @@
 package pt.ua.dicoogle.server.web.utils;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.collections.map.HashedMap;
-
-import com.google.gson.JsonObject;
 
 import net.sf.json.JSONObject;
 
@@ -54,13 +48,12 @@ public class ResponseUtil {
     	}
     	
     	object.write(resp.getWriter());
-    	
     }
     
     /*
      * Generic Pair Util for Json response
      */
-    public static class Pair<String, V>{
+    public static class Pair<V>{
     	String key;
     	V value;
 		public Pair(String key, V value) {

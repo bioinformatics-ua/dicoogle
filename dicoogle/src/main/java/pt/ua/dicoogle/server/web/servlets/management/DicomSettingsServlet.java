@@ -25,12 +25,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import net.sf.json.JSONSerializer;
 
 import org.apache.commons.lang3.StringUtils;
 
 import pt.ua.dicoogle.core.ServerSettings;
-
-import com.google.gson.Gson;
 
 /**
  *
@@ -55,7 +54,7 @@ public class DicomSettingsServlet extends HttpServlet {
 				responseTimeout, connectionTimeout, idleTimeout, acceptTimeout,
 				maxPduSend, maxPduReceive, maxAssociations);
 
-		resp.getWriter().write(queryRetrieveSettings.getJSON());
+		resp.getWriter().write(JSONSerializer.toJSON(queryRetrieveSettings).toString());
 	}
 
 	@Override
@@ -105,10 +104,13 @@ public class DicomSettingsServlet extends HttpServlet {
 	/*
 	 * MODEL FOR QUERY RETRIEVE SETTINGS
 	 */
-	private class QueryRetrieveSettingsObject {
-		int responseTimeout, connectionTimeout, idleTimeout, acceptTimeout,
+	public static class QueryRetrieveSettingsObject {
+        private int responseTimeout, connectionTimeout, idleTimeout, acceptTimeout,
 				maxPduSend, maxPduReceive, maxAssociations;
 
+        public QueryRetrieveSettingsObject() {
+        }
+        
 		public QueryRetrieveSettingsObject(int responseTimeout,
 				int connectionTimeout, int idleTimeout, int acceptTimeout,
 				int maxPduSend, int maxPduReceive, int maxAssociations) {
@@ -122,10 +124,61 @@ public class DicomSettingsServlet extends HttpServlet {
 			this.maxAssociations = maxAssociations;
 		}
 
-		public String getJSON() {
-			Gson gson = new Gson();
-			return gson.toJson(this);
-		}
+        public int getResponseTimeout() {
+            return responseTimeout;
+        }
+
+        public void setResponseTimeout(int responseTimeout) {
+            this.responseTimeout = responseTimeout;
+        }
+
+        public int getConnectionTimeout() {
+            return connectionTimeout;
+        }
+
+        public void setConnectionTimeout(int connectionTimeout) {
+            this.connectionTimeout = connectionTimeout;
+        }
+
+        public int getIdleTimeout() {
+            return idleTimeout;
+        }
+
+        public void setIdleTimeout(int idleTimeout) {
+            this.idleTimeout = idleTimeout;
+        }
+
+        public int getAcceptTimeout() {
+            return acceptTimeout;
+        }
+
+        public void setAcceptTimeout(int acceptTimeout) {
+            this.acceptTimeout = acceptTimeout;
+        }
+
+        public int getMaxPduSend() {
+            return maxPduSend;
+        }
+
+        public void setMaxPduSend(int maxPduSend) {
+            this.maxPduSend = maxPduSend;
+        }
+
+        public int getMaxPduReceive() {
+            return maxPduReceive;
+        }
+
+        public void setMaxPduReceive(int maxPduReceive) {
+            this.maxPduReceive = maxPduReceive;
+        }
+
+        public int getMaxAssociations() {
+            return maxAssociations;
+        }
+
+        public void setMaxAssociations(int maxAssociations) {
+            this.maxAssociations = maxAssociations;
+        }
 
 	}
 }
