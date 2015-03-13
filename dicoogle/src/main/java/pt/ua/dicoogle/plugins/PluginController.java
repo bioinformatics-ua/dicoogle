@@ -643,7 +643,7 @@ public class PluginController{
      * @return a collection of web UI plugins.
      */
     public Collection<WebUIPlugin> getWebUIPlugins(String id) {
-        logger.log(Level.INFO, "getWebUIPlugins(slot id: {0})", id);
+        logger.log(Level.INFO, "getWebUIPlugins(slot id: {})", id);
         List<WebUIPlugin> plugins = new ArrayList<>();
 
         for (WebUIPlugin plugin : webUI.pluginSet()) {
@@ -663,7 +663,7 @@ public class PluginController{
      * @return a web UI plugin descriptor object, or null if no such plugin exists or is inactive
      */
     public WebUIPlugin getWebUIPlugin(String name) {
-        logger.log(Level.INFO, "getWebUIPlugin(name: {0})", name);
+        logger.log(Level.INFO, "getWebUIPlugin(name: {})", name);
         WebUIPlugin plugin = webUI.get(name);
         return plugin.isEnabled() ? plugin : null;
     }
@@ -674,7 +674,7 @@ public class PluginController{
      * @return the full contents of the package.json, null if the plugin is not available
      */
     public String getWebUIPackageJSON(String name) {
-        logger.log(Level.INFO, "getWebUIPackageJSON(name: {0})", name);
+        logger.log(Level.INFO, "getWebUIPackageJSON(name: {})", name);
         try {
             Object o = webUI.retrieveJSON(name);
             return (o != null)
@@ -692,7 +692,7 @@ public class PluginController{
      * @return the full contents of the module file, null if the plugin is not available
      */
     public String getWebUIModuleJS(String name) {
-        logger.log(Level.INFO, "getWebUIPackageJSON(name: {0})", name);
+        logger.log(Level.INFO, "getWebUIPackageJSON(name: {})", name);
         try {
             return webUI.retrieveModuleJS(name);
         } catch (IOException ex) {

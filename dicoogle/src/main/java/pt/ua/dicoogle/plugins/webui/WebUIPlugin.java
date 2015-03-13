@@ -20,6 +20,7 @@ package pt.ua.dicoogle.plugins.webui;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
 /** A POJO data type containing the full description of a Web UI plugin.
@@ -28,6 +29,7 @@ import net.sf.json.JSONObject;
  */
 public class WebUIPlugin implements Cloneable {
     private String name;
+    private String caption;
     private String description;
     private String version;
     private String slotId;
@@ -63,20 +65,22 @@ public class WebUIPlugin implements Cloneable {
      * @throws PluginFormatException if the JSON text contains bad information, or not enough of it
      */
     public static WebUIPlugin fromPackageJSON(JSONObject obj) throws PluginFormatException {
-        WebUIPlugin plugin = new WebUIPlugin();
-        plugin.name = obj.getString("name");
-        plugin.version = obj.getString("version");
-        plugin.description = obj.getString("description");
-        
-        JSONObject objDicoogle = obj.getJSONObject("dicoogle");
-        if (objDicoogle == null) {
-            throw new PluginFormatException("Missing dicoogle object in package.json");
+        try {
+            WebUIPlugin plugin = new WebUIPlugin();
+            plugin.name = obj.getString("name");
+            plugin.version = obj.optString("version", null);
+            plugin.description = obj.optString("description", null);
+
+            JSONObject objDicoogle = obj.getJSONObject("dicoogle");
+
+            plugin.slotId = objDicoogle.getString("slot-id");
+            plugin.moduleFile = objDicoogle.getString("module-file");
+            plugin.caption = objDicoogle.optString("caption", null);
+
+            return plugin;
+        } catch(JSONException ex) {
+            throw new PluginFormatException(ex);
         }
-        
-        plugin.slotId = objDicoogle.getString("slot-id");
-        plugin.moduleFile = objDicoogle.getString("module-file");
-        
-        return plugin;
     }
 
     public String getName() {
@@ -144,6 +148,14 @@ public class WebUIPlugin implements Cloneable {
         return "WebUIPlugin{" + "name=" + name + ", description=" + description
                 + ", version=" + version + ", slotId=" + slotId
                 + ", moduleFile=" + moduleFile + ", enabled=" + enabled + '}';
+    }
+
+    public String getCaption() {
+        return caption;
+    }
+
+    public void setCaption(String caption) {
+        this.caption = caption;
     }
     
 }

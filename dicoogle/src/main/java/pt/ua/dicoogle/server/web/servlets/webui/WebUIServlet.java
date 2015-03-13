@@ -47,10 +47,6 @@ public class WebUIServlet extends HttpServlet {
         String slotId = req.getParameter("slot-id");
         String module = req.getParameter("module");
         String process = req.getParameter("process");
-        if (StringUtils.isEmpty(name) && StringUtils.isEmpty(slotId) && StringUtils.isEmpty(module)) {
-            logger.info("name, module or slot-id not provided");
-            resp.sendError(400);
-        }
 
         if (name != null) {
             this.getPlugin(resp, name);
@@ -65,11 +61,14 @@ public class WebUIServlet extends HttpServlet {
     /** Retrieve plugins. */
     private void getPluginsBySlot(HttpServletResponse resp, String slotId) throws IOException {
         Collection<WebUIPlugin> plugins = PluginController.getInstance().getWebUIPlugins(slotId);
-        String acc = "{ plugins: [";
+        String acc = "{\"plugins\":[";
         for (WebUIPlugin plugin : plugins) {
             acc += PluginController.getInstance().getWebUIPackageJSON(plugin.getName()) + ",";
         }
-        acc = acc.substring(0,acc.length()-1) + "] }";
+        if (plugins.size() > 0) {
+            acc = acc.substring(0,acc.length()-1);
+        }
+        acc += "]}";
         resp.setContentType("application/json");
         resp.getWriter().append(acc);
     }
