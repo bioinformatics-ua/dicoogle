@@ -20,9 +20,8 @@
 package pt.ua.dicoogle.server.web.servlets.webui;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.PrintWriter;
 import java.util.Collection;
-import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -47,22 +46,24 @@ public class WebUIServlet extends HttpServlet {
         String name = req.getParameter("name");
         String slotId = req.getParameter("slot-id");
         String module = req.getParameter("module");
+        String process = req.getParameter("process");
         if (StringUtils.isEmpty(name) && StringUtils.isEmpty(slotId) && StringUtils.isEmpty(module)) {
             logger.info("name, module or slot-id not provided");
             resp.sendError(400);
         }
 
         if (name != null) {
-            this.getPlugin(req, resp, name);
+            this.getPlugin(resp, name);
         } else if (module != null) {
-            this.getModule(req, resp, module);
+            boolean doProcess = process == null || Boolean.parseBoolean(process);
+            this.getModule(resp, module, doProcess);
         } else {
-            this.getPluginsBySlot(req, resp, slotId);
+            this.getPluginsBySlot(resp, slotId);
         }
     }
 
     /** Retrieve plugins. */
-    private void getPluginsBySlot(HttpServletRequest req, HttpServletResponse resp, String slotId) throws IOException {
+    private void getPluginsBySlot(HttpServletResponse resp, String slotId) throws IOException {
         Collection<WebUIPlugin> plugins = PluginController.getInstance().getWebUIPlugins(slotId);
         String acc = "{ plugins: [";
         for (WebUIPlugin plugin : plugins) {
@@ -73,15 +74,30 @@ public class WebUIServlet extends HttpServlet {
         resp.getWriter().append(acc);
     }
 
-    private void getPlugin(HttpServletRequest req, HttpServletResponse resp, String name) throws IOException {
+    private void getPlugin(HttpServletResponse resp, String name) throws IOException {
         resp.setContentType("application/json");
         String json = PluginController.getInstance().getWebUIPackageJSON(name);
         resp.getWriter().append(json);
     }
 
-    private void getModule(HttpServletRequest req, HttpServletResponse resp, String name) throws IOException {
-        resp.setContentType("application/json");
-        String json = PluginController.getInstance().getWebUIModuleJS(name);
-        resp.getWriter().append(json);
+    private void getModule(HttpServletResponse resp, String name, boolean process) throws IOException {
+        resp.setContentType("application/javascript");
+        WebUIPlugin plugin = PluginController.getInstance().getWebUIPlugin(name);
+        if (plugin == null) {
+            resp.sendError(404);
+            return;
+        }
+        String js = PluginController.getInstance().getWebUIModuleJS(name);
+        
+        PrintWriter writer = resp.getWriter();
+        if (process) {
+            writer.append("var module;var __Dicoogle_tmp__=module;module={};\n");
+        }
+        writer.append(js);
+        if (process) {
+            writer.printf("var __Dicoogle_plugin__=module.exports;module=__Dicoogle_tmp__;\n"
+                    +   "DicoogleWeb.onRegister(new __Dicoogle_plugin__(),'%s','%s');",
+                    plugin.getName(), plugin.getSlotId());
+        }
     }
 }
