@@ -31,12 +31,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.representation.StringRepresentation;
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
+import net.sf.json.JSON;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONSerializer;
 
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.Report;
@@ -61,12 +61,17 @@ public class ForceIndexing extends HttpServlet {
 		String uriArrayJson = req.getParameter("uris");
 		String pluginName = req.getParameter("plugin");
 
-		Gson gson = new Gson();
-
-		List<String> uris = gson.fromJson(uriArrayJson,
-				new TypeToken<ArrayList<String>>() {
-				}.getType());
-		if (uris == null || uris.size() == 0) {
+        JSON arr = JSONSerializer.toJSON(uriArrayJson);
+        if (!arr.isArray()) {
+            resp.sendError(400);
+            return;
+        }
+        
+		List<String> uris = new ArrayList<>();
+        for (Object o : ((JSONArray)arr)) {
+            uris.add(o.toString());
+        }
+		if (uris.isEmpty()) {
 			resp.sendError(400, "No uri provided");
 			return;
 		}

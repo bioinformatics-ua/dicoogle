@@ -20,19 +20,14 @@ package pt.ua.dicoogle.server.web.servlets.management;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import net.sf.json.JSONSerializer;
 
-import com.google.gson.Gson;
-
-import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.core.XMLSupport;
 import pt.ua.dicoogle.server.TransfersStorage;
 import pt.ua.dicoogle.server.web.utils.ResponseUtil;
@@ -81,61 +76,61 @@ public class TransferenceOptionsServlet extends HttpServlet {
 		ResponseUtil.simpleResponse(resp, "success", true);
 	}
 
+    public static class TransferenceOptionsResponse {
+        List<Option> options;
+
+        public TransferenceOptionsResponse() {
+            options = new ArrayList<>();
+
+        }
+
+        public List<Option> getOptions() {
+            return options;
+        }
+
+        public void setOptions(List<Option> options) {
+            this.options = options;
+        }
+
+        public static TransferenceOptionsResponse fromBooleanList(boolean[] tsList) {
+            TransferenceOptionsResponse tor = new TransferenceOptionsResponse();
+            for (int i = 0; i < tsList.length; i++) {
+                tor.options.add(new Option(
+                        TransfersStorage.globalTransferMap.get(i), tsList[i]));
+            }
+            return tor;
+        }
+        
+        public static String getJSON(boolean[] tsList) {
+            TransferenceOptionsResponse tor = fromBooleanList(tsList);
+            return JSONSerializer.toJSON(tor).toString();
+        }
+
+        public static class Option {
+            String name;
+            boolean value;
+
+            public Option(String name, boolean value) {
+                this.name = name;
+                this.value = value;
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public void setName(String name) {
+                this.name = name;
+            }
+
+            public boolean isValue() {
+                return value;
+            }
+
+            public void setValue(boolean value) {
+                this.value = value;
+            }
+        }
+    }
 }
 
-class TransferenceOptionsResponse {
-	List<Option> options;
-
-	public TransferenceOptionsResponse() {
-		options = new ArrayList<>();
-
-	}
-
-	public List<Option> getOptions() {
-		return options;
-	}
-
-	public void setOptions(List<Option> options) {
-		this.options = options;
-	}
-
-	public static String getJSON(boolean[] tsList) {
-		TransferenceOptionsResponse tor = new TransferenceOptionsResponse();
-		for (int i = 0; i < tsList.length; i++) {
-			tor.options.add(tor.new Option(TransfersStorage.globalTransferMap
-					.get(i), tsList[i]));
-		}
-
-		Gson gson = new Gson();
-		String json = gson.toJson(tor);
-
-		return json;
-	}
-
-	class Option {
-		String name;
-		boolean value;
-
-		public Option(String name, boolean value) {
-			this.name = name;
-			this.value = value;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public boolean isValue() {
-			return value;
-		}
-
-		public void setValue(boolean value) {
-			this.value = value;
-		}
-
-	}
-}
