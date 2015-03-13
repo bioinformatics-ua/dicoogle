@@ -1,0 +1,9 @@
+{
+  "name" : "dummy",
+  "version" : "0.0",
+  "description" : "Dummy Web UI plugin",
+  "dicoogle" : {
+    "slot-id" : "fordummy",
+    "module-file" : "module.js"
+  }
+}
