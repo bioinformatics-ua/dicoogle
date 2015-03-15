@@ -1,9 +1,16 @@
 {
-  "name" : "dummy",
-  "version" : "0.0",
-  "description" : "Dummy Web UI plugin",
-  "dicoogle" : {
-    "slot-id" : "fordummy",
-    "module-file" : "module.js"
+  "name": "dummy",
+  "version": "0.0.1",
+  "description": "Dummy Web UI plugin",
+  "scripts": {
+    "build": "browserify -s dummy dummy.js -o module.js",
+    "build-debug": "browserify --debug -s dummy dummy.js -o module.js"
+  },
+  "dicoogle": {
+    "slot-id": "fordummy",
+    "module-file": "module.js"
+  },
+  "dependencies": {
+    "browserify": "^9.0.3"
   }
 }

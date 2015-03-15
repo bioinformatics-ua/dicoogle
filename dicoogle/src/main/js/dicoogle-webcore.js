@@ -103,27 +103,28 @@ var DicoogleWeb = new (function () {
       var packageArray = data.plugins;
       for (var i = 0 ; i < packageArray.length ; i++) {
         packages[packageArray[i].name] = packageArray[i];
-        load_plugin(packages[i]);
+        load_plugin(packageArray[i]);
       }
     }).fail(function(error) {
       console.error('Failed to fetch plugin descriptors:', error);
     });
   };
   
-  this.onRegister = function (pluginInstance, name, slotId) {
+  this.onRegister = function (pluginInstance, name) {
     if (typeof pluginInstance !== 'object' || typeof pluginInstance.render !== 'function') {
       console.error('Dicoogle web UI plugin', name, 'is corrupted');
       return;
     }
+    var thisPackage = packages[name];
+    var slotId = thisPackage.dicoogle['slot-id'];
     if (slotId === 'result' && typeof pluginInstance.onResult !== 'function') {
       console.error('Dicoogle web UI plugin', name, 'does not provide onResult');
       return;
     }
     console.log('Executed plugin:' + name);
-    var thisPackage = packages[name];
     pluginInstance.Name = name;
     pluginInstance.SlotId = slotId;
-    pluginInstance.Caption = thisPackage.dicoogle.caption;
+    pluginInstance.Caption = thisPackage.dicoogle.caption || name;
     plugins[name] = pluginInstance;
     slots[slotId].attachPlugin(pluginInstance);
     for (var i = 0 ; i < pluginLoadListeners.length ; i++) {

@@ -74,7 +74,7 @@ public class WebUIPlugin implements Cloneable {
             JSONObject objDicoogle = obj.getJSONObject("dicoogle");
 
             plugin.slotId = objDicoogle.getString("slot-id");
-            plugin.moduleFile = objDicoogle.getString("module-file");
+            plugin.moduleFile = objDicoogle.optString("module-file", "module.js");
             plugin.caption = objDicoogle.optString("caption", null);
 
             return plugin;

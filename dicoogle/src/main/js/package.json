@@ -14,7 +14,8 @@
     "jquery": "^2.1.3"
   },
   "scripts": {
-    "build": "browserify --standalone DicoogleWeb dicoogle-webcore.js -o build/dicoogle-webcore.js"
+    "build": "browserify --standalone DicoogleWeb dicoogle-webcore.js -o build/dicoogle-webcore.js",
+    "build-debug": "browserify --debug --standalone DicoogleWeb dicoogle-webcore.js -o build/dicoogle-webcore.js"
   },
   "license": "GPL-3.0+"
 }

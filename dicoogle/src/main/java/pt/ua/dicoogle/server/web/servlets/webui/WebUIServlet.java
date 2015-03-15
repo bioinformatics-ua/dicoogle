@@ -34,7 +34,7 @@ import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
 /**
  * Retrieval of web UI plugins.
  * 
- * <b>This API is unstable.</b>
+ * <b>This API is unstable. It is currently compatible with dicoogle-webcore 0.2.0</b>
  *
  * @author Eduardo Pinho
  */
@@ -89,14 +89,27 @@ public class WebUIServlet extends HttpServlet {
         String js = PluginController.getInstance().getWebUIModuleJS(name);
         
         PrintWriter writer = resp.getWriter();
-        if (process) {
-            writer.append("var module;var __Dicoogle_tmp__=module;module={};\n");
-        }
         writer.append(js);
         if (process) {
-            writer.printf("var __Dicoogle_plugin__=module.exports;module=__Dicoogle_tmp__;\n"
-                    +   "DicoogleWeb.onRegister(new __Dicoogle_plugin__(),'%s','%s');",
-                    plugin.getName(), plugin.getSlotId());
+            writer.printf("var __Dicoogle_plugin__=%s;\n"
+                    +   "DicoogleWeb.onRegister(new __Dicoogle_plugin__(), '%s');",
+                    camelize(plugin.getName()), plugin.getName());
         }
+    }
+    
+    /** Convert from dash-lowercase to camelCase
+     * @param s a string in dash-lowercase
+     * @return a string in camelCase
+     */
+    public static String camelize(String s) {
+        String [] words = s.split("-");
+        if (words.length == 0) return "";
+        String t = words[0];
+        for (int i = 1 ; i < words.length ; i++) {
+            if (!words[i].isEmpty()) {
+                t += Character.toUpperCase(words[i].charAt(0)) + words[i].substring(1);
+            }
+        }
+        return t;
     }
 }

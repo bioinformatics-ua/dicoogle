@@ -565,6 +565,7 @@ public class PluginController{
     //TODO:this method is a workaround! we do get rightmenu items, but only for the search window
     //which should be moved to plugins and hence we are assuming too much in here!
  
+    @Deprecated
 	public List<JMenuItem> getRightButtonItems() {
         logger.info("getRightButtonItems");
         logger.info(pluginSets);
@@ -592,6 +593,7 @@ public class PluginController{
     }
 
     //returns a list of tabs from all plugins
+    @Deprecated
     public List<JPanel> getTabItems() {
         logger.info("getTabItems");
         logger.info(pluginSets);
@@ -613,6 +615,7 @@ public class PluginController{
         return panels;
     }
 
+    @Deprecated
     public List<JMenuItem> getMenuItems() {
         logger.info("getMenuItems");
         logger.info(pluginSets);
@@ -665,7 +668,8 @@ public class PluginController{
     public WebUIPlugin getWebUIPlugin(String name) {
         logger.log(Level.INFO, "getWebUIPlugin(name: {})", name);
         WebUIPlugin plugin = webUI.get(name);
-        return plugin.isEnabled() ? plugin : null;
+        return plugin == null ? null
+                : plugin.isEnabled() ? plugin : null;
     }
 
     /** Retrieve the web UI plugin descriptor package.json.
@@ -692,7 +696,7 @@ public class PluginController{
      * @return the full contents of the module file, null if the plugin is not available
      */
     public String getWebUIModuleJS(String name) {
-        logger.log(Level.INFO, "getWebUIPackageJSON(name: {})", name);
+        logger.log(Level.INFO, "getWebUIModuleJS(name: {})", name);
         try {
             return webUI.retrieveModuleJS(name);
         } catch (IOException ex) {
