@@ -40,6 +40,9 @@ public interface IndexerInterface extends DicooglePlugin {
 
     public Task<Report> index(Iterable<StorageInputStream> files);
 
+    
+    public boolean handles(URI path);    
+    
     /* 
      * Remove the entry in the database
      * 
