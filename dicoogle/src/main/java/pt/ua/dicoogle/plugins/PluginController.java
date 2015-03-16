@@ -467,43 +467,36 @@ public class PluginController{
         logger.info("Finised firing all Indexing plugins for "+path.toString());
         
         return rettasks;    	
-    }     
+    }
     
     //
-    public List<Task<Report>> index(String pluginName, URI path) {
+    public Task<Report> index(String pluginName, URI path) {
     	logger.info("Starting Indexing procedure for "+path.toString());
         StorageInterface store = getStorageForSchema(path);
 
         if(store==null){ 
-        	logger.error("No storage plugin detected");
-            return Collections.emptyList(); 
+            logger.error("No storage plugin detected");
+            return null;
         }
         
         IndexerInterface indexer = getIndexerByName(pluginName, true);
-        ArrayList<Task<Report>> rettasks = new ArrayList<>();
         final  String pathF = path.toString();
-    	Task<Report> task = indexer.index(store.at(path));
-            task.onCompletion(new Runnable() {
-
-                @Override
-                public void run() {
-                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                    System.out.println("Task accomplished " + pathF);
-                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                }
-            });
-            
-            
-        if(task != null){
-	        taskManager.dispatch(task);
-	        rettasks.add(task);
-	        logger.info("FIRED INDEXER: {} FOR URI: {}", pluginName, path.toString());
-        }
-        logger.error("UNKOWN ERROR CALLING INDEXER: {}", pluginName);
         
-        return rettasks;    	
+    	Task<Report> task = indexer.index(store.at(path));
+        task.onCompletion(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
+                System.out.println("Index Task accomplished: " + pathF);
+                System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
+            }
+        });
+            
+            
+	taskManager.dispatch(task);
+	logger.info("FIRED INDEXER: {} FOR URI: {}", pluginName, path.toString());
+        
+        return task;    	
     }
     
     public void unindex(URI path) {

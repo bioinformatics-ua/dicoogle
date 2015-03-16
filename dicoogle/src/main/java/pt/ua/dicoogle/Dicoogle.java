@@ -30,6 +30,7 @@ import org.dcm4che2.data.TransferSyntax;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.plugins.ServiceController;
 import pt.ua.dicoogle.sdk.datastructs.Report;
+import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.Task;
 
 /**
@@ -56,7 +57,7 @@ public class Dicoogle
 
         try{
             Dicoogle dicoogle = new Dicoogle();
-            List<Runnable> x = dicoogle.parseCommandLine(args);
+            dicoogle.parseCommandLine(args);
             dicoogle.initialize();
             dicoogle.serviceController.manageJettyPlugins(dicoogle.pluginController.getJettyPlugins());
             dicoogle.serviceController.manageRestPlugins(dicoogle.pluginController.getRestPlugins());
@@ -67,8 +68,6 @@ public class Dicoogle
         }
                                
         ExceptionHandler.registerExceptionHandler();
-        
-        
     }
 
 
@@ -126,7 +125,23 @@ public class Dicoogle
                 case "-in": break;
                     
                 //execute query
-                case "-q": break;
+                case "-q": {
+                    if(i+1 <args.length) {
+                        System.err.println("Query parameter requires a query expression");
+                        System.exit(1);
+                    }
+                    Task<Iterable<SearchResult>> queryTask = pluginController.query("lucene",args[i+1] );
+                try {
+                    Iterable<SearchResult> r = queryTask.get();
+                    for(SearchResult s : r){
+                        System.out.println("RESULT!:"+s);
+                    }
+                } catch (InterruptedException | ExecutionException ex) {
+                    Logger.getLogger(Dicoogle.class.getName()).log(Level.SEVERE, null, ex);
+                }   
+                    i+=2;
+                    break;
+                }
                     
                 //await previous instructions
                 case "-barrier": break;

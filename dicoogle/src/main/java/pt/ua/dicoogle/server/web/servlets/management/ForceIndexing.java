@@ -85,7 +85,7 @@ public class ForceIndexing extends HttpServlet {
 				if (pluginName == null)
 					reports.addAll(pc.index(u));
 				else
-					reports.addAll(pc.index(pluginName, u));
+					reports.add(pc.index(pluginName, u));
 			}
 		}
 
