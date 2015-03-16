@@ -59,7 +59,7 @@ public class WadoServlet extends HttpServlet{
 		HashMap<String, String> extraFields = new HashMap<String, String>();
         extraFields.put("SOPInstanceUID", "SOPInstanceUID");
 		
-		PluginController pc = PluginController.getInstance();
+		PluginController pc = PluginController.get();
         JointQueryTask task = new MyHolder();
         
         Iterable<SearchResult> results = null;

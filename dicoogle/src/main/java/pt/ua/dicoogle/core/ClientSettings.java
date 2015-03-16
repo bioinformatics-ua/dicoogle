@@ -21,7 +21,6 @@ package pt.ua.dicoogle.core;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import pt.ua.dicoogle.rGUI.server.users.HashService;
 
 /**
  *
@@ -77,7 +76,7 @@ public class ClientSettings {
         defaultServerHost = "localhost";
         defaultServerPort = 9014;
         defaultUserName = "dicoogle";
-        defaultPassword = HashService.getSHA1Hash("dicoogle");
+        //defaultPassword = HashService.getSHA1Hash("dicoogle");
     }
 
     public void setExtV(String EV)

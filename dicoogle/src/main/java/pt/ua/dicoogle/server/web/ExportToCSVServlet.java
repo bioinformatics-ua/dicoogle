@@ -66,13 +66,13 @@ public class ExportToCSVServlet extends HttpServlet {
 				resp.getOutputStream());
 
     	if(providers == null || providers.length == 0) {
-			PluginController.getInstance().queryAll(task, queryString, fieldsMap);
+			PluginController.get().queryAll(task, queryString, fieldsMap);
 		} else {
 			List<String> providersList = new ArrayList<>();
 			for (String f : providers) {
 				providersList.add(f);
 			}
-			PluginController.getInstance().query(task, providersList, queryString,
+			PluginController.get().query(task, providersList, queryString,
 					fieldsMap);
 		}
 
@@ -128,13 +128,13 @@ public class ExportToCSVServlet extends HttpServlet {
 				resp.getOutputStream());
 
 		if (arr.isEmpty()) {
-			PluginController.getInstance().queryAll(task, queryString, fields);
+			PluginController.get().queryAll(task, queryString, fields);
 		} else {
 			List<String> providers = new ArrayList<>();
 			for (Object f : arr) {
 				providers.add(f.toString());
 			}
-			PluginController.getInstance().query(task, providers, queryString,
+			PluginController.get().query(task, providers, queryString,
 					fields);
 		}
 

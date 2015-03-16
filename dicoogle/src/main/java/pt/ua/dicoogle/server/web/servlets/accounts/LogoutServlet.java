@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONObject;
-import pt.ua.dicoogle.server.web.auth.Session;
+import deletion.Session;
 import pt.ua.dicoogle.server.web.utils.ResponseUtil;
 
 /**

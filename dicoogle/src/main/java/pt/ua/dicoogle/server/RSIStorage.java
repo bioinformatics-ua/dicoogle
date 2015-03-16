@@ -86,7 +86,7 @@ public class RSIStorage extends StorageService
     
     private BlockingQueue<URI> queue = new LinkedBlockingQueue<URI>();
     
-    
+    PluginController pluginController;
     /**
      * 
      * @param Services List of supported SOP Classes
@@ -94,11 +94,12 @@ public class RSIStorage extends StorageService
      * @param s Server Settings for this execution of the storage service
      */
     
-    public RSIStorage(String [] Services, SOPList l)
+    public RSIStorage(PluginController pController, String [] Services, SOPList l)
     {
         //just because the call to super must be the first instruction
         super(Services); 
         
+        pluginController = pController;
             //our configuration format
             list = l;
             settings = ServerSettings.getInstance();
@@ -287,7 +288,7 @@ public class RSIStorage extends StorageService
             
             d.initFileMetaInformation(cuid, iuid, tsuid);
             
-            Iterable <StorageInterface> plugins = PluginController.getInstance().getStoragePlugins(true);
+            Iterable <StorageInterface> plugins = pluginController.getStoragePlugins(true);
             if(plugins == null){
                 //System.out.println("There is no default plugin...");
             
@@ -330,7 +331,7 @@ public class RSIStorage extends StorageService
                     
                     if(exam != null)
                     {
-                        List <Report> reports = PluginController.getInstance().indexBlocking(exam);
+                        List <Report> reports = pluginController.indexBlocking(exam);
                     }
                 } catch (InterruptedException ex) {
                     Logger.getLogger(RSIStorage.class.getName()).log(Level.SEVERE, null, ex);

@@ -25,39 +25,29 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.restlet.resource.ServerResource;
 
-import pt.ua.dicoogle.core.ServerSettings;
-import pt.ua.dicoogle.rGUI.server.controllers.ControlServices;
-import pt.ua.dicoogle.sdk.GraphicalInterface;
 import pt.ua.dicoogle.sdk.IndexerInterface;
 import pt.ua.dicoogle.sdk.JettyPluginInterface;
 import pt.ua.dicoogle.sdk.PluginSet;
 import pt.ua.dicoogle.sdk.QueryInterface;
 import pt.ua.dicoogle.sdk.StorageInputStream;
 import pt.ua.dicoogle.sdk.StorageInterface;
-import pt.ua.dicoogle.sdk.Utils.TaskQueue;
-import pt.ua.dicoogle.sdk.Utils.TaskRequest;
 import pt.ua.dicoogle.sdk.core.PlatformCommunicatorInterface;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.settings.ConfigurationHolder;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
-import pt.ua.dicoogle.server.web.DicoogleWeb;
 import pt.ua.dicoogle.taskManager.TaskManager;
-import pt.ua.dicoogle.webservices.DicoogleWebservice;
 
 /**
  *
@@ -75,27 +65,19 @@ import pt.ua.dicoogle.webservices.DicoogleWebservice;
 public class PluginController{
 
     private static final Logger logger = LogManager.getLogger(PluginController.class.getName());
-    
-    private static PluginController instance;
 
-    public synchronized static PluginController getInstance() {
-        if (instance == null) {
-            instance = new PluginController(new File("Plugins"));
-        }
-        return instance;
-    }
     private Collection<PluginSet> pluginSets;
     private File pluginFolder;
-    private TaskQueue tasks = null;
-
-	private PluginSet remoteQueryPlugins = null;
+    private static PluginController mainGlobalInstance;
+    //private TaskQueue tasks = null;
+ 
+    public static PluginController get(){return mainGlobalInstance;}
     
     public PluginController(File pathToPluginDirectory) {
     	logger.info("Creating PluginController Instance");
         pluginFolder = pathToPluginDirectory;
         pluginSets = new ArrayList<>();
-
-        tasks = new TaskQueue();
+        mainGlobalInstance = this;
 
         //the plugin directory does not exist. lets create it
         if (!pathToPluginDirectory.exists()) {
@@ -120,40 +102,34 @@ public class PluginController{
             File pluginSettingsFile = new File(settingsFolder + "/" + plugin.getName() + ".xml");       
             try {
                 ConfigurationHolder holder = new ConfigurationHolder(pluginSettingsFile);
-                if(plugin.getName().equals("RemotePluginSet")){
-                	this.remoteQueryPlugins = plugin;
-                	holder.getConfiguration().setProperty("NodeName", ServerSettings.getInstance().getNodeName());
-    	        	holder.getConfiguration().setProperty("TemporaryPath", ServerSettings.getInstance().getPath());
-                	
-                	logger.info("Started Remote Communications Manager");
-                }
                 plugin.setSettings(holder);
             }
             catch (ConfigurationException e){
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-            catch (UnsupportedOperationException e){
-                // TODO log this properly, remove plugin from plugin list
-                e.printStackTrace();
+		logger.info(e);
             }
         }
-        logger.info("Settings pushed to plugins");
         
         pluginSets.add(new DefaultFileStoragePlugin());
         logger.info("Added default storage plugin");
         
         initializePlugins(pluginSets);
-        initRestInterface(pluginSets);
-        initJettyInterface(pluginSets);
+        //initRestInterface(pluginSets);
+        //initJettyInterface(pluginSets);
         logger.info("Initialized plugins");
     }
     
+    /*
+    *   Plugins may need to communicate with the platform.
+    *   Plugins implementing the PlatformCommunicator interface have a setPlatformProxy
+    *   which expects an implementation of the methods which it may call (given by PlatformCommunicatorInterface)
+    *   This method insures all plugins implementing the interface now have
+    *   a viable reference to those methods
+    *
+    */
     private void initializePlugins(Collection<PluginSet> plugins) {
         for (PluginSet set : plugins) {
             System.out.println("SetPlugins: " + set);
             if (set instanceof PlatformCommunicatorInterface) {
-                
                 ((PlatformCommunicatorInterface) set).setPlatformProxy(new DicooglePlatformProxy(this));
             }
         }
@@ -164,8 +140,9 @@ public class PluginController{
      * check which interfaces are present and create a restlet component to
      * handle them. also we export them using common settings and security
      * profiles
+     * @return 
      */
-    private void initRestInterface(Collection<PluginSet> plugins) {
+    /*private void initRestInterface(Collection<PluginSet> plugins) {
         System.err.println("Initialize plugin rest interfaces");
 
         ArrayList<ServerResource> restInterfaces = new ArrayList<>();
@@ -181,9 +158,9 @@ public class PluginController{
             DicoogleWebservice.attachRestPlugin(resource);
         }
         System.err.println("Finished initializing rest interfaces");
-    }
+    }*/
 
-    private void initJettyInterface(Collection<PluginSet> plugins) {
+    /*private void initJettyInterface(Collection<PluginSet> plugins) {
         System.err.println("initing jetty interface");
                 
          ArrayList<JettyPluginInterface> jettyInterfaces = new ArrayList<>();
@@ -197,6 +174,26 @@ public class PluginController{
          for(JettyPluginInterface resource : jettyInterfaces){
         	 jettyServer.addContextHandlers( resource.getJettyHandlers() );
          }
+    }*/
+    
+    public Collection<JettyPluginInterface> getJettyPlugins(){
+         ArrayList<JettyPluginInterface> jettyInterfaces = new ArrayList<>();
+         for(PluginSet pluginSet : pluginSets){
+            Collection<JettyPluginInterface> jettyInterface = pluginSet.getJettyPlugins();
+            if(jettyInterface == null) continue;
+                jettyInterfaces.addAll(jettyInterface);
+         }
+         return jettyInterfaces;
+    }
+    
+    public Collection<ServerResource> getRestPlugins(){
+        ArrayList<ServerResource> restInterfaces = new ArrayList<>();
+        for (PluginSet pluginSet : pluginSets) {
+            Collection<ServerResource> restInterface = pluginSet.getRestPlugins();
+            if (restInterface == null) continue;
+            restInterfaces.addAll(restInterface);
+        }
+        return restInterfaces;         
     }
 
     /**
@@ -211,7 +208,7 @@ public class PluginController{
                 settings.save();
             }
 	*/
-            //lets the plugin know we are shutting down
+            //lets notify the plugin that we are shutting down
             plugin.shutdown();
         }
     }
@@ -341,10 +338,6 @@ public class PluginController{
         }
         return queriers;
     }
-
-    public void addTask(TaskRequest task) {
-        this.tasks.addTask(task);
-    }
    
     private TaskManager taskManager = new TaskManager(4);
     
@@ -387,7 +380,6 @@ public class PluginController{
     {
     	//logger.info("Querying all providers");
     	List<String> providers = this.getQueryProvidersName(true);
-    	
     	return query(holder, providers, query, parameters);        
     }
     
@@ -400,19 +392,18 @@ public class PluginController{
     }
     
     public JointQueryTask query(JointQueryTask holder, List<String> querySources, final String query, final Object ... parameters){
-        if(holder == null)
-        	return null;
+        if(holder == null) return null;
     	
     	List<Task<Iterable<SearchResult>>> tasks = new ArrayList<>();
         for(String p : querySources){
-        	Task<Iterable<SearchResult>> task = getTaskForQuery(p, query, parameters);
-        	tasks.add(task);
-        	holder.addTask(task);
+            Task<Iterable<SearchResult>> task = getTaskForQuery(p, query, parameters);
+            tasks.add(task);
+            holder.addTask(task);
         }
 
         //and executes said task asynchronously
         for(Task<?> t : tasks)
-        	taskManager.dispatch(t);
+            taskManager.dispatch(t);
 
         //logger.info("Fired Query Tasks: "+Arrays.toString(querySources.toArray()) +" QueryString:"+query);
         return holder;//returns the handler to obtain the computation results
@@ -447,15 +438,14 @@ public class PluginController{
         StorageInterface store = getStorageForSchema(path);
 
         if(store==null){ 
-        	logger.error("No storage plugin detected");
+            logger.error("No storage plugin detected");
             return Collections.emptyList(); 
         }
         
         Collection<IndexerInterface> indexers = getIndexingPlugins(true);
         ArrayList<Task<Report>> rettasks = new ArrayList<>();
         final  String pathF = path.toString();
-        for(IndexerInterface indexer : indexers){            
-        	
+        for(IndexerInterface indexer : indexers){            	
         	Task<Report> task = indexer.index(store.at(path));
                 task.onCompletion(new Runnable() {
 
@@ -521,16 +511,14 @@ public class PluginController{
         StorageInterface store = getStorageForSchema(path);
 
         if(store==null){ 
-        	logger.error("No storage plugin detected");
+            logger.error("No storage plugin detected");
         }
         
         Collection<IndexerInterface> indexers = getIndexingPlugins(true);
         ArrayList<Task<Report>> rettasks = new ArrayList<>();
         
         for(IndexerInterface indexer : indexers){            
-        	
-        	boolean result = indexer.unindex(path);
-            
+        	indexer.unindex(path);
         }
         logger.info("Finised firing all undexing plugins for "+path.toString());
         
@@ -547,109 +535,17 @@ public class PluginController{
         
         ArrayList<Report> reports = new ArrayList<>(ret.size());
         for(Task<Report> t : ret){
-        	try {
-				reports.add(t.get());
-			}
+            try {
+                reports.add(t.get());
+            }
             catch (InterruptedException | ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+            // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
         logger.info("Finished Indexing Blocking procedure for "+path.toString());
         
         return reports;
     }
 
-    //METHODs FOR PluginController4Users
-    //TODO:this method is a workaround! we do get rightmenu items, but only for the search window
-    //which should be moved to plugins and hence we are assuming too much in here!
- 
-	public List<JMenuItem> getRightButtonItems() {
-        System.out.println("getRightButtonItems");
-        System.out.println(pluginSets);
-        ArrayList<JMenuItem> rightMenuItems = new ArrayList<>();
-        
-        
-        for (PluginSet set : pluginSets) {
-            System.out.println("Set plugins: ");
-            System.out.println(set.getGraphicalPlugins());
-            Collection<GraphicalInterface> graphicalPlugins = set.getGraphicalPlugins();
-            if (graphicalPlugins == null) {
-                continue;
-            }
-            System.out.println("Looking for plugin");
-            for (GraphicalInterface gpi : graphicalPlugins) {
-                System.out.println("GPI: " + gpi);
-                ArrayList<JMenuItem> rbPanels = gpi.getRightButtonItems();
-                if (rbPanels == null) {
-                    continue;
-                }
-                rightMenuItems.addAll(rbPanels);
-            }
-        }
-        return rightMenuItems;
-    }
-
-    //returns a list of tabs from all plugins
-    public List<JPanel> getTabItems() {
-        System.out.println("getTabItems");
-        System.out.println(pluginSets);
-        ArrayList<JPanel> panels = new ArrayList<>();
-
-        for (PluginSet set : pluginSets) {
-            Collection<GraphicalInterface> graphicalPlugins = set.getGraphicalPlugins();
-            if (graphicalPlugins == null) {
-                continue;
-            }
-            for (GraphicalInterface gpi : graphicalPlugins) {
-                ArrayList<JPanel> tPanels = gpi.getTabPanels();
-                if (tPanels == null) {
-                    continue;
-                }
-                panels.addAll(tPanels);
-            }
-        }
-        return panels;
-    }
-
-    public List<JMenuItem> getMenuItems() {
-        System.out.println("getMenuItems");
-        System.out.println(pluginSets);
-        ArrayList<JMenuItem> items = new ArrayList<>();
-
-        for (PluginSet set : pluginSets) {
-            Collection<GraphicalInterface> graphicalPlugins = set.getGraphicalPlugins();
-            if (graphicalPlugins == null) {
-                continue;
-            }
-
-            for (GraphicalInterface gpi : graphicalPlugins) {
-                Collection<JMenuItem> setItems = gpi.getMenuItems();
-                if (setItems == null) {
-                    continue;
-                }
-                items.addAll(setItems);
-            }
-        }
-        return items;
-    }
-    
-    //METHODS FOR SERVICE:JAVA
-    /**
-     *
-     * TODO: REVIEW! BELOW
-     *
-     * Checks if the plugin exists and has advanced/internal settings.
-     *
-     * @param pluginName the name of the plugin.
-     * @return true if the plugin exists and has at least one advance/internal
-     * settings, false otherwise.
-     */
-    public boolean hasAdvancedSettings(String pluginName) {
-        return false;
-    }
-
-    public HashMap<String, String> getAdvancedSettingsHelp(String pluginName) {
-        return null;
-    }
 }

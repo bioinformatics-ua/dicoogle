@@ -195,7 +195,7 @@ public class Indexer{
                 }
                 if (uri != null)
                 {
-                    List<Task<Report>> tmpList = PluginController.getInstance().index(uri);
+                    List<Task<Report>> tmpList = PluginController.get().index(uri);
                     
                     for (Task _t : tmpList)
                     {

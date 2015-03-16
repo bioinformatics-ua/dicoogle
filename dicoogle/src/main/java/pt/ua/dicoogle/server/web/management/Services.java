@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import pt.ua.dicoogle.rGUI.server.controllers.ControlServices;
+//import pt.ua.dicoogle.rGUI.server.controllers.ControlServices;
 import pt.ua.dicoogle.plugins.PluginController;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
 import pt.ua.dicoogle.sdk.settings.Utils;
@@ -56,7 +56,7 @@ public class Services {
      * Pointers to the objects that maintain the services and plugins
      * information.
      */
-    private static ControlServices svcs;
+    //private static ControlServices svcs;
     private static PluginController plgs;
     /**
      * Types of actions to perform.
@@ -110,8 +110,8 @@ public class Services {
     private ServerSettings cfgs;
 
     private Services() {
-        svcs = ControlServices.getInstance();
-        plgs = PluginController.getInstance();
+        //svcs = ControlServices.getInstance();
+        plgs = PluginController.get();
 
         cfgs = ServerSettings.getInstance();
         xmlSupport = new XMLSupport();
@@ -212,20 +212,20 @@ public class Services {
             switch (action) {
                 case SVC_START:
                     if (svcName.equalsIgnoreCase(webServerName)) {
-                        svcs.startWebServer();
+                    //    svcs.startWebServer();
                         return RES_OK;
                     } else {
                         if (svcName.equalsIgnoreCase(webServicesName)) {
 
-                            svcs.startWebServices();
+                        //    svcs.startWebServices();
                             return RES_OK;
                         } else {
                             if (svcName.equalsIgnoreCase(storageName)) {
-                                svcs.startStorage();
+                          //      svcs.startStorage();
                                 return RES_OK;
                             } else {
                                 if (svcName.equalsIgnoreCase(queryRetrieveName)) {
-                                    svcs.startQueryRetrieve();
+                            //        svcs.startQueryRetrieve();
                                     return RES_OK;
                                 } else {
                                 	//TODO: DELETED
@@ -244,20 +244,20 @@ public class Services {
 
                 case SVC_STOP:
                     if (svcName.equalsIgnoreCase(webServerName)) {
-                        svcs.stopWebServer();
+                    //    svcs.stopWebServer();
                         return RES_OK;
                     } else {
                         if (svcName.equalsIgnoreCase(webServicesName)) {
 
-                            svcs.stopWebServices();
+                    //        svcs.stopWebServices();
                             return RES_OK;
                         } else {
                             if (svcName.equalsIgnoreCase(storageName)) {
-                                svcs.stopStorage();
+                    //            svcs.stopStorage();
                                 return RES_OK;
                             } else {
                                 if (svcName.equalsIgnoreCase(queryRetrieveName)) {
-                                    svcs.stopQueryRetrieve();
+                      //              svcs.stopQueryRetrieve();
                                     return RES_OK;
                                 } else {
                                 	//TODO: DELETED
@@ -394,7 +394,7 @@ public class Services {
                                         return RES_INVALID_ACTION_PARAMETER;
                                     }
                                 } else {
-                                    if (plgs.hasAdvancedSettings(svcName)) {
+                                    //if (plgs.hasAdvancedSettings(svcName)) {
                                         //TODO: DELETED
                                     	//HashMap<String, Object> settings = plgs.getAdvancedSettings(svcName);
 
@@ -402,18 +402,18 @@ public class Services {
 
 
                                         // try to apply the settings
-                                        if (/*plgs.trySettings(svcName, settings)*/true) {
+                                      //  if (/*plgs.trySettings(svcName, settings)*/true) {
                                             //plgs.setSettings(svcName, settings);
 
                                             //plgs.saveSettings();
 
-                                            return RES_OK;
-                                        } else {
+                                          //  return RES_OK;
+                                        //} else {
                                             return RES_INVALID_ACTION_PARAMETER;
-                                        }
-                                    }
+                                        //}
+                                    //}
 
-                                    return RES_INVALID_SERVICE_NAME;
+                                    //return RES_INVALID_SERVICE_NAME;
                                 }
                             }
                         }
@@ -423,7 +423,7 @@ public class Services {
                 default:
                     return RES_INVALID_ACTION;
             }
-        } catch (IOException ex) {
+        } catch (Exception /*IOException */ex) {
             return RES_WARNING;
         }
     }
@@ -804,13 +804,13 @@ public class Services {
             result += getHTMLServiceManagementTableRow(plgs.isPluginRunning(plug), brokerURL, plug, true, true, cfgs.getAutoStartPlugin(plug), false, 0, plgs.hasAdvancedSettings(plug), advancedOptionsManagerURL);
         }*/
         // list the storage service
-        result += getHTMLServiceManagementTableRow(svcs.storageIsRunning(), brokerURL, storageName, true, true, storageStart(), true, storagePort(), false, /*advancedOptionsManagerURL*/ null);
+        result += getHTMLServiceManagementTableRow(true/*svcs.storageIsRunning()*/, brokerURL, storageName, true, true, storageStart(), true, storagePort(), false, /*advancedOptionsManagerURL*/ null);
         // list the query retrieve service
-        result += getHTMLServiceManagementTableRow(svcs.queryRetrieveIsRunning(), brokerURL, queryRetrieveName, true, true, queryRetrieveStart(), true, queryRetrievePort(), true, advancedOptionsManagerURL);
-        // list the web services
-        result += getHTMLServiceManagementTableRow(svcs.webServicesIsRunning(), brokerURL, webServicesName, true, true, webServicesStart(), true, webServicesPort(), false, null);
+        result += getHTMLServiceManagementTableRow(true/*svcs.queryRetrieveIsRunning()*/, brokerURL, queryRetrieveName, true, true, queryRetrieveStart(), true, queryRetrievePort(), true, advancedOptionsManagerURL);
+        // list the web services1
+        result += getHTMLServiceManagementTableRow(true/*svcs.webServicesIsRunning()*/, brokerURL, webServicesName, true, true, webServicesStart(), true, webServicesPort(), false, null);
         // list the web server
-        result += getHTMLServiceManagementTableRow(svcs.webServerIsRunning(), brokerURL, webServerName, true, true, webServerStart(), true, webServerPort(), false, null);
+        result += getHTMLServiceManagementTableRow(true/*svcs.webServerIsRunning()*/, brokerURL, webServerName, true, true, webServerStart(), true, webServerPort(), false, null);
         // list the RMI service
         result += getHTMLServiceManagementTableRow(true, brokerURL, remoteGUIName, false, false, true, true, remoteGUIPort(), true, advancedOptionsManagerURL); // FIXME actually get if the RMI is running or not
 
@@ -1129,10 +1129,10 @@ public class Services {
         // if it's not a embeded service
         if (!isEmbededService) {
             // test if it's a plugin and has advanced settings
-            if (!plgs.hasAdvancedSettings(name)) {
+            /*if (!plgs.hasAdvancedSettings(name)) {
                 result += "<h3>The required plugin/service is either invalid or has no advanced settings!</h3>";
                 return result;
-            }
+            }*/
         }
 
         if ((elementID == null) || elementID.trim().isEmpty()) {
@@ -1153,7 +1153,7 @@ public class Services {
         {
         	//TODO: DELETED
             //settings = plgs.getAdvancedSettings(name);
-            settingsHelp = plgs.getAdvancedSettingsHelp(name);
+           // settingsHelp = plgs.getAdvancedSettingsHelp(name);
         } else {
             if (isStorage) {
                 settings = cfgs.getStorageSettings();

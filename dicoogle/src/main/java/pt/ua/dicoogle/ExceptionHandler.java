@@ -21,10 +21,9 @@ package pt.ua.dicoogle;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import javax.swing.JOptionPane;
-import pt.ieeta.anonymouspatientdata.core.Anonymous;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-//import pt.ieeta.anonymouspatientdata.core.Anonymous;
 
 /**
  *
@@ -45,38 +44,20 @@ class ExceptionHandler implements Thread.UncaughtExceptionHandler {
     handle(e);
   }
 
-  public void handle(Throwable throwable) {
-    try {
-        /**
-         * Here you can insert code to send exception to email etc.
-         */
-        if (/*DebugManager.getInstance().isDebug()*/true) {
-            throwable.printStackTrace();
-        } else {
-            String msg = getStackTrace(throwable);
-            Anonymous.getInstance().stop();
-            //Anonymous.getInstance().stop();
-            if (msg.contains("heap"))
-            {
-                JOptionPane.showMessageDialog(null, "Generic Error, see log.txt.\n\nError: lack of memory. You should increase memory \n",
-                    "Exception Error", JOptionPane.INFORMATION_MESSAGE);
-            
-            }
-            else
-            {    
-                 JOptionPane.showMessageDialog(null, "Generic Error, see log.txt.\n\nError: \n" + msg,
-                    "Exception Error", JOptionPane.INFORMATION_MESSAGE);
-            }
-            //DebugManager.getInstance().log(getStackTrace(throwable)+"\n");
-            System.err.println(getStackTrace(throwable)+"\n");
+    public void handle(Throwable throwable) {
+        try {
+            Logger.getLogger("global").log(Level.SEVERE, null, throwable);
+            Logger.getLogger("global").log(Level.SEVERE, null, getStackTrace(throwable));
+            System.err.println(throwable);
+            System.err.println(getStackTrace(throwable));
+            System.exit(1);        
         }
-      } catch (Throwable t) {
-      // don't let the exception get thrown out, will cause infinite looping!
-    }
+        catch (Throwable t) {
+        // don't let the exception get thrown out, will cause infinite looping!
+        }
   }
 
   public static void registerExceptionHandler() {
     Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
-    System.setProperty("sun.awt.exception.handler", ExceptionHandler.class.getName());
   }
 }

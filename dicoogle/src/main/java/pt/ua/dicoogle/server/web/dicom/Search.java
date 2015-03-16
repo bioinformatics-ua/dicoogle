@@ -203,7 +203,7 @@ public class Search {
 			this.selectedProviders.addAll(JSONArray.toCollection(arr,
 					String.class));
 		} else {
-			this.selectedProviders = PluginController.getInstance()
+			this.selectedProviders = PluginController.get()
 					.getQueryProvidersName(true);
 		}
 		this.httpSession = ((HttpServletRequest) request).getSession(false);
@@ -533,7 +533,7 @@ public class Search {
 	 * @return The selected Query Providers 
 	 */
 	public List<String> getQueryProviders() {
-		List<String> providers = PluginController.getInstance()
+		List<String> providers = PluginController.get()
 				.getQueryProvidersName(true);
 
 		return providers;
@@ -647,8 +647,7 @@ public class Search {
 
 				}
 			};
-			itResults = PluginController.getInstance()
-					.query(t, selectedProviders, query, searchParam).get();
+			itResults = PluginController.get().query(t, selectedProviders, query, searchParam).get();
 
 			// }
 

@@ -76,7 +76,7 @@ public class DumpServlet extends HttpServlet {
 
         Iterable<SearchResult> results = null;
         try {
-            results = PluginController.getInstance().queryAll(queryTaskHolder, query, extraFields).get();
+            results = PluginController.get().queryAll(queryTaskHolder, query, extraFields).get();
         } catch (InterruptedException | ExecutionException ex) {
             Logger.getLogger(SearchServlet.class.getName()).log(Level.SEVERE, null, ex);
         }

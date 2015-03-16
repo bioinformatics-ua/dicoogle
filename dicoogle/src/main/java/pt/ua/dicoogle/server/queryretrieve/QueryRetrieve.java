@@ -39,7 +39,8 @@ import org.dcm4che2.net.NewThreadExecutor;
 import org.dcm4che2.net.TransferCapability;
 import org.dcm4che2.net.service.VerificationService;
 
-import pt.ua.dicoogle.Main;
+import pt.ua.dicoogle.Dicoogle;
+import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.Utils.Platform;
 import pt.ua.dicoogle.server.DicomNetwork;
 
@@ -95,11 +96,13 @@ public class QueryRetrieve extends DicomNetwork
     UID.PatientRootQueryRetrieveInformationModelMOVE};
     
     private LuceneQueryACLManager luke;
+    
+    PluginController pluginController;
   
-    public QueryRetrieve()
+    public QueryRetrieve(PluginController pcontroller)
     {
-
         super("DICOOGLE-QUERYRETRIEVE");
+        pluginController = pcontroller;
 
         // super(multiSop, executor);
                 this.sopClass = s.getSOPClass();
@@ -164,8 +167,8 @@ public class QueryRetrieve extends DicomNetwork
             java.util.logging.Logger.getLogger(CFindServiceSCP.class.getName()).log(Level.SEVERE, null, ex);
         }        
         
-        this.localAE.register(new CMoveServiceSCP(moveSop, executor, luke));
-        this.localAE.register(new CFindServiceSCP(multiSop, executor, luke));
+        this.localAE.register(new CMoveServiceSCP(pluginController, moveSop, executor, luke));
+        this.localAE.register(new CFindServiceSCP(pluginController, multiSop, executor, luke));
         this.localAE.register(new VerificationService());
 
         this.localConn.setPort(s.getWlsPort());

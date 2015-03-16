@@ -28,7 +28,7 @@ public class Version
 {
 
     public static boolean DEVELOPMENT_MODE = true ;
-    public static String VERSION = "0.5 ALPHA";
+    public static String VERSION = "0.6 PRE_ALPHA";
 
     public static String getVersion()
     {
@@ -43,7 +43,5 @@ public class Version
         }
         version = VERSION ;
         return version ;
-
-    }
-    
+    }    
 }

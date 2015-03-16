@@ -81,10 +81,12 @@ public class SearchDicomResult implements Iterator<DicomObject>
     
     String currentFile ;
 
+    PluginController pluginController;
     
-	public SearchDicomResult(String searchQuery, boolean isNetwork,
+	public SearchDicomResult(PluginController pController, String searchQuery, boolean isNetwork,
 			ArrayList<String> extrafields, QUERYLEVEL level) {
 
+            pluginController=pController;
 		queryLevel = level;
 
 		/**
@@ -116,7 +118,7 @@ public class SearchDicomResult implements Iterator<DicomObject>
 
 			}
 		};
-		holder = PluginController.getInstance().queryAll(holder, searchQuery,
+		holder = pluginController.queryAll(holder, searchQuery,
 				extraFields);
 
 		try {

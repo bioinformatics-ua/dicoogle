@@ -94,7 +94,7 @@ public class RestDimResource extends ServerResource{
         
         List<String> knownProviders = new ArrayList<String>();
         String[] providers = queryForm.getValuesArray("provider");
-        List<String> activeProviders = PluginController.getInstance().getQueryProvidersName(true);
+        List<String> activeProviders = PluginController.get().getQueryProvidersName(true);
         boolean queryAll = providers.length == 0;
     	for(String p : providers){
         	if(p.equalsIgnoreCase("all")){
@@ -143,9 +143,9 @@ public class RestDimResource extends ServerResource{
         long startTime = System.currentTimeMillis();
         MyHolder holder = new MyHolder();
         if(queryAll)
-        	PluginController.getInstance().queryAll(holder, search, extraFields);
+        	PluginController.get().queryAll(holder, search, extraFields);
         else
-        	PluginController.getInstance().query(holder, knownProviders, search, extraFields);
+        	PluginController.get().query(holder, knownProviders, search, extraFields);
         
     	ArrayList<SearchResult> resultsArr = new ArrayList<SearchResult>();
         

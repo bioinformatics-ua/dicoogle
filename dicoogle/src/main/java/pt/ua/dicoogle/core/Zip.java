@@ -174,36 +174,5 @@ public class Zip implements Closeable
      */
     public void setZipName(String zipName) {
         this.zipName = zipName;
-    }
-
-    
-    
-    public static void main(String [] args)
-    {
-    
-    
-        long timeEncryptStart = System.currentTimeMillis();
-        Zip zip = new Zip("/Volumes/Extend/dataset/IM-0001-0001.zip");
-        zip.createZip();
-        zip.addFile("/Volumes/Extend/dataset/XABraga/IM-0001-0001.dcm");
-        
-        zip.close();
-                  
-            
-            long timeEncryptEnd = System.currentTimeMillis() - timeEncryptStart;
-            System.out.println("Encrypted in " + timeEncryptEnd + " (ms)");
-            
-            timeEncryptStart = System.currentTimeMillis();
-            
-            UnZip unzip = new UnZip("/Volumes/Extend/dataset/IM-0001-0001.zip");
-            unzip.loadFile();
-            unzip.decompress();
-            
-            timeEncryptEnd = System.currentTimeMillis() - timeEncryptStart;
-            System.out.println("Encrypted in " + timeEncryptEnd + " (ms)");
-            
-            
-    }
-    
-    
+    }    
 }

@@ -21,7 +21,6 @@ package pt.ua.dicoogle.server.queryretrieve;
 import com.google.common.io.ByteStreams;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -84,7 +83,7 @@ public class CallDCMSend
             for (URI rui : files)
             {                
                 System.out.println("Entered Retrieving: "+rui.toString());
-                StorageInterface plugin = PluginController.getInstance().getStorageForSchema(rui);
+                StorageInterface plugin = PluginController.get().getStorageForSchema(rui);
                 System.out.println("Plkugin: " +  plugin);
                 System.out.println("rui.toString: " +  plugin);
                 

@@ -40,7 +40,7 @@ import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.core.XMLSupport;
 import pt.ua.dicoogle.server.web.management.Dicoogle;
 import pt.ua.dicoogle.server.web.management.Services;
-import pt.ua.dicoogle.server.web.auth.Session;
+import deletion.Session;
 import static pt.ua.dicoogle.sdk.settings.Utils.processAdvancedSettings;
 
 /**

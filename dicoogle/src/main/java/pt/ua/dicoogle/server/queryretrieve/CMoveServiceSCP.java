@@ -36,31 +36,32 @@ import org.dcm4che2.net.DimseRSP;
 import org.dcm4che2.net.Status;
 import pt.ua.dicoogle.core.exceptions.CFindNotSupportedException;
 
-import pt.ua.dicoogle.core.LogDICOM;
-import pt.ua.dicoogle.core.LogLine;
-import pt.ua.dicoogle.core.LogXML;
+import deletion.LogLine;
 import pt.ua.dicoogle.core.MoveDestination;
 import pt.ua.dicoogle.server.DicomNetwork;
 import pt.ua.dicoogle.server.SearchDicomResult;
 import pt.ua.dicoogle.core.ServerSettings;
-import pt.ua.dicoogle.rGUI.server.controllers.Logs;
+import pt.ua.dicoogle.plugins.PluginController;
 
 /**
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class CMoveServiceSCP extends CMoveService {
-
+    private static final Logger log = Logger.getLogger("services");
     private DicomNetwork service = null;
     private LuceneQueryACLManager luke;
+    PluginController pluginController;
 
-    public CMoveServiceSCP(String[] sopClasses, Executor executor, LuceneQueryACLManager luke) {
+    public CMoveServiceSCP( PluginController pcontroller, String[] sopClasses, Executor executor, LuceneQueryACLManager luke) {
         super(sopClasses, executor);
+        pluginController = pcontroller;
          this.luke = luke;
     }
 
-    public CMoveServiceSCP(String sopClass, Executor executor) {
+    public CMoveServiceSCP(PluginController pcontroller, String sopClass, Executor executor) {
         super(sopClass, executor);
+        pluginController = pcontroller;
         this.luke = null;
     }
     
@@ -178,7 +179,7 @@ public class CMoveServiceSCP extends CMoveService {
                  query += filterQuery;
         }
         //TODO: FIlter Query;
-        SearchDicomResult search = new SearchDicomResult(query,
+        SearchDicomResult search = new SearchDicomResult(pluginController, query,
                 true, extrafields, SearchDicomResult.QUERYLEVEL.IMAGE);
         ArrayList<URI> files = new ArrayList<URI>();
 
@@ -235,17 +236,9 @@ public class CMoveServiceSCP extends CMoveService {
 
             LogLine ll = new LogLine("cmove", LogLine.getDateTime(), destination,
                     "Files: " + files.size() + " -- (" + hostDest + ":" + portAddr + ")");
-            LogDICOM.getInstance().addLine(ll);
-            LogXML l = new LogXML();
+    
 
-            try
-            {
-                l.printXML();
-            } catch (TransformerConfigurationException ex) {
-                Logger.getLogger(CMoveServiceSCP.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            Logs.getInstance().addLog(ll);
+            //Logs.getInstance().addLog(ll);
             if (CMoveID==null||CMoveID.equals(""))
             {
                 //DebugManager.getInstance().debug("No originator message ID");

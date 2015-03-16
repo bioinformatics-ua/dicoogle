@@ -49,7 +49,7 @@ public class SearchHolder {
 	public synchronized int registerNewQuery(List<String> providers, String query, Object searchParam){
 		QueryHandler task = new QueryHandler();
 		
-		task = (QueryHandler) PluginController.getInstance().query(task, providers, query, searchParam);
+		task = (QueryHandler) PluginController.get().query(task, providers, query, searchParam);
 		if(task == null)
 			return -1;
 		

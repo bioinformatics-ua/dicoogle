@@ -44,6 +44,7 @@ import org.dcm4che2.net.Status;
 
 
 import pt.ua.dicoogle.core.exceptions.CFindNotSupportedException;
+import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.server.SearchDicomResult;
 
 /**
@@ -55,7 +56,7 @@ public class FindRSP implements DimseRSP
     
     private DicomObject rsp;
     private DicomObject keys;
-    
+    PluginController pluginController;
     
     
     /** 
@@ -68,8 +69,9 @@ public class FindRSP implements DimseRSP
     private String callingAET;
     private LuceneQueryACLManager luke;
     
-    public FindRSP(DicomObject keys, DicomObject rsp, String callingAET, LuceneQueryACLManager luke)
+    public FindRSP(PluginController pcontroller, DicomObject keys, DicomObject rsp, String callingAET, LuceneQueryACLManager luke)
     {
+        pluginController = pcontroller;
         this.rsp = rsp ; 
         this.keys = keys ;
         
@@ -158,8 +160,7 @@ public class FindRSP implements DimseRSP
             level = SearchDicomResult.QUERYLEVEL.IMAGE;
         }
         System.out.println("Charset: "+ this.keys.get(Tag.SpecificCharacterSet));
-        search = new SearchDicomResult(query,
-                 true, extrafields, level);
+        search = new SearchDicomResult(pluginController, query, true, extrafields, level);
 
 
 

@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.Executor;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.transform.TransformerConfigurationException;
 
@@ -36,14 +37,8 @@ import org.dcm4che2.net.DicomServiceException;
 import org.dcm4che2.net.DimseRSP;
 import org.dcm4che2.net.service.CFindService;
 
-
-import pt.ua.dicoogle.core.LogDICOM;
-import pt.ua.dicoogle.core.LogLine;
-
-
-import pt.ua.dicoogle.core.LogXML;
 import pt.ua.dicoogle.core.ServerSettings;
-import pt.ua.dicoogle.rGUI.server.controllers.Logs;
+import pt.ua.dicoogle.plugins.PluginController;
 
 
 
@@ -54,6 +49,8 @@ import pt.ua.dicoogle.server.DicomNetwork;
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class CFindServiceSCP extends CFindService {
+    private static final Logger log = Logger.getLogger("services");
+
 
     private ServerSettings s = ServerSettings.getInstance();
     private int rspdelay = ServerSettings.getInstance().getRspDelay();
@@ -61,14 +58,18 @@ public class CFindServiceSCP extends CFindService {
     private DicomNetwork service = null;
     private LuceneQueryACLManager luke = null;
     
+    PluginController pluginController;
+    
 
-    public CFindServiceSCP(String[] multiSop, Executor e) {
+    public CFindServiceSCP(PluginController pController, String[] multiSop, Executor e) {
         super(multiSop, e);
+        pluginController = pController;
         this.luke = null;        
     }
 
-    public CFindServiceSCP(String[] multiSop, Executor e, LuceneQueryACLManager luke) {
+    public CFindServiceSCP(PluginController pController, String[] multiSop, Executor e, LuceneQueryACLManager luke) {
         super(multiSop, e);
+        pluginController = pController;
         this.luke = luke;        
     }
     
@@ -132,25 +133,14 @@ public class CFindServiceSCP extends CFindService {
          * Search information at Lucene Indexer
          * So the FindRSP will fill the DimRSP
          */
-        replay = new FindRSP(keys, rsp,  as.getCallingAET(), luke);
+        replay = new FindRSP(pluginController, keys, rsp,  as.getCallingAET(), luke);
         DicomElement e = keys.get(Tag.PatientName);
         String add = "";
         if (e != null) {
             add = new String(e.getBytes());
         }
-        LogLine ll = new LogLine("cfind", getDateTime(), as.getCallingAET(),
-                as.toString() + " -- " + add);
-        LogDICOM.getInstance().addLine(ll);
-        LogXML l = new LogXML();
-        try {
-            l.printXML();
-        } catch (TransformerConfigurationException ex) {
-            java.util.logging.Logger.getLogger(
-                    QueryRetrieve.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        Logs.getInstance().addLog(ll);
-
-
+        
+        log.log(Level.INFO,"cfind" + getDateTime() +as.getCallingAET() + as.toString() + " -- " + add);
         return replay;
     }
 

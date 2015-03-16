@@ -16,38 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.server.web.servlets.search;
-
-import java.io.IOException;
-import java.util.List;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.google.gson.Gson;
-
-import pt.ua.dicoogle.plugins.PluginController;
+package pt.ua.dicoogle.user;
 
 /**
- * Retrieve active providers
  *
- * @author Frederico Silva <fredericosilva@ua.pt>
+ * @author psytek
  */
-public class ProvidersServlet extends HttpServlet{
+public class HashService {
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		
-		List<String> activeProviders = PluginController.get().getQueryProvidersName(true);
-		
-		String json = new Gson().toJson(activeProviders);
-		
-		resp.getWriter().print(json);
-			
-	}
-	
-
+    public static String getSHA1Hash(String pass) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
 }

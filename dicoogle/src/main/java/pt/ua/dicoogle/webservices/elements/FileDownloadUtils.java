@@ -57,7 +57,7 @@ public class FileDownloadUtils {
         extraFields.put("SOPInstanceUID", "SOPInstanceUID");
         
         
-        PluginController pc = PluginController.getInstance();
+        PluginController pc = PluginController.get();
         JointQueryTask task = new MyHolder();
         pc.queryAll(task, query, extraFields);
         Iterable<SearchResult> queryResults = null;

@@ -71,7 +71,7 @@ public class ForceIndexing extends HttpServlet {
 			return;
 		}
 
-		PluginController pc = PluginController.getInstance();
+		PluginController pc = PluginController.get();
 
 		List<Task<Report>> reports = new ArrayList<>(uris.size());
 		for (String uri : uris) {

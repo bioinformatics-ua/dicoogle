@@ -91,7 +91,7 @@ public class RestDumpResource extends ServerResource{
         Iterable<SearchResult> queryResultList = null;
         try {
             System.out.println("Query: + " + query);
-            queryResultList = PluginController.getInstance().queryAll(holder, query, extraFields).get();
+            queryResultList = PluginController.get().queryAll(holder, query, extraFields).get();
             Thread.sleep(1000);
         } catch (InterruptedException ex) {
             Logger.getLogger(RestDumpResource.class.getName()).log(Level.SEVERE, null, ex);

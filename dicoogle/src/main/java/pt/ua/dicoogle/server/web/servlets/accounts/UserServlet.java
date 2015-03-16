@@ -27,11 +27,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import pt.ua.dicoogle.rGUI.server.users.HashService;
-import pt.ua.dicoogle.rGUI.server.users.User;
-import pt.ua.dicoogle.rGUI.server.users.UsersStruct;
-import pt.ua.dicoogle.server.web.management.Dicoogle;
 import pt.ua.dicoogle.server.web.utils.ResponseUtil;
+import pt.ua.dicoogle.user.HashService;
+import pt.ua.dicoogle.user.User;
+import pt.ua.dicoogle.user.UsersStruct;
 
 /**
  * User Servlet for create, remove and consult user accounts

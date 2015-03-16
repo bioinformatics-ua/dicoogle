@@ -55,7 +55,7 @@ public class RestFileResource extends ServerResource {
     private PluginController core;
 
     public RestFileResource() {
-        this.core = PluginController.getInstance();
+        this.core = PluginController.get();
     }
     
     @Get
@@ -93,35 +93,4 @@ public class RestFileResource extends ServerResource {
         }*/
     }
     
-     private static class MyHolder extends JointQueryTask {
-         
-        @Override
-        public void onCompletion() {
-        }
-
-        @Override
-        public void onReceive(Task<Iterable<SearchResult>> e) {
-        }
-    }    
-     
-     private static class MyOutput extends OutputRepresentation{
-
-         private StorageInputStream stream;
-
-        public MyOutput(StorageInputStream stream, MediaType mediaType) {
-            super(mediaType);
-            this.stream = stream;
-        }
-        @Override
-        public void write(OutputStream out) throws IOException  {
-             try {
-                 IOUtils.copy(stream.getInputStream(), out);
-             } catch (IOException ex) {
-                 Logger.getLogger(RestFileResource.class.getName()).log(Level.SEVERE, null, ex);
-                 ex.printStackTrace();
-                 throw ex;
-             }
-           
-        }
-     }
 }

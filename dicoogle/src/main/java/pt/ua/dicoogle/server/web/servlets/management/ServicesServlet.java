@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import pt.ua.dicoogle.plugins.PluginController;
-import pt.ua.dicoogle.rGUI.server.controllers.ControlServices;
 import pt.ua.dicoogle.server.web.utils.ResponseUtil;
 
 /**
@@ -35,7 +34,7 @@ import pt.ua.dicoogle.server.web.utils.ResponseUtil;
  */
 public class ServicesServlet extends HttpServlet {
 	private PluginController mPluginController;
-	private ControlServices mControlServices;
+	//private ControlServices mControlServices;
 	
 	public final static int STORAGE = 0;
 	public final static int PLUGIN = 1;
@@ -50,14 +49,14 @@ public class ServicesServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		mPluginController = PluginController.getInstance();
-		mControlServices = ControlServices.getInstance();
+		mPluginController = PluginController.get();
+		//mControlServices = ControlServices.getInstance();
 		
 		
 		boolean isRunning = false; 
 		switch (mType) {
 		case 0:
-			isRunning = mControlServices.storageIsRunning();
+			isRunning = true/*mControlServices.storageIsRunning()*/;
 			
 			break;
 		case 1:
@@ -66,7 +65,7 @@ public class ServicesServlet extends HttpServlet {
 			break;
 			
 		case 2:
-			isRunning = mControlServices.queryRetrieveIsRunning();
+			isRunning = true /*mControlServices.queryRetrieveIsRunning()*/;
 			break;
 
 		default:
@@ -81,17 +80,17 @@ public class ServicesServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		mPluginController = PluginController.getInstance();
-		mControlServices = ControlServices.getInstance();
+		mPluginController = PluginController.get();
+		//mControlServices = ControlServices.getInstance();
 		
 		boolean setState = Boolean.parseBoolean(req.getParameter("running")); 
 		switch (mType) {
 		case 0:
 			boolean success = true;
 			if(setState)
-				success = (mControlServices.startStorage() ==0)?true:false;
+				success = true/*(mControlServices.startStorage() ==0)?true:false*/;
 			else
-				mControlServices.stopStorage();
+				;//mControlServices.stopStorage();
 			
 			
 			ResponseUtil.simpleResponse(resp, "success", success);
@@ -103,11 +102,11 @@ public class ServicesServlet extends HttpServlet {
 			break;
 			
 		case 2:
-			if(setState)
+			/*if(setState)
 				mControlServices.startQueryRetrieve();
 			else
 				mControlServices.stopStorage();
-			
+			*/
 			
 			ResponseUtil.simpleResponse(resp, "success", true);
 			

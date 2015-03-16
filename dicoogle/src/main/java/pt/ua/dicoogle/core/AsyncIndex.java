@@ -36,8 +36,11 @@ import pt.ua.dicoogle.plugins.PluginController;
  */
 public class AsyncIndex {
 
-    public AsyncIndex() {
+    PluginController pluginController;
+    
+    public AsyncIndex(PluginController pController) {
 
+        pluginController = pController;
         // path to watch
         String path = ServerSettings.getInstance().getDicoogleDir();
 
@@ -54,37 +57,25 @@ public class AsyncIndex {
         // add actual watch
         if (ServerSettings.getInstance().isMonitorWatcher())
         {
-            int watchID = 0;
             try {
-                watchID = JNotify.addWatch(path, mask, watchSubtree, new Listener());
-            } catch (JNotifyException ex) {
+                JNotify.addWatch(path, mask, watchSubtree, new Listener(pluginController));
+            }
+            catch (JNotifyException ex) {
                 Logger.getLogger(AsyncIndex.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
-        
-
-
-        // to remove watch the watch
-//        boolean res = false;
-//        try {
-//            res = JNotify.removeWatch(watchID);
-//        } catch (JNotifyException ex) {
-//            Logger.getLogger(AsyncIndex.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        if (!res) {
-//            // invalid watch ID specified.
-//        }
-
-
-
     }
 }
 
 class Listener implements JNotifyListener {
 
-    public void fileRenamed(int wd, String rootPath, String oldName,
-            String newName) {
+    PluginController pluginController;
+    
+    Listener(PluginController p){
+        pluginController=p;
+    }
+    
+    public void fileRenamed(int wd, String rootPath, String oldName, String newName) {
         print("renamed " + rootPath + " : " + oldName + " -> " + newName);
     }
 
@@ -95,8 +86,9 @@ class Listener implements JNotifyListener {
     public void fileDeleted(int wd, String rootPath, String name) {
         print("deleted " + rootPath + " : " + name);
         try {
-            PluginController.getInstance().unindex(new URI(rootPath + File.pathSeparator+ name));
-        } catch (URISyntaxException ex) {
+            pluginController.unindex(new URI(rootPath + File.pathSeparator+ name));
+        }
+        catch (URISyntaxException ex) {
             Logger.getLogger(Listener.class.getName()).log(Level.SEVERE, null, ex);
         }
         
@@ -106,8 +98,9 @@ class Listener implements JNotifyListener {
     public void fileCreated(int wd, String rootPath, String name) {
         try {
             print("created " + rootPath + " : " + name);
-            PluginController.getInstance().index(new URI(rootPath + File.pathSeparator+ name));
-        } catch (URISyntaxException ex) {
+            pluginController.index(new URI(rootPath + File.pathSeparator+ name));
+        }
+        catch (URISyntaxException ex) {
             Logger.getLogger(Listener.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

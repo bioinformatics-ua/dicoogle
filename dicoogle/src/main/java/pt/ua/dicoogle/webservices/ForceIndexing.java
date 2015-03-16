@@ -49,7 +49,7 @@ public class ForceIndexing extends ServerResource{
         String[] uris = queryForm.getValuesArray("uri");
         String pluginName = queryForm.getValues("plugin");
         
-        PluginController pc = PluginController.getInstance();
+        PluginController pc = PluginController.get();
         //System.out.println("Generating Tasks");
         List<Task<Report>> reports  = new ArrayList<>(uris.length);
         for(String uriString : uris) {

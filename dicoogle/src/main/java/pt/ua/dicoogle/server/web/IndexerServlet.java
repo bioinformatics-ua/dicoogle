@@ -35,7 +35,7 @@ import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.settings.types.ServerDirectoryPath;
 import pt.ua.dicoogle.sdk.task.Task;
 import pt.ua.dicoogle.server.web.management.Services;
-import pt.ua.dicoogle.server.web.auth.Session;
+import deletion.Session;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.server.web.management.Dicoogle;
@@ -288,8 +288,7 @@ public class IndexerServlet extends HttpServlet {
 
 			if (uri != null) {
 				System.out.println("URI: " + uri.toString());
-				List<Task<Report>> report = PluginController.getInstance()
-						.index(uri);
+				List<Task<Report>> report = PluginController.get().index(uri);
 				System.out.println("Report Length: " + report.size());
 				if (this.ongoingTasks == null)
 					this.ongoingTasks = report;

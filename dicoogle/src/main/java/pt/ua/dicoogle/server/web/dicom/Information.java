@@ -63,7 +63,7 @@ public class Information
 
 		CountDownLatch latch = new CountDownLatch(1);	
 		MyHolder holder= new MyHolder(latch);
-		PluginController.getInstance().queryAll(holder , query, new HashMap<String, String>());
+		PluginController.get().queryAll(holder , query, new HashMap<String, String>());
 
 		try {
 			latch.await();
@@ -99,7 +99,7 @@ public class Information
 			        }
 			        
 			        if(uri != null){
-			        	StorageInterface str = PluginController.getInstance().getStorageForSchema(uri);
+			        	StorageInterface str = PluginController.get().getStorageForSchema(uri);
 			            if(str != null){
 			            	Iterable<StorageInputStream> stream = str.at(uri);
 			            	for( StorageInputStream r : stream){
@@ -190,7 +190,7 @@ public class Information
 					
 				}
 			};
-			itResults = PluginController.getInstance().queryAll(holder , query, extraFields).get();
+			itResults = PluginController.get().queryAll(holder , query, extraFields).get();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

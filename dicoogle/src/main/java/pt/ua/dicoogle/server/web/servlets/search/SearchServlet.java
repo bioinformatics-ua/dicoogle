@@ -81,7 +81,7 @@ public class SearchServlet extends HttpServlet {
         List<String> knownProviders = null;
         if (!queryAllProviders) {
             knownProviders = new ArrayList<>();
-            List<String> activeProviders = PluginController.getInstance().getQueryProvidersName(true);
+            List<String> activeProviders = PluginController.get().getQueryProvidersName(true);
             for (String p : providerList) {
                 if (activeProviders.contains(p)) {
                     knownProviders.add(p);
@@ -118,9 +118,9 @@ public class SearchServlet extends HttpServlet {
         long elapsedTime = System.currentTimeMillis();
         try {
             if (queryAllProviders) {
-                results = PluginController.getInstance().queryAll(queryTaskHolder, query, extraFields).get();
+                results = PluginController.get().queryAll(queryTaskHolder, query, extraFields).get();
             } else {
-                results = PluginController.getInstance().query(queryTaskHolder, knownProviders, query, extraFields).get();
+                results = PluginController.get().query(queryTaskHolder, knownProviders, query, extraFields).get();
             }
         } catch (InterruptedException | ExecutionException ex) {
             Logger.getLogger(SearchServlet.class.getName()).log(Level.SEVERE, null, ex);
