@@ -16,14 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.sdk.datastructs;
 
-public abstract class IndexReport extends Report {
+package pt.ua.dicoogle.sdk;
 
-	public abstract long getElapsedTime();
-
-	public abstract int getNErrors();
-
-	public abstract int getNIndexed();
-
+/**
+ *
+ * @author psytek
+ */
+public interface ServiceInterface {    
+    void start();
+    void stop();
+    boolean isRunning();
+    
 }

@@ -21,7 +21,7 @@ package pt.ua.dicoogle.sdk.datastructs;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TaskIndexReport extends IndexReport {
+public class TaskIndexReport implements Report {
 
 	private final List<DocumentIndexReport> successfulReports;
 	private final List<DocumentIndexReport> errorReports;
@@ -58,7 +58,6 @@ public class TaskIndexReport extends IndexReport {
 	/* (non-Javadoc)
 	 * @see pt.ua.dicoogle.sdk.datastructs.IndexReport#getElapsedTime()
 	 */
-	@Override
 	public long getElapsedTime() {
 		return elapsedTime.getTime();
 	}
@@ -66,7 +65,6 @@ public class TaskIndexReport extends IndexReport {
 	/* (non-Javadoc)
 	 * @see pt.ua.dicoogle.sdk.datastructs.IndexReport#getNErrors()
 	 */
-	@Override
 	public int getNErrors(){
 		if(!successful)
 			return -1;
@@ -76,7 +74,6 @@ public class TaskIndexReport extends IndexReport {
 	/* (non-Javadoc)
 	 * @see pt.ua.dicoogle.sdk.datastructs.IndexReport#getNIndexed()
 	 */
-	@Override
 	public int getNIndexed(){
 		if(!successful)
 			return -1;

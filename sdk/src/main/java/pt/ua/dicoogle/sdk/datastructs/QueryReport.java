@@ -16,39 +16,40 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.sdk;
 
-import java.net.URI;
-import pt.ua.dicoogle.sdk.datastructs.Report;
-import pt.ua.dicoogle.sdk.task.Task;
+package pt.ua.dicoogle.sdk.datastructs;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import pt.ua.dicoogle.sdk.utils.Multirator;
 
 /**
- * Represents the Index Interface Plugin. It is related with the storage of the
- * document, for instance, DICOM metadata.
  *
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Frederico Valente <fmvalente@ua.pt>
  */
-public interface IndexerInterface extends DicooglePlugin {
+public class QueryReport implements Iterable<SearchResult>, Report {
 
-    /**
-     * Index the file path to the database It can be a directory
-     *
-     * @param path directory or file to index
-     */
-    public Task<Report> index(StorageInputStream file);
-
-    public Task<Report> index(Iterable<StorageInputStream> files);
-
-    public boolean handles(URI uri);
+    public static final QueryReport EmptyReport = new QueryReport(Collections.EMPTY_LIST);        
+    ArrayList<Iterable<SearchResult>> elementSources = new ArrayList<>();    
     
+    public QueryReport(){}
     
-    /* 
-     * Remove the entry in the database
-     * 
-     * @param uri URI of the document
-     * @return boolean true if it was deleted from database, false otherwise.
-     * @see URI
-     */
-    public boolean unindex(URI uri);
+    public QueryReport(Iterable<SearchResult> results){
+        this.elementSources.add(results);
+    }
+
+    public QueryReport(Collection<SearchResult> results){
+        this.elementSources.add(results);
+    }
+
+    @Override
+    public Iterator<SearchResult> iterator() {
+        return new Multirator<>(elementSources);
+    }
+
+    public void merge(QueryReport report) {
+        elementSources.add(report);
+    }    
 }

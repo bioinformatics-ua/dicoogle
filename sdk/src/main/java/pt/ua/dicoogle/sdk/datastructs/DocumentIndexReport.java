@@ -18,7 +18,7 @@
  */
 package pt.ua.dicoogle.sdk.datastructs;
 
-public class DocumentIndexReport extends IndexReport {
+public class DocumentIndexReport implements Report {
 
 	private Measurable retrieveObjectTime;
 	private Measurable assembleDocumentTIme;
@@ -73,20 +73,17 @@ public class DocumentIndexReport extends IndexReport {
 	public void stop() {
 		totalTime.stop();
 	}
-
-	@Override
+	
 	public long getElapsedTime() {
 		return totalTime.getTime();
 	}
-
-	@Override
+	
 	public int getNErrors() {
 		if(isSuccessfull())
 			return 0;
 		return 1;
 	}
 
-	@Override
 	public int getNIndexed() {		
 		if(isSuccessfull())
 			return 1;

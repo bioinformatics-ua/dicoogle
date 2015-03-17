@@ -21,7 +21,16 @@ package pt.ua.dicoogle.sdk.datastructs;
 /**
  *
  * @author psytek
+ * 
+ * This interface is meant to return data from the tasks
+ * since a single task (such as indexing) may handle multiple sub tasks
+ * we may need a particularly complex return type (which will be inheriting from this class)
+ * TODO: actually enforce some restrictions or functionality, otherwise we may as well use Object
  */
-public class Report {
+public interface Report {
     
+    
+    
+    
+    String toString();
 }

@@ -54,7 +54,6 @@ public class Task<Type> extends FutureTask<Type> {
         }
     }
     
-    
     public void onCompletion(Runnable r){
         toRunWhenComplete.add(r);
     }

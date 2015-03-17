@@ -18,6 +18,7 @@
  */
 package pt.ua.dicoogle.sdk;
 
+import pt.ua.dicoogle.sdk.datastructs.QueryReport;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 
 /**
@@ -36,10 +37,10 @@ public interface QueryInterface extends DicooglePlugin
      * @param parameters Object parameters of the query. The plugin can use 
      * the generic parameters to communicate between each other.
      * 
-     * The consumer of the results will use Iterator and get the results until
+     * The consumer of the results will use Iterator (which a QueryReport is) and get the results until
      * has next. The iterator can be redefined, and wait until results.
      * 
      * @return Iterator returns the results.
      */
-    public Iterable<SearchResult> query(String query, Object ... parameters) ;
+    public QueryReport query(String query, Object ... parameters) ;
 }

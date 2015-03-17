@@ -21,6 +21,7 @@ package pt.ua.dicoogle.sdk.task;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import pt.ua.dicoogle.sdk.datastructs.QueryReport;
 
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 
@@ -37,7 +38,7 @@ public abstract class JointQueryTask {
 	private boolean cancelled;
 	private int numberOfCompletedTasks;
 	
-	private List<Task<Iterable<SearchResult>>> searchTasks;
+	private List<Task<QueryReport>> searchTasks;
 	
 	public JointQueryTask() {
 		this.searchTasks = new ArrayList<>();
@@ -45,7 +46,7 @@ public abstract class JointQueryTask {
 		this.cancelled = false;
 	}
 
-	public boolean addTask(final Task<Iterable<SearchResult>> e) {
+	public boolean addTask(final Task<QueryReport> e) {
 		//Add hook
 		e.onCompletion( new Runnable() {
 			@Override
@@ -62,17 +63,17 @@ public abstract class JointQueryTask {
 	
 	public abstract void onCompletion();
 
-	public abstract void onReceive(Task<Iterable<SearchResult>> e);
+	public abstract void onReceive(Task<QueryReport> e);
 	
-	public Iterable<SearchResult> get() throws InterruptedException, ExecutionException{
+	public QueryReport get() throws InterruptedException, ExecutionException{
 		List<SearchResult> list = new ArrayList<>();
 		
-		for(Task<Iterable<SearchResult>> task : searchTasks){
+		for(Task<QueryReport> task : searchTasks){
 			Iterable<SearchResult> res = task.get();
 			for(SearchResult i : res)
 				list.add(i);
 		}
-		return list;
+		return new QueryReport(list);
 	}	
 
 	public float getProgress() {
@@ -94,11 +95,11 @@ public abstract class JointQueryTask {
 	}
 
 	public boolean cancel(boolean mayInterruptIfRunning) {
-		boolean ret = true;
-		for(Task<Iterable<SearchResult>> t : searchTasks){
-			if(!t.isCancelled())
-				ret = t.cancel(mayInterruptIfRunning) && ret;
-		}
-		return ret;
+            boolean ret = true;
+            for(Task<QueryReport> t : searchTasks){
+                if(!t.isCancelled())
+                    ret = t.cancel(mayInterruptIfRunning) && ret;
+            }
+            return ret;
 	}	
 }

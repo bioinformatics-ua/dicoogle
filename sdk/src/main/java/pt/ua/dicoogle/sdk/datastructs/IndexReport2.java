@@ -18,7 +18,9 @@
  */
 package pt.ua.dicoogle.sdk.datastructs;
 
-public class IndexReport2 extends IndexReport {
+//TODO:change the name... how does this differentiates from indexreport1? or documentIndexReport?
+
+public class IndexReport2 implements Report {
 
 	private int nIndexedFiles;
 	private int nErrors;
@@ -81,12 +83,10 @@ public class IndexReport2 extends IndexReport {
 		this.elapsedTime = System.currentTimeMillis() - elapsedTime;
 	}
 
-	@Override
 	public int getNErrors() {
 		return nErrors;
 	}
 
-	@Override
 	public int getNIndexed() {
 		return nIndexedFiles;
 	}
