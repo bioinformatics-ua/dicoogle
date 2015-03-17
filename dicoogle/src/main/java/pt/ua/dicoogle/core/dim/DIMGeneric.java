@@ -72,7 +72,7 @@ public class DIMGeneric
      * it is allow to handle a ArrayList of Strings or SearchResults
      * @param arr
      */
-    public DIMGeneric(Collection<SearchResult> arr) throws Exception{
+    public DIMGeneric(Iterable<SearchResult> arr) throws Exception{
             HashMap<String, Object> extra = null;
             //DebugManager.getInstance().debug("Looking search results: " + arr.size() );
 

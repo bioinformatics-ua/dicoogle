@@ -18,18 +18,7 @@
  */
 package pt.ua.dicoogle.services;
 
-import pt.ua.dicoogle.server.web.servlets.search.ProvidersServlet;
-import pt.ua.dicoogle.server.web.servlets.search.SearchServlet;
-import pt.ua.dicoogle.server.web.servlets.search.WadoServlet;
-import pt.ua.dicoogle.server.web.servlets.accounts.UserServlet;
-import pt.ua.dicoogle.server.web.servlets.accounts.LoginServlet;
 import pt.ua.dicoogle.core.ServerSettings;
-import pt.ua.dicoogle.server.web.servlets.management.AETitleServlet;
-import pt.ua.dicoogle.server.web.servlets.management.DicomSettingsServlet;
-import pt.ua.dicoogle.server.web.servlets.management.ForceIndexing;
-import pt.ua.dicoogle.server.web.servlets.management.IndexerSettingsServlet;
-import pt.ua.dicoogle.server.web.servlets.management.ServicesServlet;
-import pt.ua.dicoogle.server.web.servlets.management.TransferenceOptionsServlet;
 
 import java.io.File;
 import java.net.URL;
@@ -49,21 +38,8 @@ import javax.servlet.http.HttpServlet;
 
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlets.GzipFilter;
-import pt.ua.dicoogle.server.web.ExportCSVToFILEServlet;
-import pt.ua.dicoogle.server.web.ExportToCSVServlet;
-import pt.ua.dicoogle.server.web.ImageServlet;
-import pt.ua.dicoogle.server.web.IndexControlServlet;
-import pt.ua.dicoogle.server.web.IndexerServlet;
-import pt.ua.dicoogle.server.web.SearchHolderServlet;
-import pt.ua.dicoogle.server.web.SettingsServlet;
-import pt.ua.dicoogle.server.web.TagsServlet;
-
-import pt.ua.dicoogle.server.web.servlets.accounts.LogoutServlet;
-import pt.ua.dicoogle.server.web.servlets.search.DumpServlet;
-import pt.ua.dicoogle.server.web.utils.LocalImageCache;
 
 /**
- * @author António Novo <antonio.novo@ua.pt>
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Frederico Valente
  * @author Frederico Silva <fredericosilva@ua.pt>
@@ -80,7 +56,6 @@ public class JettyServiceProvider {
      * Sets the context path used to serve the contents.
      */
     public static final String CONTEXTPATH = "/";
-    private LocalImageCache cache = null;
     private Server server = null;
     private int port;
 
@@ -116,49 +91,11 @@ public class JettyServiceProvider {
         //setup the DICOM to PNG image servlet, with a local cache
         final ServletContextHandler dic2png = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
         dic2png.setContextPath(CONTEXTPATH);
-        cache = new LocalImageCache("dic2png", 300, 900); // pooling rate of 12/hr and max un-used cache age of 15 minutes
-        dic2png.addServlet(new ServletHolder(new ImageServlet(cache)), "/dic2png");
-        cache.start(); // start the caching system
-
-        // setup the DICOM to PNG image servlet
-        final ServletContextHandler dictags = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        dictags.setContextPath(CONTEXTPATH);
-        dictags.addServlet(new ServletHolder(new TagsServlet()), "/dictags");
-
-        // setup the Export to CSV Servlet
-        final ServletContextHandler csvServletHolder = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        csvServletHolder.setContextPath(CONTEXTPATH);
-        csvServletHolder.addServlet(new ServletHolder(new ExportToCSVServlet()), "/export");
-
-        File tempDir = new File(ServerSettings.getInstance().getPath());
-        csvServletHolder.addServlet(new ServletHolder(new ExportCSVToFILEServlet(tempDir)), "/exportFile");
-
-        // setup the search (DIMSE-service-user C-FIND ?!?) servlet
-        final ServletContextHandler search = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        search.setContextPath(CONTEXTPATH);
-        search.addServlet(new ServletHolder(new SearchServlet()), "/search");
 
         // setup the plugins data, xslt and pages servlet
         final ServletContextHandler plugin = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
         plugin.setContextPath(CONTEXTPATH);
-        /*hooks = getRegisteredHookActions();
-         plugin.addServlet(new ServletHolder(new PluginsServlet(hooks)), "/plugin/*");
-         */
-
-        // setup the plugins data, xslt and pages servlet
-        final ServletContextHandler indexer = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        indexer.setContextPath(CONTEXTPATH);
-        indexer.addServlet(new ServletHolder(new IndexerServlet()), "/indexer");
-
-        final ServletContextHandler indexeres = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        indexer.setContextPath(CONTEXTPATH);
-        indexer.addServlet(new ServletHolder(new IndexControlServlet()), "/indexamos");
-
-        // setup the general/advanced Dicoogle settings servlet
-        final ServletContextHandler settings = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        settings.setContextPath(CONTEXTPATH);
-        settings.addServlet(new ServletHolder(new SettingsServlet()), "/settings");
-
+        
         // setup the web pages/scripts app
         final WebAppContext webpages = new WebAppContext(warUrlString, CONTEXTPATH);
         webpages.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false"); // disables directory listing
@@ -166,40 +103,13 @@ public class JettyServiceProvider {
         webpages.setInitParameter("cacheControl", "max-age=0, public");
 
         webpages.setWelcomeFiles(new String[]{"newsearch.jsp"});
-        webpages.addServlet(new ServletHolder(new SearchHolderServlet()), "/search/holders");
-        FilterHolder filter = webpages.addFilter(GzipFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
 
 
         // list the all the handlers mounted above
         Handler[] handlers = new Handler[]{
             dic2png,
-            dictags,
             plugin,
-            indexer,
-            indexeres,
-            settings,
-            csvServletHolder,
-            createServletHandler(new LoginServlet(), "/login"),
-            createServletHandler(new LogoutServlet(), "/logout"),
-            createServletHandler(new UserServlet(), "/user"),
-            createServletHandler(new SearchServlet(), "/search"),
-            createServletHandler(new DumpServlet(), "/dump"),
-            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.path) , "/management/settings/index/path"),
-            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.zip), "/management/settings/index/zip"),
-            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.effort), "/management/settings/index/effort"),
-            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnail), "/management/settings/index/thumbnail"),
-            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnailSize), "/management/settings/index/thumbnail/size"),
-            createServletHandler(new TransferenceOptionsServlet(), "/management/settings/transfer"),
-            createServletHandler(new WadoServlet(), "/wado"),
-            createServletHandler(new ProvidersServlet(), "/providers"),
-            createServletHandler(new DicomSettingsServlet(), "/management/settings/dicom/query"),
-            createServletHandler(new ForceIndexing(), "/management/tasks/index"),
-            createServletHandler(new ServicesServlet(ServicesServlet.STORAGE), "/management/dicom/storage"),
-            createServletHandler(new ServicesServlet(ServicesServlet.QUERY), "/management/dicom/query"),
-            createServletHandler(new ServicesServlet(ServicesServlet.PLUGIN), "/management/plugins/"),
-            createServletHandler(new AETitleServlet(), "/management/settings/dicom"),
             webpages
-
         };
 
         // setup the server
@@ -234,12 +144,6 @@ public class JettyServiceProvider {
 
         // voiding its value
         server = null;
-
-        // and remove the local cache, if any
-        if (cache != null) {
-            cache.terminate();
-            cache = null;
-        }
     }
     
     public void start() throws Exception{

@@ -16,6 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+
+
 package pt.ua.dicoogle.plugins;
 
 import java.net.URI;
@@ -27,6 +30,7 @@ import pt.ua.dicoogle.sdk.QueryInterface;
 import pt.ua.dicoogle.sdk.StorageInputStream;
 import pt.ua.dicoogle.sdk.StorageInterface;
 import pt.ua.dicoogle.sdk.core.DicooglePlatformInterface;
+import pt.ua.dicoogle.sdk.datastructs.QueryReport;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
@@ -34,23 +38,25 @@ import pt.ua.dicoogle.sdk.task.Task;
 
 /**
  * Proxy to the implementations of Plugin Controller
- * 
+ *
  * @author psytek
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class DicooglePlatformProxy implements DicooglePlatformInterface {
 
     private PluginController pluginController;
-    
-    public DicooglePlatformProxy(PluginController pluginController){
+
+    public DicooglePlatformProxy(PluginController pluginController) {
         this.pluginController = pluginController;
     }
-    
+
     @Override
     public IndexerInterface requestIndexPlugin(String name) {
         Collection<IndexerInterface> indexers = pluginController.getIndexingPlugins(true);
-        for(IndexerInterface index : indexers){
-            if(index.getName().equals(name)) return index;
+        for (IndexerInterface index : indexers) {
+            if (index.getName().equals(name)) {
+                return index;
+            }
         }
         return null;
     }
@@ -58,10 +64,12 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
     @Override
     public QueryInterface requestQueryPlugin(String name) {
         Collection<QueryInterface> queriers = pluginController.getQueryPlugins(true);
-        for(QueryInterface querier : queriers){
-            if(querier.getName().equals(name)) return querier;
+        for (QueryInterface querier : queriers) {
+            if (querier.getName().equals(name)) {
+                return querier;
+            }
         }
-        
+
         return null;
     }
 
@@ -90,48 +98,52 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
         return pluginController.resolveURI(location);
     }
 
-	public Collection<StorageInterface> getStoragePlugins(boolean onlyEnabled) {
-		return pluginController.getStoragePlugins(onlyEnabled);
-	}
+    public Collection<StorageInterface> getStoragePlugins(boolean onlyEnabled) {
+        return pluginController.getStoragePlugins(onlyEnabled);
+    }
 
-	public StorageInterface getStorageForSchema(String schema) {
-		return pluginController.getStorageForSchema(schema);
-	}
+    @Override
+    public StorageInterface getStorageForSchema(String schema) {
+        return pluginController.getStorageForSchema(schema);
+    }
 
-	public Collection<QueryInterface> getQueryPlugins(boolean onlyEnabled) {
-		return pluginController.getQueryPlugins(onlyEnabled);
-	}
+    @Override
+    public Collection<QueryInterface> getQueryPlugins(boolean onlyEnabled) {
+        return pluginController.getQueryPlugins(onlyEnabled);
+    }
 
-	public List<String> getQueryProvidersName(boolean enabled) {
-		return pluginController.getQueryProvidersName(enabled);
-	}
+    public List<String> getQueryProvidersName(boolean enabled) {
+        return pluginController.getQueryProvidersName(enabled);
+    }
 
-	public QueryInterface getQueryProviderByName(String name,
-			boolean onlyEnabled) {
-		return pluginController.getQueryProviderByName(name, onlyEnabled);
-	}
+    public QueryInterface getQueryProviderByName(String name, boolean onlyEnabled) {
+        return pluginController.getQueryProviderByName(name, onlyEnabled);
+    }
 
-	public JointQueryTask queryAll(JointQueryTask holder, String query,
-			Object... parameters) {
-		return pluginController.queryAll(holder, query, parameters);
-	}
-
-	public Task<Iterable<SearchResult>> query(String querySource, String query,
-			Object... parameters) {
-		return pluginController.query(querySource, query, parameters);
-	}
-
-	public JointQueryTask query(JointQueryTask holder,
-			List<String> querySources, String query, Object... parameters) {
-		return pluginController.query(holder, querySources, query, parameters);
-	}
-
-	public List<Task<Report>> index(URI path) {
-		return pluginController.index(path);
-	}
-
-	public List<Report> indexBlocking(URI path) {
-		return pluginController.indexBlocking(path);
-	}
+    @Override
+    public Task<QueryReport> queryDispatch(Iterable<String> querySources, String query, Object ... parameters){
+        return pluginController.queryDispatch(querySources, query, parameters);
+    }
+    @Override
+    public Task<QueryReport> queryDispatch(String querySource, String query, Object ... parameters){
+        return pluginController.queryDispatch(querySource, query, parameters);
+    }
+    @Override
+    public Task<QueryReport> queryClosure(Iterable<String> querySources, String query, Object ... parameters){
+        return pluginController.queryClosure(querySources, query, parameters);
+    }
+    @Override
+    public Task<QueryReport> queryClosure(String querySource, String query, Object ... parameters){
+        return pluginController.queryClosure(querySource, query, parameters);
+    }
     
+    
+    public List<Task<Report>> index(URI path) {
+        return pluginController.index(path);
+    }
+
+    public List<Report> indexBlocking(URI path) {
+        return pluginController.indexBlocking(path);
+    }
+
 }

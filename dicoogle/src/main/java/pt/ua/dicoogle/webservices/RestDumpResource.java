@@ -43,9 +43,7 @@ public class RestDumpResource extends ServerResource{
         
     @Get
     public String represent(){
-        
-        
-        
+                
         String SOPInstanceUID = getRequest().getResourceRef().getQueryAsForm().getValues("uid");
         if(SOPInstanceUID == null) return null;
         
@@ -60,70 +58,25 @@ public class RestDumpResource extends ServerResource{
                 extraFields.put(s, s);
         }
 
-        JointQueryTask holder = new JointQueryTask() {
-
-                @Override
-                public void onReceive(Task<Iterable<SearchResult>> e) {
-                    try {
-                        // TODO Auto-generated method stub
-                    System.out.println("onReceive");
-                    for (SearchResult r : e.get())
-                    {
-                        System.out.println(r.getURI());
-                    }
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(RestDumpResource.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (ExecutionException ex) {
-                        Logger.getLogger(RestDumpResource.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                }
-
-                @Override
-                public void onCompletion() {
-                        // TODO Auto-generated method stub
-                    System.out.println("onComplete");
-
-                }
-        };
-
         //performs the search
         Iterable<SearchResult> queryResultList = null;
         try {
             System.out.println("Query: + " + query);
-            queryResultList = PluginController.get().queryAll(holder, query, extraFields).get();
-            Thread.sleep(1000);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(RestDumpResource.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ExecutionException ex) {
+            queryResultList = PluginController.get().queryDispatch("lucene", query, extraFields).get();
+        }
+        catch (InterruptedException | ExecutionException ex) {
             Logger.getLogger(RestDumpResource.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (queryResultList==null)
-        {
-            System.err.println("Aborting queryResult is null");
-                return null;
-        }
-        
-        if(!queryResultList.iterator().hasNext()) 
-        {
-            System.err.println("Aborting queryResult does not have next");
-            return null;
-        }//TODO:Throw exception
         
         StringBuilder sb = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<tags>\n");
         
-        Iterator it  = queryResultList.iterator();
-        while (it.hasNext()) {
-                System.out.println("results: +++");
-                SearchResult r = (SearchResult) it.next();
-                for (String s : r.getExtraData().keySet())
-                {
-                    System.out.println(s);
-                    sb.append("\t<tag name=\"").append(s).append("\">").append(escapeHtml3(((String)r.getExtraData().get(s)).trim())).append("</tag>\n");
-                }
+        for(SearchResult r : queryResultList){
+            for (String s : r.getExtraData().keySet()){
+                System.out.println(s);
+                sb.append("\t<tag name=\"").append(s).append("\">").append(escapeHtml3(((String)r.getExtraData().get(s)).trim())).append("</tag>\n");
+            }
         }
 
-        
         sb.append("</tags>");
         
         //and returns an xml version of our dim search

@@ -38,6 +38,7 @@ import org.restlet.data.MediaType;
 import org.restlet.representation.OutputRepresentation;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.StorageInputStream;
+import pt.ua.dicoogle.sdk.datastructs.QueryReport;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
@@ -58,12 +59,12 @@ public class FileDownloadUtils {
         
         
         PluginController pc = PluginController.get();
-        JointQueryTask task = new MyHolder();
-        pc.queryAll(task, query, extraFields);
-        Iterable<SearchResult> queryResults = null;
+        
+        Iterable<SearchResult> queryResults;
         try {
-            queryResults = task.get();
-        } catch (InterruptedException | ExecutionException ex) {
+            queryResults = pc.queryDispatch("lucene", query, extraFields).get();
+        }
+        catch (InterruptedException | ExecutionException ex) {
             Logger.getLogger(RestFileResource.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
@@ -99,19 +100,8 @@ public class FileDownloadUtils {
         }
         return null;
     }
-        
-    private static class MyHolder extends JointQueryTask {
-         
-        @Override
-        public void onCompletion() {
-        }
-
-        @Override
-        public void onReceive(Task<Iterable<SearchResult>> e) {
-        }
-    }    
-     
-     private static class MyOutput extends OutputRepresentation{
+    
+    private static class MyOutput extends OutputRepresentation{
 
          private final StorageInputStream stream;
 
@@ -123,7 +113,8 @@ public class FileDownloadUtils {
         public void write(OutputStream out) throws IOException  {
              try {
                  IOUtils.copy(stream.getInputStream(), out);
-             } catch (IOException ex) {
+             }
+             catch (IOException ex) {
                  Logger.getLogger(RestFileResource.class.getName()).log(Level.SEVERE, null, ex);
                  ex.printStackTrace();
                  throw ex;

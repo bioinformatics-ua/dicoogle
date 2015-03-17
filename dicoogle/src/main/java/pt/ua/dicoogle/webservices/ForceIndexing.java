@@ -65,7 +65,7 @@ public class ForceIndexing extends ServerResource{
             	if(pluginName == null)
             		reports.addAll(pc.index(u));
             	else
-            		reports.addAll(pc.index(pluginName,u));
+            		reports.add(pc.index(pluginName,u));
             }
         }
         

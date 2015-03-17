@@ -42,6 +42,7 @@ import pt.ua.dicoogle.sdk.QueryInterface;
 import pt.ua.dicoogle.sdk.StorageInputStream;
 import pt.ua.dicoogle.sdk.StorageInterface;
 import pt.ua.dicoogle.sdk.core.PlatformCommunicatorInterface;
+import pt.ua.dicoogle.sdk.datastructs.QueryReport;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.settings.ConfigurationHolder;
@@ -69,7 +70,6 @@ public class PluginController{
     private Collection<PluginSet> pluginSets;
     private File pluginFolder;
     private static PluginController mainGlobalInstance;
-    //private TaskQueue tasks = null;
  
     public static PluginController get(){return mainGlobalInstance;}
     
@@ -363,7 +363,7 @@ public class PluginController{
     	return null;
     }
     
-    //TODO: CONVENIENCE METHOD
+    // CONVENIENCE METHOD
     public IndexerInterface getIndexerByName(String name, boolean onlyEnabled){
     	Collection<IndexerInterface> plugins = getIndexingPlugins(onlyEnabled);
     	for(IndexerInterface p : plugins){
@@ -376,53 +376,102 @@ public class PluginController{
     	return null;
     }
     
-    public JointQueryTask queryAll(JointQueryTask holder, final String query, final Object ... parameters)
-    {
-    	//logger.info("Querying all providers");
-    	List<String> providers = this.getQueryProvidersName(true);
-    	return query(holder, providers, query, parameters);        
+    public Iterable<String> indexerNames(){
+    	Collection<IndexerInterface> plugins = getIndexingPlugins(true);
+        ArrayList<String> names = new ArrayList<>();
+    	for(IndexerInterface p : plugins){
+            names.add(p.getName());
+    	}
+    	return names;
     }
-    
-    public Task<Iterable<SearchResult>> query(String querySource, final String query, final Object ... parameters){
-        Task<Iterable<SearchResult>> t = getTaskForQuery(querySource, query, parameters);       
-        taskManager.dispatch(t);
-        //logger.info("Fired Query Task: "+querySource +" QueryString:"+query);
         
+    public Task<QueryReport> queryDispatch(String querySource, final String query, final Object ... parameters){
+        Task<QueryReport> t = queryClosure(querySource, query, parameters);       
+        taskManager.dispatch(t);        
         return t;//returns the handler to obtain the computation results
     }
     
-    public JointQueryTask query(JointQueryTask holder, List<String> querySources, final String query, final Object ... parameters){
-        if(holder == null) return null;
-    	
-    	List<Task<Iterable<SearchResult>>> tasks = new ArrayList<>();
-        for(String p : querySources){
-            Task<Iterable<SearchResult>> task = getTaskForQuery(p, query, parameters);
-            tasks.add(task);
-            holder.addTask(task);
-        }
+    public Task<QueryReport> queryDispatch(final Iterable<String> querySources, final String query, final Object ... parameters){        
+        
+        /*
+        * Creates a task that dispatches several tasks, one per enabled query plugin,
+        * waits their completion and merges the results into a single report.
+        * A dispatched task object is returned.
+        */
+        
+        Task<QueryReport> queryTask = new Task<>("multiple query",
+            new Callable<QueryReport>(){
+                @Override
+                public QueryReport call() throws Exception {
+                    ArrayList<Task<QueryReport>> tasks = new ArrayList<>();
+                    for(String sourcePlugin : querySources){
+                        Task<QueryReport> task = queryClosure(sourcePlugin, query, parameters);
+                        tasks.add(task);
+                        taskManager.dispatch(task);
+                    }
+                    
+                    QueryReport q = new QueryReport();
+                    for(Task<QueryReport> t:tasks){
+                        q.merge(t.get());
+                    }
+                    return q;
+                    
+                }
+            });
+
 
         //and executes said task asynchronously
-        for(Task<?> t : tasks)
-            taskManager.dispatch(t);
-
-        //logger.info("Fired Query Tasks: "+Arrays.toString(querySources.toArray()) +" QueryString:"+query);
-        return holder;//returns the handler to obtain the computation results
+        taskManager.dispatch(queryTask);
+        return queryTask;
     }
     
-    private Task<Iterable<SearchResult>> getTaskForQuery(String querySource, final String query, final Object ... parameters){
+    public Task<QueryReport> queryClosure(String querySource, final String query, final Object ... parameters){
     	final QueryInterface queryEngine = getQueryProviderByName(querySource, true);
     	//returns a tasks that runs the query from the selected query engine
-        Task<Iterable<SearchResult>> queryTask = new Task<>(querySource,
-            new Callable<Iterable<SearchResult>>(){
-            @Override public Iterable<SearchResult> call() throws Exception {
-                if(queryEngine == null) return Collections.emptyList();
-                return queryEngine.query(query, parameters);
-            }
-        });
+        Task<QueryReport> queryTask = new Task<>(querySource,
+            new Callable<QueryReport>(){
+                @Override public QueryReport call() throws Exception {
+                    if(queryEngine == null) return QueryReport.EmptyReport;
+                    return queryEngine.query(query, parameters);
+                }
+            });
         //logger.info("Prepared Query Task: QueryString");
         return queryTask;
     }        
  
+        //returns a task, that has not yet been dispatched
+        //this means the task can run in blocking mode on the caller thread, or
+        //be dispatched to the task manager
+        public Task<QueryReport> queryClosure(final Iterable<String> querySources, final String query, final Object ... parameters){        
+            /*
+            * Creates a task that dispatches several tasks, one per enabled query plugin,
+            * waits their completion and merges the results into a single report.
+            * A dispatched task object is returned.
+            */
+            Task<QueryReport> queryTask = new Task<>("multiple query",
+                new Callable<QueryReport>(){
+                    @Override
+                    public QueryReport call() throws Exception {
+                        ArrayList<Task<QueryReport>> tasks = new ArrayList<>();
+                        for(String sourcePlugin : querySources){
+                            Task<QueryReport> task = queryClosure(sourcePlugin, query, parameters);
+                            tasks.add(task);
+                            taskManager.dispatch(task);
+                        }
+
+                        QueryReport q = new QueryReport();
+                        for(Task<QueryReport> t:tasks){
+                            q.merge(t.get());
+                        }
+                        return q;
+
+                    }
+                });
+            return queryTask;
+        }
+
+    
+    
     /*
      * Given an URI (which may be a path to a dir or file, a web resource or whatever)
      * this method creates a task that
@@ -498,6 +547,41 @@ public class PluginController{
         
         return task;    	
     }
+    
+        public Task<Report> indexClosure(String pluginName, URI path) {
+    	logger.info("Starting Indexing procedure from Closure for "+path.toString());
+        StorageInterface store = getStorageForSchema(path);
+
+        if(store==null){ 
+            logger.error("No storage plugin detected");
+            return null;
+        }
+        
+        IndexerInterface indexer = getIndexerByName(pluginName, true);
+        if(indexer == null){
+            String names = "";
+            for(String s : indexerNames()) names += s+" ";
+            logger.error("Indexer not found:"+pluginName+"\n available:"+names);
+            return null;
+        }
+        
+        final  String pathF = path.toString();
+        
+    	Task<Report> task = indexer.index(store.at(path));
+        task.onCompletion(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
+                System.out.println("Index Task accomplished: " + pathF);
+                System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
+            }
+        });
+        
+        return task;    	
+    }
+
+    
+    
     
     public void unindex(URI path) {
     	logger.info("Starting Indexing procedure for "+path.toString());

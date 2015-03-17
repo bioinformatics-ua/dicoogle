@@ -57,10 +57,26 @@ public class Dicoogle
 
         try{
             Dicoogle dicoogle = new Dicoogle();
-            dicoogle.parseCommandLine(args);
+            System.err.println("Parsing");
+            for(String arg : args){
+                System.err.println(arg);
+            }
+            
+            
+            List<Task<Report>> tasks = dicoogle.parseCommandLine(args);
+            System.err.println("Done Parsing");
             dicoogle.initialize();
             dicoogle.serviceController.manageJettyPlugins(dicoogle.pluginController.getJettyPlugins());
             dicoogle.serviceController.manageRestPlugins(dicoogle.pluginController.getRestPlugins());
+            
+            System.err.println("Pre loop");
+            
+            for(Task<Report> forest : tasks){
+                System.err.println("ON TASK RUNNER");
+                Report r = forest.get();
+                System.out.println(r);
+            }            
+            System.err.println("aft loop");
         }
         catch (Exception ex) {
             Logger.getLogger(Dicoogle.class.getName()).log(Level.SEVERE, null, ex);
@@ -89,8 +105,8 @@ public class Dicoogle
 //        AsyncIndex asyncIndex = new AsyncIndex();
     }
 
-    private List<Runnable> parseCommandLine(String[] args) throws URISyntaxException {
-        ArrayList<Runnable> actions = new ArrayList<>();
+    private List<Task<Report>> parseCommandLine(String[] args) throws URISyntaxException {
+        ArrayList<Task<Report>> actions = new ArrayList<>();
         String workingDirectoryPath = "./";
         int i=0;
         while(i< args.length){
@@ -107,16 +123,8 @@ public class Dicoogle
                 
                 //index
                 case "-i":{
-                    for(Task<Report> indexTask : pluginController.index(new URI(args[i+1]))){
-                        System.err.println("Indexing:"+args[i+1]);
-                        try {
-                            Report r = indexTask.get();
-                           //TODO: r.toLog 
-                        }
-                        catch (InterruptedException | ExecutionException ex) {
-                            Logger.getLogger(Dicoogle.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
+                    Task<Report> indexTask = pluginController.indexClosure("lucene", new URI(args[i+1]));
+                    actions.add(indexTask);
                     i+=2;
                     break;
                 }
@@ -126,19 +134,12 @@ public class Dicoogle
                     
                 //execute query
                 case "-q": {
-                    if(i+1 <args.length) {
+                    if(i+1 >= args.length) {
                         System.err.println("Query parameter requires a query expression");
                         System.exit(1);
                     }
-                    Task<Iterable<SearchResult>> queryTask = pluginController.query("lucene",args[i+1] );
-                try {
-                    Iterable<SearchResult> r = queryTask.get();
-                    for(SearchResult s : r){
-                        System.out.println("RESULT!:"+s);
-                    }
-                } catch (InterruptedException | ExecutionException ex) {
-                    Logger.getLogger(Dicoogle.class.getName()).log(Level.SEVERE, null, ex);
-                }   
+                    Task task = pluginController.queryClosure("lucene",args[i+1] );
+                    actions.add(task);
                     i+=2;
                     break;
                 }
@@ -156,7 +157,8 @@ public class Dicoogle
                 //use this config file
                 case "-c": break;
                 
-                
+                default:
+                    i++;
                 
             }
             

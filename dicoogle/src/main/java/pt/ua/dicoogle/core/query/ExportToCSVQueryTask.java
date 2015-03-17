@@ -29,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import pt.ua.dicoogle.sdk.datastructs.QueryReport;
 
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
@@ -68,7 +69,7 @@ public class ExportToCSVQueryTask extends JointQueryTask {
 	}
 
 	@Override
-	public void onReceive(Task<Iterable<SearchResult>> e) {
+	public void onReceive(Task<QueryReport> e) {
 		// TODO Auto-generated method stub
 
 		try {

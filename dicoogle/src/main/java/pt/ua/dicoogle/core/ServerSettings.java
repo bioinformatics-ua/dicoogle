@@ -28,7 +28,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.dcm4che2.data.UID;
-import pt.ua.dicoogle.server.web.utils.types.DataTable;
 
 /**
  *
@@ -1044,7 +1043,7 @@ public class ServerSettings
 		//result.put(STORAGE_SETTING_PATH, new ServerDirectoryPath(getPath()));
 		// TODO move some of these new classes onto the SDK, so that plugins can also process option types/fields
 		int destCount = dest.size();
-		DataTable storageServers = new DataTable(3, destCount);
+		/*DataTable storageServers = new DataTable(3, destCount);
 		storageServers.setColumnName(0, "AETitle");
 		storageServers.setColumnName(1, "IP");
 		storageServers.setColumnName(2, "Port");
@@ -1065,7 +1064,7 @@ public class ServerSettings
 				storageServers.setCellData(i, 2, "" + aDest.getPort());
 			}
 		result.put(STORAGE_SETTING_SERVERS_DESTINATIONS, storageServers);
-
+*/
 		return result;
 	}
 

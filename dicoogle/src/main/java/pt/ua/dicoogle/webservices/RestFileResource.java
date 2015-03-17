@@ -47,7 +47,7 @@ import pt.ua.dicoogle.webservices.elements.FileDownloadUtils;
  * WARNING: This will return *any* file on the host! The best way to correct
  * this will be to change the generated XML in order to produce SOPInstanceUID,
  * and let them act as a tag for the file. This will imply a new query every
- * time we wanto to download a new file, but that's probably fine...
+ * time we want to download a new file, but that's probably fine...
  *
  */
 public class RestFileResource extends ServerResource {
