@@ -30,7 +30,6 @@ import org.dcm4che2.data.TransferSyntax;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.plugins.ServiceController;
 import pt.ua.dicoogle.sdk.datastructs.Report;
-import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.Task;
 
 /**
@@ -57,11 +56,8 @@ public class Dicoogle
 
         try{
             Dicoogle dicoogle = new Dicoogle();
-            System.err.println("Parsing");
-            for(String arg : args){
-                System.err.println(arg);
-            }
             
+            dicoogle.pluginController.plugins().forEach((p) -> System.err.println("plugin loaded: "+p.getName()));
             
             List<Task<Report>> tasks = dicoogle.parseCommandLine(args);
             System.err.println("Done Parsing");
@@ -71,15 +67,17 @@ public class Dicoogle
             
             System.err.println("Pre loop");
             
-            for(Task<Report> forest : tasks){
+            for(Task<Report> task : tasks){
                 System.err.println("ON TASK RUNNER");
-                Report r = forest.get();
+                System.err.println(task.getName());
+                task.run();
+                Report r = task.get();
                 System.out.println(r);
-            }            
+            }
             System.err.println("aft loop");
         }
-        catch (Exception ex) {
-            Logger.getLogger(Dicoogle.class.getName()).log(Level.SEVERE, null, ex);
+        catch (URISyntaxException | InterruptedException | ExecutionException ex) {
+            Logger.getLogger("dicoogle").log(Level.SEVERE, null, ex);
             System.err.println(ex);
         }
                                

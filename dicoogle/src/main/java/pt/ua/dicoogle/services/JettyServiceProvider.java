@@ -18,11 +18,13 @@
  */
 package pt.ua.dicoogle.services;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import pt.ua.dicoogle.core.ServerSettings;
 
-import java.io.File;
 import java.net.URL;
-import java.util.EnumSet;
+import java.util.logging.Level;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -33,11 +35,9 @@ import org.eclipse.jetty.webapp.WebAppContext;
 
 import java.util.logging.Logger;
 
-import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServlet;
+import pt.ua.dicoogle.Dicoogle;
 
-import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlets.GzipFilter;
 
 /**
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
@@ -57,7 +57,6 @@ public class JettyServiceProvider {
      */
     public static final String CONTEXTPATH = "/";
     private Server server = null;
-    private int port;
 
     private ContextHandlerCollection contextHandlers;
 
@@ -67,37 +66,41 @@ public class JettyServiceProvider {
 
     /**
      * Initializes and starts the Dicoogle Web service.
+     * @param port
      */
     public JettyServiceProvider(int port) {
-        log.info("Starting Web Services... in DicoogleWeb. POrt: " + port);
+        log.info("Starting Jetty Web Services... Port: " + port);
 
         //wtf is this?
         System.setProperty("org.apache.jasper.compiler.disablejsr199throws Exception", "true");
 
-        this.port = port;
-
         // abort if the server is already running
         if (server != null) {
-            System.err.println("Server is not null!!");
+            Logger.getLogger("dicoogle").warning("Server is not null!!");
             return;
         }
-
-        System.err.println("Server is not null");
-
+        
         // "build" the input location, based on the www directory/.war chosen
-        final URL warUrl = Thread.currentThread().getContextClassLoader().getResource(WEBAPPDIR);
-        final String warUrlString = warUrl.toExternalForm();
-
-        //setup the DICOM to PNG image servlet, with a local cache
-        final ServletContextHandler dic2png = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        dic2png.setContextPath(CONTEXTPATH);
-
+        URI webPathUri;
+        try {
+            String jarPath = Dicoogle.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+            File webFile = new File(jarPath+"/web");
+            if(!webFile.exists()){
+                webFile.mkdir();
+            }
+            webPathUri = webFile.toURI();
+        }
+        catch (URISyntaxException ex) {
+            Logger.getLogger("dicoogle").log(Level.SEVERE, null, ex);
+            return;
+        }
+        
         // setup the plugins data, xslt and pages servlet
         final ServletContextHandler plugin = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
         plugin.setContextPath(CONTEXTPATH);
         
         // setup the web pages/scripts app
-        final WebAppContext webpages = new WebAppContext(warUrlString, CONTEXTPATH);
+        final WebAppContext webpages = new WebAppContext(webPathUri.toString(), CONTEXTPATH);
         webpages.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false"); // disables directory listing
         webpages.setInitParameter("useFileMappedBuffer", "false");
         webpages.setInitParameter("cacheControl", "max-age=0, public");
@@ -107,14 +110,12 @@ public class JettyServiceProvider {
 
         // list the all the handlers mounted above
         Handler[] handlers = new Handler[]{
-            dic2png,
             plugin,
             webpages
         };
 
         // setup the server
         server = new Server(port);
-        server = new Server(ServerSettings.getInstance().getWeb().getServerPort());
 
         // register the handlers on the server
         this.contextHandlers = new ContextHandlerCollection();

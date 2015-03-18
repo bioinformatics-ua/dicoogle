@@ -138,12 +138,12 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
     }
     
     
-    public List<Task<Report>> index(URI path) {
-        return pluginController.index(path);
+    public Task<Report> indexDispatch(URI path) {
+        return pluginController.indexDispatch(path);
     }
-
-    public List<Report> indexBlocking(URI path) {
-        return pluginController.indexBlocking(path);
+    
+    public Task<Report> indexClosure(URI path){
+        return pluginController.indexClosure(path);
     }
 
 }
