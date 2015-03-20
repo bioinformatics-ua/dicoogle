@@ -21,6 +21,7 @@ package pt.ua.dicoogle.sdk.task;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
+import pt.ua.dicoogle.sdk.datastructs.Report;
 
 /**
  *
@@ -46,6 +47,18 @@ public class Task<Type> extends FutureTask<Type> {
         toRunWhenComplete = new ArrayList<>();//we could lazy initialize this in onCompletion
     }
     
+    public static Task<Report> error(final String error) {
+        return new Task("error", new Callable<Report>() 
+            {
+                @Override
+                public Report call() throws Exception {
+                    throw new Exception(error);
+                }
+            }
+        );
+    }
+
+    
     @Override
     protected void set(Type ret){
         super.set(ret);
@@ -62,6 +75,7 @@ public class Task<Type> extends FutureTask<Type> {
     
     /**
      * a task name, for presentation purposes
+     * @return the name given to the task
      */
     public String getName(){return taskName;}
     public void setName(String name){name = taskName;}
@@ -71,6 +85,7 @@ public class Task<Type> extends FutureTask<Type> {
     /**
      * returns the task progress, goes from 0 to 1
      * however, if we have an unbounded task a -1 is returned
+     * @return the task progress if defined in a subclass or -1 if undetermined
      */
     public float getProgress(){
         if (callable instanceof ProgressCallable){

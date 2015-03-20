@@ -18,6 +18,10 @@
  */
 package pt.ua.dicoogle.sdk.datastructs;
 
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collections;
+
 /**
  *
  * @author psytek
@@ -27,10 +31,19 @@ package pt.ua.dicoogle.sdk.datastructs;
  * we may need a particularly complex return type (which will be inheriting from this class)
  * TODO: actually enforce some restrictions or functionality, otherwise we may as well use Object
  */
-public interface Report {
+public class Report {
+    ArrayList<Report> childs = new ArrayList<>();
+       
+    
+    public void addChild(Report r){childs.add(r);}
+    public Iterable<Report> childs(){return childs;}
     
     
+    public static ErrorReport error(String error, Exception ex) {
+        return new ErrorReport(error,ex);        
+    }
+
     
-    
-    String toString();
-}
+    public Iterable<SearchResult> results(){return Collections.EMPTY_LIST;}
+    public Iterable<ErrorReport> errors(){return Collections.EMPTY_LIST;}
+ }

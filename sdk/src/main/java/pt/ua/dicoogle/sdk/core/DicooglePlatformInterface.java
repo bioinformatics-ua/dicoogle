@@ -92,28 +92,26 @@ public interface DicooglePlatformInterface {
      * @return
      */
     public StorageInterface getStorageForSchema(URI location);
-
+    public StorageInterface getStorageForSchema(String schema);
     public Iterable<StorageInputStream> resolveURI(URI location);
 
     public Collection<StorageInterface> getStoragePlugins(boolean onlyEnabled);
-
-    public StorageInterface getStorageForSchema(String schema);
-
     public Collection<QueryInterface> getQueryPlugins(boolean onlyEnabled);
-
+    
     public List<String> getQueryProvidersName(boolean enabled);
-
     public QueryInterface getQueryProviderByName(String name, boolean onlyEnabled);
 
-    public List<Task<Report>> index(URI path);
-
-    public List<Report> indexBlocking(URI path);
+    //indexing
+    public Task<Report> indexDispatch(String pluginName, URI path);
+    public Task<Report> indexClosure(String pluginName, URI path);
+    public Task<Report> indexAllDispatch(URI path);
+    public Task<Report> indexAllClosure(URI path);
     
     //querying
-    public Task<QueryReport> queryDispatch(Iterable<String> querySources, String query, Object ... parameters);
-    public Task<QueryReport> queryDispatch(String querySource, String query, Object ... parameters);
-    public Task<QueryReport> queryClosure(Iterable<String> querySources, String query, Object ... parameters);
-    public Task<QueryReport> queryClosure(String querySource, String query, Object ... parameters);
+    public Task<Report> queryDispatch(Iterable<String> querySources, String query, Object ... parameters);
+    public Task<Report> queryDispatch(String querySource, String query, Object ... parameters);
+    public Task<Report> queryClosure(Iterable<String> querySources, String query, Object ... parameters);
+    public Task<Report> queryClosure(String querySource, String query, Object ... parameters);
 
     
 }

@@ -29,11 +29,12 @@ import java.util.NoSuchElementException;
  * 
  * This class creates a single iterator from a list of iterators to the same underlying object types
  * Essentially allows us to merge collections
+ * @param <T> element of the collection we are iterating over
  * 
  */
 public class Multirator<T> implements Iterator<T> {
 
-    ArrayList<Iterable<T>> elementSources;
+    ArrayList<Iterable<T>> elementSources = new ArrayList<>();
     int currentElement;
     Iterator<T> currentElementIter;
 
@@ -48,15 +49,11 @@ public class Multirator<T> implements Iterator<T> {
     @Override
     public boolean hasNext() {
         boolean hasNxt = currentElementIter.hasNext();
-        if (hasNxt) {
-            return true;
-        }
-
-        if (currentElement == elementSources.size()) {
-            return false;
-        }
+        if (hasNxt) {return true;}
 
         currentElement++;
+        if (currentElement == elementSources.size()) {return false;}
+        
         currentElementIter = elementSources.get(currentElement).iterator();
         return hasNext();
     }
@@ -64,15 +61,11 @@ public class Multirator<T> implements Iterator<T> {
     @Override
     public T next() {
         boolean hasNxt = currentElementIter.hasNext();
-        if (hasNxt) {
-            return currentElementIter.next();
-        }
-
-        if (currentElement == elementSources.size()) {
-            throw new NoSuchElementException();
-        }
+        if (hasNxt) {return currentElementIter.next();}
 
         currentElement++;
+        if (currentElement == elementSources.size()) {throw new NoSuchElementException();}
+
         currentElementIter = elementSources.get(currentElement).iterator();
         return next();
     }

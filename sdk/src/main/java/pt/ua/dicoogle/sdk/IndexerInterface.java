@@ -34,7 +34,8 @@ public interface IndexerInterface extends DicooglePlugin {
     /**
      * Index the file path to the database It can be a directory
      *
-     * @param path directory or file to index
+     * @param file
+     * @return 
      */
     public Task<Report> index(StorageInputStream file);
 

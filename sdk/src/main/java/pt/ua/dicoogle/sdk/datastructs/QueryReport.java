@@ -19,6 +19,7 @@
 
 package pt.ua.dicoogle.sdk.datastructs;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,9 +30,10 @@ import pt.ua.dicoogle.sdk.utils.Multirator;
  *
  * @author Frederico Valente <fmvalente@ua.pt>
  */
-public class QueryReport implements Iterable<SearchResult>, Report {
+public class QueryReport  extends Report implements Iterable<SearchResult> {
 
     public static final QueryReport EmptyReport = new QueryReport(Collections.EMPTY_LIST);        
+    
     ArrayList<Iterable<SearchResult>> elementSources = new ArrayList<>();    
     
     public QueryReport(){}
@@ -49,7 +51,22 @@ public class QueryReport implements Iterable<SearchResult>, Report {
         return new Multirator<>(elementSources);
     }
 
-    public void merge(QueryReport report) {
-        elementSources.add(report);
-    }    
+    @Override
+    public String toString(){
+        String retString = "";
+        for(SearchResult searchResult:this){
+            retString += searchResult.toString();
+            retString += "\n";
+        }
+        return retString;
+    }
+    
+    /**
+     *
+     * @return
+     */
+    @Override
+    public Iterable<SearchResult> results(){
+        return this;
+    }
 }

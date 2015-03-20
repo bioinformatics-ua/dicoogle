@@ -16,30 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.sdk;
-
-import pt.ua.dicoogle.sdk.datastructs.Report;
+package pt.ua.dicoogle.sdk.datastructs;
 
 /**
- *  Base class for all plugins able to handle queries
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
- * @author fmvalente
+ *
+ * @author Frederico Valente <fmvalente@ua.pt>
  */
-
-public interface QueryInterface extends DicooglePlugin 
-{
+public class ErrorReport extends Report{
+    Exception trappedException;
+    String error;
     
-    /**
-     * Search in the database
-     * 
-     * @param query Query string based on Lucene
-     * @param parameters Object parameters of the query. The plugin can use 
-     * the generic parameters to communicate between each other.
-     * 
-     * The consumer of the results will use Iterator (which a QueryReport is) and get the results until
-     * has next. The iterator can be redefined, and wait until results.
-     * 
-     * @return Iterator returns the results.
-     */
-    public Report query(String query, Object ... parameters) ;
+    
+    public ErrorReport(String error, Exception e){
+        this.error = error;
+        trappedException = e;
+    }
+    
+    @Override
+    public String toString(){
+        return error+trappedException.toString();
+    }
+        
 }

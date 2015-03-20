@@ -18,7 +18,7 @@
  */
 package pt.ua.dicoogle.sdk.datastructs;
 
-public class DocumentIndexReport implements Report {
+public class DocumentIndexReport extends Report {
 
 	private Measurable retrieveObjectTime;
 	private Measurable assembleDocumentTIme;

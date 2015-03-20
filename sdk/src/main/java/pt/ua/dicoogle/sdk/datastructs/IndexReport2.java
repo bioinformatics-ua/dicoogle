@@ -20,7 +20,7 @@ package pt.ua.dicoogle.sdk.datastructs;
 
 //TODO:change the name... how does this differentiates from indexreport1? or documentIndexReport?
 
-public class IndexReport2 implements Report {
+public class IndexReport2 extends Report {
 
 	private int nIndexedFiles;
 	private int nErrors;

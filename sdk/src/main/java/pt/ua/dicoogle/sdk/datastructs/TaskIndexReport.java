@@ -21,7 +21,7 @@ package pt.ua.dicoogle.sdk.datastructs;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TaskIndexReport implements Report {
+public class TaskIndexReport extends Report {
 
 	private final List<DocumentIndexReport> successfulReports;
 	private final List<DocumentIndexReport> errorReports;
