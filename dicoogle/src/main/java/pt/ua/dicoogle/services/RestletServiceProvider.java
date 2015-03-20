@@ -31,6 +31,7 @@ import org.restlet.resource.ServerResource;
 import org.restlet.routing.Router;
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.webservices.ForceIndexing;
+import pt.ua.dicoogle.webservices.RestDCMImageResource;
 import pt.ua.dicoogle.webservices.RestDimResource;
 import pt.ua.dicoogle.webservices.RestDumpResource;
 import pt.ua.dicoogle.webservices.RestFileResource;
@@ -96,7 +97,7 @@ import pt.ua.dicoogle.webservices.RestWADOResource;
                 router.attach("/file", RestFileResource.class);//file download resource
                 router.attach("/dump", RestDumpResource.class);//dump resource
                 router.attach("/tags", RestTagsResource.class);//list of avalilable tags resource
-                //router.attach("/img", RestImageResource.class);//jpg image resource
+                router.attach("/img", RestDCMImageResource.class);//jpg image resource
                 //router.attach("/enumField", RestEnumField.class);
                 //router.attach("/countResuls", RestCountQueryResults.class);
                 router.attach("/wado", RestWADOResource.class);
