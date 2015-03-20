@@ -22,17 +22,21 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import net.sf.json.JSONObject;
+
 import org.apache.commons.lang3.StringUtils;
+
 import pt.ua.dicoogle.core.QueryExpressionBuilder;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
@@ -45,6 +49,9 @@ import pt.ua.dicoogle.sdk.task.Task;
  * @author Frederico Silva <fredericosilva@ua.pt>
  */
 public class SearchServlet extends HttpServlet {
+
+  private static final long serialVersionUID = 1L;
+
     //TODO: QIDO;
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -52,7 +59,7 @@ public class SearchServlet extends HttpServlet {
          Example: http://localhost:8080/search?query=wrix&keyword=false&provicer=lucene
          */
         String query = request.getParameter("query");
-        String provider = request.getParameter("provider");
+        String[] providers = request.getParameterValues("provider");
         boolean keyword = Boolean.parseBoolean(request.getParameter("keyword"));
       
         if (StringUtils.isEmpty(query)) {
@@ -65,16 +72,8 @@ public class SearchServlet extends HttpServlet {
             query = q.getQueryString();
         }
 
-        //Split provider string to list
-        List<String> providerList = null;
-        if (provider != null) {
-            providerList = Arrays.asList(provider.split(";"));
-        }
-
-       
-
         boolean queryAllProviders = false;
-        if (providerList == null || providerList.isEmpty()) {
+        if (providers == null || providers.length == 0) {
             queryAllProviders = true;
         }
 
@@ -82,7 +81,7 @@ public class SearchServlet extends HttpServlet {
         if (!queryAllProviders) {
             knownProviders = new ArrayList<>();
             List<String> activeProviders = PluginController.getInstance().getQueryProvidersName(true);
-            for (String p : providerList) {
+            for (String p : providers) {
                 if (activeProviders.contains(p)) {
                     knownProviders.add(p);
                 }
@@ -150,7 +149,7 @@ public class SearchServlet extends HttpServlet {
             rj.put("uri", r.getURI().toString());
 
             JSONObject fields = new JSONObject();
-            for (HashMap.Entry<String,Object> f : r.getExtraData().entrySet()) {
+            for (Entry<String, Object> f : r.getExtraData().entrySet()) {
                 // remove padding from string representations before accumulating
                 fields.accumulate(f.getKey(), f.getValue().toString().trim());
             }
