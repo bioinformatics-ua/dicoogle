@@ -61,6 +61,6 @@ public class RestWADOResource extends ServerResource {
                 //result = generateErrorRepresentation("Please enter a UID", "400");
         }
         
-        return FileDownloadUtils.gerFileRepresentation(objectUID);
+        return FileDownloadUtils.getFileRepresentation(objectUID);
     }
 }

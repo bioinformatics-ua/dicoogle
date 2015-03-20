@@ -30,7 +30,6 @@ import org.restlet.data.Protocol;
 import org.restlet.resource.ServerResource;
 import org.restlet.routing.Router;
 import pt.ua.dicoogle.core.ServerSettings;
-import pt.ua.dicoogle.webservices.ExamTimeResource;
 import pt.ua.dicoogle.webservices.ForceIndexing;
 import pt.ua.dicoogle.webservices.RestDimResource;
 import pt.ua.dicoogle.webservices.RestDumpResource;
@@ -42,22 +41,25 @@ import pt.ua.dicoogle.webservices.RestWADOResource;
  *
  * @author psytek
  */
-    public class RestletServiceProvider extends Application {
+    public class RestletServiceProvider{
+        static final Logger logger = Logger.getLogger("dicoogle");
+        static ArrayList<ServerResource> pluginServices = new ArrayList<>();
 
-        Component component = null;
-        ArrayList<ServerResource> pluginServices = new ArrayList<>();
-
-        void RestletServiceProvider(){
-            try{
-                System.err.println("Stating Webservice in port:"+ServerSettings.getInstance().getWeb().getServicePort());
-
+        RestletService service = null;
+        
+        private static class RestletService extends Application{
+            Component component = null;
+            int port;
+            
+            RestletService(int port) throws Exception{
+                this.port = port;
                 // Adds a new HTTP server listening on customized port.
                 // The implementation used is based on java native classes
                 // It's not the fastest possible implementation
                 // but it suffices for the time being
                 // (we can always use other backends at the expense of a few more dependencies)
                 component = new Component();
-                component.getServers().add(Protocol.HTTP,ServerSettings.getInstance().getWeb().getServicePort());
+                component.getServers().add(Protocol.HTTP, ServerSettings.getInstance().getWeb().getServicePort());
 
                 // Attaches this application to the server.
                 component.getDefaultHost().attach(this);
@@ -65,65 +67,64 @@ import pt.ua.dicoogle.webservices.RestWADOResource;
                 // And starts the component.
                 component.start();
                 org.restlet.engine.Engine.setLogLevel(Level.OFF);
+                
             }
-            catch(Exception e){
-                //TODO:log this properly...
-                System.err.println(e.getMessage());
-            }
-        }
+            
+            @Override
+            public void stop() throws Exception{
+                if(component == null) return;
 
-        public void stop(){
-            if(component == null) return;
-
-            for(Server server : component.getServers()){
-                try {
+                for(Server server : component.getServers()){
                     server.stop();
                 }
-                catch (Exception ex) {
-                    Logger.getLogger("global").log(Level.SEVERE, null, ex);
-                }
+                component=null;
             }
-            component=null;
+
+            /**
+             * Creates a root Restlet that will receive all incoming calls.
+             *
+             * @return
+             */
+            @Override
+            public synchronized Restlet createInboundRoot() {
+                // Create a router Restlet that routes each call to a
+                // new instance of our resources
+                Router router = new Router(getContext());
+
+                // Defines routing to resources
+                router.attach("/dim", RestDimResource.class);//search resource
+                router.attach("/file", RestFileResource.class);//file download resource
+                router.attach("/dump", RestDumpResource.class);//dump resource
+                router.attach("/tags", RestTagsResource.class);//list of avalilable tags resource
+                //router.attach("/img", RestImageResource.class);//jpg image resource
+                //router.attach("/enumField", RestEnumField.class);
+                //router.attach("/countResuls", RestCountQueryResults.class);
+                router.attach("/wado", RestWADOResource.class);
+
+                //Advanced Dicoogle Features
+                router.attach("/doIndex", ForceIndexing.class);
+
+                //lets add plugin registred servicesHandler
+                //this is still a little brittle... :(
+                for (ServerResource resource : pluginServices) {
+                    logger.info("restlet inbound: " + resource.toString());
+                    router.attach("/" + resource.toString(), resource.getClass());
+                }
+
+                return router;
+            }
         }
+        
+        
+        public void RestletServiceProvider(){}
 
-        /**
-        * Creates a root Restlet that will receive all incoming calls.
-         * @return 
-        */
-       @Override
-       public synchronized Restlet createInboundRoot() {
-           // Create a router Restlet that routes each call to a
-           // new instance of our resources
-           Router router = new Router(getContext());
-
-           // Defines routing to resources
-
-           router.attach("/dim", RestDimResource.class);//search resource
-           router.attach("/file", RestFileResource.class);//file download resource
-           router.attach("/dump", RestDumpResource.class);//dump resource
-           router.attach("/tags", RestTagsResource.class);//list of avalilable tags resource
-           //router.attach("/image", RestImageResource.class);//jpg image resource
-           //router.attach("/enumField", RestEnumField.class);
-           //router.attach("/countResuls", RestCountQueryResults.class);
-           router.attach("/wado", RestWADOResource.class);
-           router.attach("/examTime", ExamTimeResource.class);
-
-           //Advanced Dicoogle Features
-           router.attach("/doIndex", ForceIndexing.class);
-
-
-           //lets add plugin registred servicesHandler
-           //this is still a little brittle... :(
-           for(ServerResource resource : pluginServices){
-               System.err.println("Inbound: "+resource.toString());
-               router.attach("/"+resource.toString(), resource.getClass());
-           }
-
-           return router;
-       }
-
-       public void attachRestPlugin(ServerResource resource){
-           pluginServices.add(resource);
-       }
+        public void start() throws Exception{
+            logger.info("Stating Webservice in port:"+ServerSettings.getInstance().getWeb().getServicePort());
+            service = new RestletService(ServerSettings.getInstance().getWeb().getServicePort());
+        }
+        
+        public void attachRestPlugin(ServerResource resource) {
+            pluginServices.add(resource);
+        }
     }
 

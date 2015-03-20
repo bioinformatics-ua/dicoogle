@@ -36,7 +36,6 @@ public class PluginFactory {
     //TODO:configurable directory
     public static Collection<PluginSet> getPlugins(File pluginDirectory){
         PluginManager pm = PluginManagerFactory.createPluginManager();
-        System.err.println(pluginDirectory.getAbsolutePath());
         pm.addPluginsFrom(pluginDirectory.toURI());
         PluginManagerUtil pmu = new PluginManagerUtil(pm);
         return pmu.getPlugins(PluginSet.class);
@@ -44,8 +43,7 @@ public class PluginFactory {
     
      public static Collection<PluginSet> getPlugins(){
         PluginManager pm = PluginManagerFactory.createPluginManager();
-        File path = new File("Plugins");
-        System.err.println(path.getAbsolutePath());
+        File path = new File("plugins");
         pm.addPluginsFrom(path.toURI());
         PluginManagerUtil pmu = new PluginManagerUtil(pm);
         return pmu.getPlugins(PluginSet.class);

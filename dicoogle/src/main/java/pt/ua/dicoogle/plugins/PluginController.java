@@ -1,21 +1,20 @@
 /**
- * Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group -
- * http://bioinformatics.ua.pt/
+ * Copyright (C) 2014  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
  *
  * This file is part of Dicoogle/dicoogle.
  *
- * Dicoogle/dicoogle is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Dicoogle/dicoogle is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Dicoogle/dicoogle is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * Dicoogle/dicoogle is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * Dicoogle. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
 package pt.ua.dicoogle.plugins;
 
@@ -28,11 +27,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.restlet.resource.ServerResource;
 
 import pt.ua.dicoogle.sdk.IndexerInterface;
@@ -63,7 +61,7 @@ import pt.ua.dicoogle.taskManager.TaskManager;
  */
 public class PluginController {
 
-    private static final Logger logger = LogManager.getLogger("dicoogle");
+    private static final Logger logger = Logger.getLogger("dicoogle");
 
     private Collection<PluginSet> pluginSets;
     private File pluginFolder;
@@ -107,7 +105,7 @@ public class PluginController {
                 plugin.setSettings(holder);
             }
             catch (ConfigurationException e) {
-                logger.info(e);
+                logger.throwing("PluginController","Contructor",e);
             }
         }
 
@@ -117,7 +115,7 @@ public class PluginController {
         logger.info("Added default storage plugin");
 
         initializePlugins(pluginSets);
-        logger.info("Initialized plugins");
+        logger.info("finished plugin initialization");
     }
 
     /*
@@ -211,7 +209,7 @@ public class PluginController {
             }
         }
 
-        logger.error("Could not resolve uri: " + location.toString());
+        logger.info("Could not resolve uri: " + location.toString());
         return Collections.emptyList();
     }
 
@@ -233,7 +231,7 @@ public class PluginController {
                 return store;
             }
         }
-        logger.error("Could not get storage for schema: " + location.toString());
+        logger.info("Could not get storage for schema: " + location.toString());
         return null;
     }
 
@@ -244,7 +242,7 @@ public class PluginController {
         }
         catch (URISyntaxException e) {
             // TODO Auto-generated catch block
-            logger.error("getStorageFromSchema failed:"+e);
+            logger.throwing("PluginController","getStorageFromSchema",e);
             return null;
         }
         return getStorageForSchema(uri);
@@ -279,7 +277,7 @@ public class PluginController {
                 return p;
             }
         }
-        logger.error("Could not retrive query provider:" + name);
+        logger.info("Could not retrive query provider:" + name);
         return null;
     }
 
@@ -290,7 +288,7 @@ public class PluginController {
                 return p;
             }
         }
-        logger.error("No Indexer Matching:" + name);
+        logger.info("No Indexer Matching:" + name);
         return null;
     }
 
@@ -303,84 +301,78 @@ public class PluginController {
         return names;
     }
 
-    public Task<QueryReport> queryDispatch(String querySource, final String query, final Object... parameters) {
-        Task<QueryReport> t = queryClosure(querySource, query, parameters);
+    public Task<Report> queryDispatch(String querySource, final String query, final Object... parameters) {
+        Task<Report> t = queryClosure(querySource, query, parameters);
         taskManager.dispatch(t);
         return t;//returns the handler to obtain the computation results
     }
 
-    public Task<QueryReport> queryDispatch(final Iterable<String> querySources, final String query, final Object... parameters) {
+    public Task<Report> queryDispatch(final Iterable<String> querySources, final String query, final Object... parameters) {
 
         /*
          * Creates a task that dispatches several tasks, one per enabled query plugin,
          * waits their completion and merges the results into a single report.
          * A dispatched task object is returned.
          */
-        Task<QueryReport> queryTask = new Task<>("multiple query",
-                new Callable<QueryReport>() {
-                    @Override
-                    public QueryReport call() throws Exception {
-                        ArrayList<Task<QueryReport>> tasks = new ArrayList<>();
-                        for (String sourcePlugin : querySources) {
-                            Task<QueryReport> task = queryClosure(sourcePlugin, query, parameters);
-                            tasks.add(task);
-                            taskManager.dispatch(task);
-                        }
-
-                        QueryReport q = new QueryReport();
-                        for (Task<QueryReport> t : tasks) {
-                            q.merge(t.get());
-                        }
-                        return q;
-
-                    }
-                });
+        Task<Report> queryTask = new Task<>("multiple query -> "+query, () -> {
+            ArrayList<Task<Report>> tasks = new ArrayList<>();
+            for (String sourcePlugin : querySources) {
+                Task<Report> task = queryClosure(sourcePlugin, query, parameters);
+                tasks.add(task);
+                taskManager.dispatch(task);
+            }
+            
+            Report q = new QueryReport();
+            for (Task<Report> t : tasks) {
+                q.addChild(t.get());
+            }
+            return q;
+        });
 
         //and executes said task asynchronously
         taskManager.dispatch(queryTask);
         return queryTask;
     }
 
-    public Task<QueryReport> queryClosure(String querySource, final String query, final Object... parameters) {
+    public Task<Report> queryClosure(String querySource, final String query, final Object... parameters) {
         final QueryInterface queryEngine = getQueryProviderByName(querySource, true);
         //returns a tasks that runs the query from the selected query engine
-        Task<QueryReport> queryTask = new Task<>(querySource,
-                new Callable<QueryReport>() {
+        Task<Report> queryTask = new Task<>("query:"+querySource+" ->"+query,
+                new Callable<Report>() {
                     @Override
-                    public QueryReport call() throws Exception {
+                    public Report call() throws Exception {
                         if (queryEngine == null) {
                             return QueryReport.EmptyReport;
                         }
                         return queryEngine.query(query, parameters);
                     }
                 });
-        //logger.info("Prepared Query Task: QueryString");
         return queryTask;
     }
 
         //returns a task, that has not yet been dispatched
     //this means the task can run in blocking mode on the caller thread, or
     //be dispatched to the task manager
-    public Task<QueryReport> queryClosure(final Iterable<String> querySources, final String query, final Object... parameters) {
+    public Task<Report> queryClosure(final Iterable<String> querySources, final String query, final Object... parameters) {
         /*
          * Creates a task that dispatches several tasks, one per enabled query plugin,
          * waits their completion and merges the results into a single report.
          * A dispatched task object is returned.
          */
-        Task<QueryReport> queryTask = new Task<>("multiple query",
-                new Callable<QueryReport>() {
+        Task<Report> queryTask = new Task<>("multiple query",
+                new Callable<Report>() {
                     @Override
-                    public QueryReport call() throws Exception {
-                        ArrayList<Task<QueryReport>> tasks = new ArrayList<>();
+                    public Report call() throws Exception {
+                        ArrayList<Task<Report>> tasks = new ArrayList<>();
                         for (String sourcePlugin : querySources) {
-                            Task<QueryReport> task = queryClosure(sourcePlugin, query, parameters);
+                            Task<Report> task = queryClosure(sourcePlugin, query, parameters);
                             tasks.add(task);
                             taskManager.dispatch(task);
                         }
 
-                        QueryReport q = new QueryReport();
-                        for (Task<QueryReport> t : tasks) {
-                            q.merge(t.get());
+                        Report q = new QueryReport();
+                        for (Task<Report> t : tasks) {
+                            q.addChild(t.get());
                         }
                         return q;
 
@@ -395,73 +387,53 @@ public class PluginController {
      * calls the appropriate indexers and instructs them to index the data pointed to by the URI
      * it is up to the caller to run the task asynchronously by feeding it to an executor
      * or in a blocking way by calling the get() method of the task
-     * 
-     * 
-     * 
      */
-    public List<Task<Report>> index(URI path) {
-        logger.info("Starting Indexing procedure for " + path.toString());
+    public Task<Report> indexAllClosure(URI path) {
+        logger.info("Starting indexing procedure for " + path.toString());
         StorageInterface store = getStorageForSchema(path);
 
         if (store == null) {
-            logger.error("No storage plugin detected");
-            return Collections.emptyList();
+            logger.info("No storage plugin detected");
+            return Task.error("No storage plugin detected");
         }
 
-        Collection<IndexerInterface> indexers = getIndexingPlugins(true);
-        ArrayList<Task<Report>> rettasks = new ArrayList<>();
-        final String pathF = path.toString();
-        for (IndexerInterface indexer : indexers) {
-            Task<Report> task = indexer.index(store.at(path));
-            task.onCompletion(new Runnable() {
+        
+        Task<Report> retTask = new Task<>("indexall task: "+path, new Callable<Report>() {
 
-                @Override
-                public void run() {
-                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                    System.out.println("Task accomplished " + pathF);
-                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
+            @Override
+            public Report call() throws Exception {
+                ArrayList<Task<Report>> subtasks = new ArrayList<>();
+                for (IndexerInterface indexer : getIndexingPlugins(true)) {
+                    Task<Report> task = indexer.index(store.at(path));
+                    task.onCompletion(() -> {logger.info(indexer.getName()+": finished indexing");});
+                    taskManager.dispatch(task);
+                    subtasks.add(task);
                 }
-            });
-
-            if (task == null) {
-                continue;
+                
+                Report ret = new Report();
+                for(Task<Report> task: subtasks){
+                    ret.addChild(task.get());
+                }
+                
+                return ret;
             }
-            taskManager.dispatch(task);
-            rettasks.add(task);
-        }
-        logger.info("Finised firing all Indexing plugins for " + path.toString());
-
-        return rettasks;
+        });
+        return retTask;
     }
-
+    
+    public Task<Report> indexAllDispatch(URI path) {
+        Task task = indexAllClosure(path);
+        taskManager.dispatch(task);
+        return task;
+    }
     /*
     *   Creates a task that will index URI with the plugin name
     *   and dispatches it to the executor
     */
     public Task<Report> indexDispatch(String pluginName, URI path) {
-        logger.info("Starting Indexing procedure for " + path.toString());
-        StorageInterface store = getStorageForSchema(path);
-
-        if (store == null) {
-            logger.error("No storage plugin detected");
-            return null;
-        }
-
-        IndexerInterface indexer = getIndexerByName(pluginName, true);
-
-        Task<Report> task = indexer.index(store.at(path));
-        task.onCompletion(() -> {
-            System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-            System.out.println("Index Task accomplished: " + path);
-            System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-        });
-
-        taskManager.dispatch(task);
-        logger.info("FIRED INDEXER: {} FOR URI: {}", pluginName, path.toString());
-
-        return task;
+        Task t = indexClosure(pluginName, path);
+        taskManager.dispatch(t);
+        return t;
     }
 
     public Task<Report> indexClosure(String pluginName, URI path) {
@@ -469,7 +441,7 @@ public class PluginController {
         StorageInterface store = getStorageForSchema(path);
 
         if (store == null) {
-            logger.error("No storage plugin detected");
+            logger.info("No storage plugin detected");
             return null;
         }
 
@@ -479,37 +451,29 @@ public class PluginController {
             for (String s : indexerNames()) {
                 names += s + " ";
             }
-            logger.error("Indexer not found:" + pluginName + "\n available:" + names);
-            return null;
+            logger.info("Indexer not found:" + pluginName + "\n available:" + names);
+            return Task.error("Indexer not found:" + pluginName + "\n available:" + names);
         }
 
         final String pathF = path.toString();
         Task<Report> task = indexer.index(store.at(path));
         task.onCompletion(() -> {
-            System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-            System.out.println("Index Task accomplished: " + pathF);
-            System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
+            logger.info("index task accomplished: " + task.getName());
         });
 
         return task;
     }
 
     public void unindex(URI path) {
-        logger.info("Starting Indexing procedure for " + path.toString());
+        logger.info("unindexing: "+ path.toString());
         StorageInterface store = getStorageForSchema(path);
 
         if (store == null) {
-            logger.error("No storage plugin detected");
+            logger.info("No storage plugin detected");
+            return;
         }
 
-        Collection<IndexerInterface> indexers = getIndexingPlugins(true);
-        ArrayList<Task<Report>> rettasks = new ArrayList<>();
-
-        for (IndexerInterface indexer : indexers) {
-            indexer.unindex(path);
-        }
-        logger.info("Finised firing all undexing plugins for " + path.toString());
-
+        getIndexingPlugins(true).stream().forEach((indexer) -> {indexer.unindex(path);});
     }
 
     public Stream<PluginSet> plugins() {

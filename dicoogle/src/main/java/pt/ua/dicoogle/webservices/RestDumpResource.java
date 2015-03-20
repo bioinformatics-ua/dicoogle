@@ -19,7 +19,6 @@
 package pt.ua.dicoogle.webservices;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,8 +28,6 @@ import org.restlet.resource.ServerResource;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.utils.DictionaryAccess;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
-import pt.ua.dicoogle.sdk.task.JointQueryTask;
-import pt.ua.dicoogle.sdk.task.Task;
 
 /**
  *
@@ -62,7 +59,7 @@ public class RestDumpResource extends ServerResource{
         Iterable<SearchResult> queryResultList = null;
         try {
             System.out.println("Query: + " + query);
-            queryResultList = PluginController.get().queryDispatch("lucene", query, extraFields).get();
+            queryResultList = PluginController.get().queryDispatch("lucene", query, extraFields).get().results();
         }
         catch (InterruptedException | ExecutionException ex) {
             Logger.getLogger(RestDumpResource.class.getName()).log(Level.SEVERE, null, ex);

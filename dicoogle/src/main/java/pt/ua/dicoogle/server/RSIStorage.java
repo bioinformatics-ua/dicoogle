@@ -54,6 +54,7 @@ import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.IndexerInterface;
 import pt.ua.dicoogle.sdk.StorageInterface;
 import pt.ua.dicoogle.sdk.datastructs.Report;
+import pt.ua.dicoogle.sdk.task.Task;
 
 
 /**
@@ -82,8 +83,6 @@ public class RSIStorage extends StorageService
     
     private boolean gzip = ServerSettings.getInstance().isGzipStorage();;
    
-
-    
     private BlockingQueue<URI> queue = new LinkedBlockingQueue<URI>();
     
     PluginController pluginController;
@@ -331,10 +330,12 @@ public class RSIStorage extends StorageService
                     
                     if(exam != null)
                     {
-                        List <Report> reports = pluginController.indexBlocking(exam);
+                        Task<Report> task = pluginController.indexAllClosure(exam);
+                        task.run();
+                        Report reports = task.get();
                     }
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(RSIStorage.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InterruptedException | ExecutionException ex) {
+                    Logger.getLogger("dicoogle").log(Level.SEVERE, null, ex);
                 }
                  
             }

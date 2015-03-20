@@ -19,69 +19,39 @@
 
 package pt.ua.dicoogle.plugins;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.restlet.Application;
-import org.restlet.Component;
-import org.restlet.Restlet;
-import org.restlet.Server;
-import org.restlet.data.Protocol;
+import org.apache.log4j.Logger;
 import org.restlet.resource.ServerResource;
-import org.restlet.routing.Router;
-import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.sdk.JettyPluginInterface;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.services.JettyServiceProvider;
 import pt.ua.dicoogle.services.RestletServiceProvider;
-import pt.ua.dicoogle.webservices.ExamTimeResource;
-import pt.ua.dicoogle.webservices.ForceIndexing;
-import pt.ua.dicoogle.webservices.RestDimResource;
-import pt.ua.dicoogle.webservices.RestDumpResource;
-import pt.ua.dicoogle.webservices.RestFileResource;
-import pt.ua.dicoogle.webservices.RestTagsResource;
-import pt.ua.dicoogle.webservices.RestWADOResource;
 
 /**
  *
  * @author psytek
  */
 public class ServiceController {
-    
+    Logger logger = Logger.getLogger("dicoogle");
     RestletServiceProvider restletHandler = new RestletServiceProvider();
     JettyServiceProvider jettyHandler = new JettyServiceProvider(8080);
 
-    
-
-    
-    
-    ///////////////////////////////////////////////////////jetty
-    
-    
-    
-    
-    //////////////////////////////////////SController
     public ServiceController(){
         //load services.xml
-        
-        
     }
     
     public void manageJettyPlugins(Collection<JettyPluginInterface> jettyInterfaces){
-        for(JettyPluginInterface resource : jettyInterfaces){
-            jettyHandler.addContextHandlers( resource.getJettyHandlers() );
-         }
+        jettyInterfaces.stream().forEach((resource) -> {jettyHandler.addContextHandlers( resource.getJettyHandlers() );});
     }
     
     public void manageRestPlugins(Collection<ServerResource> restInterfaces){
-        for (ServerResource resource : restInterfaces) {
-            restletHandler.attachRestPlugin(resource);
-        }
+        restInterfaces.stream().forEach((resource) -> {restletHandler.attachRestPlugin(resource);});
     }
     
     public void startEnabledServices() throws Exception{
+        logger.info("stating enabled jetty services");
         jettyHandler.start();
+        logger.info("stating enabled restlet services");
         restletHandler.start();
     }
     

@@ -64,7 +64,7 @@ public class RestFileResource extends ServerResource {
         if (SOPInstanceUID == null) {
             return null;
         }
-        return FileDownloadUtils.gerFileRepresentation(SOPInstanceUID);
+        return FileDownloadUtils.getFileRepresentation(SOPInstanceUID);
         /*File file = new File(queryResultList.get(0).getOrigin());
         
         File temp = file;

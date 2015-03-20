@@ -28,11 +28,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import metal.utils.fileiterator.FileIterator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.dcm4che2.data.DicomObject;
 import org.dcm4che2.io.DicomInputStream;
 
@@ -42,7 +41,7 @@ import pt.ua.dicoogle.sdk.StorageInterface;
 
 public class DefaultFileStoragePlugin extends PluginBase implements StorageInterface{
 
-	private static final Logger logger = LogManager.getLogger(DefaultFileStoragePlugin.class.getName());
+	private static final Logger logger = Logger.getLogger("dicoogle");
 	
 	private String defaultScheme = "file";
 	
@@ -73,31 +72,29 @@ public class DefaultFileStoragePlugin extends PluginBase implements StorageInter
 
 	@Override
 	public boolean handles(URI location) {
-		if (location.getScheme() == null)
-			return true;
+		if (location.getScheme() == null) return true;
 		return location.getScheme().equals(defaultScheme);
 	}
 	
 	private Iterator<StorageInputStream> createIterator(URI location){
 		if(!handles(location)){
-			logger.error("Cannot Handle: "+location.toString());
+			logger.info("cannot handle: "+location.toString());
 			return Collections.emptyIterator();
 		}
 
-		logger.debug("Stared creating Iterator in: "+location.getSchemeSpecificPart()); 
 		File parent = new File(location.getSchemeSpecificPart());
 		Iterator<File> fileIt;
 		
 		if (parent.isDirectory()) {
-			logger.debug("Location is a directory: "+location.getSchemeSpecificPart());
+			logger.info("Location is a directory: "+location.getSchemeSpecificPart());
 			fileIt = new FileIterator(parent);
-		} else {
-			List<File> files = new ArrayList<>(1);
-			files.add(parent);
-			fileIt = files.iterator();
+		}
+                else {
+                    List<File> files = new ArrayList<>(1);
+                    files.add(parent);
+                    fileIt = files.iterator();
 		}
 
-		logger.debug("Finished assembling Iterator: "+ location.getSchemeSpecificPart());
 		return new MyIterator(fileIt);
 	}
 
@@ -167,10 +164,8 @@ public class DefaultFileStoragePlugin extends PluginBase implements StorageInter
 
 		@Override
 		public StorageInputStream next() {
-			if(!it.hasNext())
-				return null;
+			if(!it.hasNext()) return null;
 			File f = it.next();
-			logger.debug("Added File: "+f.toURI());
 			MyDICOMInputString stream = new MyDICOMInputString(f);			
 			return stream;
 		}

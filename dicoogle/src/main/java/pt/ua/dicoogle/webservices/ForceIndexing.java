@@ -20,26 +20,26 @@ package pt.ua.dicoogle.webservices;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
+import org.restlet.data.Status;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.Get;
+import org.restlet.resource.ResourceException;
 import org.restlet.resource.ServerResource;
 
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.task.Task;
 
-public class ForceIndexing extends ServerResource{
+public class ForceIndexing extends ServerResource {
     
-	private static final Logger log = LogManager.getLogger(ForceIndexing.class.getName());	
+	private static final Logger logger = Logger.getLogger("dicoogle");
 	
     @Get
     public Representation represent(){
@@ -50,42 +50,28 @@ public class ForceIndexing extends ServerResource{
         String pluginName = queryForm.getValues("plugin");
         
         PluginController pc = PluginController.get();
-        //System.out.println("Generating Tasks");
-        List<Task<Report>> reports  = new ArrayList<>(uris.length);
+        Report returnReport = new Report();
         for(String uriString : uris) {
-            URI u = null;
             try {
-                u = new URI(uriString.replaceAll(" ","%20"));
-            } catch (URISyntaxException ex) {
-            	log.error("Could not create URI", ex);
-                ex.printStackTrace();
-            } 
-            if(u != null){
-            	log.info("Sent Index Request: {}, {}",pluginName, u.toString());
-            	if(pluginName == null)
-            		reports.addAll(pc.index(u));
-            	else
-            		reports.add(pc.index(pluginName,u));
+                URI u = new URI(uriString.replaceAll(" ","%20"));
+
+                logger.info("Sent Index Request: " + pluginName + u.toString());
+                if (pluginName == null) { //no name somehow means we are going to index using all indexers
+                    Task<Report> indexTask = pc.indexAllClosure(u);
+                    indexTask.run();
+                    returnReport.addChild(indexTask.get());
+                }
+                else {
+                    Task<Report> indexTask = pc.indexClosure(pluginName, u);
+                    indexTask.run();
+                    returnReport.addChild(indexTask.get());
+                }
             }
+            catch (URISyntaxException  | InterruptedException  | ExecutionException ex) {
+                logger.log(Level.SEVERE, null, ex);
+                throw new ResourceException(Status.SERVER_ERROR_INTERNAL, ex);
+            }            
         }
-        
-        //System.out.println("Waiting for Results");
-        List<Report> done = new ArrayList<>(reports.size());
-        StringBuilder builder = new StringBuilder();
-        for(Task<Report> t : reports){
-            try {
-            	Report r = t.get();
-                done.add(r);
-                builder.append(r).append("\n");
-            }catch(InterruptedException | ExecutionException ex){
-            	log.error("UNKNOW ERROR", ex);
-            	ex.printStackTrace();
-            }
-        }
-        //System.out.println("Exporting Results");
-        
-        log.info("Finished forced indexing procedure: {}", reports.size());
-        
-        return new StringRepresentation(builder.toString(), MediaType.TEXT_PLAIN);
+        return new StringRepresentation(returnReport.toString(), MediaType.TEXT_PLAIN);
     }
 }

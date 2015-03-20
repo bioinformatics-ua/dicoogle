@@ -22,12 +22,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
@@ -40,7 +39,7 @@ import org.restlet.resource.ServerResource;
 import pt.ua.dicoogle.core.QueryExpressionBuilder;
 import pt.ua.dicoogle.core.dim.DIMGeneric;
 import pt.ua.dicoogle.plugins.PluginController;
-import pt.ua.dicoogle.sdk.datastructs.QueryReport;
+import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.utils.DictionaryAccess;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 
@@ -51,7 +50,7 @@ import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 //TODO:add type to file search
 public class RestDimResource extends ServerResource {
 
-    private static final Logger log = LogManager.getLogger(RestDimResource.class.getName());
+    private static final Logger log = Logger.getLogger("dicoogle");
 
     @Get
     public Representation represent() {
@@ -130,7 +129,7 @@ public class RestDimResource extends ServerResource {
         //System.err.println("FINAL SEARCH QUERY: "+search);
         long startTime = System.currentTimeMillis();
         
-        QueryReport qresult=null;
+        Report qresult=null;
         try {
             qresult = PluginController.get().queryDispatch(provider, search, extraFields).get();
         }
@@ -141,11 +140,11 @@ public class RestDimResource extends ServerResource {
         String ret = "";
         MediaType mtype = null;
         if (dim) {
-            ret = processDIMResults(qresult);
+            ret = processDIMResults(qresult.results());
             mtype = MediaType.APPLICATION_XML;
         }
         else {
-            ret = processJSON(qresult, startTime);
+            ret = processJSON(qresult.results(), startTime);
             mtype = MediaType.APPLICATION_JSON;
         }
 

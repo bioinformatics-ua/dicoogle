@@ -19,14 +19,17 @@
 package pt.ua.dicoogle;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import org.dcm4che2.data.TransferSyntax;
+import org.dcm4che2.data.TransferSyntax;//must remove this dep from here
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.plugins.ServiceController;
 import pt.ua.dicoogle.sdk.datastructs.Report;
@@ -35,15 +38,18 @@ import pt.ua.dicoogle.sdk.task.Task;
 /**
  * Main class for Dicoogle
  * @author Frederico Valente
- * @author Filipe Freitas
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
- * @author Samuel Campos <samuelcampos@ua.pt>
  */
-public class Dicoogle
-{
+public class Dicoogle implements Runnable
+{   
+    static Logger logger;
     
     PluginController pluginController = new PluginController(new File("./plugins"));
     ServiceController serviceController = new ServiceController();
+    
+    boolean running = true;
+    boolean isServer = false;
+    boolean useWebServices = false;
     
     /**
      * Inits application
@@ -52,69 +58,89 @@ public class Dicoogle
      */
     public static void main(String[] args)
     {
-        System.setProperty("log4j.configurationFile", "log4j-2.xml");
-
+        ExceptionHandler.registerExceptionHandler();
+        initializeLogging();
+        
         try{
             Dicoogle dicoogle = new Dicoogle();
+            dicoogle.pluginController.plugins().forEach((p) -> logger.info("plugin loaded: "+p.getName()));
+
             
-            dicoogle.pluginController.plugins().forEach((p) -> System.err.println("plugin loaded: "+p.getName()));
-            
-            List<Task<Report>> tasks = dicoogle.parseCommandLine(args);
-            System.err.println("Done Parsing");
-            dicoogle.initialize();
+            /*
+            *   Parses the command line to obtain tasks to execute and
+            *   config values to override
+            */
+            Iterable<Task<Report>> tasks = dicoogle.parseCommandLine(args);
+                        
+            /*
+            *   prepare the webservice controllers
+            *   this will ask the plugin controller for any webplugin and initialize the services if so configured
+            */
             dicoogle.serviceController.manageJettyPlugins(dicoogle.pluginController.getJettyPlugins());
             dicoogle.serviceController.manageRestPlugins(dicoogle.pluginController.getRestPlugins());
             
-            System.err.println("Pre loop");
-            
+            /*
+            *   execute each task specified on the command line
+            */
             for(Task<Report> task : tasks){
-                System.err.println("ON TASK RUNNER");
-                System.err.println(task.getName());
+                logger.info("running task:"+task.getName());
                 task.run();
-                Report r = task.get();
-                System.out.println(r);
+                System.out.println("task "+task.getName()+" complete.");
+                System.out.println(task.get());
+                System.out.flush();
             }
-            System.err.println("aft loop");
+            System.err.println("Finished running tasks...");
+            
+            dicoogle.run();            
         }
-        catch (URISyntaxException | InterruptedException | ExecutionException ex) {
-            Logger.getLogger("dicoogle").log(Level.SEVERE, null, ex);
+        catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
             System.err.println(ex);
         }
-                               
-        ExceptionHandler.registerExceptionHandler();
     }
 
-
-    public void initialize()
-    {
-        //what is this? should be moved somewhere else...
+    
+    Dicoogle() throws Exception{
+        
+        //what is this? should be moved somewhere else... perhaps lucene indexing plugin?
         TransferSyntax.add(new TransferSyntax("1.2.826.0.1.3680043.2.682.1.40", false,false, false, true));
         TransferSyntax.add(new TransferSyntax("1.2.840.10008.1.2.4.70", true,false, false, true));
         TransferSyntax.add(new TransferSyntax("1.2.840.10008.1.2.5.50", false,false, false, true));    
-
-
-
+        
         // Lauch Async Index 
         // It monitors a folder, and when a file is touched an event
         // triggers and index is updated.
         
         //TODO: This SHOULD be parametrized and created somewhere else depending
         //on commandline/config file paramenters
-//        AsyncIndex asyncIndex = new AsyncIndex();
+        //AsyncIndex asyncIndex = new AsyncIndex();
     }
+    
+    private static void initializeLogging() {
+        //configures logging
+        LogManager logManager = LogManager.getLogManager();
+        File logConfigFile = new File("./logconfig.properties");
+        if(logConfigFile.exists()){
+            try{
+                logManager.readConfiguration(new FileInputStream(logConfigFile));
+            }
+            catch(IOException | SecurityException e){
+                logger.severe("io error when opening log config file");
+            } //if the log file does not exists or cant be read its no biggie, we use java's default config
+        }
+        else{System.err.println("Unable to open config file: "+logConfigFile);}
+        logger = Logger.getLogger("dicoogle");        
+    }   
 
-    private List<Task<Report>> parseCommandLine(String[] args) throws URISyntaxException {
+
+    private Iterable<Task<Report>> parseCommandLine(String[] args) throws URISyntaxException {
         ArrayList<Task<Report>> actions = new ArrayList<>();
-        String workingDirectoryPath = "./";
         int i=0;
         while(i< args.length){
             switch(args[i]){
                 //set working directory
-                case "-w": //todo: make logs write into working directory
-                    workingDirectoryPath = args[i+1];
-                    i+=2;
-                    break;
-                    
+                //-w ./ for now
+                
                 //set loggers to verborse and output to stdout
                 case "-v": break;
                 
@@ -127,16 +153,23 @@ public class Dicoogle
                     break;
                 }
                 
+                case "-iall":{
+                    Task<Report> indexTask = pluginController.indexAllClosure(new URI(args[i+1]));
+                    actions.add(indexTask);
+                    i+=2;
+                    break;
+                }
+                
                 //index using specific plugin
                 case "-in": break;
                     
                 //execute query
                 case "-q": {
-                    if(i+1 >= args.length) {
-                        System.err.println("Query parameter requires a query expression");
+                    if(i+2 >= args.length) {
+                        System.err.println("Query parameter requires an engine and a query expression");
                         System.exit(1);
                     }
-                    Task task = pluginController.queryClosure("lucene",args[i+1] );
+                    Task task = pluginController.queryClosure(args[i+1],args[i+2]);
                     actions.add(task);
                     i+=2;
                     break;
@@ -145,9 +178,17 @@ public class Dicoogle
                 //await previous instructions
                 case "-barrier": break;
  
-                //initializes services
-                case "-s":
-                    
+                //server mode
+                case "-s": 
+                    isServer = true;
+                    i++;
+                    break;
+                
+                case "-w": 
+                    useWebServices = true;
+                    isServer = true;
+                    i++;
+                    break;
                     
                 //terminate after this instruction
                 case "-e": break;
@@ -157,6 +198,7 @@ public class Dicoogle
                 
                 default:
                     i++;
+                    break;
                 
             }
             
@@ -164,4 +206,34 @@ public class Dicoogle
         }
         return actions;
     }
+
+    @Override
+    public synchronized void run(){
+        //if we are not a server, there is no point in initiating webservices
+        if(!isServer) return;
+        
+        if(useWebServices){
+            try {
+                serviceController.startEnabledServices();
+            }
+            catch (Exception ex) {
+                logger.log(Level.SEVERE, "failure initiating services:", ex);
+                return;
+            }
+        }
+
+        
+        //blocks 
+        while(running){
+            try {
+                wait(1000);
+            }
+            catch (InterruptedException ex) {
+                logger.log(Level.SEVERE, null, ex);
+            }
+        }   
+    }
+    
+    void quit(){running = false;}
+    
 }

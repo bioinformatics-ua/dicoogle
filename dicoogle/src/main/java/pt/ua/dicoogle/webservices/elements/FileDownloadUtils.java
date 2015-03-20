@@ -38,10 +38,8 @@ import org.restlet.data.MediaType;
 import org.restlet.representation.OutputRepresentation;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.StorageInputStream;
-import pt.ua.dicoogle.sdk.datastructs.QueryReport;
+import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
-import pt.ua.dicoogle.sdk.task.JointQueryTask;
-import pt.ua.dicoogle.sdk.task.Task;
 import pt.ua.dicoogle.webservices.RestDimResource;
 import pt.ua.dicoogle.webservices.RestFileResource;
 
@@ -51,7 +49,9 @@ import pt.ua.dicoogle.webservices.RestFileResource;
  */
 public class FileDownloadUtils {
     
-    public static OutputRepresentation gerFileRepresentation(String SOPInstanceUID) {
+    static Logger logger = Logger.getLogger("dicoogle");
+    
+    public static OutputRepresentation getFileRepresentation(String SOPInstanceUID) {
         String query = "SOPInstanceUID:" + SOPInstanceUID;
         
         HashMap<String, String> extraFields = new HashMap<String, String>();
@@ -60,20 +60,17 @@ public class FileDownloadUtils {
         
         PluginController pc = PluginController.get();
         
-        Iterable<SearchResult> queryResults;
+        Report queryResults;
         try {
             queryResults = pc.queryDispatch("lucene", query, extraFields).get();
         }
         catch (InterruptedException | ExecutionException ex) {
-            Logger.getLogger(RestFileResource.class.getName()).log(Level.SEVERE, null, ex);
+            logger.throwing("FileDownloadUtils","getFileRepresentation",ex);
             return null;
         }
-        
-        if(!queryResults.iterator().hasNext())
-            return null;
-        
+                
         URI fileURI = null;
-        for (SearchResult r : queryResults) {
+        for (SearchResult r : queryResults.results()) {
             Logger.getLogger(RestDimResource.class.getName()).severe(r.getURI().toString());
             fileURI = r.getURI();
         }

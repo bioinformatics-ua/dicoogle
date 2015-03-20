@@ -28,36 +28,25 @@ import java.util.logging.Logger;
 /**
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Frederico Valente <fmvalente@ua.pt>
  */
 class ExceptionHandler implements Thread.UncaughtExceptionHandler {
 
-  public static String getStackTrace(Throwable throwable)
-  {
-    Writer writer = new StringWriter();
-    PrintWriter printWriter = new PrintWriter(writer);
-    throwable.printStackTrace(printWriter);
-    return writer.toString();
-  }
+    public static String getStackTrace(Throwable throwable){
+        Writer writer = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(writer);
+        throwable.printStackTrace(printWriter);
+        return writer.toString();
+    }
 
 
-  public void uncaughtException(Thread t, Throwable e) {
-    handle(e);
-  }
+    @Override
+    public void uncaughtException(Thread t, Throwable e) {handle(e);}
 
     public void handle(Throwable throwable) {
-        try {
-            Logger.getLogger("global").log(Level.SEVERE, null, throwable);
-            Logger.getLogger("global").log(Level.SEVERE, null, getStackTrace(throwable));
-            System.err.println(throwable);
-            System.err.println(getStackTrace(throwable));
-            System.exit(1);        
-        }
-        catch (Throwable t) {
-        // don't let the exception get thrown out, will cause infinite looping!
-        }
-  }
+        Logger.getLogger("dicoogle").log(Level.SEVERE, "exception caught by the general exception handler: ", throwable);
+        System.exit(1);        
+    }
 
-  public static void registerExceptionHandler() {
-    Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
-  }
+    public static void registerExceptionHandler() {Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());}
 }

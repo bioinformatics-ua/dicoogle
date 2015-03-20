@@ -30,10 +30,7 @@ import pt.ua.dicoogle.sdk.QueryInterface;
 import pt.ua.dicoogle.sdk.StorageInputStream;
 import pt.ua.dicoogle.sdk.StorageInterface;
 import pt.ua.dicoogle.sdk.core.DicooglePlatformInterface;
-import pt.ua.dicoogle.sdk.datastructs.QueryReport;
 import pt.ua.dicoogle.sdk.datastructs.Report;
-import pt.ua.dicoogle.sdk.datastructs.SearchResult;
-import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
 
 /**
@@ -44,7 +41,7 @@ import pt.ua.dicoogle.sdk.task.Task;
  */
 public class DicooglePlatformProxy implements DicooglePlatformInterface {
 
-    private PluginController pluginController;
+    private final PluginController pluginController;
 
     public DicooglePlatformProxy(PluginController pluginController) {
         this.pluginController = pluginController;
@@ -98,6 +95,7 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
         return pluginController.resolveURI(location);
     }
 
+    @Override
     public Collection<StorageInterface> getStoragePlugins(boolean onlyEnabled) {
         return pluginController.getStoragePlugins(onlyEnabled);
     }
@@ -112,38 +110,51 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
         return pluginController.getQueryPlugins(onlyEnabled);
     }
 
+    @Override
     public List<String> getQueryProvidersName(boolean enabled) {
         return pluginController.getQueryProvidersName(enabled);
     }
 
+    @Override
     public QueryInterface getQueryProviderByName(String name, boolean onlyEnabled) {
         return pluginController.getQueryProviderByName(name, onlyEnabled);
     }
 
     @Override
-    public Task<QueryReport> queryDispatch(Iterable<String> querySources, String query, Object ... parameters){
+    public Task<Report> queryDispatch(Iterable<String> querySources, String query, Object ... parameters){
         return pluginController.queryDispatch(querySources, query, parameters);
     }
     @Override
-    public Task<QueryReport> queryDispatch(String querySource, String query, Object ... parameters){
+    public Task<Report> queryDispatch(String querySource, String query, Object ... parameters){
         return pluginController.queryDispatch(querySource, query, parameters);
     }
     @Override
-    public Task<QueryReport> queryClosure(Iterable<String> querySources, String query, Object ... parameters){
+    public Task<Report> queryClosure(Iterable<String> querySources, String query, Object ... parameters){
         return pluginController.queryClosure(querySources, query, parameters);
     }
     @Override
-    public Task<QueryReport> queryClosure(String querySource, String query, Object ... parameters){
+    public Task<Report> queryClosure(String querySource, String query, Object ... parameters){
         return pluginController.queryClosure(querySource, query, parameters);
     }
     
     
-    public Task<Report> indexDispatch(URI path) {
-        return pluginController.indexDispatch(path);
+    @Override
+    public Task<Report> indexDispatch(String pluginName, URI path) {
+        return pluginController.indexDispatch(pluginName, path);
     }
     
-    public Task<Report> indexClosure(URI path){
-        return pluginController.indexClosure(path);
+    @Override
+    public Task<Report> indexClosure(String pluginName, URI path){
+        return pluginController.indexClosure(pluginName, path);
     }
 
+    @Override
+    public Task<Report> indexAllDispatch(URI path) {
+        return pluginController.indexAllDispatch(path);
+    }
+
+    @Override
+    public Task<Report> indexAllClosure(URI path) {
+        return pluginController.indexAllClosure(path);
+    }    
 }

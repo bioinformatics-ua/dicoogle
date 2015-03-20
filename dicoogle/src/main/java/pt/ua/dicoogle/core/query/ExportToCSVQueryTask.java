@@ -24,11 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import pt.ua.dicoogle.sdk.datastructs.QueryReport;
 
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
@@ -37,7 +36,7 @@ import pt.ua.dicoogle.sdk.task.Task;
 
 public class ExportToCSVQueryTask extends JointQueryTask {
 
-	private static final Logger log = LogManager.getLogger(ExportToCSVQueryTask.class.getName());
+	private static final Logger log = Logger.getLogger("dicoogle");
 	
 	private static String[] searchChars = new String[]{"\n", ";"};
 	private static String[] replaceChars = new String[]{"", ","};
@@ -65,7 +64,7 @@ public class ExportToCSVQueryTask extends JointQueryTask {
 		writter.close();
 		latch.countDown();
 		
-		log.info("Exported CSV Table: ", tagsOrder.toString(), nLines);
+		log.info("Exported CSV Table: "+ tagsOrder.toString()+ nLines);
 	}
 
 	@Override
@@ -91,9 +90,7 @@ public class ExportToCSVQueryTask extends JointQueryTask {
 	 */
 	private void printFirstLine() {
 		StringBuilder builder = new StringBuilder();
-		
-		log.debug("Started, Printing first line: ", tagsOrder);
-		
+				
 		for (String tag : tagsOrder) {
 			builder.append(tag).append(";");
 		}
@@ -119,7 +116,6 @@ public class ExportToCSVQueryTask extends JointQueryTask {
 			}
 		}
 		
-		log.debug("Printing Line: ", builder.toString());
 		nLines++;
 		this.writter.println(builder.toString());
 	}

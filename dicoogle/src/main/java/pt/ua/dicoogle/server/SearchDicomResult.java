@@ -48,6 +48,7 @@ import pt.ua.dicoogle.core.dim.Patient;
 import pt.ua.dicoogle.core.dim.Serie;
 import pt.ua.dicoogle.core.dim.Study;
 import pt.ua.dicoogle.plugins.PluginController;
+import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 
 /**
@@ -97,7 +98,8 @@ public class SearchDicomResult implements Iterator<DicomObject> {
         }
 
         try {
-            it = pluginController.queryDispatch("lucene", searchQuery, extraFields).get().iterator();
+            Report rep = pluginController.queryDispatch("lucene", searchQuery, extraFields).get();
+            it = rep.results().iterator();
 
         } catch (InterruptedException | ExecutionException e1) {
             // TODO Auto-generated catch block

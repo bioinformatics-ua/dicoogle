@@ -75,14 +75,17 @@ class Listener implements JNotifyListener {
         pluginController=p;
     }
     
+    @Override
     public void fileRenamed(int wd, String rootPath, String oldName, String newName) {
         print("renamed " + rootPath + " : " + oldName + " -> " + newName);
     }
 
+    @Override
     public void fileModified(int wd, String rootPath, String name) {
         print("modified " + rootPath + " : " + name);
     }
 
+    @Override
     public void fileDeleted(int wd, String rootPath, String name) {
         print("deleted " + rootPath + " : " + name);
         try {
@@ -95,13 +98,14 @@ class Listener implements JNotifyListener {
         
     }
 
+    @Override
     public void fileCreated(int wd, String rootPath, String name) {
         try {
             print("created " + rootPath + " : " + name);
-            pluginController.index(new URI(rootPath + File.pathSeparator+ name));
+            pluginController.indexAllDispatch(new URI(rootPath + File.pathSeparator+ name));
         }
         catch (URISyntaxException ex) {
-            Logger.getLogger(Listener.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger("dicoogle").log(Level.SEVERE, null, ex);
         }
     }
 
