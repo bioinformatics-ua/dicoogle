@@ -18,7 +18,6 @@
  */
 package pt.ua.dicoogle.sdk.datastructs;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 

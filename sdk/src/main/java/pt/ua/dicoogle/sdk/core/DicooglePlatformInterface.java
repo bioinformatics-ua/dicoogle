@@ -70,14 +70,14 @@ public interface DicooglePlatformInterface {
      *
      * @return Collection of active IndexPluginInterface
      */
-    public Collection<IndexerInterface> getAllIndexPlugins();
+    public Iterable<IndexerInterface> getAllIndexPlugins();
 
     /**
      * Access to a list of active query plugins
      *
      * @return Collection of active QueryPluginInterface
      */
-    public Collection<QueryInterface> getAllQueryPlugins();
+    public Iterable<QueryInterface> getAllQueryPlugins();
 
     /**
      *
@@ -95,10 +95,10 @@ public interface DicooglePlatformInterface {
     public StorageInterface getStorageForSchema(String schema);
     public Iterable<StorageInputStream> resolveURI(URI location);
 
-    public Collection<StorageInterface> getStoragePlugins(boolean onlyEnabled);
-    public Collection<QueryInterface> getQueryPlugins(boolean onlyEnabled);
+    public Iterable<StorageInterface> getStoragePlugins(boolean onlyEnabled);
+    public Iterable<QueryInterface> getQueryPlugins(boolean onlyEnabled);
     
-    public List<String> getQueryProvidersName(boolean enabled);
+    public Iterable<String> getQueryProvidersName(boolean enabled);
     public QueryInterface getQueryProviderByName(String name, boolean onlyEnabled);
 
     //indexing

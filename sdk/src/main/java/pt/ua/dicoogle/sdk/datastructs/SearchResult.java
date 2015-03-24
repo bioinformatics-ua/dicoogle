@@ -45,6 +45,13 @@ public class SearchResult implements Serializable {
             this.extraData = data;
     }
     
+    @Override
+    public boolean equals(Object o){
+        if(o==null) return false;
+        if(!(o instanceof SearchResult)) return false;
+        SearchResult r = (SearchResult)o;
+        return (r.location.equals(location));
+    }
     
     /**
      * Gets the location of the hit

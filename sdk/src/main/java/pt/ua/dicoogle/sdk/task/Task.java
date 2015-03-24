@@ -21,6 +21,7 @@ package pt.ua.dicoogle.sdk.task;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
+import java.util.logging.Logger;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 
 /**
@@ -31,9 +32,14 @@ import pt.ua.dicoogle.sdk.datastructs.Report;
  */
 public class Task<Type> extends FutureTask<Type> {
 
+    private static final Logger logger = Logger.getLogger("dicoogle");
+    
     private String taskName = "unnamed task";
     private Callable callable;
     ArrayList<Runnable> toRunWhenComplete;
+    
+    public double elapsedTime = -1;
+    private long tStart = 0;
     
     public Task(Callable<Type> c){
         super(c);
@@ -44,9 +50,10 @@ public class Task<Type> extends FutureTask<Type> {
     public Task(String name, Callable<Type> c){
         super(c);
         taskName = name;
-        toRunWhenComplete = new ArrayList<>();//we could lazy initialize this in onCompletion
+        toRunWhenComplete = new ArrayList<>();
     }
     
+    /*creates a task that throws an exception. for error reporting, i dislike nulls*/
     public static Task<Report> error(final String error) {
         return new Task("error", new Callable<Report>() 
             {
@@ -58,6 +65,13 @@ public class Task<Type> extends FutureTask<Type> {
         );
     }
 
+    @Override
+    public void run(){
+        //sets the timer
+        tStart = System.currentTimeMillis();
+        super.run();
+    }
+    
     
     @Override
     protected void set(Type ret){
@@ -65,10 +79,16 @@ public class Task<Type> extends FutureTask<Type> {
         for(Runnable r : toRunWhenComplete){
             r.run();
         }
+        elapsedTime = (System.currentTimeMillis() - tStart)/1000.0;
+        logger.info("task:"+getName()+" completed in: "+elapsedTime());
     }
     
     public void onCompletion(Runnable r){
         toRunWhenComplete.add(r);
+    }
+    
+    public double elapsedTime(){
+        return elapsedTime;
     }
     
     
