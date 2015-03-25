@@ -20,13 +20,11 @@
 package pt.ua.dicoogle.server.web.servlets.webui;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Collection;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
@@ -34,7 +32,7 @@ import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
 /**
  * Retrieval of web UI plugins.
  * 
- * <b>This API is unstable. It is currently compatible with dicoogle-webcore 0.2.0</b>
+ * <b>This API is unstable. It is currently compatible with dicoogle-webcore 0.3.0</b>
  *
  * @author Eduardo Pinho
  */
@@ -44,23 +42,26 @@ public class WebUIServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String name = req.getParameter("name");
-        String slotId = req.getParameter("slot-id");
+        String[] slotIdArr = req.getParameterValues("slot-id");
         String module = req.getParameter("module");
         String process = req.getParameter("process");
 
         if (name != null) {
-            this.getPlugin(resp, name);
+            resp.setContentType("application/json");
+            resp.getWriter().append(this.getPlugin(resp, name));
         } else if (module != null) {
+            resp.setContentType("application/javascript");
             boolean doProcess = process == null || Boolean.parseBoolean(process);
-            this.getModule(resp, module, doProcess);
+            resp.getWriter().append(this.getModule(resp, module, doProcess));
         } else {
-            this.getPluginsBySlot(resp, slotId);
+            resp.setContentType("application/json");
+            resp.getWriter().append(this.getPluginsBySlot(resp, slotIdArr));
         }
     }
 
     /** Retrieve plugins. */
-    private void getPluginsBySlot(HttpServletResponse resp, String slotId) throws IOException {
-        Collection<WebUIPlugin> plugins = PluginController.getInstance().getWebUIPlugins(slotId);
+    private String getPluginsBySlot(HttpServletResponse resp, String... slotIds) throws IOException {
+        Collection<WebUIPlugin> plugins = PluginController.getInstance().getWebUIPlugins(slotIds);
         String acc = "{\"plugins\":[";
         for (WebUIPlugin plugin : plugins) {
             acc += PluginController.getInstance().getWebUIPackageJSON(plugin.getName()) + ",";
@@ -69,32 +70,31 @@ public class WebUIServlet extends HttpServlet {
             acc = acc.substring(0,acc.length()-1);
         }
         acc += "]}";
-        resp.setContentType("application/json");
-        resp.getWriter().append(acc);
+        return acc;
     }
 
-    private void getPlugin(HttpServletResponse resp, String name) throws IOException {
+    private String getPlugin(HttpServletResponse resp, String name) throws IOException {
         resp.setContentType("application/json");
         String json = PluginController.getInstance().getWebUIPackageJSON(name);
-        resp.getWriter().append(json);
+        return json;
     }
 
-    private void getModule(HttpServletResponse resp, String name, boolean process) throws IOException {
+    private String getModule(HttpServletResponse resp, String name, boolean process) throws IOException {
         resp.setContentType("application/javascript");
         WebUIPlugin plugin = PluginController.getInstance().getWebUIPlugin(name);
         if (plugin == null) {
-            resp.sendError(404);
-            return;
+            return null;
         }
         String js = PluginController.getInstance().getWebUIModuleJS(name);
         
-        PrintWriter writer = resp.getWriter();
+        StringBuilder writer = new StringBuilder();
         writer.append(js);
         if (process) {
-            writer.printf("var __Dicoogle_plugin__=%s;\n"
+            writer.append(String.format("var __Dicoogle_plugin__=%s;\n"
                     +   "DicoogleWeb.onRegister(new __Dicoogle_plugin__(), '%s');",
-                    camelize(plugin.getName()), plugin.getName());
+                    camelize(plugin.getName()), plugin.getName()));
         }
+        return writer.toString();
     }
     
     /** Convert from dash-lowercase to camelCase

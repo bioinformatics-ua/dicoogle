@@ -23,10 +23,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
@@ -642,18 +645,21 @@ public class PluginController{
 
     /** Retrieve all web UI plugin descriptors for the given slot id.
      * 
-     * @param id the slot id for the plugin ("query", "result", "menu", ...), null for any
+     * @param ids the slot id's for the plugin ("query", "result", "menu", ...), empty or null for any slot
      * @return a collection of web UI plugins.
      */
-    public Collection<WebUIPlugin> getWebUIPlugins(String id) {
-        logger.log(Level.INFO, "getWebUIPlugins(slot id: {})", id);
+    public Collection<WebUIPlugin> getWebUIPlugins(String... ids) {
+        logger.log(Level.INFO, "getWebUIPlugins(slot ids: {})", (Object[])ids);
         List<WebUIPlugin> plugins = new ArrayList<>();
-
+        Set<String> idSet = new HashSet();
+        if (ids != null) {
+            idSet.addAll(Arrays.asList(ids));
+        }
         for (WebUIPlugin plugin : webUI.pluginSet()) {
             if (!plugin.isEnabled()) {
                 continue;
             }
-            if (id == null || id.equals(plugin.getSlotId())) {
+            if (idSet.isEmpty() || idSet.contains(plugin.getSlotId())) {
                 plugins.add(plugin);
             }
         }

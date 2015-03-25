@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -52,7 +53,7 @@ public class SearchServlet extends HttpServlet {
          Example: http://localhost:8080/search?query=wrix&keyword=false&provicer=lucene
          */
         String query = request.getParameter("query");
-        String provider = request.getParameter("provider");
+        String providerArr[] = request.getParameterValues("provider");
         boolean keyword = Boolean.parseBoolean(request.getParameter("keyword"));
       
         if (StringUtils.isEmpty(query)) {
@@ -64,18 +65,16 @@ public class SearchServlet extends HttpServlet {
             QueryExpressionBuilder q = new QueryExpressionBuilder(query);
             query = q.getQueryString();
         }
-
-        //Split provider string to list
-        List<String> providerList = null;
-        if (provider != null) {
-            providerList = Arrays.asList(provider.split(";"));
-        }
-
-       
-
+        
+        List<String> providerList = Collections.EMPTY_LIST;
         boolean queryAllProviders = false;
-        if (providerList == null || providerList.isEmpty()) {
+        if (providerArr == null) {
             queryAllProviders = true;
+        } else {
+            providerList = Arrays.asList(providerArr);
+            if (providerList.isEmpty()) {
+                queryAllProviders = true;
+            }
         }
 
         List<String> knownProviders = null;

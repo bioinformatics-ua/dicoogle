@@ -2,7 +2,7 @@
  */
 
 // uncomment this line if the base page does not contain React
-// var React = require('react');
+ var React = require('react');
 
 if (!React) {
   console.error("React is not supported in this page!");
