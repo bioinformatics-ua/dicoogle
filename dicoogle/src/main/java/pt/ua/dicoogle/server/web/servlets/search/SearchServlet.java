@@ -22,17 +22,22 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import net.sf.json.JSONObject;
+
 import org.apache.commons.lang3.StringUtils;
+
 import pt.ua.dicoogle.core.QueryExpressionBuilder;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
@@ -150,7 +155,7 @@ public class SearchServlet extends HttpServlet {
             rj.put("uri", r.getURI().toString());
 
             JSONObject fields = new JSONObject();
-            for (HashMap.Entry<String,Object> f : r.getExtraData().entrySet()) {
+            for (Entry<String,Object> f : r.getExtraData().entrySet()) {
                 // remove padding from string representations before accumulating
                 fields.accumulate(f.getKey(), f.getValue().toString().trim());
             }
