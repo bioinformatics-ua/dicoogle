@@ -20,7 +20,9 @@
 package pt.ua.dicoogle.server.web.servlets.webui;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -62,15 +64,14 @@ public class WebUIServlet extends HttpServlet {
     /** Retrieve plugins. */
     private String getPluginsBySlot(HttpServletResponse resp, String... slotIds) throws IOException {
         Collection<WebUIPlugin> plugins = PluginController.getInstance().getWebUIPlugins(slotIds);
-        String acc = "{\"plugins\":[";
+        List<String> pkgList = new ArrayList<>(plugins.size());
         for (WebUIPlugin plugin : plugins) {
-            acc += PluginController.getInstance().getWebUIPackageJSON(plugin.getName()) + ",";
+            String pkg = PluginController.getInstance().getWebUIPackageJSON(plugin.getName());
+            if (pkg != null) {
+                pkgList.add(pkg);
+            }
         }
-        if (plugins.size() > 0) {
-            acc = acc.substring(0,acc.length()-1);
-        }
-        acc += "]}";
-        return acc;
+        return "{\"plugins\":[" + String.join(",", pkgList) + "]}";
     }
 
     private String getPlugin(HttpServletResponse resp, String name) throws IOException {
