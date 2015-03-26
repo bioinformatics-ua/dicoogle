@@ -127,9 +127,7 @@ public class DefaultFileStoragePlugin extends PluginBase implements StorageInter
 	}
 
 	@Override
-	public String getName() {
-		return "default-filesystem-plugin";
-	}
+	public String getName() {return "default-filesystem-plugin";}
 
 	private class MyIterable implements Iterable<StorageInputStream>{
 

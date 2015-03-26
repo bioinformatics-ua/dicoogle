@@ -19,10 +19,8 @@
 
 package pt.ua.dicoogle.taskManager;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import pt.ua.dicoogle.sdk.task.Task;
 
 /**
@@ -30,7 +28,6 @@ import pt.ua.dicoogle.sdk.task.Task;
  * This is a task manager for Dicoogle.
  * Currently it is based on a fixed thread pool executor with a maximum of 4 threads executing simultaneously. 
  * 
- * TODO: change interface to use generics.
  * 
  * @author psytek
  */

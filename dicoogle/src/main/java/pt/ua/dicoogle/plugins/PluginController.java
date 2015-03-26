@@ -25,7 +25,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -134,6 +133,16 @@ public class PluginController {
         }
     }
 
+        /**
+     * Stops the plugins and saves the settings
+     *
+     */
+    public void shutdown() throws IOException {
+        for (PluginSet plugin : pluginSets) {
+            plugin.shutdown();
+        }
+    }
+    
     public Collection<JettyPluginInterface> getJettyPlugins() {
         ArrayList<JettyPluginInterface> jettyInterfaces = new ArrayList<>();
         for (PluginSet pluginSet : pluginSets) {
@@ -158,29 +167,6 @@ public class PluginController {
         return restInterfaces;
     }
 
-    /**
-     * Stops the plugins and saves the settings
-     *
-     */
-    public void shutdown() throws IOException {
-        for (PluginSet plugin : pluginSets) {
-            plugin.shutdown();
-        }
-    }
-
-    public Collection<IndexerInterface> getIndexingPlugins(boolean onlyEnabled) {
-        ArrayList<IndexerInterface> indexers = new ArrayList<>();
-        for (PluginSet pSet : pluginSets) {
-            for (IndexerInterface index : pSet.getIndexPlugins()) {
-                if (!index.isEnabled() && onlyEnabled) {
-                    continue;
-                }
-                indexers.add(index);
-            }
-        }
-        return indexers;
-    }
-
     public Collection<StorageInterface> getStoragePlugins(boolean onlyEnabled) {
         ArrayList<StorageInterface> storagePlugins = new ArrayList<>();
         for (PluginSet pSet : pluginSets) {
@@ -201,9 +187,7 @@ public class PluginController {
      * @return
      */
     public Iterable<StorageInputStream> resolveURI(URI location) {
-        Collection<StorageInterface> storages = getStoragePlugins(true);
-
-        for (StorageInterface store : storages) {
+        for (StorageInterface store : getStoragePlugins(true)) {
             if (store.handles(location)) {
                 return store.at(location);
             }
@@ -224,9 +208,8 @@ public class PluginController {
      * @return
      */
     public StorageInterface getStorageForSchema(URI location) {
-        Collection<StorageInterface> storages = getStoragePlugins(false);
 
-        for (StorageInterface store : storages) {
+        for (StorageInterface store : getStoragePlugins(false)) {
             if (store.handles(location)) {
                 return store;
             }
@@ -248,7 +231,22 @@ public class PluginController {
         return getStorageForSchema(uri);
     }
 
-    public Collection<QueryInterface> getQueryPlugins(boolean onlyEnabled) {
+    
+    
+    public Iterable<IndexerInterface> getIndexingPlugins(boolean onlyEnabled) {
+        ArrayList<IndexerInterface> indexers = new ArrayList<>();
+        for (PluginSet pSet : pluginSets) {
+            for (IndexerInterface index : pSet.getIndexPlugins()) {
+                if (!index.isEnabled() && onlyEnabled) {
+                    continue;
+                }
+                indexers.add(index);
+            }
+        }
+        return indexers;
+    }
+
+    public Iterable<QueryInterface> getQueryPlugins(boolean onlyEnabled) {
         ArrayList<QueryInterface> queriers = new ArrayList<>();
         for (PluginSet pSet : pluginSets) {
             for (QueryInterface querier : pSet.getQueryPlugins()) {
@@ -260,47 +258,47 @@ public class PluginController {
         }
         return queriers;
     }
-
-    public List<String> getQueryProvidersName(boolean enabled) {
-        Collection<QueryInterface> plugins = getQueryPlugins(enabled);
-        List<String> names = new ArrayList<>(plugins.size());
-        for (QueryInterface p : plugins) {
-            names.add(p.getName());
-        }
-        return names;
-    }
-
-    public QueryInterface getQueryProviderByName(String name, boolean onlyEnabled) {
-        Collection<QueryInterface> plugins = getQueryPlugins(onlyEnabled);
-        for (QueryInterface p : plugins) {
-            if (p.getName().equalsIgnoreCase(name)) {
-                return p;
-            }
-        }
-        logger.info("Could not retrive query provider:" + name);
-        return null;
-    }
-
+    
     public IndexerInterface getIndexerByName(String name, boolean onlyEnabled) {
-        Collection<IndexerInterface> plugins = getIndexingPlugins(onlyEnabled);
-        for (IndexerInterface p : plugins) {
+        for (IndexerInterface p : getIndexingPlugins(onlyEnabled)) {
             if (p.getName().equalsIgnoreCase(name)) {
                 return p;
             }
         }
-        logger.info("No Indexer Matching:" + name);
+        logger.info("unable to retrieve indexer:" + name);
         return null;
+    }
+    public QueryInterface getQueryProviderByName(String name, boolean onlyEnabled) {
+        for (QueryInterface p : getQueryPlugins(onlyEnabled)) {
+            if (p.getName().equalsIgnoreCase(name)) {
+                return p;
+            }
+        }
+        logger.info("unable to retrieve query provider:" + name);
+        return null;
+    }
+
+    public Iterable<String> queryNames(boolean enabled) {        
+        ArrayList<String> ret = new ArrayList<>();
+        for (QueryInterface p :  getQueryPlugins(enabled)) {
+            ret.add(p.getName());
+        }
+        return ret;
     }
 
     public Iterable<String> indexerNames() {
-        Collection<IndexerInterface> plugins = getIndexingPlugins(true);
         ArrayList<String> names = new ArrayList<>();
-        for (IndexerInterface p : plugins) {
+        for (IndexerInterface p : getIndexingPlugins(true)) {
             names.add(p.getName());
         }
         return names;
     }
 
+    
+    
+    
+    
+    
     public Task<Report> queryDispatch(String querySource, final String query, final Object... parameters) {
         Task<Report> t = queryClosure(querySource, query, parameters);
         taskManager.dispatch(t);
@@ -337,7 +335,7 @@ public class PluginController {
     public Task<Report> queryClosure(String querySource, final String query, final Object... parameters) {
         final QueryInterface queryEngine = getQueryProviderByName(querySource, true);
         //returns a tasks that runs the query from the selected query engine
-        Task<Report> queryTask = new Task<>("query:"+querySource+" ->"+query,
+        Task<Report> queryTask = new Task<>("query:"+querySource+" -> "+query,
                 new Callable<Report>() {
                     @Override
                     public Report call() throws Exception {
@@ -359,7 +357,7 @@ public class PluginController {
          * waits their completion and merges the results into a single report.
          * A dispatched task object is returned.
          */
-        Task<Report> queryTask = new Task<>("multiple query",
+        Task<Report> queryTask = new Task<>("multiple query:",
                 new Callable<Report>() {
                     @Override
                     public Report call() throws Exception {
@@ -473,11 +471,15 @@ public class PluginController {
             return;
         }
 
-        getIndexingPlugins(true).stream().forEach((indexer) -> {indexer.unindex(path);});
+        getIndexingPlugins(true).forEach((indexer) -> {indexer.unindex(path);});
     }
 
     public Stream<PluginSet> plugins() {
         return pluginSets.stream();
+    }
+
+    String getDicoogleDirectory() {
+        return "";
     }
 
 }

@@ -22,9 +22,6 @@
 package pt.ua.dicoogle.plugins;
 
 import java.net.URI;
-import java.util.Collection;
-import java.util.List;
-
 import pt.ua.dicoogle.sdk.IndexerInterface;
 import pt.ua.dicoogle.sdk.QueryInterface;
 import pt.ua.dicoogle.sdk.StorageInputStream;
@@ -49,7 +46,7 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
 
     @Override
     public IndexerInterface requestIndexPlugin(String name) {
-        Collection<IndexerInterface> indexers = pluginController.getIndexingPlugins(true);
+        Iterable<IndexerInterface> indexers = pluginController.getIndexingPlugins(true);
         for (IndexerInterface index : indexers) {
             if (index.getName().equals(name)) {
                 return index;
@@ -60,7 +57,7 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
 
     @Override
     public QueryInterface requestQueryPlugin(String name) {
-        Collection<QueryInterface> queriers = pluginController.getQueryPlugins(true);
+        Iterable<QueryInterface> queriers = pluginController.getQueryPlugins(true);
         for (QueryInterface querier : queriers) {
             if (querier.getName().equals(name)) {
                 return querier;
@@ -71,12 +68,12 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
     }
 
     @Override
-    public Collection<IndexerInterface> getAllIndexPlugins() {
+    public Iterable<IndexerInterface> getAllIndexPlugins() {
         return pluginController.getIndexingPlugins(false);
     }
 
     @Override
-    public Collection<QueryInterface> getAllQueryPlugins() {
+    public Iterable<QueryInterface> getAllQueryPlugins() {
         return pluginController.getQueryPlugins(false);
     }
 
@@ -96,7 +93,7 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
     }
 
     @Override
-    public Collection<StorageInterface> getStoragePlugins(boolean onlyEnabled) {
+    public Iterable<StorageInterface> getStoragePlugins(boolean onlyEnabled) {
         return pluginController.getStoragePlugins(onlyEnabled);
     }
 
@@ -106,13 +103,13 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
     }
 
     @Override
-    public Collection<QueryInterface> getQueryPlugins(boolean onlyEnabled) {
+    public Iterable<QueryInterface> getQueryPlugins(boolean onlyEnabled) {
         return pluginController.getQueryPlugins(onlyEnabled);
     }
 
     @Override
-    public List<String> getQueryProvidersName(boolean enabled) {
-        return pluginController.getQueryProvidersName(enabled);
+    public Iterable<String> getQueryProvidersName(boolean enabled) {
+        return pluginController.queryNames(enabled);
     }
 
     @Override
@@ -137,7 +134,6 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
         return pluginController.queryClosure(querySource, query, parameters);
     }
     
-    
     @Override
     public Task<Report> indexDispatch(String pluginName, URI path) {
         return pluginController.indexDispatch(pluginName, path);
@@ -157,4 +153,9 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
     public Task<Report> indexAllClosure(URI path) {
         return pluginController.indexAllClosure(path);
     }    
+
+    @Override
+    public String getDicoogleDirectory() {
+        return pluginController.getDicoogleDirectory();
+    }
 }

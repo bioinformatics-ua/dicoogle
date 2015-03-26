@@ -33,7 +33,6 @@ import pt.ua.dicoogle.sdk.PluginSet;
  */
 
 public class PluginFactory {
-    //TODO:configurable directory
     public static Collection<PluginSet> getPlugins(File pluginDirectory){
         PluginManager pm = PluginManagerFactory.createPluginManager();
         pm.addPluginsFrom(pluginDirectory.toURI());
@@ -41,7 +40,7 @@ public class PluginFactory {
         return pmu.getPlugins(PluginSet.class);
     }
     
-     public static Collection<PluginSet> getPlugins(){
+    public static Collection<PluginSet> getPlugins(){
         PluginManager pm = PluginManagerFactory.createPluginManager();
         File path = new File("plugins");
         pm.addPluginsFrom(path.toURI());

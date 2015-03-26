@@ -17,7 +17,7 @@
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
 package pt.ua.dicoogle.core.query;
-
+/*
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
@@ -31,10 +31,9 @@ import org.apache.commons.lang3.StringUtils;
 import pt.ua.dicoogle.sdk.datastructs.QueryReport;
 
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
-import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
-
-public class ExportToCSVQueryTask extends JointQueryTask {
+*/
+public class ExportToCSVQueryTask/* extends Task */{/*
 
 	private static final Logger log = Logger.getLogger("dicoogle");
 	
@@ -57,7 +56,7 @@ public class ExportToCSVQueryTask extends JointQueryTask {
 		printFirstLine();
 	}
 
-	@Override
+
 	public void onCompletion() {
 		// TODO Auto-generated method stub
 		writter.flush();
@@ -67,7 +66,6 @@ public class ExportToCSVQueryTask extends JointQueryTask {
 		log.info("Exported CSV Table: "+ tagsOrder.toString()+ nLines);
 	}
 
-	@Override
 	public void onReceive(Task<QueryReport> e) {
 		// TODO Auto-generated method stub
 
@@ -83,12 +81,12 @@ public class ExportToCSVQueryTask extends JointQueryTask {
 		
 
 	}
-
+*/
 	/**
 	 * Print the first line of the .csv file
 	 * 
 	 */
-	private void printFirstLine() {
+	/*private void printFirstLine() {
 		StringBuilder builder = new StringBuilder();
 				
 		for (String tag : tagsOrder) {
@@ -129,5 +127,5 @@ public class ExportToCSVQueryTask extends JointQueryTask {
 			e.printStackTrace();
 		}
 	}
-	
+	*/
 }

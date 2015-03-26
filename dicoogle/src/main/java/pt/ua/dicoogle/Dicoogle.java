@@ -18,13 +18,14 @@
  */
 package pt.ua.dicoogle;
 
+import pt.ua.dicoogle.sdk.utils.SystemInfo;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -32,6 +33,7 @@ import java.util.logging.Logger;
 import org.dcm4che2.data.TransferSyntax;//must remove this dep from here
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.plugins.ServiceController;
+import pt.ua.dicoogle.sdk.IndexerInterface;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.task.Task;
 
@@ -44,7 +46,7 @@ public class Dicoogle implements Runnable
 {   
     static Logger logger;
     
-    PluginController pluginController = new PluginController(new File("./plugins"));
+    PluginController pluginController = new PluginController(SystemInfo.getPluginDirectory());
     ServiceController serviceController = new ServiceController();
     
     boolean running = true;
@@ -60,6 +62,11 @@ public class Dicoogle implements Runnable
     {
         ExceptionHandler.registerExceptionHandler();
         initializeLogging();
+        
+        logger.info("home dir is:"+SystemInfo.getHomeDirectory());
+        logger.info("dicoogle directory is:"+SystemInfo.getDicoogleDirectory());
+        logger.info("plugin loading directory is:"+SystemInfo.getPluginDirectory());
+        logger.info("plugin data storage directory is:"+SystemInfo.getPluginStorageDirectory());
         
         try{
             Dicoogle dicoogle = new Dicoogle();
@@ -87,9 +94,8 @@ public class Dicoogle implements Runnable
                 task.run();
                 System.out.println("task "+task.getName()+" complete.");
                 System.out.println(task.get());
-                System.out.flush();
             }
-            System.err.println("Finished running tasks...");
+            System.out.println("Finished running tasks...");
             
             dicoogle.run();            
         }
@@ -119,7 +125,7 @@ public class Dicoogle implements Runnable
     private static void initializeLogging() {
         //configures logging
         LogManager logManager = LogManager.getLogManager();
-        File logConfigFile = new File("./logconfig.properties");
+        File logConfigFile = new File(SystemInfo.getDicoogleDirectory()+"/logconfig.properties");
         if(logConfigFile.exists()){
             try{
                 logManager.readConfiguration(new FileInputStream(logConfigFile));
@@ -130,7 +136,7 @@ public class Dicoogle implements Runnable
         }
         else{System.err.println("Unable to open config file: "+logConfigFile);}
         logger = Logger.getLogger("dicoogle");        
-    }   
+    }
 
 
     private Iterable<Task<Report>> parseCommandLine(String[] args) throws URISyntaxException {
@@ -147,7 +153,22 @@ public class Dicoogle implements Runnable
                 
                 //index
                 case "-i":{
-                    Task<Report> indexTask = pluginController.indexClosure("lucene", new URI(args[i+1]));
+                    if(i+2 >= args.length) {
+                        System.err.println("Query parameter requires an engine and a query expression");
+                        System.exit(1);
+                    }
+                    //check if indexer exists
+                    if(pluginController.getIndexerByName(args[i+1], true)==null){
+                        System.err.println("Indexer:"+args[i+1]+" not found!");
+                        System.err.println("Valid indexers are:");
+                        for(IndexerInterface indexer: pluginController.getIndexingPlugins(true)){
+                            System.err.print(indexer.getName()+", ");
+                        }
+                        System.err.println("");
+                        System.exit(1);
+                    }
+                    
+                    Task<Report> indexTask = pluginController.indexClosure(args[i+1], new URI(args[i+2]));
                     actions.add(indexTask);
                     i+=2;
                     break;
