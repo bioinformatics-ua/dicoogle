@@ -21,8 +21,10 @@ package pt.ua.dicoogle.server.web.servlets.search;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,7 +53,12 @@ public class DumpServlet extends HttpServlet {
         if (StringUtils.isEmpty(uid)) {
             resp.sendError(400, "No uid supplied");
         }
-
+        
+        String[] providerArr = req.getParameterValues("provider");
+        List<String> providers = (providerArr == null)
+                ? PluginController.getInstance().getQueryProvidersName(true)
+                : Arrays.asList(providerArr);
+        
         String query = "SOPInstanceUID:" + uid;
 
         DictionaryAccess da = DictionaryAccess.getInstance();
@@ -74,16 +81,13 @@ public class DumpServlet extends HttpServlet {
             }
         };
 
-        Iterable<SearchResult> results = null;
+        Iterable<SearchResult> results;
         try {
-            results = PluginController.getInstance().queryAll(queryTaskHolder, query, extraFields).get();
+            results = PluginController.getInstance().query(queryTaskHolder, providers, query, extraFields).get();
         } catch (InterruptedException | ExecutionException ex) {
             Logger.getLogger(SearchServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        if (results == null) {
             resp.sendError(500, "Could not generate results!");
-            //return;
+            return;
         }
 
         ArrayList<SearchResult> resultsArr = new ArrayList<>();

@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.gson.Gson;
+import net.sf.json.JSONArray;
 
 import pt.ua.dicoogle.plugins.PluginController;
 
@@ -43,9 +43,10 @@ public class ProvidersServlet extends HttpServlet{
 		
 		List<String> activeProviders = PluginController.getInstance().getQueryProvidersName(true);
 		
-		String json = new Gson().toJson(activeProviders);
+        JSONArray json = new JSONArray();
+        json.addAll(activeProviders);
 		
-		resp.getWriter().print(json);
+		resp.getWriter().print(json.toString());
 			
 	}
 	
