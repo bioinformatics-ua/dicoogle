@@ -20,14 +20,10 @@
 package pt.ua.dicoogle.sdk.core;
 
 import java.net.URI;
-import java.util.Collection;
-import java.util.List;
-
 import pt.ua.dicoogle.sdk.IndexerInterface;
 import pt.ua.dicoogle.sdk.QueryInterface;
 import pt.ua.dicoogle.sdk.StorageInputStream;
 import pt.ua.dicoogle.sdk.StorageInterface;
-import pt.ua.dicoogle.sdk.datastructs.QueryReport;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.task.Task;
 
@@ -112,6 +108,5 @@ public interface DicooglePlatformInterface {
     public Task<Report> queryDispatch(String querySource, String query, Object ... parameters);
     public Task<Report> queryClosure(Iterable<String> querySources, String query, Object ... parameters);
     public Task<Report> queryClosure(String querySource, String query, Object ... parameters);
-
     
 }

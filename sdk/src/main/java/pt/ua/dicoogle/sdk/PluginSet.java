@@ -27,7 +27,7 @@ import org.restlet.resource.ServerResource;
 import pt.ua.dicoogle.sdk.settings.ConfigurationHolder;
 
 /**
- * This is the class responsabile for create a sandbox of the plugin.
+ * This is the class responsible for create a sandbox for the plugin.
  * The developer can use this interface to manager the implemented plugins
  * 
  * @author psytek

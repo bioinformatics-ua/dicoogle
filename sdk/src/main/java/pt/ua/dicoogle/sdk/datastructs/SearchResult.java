@@ -31,8 +31,8 @@ import java.util.HashMap;
  * modified by: Frederico Valente
  */
 public class SearchResult implements Serializable {
-    private URI location; //a uri that allows us to fetch the result object
-    private double score; //score given by the querier
+    private final URI location; //a uri that allows us to fetch the result object
+    private final double score; //score given by the querier
     
     //stores extra data, placed by specific plugins or inserted along the way
     private HashMap<String, Object> extraData = new HashMap<>(); 

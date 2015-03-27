@@ -54,10 +54,14 @@ public class QueryReport  extends Report implements Iterable<SearchResult> {
     @Override
     public String toString(){
         String retString = "";
+            
+        int i=0;
         for(SearchResult searchResult:this){
             retString += searchResult.toString();
             retString += "\n";
+            i++;
         }
+        retString += "Obtained "+i+" results...";
         return retString;
     }
     

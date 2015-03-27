@@ -1,0 +1,82 @@
+/**
+ * Copyright (C) 2014  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+ *
+ * This file is part of Dicoogle/dicoogle-sdk.
+ *
+ * Dicoogle/dicoogle-sdk is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Dicoogle/dicoogle-sdk is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package pt.ua.dicoogle.sdk.utils;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.filechooser.FileSystemView;
+
+/**
+ * System information methods
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author psytek
+ */
+public class SystemInfo{
+    
+    public static File getHomeDirectory(){
+        File result = null;
+        if (System.getProperty("os.name").toUpperCase().indexOf("WINDOWS") != -1){
+            try {
+                Process p = Runtime.getRuntime().exec("cmd /c echo %HOMEDRIVE%%HOMEPATH%");
+                BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                try{
+                    p.waitFor();
+                }
+                catch (InterruptedException e) {
+                    throw new IOException("Interrupted: " + e.getMessage());
+                }
+                result = new File(reader.readLine());
+            }
+            catch (IOException ex) {
+                Logger.getLogger(SystemInfo.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        else{
+            result = FileSystemView.getFileSystemView().getHomeDirectory();
+        }
+        return result;
+    }
+    
+    //the place where we can put stuff, like config files, indexes, etc...
+    public static File getDicoogleDirectory(){
+        File pluginStorage = new File(getHomeDirectory().getAbsolutePath()+"/.dicoogle/");
+        if(!pluginStorage.exists()){
+            pluginStorage.mkdir();
+        }
+        return pluginStorage;
+    }
+
+    
+    public static File getPluginStorageDirectory(){
+        File pluginStorage = new File(getDicoogleDirectory()+"/data/");
+        if(!pluginStorage.exists()){
+            pluginStorage.mkdir();
+        }
+        return pluginStorage;
+    }
+    
+    //returns the directory from where plugins are to be loaded
+    public static File getPluginDirectory(){
+        return new File( getDicoogleDirectory()+"/plugins/");
+    }        
+}
