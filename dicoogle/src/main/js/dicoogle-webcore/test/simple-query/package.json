@@ -3,14 +3,11 @@
   "version": "0.0.1",
   "description": "Simple Query Web UI plugin",
   "scripts": {
-    "build": "browserify -s simple-query simple-query.js -o module.js",
-    "build-debug": "browserify --debug -s simple-query simple-query.js -o module.js"
+    "build": "cp simple-query.js module.js"
   },
   "dicoogle": {
+    "caption": "Simple Query",
     "slot-id": "query",
     "module-file": "module.js"
-  },
-  "dependencies": {
-    "browserify": "^9.0.3"
   }
 }

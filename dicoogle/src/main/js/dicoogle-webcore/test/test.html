@@ -4,8 +4,7 @@
     <title>Dicoogle web plugin test chamber</title>
     
     <script src='./document-register-element.js'></script>
-    <!-- <script src='../node_modules/requirejs/require.js'></script> -->
-    <!-- <script src='http://requirejs.org/docs/release/2.1.16/minified/require.js'></script> -->
+    <script src='./require.js'></script>
     <script src='../build/dicoogle-webcore.js'></script>
     <style>
       div.slotdiv {
@@ -22,21 +21,17 @@
   <body>
     <h2>Test Chamber</h2>
     <p>This page holds a Dicoogle Web UI slot with the slot id <tt>fordummy</tt>.
-    If you are hosting this web page directly through the Dicoogle server, then any plugin for this slot
-    will be loaded automatically. Otherwise, try setting the server's base URL (in the code) and allow CORS on your browser.</p>
+    If you are hosting this web page directly through the Dicoogle server, then any plugin for this slot will be loaded
+    automatically. Otherwise, try setting the server's base URL (in the code) and allow CORS on your browser.</p>
     
     <div class="slotdiv">
       <dicoogle-slot data-slot-id='fordummy'></dicoogle-slot>
     </div>
     
     <script>
-    /*
-      require(['DicoogleWeb'], function(DicoogleWeb) {
+      require(['dicoogle-webcore'], function(DicoogleWeb) {
         DicoogleWeb.init('http://localhost:8080/');
       });
-      */
-      DicoogleWeb.init('http://localhost:8080/');
     </script>
   </body>
 </html>
-

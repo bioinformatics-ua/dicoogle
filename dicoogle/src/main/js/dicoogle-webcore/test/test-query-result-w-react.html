@@ -3,6 +3,7 @@
   <head>
     <title>Dicoogle web plugin test chamber (Query + Result)</title>
     <script src='./document-register-element.js'></script>
+    <script src='./require.js'></script>
     <script src="./react-0.13.0.js"></script>
     <script src="./reactable.js"></script>
     <script src='../build/dicoogle-webcore.js'></script>
@@ -26,7 +27,8 @@
   <body>
     <h2>Test Chamber (Query + Result)</h2>
     This page holds two Dicoogle Web UI slots! One with the id <tt>query</tt> and another with the id <tt>result</tt>.
-    It is excellent for experimenting with Dicoogle search operations. This page also includes React and ReactTable.
+    It is excellent for experimenting with Dicoogle search operations. This page also includes React (<tt>'react'</tt>)
+    and React.Table (<tt>'reactable'</tt>).
     
     <div class="queryslot">
       <dicoogle-slot data-slot-id='query' />
@@ -34,6 +36,10 @@
     <div class="resultslot">
       <dicoogle-slot data-slot-id='result' />
     </div>
-    <script>DicoogleWeb.init('http://localhost:8080/')</script>
+    <script>
+      require(['dicoogle-webcore'], function(DicoogleWeb) {
+        DicoogleWeb.init('http://localhost:8080/');
+      });
+    </script>
   </body>
 </html>

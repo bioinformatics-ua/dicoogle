@@ -1,14 +1,12 @@
 /** Dicoogle web application core.
  * This module provides support to web interface plugins.
+ * AMD module
  */
-
-module.exports = (function () {
+define('dicoogle-webcore', function (require) {
+  'use strict';
+  
   var m = {};
   
-  // dependencies
-  var $ = require('jquery');
-  $.ajaxSettings.traditional = true;
-
   // custom element definitions
   var HTMLDicoogleSlotElement = (function() {
 
@@ -139,28 +137,16 @@ module.exports = (function () {
   m.fetchPlugins = function (slotIds) {
     console.log('Fetching Dicoogle web UI plugin descriptors ...');
     var uri = 'webui';
-    var qs = '';
-    if (Array.isArray(slotIds)) {
-      var params = [];
-      for (let i = 0 ; i < slotIds.length ; i++) {
-        params.push('slot-id=' + slotIds[i]);
+    service_get(uri, {'slot-id':slotIds}, function(error, data) {
+      if (error) {
+        console.error('Failed to fetch plugin descriptors:' , error);
+        return;
       }
-      qs = params.join('&');
-    } else if (typeof slotIds === 'string') {
-      qs = 'slot-id=' + slotIds;
-    }
-    $.ajax({
-      dataType: 'json',
-      url: base_url+uri,
-      data: qs
-    }).done(function (data){
       var packageArray = data.plugins;
       for (let i = 0 ; i < packageArray.length ; i++) {
         packages[packageArray[i].name] = packageArray[i];
         load_plugin(packageArray[i]);
       }
-    }).fail(function(error) {
-      console.error('Failed to fetch plugin descriptors:' , error);
     });
   };
   
@@ -209,14 +195,14 @@ module.exports = (function () {
    */
   m.issueQuery = function(query, options, callback) {
     options.query = query;
-    var requestTime = new Date();
-    $.getJSON(base_url+'search', options).done(function(data) {
-      dispatch_result(data, requestTime, options);
-      if (callback) {
-        callback(null, data);
+    let requestTime = new Date();
+    service_get('search', options, function (error, data) {
+      if (error) {
+        callback(error, null);
+        return;
       }
-    }).fail(function(error) {
-      callback(error, null);
+      dispatch_result(data, requestTime, options);
+      callback(null, data);
     });
   };
   
@@ -233,9 +219,7 @@ module.exports = (function () {
       console.error('invalid call to DicoogleWeb.request : a callback function is required');
       return;
     }
-    $.getJSON(base_url+service, data)
-      .done(function(result) { callback(null, result); })
-      .fail(function(error) { callback(error, null); });
+    service_get(service, data, callback);
   };
   
   // ----------------------------------------------------------------------------
@@ -275,15 +259,32 @@ module.exports = (function () {
   };
       
   // ---------------- private methods ----------------
+  function isArray(it) {
+    const ostring = Object.prototype.toString;
+    return ostring.call(it) === '[object Array]';
+  }
   
+  function isFunction(it) {
+    const ostring = Object.prototype.toString;
+    return ostring.call(it) === '[object Function]';
+  }
+
   function load_plugin(packageJSON) {
     var slotId = slots[packageJSON.dicoogle['slot-id']];
     if (!slotId) {
       console.error('Unexistent slot ID ', packageJSON.dicoogle['slot-id'], '!');
       return;
     }
-    $.getScript(base_url+'webui?module=' + packageJSON.name).done(function () {
-      console.log('Loaded plugin:', packageJSON.name);
+    getScript(packageJSON.name, function() {
+      console.log('Requiring ', packageJSON.name, '...');
+      require([packageJSON.name], function(PluginModule) {
+        console.log('Obtained, reading ...');
+        if (!isFunction(PluginModule)) {
+          console.error('Plugin module is not a function!');
+          console.error(PluginModule);
+        }
+        m.onRegister(new PluginModule(), packageJSON.name);
+      });
     });
   }
   
@@ -315,5 +316,84 @@ module.exports = (function () {
     }
   }
   
+  /**
+   * send a GET request to a Dicoogle service
+   *
+   * @param {string} uri the request URI in string or array form
+   * @param {string} qs an object containing query string parameters (or a QS without '?')
+   * @param {Function(error,outcome)} callback
+   */
+  function service_get(uri, qs, callback) {
+    // create full query string
+    let end_url = base_url;
+    if (isArray(qs[uri])) {
+      end_url += uri.join('/');
+    } else {
+      end_url += uri;
+    }
+    
+    let qstring = '?';
+    if (typeof qs === 'string') {
+      qstring += qs;
+    } else {
+      let qparams = [];
+      for (let pname in qs) {
+        if (isArray(qs[pname])) {
+          for (let j = 0 ; j < qs[pname].length ; j++) {
+            qparams.push(pname + '=' + encodeURIComponent(qs[pname][j]));
+          }
+        } else {
+          qparams.push(pname + '=' + encodeURIComponent(qs[pname]));
+        }
+      }
+      qstring += qparams.join('&');
+    }
+    end_url += qstring;
+    
+    // This XDomainRequest thing is for IE support (lulz)
+    let req = (typeof XDomainRequest !== 'undefined') ?
+      new XDomainRequest() : new XMLHttpRequest();
+    req.onreadystatechange = function() {
+      if (req.readyState === 4) {
+        if (req.status !== 200) {
+          callback({code: "SERVER-"+req.status, message: req.statusText}, null);
+          return;
+        }
+        let type = req.getResponseHeader('Content-Type');
+        let mime = type;
+        if (mime.indexOf(";") !== -1) {
+          mime = mime.split(";")[0];
+        }
+        if (mime === 'application/json') {
+          let result = JSON.parse(req.responseText);
+          callback(null, result);
+        } else {
+          let result = { type: type, text: req.responseText };
+          callback(null, result);
+        }
+      }
+    };
+    req.open('GET', end_url, true);
+    req.send();
+  }
+  
+  function getScript(moduleName, callback) {
+      var script = document.createElement('script');
+      var prior = document.getElementsByTagName('script')[0];
+      script.async = 1;
+      prior.parentNode.insertBefore(script, prior);
+      script.onload = script.onreadystatechange = function( _, isAbort ) {
+          if(isAbort || !script.readyState || /loaded|complete/.test(script.readyState) ) {
+              script.onload = script.onreadystatechange = null;
+              script = undefined;
+              if(!isAbort) {
+                if(callback) callback();
+              }
+          }
+      };
+
+      script.src = base_url+'webui?module='+moduleName+'&process=false';
+  }
+  
   return m;
-})();
+});

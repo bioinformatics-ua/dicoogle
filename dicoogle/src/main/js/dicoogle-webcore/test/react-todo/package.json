@@ -3,18 +3,14 @@
   "version": "0.0.1",
   "description": "A TODO list for Dicoogle",
   "scripts": {
-    "b": "browserify -t reactify module.jsx -o module.js",
-    "build": "browserify -t reactify --standalone react-todo module.jsx -o module.js",
-    "build-debug": "browserify --debug -t reactify --standalone react-todo module.jsx -o module.js"
+    "build": "jsx todo.jsx > module.js"
   },
   "dicoogle": {
     "caption": "TODO list",
     "slot-id": "fordummy",
     "module-file": "module.js"
   },
-  "dependencies": {
-    "browserify": "^9.0.3",
-    "react": "^0.13.0",
-    "reactify": "^1.1.0"
+  "devDependencies": {
+    "react-tools": "^0.13.1"
   }
 }

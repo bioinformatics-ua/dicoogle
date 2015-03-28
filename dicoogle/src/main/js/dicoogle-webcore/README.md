@@ -55,14 +55,15 @@ An example of a package:
 ### Module
 
 In addition, a JavaScript module must be implemented, containing the entire logic and rendering of the plugin.
-The final script must expose a browser global variable with the name of the plugin in camel cases (e.g. 'cbir-query'
-becomes `cbirQuery`). When using browserify (see below), this conversion is done automatically.
+The final script must define a new named AMD module, with the exact same name of the plugin.
 
-The best and recommended way to do this is to make a module in UMD format. The developer can make a node-flavored
-CommonJS module and use browserify to convert it (and embed dependencies). The module must be a single function, in
-which instances must have a `render()` function returning a DOM element.
+Ths developer may also choose to create the module under the UMD format. The developer can make a node-flavored
+CommonJS module and use tools like browserify to convert it (and embed dependencies). The module must be a single
+constructor function, in which instances must have a `render()` function returning a DOM element. Most tools
+however, do not support creating a named AMD module, which is why these module specifications may change in the
+future.
 
-All modules will have access to a `DicoogleWeb` object for interfacing with Dicoogle. If the
+All modules will have access to the `dicoogle-web` module for interfacing with Dicoogle. If the
 plugin is to be attached to a result slot, it must also implement `onResult(result)`. Query plugins can invoke
 `issueQuery(...)` to perform a query and expose the results on the page (via result plugins). Other REST
 services exposed by Dicoogle are easily accessible with `request(...)`.
@@ -74,19 +75,20 @@ embedded. This is particularly useful to avoid replicating dependencies and prev
 Below is an example of a plugin module (assuming file name "example.js" and plugin name "example-plugin").
 
 ```javascript
-var ExamplePlugin = function() {
+define('example', function(require) {
 
-  // ...
+  var DicoogleWeb = require('dicoogle-webcore'); // use Dicoogle
 
-  this.render = function() {
-    var e = document.create('span');
-    e.innerHTML('This method must return a DOM element.');
-    return e;
+  return function() {
+
+    // ...
+
+    this.render = function() {
+      var e = document.create('span');
+      e.innerHTML('This method must return a DOM element.');
+      return e;
+    };
   };
-};
-module.exports = ExamplePlugin;
+});
 ```
 
-This file can be built to UMD with the following command:
-
-    browserify -s example-plugin example.js -o module.js

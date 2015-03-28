@@ -1,53 +1,55 @@
 module.exports = function(grunt) {
 
+  var globals = {
+    "document": false,
+    "console": false,
+    "define": false,
+    "HTMLDivElement": false,
+    "XMLHttpRequest": false,
+    "XDomainRequest": false
+  };
+
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     jshint: {
       all: ['Gruntfile.js', '<%= pkg.name %>.js'],
       options: {
-        force: true,
-        esnext: true
+        esnext: true,
+        globals: globals
       }
     },
     babel: {
       options: {
       },
-      build: {
+      all: {
         src: '<%= pkg.name %>.js',
         dest: 'build/<%= pkg.name %>.js'
       }
     }, 
-    browserify: {
-      options: {
-        banner: '<%= grunt.file.read("license-header.txt") %>',
-        browserifyOptions: {
-          standalone: 'DicoogleWeb',
-        }
-      },
-      buildDebug: {
-        options: {
-          browserifyOptions: {
-            debug: true,
-            standalone: 'DicoogleWeb',
-          }
-        },
-        src:  'build/<%= pkg.name %>.js',
-        dest: 'build/<%= pkg.name %>-debug.js'
-      },
-      build: {
-        src:  'build/<%= pkg.name %>.js',
-        dest: 'build/<%= pkg.name %>.js'
-      }
-    },
     uglify: {
       options: {
-        compress: true,
-        banner: '<%= grunt.file.read("license-header.txt") %> */'
+        banner: '<%= grunt.file.read("license-header.txt") %>'
       },
-      build: {
+      minimize: {
+        options: {
+          compress: true,
+          preserveComments: false,
+          mangle: true
+        },
         src: 'build/<%= pkg.name %>.js',
         dest: 'build/<%= pkg.name %>.min.js'
+      },
+      pretty: {
+        options: {
+          beautify: true,
+          compress: false,
+          mangle: false,
+          preserveComments: true,
+          sourceMap: true
+        },
+        src: 'build/<%= pkg.name %>.js',
+        dest: 'build/<%= pkg.name %>.js'
       }
     }
   });
@@ -55,12 +57,9 @@ module.exports = function(grunt) {
   // Load plugin tasks.
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-babel');
-  grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  
 
   // Default task(s).
-  grunt.registerTask('default', ['jshint','babel','browserify:build','uglify:build']);
-  grunt.registerTask('debug', ['jshint','babel','browserify:buildDebug']);
+  grunt.registerTask('default', ['jshint','babel','uglify:minimize','uglify:pretty']);
 
 };

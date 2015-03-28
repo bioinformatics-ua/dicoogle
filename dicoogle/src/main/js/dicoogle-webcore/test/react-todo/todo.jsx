@@ -7,16 +7,16 @@ define('react-todo', function(require) {
     console.error("React is not supported in this page!");
   }
 
-  var TodoItems = React.createClass({displayName: "TodoItems",
+  var TodoItems = React.createClass({
     render: function() {
       var createItem = function(itemText) {
-        return React.createElement("li", null, itemText);
+        return <li>{itemText}</li>;
       };
-      return React.createElement("ul", null, this.props.items.map(createItem));
+      return <ul>{this.props.items.map(createItem)}</ul>;
     }
   });
 
-  var TodoApp = React.createClass({displayName: "TodoApp",
+  var TodoApp = React.createClass({
     getInitialState: function() {
       return {items: [], text: ''};
     },
@@ -31,20 +31,20 @@ define('react-todo', function(require) {
     },
     render: function() {
       return (
-        React.createElement("div", null, 
-          React.createElement("h3", null, "TODO"), 
-          React.createElement(TodoItems, {items: this.state.items}), 
-          React.createElement("form", {onSubmit: this.handleSubmit}, 
-            React.createElement("input", {onChange: this.onChange, value: this.state.text}), 
-            React.createElement("button", null, 'Add #' + (this.state.items.length + 1))
-          )
-        )
+        <div>
+          <h3>TODO</h3>
+          <TodoItems items={this.state.items} />
+          <form onSubmit={this.handleSubmit}>
+            <input onChange={this.onChange} value={this.state.text} />
+            <button>{'Add #' + (this.state.items.length + 1)}</button>
+          </form>
+        </div>
       );
     }
   });
 
   var Module = function() {
-    var r = React.createElement(TodoApp, null);
+    var r = <TodoApp />;
     this.render = function() {
       var e = document.createElement('div');
       React.render(r, e);

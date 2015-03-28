@@ -691,7 +691,7 @@ public class PluginController{
                     ? o.toString()
                     : null;
         } catch (IOException ex) {
-            logger.log(Level.ERROR, (String)null, ex);
+            logger.log(Level.ERROR, ex.getMessage(), ex);
             return null;
         }
     }

@@ -3,21 +3,15 @@
   "version": "0.0.1",
   "description": "A simple result table view for Dicoogle",
   "scripts": {
-    "build": "browserify -t reactify -u react --standalone simple-result module.jsx -o module.js",
-    "build-debug": "browserify --debug -t reactify -u react --standalone simple-result module.jsx -o module.js"
+    "build": "jsx module.jsx > module.js"
   },
   "dicoogle": {
     "caption": "Simple Result",
     "slot-id": "result",
     "module-file": "module.js"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
-    "browserify": "^9.0.3",
-    "react": "^0.13.0",
-    "reactify": "^1.1.0",
-    "react": "^0.13.1",
-    "reactable": "^0.10.1"
+    "react-tools": "^0.13.1"
   }
 }

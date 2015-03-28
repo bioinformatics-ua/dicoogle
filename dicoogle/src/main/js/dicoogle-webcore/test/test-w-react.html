@@ -2,11 +2,12 @@
 <html>
   <head>
     <title>Dicoogle web plugin test chamber (with React)</title>
-    <script src="https://fb.me/react-0.13.0.js"></script>
-<!--    <script src="https://fb.me/JSXTransformer-0.13.0.js"></script> -->
+    <script src='./document-register-element.js'></script>
+    <script src='./require.js'></script>
+    <script src="./react-0.13.0.js"></script>
     <script src='../build/dicoogle-webcore.js'></script>
     <style>
-      #fordummy {
+      div.slotdiv {
         margin-right: auto;
         max-width: 16cm;
         width: 100%;
@@ -20,16 +21,20 @@
   <body>
     <h2>Test Chamber (with React)</h2>
     <p>This page holds a Dicoogle Web UI slot with the id <tt>fordummy</tt>.
-    If you are hosting this web page directly through the Dicoogle server, then any plugin for this slot
-    will be loaded automatically. Otherwise, try setting the server's base URL (in the code) and allow CORS on your browser.</p>
-    <p>This page already contains React, which means plugins do not have to embed it. They can just assume it exists without
-    <tt>require</tt>ing it.</p>
+    If you are hosting this web page directly through the Dicoogle server, then any plugin for this slot will be loaded
+    automatically. Otherwise, try setting the server's base URL (in the code) and allow CORS on your browser.</p>
+    <p>
+      This page already contains React, which means plugins do not have to embed it. They can just <tt>require</tt> it.
+    </p>
     
     <div class="slotdiv">
       <dicoogle-slot data-slot-id='fordummy'></dicoogle-slot>
     </div>
     
-    <script>DicoogleWeb.init('http://localhost:8080/')</script>
+    <script>
+      require(['dicoogle-webcore'], function(DicoogleWeb) {
+        DicoogleWeb.init('http://localhost:8080/');
+      });
+    </script>
   </body>
 </html>
-

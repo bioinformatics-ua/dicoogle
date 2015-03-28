@@ -32,9 +32,9 @@ import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
 
 /**
- * Retrieval of web UI plugins.
+ * Retrieval of web UI plugins and respective packages/modules.
  * 
- * <b>This API is unstable. It is currently compatible with dicoogle-webcore 0.3.0</b>
+ * <b>This API is unstable. It is currently only compatible with dicoogle-webcore 0.4.x</b>
  *
  * @author Eduardo Pinho
  */
@@ -53,7 +53,7 @@ public class WebUIServlet extends HttpServlet {
             resp.getWriter().append(this.getPlugin(resp, name));
         } else if (module != null) {
             resp.setContentType("application/javascript");
-            boolean doProcess = process == null || Boolean.parseBoolean(process);
+            boolean doProcess = process != null && Boolean.parseBoolean(process);
             resp.getWriter().append(this.getModule(resp, module, doProcess));
         } else {
             resp.setContentType("application/json");
@@ -89,11 +89,14 @@ public class WebUIServlet extends HttpServlet {
         String js = PluginController.getInstance().getWebUIModuleJS(name);
         
         StringBuilder writer = new StringBuilder();
+        if (process) {
+            writer.append(String.format("define(\"%s\", "
+                    + "function(module,exports,require){\n",
+                    plugin.getName()));
+        }
         writer.append(js);
         if (process) {
-            writer.append(String.format("var __Dicoogle_plugin__=%s;\n"
-                    +   "DicoogleWeb.onRegister(new __Dicoogle_plugin__(), '%s');",
-                    camelize(plugin.getName()), plugin.getName()));
+            writer.append(String.format("\n});\n"));
         }
         return writer.toString();
     }
