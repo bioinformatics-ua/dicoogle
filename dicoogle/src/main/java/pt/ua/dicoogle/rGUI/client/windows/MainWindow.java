@@ -77,6 +77,7 @@ import pt.ua.dicoogle.sdk.task.Task;
 
 /**
  * Dicoogle GUI Main form
+ *
  * @author Filipe Freitas
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Marco Pereira
@@ -101,52 +102,47 @@ public class MainWindow extends javax.swing.JFrame {
     private boolean lastQueryKeywords;
     private boolean lastQueryAdvanced;
     private ArrayList<javax.swing.JCheckBox> ranges;
-    
-    
+
     //a popup menu for plugin extension on retrieved results
     private JPopupMenu popupMenu = new JPopupMenu();
 
-
-    public static synchronized MainWindow getInstance(){
-        try{
+    public static synchronized MainWindow getInstance() {
+        try {
             sem.acquire();
-            if (instance == null){
+            if (instance == null) {
                 instance = new MainWindow();
             }
             sem.release();
-        }
-        catch (InterruptedException ex){
+        } catch (InterruptedException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
         return instance;
     }
 
-    
-    
     public static Image getImage(final String pathAndFileName) {
         final URL url = Thread.currentThread().getContextClassLoader().getResource(pathAndFileName);
         return Toolkit.getDefaultToolkit().getImage(url);
     }
     private final TaskList taskList;
-    
-    /** Creates new form MainWindow */
-    private MainWindow(){
+
+    /**
+     * Creates new form MainWindow
+     */
+    private MainWindow() {
         ranges = new ArrayList<>();
         List<String> names = null;
         try {
             names = PluginController4user.getInstance().getPluginNames();
-            for (String name : names){
+            for (String name : names) {
                 JCheckBox newJCB = new JCheckBox(name);
-                if (PluginController4user.getInstance().isLocalPlugin(name)){
+                if (PluginController4user.getInstance().isLocalPlugin(name)) {
                     newJCB.setSelected(true);
                 }
                 this.ranges.add(newJCB);
             }
-        }
-        catch (RemoteException ex){
+        } catch (RemoteException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
-
 
         initComponents();
 
@@ -155,9 +151,7 @@ public class MainWindow extends javax.swing.JFrame {
         SequentialGroup groupBoxesH = jPanel6Layout.createSequentialGroup().addComponent(jLabel2);
         ParallelGroup groupBoxesV = jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE).addComponent(jLabel2);
 
-        
-        for (JCheckBox cbox : this.ranges)
-        {
+        for (JCheckBox cbox : this.ranges) {
             groupBoxesH.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addComponent(cbox);
             groupBoxesV.addComponent(cbox);
         }
@@ -175,8 +169,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         clientCore = ClientCore.getInstance();
 
-        if (!clientCore.isAdmin())
-        {
+        if (!clientCore.isAdmin()) {
             jMenu10.setVisible(false);
             jMenuItemShutdown.setVisible(false);
             jMenuDirScan2.setVisible(false);
@@ -187,21 +180,17 @@ public class MainWindow extends javax.swing.JFrame {
             jButtonLogs.setVisible(false);
         }
 
-        if (!clientCore.isUser())
-        {
+        if (!clientCore.isUser()) {
             jPanel5.setVisible(false);
             jButtonClientPreferences.setVisible(false);
-        } else
-        {
+        } else {
             searchTree = Result2Tree.getInstance();
         }
 
-        if (Main.isFixedClient())
-        {
+        if (Main.isFixedClient()) {
             jMenuItemShutdown.setVisible(false);
-            
-        } else
-        {
+
+        } else {
             jMenuItem7.setVisible(false);
         }
 
@@ -235,12 +224,9 @@ public class MainWindow extends javax.swing.JFrame {
         StudyDateRangeInitialBoundary.setEnabled(false);
         StudyDateRangeTerminalBoundary.setEnabled(false);
 
-
         //tree view init
         jTreeResults.setModel(new DefaultTreeModel(Result2Tree.getInstance().getTop()));
         jTreeResults.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-
-
 
         jButtonDownload.setEnabled(false);
         jButtonView.setEnabled(false);
@@ -254,60 +240,52 @@ public class MainWindow extends javax.swing.JFrame {
          * This search is needed to autocomplete
          */
         /*
-        QueryResults q = new QueryResults("*:*");
+         QueryResults q = new QueryResults("*:*");
         
         
-        List<String> items = q.getFields();
+         List<String> items = q.getFields();
         
         
         
-        boolean strictMatching = false;
-        AutoCompleteDecorator.decorate(jTextFieldQuery, items, strictMatching);
+         boolean strictMatching = false;
+         AutoCompleteDecorator.decorate(jTextFieldQuery, items, strictMatching);
          *
          */
-        
-        
-        
-        
-        
         //plugins v2
-        try{
+        try {
             List<JPanel> panels = PluginController4user.getInstance().getTabPanels();
-            if(panels != null){
-                for(JPanel panel : panels){
+            if (panels != null) {
+                for (JPanel panel : panels) {
                     tabPanel.add(panel);
                 }
             }
-        }
-        catch(RemoteException ex){
+        } catch (RemoteException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        try{
+
+        try {
             List<JMenuItem> menus = PluginController4user.getInstance().getPluginMenus();
-            if(menus != null){
-                for(JMenuItem menu : menus){
+            if (menus != null) {
+                for (JMenuItem menu : menus) {
                     pluginMenu.add(menu);
                 }
             }
-        }
-        catch(RemoteException ex){
+        } catch (RemoteException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        try{
+
+        try {
             System.err.println("Checking for plugins requiring gui expansion.,.");
             List<JMenuItem> items = PluginController4user.getInstance().getRightButtonItems();
-            if(items != null){
-                for(JMenuItem item : items){
+            if (items != null) {
+                for (JMenuItem item : items) {
                     popupMenu.add(item);
                 }
             }
-        }
-        catch (RemoteException ex) {
+        } catch (RemoteException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         taskList = new TaskList();
         taskList.setName("Task Progress");
         tabPanel.add(taskList);
@@ -317,8 +295,7 @@ public class MainWindow extends javax.swing.JFrame {
     /**
      * Center the main Window taking into account the Screen Size
      */
-    private void centerWindow()
-    {
+    private void centerWindow() {
         // Positions the window in the center of screen
         int width = this.getWidth();
         int height = this.getHeight();
@@ -328,8 +305,7 @@ public class MainWindow extends javax.swing.JFrame {
         setBounds(x, y, width, height);
     }
 
-    private void resizeWindow()
-    {
+    private void resizeWindow() {
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         this.setSize(screen.width - 30, screen.height - 50);
     }
@@ -337,21 +313,16 @@ public class MainWindow extends javax.swing.JFrame {
     /**
      * Register the Events to Quit and About if Dicoogle is running on Mac_OSX
      */
-    private void registerForMacOSXEvents()
-    {
-        if (Main.MAC_OS_X)
-        {
-            try
-            {
+    private void registerForMacOSXEvents() {
+        if (Main.MAC_OS_X) {
+            try {
                 //System.out.println("Registering MAC_OSX Events");
 
                 // Generate and register the OSXAdapter, passing it a hash of all the methods we wish to
                 // use as delegates for various com.apple.eawt.ApplicationListener methods
-                if (Main.isFixedClient())
-                {
+                if (Main.isFixedClient()) {
                     OSXAdapter.setQuitHandler(this, getClass().getDeclaredMethod("exit", (Class[]) null));
-                } else
-                {
+                } else {
                     OSXAdapter.setQuitHandler(this, getClass().getDeclaredMethod("exitClient", (Class[]) null));
                 }
 
@@ -359,37 +330,34 @@ public class MainWindow extends javax.swing.JFrame {
                 //OSXAdapter.setPreferencesHandler(this, getClass().getDeclaredMethod("preferences", (Class[])null));
                 //OSXAdapter.setFileHandler(this, getClass().getDeclaredMethod("loadImageFile", new Class[] { String.class }));
 
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 System.err.println("Error while loading the OSXAdapter:");
                 e.printStackTrace();
             }
         }
     }
 
-    public void exit()
-    {
+    public void exit() {
         jMenuItem1ActionPerformed(null);
     }
 
-    public void exitClient()
-    {
+    public void exitClient() {
         jMenuItem11ActionPerformed(null);
     }
 
-    public void about()
-    {
+    public void about() {
         jMenuItem3ActionPerformed(null);
     }
 
-    /**************************************************
-     *  Private Methods
-     **************************************************/
+    /**
+     * ************************************************
+     * Private Methods
+     *************************************************
+     */
     /**
      * Stops the window from minimizing to tray while in options screen
      */
-    private void showOptions()
-    {
+    private void showOptions() {
         ServerOptions t = ServerOptions.getInstance();
         t.setReturnToMain(true);
         t.setVisible(true);
@@ -398,8 +366,7 @@ public class MainWindow extends javax.swing.JFrame {
         //this.setEnabled(false);
     }
 
-    private void cleanThumbnails()
-    {
+    private void cleanThumbnails() {
 //        Result2Tree.showImage("Image Thumbnail", null, jPanelThumbnail);
         jPanelThumbnail.setSize(64, 64);
         repaint();
@@ -412,8 +379,7 @@ public class MainWindow extends javax.swing.JFrame {
      * @param t
      * @return
      */
-    private String convMillisToTimeString(long t)
-    {
+    private String convMillisToTimeString(long t) {
         long milis = t % 1000;
         t /= 1000;
         long segs = t % 60;
@@ -427,16 +393,14 @@ public class MainWindow extends javax.swing.JFrame {
         return String.format("%d:%02d:%02d:%02d", days, hours, mins, segs);
     }
 
-    private void dcm2JPEG(int thumbnailSize)
-    {
+    private void dcm2JPEG(int thumbnailSize) {
 
         /**
          * Why couldn't? It works!
-        
-        if (System.getProperty("os.name").toUpperCase().indexOf("MAC OS") != -1) {
-        JOptionPane.showMessageDialog(this, "Operation Not Available to MAC OS.", "Missing JAI Tool", JOptionPane.WARNING_MESSAGE);
-        return;
-        }
+         *
+         * if (System.getProperty("os.name").toUpperCase().indexOf("MAC OS") !=
+         * -1) { JOptionPane.showMessageDialog(this, "Operation Not Available to
+         * MAC OS.", "Missing JAI Tool", JOptionPane.WARNING_MESSAGE); return; }
          */
         String pathDir = ".";
 
@@ -447,11 +411,9 @@ public class MainWindow extends javax.swing.JFrame {
         //chooser.setFileFilter(arg0)
         chooser.setAcceptAllFileFilterUsed(false);
 
-        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
-        {
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File filePath = new File(chooser.getSelectedFile().toString());
-            if (filePath.exists() && filePath.isFile() && filePath.canRead())
-            {
+            if (filePath.exists() && filePath.isFile() && filePath.canRead()) {
                 File jpgFile = new File(filePath.getAbsolutePath() + ".jpg");
                 Dicom2JPEG.convertDicom2Jpeg(filePath, jpgFile, thumbnailSize);
             }
@@ -461,22 +423,19 @@ public class MainWindow extends javax.swing.JFrame {
     /**
      * @return ArrayList<String> with selected items in the tree
      */
-    private ArrayList<String> getSelectedLocalFiles()
-    {
+    private ArrayList<String> getSelectedLocalFiles() {
         ArrayList<String> files = new ArrayList<String>();
 
         TreePath path = jTreeResults.getSelectionPath();
 
         // Tree Root is not permited
-        if (path == null || path.getPathCount() < 2)
-        {
+        if (path == null || path.getPathCount() < 2) {
             return null;
         }
 
         jTreeResults.expandPath(path);
 
-        if (path != null)
-        {
+        if (path != null) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 
             // recieves all childs
@@ -485,12 +444,10 @@ public class MainWindow extends javax.swing.JFrame {
             Iterator<DefaultMutableTreeNode> it = childs.iterator();
 
             // converts TreeNodes to filePaths
-            while (it.hasNext())
-            {
+            while (it.hasNext()) {
                 Object obj = it.next().getUserObject();
 
-                if (SearchResult.class.isInstance(obj))
-                {
+                if (SearchResult.class.isInstance(obj)) {
                     files.add(obj.toString());
                 }
             }
@@ -499,20 +456,16 @@ public class MainWindow extends javax.swing.JFrame {
         return files;
     }
 
-    private ArrayList<DefaultMutableTreeNode> getLocalLeafs(DefaultMutableTreeNode node, TreePath path)
-    {
+    private ArrayList<DefaultMutableTreeNode> getLocalLeafs(DefaultMutableTreeNode node, TreePath path) {
         ArrayList<DefaultMutableTreeNode> list = new ArrayList<DefaultMutableTreeNode>();
         TreePath temp;
 
-        if (node.isLeaf())
-        {
+        if (node.isLeaf()) {
             list.add(node);
-        } else
-        {
+        } else {
             Enumeration<DefaultMutableTreeNode> en = node.children();
 
-            while (en.hasMoreElements())
-            {
+            while (en.hasMoreElements()) {
                 DefaultMutableTreeNode elem = en.nextElement();
 
                 temp = path.pathByAddingChild(elem);
@@ -525,10 +478,10 @@ public class MainWindow extends javax.swing.JFrame {
         return list;
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -1684,11 +1637,9 @@ public class MainWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        if (Main.isFixedClient())
-        {
+        if (Main.isFixedClient()) {
             jMenuItem7.doClick();
-        } else
-        {
+        } else {
             jMenuItem11.doClick();
         }
     }//GEN-LAST:event_formWindowClosing
@@ -1715,63 +1666,53 @@ public class MainWindow extends javax.swing.JFrame {
 
         File toDelete = new File("pluginClasses");
         String[] deleteArray = toDelete.list();
-        if (deleteArray != null)
-        {
-            for (String fileName : deleteArray)
-            {
+        if (deleteArray != null) {
+            for (String fileName : deleteArray) {
                 File f = new File("pluginClasses/" + fileName);
                 f.delete();
             }
         }
-        if (clientCore.isAdmin() && AdminRefs.getInstance().unsavedSettings())
-        {
-            Object[] opt =
-            {
-                "Save", "Discard", "Cancel"
-            };
+        if (clientCore.isAdmin() && AdminRefs.getInstance().unsavedSettings()) {
+            Object[] opt
+                    = {
+                        "Save", "Discard", "Cancel"
+                    };
 
             String message = "There are unsaved Server Settings.\nDo you want to save them?";
             int op = JOptionPane.showOptionDialog(this, message, "Unsaved Server Settings", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, opt, opt[2]);
 
-            if (op == 0)
-            {
+            if (op == 0) {
                 AdminRefs.getInstance().saveSettings();
             }
 
-            if (op == 2)
-            {
+            if (op == 2) {
                 return;
             }
         }
 
-        if (ClientOptions.getInstance().unsavedSettings())
-        {
-            Object[] opt =
-            {
-                "Save", "Discard", "Cancel"
-            };
+        if (ClientOptions.getInstance().unsavedSettings()) {
+            Object[] opt
+                    = {
+                        "Save", "Discard", "Cancel"
+                    };
 
             String message = "There are unsaved Client Settings.\nDo you want to save them?";
             int op = JOptionPane.showOptionDialog(this, message, "Unsaved Client Settings", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, opt, opt[2]);
 
-            if (op == 0)
-            {
+            if (op == 0) {
                 ClientOptions.getInstance().saveSettings();
             }
 
-            if (op == 2)
-            {
+            if (op == 2) {
                 return;
             }
         }
 
         QueryHistorySupport.getInstance().saveQueryHistory();
 
-        if (clientCore.isAdmin())
-        {
+        if (clientCore.isAdmin()) {
             AdminRefs.getInstance().shutdownServer();
         }
-
 
         System.exit(0);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
@@ -1788,16 +1729,14 @@ private void jMenuDirScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 
     /**
      * Do an advanced search
+     *
      * @param evt
      */
     private void jButtonLogsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLogsActionPerformed
 
-
-
         Logs logs = Logs.getInstance();
 
-        if (logs != null)
-        {
+        if (logs != null) {
             logs.setVisible(true);
             logs.toFront();
             //this.setEnabled(false);
@@ -1860,25 +1799,21 @@ private void jMenuDirScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     }//GEN-LAST:event_jMenuItem10ActionPerformed
 
     private void jButtonPeersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPeersActionPerformed
-        try
-        {
+        try {
             List<NetworkMember> peerList = UserRefs.getInstance().getSearch().getPeerList();
 
             String peerNames = "These are the P2P peers that are connected:";
-            if (peerList.size() == 0)
-            {
+            if (peerList.size() == 0) {
                 peerNames = "No peers connected!";
             }
 
-            for (NetworkMember s : peerList)
-            {
+            for (NetworkMember s : peerList) {
                 peerNames += "\n" + s.getPeerName() + " : " + s.getPluginName();
             }
 
             JOptionPane.showMessageDialog(this, peerNames, "P2P Peers", JOptionPane.INFORMATION_MESSAGE);
 
-        } catch (RemoteException ex)
-        {
+        } catch (RemoteException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButtonPeersActionPerformed
@@ -1886,35 +1821,29 @@ private void jMenuDirScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     private void jMenuItemUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemUsersActionPerformed
         UsersManager usersManager = UsersManager.getInstance();
 
-        if (usersManager != null)
-        {
+        if (usersManager != null) {
             usersManager.setVisible(true);
             usersManager.toFront();
             //this.setEnabled(false);
         }
     }//GEN-LAST:event_jMenuItemUsersActionPerformed
 
-    public void updateP2PThumbnail(SearchResult result)
-    {
+    public void updateP2PThumbnail(SearchResult result) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) getjTreeResults().getLastSelectedPathComponent();
-        if (node == null)
-        {
+        if (node == null) {
             return;
         }
 
         Object nodeInfo = null;
         DefaultMutableTreeNode nodeLeaf = null;
 
-        if (node.getLevel() == 4 || (node.isLeaf() && node.getLevel() > 1))
-        {
+        if (node.getLevel() == 4 || (node.isLeaf() && node.getLevel() > 1)) {
             Object nodeInfoLeaf = null;
 
-            if (node.getLevel() == 4)
-            {
+            if (node.getLevel() == 4) {
                 nodeLeaf = node.getFirstLeaf();
                 nodeInfoLeaf = nodeLeaf.getUserObject();
-            } else
-            {
+            } else {
                 // Leaf
                 nodeInfo = node.getUserObject();
                 nodeLeaf = node;
@@ -1922,10 +1851,8 @@ private void jMenuDirScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
             }
 
             //SearchResult r = (SearchResult) nodeInfoLeaf;
-
-            if (nodeInfoLeaf == result)
-            {
-                showThumbnail((String)result.getExtraData().get("Thumbnail"));
+            if (nodeInfoLeaf == result) {
+                showThumbnail((String) result.getExtraData().get("Thumbnail"));
             }
         }
 
@@ -1934,8 +1861,7 @@ private void jMenuDirScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     private void jMenuItemChangePasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemChangePasswordActionPerformed
         ChangePassword changePassword = ChangePassword.getInstance();
 
-        if (changePassword != null)
-        {
+        if (changePassword != null) {
             changePassword.setVisible(true);
             changePassword.toFront();
         }
@@ -1944,8 +1870,7 @@ private void jMenuDirScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     private void jMenuItemActiveUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemActiveUsersActionPerformed
         ActiveSessions activeSessions = ActiveSessions.getInstance();
 
-        if (activeSessions != null)
-        {
+        if (activeSessions != null) {
             activeSessions.setVisible(true);
             activeSessions.toFront();
             //this.setEnabled(false);
@@ -1955,8 +1880,7 @@ private void jMenuDirScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     private void jButtonClientPreferencesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClientPreferencesActionPerformed
         ClientOptions cliOptions = ClientOptions.getInstance();
 
-        if (cliOptions != null)
-        {
+        if (cliOptions != null) {
             cliOptions.setVisible(true);
             cliOptions.toFront();
         }
@@ -1964,53 +1888,46 @@ private void jMenuDirScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 
     @SuppressWarnings("empty-statement")
     private void jMenuItemShutdownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemShutdownActionPerformed
-        Object[] opt =
-        {
-            "Yes", "No"
-        };
+        Object[] opt
+                = {
+                    "Yes", "No"
+                };
 
         String message = "Are you shure you want to shutdown the server?";
         int op = JOptionPane.showOptionDialog(this, message, "Shut down Server", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, opt, opt[1]);
 
-        if (op == 0)
-        {
+        if (op == 0) {
             //Logout from GUI Server
-            if (clientCore.isAdmin())
-            {
+            if (clientCore.isAdmin()) {
 
-                if (AdminRefs.getInstance().unsavedSettings())
-                {
-                    Object[] opt1 =
-                    {
-                        "Save", "Discard"
-                    };
+                if (AdminRefs.getInstance().unsavedSettings()) {
+                    Object[] opt1
+                            = {
+                                "Save", "Discard"
+                            };
 
                     message = "There are unsaved Server Settings.\nDo you want to save them?";
                     op = JOptionPane.showOptionDialog(this, message, "Unsaved Server Settings", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, opt1, opt1[0]);
 
-                    if (op == 0)
-                    {
+                    if (op == 0) {
                         AdminRefs.getInstance().saveSettings();
                     }
 
                 }
             }
 
-            if (clientCore.isUser())
-            {
-                if (ClientOptions.getInstance().unsavedSettings())
-                {
-                    Object[] opt2 =
-                    {
-                        "Save",
-                        "Discard"
-                    };
+            if (clientCore.isUser()) {
+                if (ClientOptions.getInstance().unsavedSettings()) {
+                    Object[] opt2
+                            = {
+                                "Save",
+                                "Discard"
+                            };
 
                     message = "There are unsaved Client Settings.\nDo you want to save them?";
                     op = JOptionPane.showOptionDialog(this, message, "Unsaved Client Settings", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, opt2, opt2[0]);
 
-                    if (op == 0)
-                    {
+                    if (op == 0) {
                         ClientOptions.getInstance().saveSettings();
                     }
                 }
@@ -2018,8 +1935,7 @@ private void jMenuDirScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 
             QueryHistorySupport.getInstance().saveQueryHistory();
 
-            if (clientCore.isAdmin())
-            {
+            if (clientCore.isAdmin()) {
                 AdminRefs.getInstance().shutdownServer();
             }
 
@@ -2033,82 +1949,69 @@ private void jMenuDirScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 
     private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
         //Logout from GUI Server
-        try
-        {
-            if (clientCore.isAdmin() && AdminRefs.getInstance().unsavedSettings())
-            {
-                Object[] opt =
-                {
-                    "Save", "Discard", "Cancel"
-                };
+        try {
+            if (clientCore.isAdmin() && AdminRefs.getInstance().unsavedSettings()) {
+                Object[] opt
+                        = {
+                            "Save", "Discard", "Cancel"
+                        };
 
                 String message = "There are unsaved Server Settings.\nDo you want to save them?";
                 int op = JOptionPane.showOptionDialog(this, message, "Unsaved Server Settings", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, opt, opt[2]);
 
-                if (op == 0)
-                {
+                if (op == 0) {
                     AdminRefs.getInstance().saveSettings();
                 }
 
-                if (op == 2)
-                {
+                if (op == 2) {
                     return;
                 }
             }
 
-            if (clientCore.isUser() && ClientOptions.getInstance().unsavedSettings())
-            {
-                Object[] opt =
-                {
-                    "Save", "Discard", "Cancel"
-                };
+            if (clientCore.isUser() && ClientOptions.getInstance().unsavedSettings()) {
+                Object[] opt
+                        = {
+                            "Save", "Discard", "Cancel"
+                        };
 
                 String message = "There are unsaved Client Settings.\nDo you want to save them?";
                 int op = JOptionPane.showOptionDialog(this, message, "Unsaved Client Settings", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, opt, opt[2]);
 
-                if (op == 0)
-                {
+                if (op == 0) {
                     ClientOptions.getInstance().saveSettings();
                 }
 
-                if (op == 2)
-                {
+                if (op == 2) {
                     return;
                 }
             }
 
-            if (clientCore.isAdmin())
-            {
+            if (clientCore.isAdmin()) {
                 AdminRefs.getInstance().logout();
             }
 
             searchTree.unexportSearchSignal();
             clientCore.getUser().logout();
 
-        } catch (RemoteException ex)
-        {
+        } catch (RemoteException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
         File toDelete = new File("pluginClasses");
         String[] deleteArray = toDelete.list();
-        if (deleteArray != null)
-        {
-            for (String fileName : deleteArray)
-            {
+        if (deleteArray != null) {
+            for (String fileName : deleteArray) {
                 File f = new File("pluginClasses/" + fileName);
                 f.delete();
             }
         }
         QueryHistorySupport.getInstance().saveQueryHistory();
 
-        if (Main.isFixedClient())
-        {
+        if (Main.isFixedClient()) {
             clientCore.stopKeepAlives();
             this.dispose();
 
             TrayIconCreator.getInstance().distroyTrayIcon();
-        } else
-        {
+        } else {
             System.exit(0);
         }
     }//GEN-LAST:event_jMenuItem11ActionPerformed
@@ -2116,214 +2019,197 @@ private void jMenuDirScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
     File toDelete = new File("pluginClasses");
     String[] deleteArray = toDelete.list();
-    if (deleteArray != null)
-    {
-        for (String fileName : deleteArray)
-        {
+    if (deleteArray != null) {
+        for (String fileName : deleteArray) {
             File f = new File("pluginClasses/" + fileName);
             f.delete();
         }
     }
-    if (clientCore.isAdmin() && AdminRefs.getInstance().unsavedSettings())
-    {
-        Object[] opt =
-        {
-            "Save", "Discard", "Cancel"
-        };
+    if (clientCore.isAdmin() && AdminRefs.getInstance().unsavedSettings()) {
+        Object[] opt
+                = {
+                    "Save", "Discard", "Cancel"
+                };
 
         String message = "There are unsaved Server Settings.\nDo you want to save them?";
         int op = JOptionPane.showOptionDialog(this, message, "Unsaved Server Settings", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, opt, opt[2]);
 
-        if (op == 0)
-        {
+        if (op == 0) {
             AdminRefs.getInstance().saveSettings();
         }
 
-        if (op == 2)
-        {
+        if (op == 2) {
             return;
         }
     }
 
-    if (ClientOptions.getInstance().unsavedSettings())
-    {
-        Object[] opt =
-        {
-            "Save", "Discard", "Cancel"
-        };
+    if (ClientOptions.getInstance().unsavedSettings()) {
+        Object[] opt
+                = {
+                    "Save", "Discard", "Cancel"
+                };
 
         String message = "There are unsaved Client Settings.\nDo you want to save them?";
         int op = JOptionPane.showOptionDialog(this, message, "Unsaved Client Settings", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, opt, opt[2]);
 
-        if (op == 0)
-        {
+        if (op == 0) {
             ClientOptions.getInstance().saveSettings();
         }
 
-        if (op == 2)
-        {
+        if (op == 2) {
             return;
         }
     }
 
     QueryHistorySupport.getInstance().saveQueryHistory();
 
-    if (clientCore.isAdmin())
-    {
+    if (clientCore.isAdmin()) {
         AdminRefs.getInstance().shutdownServer();
     }
-
 
     System.exit(0);
 }//GEN-LAST:event_jMenuItem7ActionPerformed
 
 private void jTreeResultsKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTreeResultsKeyReleased
-    if (KeyEvent.VK_DELETE == evt.getKeyCode() && clientCore.isAdmin())
-    {
+    if (KeyEvent.VK_DELETE == evt.getKeyCode() && clientCore.isAdmin()) {
         ArrayList<String> files = getSelectedLocalFiles();
 
-        if (files != null && !files.isEmpty())
-        {
-            try
-            {
-                Object[] opt =
-                {
-                    "Remove and Delete", "Remove", "Cancel"
-                };
+        if (files != null && !files.isEmpty()) {
+            try {
+                Object[] opt
+                        = {
+                            "Remove and Delete", "Remove", "Cancel"
+                        };
                 String message = "Are you sure you want to remove these files from Index Engine?";
 
                 int op = JOptionPane.showOptionDialog(this, message, "Remove Files", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, opt, opt[2]);
 
-                if (op == 0)
-                {
+                if (op == 0) {
                     AdminRefs.getInstance().getIndexOptions().removeFilesFromIndexer(files, true);
                 }
-                if (op == 1)
-                {
+                if (op == 1) {
                     AdminRefs.getInstance().getIndexOptions().removeFilesFromIndexer(files, false);
                 }
-            } catch (RemoteException ex)
-            {
+            } catch (RemoteException ex) {
                 Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
 }//GEN-LAST:event_jTreeResultsKeyReleased
 
-/*
- * This need some serious rewritting
- * alot of cruft
- */
+    /*
+     * This need some serious rewritting
+     * alot of cruft
+     */
 private void jTreeResultsValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_jTreeResultsValueChanged
 
-    
     /*
-    DefaultMutableTreeNode node = (DefaultMutableTreeNode) getjTreeResults().getLastSelectedPathComponent();
-    if (node == null){
-        return;
-    }
-    this.jButtonDownload.setEnabled(false);
-    Object nodeInfo = null;
-    DefaultMutableTreeNode nodeLeaf = null;
+     DefaultMutableTreeNode node = (DefaultMutableTreeNode) getjTreeResults().getLastSelectedPathComponent();
+     if (node == null){
+     return;
+     }
+     this.jButtonDownload.setEnabled(false);
+     Object nodeInfo = null;
+     DefaultMutableTreeNode nodeLeaf = null;
 
 
-    if (node.getLevel() == 4 || (node.isLeaf() && node.getLevel() > 1)){
-        Object nodeInfoLeaf = null;
+     if (node.getLevel() == 4 || (node.isLeaf() && node.getLevel() > 1)){
+     Object nodeInfoLeaf = null;
 
-        if (node.getLevel() == 4){
-            nodeLeaf = node.getFirstLeaf();
-            nodeInfoLeaf = nodeLeaf.getUserObject();
-        }
-        else{
-            // Leaf
-            nodeInfo = node.getUserObject();
-            nodeLeaf = node;
-            nodeInfoLeaf = nodeInfo;
-        }
+     if (node.getLevel() == 4){
+     nodeLeaf = node.getFirstLeaf();
+     nodeInfoLeaf = nodeLeaf.getUserObject();
+     }
+     else{
+     // Leaf
+     nodeInfo = node.getUserObject();
+     nodeLeaf = node;
+     nodeInfoLeaf = nodeInfo;
+     }
 
-        SearchResult r = (SearchResult) nodeInfoLeaf;
+     SearchResult r = (SearchResult) nodeInfoLeaf;
 
-        //HashMap extras = r.getExtraData();
-        //String thumb = (String) extras.get("Thumbnail");
+     //HashMap extras = r.getExtraData();
+     //String thumb = (String) extras.get("Thumbnail");
 
-        //System.out.println("Filename: " + r.getFileName());
-        //System.out.println("FileHash: " + r.getFileHash());
-*/
-        /*if (thumb != null){
-            showThumbnail(thumb);
-        }
-        else if (!SearchResult.class.isInstance(nodeInfoLeaf) && SearchResult.class.isInstance(nodeInfoLeaf)){
-            SearchResult res = searchTree.searchThumbnail(r.getURI(), "filehash");//was r.getFileHash, should be placed on extradata
+     //System.out.println("Filename: " + r.getFileName());
+     //System.out.println("FileHash: " + r.getFileHash());
+     */
+    /*if (thumb != null){
+     showThumbnail(thumb);
+     }
+     else if (!SearchResult.class.isInstance(nodeInfoLeaf) && SearchResult.class.isInstance(nodeInfoLeaf)){
+     SearchResult res = searchTree.searchThumbnail(r.getURI(), "filehash");//was r.getFileHash, should be placed on extradata
 
-            if (res != null){
-                HashMap extras2 = res.getExtraData();
+     if (res != null){
+     HashMap extras2 = res.getExtraData();
 
-                if (extras2 != null){
-                    thumb = (String) extras2.get("Thumbnail");
+     if (extras2 != null){
+     thumb = (String) extras2.get("Thumbnail");
 
-                    if (thumb != null){
-                        extras.put("Thumbnail", thumb); // put the thumbnail in the original SearchResult
+     if (thumb != null){
+     extras.put("Thumbnail", thumb); // put the thumbnail in the original SearchResult
 
-                        showThumbnail(thumb);
-                    }
-                    else{
-                        cleanThumbnails();
-                    }
-                }
-            }
-            //TODO
-            //this must be removed! we must not care where the search comes from
-        }
-        else if (SearchResult.class.isInstance(nodeInfoLeaf)){
-            searchTree.searchP2PThumbnail(r);
-            cleanThumbnails();
-        }
-        else{
-            cleanThumbnails();
-        }*/
-  /*  }
-    else{
-        cleanThumbnails();
-    }
+     showThumbnail(thumb);
+     }
+     else{
+     cleanThumbnails();
+     }
+     }
+     }
+     //TODO
+     //this must be removed! we must not care where the search comes from
+     }
+     else if (SearchResult.class.isInstance(nodeInfoLeaf)){
+     searchTree.searchP2PThumbnail(r);
+     cleanThumbnails();
+     }
+     else{
+     cleanThumbnails();
+     }*/
+    /*  }
+     else{
+     cleanThumbnails();
+     }
 
-    //Controll the enable buttons
-    if (node.isLeaf())
-    {
-        jButtonDump.setEnabled(true);
-        IPluginControllerUser plugins = null;
-        try
-        {
-            plugins = this.clientCore.getUser().getPluginController();
+     //Controll the enable buttons
+     if (node.isLeaf())
+     {
+     jButtonDump.setEnabled(true);
+     IPluginControllerUser plugins = null;
+     try
+     {
+     plugins = this.clientCore.getUser().getPluginController();
             
-            //dafuq is this?
-            if ((SearchResult) nodeInfo==null)
-            {
+     //dafuq is this?
+     if ((SearchResult) nodeInfo==null)
+     {
                 
             
-            }
-    */        
+     }
+     */
             //TODO: fix this!
             /*if (!plugins.isLocalPlugin(((SearchResult) nodeInfo).getPluginName()))
-            {
-                jButtonDownload.setEnabled(true);
-                jButtonSend.setEnabled(false);
-            } else
-            {*/
-      /*          jButtonSend.setEnabled(true);
-                jButtonView.setEnabled(true);
-            //}
-        }
-        catch (RemoteException ex){
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    else{
-        jButtonDump.setEnabled(false);
-        jButtonDownload.setEnabled(false);
-        jButtonView.setEnabled(false);
+     {
+     jButtonDownload.setEnabled(true);
+     jButtonSend.setEnabled(false);
+     } else
+     {*/
+    /*          jButtonSend.setEnabled(true);
+     jButtonView.setEnabled(true);
+     //}
+     }
+     catch (RemoteException ex){
+     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+     }
+     }
+     else{
+     jButtonDump.setEnabled(false);
+     jButtonDownload.setEnabled(false);
+     jButtonView.setEnabled(false);
 
-        jButtonSend.setEnabled(true);
-    }*/
+     jButtonSend.setEnabled(true);
+     }*/
 }//GEN-LAST:event_jTreeResultsValueChanged
 
 private void jTreeResultsTreeExpanded(javax.swing.event.TreeExpansionEvent evt) {//GEN-FIRST:event_jTreeResultsTreeExpanded
@@ -2332,20 +2218,18 @@ private void jTreeResultsTreeExpanded(javax.swing.event.TreeExpansionEvent evt) 
 
 private void jTreeResultsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTreeResultsMouseClicked
     //Double Click -> Show MetaData
-    if (evt.getClickCount() == 2)
-    {
+    if (evt.getClickCount() == 2) {
         showMetaData();
     }
-    
-    if(evt.getButton() == MouseEvent.BUTTON3){
+
+    if (evt.getButton() == MouseEvent.BUTTON3) {
         popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
         popupMenu.list();
     }
 }//GEN-LAST:event_jTreeResultsMouseClicked
 
 private void jButtonExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExportActionPerformed
-    if (jTreeResults.getModel().getChildCount(jTreeResults.getModel().getRoot()) == 0)
-    {
+    if (jTreeResults.getModel().getChildCount(jTreeResults.getModel().getRoot()) == 0) {
         JOptionPane.showMessageDialog(this, "You can't export information without search results.", "Lack of Search Results", JOptionPane.INFORMATION_MESSAGE);
         return;
     }
@@ -2353,16 +2237,13 @@ private void jButtonExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     ExportData ed;
 
     HashMap<String, Boolean> plugins = new HashMap<String, Boolean>();
-    for (JCheckBox box : this.ranges)
-    {
+    for (JCheckBox box : this.ranges) {
         plugins.put(box.getText(), box.isSelected());
     }
-    if (!lastQueryAdvanced)
-    {
+    if (!lastQueryAdvanced) {
 
         ed = new ExportData(lastQueryExecuted, lastQueryKeywords, plugins);
-    } else
-    {
+    } else {
         ed = new ExportData(lastQueryExecuted, true, plugins);
     }
 
@@ -2374,81 +2255,64 @@ private void jButtonExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN
 //so there is a big chance of having broke something
 private void jButtonViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonViewActionPerformed
     DefaultMutableTreeNode node = (DefaultMutableTreeNode) jTreeResults.getLastSelectedPathComponent();
-    if (node == null)
-    {
+    if (node == null) {
         return;
     }
 
     Object nodeInfo = node.getUserObject();
     // int selected = this.jList1.getSelectedIndex();
-    if (node.isLeaf())
-    {
-        if (SearchResult.class.isInstance(nodeInfo))
-        {
+    if (node.isLeaf()) {
+        if (SearchResult.class.isInstance(nodeInfo)) {
             SearchResult tmp = (SearchResult) nodeInfo;
 
             //Why are we caring about this?
-            if (clientCore.isLocalServer())
-            {
-                
+            if (clientCore.isLocalServer()) {
+
                 File f = new File(tmp.getURI());
-                if (!f.exists())
-                {
+                if (!f.exists()) {
                     JOptionPane.showMessageDialog(this, "Dicoogle can't open this file, because this file does not exists in your file system. Try Dump button instead View!", "Error opening the file", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
                 if (ClientSettings.getInstance().getExtV() == null
-                        || ClientSettings.getInstance().getExtV().equals(""))
-                {
+                        || ClientSettings.getInstance().getExtV().equals("")) {
 
-                    try
-                    {
+                    try {
                         Desktop.getDesktop().open(new File(tmp.getURI()));
 
-                    } catch (IOException ex)
-                    {
+                    } catch (IOException ex) {
                         //oh dear
                         String folder = f.getAbsolutePath().substring(0, f.getAbsolutePath().lastIndexOf('/'));
 
-                        try
-                        {
+                        try {
                             Desktop.getDesktop().open(new File(folder));
 
-                        } catch (IOException ex1)
-                        {
+                        } catch (IOException ex1) {
                             JOptionPane.showMessageDialog(this, "Dicoogle can't open this file!", "Error opening the file", JOptionPane.ERROR_MESSAGE);
                         }
                     }
-                } else
-                {
-                    try
-                    {
+                } else {
+                    try {
                         //I changed something, no ideia do i have on what goes around here
                         ProcessBuilder pb = new ProcessBuilder(ClientSettings.getInstance().getExtV(), tmp.getURI().toString());
                         pb.start();
 
                         //Runtime.getRuntime().exec(ClientSettings.getInstance().getExtV() + " "+path);
-                    } catch (IOException ex)
-                    {
+                    } catch (IOException ex) {
                         //ex.printStackTrace();
 
                         String folder = f.getAbsolutePath().substring(0, f.getAbsolutePath().lastIndexOf('/'));
 
-                        try
-                        {
+                        try {
                             Desktop.getDesktop().open(new File(folder));
 
-                        } catch (IOException ex1)
-                        {
+                        } catch (IOException ex1) {
                             JOptionPane.showMessageDialog(this, "Dicoogle can't open this file!", "Error opening the file", JOptionPane.ERROR_MESSAGE);
                         }
                     }
                 }
-            } else
-            {
-                try
-                {
+            } else {
+                try {
                     SimpleEntry<RemoteFile, Integer> entry = UserRefs.getInstance().getSearch().downloadFile(tmp);
 
                     TransferStatus ts = new TransferStatus(entry.getKey());
@@ -2461,11 +2325,9 @@ private void jButtonViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
                     ts.setVisible(true);
                     ts.toFront();
 
-                } catch (RemoteException ex)
-                {
+                } catch (RemoteException ex) {
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IOException ex)
-                {
+                } catch (IOException ex) {
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
@@ -2475,24 +2337,19 @@ private void jButtonViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
 
 private void jButtonDownloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDownloadActionPerformed
 
-
     DefaultMutableTreeNode node = (DefaultMutableTreeNode) jTreeResults.getLastSelectedPathComponent();
-    if (node == null)
-    {
+    if (node == null) {
         return;
     }
 
     Object nodeInfo = node.getUserObject();
 
-    if (node.isLeaf() && SearchResult.class.isInstance(nodeInfo))
-    {
-        try
-        {
+    if (node.isLeaf() && SearchResult.class.isInstance(nodeInfo)) {
+        try {
             SearchResult temp = (SearchResult) nodeInfo;
             UserRefs.getInstance().getSearch().RequestP2PFile(temp);
 
-        } catch (RemoteException ex)
-        {
+        } catch (RemoteException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -2505,14 +2362,12 @@ private void jButtonDumpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
 private void jButtonSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSendActionPerformed
     ArrayList<String> files = getSelectedLocalFiles();
 
-    if (files != null && !files.isEmpty())
-    {
+    if (files != null && !files.isEmpty()) {
         DicomSend d = new DicomSend(files);
 
         d.setVisible(true);
         d.toFront();
-    } else
-    {
+    } else {
         JOptionPane.showMessageDialog(this, "Please Select Local Files to send.", "Select files", JOptionPane.INFORMATION_MESSAGE);
     }
 }//GEN-LAST:event_jButtonSendActionPerformed
@@ -2530,155 +2385,144 @@ private void SearchTipsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     tip.toFront();
 }//GEN-LAST:event_SearchTipsActionPerformed
 
-enum QUERY_STATE { READY_TO_SEARCH, WAITING_FOR_RESULTS}
-private QUERY_STATE state = QUERY_STATE.READY_TO_SEARCH;
-private boolean basicSearch = true;
+    enum QUERY_STATE {
 
-public void search()
-{
-    
-    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, "State: " + state);
-    if (state == QUERY_STATE.WAITING_FOR_RESULTS)
-    {
-        
-        Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, "Prunning query");
-        
-        pruneQuery();
-        return;
+        READY_TO_SEARCH, WAITING_FOR_RESULTS
     }
-    
-    this.jButtonDownload.setEnabled(false);
-    lastQueryExecuted = jTextFieldQuery.getText();
-    lastQueryKeywords = jCheckBoxKeywords.isSelected();
-    lastQueryAdvanced = false;
-    HashMap<String, Boolean> plugins = new HashMap<String, Boolean>();
-    boolean isSelectedPlugins = false;
-    for (JCheckBox box : this.ranges)
-    {
-        plugins.put(box.getText(), box.isSelected());
-        isSelectedPlugins = isSelectedPlugins || box.isSelected();
+    private QUERY_STATE state = QUERY_STATE.READY_TO_SEARCH;
+    private boolean basicSearch = true;
+
+    public void search() {
+
+        Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, "State: " + state);
+        if (state == QUERY_STATE.WAITING_FOR_RESULTS) {
+
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, "Prunning query");
+
+            pruneQuery();
+            return;
+        }
+
+        this.jButtonDownload.setEnabled(false);
+        lastQueryExecuted = jTextFieldQuery.getText();
+        lastQueryKeywords = jCheckBoxKeywords.isSelected();
+        lastQueryAdvanced = false;
+        HashMap<String, Boolean> plugins = new HashMap<String, Boolean>();
+        boolean isSelectedPlugins = false;
+        for (JCheckBox box : this.ranges) {
+            plugins.put(box.getText(), box.isSelected());
+            isSelectedPlugins = isSelectedPlugins || box.isSelected();
+        }
+        if (!isSelectedPlugins) {
+            JOptionPane.showMessageDialog(this, "Please select a source to search", "Missing data source", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            basicSearch = true;
+            searchTree.search(lastQueryExecuted, lastQueryKeywords, plugins);
+            state = QUERY_STATE.WAITING_FOR_RESULTS;
+            jButtonSearch.setText("Cancel");
+            cleanThumbnails();
+            QueryHistorySupport.getInstance().saveQueryHistory();
+        }
+
     }
-    if (!isSelectedPlugins)
-    {
-        JOptionPane.showMessageDialog(this, "Please select a source to search", "Missing data source", JOptionPane.INFORMATION_MESSAGE);
-    } else
-    {
-        basicSearch = true;
-        searchTree.search(lastQueryExecuted, lastQueryKeywords, plugins);
-        state = QUERY_STATE.WAITING_FOR_RESULTS;
-        jButtonSearch.setText("Cancel");
-        cleanThumbnails();
-        QueryHistorySupport.getInstance().saveQueryHistory();
+
+    public void pruneQuery() {
+        System.out.println("Prune here");
+        searchTree.pruneQuery(null);
+        state = QUERY_STATE.READY_TO_SEARCH;
+        jButtonSearch.setText("Search");
     }
 
-}
+    public void finishQuery() {
+        //System.out.println("The query is done");
+        jButtonSearch.setText("Search");
 
-public void pruneQuery()
-{
-    System.out.println("Prune here");
-    searchTree.pruneQuery(null);
-    state = QUERY_STATE.READY_TO_SEARCH;
-    jButtonSearch.setText("Search");
-}
+        state = QUERY_STATE.READY_TO_SEARCH;
+    }
 
-public void finishQuery()
-{
-    //System.out.println("The query is done");
-    jButtonSearch.setText("Search");
+    /*
+     * Updates the tree view using the query results.
+     * 
+     * todo: the tree is not a parameter to the method, as such it has state. make the tree to be updated an argument
+     */
+    private void updateSearchView(Iterable<SearchResult> searchResultIterator) {
 
-    state = QUERY_STATE.READY_TO_SEARCH;
-}
+        HashMap<String, HashMap<String, HashMap<String, HashMap<String, SearchResult>>>> tree;//omfgIHateYou;
+        tree = SearchResult.toTree(searchResultIterator);
 
-/*
- * Updates the tree view using the query results.
- * 
- * todo: the tree is not a parameter to the method, as such it has state. make the tree to be updated an argument
- */
-private void updateSearchView(Iterable<SearchResult> searchResultIterator){
-    
-    HashMap<String, HashMap<String, HashMap<String, HashMap<String, SearchResult>>>> tree;//omfgIHateYou;
-    tree = SearchResult.toTree(searchResultIterator);
-    
-    DefaultMutableTreeNode root = new DefaultMutableTreeNode("Search Results");
-        
-    for(String patientName : tree.keySet()){
-        DefaultMutableTreeNode patientMap = new DefaultMutableTreeNode(patientName);
-        root.add(patientMap);
-        
-        for(String studyUID : tree.get(patientName).keySet()){
-            DefaultMutableTreeNode studyMap = new DefaultMutableTreeNode(studyUID);
-            patientMap.add(studyMap);
-            
-            for(String seriesUID : tree.get(patientName).get(studyUID).keySet()){
-                DefaultMutableTreeNode seriesMap = new DefaultMutableTreeNode(seriesUID);
-                studyMap.add(seriesMap);
-            
-                for(SearchResult r : tree.get(patientName).get(studyUID).get(seriesUID).values()){
-                    DefaultMutableTreeNode images = new DefaultMutableTreeNode(r);
-                    seriesMap.add(images);
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Search Results");
+
+        for (String patientName : tree.keySet()) {
+            DefaultMutableTreeNode patientMap = new DefaultMutableTreeNode(patientName);
+            root.add(patientMap);
+
+            for (String studyUID : tree.get(patientName).keySet()) {
+                DefaultMutableTreeNode studyMap = new DefaultMutableTreeNode(studyUID);
+                patientMap.add(studyMap);
+
+                for (String seriesUID : tree.get(patientName).get(studyUID).keySet()) {
+                    DefaultMutableTreeNode seriesMap = new DefaultMutableTreeNode(seriesUID);
+                    studyMap.add(seriesMap);
+
+                    for (SearchResult r : tree.get(patientName).get(studyUID).get(seriesUID).values()) {
+                        DefaultMutableTreeNode images = new DefaultMutableTreeNode(r);
+                        seriesMap.add(images);
+                    }
                 }
             }
         }
-    }    
-    DefaultTreeModel treeModel = new DefaultTreeModel(root);
-    jTreeResults.setModel(treeModel);
-}
+        DefaultTreeModel treeModel = new DefaultTreeModel(root);
+        jTreeResults.setModel(treeModel);
+    }
 
 private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
     String query = jTextFieldQuery.getText();
-    
+
     //prepares the info we are interested in
-    HashMap<String,Object> options = new HashMap<>();
+    HashMap<String, Object> options = new HashMap<>();
     options.put("PatientName", null);
     options.put("PatientID", null);
     options.put("StudyInstanceUID", null);
     options.put("SeriesInstanceUID", null);
     options.put("SOPInstanceUID", null);
-    
+
     //runs the query task asynchronously
     List<String> providers = new ArrayList<>();
-    for(JCheckBox chkBox : this.ranges){
-    	if(chkBox.isSelected()){
-    		providers.add(chkBox.getText());
-    		System.out.println("Selected: "+chkBox.getText());
-    	}
+    for (JCheckBox chkBox : this.ranges) {
+        if (chkBox.isSelected()) {
+            providers.add(chkBox.getText());
+            System.out.println("Selected: " + chkBox.getText());
+        }
     }
-    
+
     JointQueryTask task = new JointQueryTask() {
-		
-		@Override
-		public void onReceive(Task<Iterable<SearchResult>> e) {
+
+        @Override
+        public void onReceive(Task<Iterable<SearchResult>> e) {
+            // TODO Auto-generated method stub
+            try {
+                updateSearchView(e.get());
+            } catch (InterruptedException | ExecutionException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onCompletion() {
 			// TODO Auto-generated method stub
-			try {
-				updateSearchView(e.get());
-			} catch (InterruptedException | ExecutionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
-		
-		@Override
-		public void onCompletion() {
-			// TODO Auto-generated method stub
-			
-		}
-	};
-    
-    task = PluginController.getInstance().query( task,providers, query, options);    
-    
-    
+
+        }
+    };
+
+    task = PluginController.getInstance().query(task, providers, query, options);
+
+
 }//GEN-LAST:event_jButtonSearchActionPerformed
 
 
-
-
-
-
-
-
 private void DateRangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DateRangeActionPerformed
-    if (ExactDate.isSelected())
-    {
+    if (ExactDate.isSelected()) {
         ExactDate.setSelected(false);
     }
     StudyDateRangeInitialBoundaryActivation.setEnabled(true);
@@ -2689,8 +2533,7 @@ private void DateRangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 }//GEN-LAST:event_DateRangeActionPerformed
 
 private void ExactDateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExactDateActionPerformed
-    if (DateRange.isSelected())
-    {
+    if (DateRange.isSelected()) {
         DateRange.setSelected(false);
     }
     StudyDateRangeInitialBoundaryActivation.setEnabled(false);
@@ -2701,21 +2544,17 @@ private void ExactDateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 }//GEN-LAST:event_ExactDateActionPerformed
 
 private void StudyDateRangeTerminalBoundaryActivationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StudyDateRangeTerminalBoundaryActivationActionPerformed
-    if (StudyDateRangeTerminalBoundaryActivation.isSelected())
-    {
+    if (StudyDateRangeTerminalBoundaryActivation.isSelected()) {
         StudyDateRangeTerminalBoundary.setEnabled(true);
-    } else
-    {
+    } else {
         StudyDateRangeTerminalBoundary.setEnabled(false);
     }
 }//GEN-LAST:event_StudyDateRangeTerminalBoundaryActivationActionPerformed
 
 private void StudyDateRangeInitialBoundaryActivationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StudyDateRangeInitialBoundaryActivationActionPerformed
-    if (StudyDateRangeInitialBoundaryActivation.isSelected())
-    {
+    if (StudyDateRangeInitialBoundaryActivation.isSelected()) {
         StudyDateRangeInitialBoundary.setEnabled(true);
-    } else
-    {
+    } else {
         StudyDateRangeInitialBoundary.setEnabled(false);
     }
 }//GEN-LAST:event_StudyDateRangeInitialBoundaryActivationActionPerformed
@@ -2764,8 +2603,7 @@ private void AdvancedSearchButtonActionPerformed(java.awt.event.ActionEvent evt)
     lastQueryExecuted = getAdvancedQuery();
     lastQueryAdvanced = true;
     HashMap<String, Boolean> plugins = new HashMap<String, Boolean>();
-    for (JCheckBox box : this.ranges)
-    {
+    for (JCheckBox box : this.ranges) {
         plugins.put(box.getText(), box.isSelected());
     }
     searchTree.search(lastQueryExecuted, true, plugins);
@@ -2888,30 +2726,25 @@ private void SelectAdvancedSearchActionPerformed(java.awt.event.ActionEvent evt)
     jPanel2.setVisible(true);
 }//GEN-LAST:event_SelectAdvancedSearchActionPerformed
 
-    private void scanDisk(boolean resume)
-    {
+    private void scanDisk(boolean resume) {
 
-        if (!clientCore.isLocalServer())
-        {
-            class Action1 extends FileAction
-            {
+        if (!clientCore.isLocalServer()) {
+            class Action1 extends FileAction {
 
                 private boolean resume = false;
 
-                public void setResume(boolean resume)
-                {
+                public void setResume(boolean resume) {
 
                     this.resume = resume;
                 }
 
                 @Override
-                public void setFileChoosed(String filePath)
-                {
+                public void setFileChoosed(String filePath) {
                     AdminRefs.getInstance().index(filePath, resume);
 
                     /*TaskList tasks = TaskList.getInstance();
-                    tasks.setVisible(true);
-                    tasks.toFront();*/
+                     tasks.setVisible(true);
+                     tasks.toFront();*/
                 }
             }
 
@@ -2926,26 +2759,22 @@ private void SelectAdvancedSearchActionPerformed(java.awt.event.ActionEvent evt)
             chooser.setVisible(true);
             // TODO:  put showTaskList = false; -- somewhere...
 
-
-        } else
-        {
+        } else {
             JFileChooser chooser = new JFileChooser();
             chooser.setCurrentDirectory(new java.io.File(AdminRefs.getInstance().getDefaultFilePath()));
             chooser.setDialogTitle("Dicoogle Scan Directory");
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             chooser.setAcceptAllFileFilterUsed(false);
 
-            if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
-            {
+            if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 AdminRefs.getInstance().index(chooser.getSelectedFile().toString(), resume);
 
                 /*TaskList tasks = TaskList.getInstance();
-                tasks.setVisible(true);
-                tasks.toFront();*/
+                 tasks.setVisible(true);
+                 tasks.toFront();*/
             }
 
         }
-
 
     }
 
@@ -2957,9 +2786,7 @@ private void jMenuDirScanResumeActionPerformed(java.awt.event.ActionEvent evt) {
 
 private void jTextFieldQueryKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldQueryKeyPressed
 
-
-    if (evt.getKeyCode() == KeyEvent.VK_ENTER)
-    {
+    if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
         search();
     }
 
@@ -2968,15 +2795,13 @@ private void jTextFieldQueryKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
 
-        
-        if (Main.isFixedClient())
-        {
-        
+        if (Main.isFixedClient()) {
+
             PluginController PController = PluginController.getInstance();
             //TODO: DELETED
             //PController.initGUI();
         }
-        
+
     }//GEN-LAST:event_formWindowOpened
 
     private void jTextFieldQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldQueryActionPerformed
@@ -3098,28 +2923,29 @@ private void jTextFieldQueryKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST
     private javax.swing.JTabbedPane tabPanel;
     // End of variables declaration//GEN-END:variables
 
-    /**************************************************
-     *  Public Methods
-     **************************************************/
+    /**
+     * ************************************************
+     * Public Methods
+     *************************************************
+     */
     /**
      * Checks if the options form is displayed
+     *
      * @return true if not displaying, true otherwise
      */
-    private void showMetaData()
-    {
+    private void showMetaData() {
         /**
          * Just show metadata for now
-         **/
+         *
+         */
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) jTreeResults.getLastSelectedPathComponent();
-        
-        if (node != null && node.isLeaf() && node.getLevel() > 3)
-        {
+
+        if (node != null && node.isLeaf() && node.getLevel() > 3) {
 
             Object nodeInfo = node.getUserObject();
             SearchResult fileInfo = (SearchResult) nodeInfo;
 
-            if (nodeInfo instanceof SearchResult)
-            {
+            if (nodeInfo instanceof SearchResult) {
                 IndexedMetaData metadataWindow = new IndexedMetaData(fileInfo, this);
                 metadataWindow.setVisible(true);
                 metadataWindow.toFront();
@@ -3127,29 +2953,24 @@ private void jTextFieldQueryKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST
         }
     }
 
-    public void showImage(String title, RenderedImage image)
-    {
-        if (jPanelThumbnail == null)
-        {
+    public void showImage(String title, RenderedImage image) {
+        if (jPanelThumbnail == null) {
 
             // It can be used to show image in external window
             JFrame f = new JFrame(title);
-            if (image != null)
-            {
+            if (image != null) {
                 f.getContentPane().add(new DisplayJAI(image));
             }
             f.pack();
             //f.setVisible(true);
             f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        } else
-        {
+        } else {
             jPanelThumbnail.removeAll();
             jPanelThumbnail.setLayout(new FlowLayout());
 
             // Yet another bugfix
             // If the indexed image does not have a thumbnail, it leads to a Null Pointer Exception
-            if (image != null)
-            {
+            if (image != null) {
                 jPanelThumbnail.add(new DisplayJAI(image));
             }
 
@@ -3161,391 +2982,309 @@ private void jTextFieldQueryKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST
     /**
      * @return the jLabelResults
      */
-    public javax.swing.JLabel getjLabelResults()
-    {
+    public javax.swing.JLabel getjLabelResults() {
         return jLabelResults;
     }
 
     /**
      * @param jLabelResults the jLabelResults to set
      */
-    public void setjLabelResults(javax.swing.JLabel jLabelResults)
-    {
+    public void setjLabelResults(javax.swing.JLabel jLabelResults) {
         this.jLabelResults = jLabelResults;
     }
 
     /**
      * @return the jLabelTime
      */
-    public javax.swing.JLabel getjLabelTime()
-    {
+    public javax.swing.JLabel getjLabelTime() {
         return jLabelTime;
     }
 
     /**
      * @param jLabelTime the jLabelTime to set
      */
-    public void setjLabelTime(javax.swing.JLabel jLabelTime)
-    {
+    public void setjLabelTime(javax.swing.JLabel jLabelTime) {
         this.jLabelTime = jLabelTime;
     }
 
     /**
      * @return the jTreeResults
      */
-    public javax.swing.JTree getjTreeResults()
-    {
+    public javax.swing.JTree getjTreeResults() {
         return jTreeResults;
     }
 
     /**
      * @param jTreeResults the jTreeResults to set
      */
-    public void setjTreeResults(javax.swing.JTree jTreeResults)
-    {
+    public void setjTreeResults(javax.swing.JTree jTreeResults) {
         this.jTreeResults = jTreeResults;
     }
 
-    private void showThumbnail(String thumb)
-    {
-        if (thumb == null)
-        {
+    private void showThumbnail(String thumb) {
+        if (thumb == null) {
             return;
         }
 
         byte[] tb = Base64.decodeBase64(thumb.getBytes());
         ByteArrayInputStream in = new ByteArrayInputStream(tb);
         RenderedImage out;
-        try
-        {
+        try {
             out = ImageIO.read(in);
             jPanelThumbnail.setSize(64, 64);
             Result2Tree.showImage("Image Thumbnail", out, jPanelThumbnail);
             repaint();
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             cleanThumbnails();
         }
     }
 
-    private String getAdvancedQuery()
-    {
+    private String getAdvancedQuery() {
         boolean modified = false;
         String advancedquery = "";
 
-        if (!((PatientName.getText()).equals("(All patients)")) && !((PatientName.getText()).isEmpty()))
-        {
-            if (!modified)
-            {
+        if (!((PatientName.getText()).equals("(All patients)")) && !((PatientName.getText()).isEmpty())) {
+            if (!modified) {
                 advancedquery = (advancedquery + "PatientName:(" + PatientName.getText() + ")");
                 modified = true;
-            } else
-            {
+            } else {
                 advancedquery = (advancedquery + " AND PatientName:(" + PatientName.getText() + ")");
             }
         }
 
-        if (!((PatientID.getText()).equals("(All IDs)")) && !((PatientID.getText()).isEmpty()))
-        {
-            if (!modified)
-            {
+        if (!((PatientID.getText()).equals("(All IDs)")) && !((PatientID.getText()).isEmpty())) {
+            if (!modified) {
                 advancedquery = (advancedquery + "PatientID:(" + PatientID.getText() + ")");
                 modified = true;
-            } else
-            {
+            } else {
                 advancedquery = (advancedquery + " AND PatientID:(" + PatientID.getText() + ")");
             }
         }
 
         // 0 - All 1 - Male  1 - Female
-        if (PatientGender.getSelectedItem().equals("All"))
-        {
-        } else if (PatientGender.getSelectedItem().equals("Male"))
-        {
-            if (!modified)
-            {
+        if (PatientGender.getSelectedItem().equals("All")) {
+        } else if (PatientGender.getSelectedItem().equals("Male")) {
+            if (!modified) {
                 advancedquery = (advancedquery + "PatientSex:M");
                 modified = true;
-            } else
-            {
+            } else {
                 advancedquery = (advancedquery + " AND PatientSex:M");
             }
-        } else if (PatientGender.getSelectedItem().equals("Female"))
-        {
-            if (!modified)
-            {
+        } else if (PatientGender.getSelectedItem().equals("Female")) {
+            if (!modified) {
                 advancedquery = (advancedquery + "PatientSex:F");
                 modified = true;
-            } else
-            {
+            } else {
                 advancedquery = (advancedquery + " AND PatientSex:F");
             }
         }
 
-        if (!((InstitutionName.getText()).equals("(All institutions)")) && !((InstitutionName.getText()).isEmpty()))
-        {
-            if (!modified)
-            {
+        if (!((InstitutionName.getText()).equals("(All institutions)")) && !((InstitutionName.getText()).isEmpty())) {
+            if (!modified) {
                 advancedquery = (advancedquery + "InstitutionName:(" + InstitutionName.getText() + ")");
                 modified = true;
-            } else
-            {
+            } else {
                 advancedquery = (advancedquery + " AND InstitutionName:(" + InstitutionName.getText() + ")");
             }
         }
 
-        if (!((Physician.getText()).equals("(All physicians)")) && !((Physician.getText()).isEmpty()))
-        {
-            if (!modified)
-            {
+        if (!((Physician.getText()).equals("(All physicians)")) && !((Physician.getText()).isEmpty())) {
+            if (!modified) {
                 advancedquery = (advancedquery + "(PerformingPhysicianName:(" + Physician.getText() + ") OR ReferringPhysicianName:(" + Physician.getText() + "))");
                 modified = true;
-            } else
-            {
+            } else {
                 advancedquery = (advancedquery + " AND (PerformingPhysicianName:(" + Physician.getText() + ") OR ReferringPhysicianName:(" + Physician.getText() + "))");
             }
         }
 
-        if (!((OperatorName.getText()).equals("(All operators)")) && !((OperatorName.getText()).isEmpty()))
-        {
-            if (!modified)
-            {
+        if (!((OperatorName.getText()).equals("(All operators)")) && !((OperatorName.getText()).isEmpty())) {
+            if (!modified) {
                 advancedquery = (advancedquery + "OperatorName:(" + OperatorName.getText() + ")");
                 modified = true;
-            } else
-            {
+            } else {
                 advancedquery = (advancedquery + " AND OperatorName:(" + OperatorName.getText() + ")");
             }
         }
 
-        if (ExactDate.isSelected())
-        {
-            if (!((StudyDate.getText()).equals("(All dates)")) && !((StudyDate.getText()).isEmpty()))
-            {
-                if (!modified)
-                {
+        if (ExactDate.isSelected()) {
+            if (!((StudyDate.getText()).equals("(All dates)")) && !((StudyDate.getText()).isEmpty())) {
+                if (!modified) {
                     advancedquery = (advancedquery + "StudyDate:(" + StudyDate.getText() + ")");
                     modified = true;
-                } else
-                {
+                } else {
                     advancedquery = (advancedquery + " AND StudyDate:(" + StudyDate.getText() + ")");
                 }
             }
-        } else
-        {
+        } else {
             //http://www.rgagnon.com/javadetails/java-0106.html
             Calendar cal = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             //sdf.format(cal.getTime());
 
-            if (modified)
-            {
+            if (modified) {
                 advancedquery = (advancedquery + " AND StudyDate:[");
-            } else
-            {
+            } else {
                 advancedquery = advancedquery + "StudyDate:[";
             }
             modified = true;
 
-            if (StudyDateRangeInitialBoundaryActivation.isSelected() && StudyDateRangeTerminalBoundaryActivation.isSelected())
-            {
-                if (((StudyDateRangeInitialBoundary.getText()).equals("(Beginning)")) || ((StudyDateRangeInitialBoundary.getText()).isEmpty()))
-                {
+            if (StudyDateRangeInitialBoundaryActivation.isSelected() && StudyDateRangeTerminalBoundaryActivation.isSelected()) {
+                if (((StudyDateRangeInitialBoundary.getText()).equals("(Beginning)")) || ((StudyDateRangeInitialBoundary.getText()).isEmpty())) {
                     advancedquery = (advancedquery + "0000101 TO ");
-                } else
-                {
+                } else {
                     advancedquery = advancedquery + StudyDateRangeInitialBoundary.getText() + " TO ";
                 }
 
-                if (((StudyDateRangeTerminalBoundary.getText()).equals("(Today)")) || ((StudyDateRangeTerminalBoundary.getText()).isEmpty()))
-                {
+                if (((StudyDateRangeTerminalBoundary.getText()).equals("(Today)")) || ((StudyDateRangeTerminalBoundary.getText()).isEmpty())) {
                     advancedquery = advancedquery + sdf.format(cal.getTime()) + "]";
-                } else
-                {
+                } else {
                     advancedquery = advancedquery + StudyDateRangeTerminalBoundary.getText() + "]";
                 }
-            } else if (StudyDateRangeInitialBoundaryActivation.isSelected() && !StudyDateRangeTerminalBoundaryActivation.isSelected())
-            {
-                if (((StudyDateRangeInitialBoundary.getText()).equals("(Beginning)")) || ((StudyDateRangeInitialBoundary.getText()).isEmpty()))
-                {
+            } else if (StudyDateRangeInitialBoundaryActivation.isSelected() && !StudyDateRangeTerminalBoundaryActivation.isSelected()) {
+                if (((StudyDateRangeInitialBoundary.getText()).equals("(Beginning)")) || ((StudyDateRangeInitialBoundary.getText()).isEmpty())) {
                     advancedquery = (advancedquery + "0000101 TO ");
-                } else
-                {
+                } else {
                     advancedquery = advancedquery + StudyDateRangeInitialBoundary.getText() + " TO ";
                 }
 
                 advancedquery = advancedquery + sdf.format(cal.getTime()) + "]";
-            } else if (!StudyDateRangeInitialBoundaryActivation.isSelected() && StudyDateRangeTerminalBoundaryActivation.isSelected())
-            {
+            } else if (!StudyDateRangeInitialBoundaryActivation.isSelected() && StudyDateRangeTerminalBoundaryActivation.isSelected()) {
                 advancedquery = advancedquery + "0000101 TO ";
-                if (((StudyDateRangeTerminalBoundary.getText()).equals("(Today)")) || ((StudyDateRangeTerminalBoundary.getText()).isEmpty()))
-                {
+                if (((StudyDateRangeTerminalBoundary.getText()).equals("(Today)")) || ((StudyDateRangeTerminalBoundary.getText()).isEmpty())) {
                     advancedquery = advancedquery + sdf.format(cal.getTime()) + "]";
-                } else
-                {
+                } else {
                     advancedquery = advancedquery + StudyDateRangeTerminalBoundary.getText() + "]";
                 }
 
-            } else
-            {
+            } else {
                 advancedquery = (advancedquery + "0000101 TO ");
                 advancedquery = advancedquery + sdf.format(cal.getTime()) + "]";
             }
         }
 
-        if (ModalSelectAll.isSelected())
-        {
-            if (modified)
-            {
+        if (ModalSelectAll.isSelected()) {
+            if (modified) {
                 advancedquery = advancedquery + " AND ";
             }
 
             advancedquery = advancedquery + "*:*";
-        } else
-        {
+        } else {
             String modalities = "";
-            if (modified)
-            {
+            if (modified) {
                 modalities = modalities + " AND (";
-            } else
-            {
+            } else {
                 modalities = modalities + "(";
             }
             boolean ModSelected = false;
 
-            if (ModalCR.isSelected())
-            {
+            if (ModalCR.isSelected()) {
                 modified = true;
                 ModSelected = true;
                 modalities = modalities + "Modality:CR";
             }
 
-            if (ModalCT.isSelected())
-            {
+            if (ModalCT.isSelected()) {
                 modified = true;
-                if (ModSelected)
-                {
+                if (ModSelected) {
                     modalities = modalities + " OR ";
                 }
                 ModSelected = true;
                 modalities = modalities + "Modality:CT";
             }
 
-            if (ModalDX.isSelected())
-            {
+            if (ModalDX.isSelected()) {
                 modified = true;
-                if (ModSelected)
-                {
+                if (ModSelected) {
                     modalities = modalities + " OR ";
                 }
                 ModSelected = true;
                 modalities = modalities + "Modality:DX";
             }
 
-            if (ModalES.isSelected())
-            {
+            if (ModalES.isSelected()) {
                 modified = true;
-                if (ModSelected)
-                {
+                if (ModSelected) {
                     modalities = modalities + " OR ";
                 }
                 ModSelected = true;
                 modalities = modalities + "Modality:ES";
             }
 
-            if (ModalMG.isSelected())
-            {
+            if (ModalMG.isSelected()) {
                 modified = true;
-                if (ModSelected)
-                {
+                if (ModSelected) {
                     modalities = modalities + " OR ";
                 }
                 ModSelected = true;
                 modalities = modalities + "Modality:MG";
             }
 
-            if (ModalMR.isSelected())
-            {
+            if (ModalMR.isSelected()) {
                 modified = true;
-                if (ModSelected)
-                {
+                if (ModSelected) {
                     modalities = modalities + " OR ";
                 }
                 ModSelected = true;
                 modalities = modalities + "Modality:MR";
             }
 
-            if (ModalNM.isSelected())
-            {
+            if (ModalNM.isSelected()) {
                 modified = true;
-                if (ModSelected)
-                {
+                if (ModSelected) {
                     modalities = modalities + " OR ";
                 }
                 ModSelected = true;
                 modalities = modalities + "Modality:NM";
             }
 
-            if (ModalOT.isSelected())
-            {
+            if (ModalOT.isSelected()) {
                 modified = true;
-                if (ModSelected)
-                {
+                if (ModSelected) {
                     modalities = modalities + " OR ";
                 }
                 ModSelected = true;
                 modalities = modalities + "Modality:OT";
             }
 
-            if (ModalPT.isSelected())
-            {
+            if (ModalPT.isSelected()) {
                 modified = true;
-                if (ModSelected)
-                {
+                if (ModSelected) {
                     modalities = modalities + " OR ";
                 }
                 ModSelected = true;
                 modalities = modalities + "Modality:PT";
             }
 
-            if (ModalRF.isSelected())
-            {
+            if (ModalRF.isSelected()) {
                 modified = true;
-                if (ModSelected)
-                {
+                if (ModSelected) {
                     modalities = modalities + " OR ";
                 }
                 ModSelected = true;
                 modalities = modalities + "Modality:RF";
             }
 
-            if (ModalSC.isSelected())
-            {
+            if (ModalSC.isSelected()) {
                 modified = true;
-                if (ModSelected)
-                {
+                if (ModSelected) {
                     modalities = modalities + " OR ";
                 }
                 ModSelected = true;
                 modalities = modalities + "Modality:SC";
             }
 
-            if (ModalUS.isSelected())
-            {
+            if (ModalUS.isSelected()) {
                 modified = true;
-                if (ModSelected)
-                {
+                if (ModSelected) {
                     modalities = modalities + " OR ";
                 }
                 ModSelected = true;
                 modalities = modalities + "Modality:US";
             }
 
-            if (ModalXA.isSelected())
-            {
+            if (ModalXA.isSelected()) {
                 modified = true;
-                if (ModSelected)
-                {
+                if (ModSelected) {
                     modalities = modalities + " OR ";
                 }
                 ModSelected = true;
@@ -3554,27 +3293,21 @@ private void jTextFieldQueryKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST
 
             modalities = modalities + ")";
 
-            if (!modalities.equals(" AND ()"))
-            {
+            if (!modalities.equals(" AND ()")) {
                 advancedquery = advancedquery + modalities;
             }
         }
 
         // System.out.println(modalities);
-        if (!modified)
-        {
+        if (!modified) {
             advancedquery = "*:*";
         }
 
         return advancedquery;
     }
-    
-    
-    
-    public javax.swing.JMenu getMenu()
-    {
+
+    public javax.swing.JMenu getMenu() {
         return jMenuTools2;
     }
-    
 
 }

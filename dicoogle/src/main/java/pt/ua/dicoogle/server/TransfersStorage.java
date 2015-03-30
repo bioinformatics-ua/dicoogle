@@ -17,11 +17,16 @@
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
 package pt.ua.dicoogle.server;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.dcm4che2.data.UID;
 
 /**
  *
  * @author Marco Pereira
+ * @author Frederico Silva
  */
 public class TransfersStorage {
     private boolean accepted;
@@ -43,7 +48,25 @@ public class TransfersStorage {
      * [13] MPEG2
      */
     
-    
+    public static final Map<Integer, String> globalTransferMap;
+    static {
+        Map<Integer, String> aMap = new HashMap<>();
+        aMap.put(0, "ImplicitVRLittleEndian");
+        aMap.put(1, "ExplicitVRLittleEndian");
+        aMap.put(2, "DeflatedExplicitVRLittleEndian");
+        aMap.put(3, "ExplicitVRBigEndian");
+        aMap.put(4, "JPEGLossless");
+        aMap.put(5, "JPEGLSLossless");
+        aMap.put(6, "JPEGLosslessNonHierarchical14");
+        aMap.put(7, "JPEG2000LosslessOnly");
+        aMap.put(8, "JPEGBaseline1");
+        aMap.put(9, "JPEGExtended24");
+        aMap.put(10, "JPEGLSLossyNearLossless");
+        aMap.put(11, "JPEG2000");
+        aMap.put(12, "RLELossless");
+        aMap.put(13, "MPEG2");
+        globalTransferMap = Collections.unmodifiableMap(aMap);
+    }
     public TransfersStorage()
     {
         int i;
