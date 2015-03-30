@@ -65,10 +65,12 @@ define('simple-result', function(require) {
           return;
       }
       for (var i = 0 ; i < data.results.length ; i++) {
-      var fields = data.results[i].fields;
-        delete data.results[i].fields;
-        for (var fname in fields) {
-          data.results[i][fname] = fields[fname];
+        var fields = data.results[i].fields;
+        if (fields) {
+          delete data.results[i].fields;
+          for (var fname in fields) {
+            data.results[i][fname] = fields[fname];
+          }
         }
       }
       handler.setState({
