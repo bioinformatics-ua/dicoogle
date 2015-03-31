@@ -1,0 +1,39 @@
+body {
+    background-color: $main_bg;
+    font-family: $app_font;
+    text-rendering: optimizeLegibility;
+}
+.vertical_center {
+    vertical-align: middle;
+}
+input {
+    margin: 0;
+}
+.inline_block {
+    display: inline-block;
+}
+.globalmargin {
+    margin: 10px;
+}
+.space_up {
+    margin-top: 10px;
+}
+.subject_text {
+    font-size: 17px;
+    color: $blue1;
+    font-weight: bold;
+}
+.centerDivH {
+    margin: 0 auto;
+    display: block;
+}
+.outer {
+    display: table-cell;
+    vertical-align: middle;
+}
+//FAKE DEFENITIONS
+.resultfake {
+    width: auto !important;
+    height: auto !important;
+    max-width: 100%;
+}

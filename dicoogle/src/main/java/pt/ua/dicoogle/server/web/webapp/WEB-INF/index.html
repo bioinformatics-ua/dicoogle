@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Dicoogle</title>
+    <!-- Bootstrap core CSS -->
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <!-- Bootstrap theme -->
+    <link href="bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <!-- <link href="css/theme.css" rel="stylesheet"> -->
+    <link href="node_modules/datatables/media/css/jquery.dataTables.css" rel="stylesheet">
+
+    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+
+      <!-- Custom CSS -->
+    <link href="css/simple-sidebar.css" rel="stylesheet">
+    <link href="css/loaders.min.css" rel="stylesheet">
+
+    <!-- Keep dicoogle sass generated css always the last one-->
+    <link href="css/dicoogle.css" rel="stylesheet">
+
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+    <script src="lib/es6-shim.js"></script>
+    <script src="lib/es6-sham.js"></script>
+
+</head>
+<body>
+     <div class="topbar">
+
+        <img class="btn_drawer" src="assets/drawer_menu.png" id="menu-toggle">
+
+        <a>Dicoogle</a>
+    </div>
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+
+
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="container">
+
+
+        </div>
+        <!-- /#page-content-wrapper -->
+
+    </div>
+
+
+    <!-- /container -->
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+<script src="js/bundle.js"></script>
+
+<script>
+        $("#menu-toggle").click(function (e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+        </script>
+</body>
+</html>

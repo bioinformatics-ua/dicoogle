@@ -1,0 +1,11 @@
+.btn_dicoogle{
+    background-color: $blue1;
+    color: #ffffff;
+    &:hover{
+        background-color: $blue4;
+        color: #ffffff;
+    }
+    a{
+      color: #ffffff;
+    }
+}

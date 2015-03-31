@@ -1,0 +1,14 @@
+//INSTALL DEPENDENCIES
+npm install
+
+
+//START
+npm start
+
+
+//SERVER
+./run_server
+
+SASS
+//
+./run_sass
