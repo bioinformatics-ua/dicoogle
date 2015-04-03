@@ -20,6 +20,9 @@
 package pt.ua.dicoogle.server.web.servlets.management;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -31,14 +34,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.restlet.data.MediaType;
-import org.restlet.representation.StringRepresentation;
-
-import net.sf.json.JSON;
 import net.sf.json.JSONArray;
-import net.sf.json.JSONSerializer;
-
+import net.sf.json.JSONObject;
 import pt.ua.dicoogle.plugins.PluginController;
+import pt.ua.dicoogle.sdk.datastructs.IndexReport;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.task.Task;
 
@@ -48,68 +47,94 @@ import pt.ua.dicoogle.sdk.task.Task;
  */
 public class ForceIndexing extends HttpServlet {
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-	}
+  @Override
+  protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
+      IOException {
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		// System.out.println("Fetching Data");
-		String uriArrayJson = req.getParameter("uris");
-		String pluginName = req.getParameter("plugin");
+    // Getting Parameters.
+    String[] uris = req.getParameterValues("uri");
+    String[] pluginsName = req.getParameterValues("plugin");
 
-        JSON arr = JSONSerializer.toJSON(uriArrayJson);
-        if (!arr.isArray()) {
-            resp.sendError(400);
-            return;
+    if (uris == null) {
+      resp.sendError(400, "No uri provided");
+      return;
+    }
+
+    int expectedReports = uris.length * ((pluginsName == null) ? 1 : pluginsName.length);
+    resp.setContentType("application/json");
+
+    PluginController pc = PluginController.getInstance();
+    
+    //Firing Tasks.
+    List<Task<Report>> reports = new ArrayList<>(expectedReports);
+    for (String uri : uris) {
+      URI u = null;
+      try {
+        u = new URI(uri.replaceAll(" ", "%20"));
+      } catch (URISyntaxException ex) {
+        // log.error("Could not create URI", ex);
+        ex.printStackTrace();
+      }
+      if (u != null) {
+        // log.info("Sent Index Request: {}, {}",pluginName, u.toString());
+        if (pluginsName == null) {
+          reports.addAll(pc.index(u));
+        } else {
+          for (String pluginName : pluginsName) {
+            reports.addAll(pc.index(pluginName, u));
+          }
         }
+
+      }
+    }
         
-		List<String> uris = new ArrayList<>();
-        for (Object o : ((JSONArray)arr)) {
-            uris.add(o.toString());
+    //Waiting for results, construct the output.
+    List<IndexReport> done = new ArrayList<>(reports.size());
+    JSONArray ret = new JSONArray();
+    for (Task<Report> t : reports) {
+      try {
+        IndexReport r = (IndexReport) t.get();
+        JSONObject obj = convertReportToJSON(r);
+        done.add(r);
+        ret.add(obj);
+      } catch (InterruptedException | ExecutionException ex) {
+        // log.error("UNKNOW ERROR", ex);
+        ex.printStackTrace();
+      }
+    }
+    // log.info("Finished forced indexing procedure: {}", reports.size());
+
+    resp.getWriter().write(ret.toString());
+    resp.getWriter().flush();
+  }
+  
+  private static JSONObject convertReportToJSON(IndexReport r){
+    JSONObject obj = new JSONObject();
+    obj.put("indexed", r.getNIndexed());
+    obj.put("errors", r.getNErrors());
+    obj.put("elapsedTime", r.getElapsedTime());
+    
+    JSONObject extraObjects = new JSONObject();
+    
+    Method[] methods = r.getClass().getDeclaredMethods();
+    for(Method m : methods){
+      if( Modifier.isPublic(m.getModifiers()) && m.getName().startsWith("get") && m.getParameterTypes().length == 0){
+        Object ret = null;
+        try {
+          ret = m.invoke(r, null);
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
         }
-		if (uris.isEmpty()) {
-			resp.sendError(400, "No uri provided");
-			return;
-		}
-
-		PluginController pc = PluginController.getInstance();
-
-		List<Task<Report>> reports = new ArrayList<>(uris.size());
-		for (String uri : uris) {
-			URI u = null;
-			try {
-				u = new URI(uri.replaceAll(" ", "%20"));
-			} catch (URISyntaxException ex) {
-				ex.printStackTrace();
-			}
-			if (u != null) {
-				if (pluginName == null)
-					reports.addAll(pc.index(u));
-				else
-					reports.addAll(pc.index(pluginName, u));
-			}
-		}
-
-		List<Report> done = new ArrayList<>(reports.size());
-		StringBuilder builder = new StringBuilder();
-		for (Task<Report> t : reports) {
-			try {
-				Report r = t.get();
-				done.add(r);
-				builder.append(r).append("\n");
-			} catch (InterruptedException | ExecutionException ex) {
-				ex.printStackTrace();
-			}
-		}
-		
-		resp.getWriter().write(
-				new StringRepresentation(builder.toString(),
-						MediaType.TEXT_PLAIN).toString());
-
-	}
-
+        if(ret != null)
+          extraObjects.put(m.getName().substring(3), ret);
+      }
+    }    
+    
+    obj.put("extra", extraObjects);
+    return obj;
+  }
 }

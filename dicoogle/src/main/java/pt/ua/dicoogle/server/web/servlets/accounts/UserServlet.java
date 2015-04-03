@@ -30,7 +30,6 @@ import net.sf.json.JSONObject;
 import pt.ua.dicoogle.rGUI.server.users.HashService;
 import pt.ua.dicoogle.rGUI.server.users.User;
 import pt.ua.dicoogle.rGUI.server.users.UsersStruct;
-import pt.ua.dicoogle.server.web.management.Dicoogle;
 import pt.ua.dicoogle.server.web.utils.ResponseUtil;
 
 /**

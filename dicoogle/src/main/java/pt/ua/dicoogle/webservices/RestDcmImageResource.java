@@ -71,44 +71,77 @@ public class RestDcmImageResource extends ServerResource {
     @Get("image/jpeg")
     public void getJPEG() {
         BufferedImage dicomImage=null;
-        String dcmPath = getRequest().getResourceRef().getQueryAsForm().getValues("path");
-        if (dcmPath == null) {return;}
+        String imgPath = getRequest().getResourceRef().getQueryAsForm().getValues("path");
+        if (imgPath == null) {return;}
         
-        File file = new File(dcmPath);
-        //todo:if not file...
+        int indexExt = imgPath.toString().lastIndexOf('.');
+        if(indexExt == -1) imgPath += ".dcm"; //a lot of dicom files have no extension
         
-        Iterator<ImageReader> iterator =ImageIO.getImageReadersByFormatName("DICOM");
-        while (iterator.hasNext()) {
-            ImageReader imageReader = (ImageReader) iterator.next();
-            DicomImageReadParam dicomImageReadParam = (DicomImageReadParam) imageReader.getDefaultReadParam();
-            try {
-                ImageInputStream iis = ImageIO.createImageInputStream(file);
-                imageReader.setInput(iis,false);
-                dicomImage = imageReader.read(0, dicomImageReadParam);
-                iis.close();
-                if(dicomImage == null){
-                    System.err.println("Could not read image!!");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        String extension = imgPath.substring(indexExt);
+        switch(extension.toLowerCase()){
+            case ".jpg":    //these are not indexed
+            case ".png":
+            case ".gif":
+            case ".bmp":
+            case ".tiff":
+            case ".jpeg":{
+                File file = new File(imgPath);
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            try{
-                ImageIO.write(dicomImage, "jpg", baos);
-                baos.flush();
-                ByteArrayRepresentation bar = new ByteArrayRepresentation(baos.toByteArray(), MediaType.IMAGE_JPEG);
-                getResponse().setEntity(bar);
-                baos.close();
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                try {
+                    BufferedImage img = ImageIO.read(file);
+                    ImageIO.write(img, "jpg", baos);
+                    baos.flush();
+                    ByteArrayRepresentation bar = new ByteArrayRepresentation(baos.toByteArray(), MediaType.IMAGE_JPEG);
+                    getResponse().setEntity(bar);
+                    baos.close();
+                }
+                catch (IOException e) {
+                    System.err.println("OH DAMN");
+                    return;
+                }
+                break;
             }
-            catch(IOException e){
-                System.err.println("OH DAMN");
-                return;
-            }        
+                
+            
+            case ".dicom":  //these are
+            case ".dcm":{
+                File file = new File(imgPath);
+                //todo:if not file...
+
+                Iterator<ImageReader> iterator =ImageIO.getImageReadersByFormatName("DICOM");
+                while (iterator.hasNext()) {
+                    ImageReader imageReader = (ImageReader) iterator.next();
+                    DicomImageReadParam dicomImageReadParam = (DicomImageReadParam) imageReader.getDefaultReadParam();
+                    try {
+                        ImageInputStream iis = ImageIO.createImageInputStream(file);
+                        imageReader.setInput(iis,false);
+                        dicomImage = imageReader.read(0, dicomImageReadParam);
+                        iis.close();
+                        if(dicomImage == null){
+                            System.err.println("Could not read image!!");
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    try{
+                        ImageIO.write(dicomImage, "jpg", baos);
+                        baos.flush();
+                        ByteArrayRepresentation bar = new ByteArrayRepresentation(baos.toByteArray(), MediaType.IMAGE_JPEG);
+                        getResponse().setEntity(bar);
+                        baos.close();
+                    }
+                    catch(IOException e){
+                        System.err.println("OH DAMN");
+                        return;
+                    }
+                }
+                break;
+            }
         }
-    }
-    
-     
+    }     
 }
 
     

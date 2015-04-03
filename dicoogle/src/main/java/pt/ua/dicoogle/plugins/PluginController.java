@@ -445,20 +445,18 @@ public class PluginController{
      * calls the appropriate indexers and instructs them to index the data pointed to by the URI
      * it is up to the caller to run the task asynchronously by feeding it to an executor
      * or in a blocking way by calling the get() method of the task
-     * 
-     * 
-     * 
      */
     public List<Task<Report>> index(URI path) {
     	logger.info("Starting Indexing procedure for "+path.toString());
         StorageInterface store = getStorageForSchema(path);
 
         if(store==null){ 
-        	logger.error("No storage plugin detected");
+            logger.error("No storage plugin detected");
             return Collections.emptyList(); 
         }
         
-        Collection<IndexerInterface> indexers = getIndexingPlugins(true);
+        Collection<IndexerInterface> indexers= getIndexingPlugins(true);
+        //Collection<IndexerInterface> indexers = getIndexingPluginsByMimeType(path);
         ArrayList<Task<Report>> rettasks = new ArrayList<>();
         final  String pathF = path.toString();
         for(IndexerInterface indexer : indexers){            
@@ -520,6 +518,8 @@ public class PluginController{
         
         return rettasks;    	
     }
+
+    
     
     public void unindex(URI path) {
     	logger.info("Starting Indexing procedure for "+path.toString());
