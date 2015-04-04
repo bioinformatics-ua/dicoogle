@@ -33,7 +33,6 @@ import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
-import org.apache.log4j.PropertyConfigurator;
 import org.dcm4che2.data.TransferSyntax;
 import org.xml.sax.SAXException;
 

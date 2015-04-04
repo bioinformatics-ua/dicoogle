@@ -212,9 +212,9 @@
 			<groupId>pt.ua.ieeta</groupId>
 			<artifactId>dicoogle-sdk</artifactId>
 			<version>1.0-SNAPSHOT</version>
-
 		</dependency>
-		<dependency>
+
+                <dependency>
 			<groupId>pt.ua.ieeta</groupId>
 			<artifactId>dicoogle-sdk-ext</artifactId>
 			<version>1.0-SNAPSHOT</version>
@@ -260,6 +260,7 @@
 			<artifactId>AbsoluteLayout</artifactId>
 			<version>RELEASE701</version>
 		</dependency>
+                
 		<dependency>
 			<groupId>org.jdom</groupId>
 			<artifactId>jdom2</artifactId>
@@ -279,25 +280,25 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.5</version>
-		</dependency>
-
-		<dependency>
 			<groupId>metal.utils</groupId>
 			<artifactId>metal.utils.fileiterator</artifactId>
 			<version>1.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-api</artifactId>
-			<version>2.0</version>
+
+                <dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.12</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
-			<version>2.0</version>
+			<version>2.2</version>
 		</dependency>
+                <dependency>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                    <version>2.2</version>
+                </dependency>
 	</dependencies>
 </project>
