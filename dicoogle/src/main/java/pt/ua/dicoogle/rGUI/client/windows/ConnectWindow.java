@@ -24,8 +24,10 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.net.URL;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -64,7 +66,7 @@ public class ConnectWindow extends javax.swing.JFrame {
         }
         catch (InterruptedException ex)
         {
-            Logger.getLogger(ConnectWindow.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ConnectWindow.class).error(ex.getMessage(), ex);
         }
         return instance;
     }
@@ -333,7 +335,7 @@ public class ConnectWindow extends javax.swing.JFrame {
                     
 
                 } catch (Exception ex) {
-                   //Logger.getLogger(ConnectWindow.class.getName()).log(Level.SEVERE, null, ex);
+                   //LoggerFactory.getLogger(ConnectWindow.class).error(ex.getMessage(), ex);
                     JOptionPane.showMessageDialog(this, "Unable to connect to the GUI Server\n"+ex.getMessage(),
                     "Connection Error", JOptionPane.ERROR_MESSAGE);
                     ex.printStackTrace();

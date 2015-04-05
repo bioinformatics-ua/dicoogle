@@ -19,8 +19,10 @@
 package pt.ua.dicoogle.core;
 
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.rGUI.server.users.HashService;
 
 /**
@@ -56,7 +58,7 @@ public class ClientSettings {
         }
         catch (InterruptedException ex)
         {
-            Logger.getLogger(ServerSettings.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ServerSettings.class.getName()).error(ex.getMessage(), ex);
         }
         return instance;
     }

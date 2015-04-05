@@ -28,8 +28,10 @@ import java.net.SocketException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JOptionPane;
 
@@ -57,14 +59,14 @@ import pt.ua.ieeta.emailreport.Configuration;
 /**
  * Main class for Dicoogle
  * @author Filipe Freitas
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
 public class Main
 {
 
     private static boolean optimizeMemory = true;
-    //static Logger logger = Logger.getLogger(Main.class);
+    //static Logger logger = LoggerFactory.getLogger(Main.class);
     private static boolean isGUIServer = false;
     //indicates whether the client and the server were pulled at the same time
     private static boolean isFixedClient = false;
@@ -102,7 +104,7 @@ public class Main
             System.setProperty("java.rmi.server.hostname", addressString(localAddresses()));
         } catch (SocketException ex)
         {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Main.class.getName()).error((String)null, ex);
         }
         System.setProperty("log4j.configurationFile", "log4j-2.xml");
         switch (args.length)
@@ -144,7 +146,7 @@ public class Main
                             URI uri = new URI("http://localhost:" + settings.getWeb().getServerPort());
                             Desktop.getDesktop().browse(uri);
                         } catch (IOException | URISyntaxException ex) {
-                            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                            LoggerFactory.getLogger(Main.class.getName()).error((String)null, ex);
                             System.err.println("Request to open web application ignored: " + ex.getMessage());
                         }
                     }
@@ -233,15 +235,8 @@ public class Main
             //load DICOM Services Log
             LogDICOM ll = new LogXML().getXML();
 
-        } catch (FileNotFoundException ex)
-        {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SAXException ex)
-        {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex)
-        {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SAXException | IOException ex) {
+            LoggerFactory.getLogger(Main.class.getName()).error((String)null, ex);
         }
 
         /***
@@ -360,7 +355,7 @@ public class Main
 
         } catch (UnknownHostException ex)
         {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Main.class.getName()).error((String)null, ex);
         }
 
         return localAddrs;

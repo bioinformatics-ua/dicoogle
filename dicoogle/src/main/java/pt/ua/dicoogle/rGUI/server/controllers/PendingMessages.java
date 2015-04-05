@@ -21,8 +21,10 @@ package pt.ua.dicoogle.rGUI.server.controllers;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IPendingMessages;
 import pt.ua.dicoogle.rGUI.interfaces.signals.IPendingMessagesSignal;
 
@@ -57,7 +59,7 @@ public class PendingMessages implements IPendingMessages {
             }
             sem.release();
         } catch (InterruptedException ex) {
-            Logger.getLogger(PendingMessages.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(PendingMessages.class).error(ex.getMessage(), ex);
         }
         return instance;
     }
@@ -85,11 +87,11 @@ public class PendingMessages implements IPendingMessages {
                     signal.sendPendingMessagesSignal(0);
                 }
             } catch (RemoteException ex) {
-                Logger.getLogger(PendingMessages.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(PendingMessages.class).error(ex.getMessage(), ex);
             }
             
         } catch (InterruptedException ex) {
-            Logger.getLogger(PendingMessages.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(PendingMessages.class).error(ex.getMessage(), ex);
         }
         
     }
@@ -111,7 +113,7 @@ public class PendingMessages implements IPendingMessages {
 
             return temp;
         } catch (InterruptedException ex) {
-            Logger.getLogger(PendingMessages.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(PendingMessages.class).error(ex.getMessage(), ex);
             return null;
         }
     }

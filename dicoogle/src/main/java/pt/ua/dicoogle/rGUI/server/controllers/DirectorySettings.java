@@ -23,8 +23,10 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.RemoteException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IDirectory;
@@ -239,7 +241,7 @@ public class DirectorySettings implements IDirectory {
             try {
                 PluginController.getInstance().index(new URI(f.getAbsolutePath()));
             } catch (URISyntaxException ex) {
-                Logger.getLogger(DirectorySettings.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(DirectorySettings.class).error(ex.getMessage(), ex);
             }
             
         } else

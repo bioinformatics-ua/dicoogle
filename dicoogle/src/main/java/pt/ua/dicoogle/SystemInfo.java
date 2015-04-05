@@ -22,13 +22,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.filechooser.FileSystemView;
 
 /**
  * System information methods
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
  * @author psytek
  */
 public class SystemInfo{
@@ -48,7 +47,7 @@ public class SystemInfo{
                 result = new File(reader.readLine());
             }
             catch (IOException ex) {
-                Logger.getLogger(SystemInfo.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(SystemInfo.class.getName()).error(ex.getMessage(), ex);
             }
         }
         else{

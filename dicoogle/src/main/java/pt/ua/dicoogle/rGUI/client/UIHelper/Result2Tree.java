@@ -26,8 +26,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.RMISocketFactory;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -45,7 +44,7 @@ import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 /**
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
- * @author Lu√≠s A. Basti√£o Silva <bastiao@ua.pt>
+ * @author Lu??????s A. Basti?????o Silva <bastiao@ua.pt>
  */
 public class Result2Tree extends Observable
 {
@@ -78,8 +77,6 @@ public class Result2Tree extends Observable
 
     private Result2Tree()
     {
-        Logger.getLogger(MainWindow.class.getName()).setLevel(Level.OFF);
-        Logger.getLogger(Result2Tree.class.getName()).setLevel(Level.OFF);
         try
         {
             this.resultsList = new ArrayList();
@@ -96,7 +93,7 @@ public class Result2Tree extends Observable
 
         } catch (RemoteException ex)
         {
-            Logger.getLogger(Result2Tree.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Result2Tree.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -106,7 +103,7 @@ public class Result2Tree extends Observable
         try {
             searchRef.pruneQuery(id);
         } catch (RemoteException ex) {
-            Logger.getLogger(Result2Tree.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Result2Tree.class).error(ex.getMessage(), ex);
         }
     }
     
@@ -135,7 +132,7 @@ public class Result2Tree extends Observable
             showImage("Image Thumbnail", null, jPanelThumbnail);
         } catch (RemoteException ex)
         {
-            Logger.getLogger(Result2Tree.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Result2Tree.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -150,7 +147,7 @@ public class Result2Tree extends Observable
 
         } catch (RemoteException ex)
         {
-            Logger.getLogger(Result2Tree.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Result2Tree.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -168,7 +165,7 @@ public class Result2Tree extends Observable
             return searchRef.getThumbnail(FileName, FileHash);
         } catch (RemoteException ex)
         {
-            Logger.getLogger(Result2Tree.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Result2Tree.class).error(ex.getMessage(), ex);
         }
 
         return null;
@@ -196,7 +193,7 @@ public class Result2Tree extends Observable
 
         } catch (RemoteException ex)
         {
-            Logger.getLogger(Result2Tree.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Result2Tree.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -234,7 +231,7 @@ public class Result2Tree extends Observable
 
     public DefaultMutableTreeNode convertQueryResult2Tree(List queryResultL)
     {
-        Logger.getLogger(Result2Tree.class.getName()).log(Level.SEVERE,"Chegou a convertQueryResult2Tree com :" + queryResultL.size());
+        LoggerFactory.getLogger(Result2Tree.class).trace("Chegou a convertQueryResult2Tree com :" + queryResultL.size());
         top.removeAllChildren();
         //this.resultsList = queryResultL;
 
@@ -358,25 +355,25 @@ public class Result2Tree extends Observable
     {
         if (agressive)
         {
-            Logger.getLogger(Result2Tree.class.getName()).log(Level.SEVERE, "completeTree, Aggressive mode");
+            LoggerFactory.getLogger(Result2Tree.class).trace("completeTree, Aggressive mode");
             return;
         }
 
         //long tBegin = System.nanoTime();
 
         int level = evt.getPath().getPathCount();
-        Logger.getLogger(Result2Tree.class.getName()).log(Level.SEVERE, "level calculated " + level);
+        LoggerFactory.getLogger(Result2Tree.class).trace("level calculated {}", level);
         if (level == 2)
         {
             // Study
             //DebugManager.getInstance().debug("Study");
             //System.out.println("PatientName:" + evt.getPath().getPathComponent(1));
-            Logger.getLogger(Result2Tree.class.getName()).log(Level.SEVERE, "level 2");
+            LoggerFactory.getLogger(Result2Tree.class).trace("level 2");
             DefaultMutableTreeNode patient_name = (DefaultMutableTreeNode) evt.getPath().getPathComponent(1);
 
             if (patient_name.getFirstChild().isLeaf())
             {
-                Logger.getLogger(Result2Tree.class.getName()).log(Level.SEVERE, "PatientName: " +patient_name );
+                LoggerFactory.getLogger(Result2Tree.class).trace("PatientName: {}", patient_name );
                 completeByName(patient_name);
             }
 
@@ -387,7 +384,7 @@ public class Result2Tree extends Observable
             // Serie
             //DebugManager.getInstance().debug("Serie");
             //System.out.println("Study Date:" + evt.getPath().getPathComponent(2));
-            Logger.getLogger(Result2Tree.class.getName()).log(Level.SEVERE, "completeTree - level 3");
+            LoggerFactory.getLogger(Result2Tree.class).trace("completeTree - level 3");
             DefaultMutableTreeNode study_date = (DefaultMutableTreeNode) evt.getPath().getPathComponent(2);
 
             if (study_date.getFirstChild().isLeaf())
@@ -399,7 +396,7 @@ public class Result2Tree extends Observable
             // Image
             //DebugManager.getInstance().debug("Image");
             //System.out.println("Modality:" + evt.getPath().getPathComponent(3));
-            Logger.getLogger(Result2Tree.class.getName()).log(Level.SEVERE, "completeTree - level 4");
+            LoggerFactory.getLogger(Result2Tree.class).trace("completeTree - level 4");
             DefaultMutableTreeNode modality = (DefaultMutableTreeNode) evt.getPath().getPathComponent(3);
 
             if (modality.getFirstChild().isLeaf())
@@ -424,7 +421,7 @@ public class Result2Tree extends Observable
         HashMap extra;
         HashSet<String> studyDates = new HashSet<String>(); // to elimitate repetition
 
-        Logger.getLogger(Result2Tree.class.getName()).log(Level.SEVERE, "result size" + result.size());
+        LoggerFactory.getLogger(Result2Tree.class).trace("result size" + result.size());
         for (SearchResult temp : result)
         {
             extra = temp.getExtraData();
@@ -732,7 +729,7 @@ public class Result2Tree extends Observable
             MainWindow.getInstance().getjLabelTime().setText(String.valueOf(serverSearchTime));
         } catch (RemoteException ex)
         {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Result2Tree.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -750,7 +747,7 @@ public class Result2Tree extends Observable
             model.setRoot(convertQueryResult2Tree(resultsList));
         } catch (RemoteException ex)
         {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Result2Tree.class).error(ex.getMessage(), ex);
         }
 
     }
@@ -761,7 +758,7 @@ public class Result2Tree extends Observable
     public void getP2PSearchResults()
     {
 
-        Logger.getLogger(Result2Tree.class.getName()).log(Level.SEVERE, "getP2PSearchResults");
+        LoggerFactory.getLogger(Result2Tree.class).trace("getP2PSearchResults");
         
         try
         {
@@ -785,15 +782,15 @@ public class Result2Tree extends Observable
                 
             }
             
-            Logger.getLogger(Result2Tree.class.getName()).log(Level.SEVERE, "getP2PSearchResults, size of resultList "+resultsList.size());
+            LoggerFactory.getLogger(Result2Tree.class.getName()).trace("getP2PSearchResults, size of resultList {}", resultsList.size());
             
-            Logger.getLogger(Result2Tree.class.getName()).log(Level.SEVERE, "getP2PSearchResults, size of tmpSize "+temp.size());
+            LoggerFactory.getLogger(Result2Tree.class.getName()).trace("getP2PSearchResults, size of tmpSize {}", temp.size());
             
 
             
         } catch (RemoteException ex)
         {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Result2Tree.class).error(ex.getMessage(), ex);
         }
 
     }
@@ -815,7 +812,7 @@ public class Result2Tree extends Observable
             }
         } catch (RemoteException ex)
         {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(MainWindow.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -842,7 +839,7 @@ public class Result2Tree extends Observable
 
         } catch (RemoteException ex)
         {
-            Logger.getLogger(Result2Tree.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Result2Tree.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -859,7 +856,7 @@ public class Result2Tree extends Observable
             }
         } catch (NoSuchObjectException ex)
         {
-            Logger.getLogger(Result2Tree.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Result2Tree.class).error(ex.getMessage(), ex);
         }
     }
 

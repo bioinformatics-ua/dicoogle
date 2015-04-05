@@ -24,8 +24,10 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -44,7 +46,7 @@ import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 
 /**
  *
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
  */
 public class DIMGeneric
 {
@@ -202,7 +204,7 @@ public class DIMGeneric
         try {
             hd = tf.newTransformerHandler();
         } catch (TransformerConfigurationException ex) {
-            Logger.getLogger(DIMGeneric.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(DIMGeneric.class).error(ex.getMessage(), ex);
         }
         Transformer serializer = hd.getTransformer();
         serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
@@ -259,7 +261,7 @@ public class DIMGeneric
             hd.endElement("", "", "DIM");
 
         } catch (SAXException ex) {
-            Logger.getLogger(DIMGeneric.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(DIMGeneric.class.getName()).error(ex.getMessage(), ex);
         }
 
         return writer.toString() ;

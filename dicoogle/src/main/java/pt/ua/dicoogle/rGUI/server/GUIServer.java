@@ -21,8 +21,10 @@ package pt.ua.dicoogle.rGUI.server;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.ExportException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.rmi.server.UnicastRemoteObject;
 
@@ -97,7 +99,7 @@ public class GUIServer {
             } catch (Exception ex) {
                 //DebugManager.getInstance().debug("Error associating the remote object to the NameRegistry!");
 
-                Logger.getLogger(GUIServer.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(GUIServer.class).error(ex.getMessage(), ex);
 
                 break;
             }

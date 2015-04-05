@@ -26,9 +26,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.lang3.StringUtils;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
@@ -36,7 +35,7 @@ import pt.ua.dicoogle.sdk.task.Task;
 
 public class ExportToCSVQueryTask extends JointQueryTask {
 
-	private static final Logger log = LogManager.getLogger(ExportToCSVQueryTask.class.getName());
+	private static final Logger log = LoggerFactory.getLogger(ExportToCSVQueryTask.class);
 	
 	private static String[] searchChars = new String[]{"\n", ";"};
 	private static String[] replaceChars = new String[]{"", ","};

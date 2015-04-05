@@ -25,8 +25,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.rGUI.server.controllers.Logs;
 import pt.ua.dicoogle.sdk.Utils.Platform;
@@ -50,7 +52,7 @@ public class UserSessionsLog {
             }
             sem.release();
         } catch (InterruptedException ex) {
-            Logger.getLogger(UserSessions.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UserSessions.class).error(ex.getMessage(), ex);
         }
         return instance;
     }
@@ -121,14 +123,14 @@ public class UserSessionsLog {
 
 
         } catch (InterruptedException ex) {
-            Logger.getLogger(UserSessionsLog.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UserSessionsLog.class).error(ex.getMessage(), ex);
         } catch (IOException ex) {
-            Logger.getLogger(UserSessionsLog.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UserSessionsLog.class).error(ex.getMessage(), ex);
         } finally {
             try {
                 out.close();
             } catch (IOException ex) {
-                Logger.getLogger(UserSessionsLog.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(UserSessionsLog.class).error(ex.getMessage(), ex);
             }
         }
 
@@ -145,14 +147,14 @@ public class UserSessionsLog {
             out.close();
 
         } catch (InterruptedException ex) {
-            Logger.getLogger(UserSessionsLog.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UserSessionsLog.class).error(ex.getMessage(), ex);
         } catch (IOException ex) {
-            Logger.getLogger(UserSessionsLog.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UserSessionsLog.class).error(ex.getMessage(), ex);
         } finally {
             try {
                 out.close();
             } catch (IOException ex) {
-                Logger.getLogger(UserSessionsLog.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(UserSessionsLog.class).error(ex.getMessage(), ex);
             }
         }
 
@@ -177,15 +179,15 @@ public class UserSessionsLog {
             in.close();
 
         } catch (InterruptedException ex) {
-            Logger.getLogger(UserSessionsLog.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UserSessionsLog.class).error(ex.getMessage(), ex);
         } catch (IOException ex) {
-            Logger.getLogger(UserSessionsLog.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UserSessionsLog.class).error(ex.getMessage(), ex);
         } finally {
             try {
                 in.close();
 
             } catch (IOException ex) {
-                Logger.getLogger(UserSessionsLog.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(UserSessionsLog.class).error(ex.getMessage(), ex);
             }
         }
         

@@ -32,8 +32,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.Main;
 
 /**
@@ -68,7 +70,7 @@ public class About extends javax.swing.JFrame {
         }
         catch (InterruptedException ex)
         {
-            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
         }
         return instance;
     }
@@ -110,7 +112,7 @@ public class About extends javax.swing.JFrame {
             
             
         } catch (IOException ex) {
-            Logger.getLogger(About.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(About.class).error(ex.getMessage(), ex);
         }
         
     }
@@ -166,7 +168,7 @@ public class About extends javax.swing.JFrame {
         jTextArea2.setEditable(false);
         jTextArea2.setLineWrap(true);
         jTextArea2.setRows(5);
-        jTextArea2.setText("Dicoogle is a project developed in IEETA (Instituto de Engenharia Electrónica e Telemática de Aveiro) in Network Medical Imaging.\n\nDICOM stands for Digital Imaging and Communications in Medicine, an standard for handling, storing, printing, and transmitting information in medical imaging. It comprises many conceptual elements, namely the Storage Server, QueryRetrieve, WebServices, Web version and many other features. \n\nOur implementation uses a Jgroups based library, that deals uses code to implement the p2p networking features. \nFurthermore, we use the dcm4che Java toolkit to manage the DICOM mechanics,  the Substance library, which enhances this application's visuals, and Lucene, a text search engine library used to index DICOM files.");
+        jTextArea2.setText("Dicoogle is a project developed in IEETA (Instituto de Engenharia Electr??nica e Telem??tica de Aveiro) in Network Medical Imaging.\n\nDICOM stands for Digital Imaging and Communications in Medicine, an standard for handling, storing, printing, and transmitting information in medical imaging. It comprises many conceptual elements, namely the Storage Server, QueryRetrieve, WebServices, Web version and many other features. \n\nOur implementation uses a Jgroups based library, that deals uses code to implement the p2p networking features. \nFurthermore, we use the dcm4che Java toolkit to manage the DICOM mechanics,  the Substance library, which enhances this application's visuals, and Lucene, a text search engine library used to index DICOM files.");
         jTextArea2.setWrapStyleWord(true);
         jScrollPane2.setViewportView(jTextArea2);
 
@@ -263,7 +265,7 @@ public class About extends javax.swing.JFrame {
         jTextArea3.setColumns(20);
         jTextArea3.setEditable(false);
         jTextArea3.setRows(5);
-        jTextArea3.setText("Mentor: Professor Carlos Costa\n\nDeveloper List:\n- 2007\n     Marco Pereira        30091    marcopereira@ua.pt\n     Filipe Freitas         30579    http://www.filipefreitas.net\n\n- 2008\n     João Pereira            30777    a30777@ua.pt\n     Miguel Fonseca      21153    miguelfonseca@ua.pt\n\n- Current:\n     Luís Bastião Silva    38323    bastiao@ua.pt\n     Samuel Campos      42607    samuelcampos@ua.pt\n     Carlos Ferreira  \n\nImplemented using:\n   Jgroups\thttps://www.jgroups.org\n   dcm4che\thttp://www.dcm4che.org\n   Substance\thttps://substance.dev.java.net\n   Lucene\thttp://lucene.apache.org\n\nDesigned on:\n   NetBeans\thttp://www.netbeans.org\n\nPast:\nThis is initially an assignment for the Redes e Serviços em Imagiologia course, taugth by\nAugusto Ferreira da Silva (www.ieeta.pt) and Carlos Costa (www.ieeta.pt), Universidade de\n Aveiro (www.ua.pt).\n");
+        jTextArea3.setText("Mentor: Professor Carlos Costa\n\nDeveloper List:\n- 2007\n     Marco Pereira        30091    marcopereira@ua.pt\n     Filipe Freitas         30579    http://www.filipefreitas.net\n\n- 2008\n     Jo??o Pereira            30777    a30777@ua.pt\n     Miguel Fonseca      21153    miguelfonseca@ua.pt\n\n- Current:\n     Lu??s Basti??o Silva    38323    bastiao@ua.pt\n     Samuel Campos      42607    samuelcampos@ua.pt\n     Carlos Ferreira  \n\nImplemented using:\n   Jgroups\thttps://www.jgroups.org\n   dcm4che\thttp://www.dcm4che.org\n   Substance\thttps://substance.dev.java.net\n   Lucene\thttp://lucene.apache.org\n\nDesigned on:\n   NetBeans\thttp://www.netbeans.org\n\nPast:\nThis is initially an assignment for the Redes e Servi??os em Imagiologia course, taugth by\nAugusto Ferreira da Silva (www.ieeta.pt) and Carlos Costa (www.ieeta.pt), Universidade de\n Aveiro (www.ua.pt).\n");
         jScrollPane4.setViewportView(jTextArea3);
 
         jTabbedPane1.addTab("Authoring", jScrollPane4);

@@ -22,8 +22,10 @@ import java.rmi.RemoteException;
 import java.rmi.server.RMISocketFactory;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.rGUI.MultihomeRMIClientSocketFactory;
 import pt.ua.dicoogle.rGUI.client.AdminRefs;
 import pt.ua.dicoogle.rGUI.client.signals.PendingMessagesSignal;
@@ -59,7 +61,7 @@ public class ServerMessagesManager {
             AdminRefs.getInstance().getPendingMessages().RegisterSignalBack(pendingMessagesSignalStub);
             
         } catch (RemoteException ex) {
-            Logger.getLogger(ServerMessagesManager.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ServerMessagesManager.class).error(ex.getMessage(), ex);
         }
     }
 

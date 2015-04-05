@@ -22,8 +22,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -141,7 +143,7 @@ public class UsersXML extends DefaultHandler
         }
         catch (Exception ex)
         {
-            Logger.getLogger(UsersXML.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UsersXML.class).error(ex.getMessage(), ex);
         }
         return null;
     }
@@ -165,7 +167,7 @@ public class UsersXML extends DefaultHandler
             hd = tf.newTransformerHandler();
         } catch (TransformerConfigurationException ex)
         {
-            Logger.getLogger(UsersXML.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UsersXML.class).error(ex.getMessage(), ex);
         }
         
         Transformer serializer = hd.getTransformer();
@@ -179,7 +181,7 @@ public class UsersXML extends DefaultHandler
             hd.startDocument();
         } catch (SAXException ex)
         {
-            Logger.getLogger(UsersXML.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UsersXML.class).error(ex.getMessage(), ex);
         }
 
         AttributesImpl atts = new AttributesImpl();
@@ -214,7 +216,7 @@ public class UsersXML extends DefaultHandler
             hd.endDocument();
         } catch (SAXException ex)
         {
-            Logger.getLogger(UsersXML.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UsersXML.class).error(ex.getMessage(), ex);
         }
         finally {
             try {
@@ -223,7 +225,7 @@ public class UsersXML extends DefaultHandler
                 UserFileHandle file = new UserFileHandle();
                 file.printFile(out.toByteArray());
             } catch (Exception ex) {
-                  Logger.getLogger(UsersXML.class.getName()).log(Level.SEVERE, null, ex);
+                  LoggerFactory.getLogger(UsersXML.class).error(ex.getMessage(), ex);
             }
         }
 

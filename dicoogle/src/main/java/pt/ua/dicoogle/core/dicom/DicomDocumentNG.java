@@ -23,8 +23,7 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.zip.GZIPInputStream;
 
 import org.dcm4che2.data.*;
@@ -48,7 +47,7 @@ import pt.ua.dicoogle.sdk.utils.TagsStruct;
  *
  * It was refactored in May 2009: Now it load dynamic fields from XML struct
  *
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
  * @author Marco
  */
 public class DicomDocumentNG {
@@ -183,7 +182,7 @@ public class DicomDocumentNG {
             try {
                 value = new String(outputData, "UTF-8");
             } catch (UnsupportedEncodingException ex) {
-                Logger.getLogger(DicomDocumentNG.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(DicomDocumentNG.class).error(ex.getMessage(), ex);
             }
             /*
              * 

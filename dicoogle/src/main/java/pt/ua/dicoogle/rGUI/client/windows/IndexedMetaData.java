@@ -26,8 +26,10 @@
 package pt.ua.dicoogle.rGUI.client.windows;
 
 import java.rmi.RemoteException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -47,7 +49,7 @@ import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 
 /**
  *
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
  */
 public class IndexedMetaData extends javax.swing.JFrame
 {
@@ -213,7 +215,7 @@ public class IndexedMetaData extends javax.swing.JFrame
                 
                 Collections.sort(metaData);
             } catch (RemoteException ex) {
-                Logger.getLogger(IndexedMetaData.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(IndexedMetaData.class).error(ex.getMessage(), ex);
             }
         }
 

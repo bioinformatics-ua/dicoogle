@@ -24,8 +24,10 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -39,7 +41,7 @@ import pt.ua.dicoogle.rGUI.interfaces.controllers.IDicomSend;
 
 /**
  *
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
 public class DicomSend extends javax.swing.JFrame {
@@ -99,7 +101,7 @@ public class DicomSend extends javax.swing.JFrame {
 
             jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNodeRoot));
         } catch (RemoteException ex) {
-            Logger.getLogger(DicomSend.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(DicomSend.class).error(ex.getMessage(), ex);
         }
 
     }
@@ -312,7 +314,7 @@ public class DicomSend extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Error sending files to choosed destination.", "Error sending files", JOptionPane.ERROR_MESSAGE);
             
         } catch (RemoteException ex) {
-            Logger.getLogger(DicomSend.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(DicomSend.class).error(ex.getMessage(), ex);
         }
     }//GEN-LAST:event_jButtonSendActionPerformed
 

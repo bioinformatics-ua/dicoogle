@@ -22,8 +22,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.dcm4che2.io.DicomInputStream;
 
@@ -56,7 +58,7 @@ public class DicoogleScan {
         
             //long time = System.nanoTime();
 
-            // O Método FileIndexer.index já a indexação recursiva de files DICOM
+            // O M??todo FileIndexer.index j?? a indexa????o recursiva de files DICOM
             
             System.out.println("Calling Index");
             PluginController.getInstance().index(path.toURI());

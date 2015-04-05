@@ -21,8 +21,10 @@ package pt.ua.dicoogle.rGUI.RFileBrowser;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.filechooser.FileSystemView;
 
 /**
@@ -44,7 +46,7 @@ public class RemoteFileSystemServer implements IRemoteFileSystem {
             }
             sem.release();
         } catch (InterruptedException ex) {
-            Logger.getLogger(RemoteFileSystemServer.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(RemoteFileSystemServer.class).error(ex.getMessage(), ex);
         }
 
         return instance;

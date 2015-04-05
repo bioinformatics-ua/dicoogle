@@ -24,8 +24,10 @@ import java.rmi.RemoteException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.JOptionPane;
 import pt.ua.dicoogle.Main;
 import pt.ua.dicoogle.rGUI.client.UIHelper.ServerMessagesManager;
@@ -62,7 +64,7 @@ public class ClientCore {
             }
             sem.release();
         } catch (InterruptedException ex) {
-            Logger.getLogger(ClientCore.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ClientCore.class).error(ex.getMessage(), ex);
         }
         return instance;
     }
@@ -90,7 +92,7 @@ public class ClientCore {
             
             UserRefs.getUserRefs(user);
         } catch (RemoteException ex) {
-            Logger.getLogger(ClientCore.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ClientCore.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -116,7 +118,7 @@ public class ClientCore {
             AdminRefs.getAdminRefs(admin);          
             ServerMessagesManager.getInstance();
         } catch (RemoteException ex) {
-            Logger.getLogger(ClientCore.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ClientCore.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -146,7 +148,7 @@ public class ClientCore {
             System.out.println(" localServer False");
             localServer = false;
         } catch (UnknownHostException ex) {
-            //Logger.getLogger(ClientCore.class.getName()).log(Level.SEVERE, null, ex);
+            //LoggerFactory.getLogger(ClientCore.class).error(ex.getMessage(), ex);
         }
     }
 

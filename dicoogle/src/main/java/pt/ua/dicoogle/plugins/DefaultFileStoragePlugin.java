@@ -31,10 +31,10 @@ import java.util.List;
 
 import metal.utils.fileiterator.FileIterator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.dcm4che2.data.DicomObject;
 import org.dcm4che2.io.DicomInputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.sdk.PluginBase;
 import pt.ua.dicoogle.sdk.StorageInputStream;
@@ -42,7 +42,7 @@ import pt.ua.dicoogle.sdk.StorageInterface;
 
 public class DefaultFileStoragePlugin extends PluginBase implements StorageInterface{
 
-	private static final Logger logger = LogManager.getLogger(DefaultFileStoragePlugin.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(DefaultFileStoragePlugin.class);
 	
 	private String defaultScheme = "file";
 	

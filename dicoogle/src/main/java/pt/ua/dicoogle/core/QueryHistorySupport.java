@@ -28,8 +28,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.sdk.Utils.Platform;
 
@@ -60,7 +62,7 @@ public class QueryHistorySupport extends Observable {
         }
         catch (InterruptedException ex)
         {
-            Logger.getLogger(QueryHistorySupport.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(QueryHistorySupport.class).error(ex.getMessage(), ex);
         }
         return instance;
     }

@@ -34,9 +34,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.restlet.resource.ServerResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.rGUI.server.controllers.ControlServices;
@@ -69,12 +69,12 @@ import pt.ua.dicoogle.webservices.DicoogleWebservice;
  *
  * @author Carlos Ferreira
  * @author Frederico Valente
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
  * @author Tiago Marques Godinho.
  */
 public class PluginController{
 
-    private static final Logger logger = LogManager.getLogger(PluginController.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(PluginController.class);
     
     private static PluginController instance;
 

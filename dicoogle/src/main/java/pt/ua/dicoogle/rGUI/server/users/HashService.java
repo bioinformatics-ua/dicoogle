@@ -21,8 +21,10 @@ package pt.ua.dicoogle.rGUI.server.users;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sun.misc.BASE64Encoder;
 
 /**
@@ -47,9 +49,9 @@ public class HashService {
             return hash;
             
         } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(HashService.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(HashService.class).error(ex.getMessage(), ex);
         } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(HashService.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(HashService.class).error(ex.getMessage(), ex);
         }
 
         return null;

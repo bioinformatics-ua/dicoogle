@@ -25,8 +25,10 @@ package pt.ua.dicoogle.webservices;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.zip.GZIPInputStream;
 import org.restlet.data.MediaType;
 import org.restlet.representation.OutputRepresentation;
@@ -66,7 +68,7 @@ public class RestImageResource extends ServerResource {
             return null;//TODO:Throw exception
         }
         for (SearchResult r : queryResultList) {
-            Logger.getLogger(RestDimResource.class.getName()).severe(r.getOrigin());
+            LoggerFactory.getLogger(RestDimResource.class.getName()).error(r.getOrigin());
         }
         File file = new File(queryResultList.get(0).getOrigin());
 
@@ -92,7 +94,7 @@ public class RestImageResource extends ServerResource {
                 try {
                     temp = File.createTempFile(dicomImage.getName(), Platform.homePath() + ".dcm");
                 } catch (IOException ex) {
-                    Logger.getLogger(RestWADOResource.class.getName()).log(Level.SEVERE, null, ex);
+                    LoggerFactory.getLogger(RestWADOResource.class).error(ex.getMessage(), ex);
                 }
                 temp.deleteOnExit();
                 FileOutputStream fos;
@@ -106,7 +108,7 @@ public class RestImageResource extends ServerResource {
                     bos.close();
                     gz.close();
                 } catch (Exception ex) {
-                    Logger.getLogger(RestWADOResource.class.getName()).log(Level.SEVERE, null, ex);
+                    LoggerFactory.getLogger(RestWADOResource.class).error(ex.getMessage(), ex);
                 }
                 dicomImage = temp;
             }*/

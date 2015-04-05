@@ -42,7 +42,8 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServlet;
@@ -55,14 +56,14 @@ import pt.ua.dicoogle.server.web.servlets.search.DumpServlet;
 import pt.ua.dicoogle.server.web.utils.LocalImageCache;
 
 /**
- * @author António Novo <antonio.novo@ua.pt>
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Ant??nio Novo <antonio.novo@ua.pt>
+ * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
  * @author Frederico Valente
  * @author Frederico Silva <fredericosilva@ua.pt>
  */
 public class DicoogleWeb {
 
-    private static final Logger log = Logger.getLogger("dicoogle");
+    private static final Logger log = LoggerFactory.getLogger("dicoogle");
     /**
      * Sets the path where the web-pages/scripts or .war are.
      */

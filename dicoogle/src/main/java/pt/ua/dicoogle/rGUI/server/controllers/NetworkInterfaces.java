@@ -21,8 +21,10 @@ package pt.ua.dicoogle.rGUI.server.controllers;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Logger;
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.INetworkInterfaces;
 
@@ -48,7 +50,7 @@ public class NetworkInterfaces implements INetworkInterfaces
             sem.release();
         } catch (InterruptedException ex)
         {
-            Logger.getLogger(QRServers.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(QRServers.class).error(ex.getMessage(), ex);
         }
         return instance;
     }

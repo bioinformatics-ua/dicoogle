@@ -20,8 +20,10 @@ package pt.ua.dicoogle.rGUI.server.controllers;
 
 import java.rmi.RemoteException;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IStartupServ;
 
@@ -57,7 +59,7 @@ public class StartupServices implements IStartupServ {
             }
             sem.release();
         } catch (InterruptedException ex) {
-            Logger.getLogger(StartupServices.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(StartupServices.class).error(ex.getMessage(), ex);
         }
 
         return instance;

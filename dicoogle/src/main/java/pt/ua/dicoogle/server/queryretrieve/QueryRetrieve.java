@@ -26,7 +26,6 @@ import aclmanager.exceptions.CannotParseFileException;
 
 import java.io.File;
 import java.util.concurrent.Executor;
-import java.util.logging.Level;
 
 import pt.ua.dicoogle.core.ServerSettings;
 
@@ -38,14 +37,14 @@ import org.dcm4che2.net.NetworkConnection;
 import org.dcm4che2.net.NewThreadExecutor;
 import org.dcm4che2.net.TransferCapability;
 import org.dcm4che2.net.service.VerificationService;
+import org.slf4j.LoggerFactory;
 
-import pt.ua.dicoogle.Main;
 import pt.ua.dicoogle.sdk.Utils.Platform;
 import pt.ua.dicoogle.server.DicomNetwork;
 
 /**
  *
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
  */
 public class QueryRetrieve extends DicomNetwork 
 {
@@ -161,7 +160,7 @@ public class QueryRetrieve extends DicomNetwork
                 this.luke = new LuceneQueryACLManager(manager);
             }
         } catch (CannotParseFileException ex) {
-            java.util.logging.Logger.getLogger(CFindServiceSCP.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(CFindServiceSCP.class).error(ex.getMessage(), ex);
         }        
         
         this.localAE.register(new CMoveServiceSCP(moveSop, executor, luke));

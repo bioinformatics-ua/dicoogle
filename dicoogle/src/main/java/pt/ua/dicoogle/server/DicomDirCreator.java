@@ -20,8 +20,10 @@ package pt.ua.dicoogle.server;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.dcm4che2.data.DicomObject;
 import org.dcm4che2.data.Tag;
 import org.dcm4che2.io.DicomInputStream;
@@ -72,7 +74,7 @@ public class DicomDirCreator {
                 }
                 dicomdir = new DicomDirWriter(file, fsinfo);
             } catch (IOException ex) {
-                Logger.getLogger(DicomDirCreator.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(DicomDirCreator.class).error(ex.getMessage(), ex);
             }
         }
         else
@@ -81,7 +83,7 @@ public class DicomDirCreator {
                 dicomdir = new DicomDirWriter(file);
                 fsinfo = dicomdir.getFileSetInformation();
             } catch (IOException ex) {
-                Logger.getLogger(DicomDirCreator.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(DicomDirCreator.class).error(ex.getMessage(), ex);
             }
         }
      }
@@ -124,12 +126,12 @@ public class DicomDirCreator {
                     ((DicomDirWriter) dicomdir).commit();
 
                 } catch (IOException ex) {
-                    Logger.getLogger(DicomDirCreator.class.getName()).log(Level.SEVERE, null, ex);
+                    LoggerFactory.getLogger(DicomDirCreator.class).error(ex.getMessage(), ex);
                 } finally {
                     try {
                         dis.close();
                     } catch (IOException ex) {
-                        Logger.getLogger(DicomDirCreator.class.getName()).log(Level.SEVERE, null, ex);
+                        LoggerFactory.getLogger(DicomDirCreator.class).error(ex.getMessage(), ex);
                     }
                 }
             }
@@ -159,7 +161,7 @@ public class DicomDirCreator {
                 dicomdir = new DicomDirWriter(file, fsinfo);                
                 updateDicomDir(f);                                 
         } catch (IOException ex) {
-            Logger.getLogger(DicomDirCreator.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(DicomDirCreator.class).error(ex.getMessage(), ex);
         }
     }
     
@@ -171,7 +173,7 @@ public class DicomDirCreator {
         try {
             dicomdir.close();
         } catch (IOException ex) {
-            Logger.getLogger(DicomDirCreator.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(DicomDirCreator.class).error(ex.getMessage(), ex);
         }
     }
     

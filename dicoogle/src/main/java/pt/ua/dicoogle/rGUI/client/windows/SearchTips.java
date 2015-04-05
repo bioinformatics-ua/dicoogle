@@ -25,8 +25,10 @@
 package pt.ua.dicoogle.rGUI.client.windows;
 
 import java.rmi.RemoteException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.*;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -66,7 +68,7 @@ public class SearchTips extends javax.swing.JFrame {
             updateList(null);
 
         } catch (RemoteException ex) {
-            Logger.getLogger(SearchTips.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(SearchTips.class).error(ex.getMessage(), ex);
         }
 
     }

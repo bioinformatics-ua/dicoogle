@@ -140,7 +140,7 @@ public class UserFileHandle {
 
                 
             } catch (IOException ex) {
-                //Logger.getLogger(UserFileHandle.class.getName()).log(Level.SEVERE, null, ex);
+                //LoggerFactory.getLogger(UserFileHandle.class).error(ex.getMessage(), ex);
             } finally {
                 if (fin != null) {
                     fin.close();

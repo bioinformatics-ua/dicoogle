@@ -21,8 +21,10 @@ package pt.ua.dicoogle.rGUI.RFileBrowser;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.rmi.RemoteException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.plaf.metal.MetalIconFactory;
 
@@ -95,7 +97,7 @@ public class RemoteFileChooser extends javax.swing.JFrame {
 
             jTextFieldFilePath.setText(actualPath);
         } catch (RemoteException ex) {
-            Logger.getLogger(RemoteFileChooser.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(RemoteFileChooser.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -119,7 +121,7 @@ public class RemoteFileChooser extends javax.swing.JFrame {
 
             jComboBox.setSelectedIndex(rFiles.length - 1);
         } catch (RemoteException ex) {
-            Logger.getLogger(RemoteFileChooser.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(RemoteFileChooser.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -300,7 +302,7 @@ public class RemoteFileChooser extends javax.swing.JFrame {
                 }
             }
         } catch (RemoteException ex) {
-            Logger.getLogger(RemoteFileChooser.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(RemoteFileChooser.class).error(ex.getMessage(), ex);
         }
     }//GEN-LAST:event_jButtonUPActionPerformed
 
@@ -334,7 +336,7 @@ public class RemoteFileChooser extends javax.swing.JFrame {
 
             loadFiles();
         } catch (RemoteException ex) {
-            Logger.getLogger(RemoteFileChooser.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(RemoteFileChooser.class).error(ex.getMessage(), ex);
         }
     }//GEN-LAST:event_jComboBoxPopupMenuWillBecomeInvisible
 
@@ -347,7 +349,7 @@ public class RemoteFileChooser extends javax.swing.JFrame {
                 loadFiles();
             }
         } catch (RemoteException ex) {
-            Logger.getLogger(RemoteFileChooser.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(RemoteFileChooser.class).error(ex.getMessage(), ex);
         }
     }//GEN-LAST:event_jButtonHomeActionPerformed
 

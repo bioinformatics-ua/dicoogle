@@ -25,8 +25,10 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.rGUI.server.controllers.Search;

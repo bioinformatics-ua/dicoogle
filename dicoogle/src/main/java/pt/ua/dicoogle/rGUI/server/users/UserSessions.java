@@ -21,8 +21,10 @@ package pt.ua.dicoogle.rGUI.server.users;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IActiveSessions;
 import pt.ua.dicoogle.rGUI.server.UserFeatures;
 
@@ -188,7 +190,7 @@ public class UserSessions implements IActiveSessions {
                 value = true;
 
             } catch (RemoteException ex) {
-                Logger.getLogger(UserSessions.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(UserSessions.class).error(ex.getMessage(), ex);
             }
         }
 
@@ -214,7 +216,7 @@ public class UserSessions implements IActiveSessions {
                 try {
                     userF.logout();
                 } catch (RemoteException ex) {
-                    Logger.getLogger(UserSessions.class.getName()).log(Level.SEVERE, null, ex);
+                    LoggerFactory.getLogger(UserSessions.class).error(ex.getMessage(), ex);
                 }
             }
         }

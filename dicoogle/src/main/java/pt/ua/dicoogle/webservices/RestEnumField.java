@@ -20,8 +20,10 @@ package pt.ua.dicoogle.webservices;
 
 import java.io.StringWriter;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import org.restlet.data.MediaType;
@@ -78,7 +80,7 @@ public class RestEnumField extends ServerResource{
             sr = new StringRepresentation(sw.toString(), MediaType.APPLICATION_XML);
 
         } catch (Exception ex) {
-            Logger.getLogger(RestTagsResource.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(RestTagsResource.class).error(ex.getMessage(), ex);
             
             sr = new StringRepresentation("", MediaType.APPLICATION_XML);
         }
