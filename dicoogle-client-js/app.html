@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<!-- Here is an example of using the wrapper in a browser environment -->
+<html>
+<head>
+<style>
+span {
+    font-family: "Courier New", monospace;
+}
+</style>
+<script src='./browser/build/dicoogle-client.js'></script>
+<script>
+  var server = "http://localhost:8080";
+  var Dicoogle = dicoogleClient(server);
+
+  function doQuery() {
+    var query = document.getElementById('txt').value;
+    var res_span = document.getElementById('res');
+    res_span.innerHTML = "Querying ...";
+
+    Dicoogle.queryFreeText(query,
+      function cb(error, result) {
+    if (error) { console.log(error);
+       res_span.innerHTML = "An error occurred: \n"
+         + JSON.stringify(error);
+    }
+    else {
+      var j = JSON.stringify(result);
+      console.log(j);
+      res_span.innerHTML = j;
+      }
+    });
+
+  }
+</script>
+</head>
+<body>
+<input id='txt'></input>
+<button onclick='doQuery()'>Query</button>
+<hr/>
+<span id='res'></span>
+</body>
+</html>
