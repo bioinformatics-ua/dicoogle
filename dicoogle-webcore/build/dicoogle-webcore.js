@@ -132,15 +132,19 @@ define("dicoogle-webcore", function(require) {
     };
     // --------------------- Plugin-accessible methods --------------------------------
     /** Issue a query to the system. This operation is asynchronous
-   * and will automatically issue back a result exposal.
+   * and will automatically issue back a result exposal. The query service requested will be "search" unless modified
+   * with the overrideService option.
    * @param query an object containing the query
    * @param options an object containing additional options (such as query plugins to use, result limit, etc.)
+   *      - overrideService [string] the name of the service to use instead of "search" 
    * @param callback an optional callback function(error, result)
    */
     m.issueQuery = function(query, options, callback) {
+        options = options || {};
         options.query = query;
         var requestTime = new Date();
-        service_get("search", options, function(error, data) {
+        var queryService = options.overrideService || "search";
+        service_get(queryService, options, function(error, data) {
             if (error) {
                 callback(error, null);
                 return;
