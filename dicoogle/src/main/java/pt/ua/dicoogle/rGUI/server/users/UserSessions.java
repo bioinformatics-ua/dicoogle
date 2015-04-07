@@ -30,6 +30,7 @@ import pt.ua.dicoogle.rGUI.server.UserFeatures;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class UserSessions implements IActiveSessions {
 
     //Active users lists

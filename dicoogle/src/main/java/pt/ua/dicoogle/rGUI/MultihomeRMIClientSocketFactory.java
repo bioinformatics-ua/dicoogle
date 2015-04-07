@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+@Deprecated
 public class MultihomeRMIClientSocketFactory
         implements RMIClientSocketFactory, Serializable {
     private static final long serialVersionUID = 7033753601964541325L;

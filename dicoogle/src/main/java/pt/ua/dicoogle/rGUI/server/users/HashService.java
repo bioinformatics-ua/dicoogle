@@ -30,6 +30,7 @@ import sun.misc.BASE64Encoder;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class HashService {
     /**
      * Encrypt one password with SHA-1 algorithm

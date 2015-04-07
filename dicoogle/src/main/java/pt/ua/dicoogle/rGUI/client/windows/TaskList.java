@@ -42,6 +42,7 @@ import pt.ua.dicoogle.sdk.task.Task;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
+@Deprecated
 public final class TaskList extends javax.swing.JPanel {
 
     private static ITaskList taskList;

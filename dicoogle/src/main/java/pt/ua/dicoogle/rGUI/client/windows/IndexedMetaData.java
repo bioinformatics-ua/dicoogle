@@ -49,6 +49,7 @@ import pt.ua.dicoogle.sdk.datastructs.SearchResult;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
+@Deprecated
 public class IndexedMetaData extends javax.swing.JFrame
 {
 

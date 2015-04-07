@@ -34,6 +34,7 @@ import pt.ua.dicoogle.server.queryretrieve.CallDCMSend;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class DicomSend implements IDicomSend {
 
     private static Semaphore sem = new Semaphore(1, true);

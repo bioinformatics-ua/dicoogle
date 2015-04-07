@@ -26,6 +26,7 @@ import java.util.ArrayList;
  *
  * @author Carlos Ferreira
  */
+@Deprecated
 public interface INetworkInterfaces extends Remote
 {
     public ArrayList<String> getNetworkInterfaces() throws RemoteException;

@@ -46,7 +46,7 @@ import pt.ua.dicoogle.sdk.Utils.Platform;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
-
+@Deprecated
 public class Logs implements ILogs {
     // Server Log (activities in server)
 

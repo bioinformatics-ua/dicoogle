@@ -33,6 +33,7 @@ import org.dcm4che2.imageio.plugins.dcm.DicomImageReadParam;
 /**
  *
  * @author Carlos Costa
+ * FIXME marked for move
  */
 public class Dicom2JPEG {
     

@@ -28,6 +28,7 @@ import java.util.Date;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class UserON implements Serializable {
     private int userID;
     private String username;

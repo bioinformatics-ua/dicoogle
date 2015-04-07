@@ -24,6 +24,7 @@ package pt.ua.dicoogle.rGUI.server.users;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class User {
     private String username;
     private String Hash;        //stores the Hash of this user (username + admin + passwordHash)

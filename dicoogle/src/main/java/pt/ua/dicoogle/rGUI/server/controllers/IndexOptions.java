@@ -43,7 +43,7 @@ import pt.ua.dicoogle.sdk.utils.TagsStruct;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
-
+@Deprecated
 public class IndexOptions implements IIndexOptions {
 
     //private HashMap<Integer, TagValue> dimFields;

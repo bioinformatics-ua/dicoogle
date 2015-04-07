@@ -40,6 +40,7 @@ import pt.ua.dicoogle.rGUI.utils.KeysManager;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class GUIServer {
 
     private int port;

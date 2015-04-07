@@ -28,6 +28,7 @@ import java.util.Set;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class UsersStruct {
     private HashMap<String, User> users;
 

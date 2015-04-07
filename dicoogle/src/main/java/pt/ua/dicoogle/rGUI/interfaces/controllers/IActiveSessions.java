@@ -27,6 +27,7 @@ import pt.ua.dicoogle.rGUI.server.users.UserON;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public interface IActiveSessions extends Remote {
 
     public HashMap<Integer, UserON> getUsersTable() throws RemoteException;

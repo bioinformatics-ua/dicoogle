@@ -39,6 +39,7 @@ import pt.ua.dicoogle.rGUI.server.users.HashService;
  *
  * @author samuelcampos
  */
+@Deprecated
 public class ChangePassword extends javax.swing.JFrame {
 
     private static Semaphore sem = new Semaphore(1, true);

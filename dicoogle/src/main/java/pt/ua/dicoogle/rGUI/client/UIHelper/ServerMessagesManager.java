@@ -36,6 +36,7 @@ import pt.ua.dicoogle.rGUI.interfaces.signals.IPendingMessagesSignal;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class ServerMessagesManager {
 
     private static PendingMessagesSignal pendingMessagesSignal;

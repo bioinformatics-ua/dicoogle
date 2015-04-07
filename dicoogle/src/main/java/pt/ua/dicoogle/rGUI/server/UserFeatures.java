@@ -48,6 +48,7 @@ import pt.ua.dicoogle.rGUI.server.users.UsersXML;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class UserFeatures implements IUser {
     private UserSessions userSessions;
     private User user;

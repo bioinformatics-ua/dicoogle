@@ -51,6 +51,7 @@ import pt.ua.dicoogle.rGUI.client.UIHelper.AllowBlankMaskFormatter;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class QRServers extends javax.swing.JFrame {
 
     private static Semaphore sem = new Semaphore(1, true);

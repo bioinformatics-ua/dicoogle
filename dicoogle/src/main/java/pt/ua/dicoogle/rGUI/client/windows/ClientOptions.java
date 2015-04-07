@@ -41,6 +41,7 @@ import pt.ua.dicoogle.rGUI.server.users.HashService;
  *
  * @author samuelcampos
  */
+@Deprecated
 public class ClientOptions extends javax.swing.JFrame {
     private ClientSettings settings;
 

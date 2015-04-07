@@ -27,6 +27,7 @@ import java.rmi.RemoteException;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public interface IRemoteFileSystem extends Remote {
 
     //File createFileObject(String path) throws RemoteException;

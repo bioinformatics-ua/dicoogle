@@ -44,6 +44,7 @@ import pt.ua.dicoogle.rGUI.server.users.HashService;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class ConnectWindow extends javax.swing.JFrame {
 
     private static ConnectWindow instance;

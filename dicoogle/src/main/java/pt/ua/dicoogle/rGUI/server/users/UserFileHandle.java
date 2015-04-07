@@ -44,6 +44,7 @@ import pt.ua.dicoogle.sdk.Utils.Platform;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class UserFileHandle {
 
     private String filename;

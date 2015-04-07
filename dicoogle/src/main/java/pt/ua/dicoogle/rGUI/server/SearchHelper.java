@@ -39,6 +39,7 @@ import pt.ua.dicoogle.sdk.observables.ListObservableSearch;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class SearchHelper implements Observer
 {
 

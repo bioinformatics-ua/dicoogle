@@ -50,6 +50,7 @@ import pt.ua.dicoogle.sdk.utils.TagValue;
  * @author Samuel da Costa Campos <samuelcampos@ua.pt>
  *
  */
+@Deprecated
 public class ExportData extends javax.swing.JFrame implements Observer {
 
     private ISearch search;

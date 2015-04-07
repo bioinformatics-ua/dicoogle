@@ -37,6 +37,7 @@ import pt.ua.dicoogle.sdk.utils.TagValue;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public interface ISearch extends Remote {
 
     // Search

@@ -43,6 +43,7 @@ import pt.ua.dicoogle.rGUI.utils.KeysManager;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class ConnectServer {
     private String host;
     private int port;

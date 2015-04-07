@@ -28,7 +28,6 @@ import pt.ua.dicoogle.server.queryretrieve.QueryRetrieve;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pt.ua.dicoogle.core.ServerSettings;
-import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IServices;
 import pt.ua.dicoogle.server.SOPList;
 import pt.ua.dicoogle.server.web.DicoogleWeb;
@@ -38,6 +37,7 @@ import pt.ua.dicoogle.taskManager.TaskManager;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class ControlServices implements IServices
 {
 
@@ -60,18 +60,12 @@ public class ControlServices implements IServices
 
     public static synchronized ControlServices getInstance()
     {
-        try
+//      sem.acquire();
+        if (instance == null)
         {
-            sem.acquire();
-            if (instance == null)
-            {
-                instance = new ControlServices();
-            }
-            sem.release();
-        } catch (InterruptedException ex)
-        {
-//            Logger.getLogger(MainWindow.class.getName()).log(Level.FATAL, null, ex);
+            instance = new ControlServices();
         }
+//      sem.release();
         return instance;
     }
 

@@ -19,7 +19,6 @@
 
 package pt.ua.dicoogle.rGUI.utils;
 
-import java.awt.KeyEventDispatcher;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -27,12 +26,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import pt.ua.dicoogle.sdk.Utils.Platform;
-
 /**
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
+@Deprecated
 public class KeysManager
 {
     private static String LOCAL_PATH = "Server_Keystore";

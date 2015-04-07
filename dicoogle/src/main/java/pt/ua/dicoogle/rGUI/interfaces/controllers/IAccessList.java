@@ -27,6 +27,7 @@ import java.util.ArrayList;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public interface IAccessList extends Remote {
     public String getAETitle() throws RemoteException;
     public void setAETitle(String AETitle) throws RemoteException;

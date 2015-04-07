@@ -44,6 +44,7 @@ import pt.ua.dicoogle.rGUI.server.users.UserON;
  *
  * @author samuelcampos
  */
+@Deprecated
 public class ActiveSessions extends javax.swing.JFrame {
     private HashMap<Integer, UserON> usersTable;
     private IActiveSessions activeSessions;

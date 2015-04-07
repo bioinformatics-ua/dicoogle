@@ -34,6 +34,7 @@ import pt.ua.dicoogle.plugins.PluginController;
  *
  * @author carloscosta
  */
+@Deprecated
 public class DicoogleScan {
     private File path = null;
 

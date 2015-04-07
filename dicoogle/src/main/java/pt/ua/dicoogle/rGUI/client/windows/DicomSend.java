@@ -42,6 +42,7 @@ import pt.ua.dicoogle.rGUI.interfaces.controllers.IDicomSend;
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class DicomSend extends javax.swing.JFrame {
 
     private ArrayList<String> filePaths;

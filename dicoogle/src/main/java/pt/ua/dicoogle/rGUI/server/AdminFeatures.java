@@ -78,6 +78,7 @@ import pt.ua.dicoogle.rGUI.server.users.UserSessions;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class AdminFeatures implements IAdmin {
 
     private static AdminFeatures instance = null;

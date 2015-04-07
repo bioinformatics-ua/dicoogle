@@ -32,6 +32,7 @@ import javax.swing.plaf.metal.MetalIconFactory;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class IconListRenderer extends DefaultListCellRenderer {
 
     private Map<Object, Icon> icons = null;

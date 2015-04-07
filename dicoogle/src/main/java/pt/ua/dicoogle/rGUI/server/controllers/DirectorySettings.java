@@ -35,7 +35,7 @@ import pt.ua.dicoogle.server.DicomDirCreator;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
-
+@Deprecated
 public class DirectorySettings implements IDirectory {
 
     private String storagePath;

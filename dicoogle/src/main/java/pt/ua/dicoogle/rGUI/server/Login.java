@@ -40,6 +40,7 @@ import pt.ua.dicoogle.rGUI.server.users.UsersXML;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class Login implements ILogin {
 
     private static Login instance = null;

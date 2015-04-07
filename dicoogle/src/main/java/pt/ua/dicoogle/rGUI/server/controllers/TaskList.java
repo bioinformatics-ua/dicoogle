@@ -32,6 +32,7 @@ import pt.ua.dicoogle.sdk.task.Task;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
+@Deprecated
 public class TaskList implements ITaskList
 {
 

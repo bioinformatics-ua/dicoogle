@@ -33,6 +33,7 @@ import pt.ua.dicoogle.rGUI.server.users.UsersXML;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class UsersManager implements IUsersManager {
     private static UsersManager instance = null;
 

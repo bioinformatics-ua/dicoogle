@@ -30,6 +30,7 @@ import pt.ua.dicoogle.sdk.Utils.PluginPanel;
  *
  * @author Carlos Ferreira
  */
+@Deprecated
 public class PanelPluginsController
 {
     private Collection<PluginPanel> panels;

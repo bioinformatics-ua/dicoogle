@@ -86,6 +86,7 @@ import pt.ua.dicoogle.sdk.task.Task;
  * @author Carlos Ferreira <c.ferreira@ua.pt>
  * @author Frederico Valente
  */
+@Deprecated
 public class MainWindow extends javax.swing.JFrame {
 
     private Result2Tree searchTree;
