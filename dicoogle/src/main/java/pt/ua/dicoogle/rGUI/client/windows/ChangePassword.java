@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import pt.ua.dicoogle.rGUI.client.ClientCore;
 import pt.ua.dicoogle.rGUI.interfaces.IUser;
-import pt.ua.dicoogle.rGUI.server.users.HashService;
+import pt.ua.dicoogle.server.users.HashService;
 
 /**
  *

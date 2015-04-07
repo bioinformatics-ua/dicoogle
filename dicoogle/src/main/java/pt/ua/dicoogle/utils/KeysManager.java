@@ -17,7 +17,7 @@
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package pt.ua.dicoogle.rGUI.utils;
+package pt.ua.dicoogle.utils;
 
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
@@ -30,10 +30,9 @@ import java.io.InputStream;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-@Deprecated
 public class KeysManager
 {
-    private static String LOCAL_PATH = "Server_Keystore";
+    private static final String LOCAL_PATH = "Server_Keystore";
     
     public static String getServerKeyPath()
     {

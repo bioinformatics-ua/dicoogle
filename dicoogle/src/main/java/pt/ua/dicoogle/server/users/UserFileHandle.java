@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.rGUI.server.users;
+package pt.ua.dicoogle.server.users;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -44,7 +44,6 @@ import pt.ua.dicoogle.sdk.Utils.Platform;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
-@Deprecated
 public class UserFileHandle {
 
     private String filename;

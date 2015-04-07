@@ -34,7 +34,7 @@ import pt.ua.dicoogle.rGUI.client.UIHelper.TrayIconCreator;
 import pt.ua.dicoogle.rGUI.interfaces.ILogin;
 import pt.ua.dicoogle.rGUI.interfaces.IAdmin;
 import pt.ua.dicoogle.rGUI.interfaces.IUser;
-import pt.ua.dicoogle.rGUI.utils.KeysManager;
+import pt.ua.dicoogle.utils.KeysManager;
 
 /**
  * This class is responsible for making the connection to the RMI GUI Server

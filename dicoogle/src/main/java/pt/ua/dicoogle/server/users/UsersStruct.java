@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.rGUI.server.users;
+package pt.ua.dicoogle.server.users;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,7 +28,6 @@ import java.util.Set;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
-@Deprecated
 public class UsersStruct {
     private HashMap<String, User> users;
 

@@ -36,7 +36,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import pt.ua.dicoogle.rGUI.client.AdminRefs;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IUsersManager;
-import pt.ua.dicoogle.rGUI.server.users.HashService;
+import pt.ua.dicoogle.server.users.HashService;
 
 /**
  *

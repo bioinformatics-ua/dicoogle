@@ -30,10 +30,10 @@ import pt.ua.dicoogle.rGUI.MultihomeSslRMIClientSocketFactory;
 import pt.ua.dicoogle.rGUI.interfaces.IAdmin;
 import pt.ua.dicoogle.rGUI.interfaces.IUser;
 
-import pt.ua.dicoogle.rGUI.server.users.User;
-import pt.ua.dicoogle.rGUI.server.users.UserSessions;
-import pt.ua.dicoogle.rGUI.server.users.UsersStruct;
-import pt.ua.dicoogle.rGUI.server.users.UsersXML;
+import pt.ua.dicoogle.server.users.User;
+import pt.ua.dicoogle.server.users.UserSessions;
+import pt.ua.dicoogle.server.users.UsersStruct;
+import pt.ua.dicoogle.server.users.UsersXML;
 
 /**
  * Login of users and administrator

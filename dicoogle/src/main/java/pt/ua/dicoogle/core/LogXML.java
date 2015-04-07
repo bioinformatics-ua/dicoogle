@@ -30,6 +30,8 @@ import javax.xml.transform.stream.*;
 import javax.xml.transform.sax.*;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -128,13 +130,8 @@ public class LogXML extends DefaultHandler
 
     public void printXML() throws TransformerConfigurationException
     {
-
-
-        FileOutputStream out = null;
-
-        try
+        try (FileOutputStream out = new FileOutputStream(filename))
         {
-            out = new FileOutputStream(filename);
             PrintWriter pw = new PrintWriter(out);
             StreamResult streamResult = new StreamResult(pw);
             SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
@@ -174,21 +171,8 @@ public class LogXML extends DefaultHandler
 
             hd.endDocument();
 
-        } catch (TransformerConfigurationException ex)
-        {
-        } catch (SAXException ex)
-        {
-        } catch (FileNotFoundException ex)
-        {
-        } finally
-        {
-            try
-            {
-                out.close();
-            } catch (IOException ex)
-            {
-            }
+        } catch (TransformerConfigurationException | SAXException | IOException ex) {
+            Logger.getLogger(LogXML.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 }

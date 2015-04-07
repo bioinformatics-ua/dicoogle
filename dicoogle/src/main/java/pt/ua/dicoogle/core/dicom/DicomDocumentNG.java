@@ -33,7 +33,7 @@ import org.dcm4che2.io.StopTagInputHandler;
 
 import pt.ieeta.anonymouspatientdata.core.impl.MatchTable;
 import pt.ua.dicoogle.core.ServerSettings;
-import pt.ua.dicoogle.rGUI.client.UIHelper.Dicom2JPEG;
+import pt.ua.dicoogle.utils.Dicom2JPEG;
 import pt.ua.dicoogle.sdk.utils.DictionaryAccess;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.index.DicomDocument;

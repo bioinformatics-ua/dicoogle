@@ -24,6 +24,7 @@
  */
 package pt.ua.dicoogle.rGUI.client.windows;
 
+import pt.ua.dicoogle.utils.Dicom2JPEG;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;

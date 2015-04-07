@@ -23,10 +23,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IUsersManager;
-import pt.ua.dicoogle.rGUI.server.users.HashService;
-import pt.ua.dicoogle.rGUI.server.users.User;
-import pt.ua.dicoogle.rGUI.server.users.UsersStruct;
-import pt.ua.dicoogle.rGUI.server.users.UsersXML;
+import pt.ua.dicoogle.server.users.HashService;
+import pt.ua.dicoogle.server.users.User;
+import pt.ua.dicoogle.server.users.UsersStruct;
+import pt.ua.dicoogle.server.users.UsersXML;
 
 /**
  * Controller of Users Manager Settings
