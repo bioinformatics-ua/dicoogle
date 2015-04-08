@@ -30,6 +30,7 @@ import org.restlet.data.Protocol;
 import org.restlet.resource.ServerResource;
 import org.restlet.routing.Router;
 import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.server.web.TestResource;
 
 /**
  *
@@ -37,26 +38,22 @@ import pt.ua.dicoogle.core.ServerSettings;
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  *
  */
-public class DicoogleWebservice extends Application {
+public class WebservicePluginApplication extends Application {
 
-    static Component component = null;
+    //static Component component = null;
     static ArrayList<ServerResource> pluginServices = new ArrayList<>();
 
+    /*
     public static void startWebservice(){
         try{
             
-            System.err.println("Stating Webservice in port:"+ServerSettings.getInstance().getWeb().getServicePort());
+            System.err.println("Adding Webservice in port:"+ServerSettings.getInstance().getWeb().getServicePort());
             
-            // Adds a new HTTP server listening on customized port.
-            // The implementation used is based on java native classes
-            // It's not the fastest possible implementation
-            // but it suffices for the time being
-            // (we can always use other backends at the expense of a few more dependencies)
             component = new Component();
             component.getServers().add(Protocol.HTTP,ServerSettings.getInstance().getWeb().getServicePort());
             
             // Attaches this application to the server.
-            component.getDefaultHost().attach(new DicoogleWebservice());
+            component.getDefaultHost().attach(new WebservicePluginApplication());
 
             // And starts the component.
             component.start();
@@ -69,20 +66,20 @@ public class DicoogleWebservice extends Application {
     }
 
     public static void stopWebservice(){
-        if(component == null) return;
-
+        // TODO
         for(Server server : component.getServers()){
             try {
                 server.stop();
             } catch (Exception ex) {
-                Logger.getLogger(DicoogleWebservice.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(WebservicePluginApplication.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        component=null;
     }
-
-     /**
+*/
+    
+    /**
      * Creates a root Restlet that will receive all incoming calls.
+     * @return a Restlet for the root 
      */
     @Override
     public synchronized Restlet createInboundRoot() {
@@ -91,7 +88,7 @@ public class DicoogleWebservice extends Application {
         Router router = new Router(getContext());
 
         // Defines routing to resources
-        
+        router.attach("/test", TestResource.class);
         router.attach("/dim", RestDimResource.class);//search resource
         router.attach("/file", RestFileResource.class);//file download resource
         router.attach("/dump", RestDumpResource.class);//dump resource

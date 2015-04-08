@@ -34,6 +34,7 @@ import pt.ua.dicoogle.server.web.servlets.management.TransferenceOptionsServlet;
 import java.io.File;
 import java.net.URL;
 import java.util.EnumSet;
+import java.util.logging.Level;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -53,6 +54,7 @@ import org.eclipse.jetty.servlets.GzipFilter;
 import pt.ua.dicoogle.server.web.servlets.accounts.LogoutServlet;
 import pt.ua.dicoogle.server.web.servlets.search.DumpServlet;
 import pt.ua.dicoogle.server.web.utils.LocalImageCache;
+import pt.ua.dicoogle.webservices.WebservicePluginApplication;
 
 /**
  * @author António Novo <antonio.novo@ua.pt>
@@ -62,7 +64,7 @@ import pt.ua.dicoogle.server.web.utils.LocalImageCache;
  */
 public class DicoogleWeb {
 
-    private static final Logger log = Logger.getLogger("dicoogle");
+    private static final Logger log = Logger.getLogger(DicoogleWeb.class.getName());
     /**
      * Sets the path where the web-pages/scripts or .war are.
      */
@@ -74,9 +76,10 @@ public class DicoogleWeb {
     public static final String CONTEXTPATH = "/";
     private LocalImageCache cache = null;
     private Server server = null;
-    private int port;
+    private final int port;
 
     private ContextHandlerCollection contextHandlers;
+    private ServletContextHandler pluginHandler = null;
 
     /**
      * The global list of GUI hooks and actions.
@@ -84,9 +87,10 @@ public class DicoogleWeb {
 
     /**
      * Initializes and starts the Dicoogle Web service.
+     * @param port the server port
      */
     public DicoogleWeb(int port) throws Exception {
-        log.info("Starting Web Services... in DicoogleWeb. POrt: " + port);
+        log.log(Level.INFO, "Starting Web Services in DicoogleWeb. Port: {0}", port);
         System.setProperty("org.apache.jasper.compiler.disablejsr199", "true");
       //  System.setProperty("org.mortbay.jetty.webapp.parentLoaderPriority", "true");
         // System.setProperty("production.mode", "true");
@@ -126,9 +130,9 @@ public class DicoogleWeb {
         csvServletHolder.addServlet(new ServletHolder(new ExportCSVToFILEServlet(tempDir)), "/exportFile");
 
         // setup the search (DIMSE-service-user C-FIND ?!?) servlet
-        final ServletContextHandler search = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        search.setContextPath(CONTEXTPATH);
-        search.addServlet(new ServletHolder(new SearchServlet()), "/search");
+        //final ServletContextHandler search = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
+        //search.setContextPath(CONTEXTPATH);
+        //search.addServlet(new ServletHolder(new SearchServlet()), "/search");
 
         // setup the plugins data, xslt and pages servlet
         final ServletContextHandler plugin = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
@@ -161,7 +165,6 @@ public class DicoogleWeb {
         webpages.addServlet(new ServletHolder(new SearchHolderServlet()), "/search/holders");
         FilterHolder filter = webpages.addFilter(GzipFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
 
-
         // list the all the handlers mounted above
         Handler[] handlers = new Handler[]{
             dic2png,
@@ -192,7 +195,6 @@ public class DicoogleWeb {
             createServletHandler(new AETitleServlet(), "/management/settings/dicom")
             ,
             webpages
-
         };
 
         // setup the server
@@ -217,6 +219,7 @@ public class DicoogleWeb {
 
     /**
      * Stops the Dicoogle Web service.
+     * @throws java.lang.Exception if a problem occurs when stopping the server
      */
     public void stop() throws Exception {
         // abort if the server is not running
@@ -235,11 +238,28 @@ public class DicoogleWeb {
             cache.terminate();
             cache = null;
         }
+        
+        this.pluginHandler = null;
     }
 
     public void addContextHandlers(Handler handler) {
         this.contextHandlers.addHandler(handler);
         //this.server.setHandler(this.contextHandlers);
+    }
+
+    public void startPluginWebServices() {
+        if (this.pluginHandler == null) {
+            this.pluginHandler = new ServletContextHandler();
+            this.pluginHandler.setContextPath(CONTEXTPATH);
+            this.pluginHandler.addServlet(new ServletHolder(new RestletHttpServlet(new WebservicePluginApplication())), "/ext");
+            this.contextHandlers.addHandler(this.pluginHandler);
+        }
+    }
+
+    public void stopPluginWebServices() {
+        if (this.pluginHandler != null) {
+            this.contextHandlers.removeHandler(this.pluginHandler);
+        }
     }
 
 }

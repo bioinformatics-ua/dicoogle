@@ -37,11 +37,8 @@ import pt.ua.dicoogle.taskManager.TaskManager;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
-@Deprecated
 public class ControlServices implements IServices
 {
-
-    private static Semaphore sem = new Semaphore(1, true);
     private static ControlServices instance = null;
     // Services vars
     private RSIStorage storage = null;
@@ -92,14 +89,13 @@ public class ControlServices implements IServices
                 startQueryRetrieve();
             }
 
+            if(settings.getWeb().isWebServer()){
+            	startWebServer();
+            }
+
             if (settings.getWeb().isWebServices())
             {
                 startWebServices();
-            }
-            
-            if(settings.getWeb().isWebServer()){
-            	startWebServer();
-            	
             }
 
         } catch (Exception ex)
@@ -238,17 +234,19 @@ public class ControlServices implements IServices
     @Override
     public void startWebServices() throws IOException
     {
-        pt.ua.dicoogle.webservices.DicoogleWebservice.startWebservice();
+        webServices.startPluginWebServices();
+        //pt.ua.dicoogle.webservices.WebservicePluginApplication.startWebservice();
         webservicesRunning = true;
-        Logs.getInstance().addServerLog("Starting Dicoogle WebServices");
+        Logger.getLogger(ControlServices.class.getName()).info("Starting Dicoogle WebServices");
     }
 
     @Override
     public void stopWebServices() throws IOException
     {
-        pt.ua.dicoogle.webservices.DicoogleWebservice.stopWebservice();
+        webServices.stopPluginWebServices();
+        //pt.ua.dicoogle.webservices.WebservicePluginApplication.stopWebservice();
         webservicesRunning = false;
-        Logs.getInstance().addServerLog("Stopping Dicoogle WebService");
+        Logger.getLogger(ControlServices.class.getName()).info("Stopping Dicoogle WebService");
     }
 
     @Override
@@ -265,7 +263,7 @@ public class ControlServices implements IServices
         
     	//PeerEngine.getInstance().start();
         //DebugManager.getInstance().debug("Starting P2P network");
-        Logs.getInstance().addServerLog("Starting " + pluginName);
+        Logger.getLogger(ControlServices.class.getName()).log(Level.INFO, "Starting {0}", pluginName);
     }
 
     @Override
@@ -302,7 +300,7 @@ public class ControlServices implements IServices
             }
         }
         
-        Logs.getInstance().addServerLog("Starting Dicoogle Web");
+        Logger.getLogger(ControlServices.class.getName()).info("Starting Dicoogle Web");
     }
 
     @Override
@@ -320,7 +318,7 @@ public class ControlServices implements IServices
                 Logger.getLogger(ControlServices.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        Logs.getInstance().addServerLog("Stopping Dicoogle Web");
+        Logger.getLogger(ControlServices.class.getName()).info("Stopping Dicoogle Web");
     }
     
     public DicoogleWeb getWebServicePlatform(){
