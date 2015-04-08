@@ -21,9 +21,6 @@ package pt.ua.dicoogle.server.users;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Iterator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IActiveSessions;
 import pt.ua.dicoogle.rGUI.server.UserFeatures;
@@ -98,7 +95,7 @@ public class UserSessions implements IActiveSessions {
         usersTable.put(ID, new UserON(ID, user.getUsername(), host));
 
         //write the log
-        Logger.getLogger(UserSessions.class.getName()).log(Level.INFO, "{0} - {1} : {2} logged in",
+        LoggerFactory.getLogger(UserSessions.class).info("{} - {} : {} logged in",
                 new Object[]{host, user.getUsername(), admin ? "administrator" : "user"});
 //        UserSessionsLog.getInstance().login(user.getUsername(), host, admin);
 
@@ -142,9 +139,8 @@ public class UserSessions implements IActiveSessions {
                 UserON user = usersTable.remove(id);
 
                 if (user != null) {
-                    Logger.getLogger(UserSessions.class.getName()).log(Level.INFO,
-                            "{0} - {1} : user logged out",
-                            new Object[]{user.getHost(), user.getUsername()});
+                    LoggerFactory.getLogger(UserSessions.class).info("{} - {} : user logged out",
+                            user.getHost(), user.getUsername());
 //                    UserSessionsLog.getInstance().logout(user.getUsername(), user.getHost(), false);
                 }
 
@@ -160,9 +156,8 @@ public class UserSessions implements IActiveSessions {
             UserON user = usersTable.get(adminID);
 
             if (user != null) {
-                    Logger.getLogger(UserSessions.class.getName()).log(Level.INFO,
-                            "{0} - {1} : administrator logged out",
-                            new Object[]{user.getHost(), user.getUsername()});
+                    LoggerFactory.getLogger(UserSessions.class).info("{} - {} : administrator logged out",
+                            user.getHost(), user.getUsername());
 //                UserSessionsLog.getInstance().logout(user.getUsername(), user.getHost(), true);
             }
         }
@@ -230,8 +225,7 @@ public class UserSessions implements IActiveSessions {
     }
 
     public void loginFailed(String username, String host, boolean admin) {
-        Logger.getLogger(UserSessions.class.getName()).log(Level.INFO,
-                "{0} - {1} : {2} login failed",
+        LoggerFactory.getLogger(UserSessions.class).info("{} - {} : {} login failed",
                 new Object[]{username, host, admin ? "administrator" : "user"});
         //UserSessionsLog.getInstance().loginFailed(username, host, admin);
     }

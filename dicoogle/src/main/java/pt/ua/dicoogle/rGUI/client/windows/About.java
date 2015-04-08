@@ -30,12 +30,7 @@ import java.awt.Toolkit;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.concurrent.Semaphore;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import pt.ua.dicoogle.Main;
 
 /**
  * Simple About Screen for RSI Storage Server
@@ -54,23 +49,11 @@ public class About extends javax.swing.JFrame {
     private boolean returnToMain = true;
     private static About instance = null;
     
-    private static Semaphore sem = new Semaphore(1, true);
-
     public static synchronized About getInstance()
     {
-        try
+        if (instance == null)
         {
-            sem.acquire();
-            if (instance == null)
-            {
-                instance = new About();
-            }
-            sem.release();
-
-        }
-        catch (InterruptedException ex)
-        {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            instance = new About();
         }
         return instance;
     }
