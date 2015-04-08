@@ -46,6 +46,7 @@ import pt.ua.dicoogle.rGUI.interfaces.controllers.IPluginControllerAdmin;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class Services extends javax.swing.JFrame
 {
     private ArrayList<buttonNlabel> listbuttons;

@@ -23,7 +23,8 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.util.*;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
 import org.dcm4che2.data.*;
@@ -32,7 +33,7 @@ import org.dcm4che2.io.StopTagInputHandler;
 
 import pt.ieeta.anonymouspatientdata.core.impl.MatchTable;
 import pt.ua.dicoogle.core.ServerSettings;
-import pt.ua.dicoogle.rGUI.client.UIHelper.Dicom2JPEG;
+import pt.ua.dicoogle.utils.Dicom2JPEG;
 import pt.ua.dicoogle.sdk.utils.DictionaryAccess;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.index.DicomDocument;
@@ -47,7 +48,7 @@ import pt.ua.dicoogle.sdk.utils.TagsStruct;
  *
  * It was refactored in May 2009: Now it load dynamic fields from XML struct
  *
- * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Marco
  */
 public class DicomDocumentNG {
@@ -182,7 +183,7 @@ public class DicomDocumentNG {
             try {
                 value = new String(outputData, "UTF-8");
             } catch (UnsupportedEncodingException ex) {
-                LoggerFactory.getLogger(DicomDocumentNG.class).error(ex.getMessage(), ex);
+                Logger.getLogger(DicomDocumentNG.class.getName()).log(Level.SEVERE, null, ex);
             }
             /*
              * 

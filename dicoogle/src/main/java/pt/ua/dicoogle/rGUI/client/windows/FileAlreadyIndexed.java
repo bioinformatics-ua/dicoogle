@@ -37,6 +37,7 @@ import pt.ua.dicoogle.rGUI.interfaces.controllers.IPendingMessages;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class FileAlreadyIndexed extends javax.swing.JFrame {
 
     private static IPendingMessages pendingMessages;

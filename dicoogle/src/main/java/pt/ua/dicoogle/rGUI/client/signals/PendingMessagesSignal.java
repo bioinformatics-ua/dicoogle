@@ -27,6 +27,7 @@ import pt.ua.dicoogle.rGUI.interfaces.signals.IPendingMessagesSignal;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class PendingMessagesSignal implements IPendingMessagesSignal {
 
     private ServerMessagesManager sMM;

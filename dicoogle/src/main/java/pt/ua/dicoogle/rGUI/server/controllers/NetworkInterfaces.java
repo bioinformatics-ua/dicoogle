@@ -32,6 +32,7 @@ import pt.ua.dicoogle.rGUI.interfaces.controllers.INetworkInterfaces;
  *
  * @author Carlos Ferreira
  */
+@Deprecated
 public class NetworkInterfaces implements INetworkInterfaces
 {
     private ServerSettings settings;

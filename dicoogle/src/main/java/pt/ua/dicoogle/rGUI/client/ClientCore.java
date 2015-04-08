@@ -39,6 +39,8 @@ import pt.ua.dicoogle.rGUI.interfaces.IUser;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
+
 public class ClientCore {
 
     private IUser user = null;

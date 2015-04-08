@@ -26,7 +26,6 @@ package pt.ua.dicoogle.rGUI.client.windows;
 
 import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.Image.*;
 import java.awt.Toolkit;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,6 +42,7 @@ import pt.ua.dicoogle.Main;
  * @author  Marco Pereira
  * @author
  */
+@Deprecated
 public class About extends javax.swing.JFrame {
 
 

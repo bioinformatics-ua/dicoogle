@@ -31,6 +31,7 @@ import javax.swing.filechooser.FileSystemView;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class RemoteFileSystemServer implements IRemoteFileSystem {
 
     private FileSystemView fs = FileSystemView.getFileSystemView();

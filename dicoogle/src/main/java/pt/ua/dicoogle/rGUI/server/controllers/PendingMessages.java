@@ -33,6 +33,7 @@ import pt.ua.dicoogle.rGUI.interfaces.signals.IPendingMessagesSignal;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class PendingMessages implements IPendingMessages {
 
     private IPendingMessagesSignal signal;

@@ -33,7 +33,7 @@ import pt.ua.dicoogle.core.ServerSettings;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
-
+@Deprecated
 public class QRServers implements IQRServers {
 
     private ServerSettings settings = null;

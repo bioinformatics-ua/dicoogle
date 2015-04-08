@@ -33,6 +33,7 @@ import pt.ua.dicoogle.rGUI.interfaces.controllers.IAccessList;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class AccessList implements IAccessList {
     private ServerSettings settings;
 

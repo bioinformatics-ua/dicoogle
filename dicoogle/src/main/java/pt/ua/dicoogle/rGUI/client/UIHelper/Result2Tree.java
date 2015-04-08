@@ -46,6 +46,7 @@ import pt.ua.dicoogle.sdk.datastructs.SearchResult;
  * @author Samuel Campos <samuelcampos@ua.pt>
  * @author Lu??????s A. Basti?????o Silva <bastiao@ua.pt>
  */
+@Deprecated
 public class Result2Tree extends Observable
 {
     private static Result2Tree instance;

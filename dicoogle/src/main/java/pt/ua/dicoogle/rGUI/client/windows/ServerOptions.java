@@ -38,10 +38,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -83,6 +81,7 @@ import pt.ua.dicoogle.sdk.utils.TagValue;
  * @author  Marco Pereira
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class ServerOptions extends javax.swing.JFrame {
 
     private DefaultComboBoxModel m;
@@ -144,7 +143,7 @@ public class ServerOptions extends javax.swing.JFrame {
                     newFile.deleteOnExit();
                 } catch (IOException ex)
                 {
-                    LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+                    Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }*/
 
@@ -169,7 +168,7 @@ public class ServerOptions extends javax.swing.JFrame {
             }
         } catch (RemoteException ex)
         {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         Image image = Toolkit.getDefaultToolkit().getImage(Thread.currentThread().getContextClassLoader().getResource("trayicon.gif"));
@@ -252,7 +251,7 @@ public class ServerOptions extends javax.swing.JFrame {
             jCheckBoxDirectoryWatcher.setSelected(directorySet.isMonitorWatcher());
 
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -288,7 +287,7 @@ public class ServerOptions extends javax.swing.JFrame {
             }
 
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -320,7 +319,7 @@ public class ServerOptions extends javax.swing.JFrame {
             jTextFieldQRResponseTimeout.setText(String.valueOf(queryRetrieve.getQRRspDelay()));
 
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -350,7 +349,7 @@ public class ServerOptions extends javax.swing.JFrame {
             jTextFieldRGUIExtIP.setText(startupserv.getRemoteGUIExtIP());
             
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -375,7 +374,7 @@ public class ServerOptions extends javax.swing.JFrame {
                 }
             }
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -394,7 +393,7 @@ public class ServerOptions extends javax.swing.JFrame {
 
             jCheckBoxIndexAllModalities.setSelected(indexOptions.isIndexAllModalities());
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -418,7 +417,7 @@ public class ServerOptions extends javax.swing.JFrame {
                 }
             }
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -437,7 +436,7 @@ public class ServerOptions extends javax.swing.JFrame {
             jLabelName.setText(SOPClass.getUID(text));
 
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -480,7 +479,7 @@ public class ServerOptions extends javax.swing.JFrame {
             jCheckBox15.setText(TS.get(13).getValue());
 
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -509,7 +508,7 @@ public class ServerOptions extends javax.swing.JFrame {
             jCheckBox14.setSelected(TS[12]);
             jCheckBox15.setSelected(TS[13]);
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -526,7 +525,7 @@ public class ServerOptions extends javax.swing.JFrame {
             }
 
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -540,7 +539,7 @@ public class ServerOptions extends javax.swing.JFrame {
 
             SOPClass.saveLocalTS(UID);
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -553,7 +552,7 @@ public class ServerOptions extends javax.swing.JFrame {
             SOPClass.saveAllTS();
 
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -2223,7 +2222,7 @@ public class ServerOptions extends javax.swing.JFrame {
             SOPClass.setTS(UID, jCheckBox2.isSelected(), 0);
             savelocalTS();
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jCheckBox2ActionPerformed
 
@@ -2234,7 +2233,7 @@ public class ServerOptions extends javax.swing.JFrame {
             SOPClass.setTS(UID, jCheckBox3.isSelected(), 1);
             savelocalTS();
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jCheckBox3ActionPerformed
 
@@ -2245,7 +2244,7 @@ public class ServerOptions extends javax.swing.JFrame {
             SOPClass.setTS(UID, jCheckBox4.isSelected(), 2);
             savelocalTS();
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jCheckBox4ActionPerformed
 
@@ -2256,7 +2255,7 @@ public class ServerOptions extends javax.swing.JFrame {
             SOPClass.setTS(UID, jCheckBox5.isSelected(), 3);
             savelocalTS();
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jCheckBox5ActionPerformed
 
@@ -2267,7 +2266,7 @@ public class ServerOptions extends javax.swing.JFrame {
             SOPClass.setTS(UID, jCheckBox6.isSelected(), 4);
             savelocalTS();
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jCheckBox6ActionPerformed
 
@@ -2278,7 +2277,7 @@ public class ServerOptions extends javax.swing.JFrame {
             SOPClass.setTS(UID, jCheckBox7.isSelected(), 5);
             savelocalTS();
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jCheckBox7ActionPerformed
 
@@ -2289,7 +2288,7 @@ public class ServerOptions extends javax.swing.JFrame {
             SOPClass.setTS(UID, jCheckBox8.isSelected(), 6);
             savelocalTS();
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jCheckBox8ActionPerformed
 
@@ -2300,7 +2299,7 @@ public class ServerOptions extends javax.swing.JFrame {
             SOPClass.setTS(UID, jCheckBox9.isSelected(), 7);
             savelocalTS();
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jCheckBox9ActionPerformed
 
@@ -2311,7 +2310,7 @@ public class ServerOptions extends javax.swing.JFrame {
             SOPClass.setTS(UID, jCheckBox10.isSelected(), 8);
             savelocalTS();
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jCheckBox10ActionPerformed
 
@@ -2322,7 +2321,7 @@ public class ServerOptions extends javax.swing.JFrame {
             SOPClass.setTS(UID, jCheckBox11.isSelected(), 9);
             savelocalTS();
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jCheckBox11ActionPerformed
 
@@ -2333,7 +2332,7 @@ public class ServerOptions extends javax.swing.JFrame {
             SOPClass.setTS(UID, jCheckBox12.isSelected(), 10);
             savelocalTS();
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jCheckBox12ActionPerformed
 
@@ -2344,7 +2343,7 @@ public class ServerOptions extends javax.swing.JFrame {
             SOPClass.setTS(UID, jCheckBox13.isSelected(), 11);
             savelocalTS();
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jCheckBox13ActionPerformed
 
@@ -2355,7 +2354,7 @@ public class ServerOptions extends javax.swing.JFrame {
             SOPClass.setTS(UID, jCheckBox14.isSelected(), 12);
             savelocalTS();
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jCheckBox14ActionPerformed
 
@@ -2366,7 +2365,7 @@ public class ServerOptions extends javax.swing.JFrame {
             SOPClass.setTS(UID, jCheckBox15.isSelected(), 13);
             savelocalTS();
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jCheckBox15ActionPerformed
 
@@ -2410,7 +2409,7 @@ private void jButtonWriteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         pluginController.setSettings(params);
     } catch (RemoteException ex)
     {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
     AdminRefs.getInstance().saveSettings();
 }//GEN-LAST:event_jButtonWriteActionPerformed
@@ -2419,7 +2418,7 @@ private void jCheckBoxIndexThumbnailsActionPerformed(java.awt.event.ActionEvent 
     try {
         directorySet.setSaveThumbnails(jCheckBoxIndexThumbnails.isSelected());
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
 }//GEN-LAST:event_jCheckBoxIndexThumbnailsActionPerformed
 
@@ -2428,7 +2427,7 @@ private void jComboBoxMatrixThumbnailsActionPerformed(java.awt.event.ActionEvent
         try {
             directorySet.setThumbnailsMatrix(jComboBoxMatrixThumbnails.getSelectedItem().toString());
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -2441,7 +2440,7 @@ private void jButtonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
         try {
             accessList.addToAccessList(jTextFieldClientAET.getText());
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     jTextFieldClientAET.setText("");
@@ -2459,7 +2458,7 @@ private void jButtonRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN
             }
         }
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
 }//GEN-LAST:event_jButtonRemoveActionPerformed
 
@@ -2494,7 +2493,7 @@ private void jCheckBoxP2PActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
          */
         startupserv.setP2P(jCheckBoxP2P.isSelected());
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
 }//GEN-LAST:event_jCheckBoxP2PActionPerformed
 
@@ -2505,7 +2504,7 @@ private void jCheckBoxWebServerActionPerformed(java.awt.event.ActionEvent evt) {
          */
         startupserv.setWebServer(jCheckBoxWebServer.isSelected());
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
 
 }//GEN-LAST:event_jCheckBoxWebServerActionPerformed
@@ -2517,7 +2516,7 @@ private void jCheckBoxWebServicesActionPerformed(java.awt.event.ActionEvent evt)
          */
         startupserv.setWebServices(jCheckBoxWebServices.isSelected());
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
 }//GEN-LAST:event_jCheckBoxWebServicesActionPerformed
 
@@ -2525,7 +2524,7 @@ private void jCheckBoxDICOMStorageActionPerformed(java.awt.event.ActionEvent evt
     try {
         startupserv.setDICOMStorage(jCheckBoxDICOMStorage.isSelected());
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
 }//GEN-LAST:event_jCheckBoxDICOMStorageActionPerformed
 
@@ -2533,7 +2532,7 @@ private void jCheckBoxDICOMQRActionPerformed(java.awt.event.ActionEvent evt) {//
     try {
         startupserv.setDICOMQR(jCheckBoxDICOMQR.isSelected());
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
 }//GEN-LAST:event_jCheckBoxDICOMQRActionPerformed
 
@@ -2586,7 +2585,7 @@ private void jButtonTagsModalityAddActionPerformed(java.awt.event.ActionEvent ev
         try {
             indexOptions.addModality(Modality);
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         jTextFieldTagsModality.setText("");
@@ -2609,7 +2608,7 @@ private void jButtonTagsModalityRemoveActionPerformed(java.awt.event.ActionEvent
         try {
             indexOptions.removeModality(modalitySelected);
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }//GEN-LAST:event_jButtonTagsModalityRemoveActionPerformed
@@ -2640,7 +2639,7 @@ private void jButtonTagsAddActionPerformed(java.awt.event.ActionEvent evt) {//GE
         group.add(subGroup);
 
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     } catch (NumberFormatException ex) {
         JOptionPane.showMessageDialog(this, "Group and Subgroup shoud be integers",
                 "Invalid Input!", JOptionPane.ERROR_MESSAGE);
@@ -2694,7 +2693,7 @@ private void jButtonTagsRemoveActionPerformed(java.awt.event.ActionEvent evt) {/
         }
 
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
 
     //JOptionPane.showMessageDialog(this, "Tag deleted sucessfully!");
@@ -2705,9 +2704,9 @@ private void jTextFieldDICOMStoragePortFocusLost(java.awt.event.FocusEvent evt) 
     try {
         startupserv.setDICOMStoragePort(Integer.valueOf(jTextFieldDICOMStoragePort.getText()));
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     } catch (NumberFormatException ex) {
-        //System.out.println("Excep????o");
+        //System.out.println("Excepção");
         JOptionPane.showMessageDialog(null, "Only numbers are accepted!",
                 "Invalid Input", JOptionPane.ERROR_MESSAGE);
 
@@ -2719,7 +2718,7 @@ private void jTextFieldWebServicesPortFocusLost(java.awt.event.FocusEvent evt) {
     try {
         startupserv.setWebServicesPort(Integer.valueOf(jTextFieldWebServicesPort.getText()));
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     } catch (NumberFormatException ex) {
         JOptionPane.showMessageDialog(this, "Only numbers are accepted!",
                 "Invalid Input", JOptionPane.ERROR_MESSAGE);
@@ -2732,7 +2731,7 @@ private void jTextFieldWebPortFocusLost(java.awt.event.FocusEvent evt) {//GEN-FI
     try {
         startupserv.setWebServerPort(Integer.valueOf(jTextFieldWebPort.getText()));
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     } catch (NumberFormatException ex) {
         JOptionPane.showMessageDialog(this, "Only numbers are accepted!",
                 "Invalid Input", JOptionPane.ERROR_MESSAGE);
@@ -2755,7 +2754,7 @@ private void jTextFieldAETitleFocusLost(java.awt.event.FocusEvent evt) {//GEN-FI
     try {
         accessList.setAETitle(jTextFieldAETitle.getText());
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
 }//GEN-LAST:event_jTextFieldAETitleFocusLost
 
@@ -2763,7 +2762,7 @@ private void jTextFieldMaxAssocFocusLost(java.awt.event.FocusEvent evt) {//GEN-F
     try {
         queryRetrieve.setMaxClientAssoc(Integer.valueOf(jTextFieldMaxAssoc.getText()));
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     } catch (NumberFormatException ex) {
         JOptionPane.showMessageDialog(this, "Only numbers are accepted!",
                 "Invalid Input", JOptionPane.ERROR_MESSAGE);
@@ -2776,7 +2775,7 @@ private void jTextFieldMaxPDUReceiveFocusLost(java.awt.event.FocusEvent evt) {//
     try {
         queryRetrieve.setMaxPDULengthReceive(Integer.valueOf(jTextFieldMaxPDUReceive.getText()));
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     } catch (NumberFormatException ex) {
         JOptionPane.showMessageDialog(this, "Only numbers are accepted!",
                 "Invalid Input", JOptionPane.ERROR_MESSAGE);
@@ -2789,7 +2788,7 @@ private void jTextFieldMaxPDUSendFocusLost(java.awt.event.FocusEvent evt) {//GEN
     try {
         queryRetrieve.setMaxPDULengthSend(Integer.valueOf(jTextFieldMaxPDUSend.getText()));
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     } catch (NumberFormatException ex) {
         JOptionPane.showMessageDialog(this, "Only numbers are accepted!",
                 "Invalid Input", JOptionPane.ERROR_MESSAGE);
@@ -2802,7 +2801,7 @@ private void jTextFieldQRTimeoutFocusLost(java.awt.event.FocusEvent evt) {//GEN-
     try {
         queryRetrieve.setQRIdleTimeout(Integer.valueOf(jTextFieldQRTimeout.getText()));
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     } catch (NumberFormatException ex) {
         JOptionPane.showMessageDialog(this, "Only numbers are accepted!",
                 "Invalid Input", JOptionPane.ERROR_MESSAGE);
@@ -2815,7 +2814,7 @@ private void jTextFieldQRAcceptTimeoutFocusLost(java.awt.event.FocusEvent evt) {
     try {
         queryRetrieve.setQRAcceptTimeout(Integer.valueOf(jTextFieldQRAcceptTimeout.getText()));
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     } catch (NumberFormatException ex) {
         JOptionPane.showMessageDialog(this, "Only numbers are accepted!",
                 "Invalid Input", JOptionPane.ERROR_MESSAGE);
@@ -2828,7 +2827,7 @@ private void jTextFieldQRResponseTimeoutFocusLost(java.awt.event.FocusEvent evt)
     try {
         queryRetrieve.setQRRspDelay(Integer.valueOf(jTextFieldQRResponseTimeout.getText()));
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     } catch (NumberFormatException ex) {
         JOptionPane.showMessageDialog(this, "Only numbers are accepted!",
                 "Invalid Input", JOptionPane.ERROR_MESSAGE);
@@ -2841,7 +2840,7 @@ private void jTextFieldQRConnectionTimeoutFocusLost(java.awt.event.FocusEvent ev
     try {
         queryRetrieve.setQRConnectionTimeout(Integer.valueOf(jTextFieldQRConnectionTimeout.getText()));
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     } catch (NumberFormatException ex) {
         JOptionPane.showMessageDialog(this, "Only numbers are accepted!",
                 "Invalid Input", JOptionPane.ERROR_MESSAGE);
@@ -2854,7 +2853,7 @@ private void jTextFieldQRPortFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIR
     try {
         startupserv.setDICOMQRPort(Integer.valueOf(jTextFieldQRPort.getText()));
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     } catch (NumberFormatException ex) {
         JOptionPane.showMessageDialog(this, "Only numbers are accepted!",
                 "Invalid Input", JOptionPane.ERROR_MESSAGE);
@@ -2870,7 +2869,7 @@ private void jCheckBoxAcceptedActionPerformed(java.awt.event.ActionEvent evt) {/
         SOPClass.setAccepted(UID, jCheckBoxAccepted.isSelected());
         savelocalTS();
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
 }//GEN-LAST:event_jCheckBoxAcceptedActionPerformed
 
@@ -2888,7 +2887,7 @@ private void jButtonDefaultActionPerformed(java.awt.event.ActionEvent evt) {//GE
             saveallTS();
         }
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
 }//GEN-LAST:event_jButtonDefaultActionPerformed
 
@@ -2906,7 +2905,7 @@ private void jButtonAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             saveallTS();
         }
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
 }//GEN-LAST:event_jButtonAllActionPerformed
 
@@ -2924,7 +2923,7 @@ private void jButtonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
             saveallTS();
         }
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
 }//GEN-LAST:event_jButtonClearActionPerformed
 
@@ -2945,7 +2944,7 @@ private void jButtonRebuildIndexActionPerformed(java.awt.event.ActionEvent evt) 
         }
 
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
 }//GEN-LAST:event_jButtonRebuildIndexActionPerformed
 
@@ -2960,7 +2959,7 @@ private void jButtonRebuildDicomDirActionPerformed(java.awt.event.ActionEvent ev
         }
 
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
 }//GEN-LAST:event_jButtonRebuildDicomDirActionPerformed
 
@@ -2974,7 +2973,7 @@ private void jButtonStoragePathActionPerformed(java.awt.event.ActionEvent evt) {
                     try {
                         setStoragePath(filePath);
                     } catch (RemoteException ex) {
-                        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+                        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
@@ -2999,7 +2998,7 @@ private void jButtonStoragePathActionPerformed(java.awt.event.ActionEvent evt) {
                 
         }
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
 }//GEN-LAST:event_jButtonStoragePathActionPerformed
 
@@ -3014,7 +3013,7 @@ private void jButtonDiccogleDirActionPerformed(java.awt.event.ActionEvent evt) {
                     setDicoogleDir(filePath);
 
                 } catch (RemoteException ex) {
-                    LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+                    Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -3038,7 +3037,7 @@ private void jButtonDiccogleDirActionPerformed(java.awt.event.ActionEvent evt) {
                 setDicoogleDir(chooser.getSelectedFile().toString());
         }
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
 }//GEN-LAST:event_jButtonDiccogleDirActionPerformed
 
@@ -3046,7 +3045,7 @@ private void jSlider1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     try {
         directorySet.setIndexerEffort(jSlider1.getValue());
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
 }//GEN-LAST:event_jSlider1MouseReleased
 
@@ -3054,7 +3053,7 @@ private void jSlider1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event
     try {
         directorySet.setIndexerEffort(jSlider1.getValue());
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
 }//GEN-LAST:event_jSlider1KeyReleased
 
@@ -3062,7 +3061,7 @@ private void jCheckBoxIndexAllModalitiesActionPerformed(java.awt.event.ActionEve
         try {
             indexOptions.setIndexAllModalities(jCheckBoxIndexAllModalities.isSelected());
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
 }//GEN-LAST:event_jCheckBoxIndexAllModalitiesActionPerformed
 
@@ -3071,7 +3070,7 @@ private void jTextFieldRGUIPortFocusLost(java.awt.event.FocusEvent evt) {//GEN-F
         startupserv.setRemoteGUIPort(Integer.valueOf(jTextFieldRGUIPort.getText()));
         
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     } catch (NumberFormatException ex) {
         JOptionPane.showMessageDialog(this, "Only numbers are accepted!",
                 "Invalid Input", JOptionPane.ERROR_MESSAGE);
@@ -3095,7 +3094,7 @@ private void jCheckBoxPermitAllAETitlesActionPerformed(java.awt.event.ActionEven
             jLabel22.setEnabled(NOT_isSelected);
             
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
 }//GEN-LAST:event_jCheckBoxPermitAllAETitlesActionPerformed
 
@@ -3106,7 +3105,7 @@ private void jCheckBoxIndexZIPFilesActionPerformed(java.awt.event.ActionEvent ev
         directorySet.setIndexZip(jCheckBoxIndexZIPFiles.isSelected());
     }
     catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
 
 
@@ -3118,7 +3117,7 @@ private void jTextFieldRGUIExtIPFocusLost(java.awt.event.FocusEvent evt) {//GEN-
         startupserv.setRemoteGUIExtIP(jTextFieldRGUIExtIP.getText());
 
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
 }//GEN-LAST:event_jTextFieldRGUIExtIPFocusLost
 
@@ -3132,7 +3131,7 @@ private void jCheckBoxDirectoryWatcherActionPerformed(java.awt.event.ActionEvent
       try {
         directorySet.setMonitorWatcher(jCheckBoxDirectoryWatcher.isSelected());
     } catch (RemoteException ex) {
-        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
     }
 }//GEN-LAST:event_jCheckBoxDirectoryWatcherActionPerformed
 
@@ -3140,7 +3139,7 @@ private void jCheckBoxAnonymousActionPerformed(java.awt.event.ActionEvent evt) {
         try {
             directorySet.setIndexAnonymous(jCheckBoxAnonymous.isSelected());
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
     
 }//GEN-LAST:event_jCheckBoxAnonymousActionPerformed
@@ -3152,7 +3151,7 @@ private void jCheckBoxAnonymousActionPerformed(java.awt.event.ActionEvent evt) {
         try {
             indexOptions.removeDictionary(value);
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
         jListDics.remove(jListDics.getSelectedIndex());
         
@@ -3222,7 +3221,7 @@ private void jCheckBoxAnonymousActionPerformed(java.awt.event.ActionEvent evt) {
         try {
             indexOptions.addDictionary(value);
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         lmDic.addElement(value);
@@ -3234,7 +3233,7 @@ private void jCheckBoxAnonymousActionPerformed(java.awt.event.ActionEvent evt) {
         try {
             directorySet.setGZipStorage(jCheckBoxGZip.isSelected());
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }//GEN-LAST:event_jCheckBoxGZipActionPerformed

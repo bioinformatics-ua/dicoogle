@@ -20,7 +20,7 @@ package pt.ua.dicoogle.rGUI.server;
 
 import java.rmi.NoSuchObjectException;
 import java.rmi.NoSuchObjectException;
-import pt.ua.dicoogle.rGUI.server.users.UserSessions;
+import pt.ua.dicoogle.server.users.UserSessions;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.slf4j.Logger;
@@ -43,13 +43,14 @@ import pt.ua.dicoogle.rGUI.interfaces.controllers.ISearch;
 import pt.ua.dicoogle.rGUI.server.controllers.DicomSend;
 import pt.ua.dicoogle.rGUI.server.controllers.PluginController4user;
 import pt.ua.dicoogle.rGUI.server.controllers.Search;
-import pt.ua.dicoogle.rGUI.server.users.User;
-import pt.ua.dicoogle.rGUI.server.users.UsersXML;
+import pt.ua.dicoogle.server.users.User;
+import pt.ua.dicoogle.server.users.UsersXML;
 
 /**
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class UserFeatures implements IUser {
     private UserSessions userSessions;
     private User user;

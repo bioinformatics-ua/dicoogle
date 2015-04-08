@@ -26,6 +26,7 @@ import pt.ua.dicoogle.rGUI.interfaces.signals.ITaskListSignal;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
+@Deprecated
 public class TaskListSignal implements ITaskListSignal
 {
     TaskList taskListWindow = null;

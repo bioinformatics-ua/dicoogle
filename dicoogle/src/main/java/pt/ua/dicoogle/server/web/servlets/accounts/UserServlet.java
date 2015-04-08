@@ -27,9 +27,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import pt.ua.dicoogle.rGUI.server.users.HashService;
-import pt.ua.dicoogle.rGUI.server.users.User;
-import pt.ua.dicoogle.rGUI.server.users.UsersStruct;
+import pt.ua.dicoogle.server.users.HashService;
+import pt.ua.dicoogle.server.users.User;
+import pt.ua.dicoogle.server.users.UsersStruct;
 import pt.ua.dicoogle.server.web.utils.ResponseUtil;
 
 /**

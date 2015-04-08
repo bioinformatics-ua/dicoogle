@@ -17,7 +17,9 @@
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package pt.ua.dicoogle.rGUI.server.users;
+package pt.ua.dicoogle.server.users;
+
+import java.util.Objects;
 
 /**
  * Class that saves information about one user
@@ -25,14 +27,15 @@ package pt.ua.dicoogle.rGUI.server.users;
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
 public class User {
-    private String username;
-    private String Hash;        //stores the Hash of this user (username + admin + passwordHash)
-    private boolean admin;
+
+    private final String username;
+    private String hash;        //stores the Hash of this user (username + admin + passwordHash)
+    private final boolean admin;
 
     public User(String username, String Hash, boolean admin){
         this.username = username;
         this.admin = admin;
-        this.Hash = Hash;
+        this.hash = Hash;
     }
 
     public String getUsername(){
@@ -46,24 +49,24 @@ public class User {
     public boolean verifyPassword(String passwordHash){
         String tempHash = HashService.getSHA1Hash(username + admin + passwordHash);
 
-        return this.Hash.equals(tempHash);
+        return this.hash.equals(tempHash);
     }
 
     public boolean changePassword(String oldPassHash, String newPassHash){
         String tempHash = HashService.getSHA1Hash(username + admin + oldPassHash);
 
-        if(!Hash.equals(tempHash))
+        if(!hash.equals(tempHash))
             return false;
 
 
         tempHash = HashService.getSHA1Hash(username + admin + newPassHash);
 
-        Hash = tempHash;
+        hash = tempHash;
         return true;
     }
 
     protected String getPasswordHash(){
-        return Hash;
+        return hash;
     }
 
     public boolean resetPassword(String newPassHash){
@@ -72,7 +75,7 @@ public class User {
 
         String tempHash = HashService.getSHA1Hash(username + admin + newPassHash);
 
-        Hash = tempHash;
+        hash = tempHash;
 
         return true;
     }
@@ -89,11 +92,25 @@ public class User {
 
         User tmp = (User) other;
 
-        if (username.equals(tmp.username) && Hash.equals(tmp.Hash)
+        if (username.equals(tmp.username) && hash.equals(tmp.hash)
                 && admin == tmp.admin) {
             return true;
         }
 
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.username);
+        hash = 67 * hash + Objects.hashCode(this.hash);
+        hash = 67 * hash + (this.admin ? 1 : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" + username + (admin ? ", admin" : "") + '}';
     }
 }

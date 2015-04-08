@@ -29,10 +29,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -52,6 +50,7 @@ import pt.ua.dicoogle.sdk.utils.TagValue;
  * @author Samuel da Costa Campos <samuelcampos@ua.pt>
  *
  */
+@Deprecated
 public class ExportData extends javax.swing.JFrame implements Observer {
 
     private ISearch search;
@@ -88,7 +87,7 @@ public class ExportData extends javax.swing.JFrame implements Observer {
             fillLists();
 
         } catch (RemoteException ex) {
-            LoggerFactory.getLogger(ExportData.class).error(ex.getMessage(), ex);
+            Logger.getLogger(ExportData.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -433,7 +432,7 @@ public class ExportData extends javax.swing.JFrame implements Observer {
                 jButtonCancel.setEnabled(false);
                 
             } catch (Exception ex) {
-                LoggerFactory.getLogger(ExportData.class).error(ex.getMessage(), ex);
+                Logger.getLogger(ExportData.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }//GEN-LAST:event_jButtonExportActionPerformed
@@ -540,10 +539,10 @@ public class ExportData extends javax.swing.JFrame implements Observer {
     public void update(Observable o, Object arg) {
         if (o==null)
         {
-            LoggerFactory.getLogger(ExportData.class).info("Update, but it is null");
+            Logger.getLogger(ExportData.class.getName()).log(Level.SEVERE, "Update, but it is null");
             return;
         }
-        LoggerFactory.getLogger(ExportData.class).trace("Update");
+        Logger.getLogger(ExportData.class.getName()).log(Level.SEVERE, "Update");
         Boolean finish = (Boolean) arg;
         
         class AuxThread extends Thread

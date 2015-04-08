@@ -28,6 +28,7 @@ import java.util.List;
  *
  * @author Carlos Ferreira
  */
+@Deprecated
 public interface IPluginControllerAdmin extends Remote
 {
     public List<String> getPluginNames() throws RemoteException;

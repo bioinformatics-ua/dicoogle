@@ -27,6 +27,7 @@ import pt.ua.dicoogle.core.MoveDestination;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public interface IDicomSend extends Remote {
 
 

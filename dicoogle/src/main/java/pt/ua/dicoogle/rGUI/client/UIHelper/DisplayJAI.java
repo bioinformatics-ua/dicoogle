@@ -75,7 +75,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import javax.swing.JPanel;
 
-
+@Deprecated
 public class DisplayJAI extends JPanel {
 
     /** image to display */

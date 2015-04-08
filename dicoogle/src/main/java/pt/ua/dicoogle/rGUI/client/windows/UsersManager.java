@@ -38,12 +38,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import pt.ua.dicoogle.rGUI.client.AdminRefs;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IUsersManager;
-import pt.ua.dicoogle.rGUI.server.users.HashService;
+import pt.ua.dicoogle.server.users.HashService;
 
 /**
  *
  * @author samuelcampos
  */
+@Deprecated
 public class UsersManager extends javax.swing.JFrame {
 
     private static Semaphore sem = new Semaphore(1, true);

@@ -25,10 +25,8 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.rGUI.server.controllers.Search;
@@ -41,6 +39,7 @@ import pt.ua.dicoogle.sdk.observables.ListObservableSearch;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class SearchHelper implements Observer
 {
 

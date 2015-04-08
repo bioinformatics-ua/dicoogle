@@ -27,6 +27,7 @@ import java.util.ArrayList;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public interface IUsersManager extends Remote {
 
     public boolean getEncryptUsersFile() throws RemoteException;

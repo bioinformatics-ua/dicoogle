@@ -32,6 +32,7 @@ import pt.ua.dicoogle.rGUI.interfaces.controllers.ISearch;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class UserRefs {
 
     private ISearch search;

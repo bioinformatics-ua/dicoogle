@@ -30,16 +30,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import pt.ua.dicoogle.rGUI.interfaces.controllers.ILogs;
 import pt.ua.dicoogle.core.LogDICOM;
 import pt.ua.dicoogle.core.LogLine;
 import pt.ua.dicoogle.rGUI.interfaces.signals.ILogsSignal;
-import pt.ua.dicoogle.rGUI.server.users.UserSessionsLog;
+import pt.ua.dicoogle.server.users.UserSessionsLog;
 import pt.ua.dicoogle.server.FileWatcher;
 import pt.ua.dicoogle.sdk.Utils.Platform;
 
@@ -48,7 +46,7 @@ import pt.ua.dicoogle.sdk.Utils.Platform;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
-
+@Deprecated
 public class Logs implements ILogs {
     // Server Log (activities in server)
 
@@ -73,7 +71,7 @@ public class Logs implements ILogs {
             sem.release();
 
         } catch (InterruptedException ex) {
-            LoggerFactory.getLogger(Logs.class).error(ex.getMessage(), ex);
+            Logger.getLogger(Logs.class.getName()).log(Level.SEVERE, null, ex);
         }
         return instance;
     }
@@ -121,7 +119,7 @@ public class Logs implements ILogs {
                 signalBack.sendLogSignal(2);
             }
         } catch (RemoteException ex) {
-            //LoggerFactory.getLogger(Logs.class).error(ex.getMessage(), ex);
+            //Logger.getLogger(Logs.class.getName()).log(Level.SEVERE, null, ex);
             //DebugManager.getInstance().debug("Problem sending signal to log: 4");
         }
         
@@ -144,7 +142,7 @@ public class Logs implements ILogs {
                     signalBack.sendLogSignal(1);
             }
         } catch (IOException ex) {
-            //LoggerFactory.getLogger(Logs.class).error(ex.getMessage(), ex);
+            //Logger.getLogger(Logs.class.getName()).log(Level.SEVERE, null, ex);
             //DebugManager.getInstance().debug("Problem sending signal to log: 1");
         }
     }
@@ -156,7 +154,7 @@ public class Logs implements ILogs {
             if(signalBack != null)
                 signalBack.sendLogSignal(0);
         } catch (RemoteException ex) {
-            //LoggerFactory.getLogger(Logs.class).error(ex.getMessage(), ex);
+            //Logger.getLogger(Logs.class.getName()).log(Level.SEVERE, null, ex);
             //DebugManager.getInstance().debug("Problem sending signal to log: 2");
         }
     }
@@ -184,7 +182,7 @@ public class Logs implements ILogs {
             if(signalBack != null)
                 signalBack.sendLogSignal(2);
         } catch (RemoteException ex) {
-            //LoggerFactory.getLogger(Logs.class).error(ex.getMessage(), ex);
+            //Logger.getLogger(Logs.class.getName()).log(Level.SEVERE, null, ex);
             //DebugManager.getInstance().debug("Problem sending signal to log: 3");
         }
     }

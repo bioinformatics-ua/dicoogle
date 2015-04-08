@@ -26,6 +26,7 @@ import java.rmi.RemoteException;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public interface ILogsSignal extends Remote {
 
     /**

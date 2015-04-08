@@ -18,10 +18,10 @@
  */
 package pt.ua.dicoogle.server.web.auth;
 
-import pt.ua.dicoogle.rGUI.server.users.User;
-import pt.ua.dicoogle.rGUI.server.users.UsersStruct;
-import pt.ua.dicoogle.rGUI.server.users.HashService;
-import pt.ua.dicoogle.rGUI.server.users.UsersXML;
+import pt.ua.dicoogle.server.users.User;
+import pt.ua.dicoogle.server.users.UsersStruct;
+import pt.ua.dicoogle.server.users.HashService;
+import pt.ua.dicoogle.server.users.UsersXML;
 
 /**
  * Provides login routines for users.

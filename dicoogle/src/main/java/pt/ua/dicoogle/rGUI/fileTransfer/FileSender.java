@@ -38,6 +38,7 @@ import javax.net.ssl.SSLServerSocketFactory;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class FileSender extends Thread {
     private File file;
     private InetAddress client;

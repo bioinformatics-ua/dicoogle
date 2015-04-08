@@ -26,6 +26,7 @@ import java.rmi.RemoteException;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public interface IStartupServ extends Remote {
 
     public void setP2P(boolean value) throws RemoteException;

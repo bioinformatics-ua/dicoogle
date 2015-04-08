@@ -30,6 +30,7 @@ import pt.ua.dicoogle.rGUI.interfaces.controllers.IPluginControllerAdmin;
  *
  * @author Carlos Ferreira
  */
+@Deprecated
 public class PluginController4Admin implements IPluginControllerAdmin
 {
     private static PluginController4Admin instance = null;

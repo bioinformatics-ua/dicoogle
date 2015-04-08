@@ -24,6 +24,7 @@
  */
 package pt.ua.dicoogle.rGUI.client.windows;
 
+import pt.ua.dicoogle.utils.Dicom2JPEG;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -86,6 +87,7 @@ import pt.ua.dicoogle.sdk.task.Task;
  * @author Carlos Ferreira <c.ferreira@ua.pt>
  * @author Frederico Valente
  */
+@Deprecated
 public class MainWindow extends javax.swing.JFrame {
 
     private Result2Tree searchTree;

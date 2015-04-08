@@ -19,11 +19,9 @@
 package pt.ua.dicoogle.core;
 
 import java.util.concurrent.Semaphore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import pt.ua.dicoogle.rGUI.server.users.HashService;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import pt.ua.dicoogle.server.users.HashService;
 
 /**
  *

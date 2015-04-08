@@ -45,6 +45,7 @@ import pt.ua.dicoogle.rGUI.interfaces.controllers.ISearch;
  *
  * @author  filipe
  */
+@Deprecated
 public class SearchTips extends javax.swing.JFrame {
     private MainWindow aThis = MainWindow.getInstance();
     private JTextField query = null;

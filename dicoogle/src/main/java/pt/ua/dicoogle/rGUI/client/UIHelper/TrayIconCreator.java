@@ -45,6 +45,7 @@ import pt.ua.dicoogle.rGUI.client.windows.ServerOptions;
 /**
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class TrayIconCreator {
 
     private static TrayIconCreator instance = null;

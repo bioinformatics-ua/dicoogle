@@ -50,6 +50,7 @@ import pt.ua.dicoogle.rGUI.interfaces.controllers.IUsersManager;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class AdminRefs {
 
     private ILogs logs;
