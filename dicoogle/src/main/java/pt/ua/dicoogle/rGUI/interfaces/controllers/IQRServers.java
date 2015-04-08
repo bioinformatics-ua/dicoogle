@@ -28,6 +28,7 @@ import java.rmi.RemoteException;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public interface IQRServers extends Remote {
 
     /**

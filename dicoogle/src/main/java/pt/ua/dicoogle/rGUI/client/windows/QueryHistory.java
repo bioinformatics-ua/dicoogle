@@ -49,6 +49,7 @@ import pt.ua.dicoogle.core.QueryHistorySupport;
  *
  * @author samuelcampos
  */
+@Deprecated
 public class QueryHistory extends javax.swing.JFrame implements Observer {
     private QueryHistorySupport QHS = QueryHistorySupport.getInstance();
     private JTextField queryField = null;

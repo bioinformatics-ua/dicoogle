@@ -32,6 +32,7 @@ import pt.ua.dicoogle.rGUI.interfaces.controllers.IPluginControllerUser;
  *
  * @author Carlos Ferreira
  */
+@Deprecated
 public class PluginController4user implements IPluginControllerUser
 {
     private static PluginController4user instance = null;

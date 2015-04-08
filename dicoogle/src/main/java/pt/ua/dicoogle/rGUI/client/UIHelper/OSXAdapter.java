@@ -78,7 +78,7 @@ package pt.ua.dicoogle.rGUI.client.UIHelper;
 import java.lang.reflect.*;
 import java.util.HashMap;
 
-
+@Deprecated
 public class OSXAdapter implements InvocationHandler {
 
     protected Object targetObject;

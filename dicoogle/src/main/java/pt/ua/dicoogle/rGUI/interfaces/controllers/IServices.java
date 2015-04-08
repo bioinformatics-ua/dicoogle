@@ -37,6 +37,7 @@ import java.rmi.RemoteException;
  * entre o servidor e o cliente.
  *
  */
+@Deprecated
 public interface IServices extends Remote {
 
     boolean stopAllServices() throws RemoteException;

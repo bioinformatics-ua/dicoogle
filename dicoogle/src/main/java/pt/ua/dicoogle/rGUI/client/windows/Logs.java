@@ -49,6 +49,7 @@ import pt.ua.dicoogle.rGUI.interfaces.signals.ILogsSignal;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class Logs extends JFrame {
 
     private static Logs instance = null;

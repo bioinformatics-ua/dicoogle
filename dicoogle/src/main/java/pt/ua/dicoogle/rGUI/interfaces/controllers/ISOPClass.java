@@ -28,6 +28,7 @@ import java.util.ArrayList;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public interface ISOPClass extends Remote {
 
     public ArrayList<SimpleEntry<String, String>> getTransferSyntax() throws RemoteException;

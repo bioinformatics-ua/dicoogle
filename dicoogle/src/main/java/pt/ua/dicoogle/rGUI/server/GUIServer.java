@@ -33,13 +33,14 @@ import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.rGUI.MultihomeSslRMIClientSocketFactory;
 
 import pt.ua.dicoogle.rGUI.interfaces.ILogin;
-import pt.ua.dicoogle.rGUI.utils.KeysManager;
+import pt.ua.dicoogle.utils.KeysManager;
 
 /**
  * This class creates the GUI Server over RMI
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class GUIServer {
 
     private int port;

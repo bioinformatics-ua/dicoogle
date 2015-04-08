@@ -34,6 +34,7 @@ import org.dom4j.io.SAXReader;
  *
  * @author Carlos Ferreira
  */
+@Deprecated
 public class PanelBuiltFromXML extends JPanel
 {
     private List<ComponentFromXML> components;

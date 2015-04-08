@@ -38,12 +38,13 @@ import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import pt.ua.dicoogle.rGUI.client.AdminRefs;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IActiveSessions;
-import pt.ua.dicoogle.rGUI.server.users.UserON;
+import pt.ua.dicoogle.server.users.UserON;
 
 /**
  *
  * @author samuelcampos
  */
+@Deprecated
 public class ActiveSessions extends javax.swing.JFrame {
     private HashMap<Integer, UserON> usersTable;
     private IActiveSessions activeSessions;

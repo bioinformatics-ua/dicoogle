@@ -27,6 +27,7 @@ import java.util.HashMap;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public interface IQueryRetrieve extends Remote {
 
     public int getMaxClientAssoc() throws RemoteException;

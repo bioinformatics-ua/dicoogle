@@ -36,6 +36,7 @@ import javax.swing.text.MaskFormatter;
  * @author R.J. Lorimer
  * @author Luis Silva
  */
+@Deprecated
 public class AllowBlankMaskFormatter extends MaskFormatter {
 
 	private boolean allowBlankField = true;

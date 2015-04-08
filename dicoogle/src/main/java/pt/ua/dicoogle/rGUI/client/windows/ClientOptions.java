@@ -35,12 +35,13 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import pt.ua.dicoogle.core.ClientSettings;
 import pt.ua.dicoogle.core.XMLClientSupport;
-import pt.ua.dicoogle.rGUI.server.users.HashService;
+import pt.ua.dicoogle.server.users.HashService;
 
 /**
  *
  * @author samuelcampos
  */
+@Deprecated
 public class ClientOptions extends javax.swing.JFrame {
     private ClientSettings settings;
 

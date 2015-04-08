@@ -27,7 +27,6 @@ package pt.ua.dicoogle.rGUI.client.windows;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import pt.ua.dicoogle.*;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.HashMap;
@@ -43,6 +42,7 @@ import pt.ua.dicoogle.rGUI.interfaces.controllers.ISearch;
  *
  * @author  filipe
  */
+@Deprecated
 public class SearchTips extends javax.swing.JFrame {
     private MainWindow aThis = MainWindow.getInstance();
     private JTextField query = null;

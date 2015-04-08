@@ -37,13 +37,14 @@ import pt.ua.dicoogle.rGUI.client.ConnectServer;
 
 import pt.ua.dicoogle.Main;
 import pt.ua.dicoogle.core.ClientSettings;
-import pt.ua.dicoogle.rGUI.server.users.HashService;
+import pt.ua.dicoogle.server.users.HashService;
 
 
 /**
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class ConnectWindow extends javax.swing.JFrame {
 
     private static ConnectWindow instance;

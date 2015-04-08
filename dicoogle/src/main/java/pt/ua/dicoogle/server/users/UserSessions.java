@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.rGUI.server.users;
+package pt.ua.dicoogle.server.users;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
@@ -96,7 +96,9 @@ public class UserSessions implements IActiveSessions {
         usersTable.put(ID, new UserON(ID, user.getUsername(), host));
 
         //write the log
-        UserSessionsLog.getInstance().login(user.getUsername(), host, admin);
+        Logger.getLogger(UserSessions.class.getName()).log(Level.INFO, "{0} - {1} : {2} logged in",
+                new Object[]{host, user.getUsername(), admin ? "administrator" : "user"});
+//        UserSessionsLog.getInstance().login(user.getUsername(), host, admin);
 
         //increase and mantain ID as a positive integer
         ID = (ID + 1) & Integer.MAX_VALUE;
@@ -138,7 +140,10 @@ public class UserSessions implements IActiveSessions {
                 UserON user = usersTable.remove(id);
 
                 if (user != null) {
-                    UserSessionsLog.getInstance().logout(user.getUsername(), user.getHost(), false);
+                    Logger.getLogger(UserSessions.class.getName()).log(Level.INFO,
+                            "{0} - {1} : user logged out",
+                            new Object[]{user.getHost(), user.getUsername()});
+//                    UserSessionsLog.getInstance().logout(user.getUsername(), user.getHost(), false);
                 }
 
                 return true;
@@ -153,7 +158,10 @@ public class UserSessions implements IActiveSessions {
             UserON user = usersTable.get(adminID);
 
             if (user != null) {
-                UserSessionsLog.getInstance().logout(user.getUsername(), user.getHost(), true);
+                    Logger.getLogger(UserSessions.class.getName()).log(Level.INFO,
+                            "{0} - {1} : administrator logged out",
+                            new Object[]{user.getHost(), user.getUsername()});
+//                UserSessionsLog.getInstance().logout(user.getUsername(), user.getHost(), true);
             }
         }
         adminID = -1;
@@ -200,7 +208,6 @@ public class UserSessions implements IActiveSessions {
         return adminID;
     }
 
-
     /*
      * Logout All Users
      */
@@ -221,6 +228,9 @@ public class UserSessions implements IActiveSessions {
     }
 
     public void loginFailed(String username, String host, boolean admin) {
-        UserSessionsLog.getInstance().loginFailed(username, host, admin);
+        Logger.getLogger(UserSessions.class.getName()).log(Level.INFO,
+                "{0} - {1} : {2} login failed",
+                new Object[]{username, host, admin ? "administrator" : "user"});
+        //UserSessionsLog.getInstance().loginFailed(username, host, admin);
     }
 }

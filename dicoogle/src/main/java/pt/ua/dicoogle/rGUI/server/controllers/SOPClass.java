@@ -35,6 +35,7 @@ import pt.ua.dicoogle.server.TransfersStorage;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class SOPClass implements ISOPClass {
 
     private SOPList list;

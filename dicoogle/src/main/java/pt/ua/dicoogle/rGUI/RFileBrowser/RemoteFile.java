@@ -27,6 +27,7 @@ import java.io.Serializable;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class RemoteFile implements Serializable {
     static final long serialVersionUID = 1L;
 

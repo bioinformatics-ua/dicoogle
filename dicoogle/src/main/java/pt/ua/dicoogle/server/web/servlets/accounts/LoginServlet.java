@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONObject;
 
-import pt.ua.dicoogle.server.web.auth.Authentication;
 import pt.ua.dicoogle.server.web.auth.LoggedIn;
 import pt.ua.dicoogle.server.web.auth.Session;
 

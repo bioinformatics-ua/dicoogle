@@ -26,7 +26,6 @@ package pt.ua.dicoogle.rGUI.client.windows;
 
 import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.Image.*;
 import java.awt.Toolkit;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,13 +33,13 @@ import java.io.InputStreamReader;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import pt.ua.dicoogle.Main;
 
 /**
  * Simple About Screen for RSI Storage Server
  * @author  Marco Pereira
  * @author
  */
+@Deprecated
 public class About extends javax.swing.JFrame {
 
 

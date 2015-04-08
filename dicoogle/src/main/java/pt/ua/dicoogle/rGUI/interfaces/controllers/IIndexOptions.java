@@ -30,6 +30,7 @@ import pt.ua.dicoogle.sdk.utils.TagValue;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public interface IIndexOptions extends Remote {
 
     public HashMap<String, ArrayList<TagValue>> getDIMFields() throws RemoteException;

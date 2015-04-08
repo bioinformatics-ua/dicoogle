@@ -26,6 +26,7 @@ package pt.ua.dicoogle.rGUI.RFileBrowser;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public abstract class FileAction{
     
     /**

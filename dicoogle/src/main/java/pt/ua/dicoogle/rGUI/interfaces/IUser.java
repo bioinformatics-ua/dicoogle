@@ -30,6 +30,7 @@ import pt.ua.dicoogle.rGUI.interfaces.controllers.ISearch;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public interface IUser extends Remote {
 
     public String getUsername() throws RemoteException;

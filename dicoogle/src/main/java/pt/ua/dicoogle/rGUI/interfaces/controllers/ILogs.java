@@ -29,6 +29,7 @@ import pt.ua.dicoogle.core.LogLine;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public interface ILogs extends Remote{
 
     public void RegisterSignalBack(ILogsSignal signalBack) throws RemoteException;

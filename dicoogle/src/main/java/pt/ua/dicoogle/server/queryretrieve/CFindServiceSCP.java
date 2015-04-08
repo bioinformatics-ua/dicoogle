@@ -45,8 +45,6 @@ import pt.ua.dicoogle.core.LogXML;
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.rGUI.server.controllers.Logs;
 
-
-
 import pt.ua.dicoogle.server.DicomNetwork;
 
 /**
@@ -72,7 +70,7 @@ public class CFindServiceSCP extends CFindService {
         this.luke = luke;        
     }
     
-    /*** CFIND */
+    /* CFIND */
     @Override
     protected synchronized DimseRSP doCFind(Association as, int pcid,
             DicomObject cmd, DicomObject keys, DicomObject rsp)

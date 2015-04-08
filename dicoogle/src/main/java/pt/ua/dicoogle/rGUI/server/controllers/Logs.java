@@ -37,7 +37,7 @@ import pt.ua.dicoogle.rGUI.interfaces.controllers.ILogs;
 import pt.ua.dicoogle.core.LogDICOM;
 import pt.ua.dicoogle.core.LogLine;
 import pt.ua.dicoogle.rGUI.interfaces.signals.ILogsSignal;
-import pt.ua.dicoogle.rGUI.server.users.UserSessionsLog;
+import pt.ua.dicoogle.server.users.UserSessionsLog;
 import pt.ua.dicoogle.server.FileWatcher;
 import pt.ua.dicoogle.sdk.Utils.Platform;
 
@@ -46,7 +46,7 @@ import pt.ua.dicoogle.sdk.Utils.Platform;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
-
+@Deprecated
 public class Logs implements ILogs {
     // Server Log (activities in server)
 

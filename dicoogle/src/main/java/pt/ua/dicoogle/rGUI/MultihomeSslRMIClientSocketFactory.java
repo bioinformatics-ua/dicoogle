@@ -44,6 +44,7 @@ import javax.rmi.ssl.SslRMIClientSocketFactory;
  * 
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class MultihomeSslRMIClientSocketFactory extends SslRMIClientSocketFactory
         implements RMIClientSocketFactory, Serializable {
     private static final long serialVersionUID = 11L;

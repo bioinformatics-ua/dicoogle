@@ -35,6 +35,7 @@ import pt.ua.dicoogle.rGUI.RFileBrowser.RemoteFile;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class FileReceiver extends Thread {
     private RemoteFile file;
     private InetAddress serverAddr;
