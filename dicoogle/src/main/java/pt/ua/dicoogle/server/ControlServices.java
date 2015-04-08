@@ -16,12 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.rGUI.server.controllers;
+package pt.ua.dicoogle.server;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 import pt.ua.dicoogle.server.RSIStorage;
 import pt.ua.dicoogle.server.queryretrieve.QueryRetrieve;
 
@@ -29,6 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IServices;
+import pt.ua.dicoogle.rGUI.server.controllers.Logs;
 import pt.ua.dicoogle.server.SOPList;
 import pt.ua.dicoogle.server.web.DicoogleWeb;
 import pt.ua.dicoogle.taskManager.TaskManager;

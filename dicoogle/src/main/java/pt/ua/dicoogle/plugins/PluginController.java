@@ -39,7 +39,7 @@ import org.apache.logging.log4j.Logger;
 import org.restlet.resource.ServerResource;
 
 import pt.ua.dicoogle.core.ServerSettings;
-import pt.ua.dicoogle.rGUI.server.controllers.ControlServices;
+import pt.ua.dicoogle.server.ControlServices;
 import pt.ua.dicoogle.sdk.GraphicalInterface;
 import pt.ua.dicoogle.sdk.IndexerInterface;
 import pt.ua.dicoogle.sdk.JettyPluginInterface;

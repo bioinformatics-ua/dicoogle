@@ -287,7 +287,7 @@ public class Main
         PluginController PController = PluginController.getInstance();
 
         // Start the Inicial Services of Dicoogle
-        pt.ua.dicoogle.rGUI.server.controllers.ControlServices.getInstance();
+        pt.ua.dicoogle.server.ControlServices.getInstance();
 
 
 

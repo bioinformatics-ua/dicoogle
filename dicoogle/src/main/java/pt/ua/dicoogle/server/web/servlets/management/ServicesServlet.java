@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import pt.ua.dicoogle.plugins.PluginController;
-import pt.ua.dicoogle.rGUI.server.controllers.ControlServices;
+import pt.ua.dicoogle.server.ControlServices;
 import pt.ua.dicoogle.server.web.utils.ResponseUtil;
 
 /**

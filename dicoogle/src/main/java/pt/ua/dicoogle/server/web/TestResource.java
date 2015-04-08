@@ -19,6 +19,7 @@
 
 package pt.ua.dicoogle.server.web;
 
+import org.restlet.data.Status;
 import org.restlet.resource.Delete;
 import org.restlet.resource.Get;
 import org.restlet.resource.Post;
@@ -34,12 +35,14 @@ public class TestResource extends ServerResource {
 
     @Get("txt")
     public String testGet() {
-        throw new ResourceException(204);
-//                return "extended GET!";
+        return "extended GET!";
     }
 
     @Post("txt:txt")
     public String testPost(String something) {
+        if (something == null || something.isEmpty()) {
+            throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
+        }
         return "extended POST: " + something;
     }
 

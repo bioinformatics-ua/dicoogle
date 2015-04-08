@@ -18,7 +18,6 @@
  */
 package pt.ua.dicoogle.webservices;
 
-import deletion.RestCountQueryResults;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,14 +39,16 @@ import pt.ua.dicoogle.server.web.TestResource;
  */
 public class WebservicePluginApplication extends Application {
 
-    //static Component component = null;
+    static Component component = null;
     static ArrayList<ServerResource> pluginServices = new ArrayList<>();
 
-    /*
+    private Router internalRouter;
+    
     public static void startWebservice(){
         try{
             
-            System.err.println("Adding Webservice in port:"+ServerSettings.getInstance().getWeb().getServicePort());
+            Logger.getLogger(WebservicePluginApplication.class.getName()).log(Level.INFO,
+                    "Adding Webservice in port {0}", ServerSettings.getInstance().getWeb().getServicePort());
             
             component = new Component();
             component.getServers().add(Protocol.HTTP,ServerSettings.getInstance().getWeb().getServicePort());
@@ -75,7 +76,6 @@ public class WebservicePluginApplication extends Application {
             }
         }
     }
-*/
     
     /**
      * Creates a root Restlet that will receive all incoming calls.
@@ -85,33 +85,37 @@ public class WebservicePluginApplication extends Application {
     public synchronized Restlet createInboundRoot() {
         // Create a router Restlet that routes each call to a
         // new instance of our resources
-        Router router = new Router(getContext());
-
+        this.internalRouter = new Router(getContext());
         // Defines routing to resources
-        router.attach("/test", TestResource.class);
-        router.attach("/dim", RestDimResource.class);//search resource
-        router.attach("/file", RestFileResource.class);//file download resource
-        router.attach("/dump", RestDumpResource.class);//dump resource
-        router.attach("/tags", RestTagsResource.class);//list of avalilable tags resource
+        internalRouter.attachDefault(TestResource.class);
+        internalRouter.attach("/dim", RestDimResource.class);//search resource
+        internalRouter.attach("/file", RestFileResource.class);//file download resource
+        internalRouter.attach("/dump", RestDumpResource.class);//dump resource
+        internalRouter.attach("/tags", RestTagsResource.class);//list of avalilable tags resource
         //router.attach("/image", RestImageResource.class);//jpg image resource
         //router.attach("/enumField", RestEnumField.class);
         //router.attach("/countResuls", RestCountQueryResults.class);
-        router.attach("/wado", RestWADOResource.class);
-        router.attach("/img", RestDcmImageResource.class);
-        router.attach("/examTime", ExamTimeResource.class);
+        internalRouter.attach("/wado", RestWADOResource.class);
+        internalRouter.attach("/img", RestDcmImageResource.class);
+        internalRouter.attach("/examTime", ExamTimeResource.class);
         
         //Advanced Dicoogle Features
-        router.attach("/doIndex", ForceIndexing.class);
+        internalRouter.attach("/doIndex", ForceIndexing.class);
         
+        loadPlugins();
         
+        Logger.getLogger(WebservicePluginApplication.class.getName()).info(internalRouter.getRoutes().toString());
+        return internalRouter;
+    }
+    
+    protected void loadPlugins() {
         //lets add plugin registred services
         //this is still a little brittle... :(
-        for(ServerResource resource : pluginServices){
-            System.err.println("Inbound: "+resource.toString());
-            router.attach("/"+resource.toString(), resource.getClass());
+        for(ServerResource resource : pluginServices) {
+            Logger.getLogger(WebservicePluginApplication.class.getName()).log(
+                    Level.FINE, "Inbound: {0}", resource);
+            internalRouter.attach("/" + resource.toString(), resource.getClass());
         }
-        
-        return router;
     }
     
     public static void attachRestPlugin(ServerResource resource){

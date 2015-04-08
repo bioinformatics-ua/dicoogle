@@ -80,6 +80,7 @@ public class DicoogleWeb {
 
     private ContextHandlerCollection contextHandlers;
     private ServletContextHandler pluginHandler = null;
+    private WebservicePluginApplication pluginApp = null;
 
     /**
      * The global list of GUI hooks and actions.
@@ -96,14 +97,6 @@ public class DicoogleWeb {
         // System.setProperty("production.mode", "true");
 
         this.port = port;
-
-        // abort if the server is already running
-        if (server != null) {
-            System.err.println("Server is not null!!");
-            return;
-        }
-
-        System.err.println("Server is not null");
 
         // "build" the input location, based on the www directory/.war chosen
         final URL warUrl = Thread.currentThread().getContextClassLoader().getResource(WEBAPPDIR);
@@ -165,8 +158,14 @@ public class DicoogleWeb {
         webpages.addServlet(new ServletHolder(new SearchHolderServlet()), "/search/holders");
         FilterHolder filter = webpages.addFilter(GzipFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
 
+        this.pluginApp = new WebservicePluginApplication();
+        this.pluginHandler = new ServletContextHandler();
+        this.pluginHandler.setContextPath(CONTEXTPATH);
+        this.pluginHandler.addServlet(new ServletHolder(new RestletHttpServlet(this.pluginApp)), "/ext/*");
+
         // list the all the handlers mounted above
         Handler[] handlers = new Handler[]{
+            pluginHandler,
             dic2png,
             dictags,
             plugin,
@@ -205,7 +204,7 @@ public class DicoogleWeb {
         this.contextHandlers = new ContextHandlerCollection();
         this.contextHandlers.setHandlers(handlers);
         server.setHandler(this.contextHandlers);
-
+        
         // and then start the server
         server.start();
     }
@@ -248,12 +247,7 @@ public class DicoogleWeb {
     }
 
     public void startPluginWebServices() {
-        if (this.pluginHandler == null) {
-            this.pluginHandler = new ServletContextHandler();
-            this.pluginHandler.setContextPath(CONTEXTPATH);
-            this.pluginHandler.addServlet(new ServletHolder(new RestletHttpServlet(new WebservicePluginApplication())), "/ext");
-            this.contextHandlers.addHandler(this.pluginHandler);
-        }
+        // TODO right now plugins are started by default
     }
 
     public void stopPluginWebServices() {

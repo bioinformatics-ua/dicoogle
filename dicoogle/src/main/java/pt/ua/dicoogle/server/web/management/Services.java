@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import pt.ua.dicoogle.rGUI.server.controllers.ControlServices;
+import pt.ua.dicoogle.server.ControlServices;
 import pt.ua.dicoogle.plugins.PluginController;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
 import pt.ua.dicoogle.sdk.settings.Utils;
