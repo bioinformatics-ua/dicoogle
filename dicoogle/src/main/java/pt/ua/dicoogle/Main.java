@@ -64,11 +64,12 @@ import pt.ua.ieeta.emailreport.Configuration;
  * @author Filipe Freitas
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Samuel Campos <samuelcampos@ua.pt>
+ * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 public class Main
 {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
-    
+
     private static boolean optimizeMemory = true;
     //static Logger logger = Logger.getLogger(Main.class);
     private static boolean isGUIServer = false;
@@ -92,7 +93,7 @@ public class Main
      */
     public static void main(String[] args)
     {
-    	System.setProperty("log4j.configurationFile", "log4j-2.xml");
+    	//System.setProperty("log4j.configurationFile", "log4j-2.xml");
         //PropertyConfigurator.configure("log4j.properties");
         if (Platform.getMode() == Platform.MODE.BUNDLE)
         {
@@ -110,7 +111,6 @@ public class Main
         {
             logger.error(ex.getMessage(), ex);
         }
-        System.setProperty("log4j.configurationFile", "log4j-2.xml");
         switch (args.length)
         {
             case 0:
@@ -235,8 +235,7 @@ public class Main
             //load DICOM Services Log
             LogDICOM ll = new LogXML().getXML();
 
-        } catch (SAXException | IOException ex)
-        {
+        } catch (SAXException | IOException ex) {
             logger.error(ex.getMessage(), ex);
         }
 
@@ -285,8 +284,6 @@ public class Main
         // Start the Inicial Services of Dicoogle
         pt.ua.dicoogle.server.ControlServices.getInstance();
 
-
-
         // Lauch Async Index 
         // It monitors a folder, and when a file is touched an event
         // triggers and index is updated.
@@ -297,7 +294,6 @@ public class Main
         isGUIServer = true;
 
         GUIServer GUIserv = new GUIServer();
-
     }
 
     private static void LaunchGUIClient()
