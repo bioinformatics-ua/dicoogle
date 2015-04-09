@@ -57,7 +57,7 @@ import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
 import pt.ua.dicoogle.server.web.DicoogleWeb;
 import pt.ua.dicoogle.taskManager.TaskManager;
-import pt.ua.dicoogle.webservices.WebservicePluginApplication;
+import pt.ua.dicoogle.server.ExtWebserviceApplication;
 
 /**
  *
@@ -178,7 +178,7 @@ public class PluginController{
         }
 
         for (ServerResource resource : restInterfaces) {
-            WebservicePluginApplication.attachRestPlugin(resource);
+            ExtWebserviceApplication.attachRestPlugin(resource);
         }
         System.err.println("Finished initializing rest interfaces");
     }

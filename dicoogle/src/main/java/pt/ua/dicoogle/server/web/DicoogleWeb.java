@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.server.web.servlets.accounts.LogoutServlet;
 import pt.ua.dicoogle.server.web.servlets.search.DumpServlet;
 import pt.ua.dicoogle.server.web.utils.LocalImageCache;
-import pt.ua.dicoogle.webservices.WebservicePluginApplication;
+import pt.ua.dicoogle.server.ExtWebserviceApplication;
 
 /**
  * @author António Novo <antonio.novo@ua.pt>
@@ -80,7 +80,7 @@ public class DicoogleWeb {
 
     private ContextHandlerCollection contextHandlers;
     private ServletContextHandler pluginHandler = null;
-    private WebservicePluginApplication pluginApp = null;
+    private ExtWebserviceApplication pluginApp = null;
 
     /**
      * The global list of GUI hooks and actions.
@@ -158,7 +158,7 @@ public class DicoogleWeb {
         webpages.addServlet(new ServletHolder(new SearchHolderServlet()), "/search/holders");
         FilterHolder filter = webpages.addFilter(GzipFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
 
-        this.pluginApp = new WebservicePluginApplication();
+        this.pluginApp = new ExtWebserviceApplication();
         this.pluginHandler = new ServletContextHandler();
         this.pluginHandler.setContextPath(CONTEXTPATH);
         this.pluginHandler.addServlet(new ServletHolder(new RestletHttpServlet(this.pluginApp)), "/ext/*");

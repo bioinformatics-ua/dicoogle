@@ -53,10 +53,9 @@ public class WadoServlet extends HttpServlet{
             return;
         }
 		
-		
 		String query = "SOPInstanceUID:" + uid;
 		
-		HashMap<String, String> extraFields = new HashMap<String, String>();
+		HashMap<String, String> extraFields = new HashMap<>();
         extraFields.put("SOPInstanceUID", "SOPInstanceUID");
 		
 		PluginController pc = PluginController.getInstance();
@@ -65,9 +64,7 @@ public class WadoServlet extends HttpServlet{
         Iterable<SearchResult> results = null;
         try {
 			results = pc.queryAll(task, query, extraFields).get();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
+		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
         
