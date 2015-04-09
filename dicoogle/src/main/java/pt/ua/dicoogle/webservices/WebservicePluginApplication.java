@@ -19,17 +19,12 @@
 package pt.ua.dicoogle.webservices;
 
 import java.util.ArrayList;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.restlet.Application;
 import org.restlet.Component;
 import org.restlet.Restlet;
-import org.restlet.Server;
-import org.restlet.data.Protocol;
 import org.restlet.resource.ServerResource;
 import org.restlet.routing.Router;
-import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.server.web.rest.ExtResource;
 import pt.ua.dicoogle.server.web.rest.TestResource;
 

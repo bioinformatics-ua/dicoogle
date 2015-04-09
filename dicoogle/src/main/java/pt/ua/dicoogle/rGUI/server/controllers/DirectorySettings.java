@@ -24,6 +24,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.RemoteException;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.plugins.PluginController;

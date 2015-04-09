@@ -44,7 +44,6 @@ import org.xml.sax.SAXException;
 
 import pt.ieeta.anonymouspatientdata.core.Anonymous;
 
-
 import pt.ua.dicoogle.core.AsyncIndex;
 import pt.ua.dicoogle.core.ClientSettings;
 import pt.ua.dicoogle.core.ServerSettings;

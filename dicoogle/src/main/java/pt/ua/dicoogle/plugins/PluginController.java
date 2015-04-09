@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /**
  * Copyright (C) 2014  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
  *
@@ -655,11 +654,8 @@ public class PluginController{
     }
 
     /*
-    *
-    *
-    *
-    *
-    */
+     *
+     */
     private Collection<IndexerInterface> getIndexingPluginsByMimeType(URI path) {
         ArrayList<IndexerInterface> indexers = new ArrayList<>();
         for (PluginSet pSet : pluginSets) {

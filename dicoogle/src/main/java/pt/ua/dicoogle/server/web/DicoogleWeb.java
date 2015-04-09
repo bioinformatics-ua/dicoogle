@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /**
  * Copyright (C) 2014  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
  *
@@ -35,7 +34,6 @@ import pt.ua.dicoogle.server.web.servlets.management.TransferenceOptionsServlet;
 import java.io.File;
 import java.net.URL;
 import java.util.EnumSet;
-import java.util.logging.Level;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
