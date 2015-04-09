@@ -61,6 +61,7 @@ import pt.ua.dicoogle.webservices.WebservicePluginApplication;
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Frederico Valente
  * @author Frederico Silva <fredericosilva@ua.pt>
+ * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 public class DicoogleWeb {
 

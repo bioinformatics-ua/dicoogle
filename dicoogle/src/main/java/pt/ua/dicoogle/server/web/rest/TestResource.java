@@ -17,8 +17,9 @@
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package pt.ua.dicoogle.server.web;
+package pt.ua.dicoogle.server.web.rest;
 
+import org.restlet.data.Parameter;
 import org.restlet.data.Status;
 import org.restlet.resource.Delete;
 import org.restlet.resource.Get;
@@ -32,31 +33,42 @@ import org.restlet.resource.ServerResource;
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 public class TestResource extends ServerResource {
+    private String something;
+    private boolean really;
 
+    protected boolean getQSBoolean(String name) {
+        Parameter param = getRequest().getResourceRef().getQueryAsForm().getFirst(name);
+        return param != null && (param.getValue() == null || param.getValue().equalsIgnoreCase("true"));
+    }
+    
+    @Override
+    public void doInit() {
+        super.doInit();
+        something = (String) getRequest().getAttributes().get("something");
+        really = getQSBoolean("really");
+    }
+    
     @Get("txt")
     public String testGet() {
-        return "extended GET!";
+        return (really ? "REALLY " : "") + something + " GET";
     }
 
     @Post("txt:txt")
-    public String testPost(String something) {
+    public String testPost(String data) {
         if (something == null || something.isEmpty()) {
             throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
         }
-        return "extended POST: " + something;
+        return (really ? "REALLY " : "") + something + " POST: " + data;
     }
 
-    @Put("txt:txt")
-    public String testPut(String something) {
-        return "extended PUT: " + something;
+    @Put("txt")
+    public String testPut() {
+        return (really ? "REALLY " : "") + something + " PUT";
     }
 
     @Delete("txt")
     public String testDelete() {
-        return "extended DELETE!";
+        return (really ? "REALLY " : "") + something + " DELETE";
     }
 
-    public TestResource() {
-        super();
-    }
 }

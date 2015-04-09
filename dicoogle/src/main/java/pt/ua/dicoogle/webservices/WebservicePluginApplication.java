@@ -29,12 +29,14 @@ import org.restlet.data.Protocol;
 import org.restlet.resource.ServerResource;
 import org.restlet.routing.Router;
 import pt.ua.dicoogle.core.ServerSettings;
-import pt.ua.dicoogle.server.web.TestResource;
+import pt.ua.dicoogle.server.web.rest.ExtResource;
+import pt.ua.dicoogle.server.web.rest.TestResource;
 
-/**
+/** A Restlet Application for aggregating extended services and 
  *
  * @author psytek
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Eduardo Pinho <eduardopinho@ua.pt>
  *
  */
 public class WebservicePluginApplication extends Application {
@@ -43,7 +45,7 @@ public class WebservicePluginApplication extends Application {
     static ArrayList<ServerResource> pluginServices = new ArrayList<>();
 
     private Router internalRouter;
-    
+/*    
     public static void startWebservice(){
         try{
             
@@ -65,7 +67,6 @@ public class WebservicePluginApplication extends Application {
             System.err.println(e.getMessage());
         }
     }
-
     public static void stopWebservice(){
         // TODO
         for(Server server : component.getServers()){
@@ -76,6 +77,7 @@ public class WebservicePluginApplication extends Application {
             }
         }
     }
+*/
     
     /**
      * Creates a root Restlet that will receive all incoming calls.
@@ -87,7 +89,7 @@ public class WebservicePluginApplication extends Application {
         // new instance of our resources
         this.internalRouter = new Router(getContext());
         // Defines routing to resources
-        internalRouter.attachDefault(TestResource.class);
+        internalRouter.attach("/test/{something}{?query}", TestResource.class);
         internalRouter.attach("/dim", RestDimResource.class);//search resource
         internalRouter.attach("/file", RestFileResource.class);//file download resource
         internalRouter.attach("/dump", RestDumpResource.class);//dump resource
@@ -101,10 +103,12 @@ public class WebservicePluginApplication extends Application {
         
         //Advanced Dicoogle Features
         internalRouter.attach("/doIndex", ForceIndexing.class);
+
+        internalRouter.attachDefault(ExtResource.class);
         
         loadPlugins();
         
-        Logger.getLogger(WebservicePluginApplication.class.getName()).info(internalRouter.getRoutes().toString());
+        Logger.getLogger(WebservicePluginApplication.class.getName()).fine(internalRouter.getRoutes().toString());
         return internalRouter;
     }
     

@@ -254,37 +254,6 @@ public class ControlServices implements IServices
     {
         return webservicesRunning;
     }
-
-    @Override
-    public void startPlugin(String pluginName)
-    {
-        //TODO:DELETED
-    	//PluginController.getInstance().initializePlugin(pluginName);
-        
-    	//PeerEngine.getInstance().start();
-        //DebugManager.getInstance().debug("Starting P2P network");
-        Logger.getLogger(ControlServices.class.getName()).log(Level.INFO, "Starting {0}", pluginName);
-    }
-
-    @Override
-    public void stopPlugin(String pluginName)
-    {
-    	//TODO: DELETED
-    	/*
-        if (PluginController.getInstance().isPluginRunning(pluginName))
-        {
-            PluginController.getInstance().stopPlugin(pluginName);
-            Logs.getInstance().addServerLog("Stopping " + pluginName);
-        }*/
-    }
-
-    @Override
-    public boolean pluginIsRunning(String pluginName)
-    {
-    	//TODO: DELETED
-        //return PluginController.getInstance().isPluginRunning(pluginName);
-    	return false;
-    }
     
     //TODO: Review those below!
     @Override
@@ -324,7 +293,5 @@ public class ControlServices implements IServices
     public DicoogleWeb getWebServicePlatform(){
     	return webServices;
     }
-    
-    
     
 }
