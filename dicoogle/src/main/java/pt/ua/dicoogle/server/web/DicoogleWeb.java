@@ -63,7 +63,7 @@ import pt.ua.dicoogle.server.web.utils.LocalImageCache;
  */
 public class DicoogleWeb {
 
-    private static final Logger log = LoggerFactory.getLogger("dicoogle");
+    private static final Logger logger = LoggerFactory.getLogger("dicoogle");
     /**
      * Sets the path where the web-pages/scripts or .war are.
      */
@@ -87,7 +87,7 @@ public class DicoogleWeb {
      * Initializes and starts the Dicoogle Web service.
      */
     public DicoogleWeb(int port) throws Exception {
-        log.info("Starting Web Services... in DicoogleWeb. POrt: " + port);
+        logger.info("Starting Web Services... in DicoogleWeb. POrt: " + port);
         System.setProperty("org.apache.jasper.compiler.disablejsr199", "true");
       //  System.setProperty("org.mortbay.jetty.webapp.parentLoaderPriority", "true");
         // System.setProperty("production.mode", "true");

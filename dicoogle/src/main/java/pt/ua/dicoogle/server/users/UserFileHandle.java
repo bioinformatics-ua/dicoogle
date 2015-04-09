@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.rGUI.server.users;
+package pt.ua.dicoogle.server.users;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,11 +29,15 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.sdk.Utils.Platform;
@@ -53,38 +57,42 @@ public class UserFileHandle {
     private Key key;
     private boolean encrypt;
 
-    public UserFileHandle() throws Exception {
+    public UserFileHandle() throws IOException {
         filename = Platform.homePath() + "users.xml";
         encrypt = ServerSettings.getInstance().isEncryptUsersFile();
+        try {
 
-        if(encrypt){
-            keyFile = "users.key";
+            if(encrypt){
+                keyFile = "users.key";
 
-            try {
-                ObjectInputStream in = new ObjectInputStream(new FileInputStream(keyFile));
-                key = (Key) in.readObject();
-                in.close();
+                try {
+                    ObjectInputStream in = new ObjectInputStream(new FileInputStream(keyFile));
+                    key = (Key) in.readObject();
+                    in.close();
 
-            } catch (FileNotFoundException ex) {
-                KeyGenerator gen = KeyGenerator.getInstance("AES");
+                } catch (FileNotFoundException ex) {
+                        KeyGenerator gen = KeyGenerator.getInstance("AES");
 
-                gen.init(128, new SecureRandom());
-                key = gen.generateKey();
+                        gen.init(128, new SecureRandom());
+                        key = gen.generateKey();
 
-                ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(keyFile));
-                out.writeObject(key);
-                out.close();
+                        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(keyFile));
+                        out.writeObject(key);
+                        out.close();
+                }
+
+                cipher = Cipher.getInstance("AES");
             }
 
-            cipher = Cipher.getInstance("AES");
+        } catch (NoSuchAlgorithmException | ClassNotFoundException | NoSuchPaddingException ex) {
+            LoggerFactory.getLogger(UserFileHandle.class).error(ex.getMessage(), ex);
         }
-
     }
 
     /**
      * Print one byte array in File
      * Encrypt that file with the key
-     * @param xml
+     * @param bytes
      */
     public void printFile(byte[] bytes) throws Exception {
         InputStream in;
@@ -112,7 +120,7 @@ public class UserFileHandle {
         in.close();
     }
 
-    public byte[] getFileContent() throws Exception {
+    public byte[] getFileContent() throws IOException {
         try {
             FileInputStream fin = null;
             ByteArrayOutputStream out = null;
@@ -139,8 +147,8 @@ public class UserFileHandle {
                     return out.toByteArray();
 
                 
-            } catch (IOException ex) {
-                //LoggerFactory.getLogger(UserFileHandle.class).error(ex.getMessage(), ex);
+            } catch (IllegalBlockSizeException ex) {
+                LoggerFactory.getLogger(UserFileHandle.class).error(ex.getMessage(), ex);
             } finally {
                 if (fin != null) {
                     fin.close();
@@ -149,14 +157,14 @@ public class UserFileHandle {
             
             return null;
         } catch (InvalidKeyException ex) {
-            System.out.println("Invalid Key to decrypt users file! Please contact your system administator.");
-            System.exit(1);
+            LoggerFactory.getLogger(UserFileHandle.class).error("Invalid Key to decrypt users file! Please contact your system administator.");
+            System.exit(1); // FIXME this is too dangerous
 
             return null;
         }
         catch(BadPaddingException ex){
-            System.out.println("Invalid Key to decrypt users file! Please contact your system administator.");
-            System.exit(2);
+            LoggerFactory.getLogger(UserFileHandle.class).error("Invalid Key to decrypt users file! Please contact your system administator.");
+            System.exit(2); // FIXME this is too dangerous
 
             return null;
         }

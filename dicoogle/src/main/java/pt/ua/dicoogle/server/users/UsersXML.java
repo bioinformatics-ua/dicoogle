@@ -20,11 +20,9 @@ package pt.ua.dicoogle.server.users;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.transform.OutputKeys;
@@ -51,10 +49,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 @Deprecated
 public class UsersXML extends DefaultHandler
 {
-
-    private UsersStruct users = UsersStruct.getInstance() ;
-
-
+    private UsersStruct users = UsersStruct.getInstance();
     private boolean isUsers = false ;
 
     private String username;
@@ -142,7 +137,7 @@ public class UsersXML extends DefaultHandler
             r.parse(src);
             return users;
         }
-        catch (Exception ex)
+        catch (SAXException | IOException ex)
         {
             LoggerFactory.getLogger(UsersXML.class).error(ex.getMessage(), ex);
         }
