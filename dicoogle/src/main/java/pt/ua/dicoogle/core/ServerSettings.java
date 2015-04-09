@@ -25,16 +25,15 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 import org.dcm4che2.data.UID;
 import pt.ua.dicoogle.server.web.utils.types.DataTable;
 
 /**
  *
  * @author Marco Pereira
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
- * @author António Novo <antonio.novo@ua.pt>
+ * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
+ * @author Ant??nio Novo <antonio.novo@ua.pt>
  * @see XMLSupport
  * 
  */
@@ -1148,7 +1147,7 @@ public class ServerSettings
                 }
             } catch (SocketException ex)
             {
-                Logger.getLogger(ServerSettings.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(ServerSettings.class).error(ex.getMessage(), ex);
             }
         }
         return interfaces;

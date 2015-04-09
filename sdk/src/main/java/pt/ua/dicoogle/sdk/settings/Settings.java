@@ -26,7 +26,8 @@ import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -35,11 +36,9 @@ import java.util.logging.Logger;
  * This object will be serialized to disk before shutdown and on configuration save.
  * 
  */
-
 public class Settings{
     
-    private static final Logger log = Logger.getLogger("dicoogle");
-    
+    private static final Logger log = LoggerFactory.getLogger(Settings.class);
     
     File settingsXmlFile; //xml file handler
     String settingsXmlString;//xml file contents
@@ -50,7 +49,7 @@ public class Settings{
      * @throws IOException 
      */
     public Settings(File settingsXmlFile) throws IOException{
-        log.fine("Loading settings from:"+settingsXmlFile.getAbsolutePath());
+        log.debug("Loading settings from: {}", settingsXmlFile.getAbsolutePath());
         this.settingsXmlFile = settingsXmlFile;
         
         //creates the settings file if it does not exist
@@ -85,9 +84,9 @@ public class Settings{
             settingsXmlString = xmlSettings;
         }
         
-        log.info("Settings for: "+settingsXmlFile.getAbsolutePath());
-        log.info(settingsXmlString);
-        log.info("...");
+        log.debug("Settings for: {}", settingsXmlFile.getAbsolutePath());
+        log.debug(settingsXmlString);
+        log.debug("...");
     }
     
     /**
@@ -113,7 +112,6 @@ public class Settings{
     /*
      * Helper methods below
      */
-    
     public String field(String name){return null;}
     public int fieldAsInt(String name){return 0;}
     public double fieldAsDouble(String name){return 0.0;}

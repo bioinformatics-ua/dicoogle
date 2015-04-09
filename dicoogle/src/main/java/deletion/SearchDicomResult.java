@@ -31,8 +31,7 @@ import pt.ua.dicoogle.core.ServerSettings;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.zip.GZIPInputStream;
 
 import org.dcm4che2.data.BasicDicomObject;
@@ -48,7 +47,7 @@ import pt.ua.dicoogle.core.dim.Study;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 /**
  *
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
  * @since 17 Fev 2009
  */
 public class SearchDicomResult implements Iterator<DicomObject>{
@@ -211,8 +210,7 @@ public class SearchDicomResult implements Iterator<DicomObject>{
                     //DebugManager.getInstance().debug("Imagem: "+path+"..."+next);
                 } catch (IOException ex)
                 {
-                    Logger.getLogger(SearchDicomResult.class.getName()).log(
-                            Level.SEVERE, null, ex);
+                    LoggerFactory.getLogger(SearchDicomResult.class).error(ex.getMessage(), ex);
                 }
                 try
                 {
@@ -231,8 +229,7 @@ public class SearchDicomResult implements Iterator<DicomObject>{
                     return din.readDicomObject();
                 } catch (IOException ex)
                 {
-                    Logger.getLogger(SearchDicomResult.class.getName()).log(
-                            Level.SEVERE, null, ex);
+                    LoggerFactory.getLogger(SearchDicomResult.class).error(ex.getMessage(), ex);
                 }
             }
             else if (queryLevel == QUERYLEVEL.STUDY||queryLevel == QUERYLEVEL.PATIENT)
@@ -245,12 +242,12 @@ public class SearchDicomResult implements Iterator<DicomObject>{
                 try {
                     patientName = new String(studyTmp.getParent().getPatientName().getBytes("ISO-8859-1"), "ISO-8859-1");
                 } catch (UnsupportedEncodingException ex) {
-                    Logger.getLogger(SearchDicomResult.class.getName()).log(Level.SEVERE, null, ex);
+                    LoggerFactory.getLogger(SearchDicomResult.class).error(ex.getMessage(), ex);
                 }
                 try {
                     result.putBytes(Tag.PatientName, VR.PN, patientName.getBytes("ISO-8859-1"));
                 } catch (UnsupportedEncodingException ex) {
-                    Logger.getLogger(SearchDicomResult.class.getName()).log(Level.SEVERE, null, ex);
+                    LoggerFactory.getLogger(SearchDicomResult.class).error(ex.getMessage(), ex);
                 }
                 
                 //System.out.println("PatientName:"+patientName);

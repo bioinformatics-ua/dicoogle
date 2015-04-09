@@ -20,8 +20,10 @@ package pt.ua.dicoogle.rGUI.client;
 
 import java.rmi.RemoteException;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.rGUI.interfaces.IUser;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IDicomSend;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.ISearch;
@@ -49,7 +51,7 @@ public class UserRefs {
             }
             sem.release();
         } catch (InterruptedException ex) {
-            Logger.getLogger(ClientCore.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ClientCore.class).error(ex.getMessage(), ex);
         }
         return instance;
     }
@@ -80,9 +82,9 @@ public class UserRefs {
 
                     //System.out.println("User Refs Adquired");
                 } catch (RemoteException ex) {
-                    Logger.getLogger(AdminRefs.class.getName()).log(Level.SEVERE, null, ex);
+                    LoggerFactory.getLogger(AdminRefs.class).error(ex.getMessage(), ex);
 
-                    //TODO: se falhar, terá implicações... o programa cliente deve parar
+                    //TODO: se falhar, ter?? implica????es... o programa cliente deve parar
                 }
             }
         }

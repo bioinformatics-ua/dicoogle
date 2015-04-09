@@ -25,8 +25,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import pt.ua.dicoogle.core.ServerSettings;
@@ -38,7 +40,7 @@ import pt.ua.dicoogle.sdk.task.Task;
 /**
  * A wrapper used to manage the indexer remotely through the web environment/app.
  *
- * @author António Novo <antonio.novo@ua.pt>
+ * @author Ant??nio Novo <antonio.novo@ua.pt>
  */
 public class Indexer{
 	/**
@@ -191,7 +193,7 @@ public class Indexer{
                 try {
                     uri = new URI(path);
                 } catch (URISyntaxException ex) {
-                    Logger.getLogger(Indexer.class.getName()).log(Level.SEVERE, null, ex);
+                    LoggerFactory.getLogger(Indexer.class).error(ex.getMessage(), ex);
                 }
                 if (uri != null)
                 {

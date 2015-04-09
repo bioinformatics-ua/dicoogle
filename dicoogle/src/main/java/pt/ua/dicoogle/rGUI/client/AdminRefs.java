@@ -21,8 +21,10 @@ package pt.ua.dicoogle.rGUI.client;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.rGUI.interfaces.IAdmin;
 import pt.ua.dicoogle.rGUI.RFileBrowser.IRemoteFileSystem;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IAccessList;
@@ -43,8 +45,8 @@ import pt.ua.dicoogle.rGUI.interfaces.controllers.ITaskList;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IUsersManager;
 
 /**
- * Esta classe é responsável por ir buscar as referências para os objectos remotos da administração
- * e guardar as referências para esses objectos
+ * Esta classe ?? respons??vel por ir buscar as refer??ncias para os objectos remotos da administra????o
+ * e guardar as refer??ncias para esses objectos
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
@@ -79,7 +81,7 @@ public class AdminRefs {
             }
             sem.release();
         } catch (InterruptedException ex) {
-            Logger.getLogger(ClientCore.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ClientCore.class).error(ex.getMessage(), ex);
         }
         return instance;
     }
@@ -123,9 +125,9 @@ public class AdminRefs {
                     
                     //System.out.println("Admin Refs Adquired");
                 } catch (RemoteException ex) {
-                    Logger.getLogger(AdminRefs.class.getName()).log(Level.SEVERE, null, ex);
+                    LoggerFactory.getLogger(AdminRefs.class).error(ex.getMessage(), ex);
 
-                    //TODO: se falhar, terá implicações... o programa cliente deve parar
+                    //TODO: se falhar, ter?? implica????es... o programa cliente deve parar
                 }
             }
         }
@@ -240,7 +242,7 @@ public class AdminRefs {
 
             return true;
         } catch (RemoteException ex) {
-            Logger.getLogger(AdminRefs.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(AdminRefs.class).error(ex.getMessage(), ex);
 
             return false;
         }
@@ -252,7 +254,7 @@ public class AdminRefs {
 
             return true;
         } catch (RemoteException ex) {
-            Logger.getLogger(AdminRefs.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(AdminRefs.class).error(ex.getMessage(), ex);
 
             return false;
         }
@@ -261,7 +263,7 @@ public class AdminRefs {
         try {
             return admin.unsavedSettings();
         } catch (RemoteException ex) {
-            Logger.getLogger(AdminRefs.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(AdminRefs.class).error(ex.getMessage(), ex);
         }
         return false;
     }
@@ -270,7 +272,7 @@ public class AdminRefs {
         try {
             return admin.getRFS();
         } catch (RemoteException ex) {
-            Logger.getLogger(AdminRefs.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(AdminRefs.class).error(ex.getMessage(), ex);
         }
         
         return null;
@@ -280,7 +282,7 @@ public class AdminRefs {
         try {
             return admin.getDefaultFilePath();
         } catch (RemoteException ex) {
-            Logger.getLogger(AdminRefs.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(AdminRefs.class).error(ex.getMessage(), ex);
         }
 
         return null;
@@ -295,7 +297,7 @@ public class AdminRefs {
         try {
             indexOptions.index(Path, resume);
         } catch (RemoteException ex) {
-            Logger.getLogger(AdminRefs.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(AdminRefs.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -308,7 +310,7 @@ public class AdminRefs {
         try {
             indexOptions.reIndex(list);
         } catch (RemoteException ex) {
-            Logger.getLogger(AdminRefs.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(AdminRefs.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -317,7 +319,7 @@ public class AdminRefs {
         try {
             admin.shutdownServer();
         } catch (RemoteException ex) {
-            //Logger.getLogger(AdminRefs.class.getName()).log(Level.SEVERE, null, ex);
+            //LoggerFactory.getLogger(AdminRefs.class).error(ex.getMessage(), ex);
         }
         //System.out.println("The server is Shutting Down");
     }

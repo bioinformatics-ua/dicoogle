@@ -29,8 +29,10 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -57,7 +59,7 @@ public class UsersManager extends javax.swing.JFrame {
             }
             sem.release();
         } catch (InterruptedException ex) {
-            Logger.getLogger(UsersManager.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UsersManager.class).error(ex.getMessage(), ex);
         }
         return instance;
     }
@@ -98,7 +100,7 @@ public class UsersManager extends javax.swing.JFrame {
 
             jCheckBoxEncrypt.setSelected(userManager.getEncryptUsersFile());
         } catch (RemoteException ex) {
-            Logger.getLogger(UsersManager.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UsersManager.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -281,7 +283,7 @@ public class UsersManager extends javax.swing.JFrame {
                 jButtonRemove.setEnabled(true);
             }
         } catch (RemoteException ex) {
-            Logger.getLogger(UsersManager.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UsersManager.class).error(ex.getMessage(), ex);
         }
     }//GEN-LAST:event_jListUsersValueChanged
 
@@ -314,7 +316,7 @@ public class UsersManager extends javax.swing.JFrame {
             load();
             
         } catch (RemoteException ex) {
-            Logger.getLogger(UsersManager.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UsersManager.class).error(ex.getMessage(), ex);
         }
     }//GEN-LAST:event_jButtonAddActionPerformed
 
@@ -333,7 +335,7 @@ public class UsersManager extends javax.swing.JFrame {
             
             load();
         } catch (RemoteException ex) {
-            Logger.getLogger(UsersManager.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UsersManager.class).error(ex.getMessage(), ex);
         }
     }//GEN-LAST:event_jButtonRemoveActionPerformed
 
@@ -345,7 +347,7 @@ public class UsersManager extends javax.swing.JFrame {
         try {
             userManager.setEncryptUsersFile(jCheckBoxEncrypt.isSelected());
         } catch (RemoteException ex) {
-            Logger.getLogger(UsersManager.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UsersManager.class).error(ex.getMessage(), ex);
         }
     }//GEN-LAST:event_jCheckBoxEncryptActionPerformed
 
@@ -375,7 +377,7 @@ public class UsersManager extends javax.swing.JFrame {
             jListUsers.clearSelection();
 
         } catch (RemoteException ex) {
-            Logger.getLogger(UsersManager.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UsersManager.class).error(ex.getMessage(), ex);
         }
     }//GEN-LAST:event_jButtonResetActionPerformed
 

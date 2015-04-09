@@ -24,8 +24,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocketFactory;
 import pt.ua.dicoogle.core.ClientSettings;
@@ -116,10 +118,10 @@ public class FileReceiver extends Thread {
                 if (!socket.isClosed())
                     socket.close();
             } catch (IOException e) {
-                Logger.getLogger(FileReceiver.class.getName()).log(Level.SEVERE, null, e);
+                LoggerFactory.getLogger(FileReceiver.class).error(ex.getMessage(), e);
             }
 
-            //Logger.getLogger(FileSender.class.getName()).log(Level.SEVERE, null, ex);
+            //LoggerFactory.getLogger(FileSender.class).error(ex.getMessage(), ex);
             return -1;
         }
 

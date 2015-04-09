@@ -20,10 +20,8 @@ package pt.ua.dicoogle.core.dicom;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
@@ -31,7 +29,7 @@ import pt.ua.dicoogle.sdk.task.Task;
 
 /**
  *
- * @author Luís A. Bastião Silva - <bastiao@ua.pt>
+ * @author Lu??s A. Basti??o Silva - <bastiao@ua.pt>
  */
 public class SearchURI {
 
@@ -46,9 +44,9 @@ public class SearchURI {
         try {
             results = holder.get();
         } catch (InterruptedException ex) {
-            Logger.getLogger(SearchURI.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(SearchURI.class).error(ex.getMessage(), ex);
         } catch (ExecutionException ex) {
-            Logger.getLogger(SearchURI.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(SearchURI.class).error(ex.getMessage(), ex);
         }
         if (results==null)
         {

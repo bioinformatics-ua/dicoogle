@@ -26,8 +26,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -85,7 +87,7 @@ public class DumpServlet extends HttpServlet {
         try {
             results = PluginController.getInstance().query(queryTaskHolder, providers, query, extraFields).get();
         } catch (InterruptedException | ExecutionException ex) {
-            Logger.getLogger(SearchServlet.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(SearchServlet.class).error(ex.getMessage(), ex);
             resp.sendError(500, "Could not generate results!");
             return;
         }

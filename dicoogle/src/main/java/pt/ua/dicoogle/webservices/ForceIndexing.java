@@ -24,14 +24,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.Report;
@@ -39,7 +39,7 @@ import pt.ua.dicoogle.sdk.task.Task;
 
 public class ForceIndexing extends ServerResource{
     
-	private static final Logger log = LogManager.getLogger(ForceIndexing.class.getName());	
+	private static final Logger log = LoggerFactory.getLogger(ForceIndexing.class);	
 	
     @Get
     public Representation represent(){

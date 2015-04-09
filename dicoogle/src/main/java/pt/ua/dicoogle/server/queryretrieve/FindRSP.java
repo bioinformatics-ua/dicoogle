@@ -31,8 +31,10 @@ import aclmanager.models.Principal;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.dcm4che2.data.DicomElement;
 import org.dcm4che2.data.DicomObject;
@@ -48,7 +50,7 @@ import pt.ua.dicoogle.server.SearchDicomResult;
 
 /**
  *
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
  */
 public class FindRSP implements DimseRSP 
 {
@@ -190,7 +192,7 @@ public class FindRSP implements DimseRSP
             result = c.getQueryString() ;
         } catch (CFindNotSupportedException ex)
         {
-            Logger.getLogger(FindRSP.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(FindRSP.class).error(ex.getMessage(), ex);
         }
 
         return result ;
@@ -290,7 +292,7 @@ public class FindRSP implements DimseRSP
             
         } catch (InterruptedException ex)
         {
-            Logger.getLogger(FindRSP.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(FindRSP.class).error(ex.getMessage(), ex);
         }
     }
 

@@ -26,9 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -52,7 +50,7 @@ import pt.ua.dicoogle.sdk.utils.TagsStruct;
 
 /**
  *
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
  */
 public class TagsXML extends DefaultHandler
 {
@@ -257,7 +255,7 @@ public class TagsXML extends DefaultHandler
             out = new FileOutputStream(Platform.homePath() + "tags.xml");
         } catch (FileNotFoundException ex)
         {
-            Logger.getLogger(TagsXML.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(TagsXML.class).error(ex.getMessage(), ex);
         }
         PrintWriter pw = new PrintWriter(out);
         StreamResult streamResult = new StreamResult(pw);
@@ -269,7 +267,7 @@ public class TagsXML extends DefaultHandler
             hd = tf.newTransformerHandler();
         } catch (TransformerConfigurationException ex)
         {
-            Logger.getLogger(TagsXML.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(TagsXML.class).error(ex.getMessage(), ex);
         }
         Transformer serializer = hd.getTransformer();
         serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
@@ -282,7 +280,7 @@ public class TagsXML extends DefaultHandler
             hd.startDocument();
         } catch (SAXException ex)
         {
-            Logger.getLogger(TagsXML.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(TagsXML.class).error(ex.getMessage(), ex);
         }
 
         TagsStruct t = TagsStruct.getInstance();
@@ -366,7 +364,7 @@ public class TagsXML extends DefaultHandler
             hd.endDocument();
         } catch (SAXException ex)
         {
-            Logger.getLogger(TagsXML.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(TagsXML.class).error(ex.getMessage(), ex);
         }
         finally {
             try {

@@ -18,19 +18,18 @@
  */
 package pt.ua.dicoogle.sdk.utils;
 
-
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.dcm4che2.data.Tag;
-
-
 
 /**
  *
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
  */
 public class DictionaryAccess
 {
@@ -56,9 +55,9 @@ public class DictionaryAccess
                 tagList.put(tags[i].getName(), tags[i].getInt(null));
                 tagListByTag.put(tags[i].getInt(null),tags[i].getName());
             } catch (IllegalArgumentException ex) {
-                Logger.getLogger(DictionaryAccess.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(DictionaryAccess.class).error(ex.getMessage(), ex);
             } catch (IllegalAccessException ex) {
-                Logger.getLogger(DictionaryAccess.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(DictionaryAccess.class).error(ex.getMessage(), ex);
             }
         }
     }

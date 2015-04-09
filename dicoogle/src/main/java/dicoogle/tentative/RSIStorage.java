@@ -34,8 +34,10 @@ import org.dcm4che2.net.Association;
 import org.dcm4che2.net.CommandUtils;
 import org.dcm4che2.net.Device;
 import org.dcm4che2.net.DicomServiceException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.zip.GZIPOutputStream;
 
 import org.dcm4che2.net.NetworkApplicationEntity;
@@ -289,7 +291,7 @@ public class RSIStorage extends StorageService
                 try {
                     exam = queue.take();
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(RSIStorage.class.getName()).log(Level.SEVERE, null, ex);
+                    LoggerFactory.getLogger(RSIStorage.class).error(ex.getMessage(), ex);
                 }
                 if (!exam.equals(""))
                 {
@@ -430,7 +432,7 @@ public class RSIStorage extends StorageService
         try {
             pool.awaitTermination(6, TimeUnit.DAYS);
         } catch (InterruptedException ex) {
-            Logger.getLogger(RSIStorage.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(RSIStorage.class).error(ex.getMessage(), ex);
         }
         device.stopListening();
         

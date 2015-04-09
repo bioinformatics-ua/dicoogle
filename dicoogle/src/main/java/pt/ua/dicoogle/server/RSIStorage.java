@@ -37,8 +37,10 @@ import org.dcm4che2.net.DicomServiceException;
 
 ///import org.dcm4che2.net.Executor;
 /** dcm4che doesn't support Executor anymore, so now import from java.util */ 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.dcm4che2.net.NetworkApplicationEntity;
 import org.dcm4che2.net.NetworkConnection;
@@ -185,7 +187,7 @@ public class RSIStorage extends StorageService
      */
     public void cstore(final Association as, final int pcid, DicomObject rq, PDVInputStream dataStream, String tsuid) throws DicomServiceException, IOException
     {
-        //DebugManager.getInstance().debug(":: Verify Permited AETs @ C-Store Request ");
+        //DebugManager.getInstance().debug(":: Verify Permited AETs @??C-Store Request ");
 
         boolean permited = false;
 
@@ -333,7 +335,7 @@ public class RSIStorage extends StorageService
                         List <Report> reports = PluginController.getInstance().indexBlocking(exam);
                     }
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(RSIStorage.class.getName()).log(Level.SEVERE, null, ex);
+                    LoggerFactory.getLogger(RSIStorage.class).error(ex.getMessage(), ex);
                 }
                  
             }
@@ -470,7 +472,7 @@ public class RSIStorage extends StorageService
         try {
             pool.awaitTermination(6, TimeUnit.DAYS);
         } catch (InterruptedException ex) {
-            Logger.getLogger(RSIStorage.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(RSIStorage.class).error(ex.getMessage(), ex);
         }
         device.stopListening();
         

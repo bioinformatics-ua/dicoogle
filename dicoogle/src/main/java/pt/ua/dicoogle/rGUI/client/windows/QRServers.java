@@ -25,8 +25,10 @@
 package pt.ua.dicoogle.rGUI.client.windows;
 
 import java.rmi.RemoteException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.net.URL;
@@ -69,7 +71,7 @@ public class QRServers extends javax.swing.JFrame {
             }
             sem.release();
         } catch (InterruptedException ex) {
-//            Logger.getLogger(MainWindow.class.getName()).log(Level.FATAL, null, ex);
+//            LoggerFactory.getLogger(MainWindow.class.getName()).log(Level.FATAL, null, ex);
         }
         return instance;
     }
@@ -273,7 +275,7 @@ public class QRServers extends javax.swing.JFrame {
             }
             
         } catch (RemoteException ex) {
-            Logger.getLogger(QRServers.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(QRServers.class).error(ex.getMessage(), ex);
         }
 
     }
@@ -298,7 +300,7 @@ public class QRServers extends javax.swing.JFrame {
                     qrserv.AddEntry(tmpMove);
                     
                 } catch (RemoteException ex) {
-                    Logger.getLogger(QRServers.class.getName()).log(Level.SEVERE, null, ex);
+                    LoggerFactory.getLogger(QRServers.class).error(ex.getMessage(), ex);
                 }
 
             
@@ -330,7 +332,7 @@ public class QRServers extends javax.swing.JFrame {
             try {
                 qrserv.RemoveEntry(tmp);
             } catch (RemoteException ex) {
-                Logger.getLogger(QRServers.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(QRServers.class).error(ex.getMessage(), ex);
             }
 
         }

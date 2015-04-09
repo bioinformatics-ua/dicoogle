@@ -19,8 +19,10 @@
 package dicoogle.tentative;
 
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.contentobjects.jnotify.JNotify;
 import net.contentobjects.jnotify.JNotifyException;
 import net.contentobjects.jnotify.JNotifyListener;
@@ -28,7 +30,7 @@ import pt.ua.dicoogle.core.ServerSettings;
 
 /**
  *
- * Luís A. Bastião Silva <bastiao@ua.pt>
+ * Lu??s A. Basti??o Silva <bastiao@ua.pt>
  */
 public class AsyncIndex {
 
@@ -54,7 +56,7 @@ public class AsyncIndex {
             try {
                 watchID = JNotify.addWatch(path, mask, watchSubtree, new Listener());
             } catch (JNotifyException ex) {
-                Logger.getLogger(AsyncIndex.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(AsyncIndex.class.getName()).error(ex.getMessage(), ex);
             }
         }
         
@@ -66,7 +68,7 @@ public class AsyncIndex {
 //        try {
 //            res = JNotify.removeWatch(watchID);
 //        } catch (JNotifyException ex) {
-//            Logger.getLogger(AsyncIndex.class.getName()).log(Level.SEVERE, null, ex);
+//            LoggerFactory.getLogger(AsyncIndex.class).error(ex.getMessage(), ex);
 //        }
 //        if (!res) {
 //            // invalid watch ID specified.

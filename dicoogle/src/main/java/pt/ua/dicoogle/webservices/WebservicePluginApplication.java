@@ -19,8 +19,9 @@
 package pt.ua.dicoogle.webservices;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.restlet.Application;
 import org.restlet.Component;
 import org.restlet.Restlet;
@@ -37,7 +38,6 @@ import pt.ua.dicoogle.server.web.rest.TestResource;
  * @author psytek
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Eduardo Pinho <eduardopinho@ua.pt>
- *
  */
 public class WebservicePluginApplication extends Application {
 
@@ -60,7 +60,7 @@ public class WebservicePluginApplication extends Application {
 
             // And starts the component.
             component.start();
-            org.restlet.engine.Engine.setLogLevel(Level.OFF);
+            org.restlet.engine.Engine.setLogLevel(java.util.logging.Level.OFF);
         }
         catch(Exception e){
             //TODO:log this properly...
@@ -73,7 +73,7 @@ public class WebservicePluginApplication extends Application {
             try {
                 server.stop();
             } catch (Exception ex) {
-                Logger.getLogger(WebservicePluginApplication.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(DicoogleWebservice.class).error(ex.getMessage(), ex);
             }
         }
     }
@@ -108,7 +108,7 @@ public class WebservicePluginApplication extends Application {
         
         loadPlugins();
         
-        Logger.getLogger(WebservicePluginApplication.class.getName()).fine(internalRouter.getRoutes().toString());
+        LoggerFactory.getLogger(WebservicePluginApplication.class).debug(internalRouter.getRoutes().toString());
         return internalRouter;
     }
     
@@ -116,8 +116,8 @@ public class WebservicePluginApplication extends Application {
         //lets add plugin registred services
         //this is still a little brittle... :(
         for(ServerResource resource : pluginServices) {
-            Logger.getLogger(WebservicePluginApplication.class.getName()).log(
-                    Level.FINE, "Inbound: {0}", resource);
+            LoggerFactory.getLogger(WebservicePluginApplication.class).debug(
+                    "Inbound: {}", resource);
             internalRouter.attach("/" + resource.toString(), resource.getClass());
         }
     }

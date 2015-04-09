@@ -21,8 +21,7 @@ package pt.ua.dicoogle.webservices;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml3;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
@@ -72,9 +71,9 @@ public class RestDumpResource extends ServerResource{
                         System.out.println(r.getURI());
                     }
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(RestDumpResource.class.getName()).log(Level.SEVERE, null, ex);
+                        LoggerFactory.getLogger(RestDumpResource.class).error(ex.getMessage(), ex);
                     } catch (ExecutionException ex) {
-                        Logger.getLogger(RestDumpResource.class.getName()).log(Level.SEVERE, null, ex);
+                        LoggerFactory.getLogger(RestDumpResource.class).error(ex.getMessage(), ex);
                     }
 
                 }
@@ -94,9 +93,9 @@ public class RestDumpResource extends ServerResource{
             queryResultList = PluginController.getInstance().queryAll(holder, query, extraFields).get();
             Thread.sleep(1000);
         } catch (InterruptedException ex) {
-            Logger.getLogger(RestDumpResource.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(RestDumpResource.class).error(ex.getMessage(), ex);
         } catch (ExecutionException ex) {
-            Logger.getLogger(RestDumpResource.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(RestDumpResource.class).error(ex.getMessage(), ex);
         }
         if (queryResultList==null)
         {

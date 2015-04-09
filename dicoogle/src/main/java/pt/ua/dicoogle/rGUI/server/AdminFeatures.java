@@ -21,8 +21,10 @@ package pt.ua.dicoogle.rGUI.server;
 import java.rmi.NoSuchObjectException;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -542,7 +544,7 @@ public class AdminFeatures implements IAdmin {
             try {
                 logout();
             } catch (RemoteException ex) {
-                Logger.getLogger(UserFeatures.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(UserFeatures.class).error(ex.getMessage(), ex);
             }
         }
     }

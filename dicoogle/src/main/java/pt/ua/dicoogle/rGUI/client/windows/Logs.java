@@ -25,8 +25,10 @@ import java.rmi.RemoteException;
 import java.rmi.server.RMISocketFactory;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.ImageIcon;
 
 import javax.swing.JTree;
@@ -95,7 +97,7 @@ public class Logs extends JFrame {
             logs.RegisterSignalBack(logsSignalStub);
 
         } catch (RemoteException ex) {
-            Logger.getLogger(Logs.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Logs.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -110,7 +112,7 @@ public class Logs extends JFrame {
             jTreeLog.setModel(new DefaultTreeModel(topLog));
 
         } catch (RemoteException ex) {
-            Logger.getLogger(Logs.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Logs.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -122,7 +124,7 @@ public class Logs extends JFrame {
             jTextLogWindow.setCaretPosition(jTextLogWindow.getDocument().getLength());
 
         } catch (RemoteException ex) {
-            Logger.getLogger(Logs.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Logs.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -133,7 +135,7 @@ public class Logs extends JFrame {
             jTextSessionsLogWindow.setText(jTextSessionsLogWindow.getText() + addLog);
 
         } catch (RemoteException ex) {
-            Logger.getLogger(Logs.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Logs.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -262,7 +264,7 @@ public class Logs extends JFrame {
                 logs.clearSessionsLog();
             }
         } catch (RemoteException ex) {
-            Logger.getLogger(Logs.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Logs.class).error(ex.getMessage(), ex);
         }
 }//GEN-LAST:event_jButtonClearActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /**
  * Copyright (C) 2014  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
  *
@@ -43,13 +44,13 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-import java.util.logging.Logger;
-
 import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServlet;
 
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlets.GzipFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.server.web.servlets.accounts.LogoutServlet;
 import pt.ua.dicoogle.server.web.servlets.search.DumpServlet;
@@ -65,7 +66,7 @@ import pt.ua.dicoogle.webservices.WebservicePluginApplication;
  */
 public class DicoogleWeb {
 
-    private static final Logger log = Logger.getLogger(DicoogleWeb.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(DicoogleWeb.class);
     /**
      * Sets the path where the web-pages/scripts or .war are.
      */
@@ -92,7 +93,7 @@ public class DicoogleWeb {
      * @param port the server port
      */
     public DicoogleWeb(int port) throws Exception {
-        log.log(Level.INFO, "Starting Web Services in DicoogleWeb. Port: {0}", port);
+        logger.info("Starting Web Services in DicoogleWeb. Port: {0}", port);
         System.setProperty("org.apache.jasper.compiler.disablejsr199", "true");
       //  System.setProperty("org.mortbay.jetty.webapp.parentLoaderPriority", "true");
         // System.setProperty("production.mode", "true");

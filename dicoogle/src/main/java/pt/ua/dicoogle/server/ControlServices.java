@@ -21,15 +21,13 @@ package pt.ua.dicoogle.server;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import pt.ua.dicoogle.server.RSIStorage;
+import org.slf4j.Logger;
 import pt.ua.dicoogle.server.queryretrieve.QueryRetrieve;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IServices;
 import pt.ua.dicoogle.rGUI.server.controllers.Logs;
-import pt.ua.dicoogle.server.SOPList;
 import pt.ua.dicoogle.server.web.DicoogleWeb;
 import pt.ua.dicoogle.taskManager.TaskManager;
 
@@ -39,6 +37,8 @@ import pt.ua.dicoogle.taskManager.TaskManager;
  */
 public class ControlServices implements IServices
 {
+    private static final Logger logger = LoggerFactory.getLogger(ControlServices.class);
+    
     private static ControlServices instance = null;
     // Services vars
     private RSIStorage storage = null;
@@ -100,7 +100,7 @@ public class ControlServices implements IServices
 
         } catch (Exception ex)
         {
-            Logger.getLogger(ControlServices.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -118,7 +118,7 @@ public class ControlServices implements IServices
             stopWebServices();
         } catch (Exception ex)
         {
-            Logger.getLogger(ControlServices.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage(), ex);
             return false;
         }
 
@@ -237,7 +237,7 @@ public class ControlServices implements IServices
         webServices.startPluginWebServices();
         //pt.ua.dicoogle.webservices.WebservicePluginApplication.startWebservice();
         webservicesRunning = true;
-        Logger.getLogger(ControlServices.class.getName()).info("Starting Dicoogle WebServices");
+        logger.info("Starting Dicoogle WebServices");
     }
 
     @Override
@@ -246,7 +246,7 @@ public class ControlServices implements IServices
         webServices.stopPluginWebServices();
         //pt.ua.dicoogle.webservices.WebservicePluginApplication.stopWebservice();
         webservicesRunning = false;
-        Logger.getLogger(ControlServices.class.getName()).info("Stopping Dicoogle WebService");
+        logger.info("Stopping Dicoogle WebService");
     }
 
     @Override
@@ -258,18 +258,18 @@ public class ControlServices implements IServices
     //TODO: Review those below!
     @Override
     public void startWebServer(){
-        System.err.println("Starting WebServer");
+        logger.info("Starting WebServer");
         
         if(webServices == null){
             try {
-                webServices = new DicoogleWeb( 8080);
+                webServices = new DicoogleWeb(8080);
                 webServerRunning = true;
             } catch (Exception ex) {
-                Logger.getLogger(ControlServices.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
         
-        Logger.getLogger(ControlServices.class.getName()).info("Starting Dicoogle Web");
+        logger.info("Starting Dicoogle Web");
     }
 
     @Override
@@ -284,10 +284,10 @@ public class ControlServices implements IServices
                 
                 webServices = null;
             } catch (Exception ex) {
-                Logger.getLogger(ControlServices.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
-        Logger.getLogger(ControlServices.class.getName()).info("Stopping Dicoogle Web");
+        logger.info("Stopping Dicoogle Web");
     }
     
     public DicoogleWeb getWebServicePlatform(){

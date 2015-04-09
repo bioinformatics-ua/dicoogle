@@ -31,8 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -57,7 +56,7 @@ import pt.ua.dicoogle.sdk.task.Task;
  * especially created to the issuing user. This holder is accessible via /search/holders.
  * 
  * @author Tiago Marques Godinho
- * @author António Novo <antonio.novo@ua.pt>
+ * @author Ant??nio Novo <antonio.novo@ua.pt>
  */
 public class Search {
 	private List<String> selectedProviders;
@@ -653,8 +652,7 @@ public class Search {
 			// }
 
 		} catch (InterruptedException | ExecutionException ex) {
-			Logger.getLogger(Search.class.getName())
-					.log(Level.SEVERE, null, ex);
+			LoggerFactory.getLogger(Search.class).error(ex.getMessage(), ex);
 		}
 
 		if (itResults == null)

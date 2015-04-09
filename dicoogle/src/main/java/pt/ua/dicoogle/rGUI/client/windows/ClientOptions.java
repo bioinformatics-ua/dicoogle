@@ -28,8 +28,10 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.net.URL;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -62,7 +64,7 @@ public class ClientOptions extends javax.swing.JFrame {
         }
         catch (InterruptedException ex)
         {
-            Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
         }
         return instance;
     }

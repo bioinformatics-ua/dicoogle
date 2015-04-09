@@ -23,8 +23,10 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.dcm4che2.data.UID;
 
 /**
@@ -136,7 +138,7 @@ public class SOPList {
         }
         catch (InterruptedException ex)
         {
-            Logger.getLogger(SOPList.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(SOPList.class).error(ex.getMessage(), ex);
         }
         return instance;
     }

@@ -26,8 +26,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
@@ -120,7 +122,7 @@ public class Services extends javax.swing.JFrame
                 refreshInterface();
             } catch (RemoteException ex)
             {
-                Logger.getLogger(Services.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(Services.class).error(ex.getMessage(), ex);
             }
         }
 
@@ -155,7 +157,7 @@ public class Services extends javax.swing.JFrame
                 }
             } catch (RemoteException ex)
             {
-                Logger.getLogger(Services.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(Services.class).error(ex.getMessage(), ex);
             }
         }
 
@@ -190,7 +192,7 @@ public class Services extends javax.swing.JFrame
             sem.release();
         } catch (InterruptedException ex)
         {
-//            Logger.getLogger(MainWindow.class.getName()).log(Level.FATAL, null, ex);
+//            LoggerFactory.getLogger(MainWindow.class.getName()).log(Level.FATAL, null, ex);
         }
         return instance;
     }
@@ -205,7 +207,7 @@ public class Services extends javax.swing.JFrame
             names = plugin.getPluginNames();
         } catch (RemoteException ex)
         {
-            Logger.getLogger(Services.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Services.class).error(ex.getMessage(), ex);
         }
 
         this.listbuttons = new ArrayList<buttonNlabel>();
@@ -218,7 +220,7 @@ public class Services extends javax.swing.JFrame
                     this.listbuttons.add(new buttonNlabel(plugin.isRunning(pluginName), pluginName));
                 } catch (RemoteException ex)
                 {
-                    Logger.getLogger(Services.class.getName()).log(Level.SEVERE, null, ex);
+                    LoggerFactory.getLogger(Services.class).error(ex.getMessage(), ex);
                 }
             }
         }
@@ -398,7 +400,7 @@ public class Services extends javax.swing.JFrame
             }*/
         } catch (RemoteException ex)
         {
-            Logger.getLogger(Services.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Services.class).error(ex.getMessage(), ex);
         }
         //Updates allways the members list.
     /*    jComboBox1.removeAllItems();
@@ -421,7 +423,7 @@ public class Services extends javax.swing.JFrame
             }
         } catch (RemoteException ex)
         {
-            Logger.getLogger(Services.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Services.class).error(ex.getMessage(), ex);
         }*/
     }
 
@@ -760,13 +762,13 @@ public class Services extends javax.swing.JFrame
                     }
                 } catch (IOException ex)
                 {
-                    Logger.getLogger(Services.class.getName()).log(Level.SEVERE, null, ex);
+                    LoggerFactory.getLogger(Services.class).error(ex.getMessage(), ex);
                 }
             }
             refreshInterface();
         } catch (RemoteException ex)
         {
-            Logger.getLogger(Services.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Services.class).error(ex.getMessage(), ex);
         }
     }//GEN-LAST:event_jButtonStorageActionPerformed
 
@@ -783,7 +785,7 @@ public class Services extends javax.swing.JFrame
             refreshInterface();
         } catch (RemoteException ex)
         {
-            Logger.getLogger(Services.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Services.class).error(ex.getMessage(), ex);
         }
     }//GEN-LAST:event_jButtonQRActionPerformed
 
@@ -800,7 +802,7 @@ public class Services extends javax.swing.JFrame
             refreshInterface();
         } catch (RemoteException ex)
         {
-            Logger.getLogger(Services.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Services.class).error(ex.getMessage(), ex);
         }       
         
     }//GEN-LAST:event_jButtonWebActionPerformed
@@ -818,7 +820,7 @@ public class Services extends javax.swing.JFrame
 
         } catch (Exception ex)
         {
-            Logger.getLogger(Services.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Services.class).error(ex.getMessage(), ex);
         }
         refreshInterface();
     }//GEN-LAST:event_jButtonWebServicesActionPerformed
