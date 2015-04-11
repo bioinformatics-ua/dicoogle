@@ -18,82 +18,33 @@
  */
 package pt.ua.dicoogle.server;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.slf4j.LoggerFactory;
 import org.restlet.Application;
-import org.restlet.Component;
 import org.restlet.Restlet;
-import org.restlet.resource.ServerResource;
 import org.restlet.routing.Router;
 import pt.ua.dicoogle.server.web.rest.ExtResource;
-import pt.ua.dicoogle.server.web.rest.TestResource;
-import pt.ua.dicoogle.server.web.rest.ExamTimeResource;
 import pt.ua.dicoogle.server.web.rest.ExamTimeResource;
 import pt.ua.dicoogle.server.web.rest.ForceIndexing;
-import pt.ua.dicoogle.server.web.rest.ForceIndexing;
-import pt.ua.dicoogle.server.web.rest.RestDcmImageResource;
 import pt.ua.dicoogle.server.web.rest.RestDcmImageResource;
 import pt.ua.dicoogle.server.web.rest.RestDimResource;
-import pt.ua.dicoogle.server.web.rest.RestDimResource;
-import pt.ua.dicoogle.server.web.rest.RestDumpResource;
 import pt.ua.dicoogle.server.web.rest.RestDumpResource;
 import pt.ua.dicoogle.server.web.rest.RestFileResource;
-import pt.ua.dicoogle.server.web.rest.RestFileResource;
 import pt.ua.dicoogle.server.web.rest.RestTagsResource;
-import pt.ua.dicoogle.server.web.rest.RestTagsResource;
-import pt.ua.dicoogle.server.web.rest.RestWADOResource;
 import pt.ua.dicoogle.server.web.rest.RestWADOResource;
 
-/** A Restlet Application for aggregating extended services and 
+/** A Restlet Application for aggregating legacy web services.
  *
  * @author psytek
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
-public class ExtWebserviceApplication extends Application {
+public class LegacyRestletApplication extends Application {
 
-    //static Component component = null;
-    private static final List<ServerResource> pluginServices = new ArrayList<>();
-    
     private Router internalRouter;
     
-    public ExtWebserviceApplication() {
+    public LegacyRestletApplication() {
         super();
     }
-/*    
-    public static void startWebservice(){
-        try{
-            
-            Logger.getLogger(ExtWebserviceApplication.class.getName()).log(Level.INFO,
-                    "Adding Webservice in port {0}", ServerSettings.getInstance().getWeb().getServicePort());
-            
-            component = new Component();
-            component.getServers().add(Protocol.HTTP,ServerSettings.getInstance().getWeb().getServicePort());
-            
-            // Attaches this application to the server.
-            component.getDefaultHost().attach(new ExtWebserviceApplication());
-
-            // And starts the component.
-            component.start();
-            org.restlet.engine.Engine.setLogLevel(java.util.logging.Level.OFF);
-        }
-        catch(Exception e){
-            //TODO:log this properly...
-            System.err.println(e.getMessage());
-        }
-    }
-    public static void stopWebservice(){
-        // TODO
-        for(Server server : component.getServers()){
-            try {
-                server.stop();
-            } catch (Exception ex) {
-                LoggerFactory.getLogger(DicoogleWebservice.class).error(ex.getMessage(), ex);
-            }
-        }
-    }
-*/
     
     /**
      * Creates a root Restlet that will receive all incoming calls.
@@ -104,7 +55,8 @@ public class ExtWebserviceApplication extends Application {
         // Create a router Restlet that routes each call to a
         // new instance of our resources
         this.internalRouter = new Router(getContext());
-        // Defines routing to resources
+
+        // Define routing to resources
         this.internalRouter.setDefaultMatchingQuery(false);
         //internalRouter.attach("/test/{something}", TestResource.class);
         internalRouter.attach("/dim", RestDimResource.class);//search resource
@@ -121,26 +73,9 @@ public class ExtWebserviceApplication extends Application {
         //Advanced Dicoogle Features
         internalRouter.attach("/doIndex", ForceIndexing.class);
 
-        internalRouter.attachDefault(ExtResource.class);
-        
-        loadPlugins();
-        
-        LoggerFactory.getLogger(ExtWebserviceApplication.class).debug(internalRouter.getRoutes().toString());
+//        internalRouter.attachDefault(ExtResource.class);
+                
+        LoggerFactory.getLogger(LegacyRestletApplication.class).debug(internalRouter.getRoutes().toString());
         return internalRouter;
     }
-    
-    protected void loadPlugins() {
-        //lets add plugin registred services
-        //this is still a little brittle... :(
-        for(ServerResource resource : pluginServices) {
-            LoggerFactory.getLogger(ExtWebserviceApplication.class).debug(
-                    "Inbound: {}", resource);
-            internalRouter.attach("/" + resource.toString(), resource.getClass());
-        }
-    }
-    
-    public static void attachRestPlugin(ServerResource resource){
-        pluginServices.add(resource);
-    }
-    
 }

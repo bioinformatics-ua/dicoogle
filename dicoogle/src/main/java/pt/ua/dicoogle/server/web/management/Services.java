@@ -31,9 +31,6 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import pt.ua.dicoogle.server.ControlServices;
 import pt.ua.dicoogle.plugins.PluginController;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
@@ -181,7 +178,7 @@ public class Services {
             } else // if the setting was not found check if it's a Boolean one, this is a FIX because browsers omit unchecked checkboxes on form action
             {
                 if (value.getClass().equals(Boolean.class)) {
-                    setting.setValue(new Boolean(false));
+                    setting.setValue(false);
                 }
             }
         }
@@ -453,7 +450,7 @@ public class Services {
 
         int portNumber = 0;
         boolean initOnStart = false;
-        HashMap<String, String[]> advSettings = new HashMap<String, String[]>();
+        HashMap<String, String[]> advSettings = new HashMap<>();
 
         int act = SVC_NO_ACTION;
         if (action.equalsIgnoreCase(ACTION_START)) {
@@ -808,7 +805,7 @@ public class Services {
         // list the query retrieve service
         result += getHTMLServiceManagementTableRow(svcs.queryRetrieveIsRunning(), brokerURL, queryRetrieveName, true, true, queryRetrieveStart(), true, queryRetrievePort(), true, advancedOptionsManagerURL);
         // list the web services
-        result += getHTMLServiceManagementTableRow(svcs.webServicesIsRunning(), brokerURL, webServicesName, true, true, webServicesStart(), true, webServicesPort(), false, null);
+        //result += getHTMLServiceManagementTableRow(false, brokerURL, webServicesName, false, false, false, true, webServicesPort(), false, null);
         // list the web server
         result += getHTMLServiceManagementTableRow(svcs.webServerIsRunning(), brokerURL, webServerName, true, true, webServerStart(), true, webServerPort(), false, null);
         // list the RMI service
@@ -832,7 +829,7 @@ public class Services {
      * available, their status and action that can be taken.
      */
     public String getHTMLServiceManagementTable(String brokerURL, String advancedOptionsManagerURL) {
-        return getHTMLServiceManagementTable(brokerURL, null);
+        return getHTMLServiceManagementTable(brokerURL, advancedOptionsManagerURL, null);
     }
 
     /**

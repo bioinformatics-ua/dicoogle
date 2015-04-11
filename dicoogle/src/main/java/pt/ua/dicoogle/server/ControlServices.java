@@ -42,7 +42,7 @@ public class ControlServices implements IServices
     private static ControlServices instance = null;
     // Services vars
     private RSIStorage storage = null;
-    private boolean webservicesRunning = false;
+    private boolean webServicesRunning = false;
     private boolean webServerRunning = false;
     private QueryRetrieve retrieve = null;
     
@@ -232,27 +232,21 @@ public class ControlServices implements IServices
     }
 
     @Override
-    public void startWebServices() throws IOException
+    @Deprecated
+    public void startWebServices()
     {
-        webServices.startPluginWebServices();
-        //pt.ua.dicoogle.webservices.WebservicePluginApplication.startWebservice();
-        webservicesRunning = true;
-        logger.info("Starting Dicoogle WebServices");
     }
 
     @Override
-    public void stopWebServices() throws IOException
+    @Deprecated
+    public void stopWebServices()
     {
-        webServices.stopPluginWebServices();
-        //pt.ua.dicoogle.webservices.WebservicePluginApplication.stopWebservice();
-        webservicesRunning = false;
-        logger.info("Stopping Dicoogle WebService");
     }
 
     @Override
     public boolean webServicesIsRunning()
     {
-        return webservicesRunning;
+        return webServicesRunning;
     }
     
     //TODO: Review those below!
@@ -264,6 +258,7 @@ public class ControlServices implements IServices
             try {
                 webServices = new DicoogleWeb(8080);
                 webServerRunning = true;
+                webServicesRunning = true;
             } catch (Exception ex) {
                 logger.error(ex.getMessage(), ex);
             }
@@ -274,11 +269,12 @@ public class ControlServices implements IServices
 
     @Override
     public void stopWebServer(){
-        System.err.println("Stopping WebServer");
+        logger.info("Stopping Web Server");
         
         if(webServices != null){
             try { 
-                webservicesRunning = false;
+                webServicesRunning = false;
+                webServerRunning = false;
                 
                 webServices.stop();
                 
