@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.server.LegacyRestletApplication;
 
 import pt.ua.dicoogle.server.web.servlets.accounts.LogoutServlet;
+import pt.ua.dicoogle.server.web.servlets.management.UnindexServlet;
 import pt.ua.dicoogle.server.web.servlets.search.DumpServlet;
 import pt.ua.dicoogle.server.web.utils.LocalImageCache;
 import pt.ua.dicoogle.server.PluginRestletApplication;
@@ -197,6 +198,7 @@ public class DicoogleWeb {
             createServletHandler(new ProvidersServlet(), "/providers"),
             createServletHandler(new DicomSettingsServlet(), "/management/settings/dicom/query"),
             createServletHandler(new ForceIndexing(), "/management/tasks/index"),
+            createServletHandler(new UnindexServlet(), "/management/tasks/unindex"),
             createServletHandler(new ServicesServlet(ServicesServlet.STORAGE), "/management/dicom/storage"),
             createServletHandler(new ServicesServlet(ServicesServlet.QUERY), "/management/dicom/query"),
             createServletHandler(new ServicesServlet(ServicesServlet.PLUGIN), "/management/plugins/"),
