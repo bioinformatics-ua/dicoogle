@@ -17,7 +17,6 @@ var SearchStore = Reflux.createStore({
 
         // subscribe to listen for whole ProductStore first as there is no `waitFor` in Reflux
         // (https://github.com/voronianski/flux-samples/blob/master/facebook-flux/js/stores/CartStore.js#L55)
-
     },
 
     request : function(url){
