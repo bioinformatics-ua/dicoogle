@@ -37,6 +37,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.restlet.resource.ServerResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.restlet.resource.ServerResource;
 
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.rGUI.server.controllers.ControlServices;
@@ -69,13 +70,12 @@ import pt.ua.dicoogle.webservices.DicoogleWebservice;
  *
  * @author Carlos Ferreira
  * @author Frederico Valente
- * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Tiago Marques Godinho.
  */
 public class PluginController{
 
     private static final Logger logger = LoggerFactory.getLogger(PluginController.class);
-    
     private static PluginController instance;
 
     public synchronized static PluginController getInstance() {
@@ -130,12 +130,11 @@ public class PluginController{
                 plugin.setSettings(holder);
             }
             catch (ConfigurationException e){
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+                logger.error(e.getMessage(),e);
 			}
             catch (UnsupportedOperationException e){
                 // TODO log this properly, remove plugin from plugin list
-                e.printStackTrace();
+                logger.error(e.getMessage(),e);
             }
         }
         logger.info("Settings pushed to plugins");
@@ -515,34 +514,54 @@ public class PluginController{
     }
 
     
-    
     public void unindex(URI path) {
-    	logger.info("Starting Indexing procedure for "+path.toString());
+    	logger.info("Starting unindexing procedure for {}", path.toString());
+        this.doUnindex(path, this.getIndexingPlugins(true));
+    }
+
+    /** Issue the removal of indexed entries in a path from the given indexers.
+     * 
+     * @param path the URI of the directory or file to unindex
+     * @param indexProviders a collection of providers
+     */
+    public void unindex(URI path, Collection<String> indexProviders) {
+    	logger.info("Starting unindexing procedure for {}", path);
+        
+        if (indexProviders != null) {
+            List<IndexerInterface> indexers = new ArrayList<>();
+            for (String provider : indexProviders) {
+                indexers.add(this.getIndexerByName(provider, true));
+            }
+            this.doUnindex(path, indexers);
+        } else {
+            this.doUnindex(path, this.getIndexingPlugins(true));
+        }
+    }
+    
+    /** Issue an unindexation procedure to the given indexers.
+     * 
+     * @param path the URI of the directory or file to unindex
+     * @param indexProviders a collection of providers
+     */
+    private void doUnindex(URI path, Collection<IndexerInterface> indexers) {
         StorageInterface store = getStorageForSchema(path);
 
         if(store==null){ 
         	logger.error("No storage plugin detected");
         }
         
-        Collection<IndexerInterface> indexers = getIndexingPlugins(true);
-        ArrayList<Task<Report>> rettasks = new ArrayList<>();
-        
         for(IndexerInterface indexer : indexers){            
-        	
-        	boolean result = indexer.unindex(path);
-            
+        	indexer.unindex(path);
         }
-        logger.info("Finised firing all undexing plugins for "+path.toString());
-        
-    }       
-    
+        logger.info("Finished unindexing {}", path);
+    }    
     
     /*
      * Convinience method that calls index(URI) and runs the returned
      * tasks on the executing thread 
      */
     public List<Report> indexBlocking(URI path) {
-    	logger.info("Starting Indexing Blocking procedure for "+path.toString());
+    	logger.info("Starting Indexing Blocking procedure for {}", path);
         List<Task<Report>> ret = index(path);
         
         ArrayList<Report> reports = new ArrayList<>(ret.size());
@@ -551,11 +570,10 @@ public class PluginController{
 				reports.add(t.get());
 			}
             catch (InterruptedException | ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+                logger.error(e.getMessage(), e);
 			}
         }
-        logger.info("Finished Indexing Blocking procedure for "+path.toString());
+        logger.info("Finished Indexing Blocking procedure for {}", path);
         
         return reports;
     }

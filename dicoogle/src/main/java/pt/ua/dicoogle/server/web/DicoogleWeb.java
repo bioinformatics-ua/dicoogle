@@ -52,14 +52,16 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlets.GzipFilter;
 
 import pt.ua.dicoogle.server.web.servlets.accounts.LogoutServlet;
+import pt.ua.dicoogle.server.web.servlets.management.UnindexServlet;
 import pt.ua.dicoogle.server.web.servlets.search.DumpServlet;
 import pt.ua.dicoogle.server.web.utils.LocalImageCache;
 
 /**
- * @author Ant??nio Novo <antonio.novo@ua.pt>
- * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
+ * @author António Novo <antonio.novo@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Frederico Valente
  * @author Frederico Silva <fredericosilva@ua.pt>
+ * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 public class DicoogleWeb {
 
@@ -187,6 +189,7 @@ public class DicoogleWeb {
             createServletHandler(new ProvidersServlet(), "/providers"),
             createServletHandler(new DicomSettingsServlet(), "/management/settings/dicom/query"),
             createServletHandler(new ForceIndexing(), "/management/tasks/index"),
+            createServletHandler(new UnindexServlet(), "/management/tasks/unindex"),
             createServletHandler(new ServicesServlet(ServicesServlet.STORAGE), "/management/dicom/storage"),
             createServletHandler(new ServicesServlet(ServicesServlet.QUERY), "/management/dicom/query"),
             createServletHandler(new ServicesServlet(ServicesServlet.PLUGIN), "/management/plugins/"),
