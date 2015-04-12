@@ -50,6 +50,7 @@ import pt.ua.dicoogle.sdk.utils.TagsStruct;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class Search implements ISearch
 {
 

@@ -28,6 +28,7 @@ import pt.ua.dicoogle.rGUI.interfaces.signals.ITaskListSignal;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
+@Deprecated
 public interface ITaskList extends Remote
 {
     public void RegisterSignalBack(ITaskListSignal signalBack) throws RemoteException;

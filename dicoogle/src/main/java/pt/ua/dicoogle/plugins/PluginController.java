@@ -518,29 +518,48 @@ public class PluginController{
         
         return rettasks;    	
     }
-
-    
     
     public void unindex(URI path) {
-    	logger.info("Starting Indexing procedure for "+path.toString());
+    	logger.info("Starting unindexing procedure for "+path.toString());
+        this.doUnindex(path, this.getIndexingPlugins(true));
+    }
+
+    /** Issue the removal of indexed entries in a path from the given indexers.
+     * 
+     * @param path the URI of the directory or file to unindex
+     * @param indexProviders a collection of providers
+     */
+    public void unindex(URI path, Collection<String> indexProviders) {
+    	logger.info("Starting unindexing procedure for "+path.toString());
+        
+        if (indexProviders != null) {
+            List<IndexerInterface> indexers = new ArrayList<>();
+            for (String provider : indexProviders) {
+                indexers.add(this.getIndexerByName(provider, true));
+            }
+            this.doUnindex(path, indexers);
+        } else {
+            this.doUnindex(path, this.getIndexingPlugins(true));
+        }
+    }
+    
+    /** Issue an unindexation procedure to the given indexers.
+     * 
+     * @param path the URI of the directory or file to unindex
+     * @param indexProviders a collection of providers
+     */
+    private void doUnindex(URI path, Collection<IndexerInterface> indexers) {
         StorageInterface store = getStorageForSchema(path);
 
         if(store==null){ 
         	logger.error("No storage plugin detected");
         }
         
-        Collection<IndexerInterface> indexers = getIndexingPlugins(true);
-        ArrayList<Task<Report>> rettasks = new ArrayList<>();
-        
         for(IndexerInterface indexer : indexers){            
-        	
-        	boolean result = indexer.unindex(path);
-            
+        	indexer.unindex(path);
         }
-        logger.info("Finished firing all undexing plugins for "+path.toString());
-        
-    }       
-    
+        logger.info("Finished unindexing "+path.toString());
+    }
     
     /*
      * Convinience method that calls index(URI) and runs the returned

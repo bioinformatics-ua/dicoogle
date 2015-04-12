@@ -29,6 +29,7 @@ import javax.swing.JPanel;
  * @author Carlos Ferreira
  * @author Frederico Valente: added graphical part
  */
+@Deprecated
 public interface IPluginControllerUser extends Remote
 {
     public List<String> getPluginNames() throws RemoteException;

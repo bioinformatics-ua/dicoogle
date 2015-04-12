@@ -27,6 +27,7 @@ import pt.ua.dicoogle.rGUI.interfaces.signals.ILogsSignal;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class LogsSignal implements ILogsSignal{
     private Logs log;
 

@@ -31,6 +31,7 @@ import javax.swing.plaf.metal.MetalIconFactory;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class RemoteFileChooser extends javax.swing.JFrame {
 
     public static final int APPROVED = 1;

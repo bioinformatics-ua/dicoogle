@@ -29,6 +29,7 @@ import pt.ua.dicoogle.rGUI.interfaces.signals.IPendingMessagesSignal;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public interface IPendingMessages extends Remote {
 
     public void RegisterSignalBack(IPendingMessagesSignal signalBack) throws RemoteException;

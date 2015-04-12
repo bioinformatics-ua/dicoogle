@@ -26,6 +26,7 @@ import java.rmi.RemoteException;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public interface ILogin extends Remote {
 
     public IAdmin LoginAdmin(String username, String passwordHash) throws RemoteException;

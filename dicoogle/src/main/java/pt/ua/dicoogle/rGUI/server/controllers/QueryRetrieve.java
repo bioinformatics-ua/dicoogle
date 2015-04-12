@@ -32,6 +32,7 @@ import pt.ua.dicoogle.rGUI.interfaces.controllers.IQueryRetrieve;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class QueryRetrieve implements IQueryRetrieve {
     private ServerSettings settings;
 

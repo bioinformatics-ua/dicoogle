@@ -26,6 +26,7 @@ import pt.ua.dicoogle.rGUI.interfaces.signals.ISearchSignal;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class SearchSignal implements ISearchSignal {
     private Result2Tree result;
 

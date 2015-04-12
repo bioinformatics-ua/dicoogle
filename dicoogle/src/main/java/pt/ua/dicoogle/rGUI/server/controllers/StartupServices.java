@@ -30,6 +30,7 @@ import pt.ua.dicoogle.rGUI.interfaces.controllers.IStartupServ;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class StartupServices implements IStartupServ {
 
     private static Semaphore sem = new Semaphore(1, true);

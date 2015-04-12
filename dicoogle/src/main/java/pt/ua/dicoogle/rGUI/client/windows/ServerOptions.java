@@ -81,6 +81,7 @@ import pt.ua.dicoogle.sdk.utils.TagValue;
  * @author  Marco Pereira
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class ServerOptions extends javax.swing.JFrame {
 
     private DefaultComboBoxModel m;

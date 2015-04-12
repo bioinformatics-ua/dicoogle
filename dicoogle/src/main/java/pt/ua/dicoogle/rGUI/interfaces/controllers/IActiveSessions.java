@@ -21,12 +21,13 @@ package pt.ua.dicoogle.rGUI.interfaces.controllers;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.HashMap;
-import pt.ua.dicoogle.rGUI.server.users.UserON;
+import pt.ua.dicoogle.server.users.UserON;
 
 /**
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public interface IActiveSessions extends Remote {
 
     public HashMap<Integer, UserON> getUsersTable() throws RemoteException;

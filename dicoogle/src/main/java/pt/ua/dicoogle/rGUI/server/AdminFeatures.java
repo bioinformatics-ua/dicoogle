@@ -70,14 +70,15 @@ import pt.ua.dicoogle.rGUI.server.controllers.TaskList;
 import pt.ua.dicoogle.rGUI.server.controllers.UsersManager;
 import pt.ua.dicoogle.rGUI.server.controllers.NetworkInterfaces;
 import pt.ua.dicoogle.rGUI.server.controllers.PluginController4Admin;
-import pt.ua.dicoogle.rGUI.server.users.User;
-import pt.ua.dicoogle.rGUI.server.users.UserSessions;
+import pt.ua.dicoogle.server.users.User;
+import pt.ua.dicoogle.server.users.UserSessions;
 
 /**
  * This class serves to provide access to administration features
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public class AdminFeatures implements IAdmin {
 
     private static AdminFeatures instance = null;

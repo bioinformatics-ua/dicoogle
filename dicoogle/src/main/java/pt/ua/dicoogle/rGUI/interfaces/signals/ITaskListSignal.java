@@ -25,7 +25,7 @@ import java.rmi.RemoteException;
  * TaskList
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-
+@Deprecated
 public interface ITaskListSignal extends Remote
 {
     public void sendTaskSignal(int flag) throws RemoteException;

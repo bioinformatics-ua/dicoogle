@@ -46,6 +46,7 @@ import pt.ua.dicoogle.rGUI.interfaces.controllers.IUsersManager;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
+@Deprecated
 public interface IAdmin extends Remote {
 
     //get the username of the current Administrator
