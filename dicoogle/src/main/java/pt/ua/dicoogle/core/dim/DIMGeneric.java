@@ -193,6 +193,8 @@ public class DIMGeneric
     }
 
     public String getSimplifiedJSON(){
+    	JSONObject result = new JSONObject();
+    	result.put("numResults", this.patients.size());
     	JSONArray patients = new JSONArray();
     	
     	for (Patient p : this.patients){
@@ -206,7 +208,9 @@ public class DIMGeneric
     		patients.add(patient);
     	}
     	
-    	return patients.toString();
+    	result.put("results", patients);
+    	
+    	return result.toString();
     }
     
     public String getXML()
