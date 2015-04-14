@@ -35,6 +35,9 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -189,6 +192,23 @@ public class DIMGeneric
 
     }
 
+    public String getSimplifiedJSON(){
+    	JSONArray patients = new JSONArray();
+    	
+    	for (Patient p : this.patients){
+    		JSONObject patient = new JSONObject();
+    		patient.put("id", p.getPatientID());
+    		patient.put("name", p.getPatientName());
+    		patient.put("gender", p.getPatientSex());
+    		patient.put("nStudies", p.getStudies().size());
+    		patient.put("birthdate", p.getPatientBirthDate());
+    		
+    		patients.add(patient);
+    	}
+    	
+    	return patients.toString();
+    }
+    
     public String getXML()
     {
 
