@@ -165,17 +165,9 @@ public class SearchServlet extends HttpServlet {
         String json;
         if(searchType == SearchType.PATIENT)
         {
-        	getPatientsOnly(resultsArr);
-        	/*ArrayList<Patient> patientList;
-        	patientList = getPatientsOnly(resultsArr);
         	
-        	json = JSONSerializer.toJSON(patientList).toString();
         	response.setContentType("application/json");
-            response.getWriter().append(json);
-        	return;
-        	*/
-        	response.setContentType("application/json");
-            response.getWriter().append(getPatientsOnly(resultsArr));
+            response.getWriter().append(getDIM(resultsArr));
         	return;
         }
         json= processJSON(resultsArr, elapsedTime);
@@ -207,7 +199,7 @@ public class SearchServlet extends HttpServlet {
         return resp.toString();
     }
     
-    private static String getPatientsOnly(ArrayList<SearchResult> allresults){
+    private static String getDIM(ArrayList<SearchResult> allresults){
     	DIMGeneric dimModel = null;
     	try {
 			dimModel = new DIMGeneric(allresults);

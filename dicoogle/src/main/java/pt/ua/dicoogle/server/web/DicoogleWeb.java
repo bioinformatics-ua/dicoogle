@@ -176,7 +176,7 @@ public class DicoogleWeb {
             createServletHandler(new LogoutServlet(), "/logout"),
             createServletHandler(new UserServlet(), "/user"),
             createServletHandler(new SearchServlet(), "/search"),
-            createServletHandler(new SearchServlet(SearchType.PATIENT), "/searchPatient"),
+            createServletHandler(new SearchServlet(SearchType.PATIENT), "/searchDIM"),
             createServletHandler(new DumpServlet(), "/dump"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.path) , "/management/settings/index/path"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.zip), "/management/settings/index/zip"),
