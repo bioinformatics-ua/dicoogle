@@ -24,6 +24,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -192,7 +194,7 @@ public class DIMGeneric
 
     }
 
-    public String getSimplifiedJSON(){
+    public String getJSON(){
     	JSONObject result = new JSONObject();
     	result.put("numResults", this.patients.size());
     	JSONArray patients = new JSONArray();
@@ -204,6 +206,56 @@ public class DIMGeneric
     		patient.put("gender", p.getPatientSex());
     		patient.put("nStudies", p.getStudies().size());
     		patient.put("birthdate", p.getPatientBirthDate());
+    		
+    		JSONArray studies = new JSONArray();
+    		for(Study s: p.getStudies())
+    		{
+    			JSONObject study = new JSONObject();
+    			study.put("studyDate", s.getStudyData());
+    			study.put("studyDescription", s.getStudyDescription());
+    			study.put("institutionName", s.getInstitutuionName());
+    			
+    			JSONArray modalities = new JSONArray();
+    			JSONArray series = new JSONArray();
+    			
+    			Set<String> modalitiesSet = new HashSet<>();
+    			for(Serie serie : s.getSeries())
+    			{
+    				if(modalitiesSet.contains(serie.getModality()))
+    				{
+    					continue;
+    				}
+    				modalitiesSet.add(serie.getModality());
+    				modalities.add(serie.getModality());
+    				
+    				JSONObject _serie = new JSONObject();
+    				_serie.put("serieNumber", serie.getSerieNumber());
+    				_serie.put("serieInstanceUID", serie.getSerieInstanceUID());
+    				_serie.put("serieDescription", serie.getSeriesDescription());
+    				_serie.put("serieModality", serie.getModality());
+    				
+    				JSONArray _sopInstanceUID = new JSONArray();
+    				for(int i=0; i<serie.getSOPInstanceUIDList().size();i++){
+    					JSONObject image = new JSONObject();
+    					image.put("sopInstanceUID", serie.getSOPInstanceUIDList().get(i));
+    					image.put("file", serie.getImageList().get(i).getRawPath());
+    					_sopInstanceUID.add(image);
+    				}
+    				_serie.put("images", _sopInstanceUID);
+    
+    				series.add(_serie);
+    			}
+    			
+    			study.put("series", series);
+    			
+    			
+    			
+    			
+    			studies.add(study);
+    			
+    		}
+    		patient.put("studies", studies);
+    		
     		
     		patients.add(patient);
     	}

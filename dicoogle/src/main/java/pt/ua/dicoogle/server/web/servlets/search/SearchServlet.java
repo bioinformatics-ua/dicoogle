@@ -215,6 +215,6 @@ public class SearchServlet extends HttpServlet {
 			e.printStackTrace();
 		}
     	
-    	return dimModel.getSimplifiedJSON();
+    	return dimModel.getJSON();
     }
 }
