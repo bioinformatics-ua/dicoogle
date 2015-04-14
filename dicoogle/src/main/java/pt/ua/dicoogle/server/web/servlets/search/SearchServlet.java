@@ -27,17 +27,24 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 
 import org.apache.commons.lang3.StringUtils;
 
 import pt.ua.dicoogle.core.QueryExpressionBuilder;
+import pt.ua.dicoogle.core.dim.DIMGeneric;
+import pt.ua.dicoogle.core.dim.Patient;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
@@ -51,7 +58,20 @@ import pt.ua.dicoogle.sdk.task.Task;
 public class SearchServlet extends HttpServlet {
 
   private static final long serialVersionUID = 1L;
+  	public enum SearchType {
 
+      ALL, PATIENT;
+  	}
+  	private SearchType searchType;
+  	public SearchServlet(){
+  		searchType = SearchType.ALL;
+  	}
+  	public SearchServlet(SearchType stype){
+  		if(stype == null)
+  			searchType = SearchType.ALL;
+  		else
+  		searchType = stype;
+  	}
     //TODO: QIDO;
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -96,10 +116,15 @@ public class SearchServlet extends HttpServlet {
         extraFields.put("Modality", "Modality");
         extraFields.put("StudyDate", "StudyDate");
         extraFields.put("SeriesInstanceUID", "SeriesInstanceUID");
+        extraFields.put("SeriesNumber","SeriesNumber");
         extraFields.put("StudyID", "StudyID");
         extraFields.put("StudyInstanceUID", "StudyInstanceUID");
         extraFields.put("Thumbnail", "Thumbnail");
         extraFields.put("SOPInstanceUID", "SOPInstanceUID");
+        extraFields.put("InstitutionName", "InstitutionName");
+        extraFields.put("StudyDescription", "StudyDescription");
+        extraFields.put("SOPInstanceUID", "SerieDescription");
+
 
         JointQueryTask queryTaskHolder = new JointQueryTask() {
 
@@ -136,9 +161,25 @@ public class SearchServlet extends HttpServlet {
         for (SearchResult r : results) {
             resultsArr.add(r);
         }
-                
-        String json = processJSON(resultsArr, elapsedTime);
-
+              
+        String json;
+        if(searchType == SearchType.PATIENT)
+        {
+        	getPatientsOnly(resultsArr);
+        	/*ArrayList<Patient> patientList;
+        	patientList = getPatientsOnly(resultsArr);
+        	
+        	json = JSONSerializer.toJSON(patientList).toString();
+        	response.setContentType("application/json");
+            response.getWriter().append(json);
+        	return;
+        	*/
+        	response.setContentType("application/json");
+            response.getWriter().append(getPatientsOnly(resultsArr));
+        	return;
+        }
+        json= processJSON(resultsArr, elapsedTime);
+        
         response.setContentType("application/json");
         response.getWriter().append(json);
     }
@@ -164,5 +205,16 @@ public class SearchServlet extends HttpServlet {
         resp.put("elapsedTime", elapsedTime);
 
         return resp.toString();
+    }
+    
+    private static String getPatientsOnly(ArrayList<SearchResult> allresults){
+    	DIMGeneric dimModel = null;
+    	try {
+			dimModel = new DIMGeneric(allresults);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	
+    	return dimModel.getSimplifiedJSON();
     }
 }
