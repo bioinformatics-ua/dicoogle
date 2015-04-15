@@ -123,7 +123,7 @@ public class SearchServlet extends HttpServlet {
         extraFields.put("SOPInstanceUID", "SOPInstanceUID");
         extraFields.put("InstitutionName", "InstitutionName");
         extraFields.put("StudyDescription", "StudyDescription");
-        extraFields.put("SOPInstanceUID", "SerieDescription");
+        extraFields.put("SeriesDescription", "SeriesDescription");
 
 
         JointQueryTask queryTaskHolder = new JointQueryTask() {
