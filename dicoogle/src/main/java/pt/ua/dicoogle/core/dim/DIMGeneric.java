@@ -50,6 +50,7 @@ import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 /**
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Frederico Silva <fredericosilva@ua.pt>
  */
 public class DIMGeneric
 {
@@ -221,10 +222,6 @@ public class DIMGeneric
     			Set<String> modalitiesSet = new HashSet<>();
     			for(Serie serie : s.getSeries())
     			{
-    				if(modalitiesSet.contains(serie.getModality()))
-    				{
-    					continue;
-    				}
     				modalitiesSet.add(serie.getModality());
     				modalities.add(serie.getModality());
     				
@@ -245,7 +242,7 @@ public class DIMGeneric
     
     				series.add(_serie);
     			}
-    			
+    			study.put("modalities", StringUtils.join(modalitiesSet,","));
     			study.put("series", series);
     			
     			
