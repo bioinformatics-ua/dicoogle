@@ -1,6 +1,6 @@
 {
   "name": "dicoogle-webcore",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "author": "Universidade de Aveiro, DETI/IEETA, Bioinformatics Group (http://bioinformatics.ua.pt/)",
   "contributors": [
     "Eduardo Pinho <eduardopinho@ua.pt>"
@@ -8,7 +8,6 @@
   "description": "Dicoogle Web Core for UI plugins",
   "files": [
     "dicoogle-webcore.js",
-    "dep/jquery.js",
     "build/dicoogle-webcore.js",
     "build/dicoogle-webcore.min.js"
   ],

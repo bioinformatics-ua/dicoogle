@@ -215,21 +215,23 @@ define('dicoogle-webcore', function (require) {
       return;
     }
     getScript(packageJSON.name, function() {
-      console.log('Requiring ', packageJSON.name, '...');
-      require([packageJSON.name], function(PluginModule) {
-        console.log('Obtained, reading ...');
-        if (!isFunction(PluginModule)) {
-          console.error('Plugin module is not a function!');
-          console.error(PluginModule);
-        }
-        onRegister(new PluginModule(), packageJSON.name);
-      });
+      setTimeout(function() {
+        console.log('Requiring ', packageJSON.name, '...');
+        require([packageJSON.name], function(PluginModule) {
+          console.log('Obtained, reading ...');
+          if (!isFunction(PluginModule)) {
+            console.error('Plugin module is not a function! ', PluginModule);
+          } else {
+            onRegister(new PluginModule(), packageJSON.name);
+          }
+        });
+      }, 100);
     });
   }
 
   function onRegister(pluginInstance, name) {
     if (typeof pluginInstance !== 'object' || typeof pluginInstance.render !== 'function') {
-      console.error('Dicoogle web UI plugin ', name, ' is corrupted or invalid');
+      console.error('Dicoogle web UI plugin ', name, ' is corrupted or invalid: ', pluginInstance);
       return;
     }
     var thisPackage = packages[name];
@@ -352,21 +354,23 @@ define('dicoogle-webcore', function (require) {
   }
   
   function getScript(moduleName, callback) {
-      var script = document.createElement('script');
-      var prior = document.getElementsByTagName('script')[0];
-      script.async = 1;
-      prior.parentNode.insertBefore(script, prior);
-      script.onload = script.onreadystatechange = function( _, isAbort ) {
-          if(isAbort || !script.readyState || /loaded|complete/.test(script.readyState) ) {
-              script.onload = script.onreadystatechange = null;
-              script = undefined;
-              if(!isAbort) {
-                if(callback) callback();
-              }
-          }
-      };
+    let script = document.createElement('script');
+    let prior = document.getElementsByTagName('script')[0];
+    script.async = 1;
+    prior.parentNode.insertBefore(script, prior);
+    let onLoadHandler = function( _, isAbort ) {
+        if(isAbort || !script.readyState || /loaded|complete/.test(script.readyState) ) {
+            script.onload = script.onreadystatechange = null;
+            script = undefined;
+            if(!isAbort) {
+              if(callback) callback();
+            }
+        }
+    };
 
-      script.src = base_url+'webui?module='+moduleName+'&process=false';
+    script.onload = script.onreadystatechange = onLoadHandler;
+
+    script.src = base_url+'webui?module='+moduleName+'&process=false';
   }
 
   // custom element definitions
