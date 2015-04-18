@@ -91,6 +91,10 @@ public class WebUIPluginManager {
     public void loadAll() {
         this.loadAll(new File(webBaseDir));
     }
+    
+    public WebUIPlugin load(String name) throws IOException, PluginFormatException {
+        return this.load(new File(this.webBaseDir + File.separatorChar + name));
+    }
 
     public WebUIPlugin load(File directory) throws IOException, PluginFormatException {
         assert directory != null;
@@ -176,4 +180,8 @@ public class WebUIPluginManager {
             }
         }
     }    
+
+    public String getWebBaseDir() {
+        return webBaseDir;
+    }
 }

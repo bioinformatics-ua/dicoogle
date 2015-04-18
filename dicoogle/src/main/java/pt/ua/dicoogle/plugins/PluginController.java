@@ -43,6 +43,7 @@ import org.apache.logging.log4j.Logger;
 import org.restlet.resource.ServerResource;
 
 import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.plugins.webui.PluginFormatException;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
 import pt.ua.dicoogle.rGUI.server.controllers.ControlServices;
 import pt.ua.dicoogle.sdk.GraphicalInterface;
@@ -729,6 +730,22 @@ public class PluginController{
             return null;
         }
     }
+
+    /** Load (or reload) a web UI plugin.
+     * @param name the name of the plugin
+     * @return whether the plugin exists and was successfully loaded
+     */
+    public boolean loadWebUIPlugin(String name) {
+        logger.log(Level.INFO, "loadWebUIPlugin(name: {})", name);
+        try {
+            this.webUI.load(name);
+        } catch (IOException | PluginFormatException ex) {
+            logger.error("could not load web UI plugin", ex);
+            return false;
+        }
+        return true;
+    }
+
 
 
     //METHODS FOR SERVICE:JAVA
