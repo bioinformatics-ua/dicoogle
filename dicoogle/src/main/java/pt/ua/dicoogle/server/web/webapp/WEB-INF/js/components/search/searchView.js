@@ -26,6 +26,9 @@ var Search = React.createClass({
     componentDidMount: function(){
       this.enableAutocomplete();
     },
+    componentDidUpdate: function(){
+      this.enableAutocomplete();
+    },
     render: function() {
         var selectionButtons = (
             <div>
