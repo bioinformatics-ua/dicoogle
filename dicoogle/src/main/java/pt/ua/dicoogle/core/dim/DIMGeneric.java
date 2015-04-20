@@ -235,7 +235,10 @@ public class DIMGeneric
     				for(int i=0; i<serie.getSOPInstanceUIDList().size();i++){
     					JSONObject image = new JSONObject();
     					image.put("sopInstanceUID", serie.getSOPInstanceUIDList().get(i));
-    					image.put("file", serie.getImageList().get(i).getRawPath());
+    					String rawPath = serie.getImageList().get(i).getRawPath();
+    					image.put("rawPath", rawPath);
+    					image.put("filename", rawPath.substring(rawPath.lastIndexOf("/")+1, rawPath.length()));
+    					
     					_sopInstanceUID.add(image);
     				}
     				_serie.put("images", _sopInstanceUID);

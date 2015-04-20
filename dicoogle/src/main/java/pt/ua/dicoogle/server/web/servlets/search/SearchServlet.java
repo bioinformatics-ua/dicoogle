@@ -113,6 +113,7 @@ public class SearchServlet extends HttpServlet {
         //attaches the required extrafields
         extraFields.put("PatientName", "PatientName");
         extraFields.put("PatientID", "PatientID");
+        extraFields.put("PatientSex","PatientSex");
         extraFields.put("Modality", "Modality");
         extraFields.put("StudyDate", "StudyDate");
         extraFields.put("SeriesInstanceUID", "SeriesInstanceUID");
