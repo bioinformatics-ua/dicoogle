@@ -20,6 +20,7 @@ package pt.ua.dicoogle.server.web;
 
 import pt.ua.dicoogle.server.web.servlets.search.ProvidersServlet;
 import pt.ua.dicoogle.server.web.servlets.search.SearchServlet;
+import pt.ua.dicoogle.server.web.servlets.search.SearchServlet.SearchType;
 import pt.ua.dicoogle.server.web.servlets.search.WadoServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.LoginServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.UserServlet;
@@ -175,6 +176,7 @@ public class DicoogleWeb {
             createServletHandler(new LogoutServlet(), "/logout"),
             createServletHandler(new UserServlet(), "/user"),
             createServletHandler(new SearchServlet(), "/search"),
+            createServletHandler(new SearchServlet(SearchType.PATIENT), "/searchDIM"),
             createServletHandler(new DumpServlet(), "/dump"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.path) , "/management/settings/index/path"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.zip), "/management/settings/index/zip"),

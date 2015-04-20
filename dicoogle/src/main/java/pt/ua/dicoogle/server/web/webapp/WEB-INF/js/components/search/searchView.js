@@ -10,6 +10,8 @@ import {ActionCreators} from '../../actions/searchActions';
 import {AdvancedSearch} from '../search/advancedSearch';
 import {ResultSearch} from '../search/searchResultView';
 
+import {DimFields} from '../../constants/dimFields';
+
 var Router = require('react-router');
 var Route = Router.Route;
 var Link = Router.Link;
@@ -20,6 +22,9 @@ var Search = React.createClass({
     getInitialState: function (){
 
         return { label:'login', searchState: "simple" };
+    },
+    componentDidMount: function(){
+      this.enableAutocomplete();
     },
     render: function() {
         var selectionButtons = (
@@ -104,10 +109,67 @@ var Search = React.createClass({
 
     onSearchClicked : function(){
         // console.log(React.getInitialState(<ResultSearch/>) );
-        var params = {text: document.getElementById("free_text").value, other:true};
+        var text = document.getElementById("free_text").value;
+
+        var params = {text: text, keyword: this.isKeyword(text), other:true};
 
         React.render(<ResultSearch items={params}/>, document.getElementById("container"));
         //console.log("asadfgh");
+    },
+    isKeyword: function(freetext){
+    for(var i=0; i<DimFields.length;i++)
+      {
+        if((freetext.indexOf(DimFields[i])) != -1)
+        {
+          return true;
+        }
+      }
+
+    },
+    enableAutocomplete : function(){
+      function split( val ) {
+      return val.split( /\sAND\s/ );
+    }
+    function extractLast( term ) {
+      return split( term ).pop();
+    }
+
+    $( "#free_text" )
+      // don't navigate away from the field on tab when selecting an item
+      .bind( "keydown", function( event ) {
+        if ( event.keyCode === $.ui.keyCode.TAB &&
+            $( this ).autocomplete( "instance" ).menu.active ) {
+          event.preventDefault();
+        }
+      })
+      .autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+          // delegate back to autocomplete, but extract the last term
+          response( $.ui.autocomplete.filter(
+            DimFields, extractLast( request.term ) ) );
+        },
+        focus: function() {
+          // prevent value inserted on focus
+          return false;
+        },
+        select: function( event, ui ) {
+          var terms = split( this.value );
+          console.log(terms);
+          // remove the current input
+          terms.pop();
+          //if(terms.lenght >1)
+          //terms.join(" AND ");
+          // add the selected item
+          console.log(terms.length);
+          var termtrick =  ((terms.length >= 1) ? " AND " : "")+ui.item.value;
+          terms.push(termtrick);
+          // add placeholder to get the comma-and-space at the end
+          terms.push( "" );
+          this.value = (terms.join( "" ) + ": ");
+          return false;
+        }
+      });
     }
 });
 

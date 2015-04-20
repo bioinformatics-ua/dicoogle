@@ -14,7 +14,7 @@
     <link href="bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
     <!-- <link href="css/theme.css" rel="stylesheet"> -->
-    <link href="node_modules/datatables/media/css/jquery.dataTables.css" rel="stylesheet">
+
 
     <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
 
@@ -22,15 +22,22 @@
     <link href="css/simple-sidebar.css" rel="stylesheet">
     <link href="css/loaders.min.css" rel="stylesheet">
 
-    <!-- Keep dicoogle sass generated css always the last one-->
-    <link href="css/dicoogle.css" rel="stylesheet">
+
+    <link href="//cdn.datatables.net/plug-ins/1.10.6/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet">
 
 
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!--<script src="lib/magnificient/jquery-1.11.2.min.js"></script>-->
+
+
+     <!--Custom JS -->
 
     <script src="lib/es6-shim.js"></script>
     <script src="lib/es6-sham.js"></script>
+
+     <!-- Keep dicoogle sass generated css always the last one-->
+    <link href="css/dicoogle.css" rel="stylesheet">
 
 </head>
 <body>
@@ -48,13 +55,12 @@
 
         </div>
         <!-- /#sidebar-wrapper -->
-
         <!-- Page Content -->
         <div id="container">
 
 
         </div>
-        <!-- /#page-content-wrapper -->
+    <!-- /#page-content-wrapper -->
 
     </div>
 
@@ -65,12 +71,28 @@
     <!-- Placed at the end of the document so the pages load faster -->
 
 <script src="js/bundle.js"></script>
+<!--<script src="lib/magnificient/jquery-ui.min.js"></script>-->
+<!--
+<script src="lib/magnificient/jquery.fs.zoetrope.min.js"></script>
+<script src="lib/magnificient/toe.min.js"></script>
+<script src="lib/magnificient/jquery.mousewheel.min.js"></script>
+<script src="lib/magnificient/imgViewer.min.js"></script>
+-->
+
+<script src="//cdn.datatables.net/1.10.6/js/jquery.dataTables.min.js"></script>
+<script src="http://cdn.datatables.net/plug-ins/1.10.6/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+
+
 
 <script>
         $("#menu-toggle").click(function (e) {
             e.preventDefault();
             $("#wrapper").toggleClass("toggled");
         });
-        </script>
+</script>
+
+
+
+
 </body>
 </html>

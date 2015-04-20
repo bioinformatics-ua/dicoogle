@@ -31,6 +31,10 @@ input {
   display: table-cell;
   vertical-align: middle; }
 
+.modal .modal-body {
+  max-height: 500px;
+  overflow-y: auto; }
+
 .resultfake {
   width: auto !important;
   height: auto !important;
@@ -47,6 +51,34 @@ input {
 
 .ball-pulse > div {
   background-color: #A3D2D8; }
+
+.step {
+  height: 45px;
+  padding: 5px;
+  cursor: pointer;
+  margin-bottom: 10px; }
+
+.step.done {
+  background-color: #49AFBB; }
+
+.step.current {
+  background-color: #49AFBB;
+  border-color: #008C99;
+  border-style: solid;
+  border-width: 4px; }
+
+.step.disabled {
+  background-color: #a3d2d8;
+  cursor: default; }
+
+.stepa {
+  padding: 10px; }
+
+.resultRow:hover {
+  background-color: #a3d2d8; }
+
+.table-striped > tbody > tr:nth-child(odd).resultRow:hover {
+  background-color: #a3d2d8; }
 
 .user-wrapper {
   position: absolute;

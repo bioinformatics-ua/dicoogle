@@ -49,6 +49,8 @@ public class DumpServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	resp.addHeader("Access-Control-Allow-Origin", "*");
+    	//http://localhost:8080/dump?uid=1.3.12.2.1107.5.2.5.11090.5.0.5823649644957102
         String uid = req.getParameter("uid");
         if (StringUtils.isEmpty(uid)) {
             resp.sendError(400, "No uid supplied");

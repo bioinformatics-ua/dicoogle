@@ -31,6 +31,12 @@ input {
     display: table-cell;
     vertical-align: middle;
 }
+
+.modal .modal-body {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
 //FAKE DEFENITIONS
 .resultfake {
     width: auto !important;
