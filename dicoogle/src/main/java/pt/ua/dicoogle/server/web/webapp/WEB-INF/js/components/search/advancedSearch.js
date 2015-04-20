@@ -13,12 +13,16 @@ var AdvancedSearch = React.createClass({
     getInitialState: function (){
         return { label:'login' };
     },
+    componentDidMount: function() {
+      $("#datepicker").datepicker();
+    },
+
     render: function() {
         var managementInstance = (
             <div>
                  <div id="filter-group">
                     <div className="row space_up">
-                        <div className="col-xs-12 col-sm-6">
+                        <div className="col-xs-12 col-sm-8">
                             <div className="globalmargin">
                                 <div className="subject_text">Patient Name</div>
                                 <input id="patient_name" type="text" className="form-control" placeholder="(All Patients)"></input>
@@ -52,51 +56,48 @@ var AdvancedSearch = React.createClass({
 
 
                         </div>
-                        <div className="col-xs-12 col-sm-6">
+                        <div className="col-xs-12 col-sm-4">
                             <div className="subject_text space_up">Modality</div>
-                            <div>
+                            <div className="modalities">
                                 <label for="modCR">CR</label>
-                                <input id="modCR" type="checkbox" name="modCR" onclick="modalityCheckBoxToggle()"/>
+                                <input id="modCR" type="checkbox" name="CR" />
 
                                 <label for="modMG">MG</label>
-                                <input id="modMG" type="checkbox" name="modMG" onclick="modalityCheckBoxToggle()"/>
+                                <input id="modMG" type="checkbox" name="MG" />
 
                                 <label for="modPT">PT</label>
-                                <input id="modPT" type="checkbox" name="modPT" onclick="modalityCheckBoxToggle()"/>
+                                <input id="modPT" type="checkbox" name="PT" />
 
                                 <label for="modXA">XA</label>
-                                <input id="modXA" type="checkbox" name="modXA" onclick="modalityCheckBoxToggle()"/>
+                                <input id="modXA" type="checkbox" name="XA" />
 
                                 <label for="modES">ES</label>
-                                <input id="modES" type="checkbox" name="modES" onclick="modalityCheckBoxToggle()"/>
+                                <input id="modES" type="checkbox" name="ES" />
 
-                            </div>
-                            <div>
+
                                 <label for="modCT">CT</label>
-                                <input id="modCT" type="checkbox" name="modCT" onclick="modalityCheckBoxToggle()"/>
+                                <input id="modCT" type="checkbox" name="CT" />
 
                                 <label for="modMR">MR</label>
-                                <input id="modMR" type="checkbox" name="modMR" onclick="modalityCheckBoxToggle()"/>
+                                <input id="modMR" type="checkbox" name="MR" />
 
                                 <label for="modRF">RF</label>
-                                <input id="modRF" type="checkbox" name="modRF" onclick="modalityCheckBoxToggle()"/>
+                                <input id="modRF" type="checkbox" name="RF" />
 
                                 <label for="modUS">US</label>
-                                <input id="modUS" type="checkbox" name="modUS" onclick="modalityCheckBoxToggle()"/>
+                                <input id="modUS" type="checkbox" name="US" />
 
                                 <label for="modDX">DX</label>
-                                <input id="modDX" type="checkbox" name="modDX" onclick="modalityCheckBoxToggle()"/>
+                                <input id="modDX" type="checkbox" name="DX" />
 
-                            </div>
-                            <div>
                                 <label for="modNM">NM</label>
-                                <input id="modNM" type="checkbox" name="modNM" onclick="modalityCheckBoxToggle()"/>
+                                <input id="modNM" type="checkbox" name="NM" />
 
                                 <label for="modSC">SC</label>
-                                <input id="modSC" type="checkbox" name="modSC" onclick="modalityCheckBoxToggle()"/>
+                                <input id="modSC" type="checkbox" name="SC" />
 
                                 <label for="modOT">OT</label>
-                                <input id="modOT" type="checkbox" name="modOT" onclick="modalityCheckBoxToggle()"/>
+                                <input id="modOT" type="checkbox" name="OT" />
 
 
                             </div>
@@ -129,7 +130,7 @@ var AdvancedSearch = React.createClass({
      console.log("SEARCH CLICKED");
        //NAME
        var patientName = document.getElementById("patient_name").value;
-       var text = "PatientName: "+this.checkEmpty(patientName); //TODO FINISH
+       var query = "PatientName: "+this.checkEmpty(patientName); //TODO FINISH
 
        //GENDER
        var gender;
@@ -143,38 +144,67 @@ var AdvancedSearch = React.createClass({
        {
          gender = "";
        }
-       text = text + gender;
+       query = query + gender;
        //ID
        var patientId = document.getElementById("patient_id").value;
        if(this.checkEmpty(patientId) != "*")
-       text = text + " AND PatientID: " + this.checkEmpty(patientId);
+       query = query + " AND PatientID: " + this.checkEmpty(patientId);
        //Instituition
        var instituition = document.getElementById("instituition").value;
        if(this.checkEmpty(instituition) != "*")
-       text = text + " AND InstitutionName: " + this.checkEmpty(instituition);
+       query = query + " AND InstitutionName: " + this.checkEmpty(instituition);
        //Pshysician
        var physician = document.getElementById("physician").value;
        if(this.checkEmpty(physician) != "*")
-       text = text + " AND PerformingPhysicianName: " + this.checkEmpty(physician);
+       query = query + " AND PerformingPhysicianName: " + this.checkEmpty(physician);
        //OperatorName
        var OperatorName = document.getElementById("OperatorName").value;
        if(this.checkEmpty(OperatorName) != "*")
-       text = text + " AND OperatorName: " + this.checkEmpty(OperatorName);
+       query = query + " AND OperatorName: " + this.checkEmpty(OperatorName);
        ///////
+
+       var mods = document.querySelector(".modalities");
+       var mods_checked = Array.prototype.slice.call(mods.querySelectorAll('input'));
+
+       var modalities = "";
+       mods_checked.forEach(function(element){
+         //console.log(element.checked);
+         if(element.checked)
+         {
+           modalities = modalities + " " + element.name;
+         }
+       })
+
+       if(modalities != "")
+       {
+         modalities = " AND Modality: ("+modalities+")";
+         query = query + modalities;
+       }
+
+       //DATE
+       if(document.getElementById("datepicker").value != "")
+       {
+         var day
+         var date = $('#datepicker').datepicker('getDate').getFullYear() + this.fix2($('#datepicker').datepicker('getDate').getMonth()) + this.fix2($('#datepicker').datepicker('getDate').getDate());
+
+         query = query + " AND StudyDate:["+date +" TO "+date+"]";
+       }
+
+
        ///////
-       var params = {text: text, keyword: true, other:true};
+       var params = {text: query, keyword: true, other:true};
 
        React.render(<ResultSearch items={params}/>, document.getElementById("container"));
-
-
-       //console.log("asadfgh");
-   },
+  },
    checkEmpty: function(text){
      if(text.length ==0 )
       return "*";
      else
       return text;
-   }
+   },
+   fix2:function(n) {
+        return (n < 10) ? '0' + n : n;
+    }
 });
 
 export {AdvancedSearch};
