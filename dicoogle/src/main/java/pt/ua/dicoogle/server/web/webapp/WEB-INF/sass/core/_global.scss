@@ -32,9 +32,8 @@ input {
     vertical-align: middle;
 }
 
-.modal .modal-body {
-    max-height: 500px;
-    overflow-y: auto;
+.modal{
+  background-color: rgba(0,0,0,0.5);
 }
 
 //FAKE DEFENITIONS
