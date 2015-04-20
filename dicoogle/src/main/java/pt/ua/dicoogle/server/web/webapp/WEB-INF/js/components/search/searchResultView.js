@@ -77,12 +77,12 @@ var ResultSearch = React.createClass({
       </div>
     );
 */
-    return (<div> 
-        
+    return (<div>
+
         <Step current={this.state.current} onClick={this.onStepClicked}/>
         <div id="step-container"/>
-        <div onClick={this.onStepClicked.bind(this, this.state.current +1)}> <button>next</button></div>
-      
+        
+
       </div>);
 
 
@@ -111,7 +111,7 @@ var ResultSearch = React.createClass({
      //React.render(<ResultSearch items={params}/>, document.getElementById("container"));
     var view;
     if(stepComponent == 0)
-      view = ( <PatientView items={this.state.data} onItemClick={this.onPatientClicked}/>);  
+      view = ( <PatientView items={this.state.data} onItemClick={this.onPatientClicked}/>);
     else if(stepComponent == 1)
       view = ( <StudyView patient={this.state.patient} onItemClick={this.onStudyClicked}/>);
     else if(stepComponent == 2)
@@ -136,7 +136,7 @@ var ResultSearch = React.createClass({
     React.render(<ImageView serie={serie} />, document.getElementById("step-container"));
   }
 
-}); 
+});
 
 var Step = React.createClass({
   getInitialState: function() {
@@ -148,7 +148,7 @@ var Step = React.createClass({
   render: function() {
 
     return (
-        <div className="row"> 
+        <div className="row">
           <div className="col-xs-3 stepa">
             <div className={this.getStep(this.state.current,0)} onClick={this.onStepClicked.bind(this, 0)}>Patient</div>
           </div>
@@ -161,7 +161,7 @@ var Step = React.createClass({
           <div className="col-xs-3 stepa">
             <div className={this.getStep(this.state.current,3)} onClick={this.onStepClicked.bind(this,3)}>Image</div>
           </div>
-       
+
         </div>
       );
   },
@@ -169,7 +169,7 @@ var Step = React.createClass({
     var state1="step current";
     var state2="step done";
     var state3="step disabled";
-   
+
     if(step == current)
       return state1;
     else if(step>current)
