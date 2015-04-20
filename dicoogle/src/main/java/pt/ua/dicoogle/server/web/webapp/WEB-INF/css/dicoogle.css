@@ -31,9 +31,8 @@ input {
   display: table-cell;
   vertical-align: middle; }
 
-.modal .modal-body {
-  max-height: 500px;
-  overflow-y: auto; }
+.modal {
+  background-color: rgba(0, 0, 0, 0.5); }
 
 .resultfake {
   width: auto !important;
@@ -65,7 +64,10 @@ input {
   background-color: #49AFBB;
   border-color: #008C99;
   border-style: solid;
-  border-width: 4px; }
+  border-width: 4px;
+  -webkit-box-shadow: 5px 5px 5px 0px rgba(50, 50, 50, 0.75);
+  -moz-box-shadow: 5px 5px 5px 0px rgba(50, 50, 50, 0.75);
+  box-shadow: 5px 5px 5px 0px rgba(50, 50, 50, 0.75); }
 
 .step.disabled {
   background-color: #a3d2d8;
@@ -79,6 +81,9 @@ input {
 
 .table-striped > tbody > tr:nth-child(odd).resultRow:hover {
   background-color: #a3d2d8; }
+
+.modalities {
+  width: 200px; }
 
 .user-wrapper {
   position: absolute;
