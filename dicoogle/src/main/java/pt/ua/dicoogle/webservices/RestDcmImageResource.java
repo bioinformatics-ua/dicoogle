@@ -17,39 +17,21 @@
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package pt.ua.dicoogle.webservices;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Iterator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import org.apache.commons.io.IOUtils;
-import org.dcm4che2.data.DicomObject;
 import org.dcm4che2.imageio.plugins.dcm.DicomImageReadParam;
 import org.restlet.data.MediaType;
 import org.restlet.representation.ByteArrayRepresentation;
-import org.restlet.representation.OutputRepresentation;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 import pt.ua.dicoogle.plugins.PluginController;
-import pt.ua.dicoogle.sdk.StorageInputStream;
-import pt.ua.dicoogle.sdk.datastructs.SearchResult;
-import pt.ua.dicoogle.sdk.task.JointQueryTask;
-import pt.ua.dicoogle.sdk.task.Task;
 
 /**
  *
@@ -67,16 +49,13 @@ public class RestDcmImageResource extends ServerResource {
         this.core = PluginController.getInstance();
     }
     
-    
-    
-    
     @Get("image/jpeg")
     public void getJPEG() {
         BufferedImage dicomImage=null;
         String imgPath = getRequest().getResourceRef().getQueryAsForm().getValues("path");
         if (imgPath == null) {return;}
         
-        int indexExt = imgPath.toString().lastIndexOf('.');
+        int indexExt = imgPath.lastIndexOf('.');
         if(indexExt == -1) imgPath += ".dcm"; //a lot of dicom files have no extension
         
         String extension = imgPath.substring(indexExt);
@@ -99,13 +78,10 @@ public class RestDcmImageResource extends ServerResource {
                     baos.close();
                 }
                 catch (IOException e) {
-                    System.err.println("OH DAMN");
-                    return;
+                    LoggerFactory.getLogger(RestDcmImageResource.class).error(e.getMessage(), e);
                 }
                 break;
             }
-                
-            
             case ".dicom":  //these are
             case ".dcm":{
                 File file = new File(imgPath);
@@ -136,7 +112,7 @@ public class RestDcmImageResource extends ServerResource {
                         baos.close();
                     }
                     catch(IOException e){
-                        System.err.println("OH DAMN");
+                        LoggerFactory.getLogger(RestDcmImageResource.class).error(e.getMessage(), e);
                         return;
                     }
                 }

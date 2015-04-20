@@ -38,9 +38,10 @@ import java.util.Iterator;
 
 /**
  * Handles conversion between the images (formats) found inside a DICOM file
- * and the PNG image format, for proper lossles web view.
+ * and the PNG image format, for proper lossless web view.
  *
  * @author António Novo <antonio.novo@ua.pt>
+ * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 public class Convert2PNG
 {	

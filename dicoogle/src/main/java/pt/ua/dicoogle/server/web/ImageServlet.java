@@ -35,10 +35,8 @@ import java.util.List;
 
 import javax.servlet.ServletOutputStream;
 
-
-
-
 import net.sf.json.JSONObject;
+import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.StorageInputStream;
 import pt.ua.dicoogle.server.web.dicom.Convert2PNG;
 import pt.ua.dicoogle.server.web.dicom.Information;
@@ -49,20 +47,18 @@ import pt.ua.dicoogle.server.web.utils.LocalImageCache;
  * Also maintains a cache of the images already served to speed-up the next requests (minimizing server load by doing way less conversions).
  *
  * @author Antonio
+ * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 public class ImageServlet extends HttpServlet
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public static final int BUFFER_SIZE = 1500; // byte size for read-write ring bufer, optimized for regular TCP connection windows
 
-	private LocalImageCache cache;
+	private final LocalImageCache cache;
 	
-        /**
-	 * Creates a image servlet.
+    /**
+	 * Creates an image servlet.
 	 *
 	 * @param cache the local image caching system, can be null and if so no caching mechanism will be used.
 	 */
@@ -70,15 +66,18 @@ public class ImageServlet extends HttpServlet
 	{
 		this.cache = cache;
 	}
-
-	
-
+    
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
 		String sopInstanceUID = request.getParameter("SOPInstanceUID");
-		if (sopInstanceUID == null || sopInstanceUID.trim().isEmpty()) // make sure that the SOPInstanceUID param is supplied
-		{
+		String uri = request.getParameter("uri");
+		if (sopInstanceUID == null) {
+            if (uri == null) {
+                response.sendError(400, "Invalid UID!");
+                return;
+            }
+        } else if (sopInstanceUID.trim().isEmpty()) {
 			response.sendError(400, "Invalid SOP Instance UID!");
 			return;
 		}
@@ -89,37 +88,31 @@ public class ImageServlet extends HttpServlet
 			sFrame = "0";
 		int frame = Integer.parseInt(sFrame);
 
-		// get the .dcm file for that SOP Instance UID
-		//File dcmFile = Information.getFileFromSOPInstanceUID(sopInstanceUID);
-		StorageInputStream dcmFile = Information.getFileFromSOPInstanceUID(sopInstanceUID, providers);
-		
+		// get the image file for that SOP Instance UID
+		StorageInputStream imgFile = Information.getFileFromSOPInstanceUID(sopInstanceUID, providers);
 		// if no .dcm file was found tell the client
-		if ((dcmFile == null))
+		if ((imgFile == null))
 		{
-			response.sendError(404, "No DICOM file for supplied SOP Instance UID!");
+			response.sendError(404, "No image file for supplied SOP Instance UID!");
 			return;
 		}
 
 		// the temporary file containing the cache contents for this DICOM image
-		File cf = null;
-				
+		File cf;
 		// if there is a cache available then use it
-		if ((cache != null) && (cache.isRunning()))
-		{
+		if ((cache != null) && (cache.isRunning())) {
 			cf = cache.getFileFromName(sopInstanceUID + "_" + frame + ".png");
 
 			// if the cache was able to get a file to cache to
-			if (cf != null)
-			{				
+			if (cf != null) {
 				// we synchronize this bit so that no thread is reading while we write the contents to this file, paralelized reading is still enabled, once the writing is finished ofcourse
-				synchronized (cf)
-				{
+				synchronized (cf) {
 					// check if the file already has contents in it, and if it's empty, cache the converted image contents to it
 					
 					if (cf.length() < 1)
 					{
 						// get the requested frame as a PNG stream
-						ByteArrayOutputStream pngStream = Convert2PNG.DICOM2PNGStream(dcmFile, frame);
+						ByteArrayOutputStream pngStream = Convert2PNG.DICOM2PNGStream(imgFile, frame);
 						
 						if (pngStream == null)
 						{
@@ -135,12 +128,9 @@ public class ImageServlet extends HttpServlet
 
 						// finally tell the local cache manager that we are finished writing to the file, so that other threads don't need to synchronize on it even (if the synch occurred we would still be able to read the contents in parallel across multiple threads, this is just a optimization for a cache that is designed to run for a very long time, to keep the linked list of files being used empty for most of the time)
 						cache.finishedUsingFile(cf);
-						
 					}
 				}
-			}
-			else
-			{
+			} else {
 				response.sendError(500, "Unable to get cached contents!");
 				return;
 			}
@@ -148,7 +138,7 @@ public class ImageServlet extends HttpServlet
 		else // if the cache is invalid or not running convert the image and return it "on-the-fly"
 		{
 			// get the requested frame as a PNG stream
-			ByteArrayOutputStream pngStream = Convert2PNG.DICOM2PNGStream(dcmFile, frame);
+			ByteArrayOutputStream pngStream = Convert2PNG.DICOM2PNGStream(imgFile, frame);
 			if (pngStream == null)
 			{
 				response.sendError(500, "Could not convert DICOM to PNG!");
