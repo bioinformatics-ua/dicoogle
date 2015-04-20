@@ -4,6 +4,8 @@ var Button = ReactBootstrap.Button;
 var ModalTrigger = ReactBootstrap.ModalTrigger;
 var Modal = ReactBootstrap.Modal;
 
+import {Endpoints} from '../../../constants/endpoints';
+
 var ImageView = React.createClass({
   	getInitialState: function() {
     	return {data: [],
@@ -36,6 +38,9 @@ var ImageView = React.createClass({
 				    	     		<ModalTrigger modal={<PopOverView uid={item.sopInstanceUID}/>}>
     									<button type="button" className="btn btn_dicoogle">Dump Image</button>
   									</ModalTrigger>
+                    <ModalTrigger modal={<PopOverImageViewer uid={item.sopInstanceUID}/>}>
+                   <button type="button" className="btn btn_dicoogle">Show Image</button>
+                 </ModalTrigger>
   								</td>
 				    	     </tr>
 			           	);
@@ -51,7 +56,7 @@ var ImageView = React.createClass({
                 			<th>SopInstanceUID</th>
                 			<th>Thumbnail</th>
                       <th></th>
-                		</tr>
+                    </tr>
         			</thead>
         			 <tbody>
            				{resultItems}
@@ -114,6 +119,31 @@ var PopOverView = React.createClass({
 
 		         {rows}
              <img  id="image1" src="http://globe-views.com/dcim/dreams/bananas/bananas-03.jpg" width="50%" />
+		        </div>
+		        <div className='modal-footer'>
+		          <Button onClick={this.props.onRequestHide}>Close</Button>
+		        </div>
+			</Modal>
+
+			);
+	}
+});
+
+var PopOverImageViewer = React.createClass({
+	getInitialState: function() {
+    	return {data: [],
+    	status: "loading",
+    	current: 0};
+  	},
+
+
+	render:function(){
+	  var url = Endpoints.base + "/dic2png?SOPInstanceUID="+this.props.uid;
+		return (
+			<Modal  {...this.props} bsStyle='primary' title='Image Dump' animation={true}>
+		        <div className='modal-body'>
+
+             <img  id="image1" src={url} width="100%" />
 		        </div>
 		        <div className='modal-footer'>
 		          <Button onClick={this.props.onRequestHide}>Close</Button>
