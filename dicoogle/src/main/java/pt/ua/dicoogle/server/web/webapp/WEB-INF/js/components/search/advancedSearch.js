@@ -7,6 +7,8 @@ var Button = ReactBootstrap.Button;
 import {SearchStore} from '../../stores/searchStore';
 import {ActionCreators} from '../../actions/searchActions';
 
+import {ResultSearch} from '../search/searchResultView';
+
 var AdvancedSearch = React.createClass({
     getInitialState: function (){
         return { label:'login' };
@@ -19,33 +21,33 @@ var AdvancedSearch = React.createClass({
                         <div className="col-xs-12 col-sm-6">
                             <div className="globalmargin">
                                 <div className="subject_text">Patient Name</div>
-                                <input type="text" className="form-control" placeholder="(All Patients)"></input>
+                                <input id="patient_name" type="text" className="form-control" placeholder="(All Patients)"></input>
                             </div>
                             <div className="globalmargin">
                                 <div className="subject_text">Patient ID</div>
-                                <input type="text" className="form-control" placeholder="(All IDS)"></input>
+                                <input id="patient_id"type="text" className="form-control" placeholder="(All IDS)"></input>
                             </div>
                             <div className="globalmargin">
                                 <div className="subject_text">Patient Gender</div>
                                 <div className="inline_block">
                                     All
-                                    <input type="checkbox" aria-label="..." checked></input>Male
-                                    <input type="checkbox" aria-label="..."></input>Female
-                                    <input type="checkbox" aria-label="..."></input>
+                                    <input id="gender_all" type="radio" name='genderRadio'></input>Male
+                                    <input id="gender_male" type="radio" name='genderRadio'></input>Female
+                                    <input id="gender_female" type="radio" name='genderRadio'></input>
 
                                 </div>
                             </div>
                             <div className="globalmargin">
                                 <div className="subject_text">Instituition Name</div>
-                                <input type="text" className="form-control" placeholder="(All Instituitions)"></input>
+                                <input id="instituition" type="text" className="form-control" placeholder="(All Instituitions)"></input>
                             </div>
                             <div className="globalmargin">
                                 <div className="subject_text">Physician</div>
-                                <input type="text" className="form-control" placeholder="(All Physicians)"></input>
+                                <input id="physician" type="text" className="form-control" placeholder="(All Physicians)"></input>
                             </div>
                             <div className="globalmargin">
                                 <div className="subject_text">Operator Name</div>
-                                <input type="text" className="form-control" placeholder="(All Operators)"></input>
+                                <input id="OperatorName" type="text" className="form-control" placeholder="(All Operators)"></input>
                             </div>
 
 
@@ -106,8 +108,8 @@ var AdvancedSearch = React.createClass({
                         </div>
 
                     </div>
-                    <button type="button" className="btn btn_dicoogle centerDivH" onclick="search()">Search</button>
-                </div> 
+                    <button type="button" className="btn btn_dicoogle centerDivH" onClick={this.onSearchClicked}>Search</button>
+                </div>
             </div>
             );
         return managementInstance;
@@ -117,12 +119,62 @@ var AdvancedSearch = React.createClass({
         SearchStore.listen(this._onChange);
 
     },
-  
+
     _onChange : function(data){
         console.log(data);
      //    if (this.isMounted())
      // this.setState({label:data});
-    }
+   },
+   onSearchClicked : function(){
+     console.log("SEARCH CLICKED");
+       //NAME
+       var patientName = document.getElementById("patient_name").value;
+       var text = "PatientName: "+this.checkEmpty(patientName); //TODO FINISH
+
+       //GENDER
+       var gender;
+       if (document.getElementById('gender_male').checked) {
+          gender = " AND PatientSex:M";
+       }
+       else if(document.getElementById('gender_female').checked){
+         gender = " AND PatientSex:F";
+       }
+       else
+       {
+         gender = "";
+       }
+       text = text + gender;
+       //ID
+       var patientId = document.getElementById("patient_id").value;
+       if(this.checkEmpty(patientId) != "*")
+       text = text + " AND PatientID: " + this.checkEmpty(patientId);
+       //Instituition
+       var instituition = document.getElementById("instituition").value;
+       if(this.checkEmpty(instituition) != "*")
+       text = text + " AND InstitutionName: " + this.checkEmpty(instituition);
+       //Pshysician
+       var physician = document.getElementById("physician").value;
+       if(this.checkEmpty(physician) != "*")
+       text = text + " AND PerformingPhysicianName: " + this.checkEmpty(physician);
+       //OperatorName
+       var OperatorName = document.getElementById("OperatorName").value;
+       if(this.checkEmpty(OperatorName) != "*")
+       text = text + " AND OperatorName: " + this.checkEmpty(OperatorName);
+       ///////
+       ///////
+       var params = {text: text, keyword: true, other:true};
+
+       React.render(<ResultSearch items={params}/>, document.getElementById("container"));
+
+
+       //console.log("asadfgh");
+   },
+   checkEmpty: function(text){
+     if(text.length ==0 )
+      return "*";
+     else
+      return text;
+   }
 });
 
 export {AdvancedSearch};

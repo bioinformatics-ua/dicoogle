@@ -7,6 +7,8 @@ import {ActionCreators} from '../actions/searchActions';
 
 import {Endpoints} from '../constants/endpoints';
 
+import {getPatients} from '../handlers/requestHandler';
+
 var SearchStore = Reflux.createStore({
     listenables: ActionCreators,
     init: function () {
@@ -26,11 +28,31 @@ var SearchStore = Reflux.createStore({
 
     onSearch : function(data){
       var self = this;
+      getPatients(data.text, data.keyword, 
+        function(data){
+          //SUCCESS
+          console.log("success", data);
+          self._contents = data;
+
+          //DEBUG WAIT
+          setTimeout(self.triggerWithDelay, 1500)
+        },
+        function(xhr){
+          //FAILURE
+          self.trigger({
+              success:false,
+              status: xhr.status
+            });
+        }
+      );
+
+
+      /*var self = this;
 
         console.log("store param: ", data.text);
 
         //'http://localhost:8080/search?query=wrix&keyword=false&provicer=lucene'
-        var url = Endpoints.base + '/search?query='+data.text+'&keyword=false&provicer=lucene';
+        var url = Endpoints.base + '/searchPatient?query='+data.text+'&keyword=false&provicer=lucene';
         console.log("store url;",url);
 
         $.ajax({
@@ -64,6 +86,7 @@ var SearchStore = Reflux.createStore({
 
 
         //this.trigger(data);
+        */
     },
 
     triggerWithDelay :function(){
