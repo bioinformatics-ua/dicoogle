@@ -25,9 +25,11 @@ var Search = React.createClass({
     },
     componentDidMount: function(){
       this.enableAutocomplete();
+      this.enableEnterKey();
     },
     componentDidUpdate: function(){
       this.enableAutocomplete();
+      this.enableEnterKey();
     },
     render: function() {
         var selectionButtons = (
@@ -173,6 +175,16 @@ var Search = React.createClass({
           return false;
         }
       });
+    },
+
+    enableEnterKey:function(){
+      var self = this;
+      $('#free_text').keyup(function(e){
+          if(e.keyCode == 13)
+          {
+            self.onSearchClicked();
+          }
+        });
     }
 });
 
