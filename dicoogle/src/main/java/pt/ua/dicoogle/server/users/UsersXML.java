@@ -46,7 +46,6 @@ import org.xml.sax.helpers.XMLReaderFactory;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
-@Deprecated
 public class UsersXML extends DefaultHandler
 {
     private UsersStruct users = UsersStruct.getInstance();

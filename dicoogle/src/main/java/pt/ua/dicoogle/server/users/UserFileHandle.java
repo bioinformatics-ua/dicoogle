@@ -71,14 +71,14 @@ public class UserFileHandle {
                     in.close();
 
                 } catch (FileNotFoundException ex) {
-                        KeyGenerator gen = KeyGenerator.getInstance("AES");
+                    KeyGenerator gen = KeyGenerator.getInstance("AES");
 
-                        gen.init(128, new SecureRandom());
-                        key = gen.generateKey();
+                    gen.init(128, new SecureRandom());
+                    key = gen.generateKey();
 
-                        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(keyFile));
+                    try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(keyFile))) {
                         out.writeObject(key);
-                        out.close();
+                    }
                 }
 
                 cipher = Cipher.getInstance("AES");
@@ -120,13 +120,14 @@ public class UserFileHandle {
         in.close();
     }
 
+    /** Retrieve the contents of the users configuration file.
+     * @return a byte array, or null if the configuration file is not available or corrupted
+     * @throws IOException on a failed attempt to read the file
+     */
     public byte[] getFileContent() throws IOException {
         try {
-            FileInputStream fin = null;
-            ByteArrayOutputStream out = null;
-            try {
-                fin = new FileInputStream(filename);
-                out = new ByteArrayOutputStream();
+            try (FileInputStream fin = new FileInputStream(filename);
+                    ByteArrayOutputStream out = new ByteArrayOutputStream()) {
                 byte[] data = new byte[1024];
                 int bytesRead;
 
@@ -135,38 +136,26 @@ public class UserFileHandle {
                     out.flush();
                 }
 
-                out.close();
-                fin.close();
-                
                 if(encrypt){
                     cipher.init(Cipher.DECRYPT_MODE, key);
                     byte[] Bytes = cipher.doFinal(out.toByteArray());
                     return Bytes;
                 }
-                else
-                    return out.toByteArray();
-
                 
-            } catch (IllegalBlockSizeException ex) {
-                LoggerFactory.getLogger(UserFileHandle.class).error(ex.getMessage(), ex);
-            } finally {
-                if (fin != null) {
-                    fin.close();
-                }
+                return out.toByteArray();
             }
-            
-            return null;
+        } catch (FileNotFoundException ex) {
+            LoggerFactory.getLogger(UserFileHandle.class).info("No such users file \"{}\", will create one with default settings.", filename);
+        } catch (IllegalBlockSizeException ex) {
+            LoggerFactory.getLogger(UserFileHandle.class).error("Users file \"{}\" is corrupted, will override it with default settings.", filename, ex);
         } catch (InvalidKeyException ex) {
             LoggerFactory.getLogger(UserFileHandle.class).error("Invalid Key to decrypt users file! Please contact your system administator.");
             System.exit(1); // FIXME this is too dangerous
-
-            return null;
         }
         catch(BadPaddingException ex){
             LoggerFactory.getLogger(UserFileHandle.class).error("Invalid Key to decrypt users file! Please contact your system administator.");
             System.exit(2); // FIXME this is too dangerous
-
-            return null;
         }
+        return null;
     }
 }
