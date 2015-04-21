@@ -102,7 +102,7 @@ var PopOverView = React.createClass({
 	render:function(){
 		if(this.state.status == "loading")
 			return (
-				<Modal  {...this.props}bsStyle='primary' title='Image Dump' animation={false}>
+				<Modal  {...this.props}bsStyle='primary' title='Image Dump' animation={true}>
 				<div> loading... </div>
         </Modal>);
 
@@ -116,10 +116,8 @@ var PopOverView = React.createClass({
 		return (
 			<Modal  {...this.props} bsStyle='primary' title='Image Dump' animation={true}>
 		        <div className='modal-body'>
-
-		         {rows}
-             <img  id="image1" src="http://globe-views.com/dcim/dreams/bananas/bananas-03.jpg" width="50%" />
-		        </div>
+              {rows}
+            </div>
 		        <div className='modal-footer'>
 		          <Button onClick={this.props.onRequestHide}>Close</Button>
 		        </div>
