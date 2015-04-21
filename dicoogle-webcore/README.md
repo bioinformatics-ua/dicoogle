@@ -10,7 +10,7 @@ The building process of Dicoogle Web Core is carried out by `grunt`. Install **n
     npm install
     npm run-script build
 
-## Using
+## Using 
 
  - Add the resulting "build/dicoogle-webcore.js" as a `<script>` to the Dicoogle web page.
  - Place <dicoogle-slot> elements in the page. They must contain a unique slot id attribute `data-slot-id`.
@@ -92,3 +92,10 @@ define('example', function(require) {
 });
 ```
 
+## Installing Plugins
+
+Place all contents of a plugin in a directory and insert the directory (by copying or linking) into the "WebPlugins" folder at the base working directory. Plugins can then be retrieved the next time the Dicoogle server loads.
+
+## Testing Plugins
+
+Web UI plugins can be tested either in a Dicoogle server or in separate pages. For the latter, please see the HTML pages in "test/TC/" for a few examples.

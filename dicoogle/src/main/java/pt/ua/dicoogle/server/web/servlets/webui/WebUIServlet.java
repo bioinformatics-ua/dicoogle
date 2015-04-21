@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
@@ -71,7 +72,7 @@ public class WebUIServlet extends HttpServlet {
                 pkgList.add(pkg);
             }
         }
-        return "{\"plugins\":[" + String.join(",", pkgList) + "]}";
+        return "{\"plugins\":[" + StringUtils.join(pkgList, ",") + "]}";
     }
 
     private String getPlugin(HttpServletResponse resp, String name) throws IOException {
