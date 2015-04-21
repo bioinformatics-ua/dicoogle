@@ -54,7 +54,12 @@ var ResultSearch = React.createClass({
     //Check if search return no results
     if(this.state.data.numResults === 0)
     {
-      return (<div> No Results</div>);
+      return (
+        <div>
+        No results for that query
+        </div>
+
+        );
     }
 
     var arraylist = this.state.data.results;
@@ -81,7 +86,7 @@ var ResultSearch = React.createClass({
 
         <Step current={this.state.current} onClick={this.onStepClicked}/>
         <div id="step-container"/>
-        
+
 
       </div>);
 

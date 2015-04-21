@@ -41,7 +41,8 @@ input {
 
 .btn_dicoogle {
   background-color: #008C99;
-  color: #ffffff; }
+  color: #ffffff;
+  margin-right: 5px; }
   .btn_dicoogle:hover {
     background-color: #1BA5B2;
     color: #ffffff; }
@@ -173,7 +174,11 @@ input {
 .panel-primary {
   border-color: #A3D2D8; }
   .panel-primary .panel-heading {
-    background-color: #A3D2D8; }
+    background-color: #A3D2D8;
+    background-image: none; }
+
+.indexprogress {
+  width: 40%; }
 
 .panel-title {
   color: #008C99; }

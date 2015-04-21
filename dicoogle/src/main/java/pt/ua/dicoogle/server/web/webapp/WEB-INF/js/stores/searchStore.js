@@ -28,14 +28,14 @@ var SearchStore = Reflux.createStore({
 
     onSearch : function(data){
       var self = this;
-      getPatients(data.text, data.keyword, 
+      getPatients(data.text, data.keyword,
         function(data){
           //SUCCESS
           console.log("success", data);
           self._contents = data;
 
           //DEBUG WAIT
-          setTimeout(self.triggerWithDelay, 1500)
+          setTimeout(self.triggerWithDelay, 700)
         },
         function(xhr){
           //FAILURE

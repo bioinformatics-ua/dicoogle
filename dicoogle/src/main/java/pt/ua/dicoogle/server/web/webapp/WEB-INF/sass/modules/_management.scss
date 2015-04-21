@@ -47,10 +47,14 @@
 
 .panel-primary{
     .panel-heading{
- background-color: $hover_color;   
+ background-color: $hover_color;
+ background-image: none;
     }
-    
+
     border-color: $hover_color;
+}
+.indexprogress{
+  width: 40%;
 }
 
 .panel-title{
@@ -58,5 +62,5 @@
 }
 
 .topMargin{
- margin-top: 30px;   
+ margin-top: 30px;
 }

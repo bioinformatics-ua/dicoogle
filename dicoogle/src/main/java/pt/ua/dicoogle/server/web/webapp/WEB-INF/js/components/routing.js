@@ -33,6 +33,8 @@ import {ActionCreators} from '../actions/searchActions';
 import {Search} from '../components/search/searchView';
 import {ResultSearch} from '../components/search/searchResultView';
 import {AboutView} from './about/aboutView';
+import {IndexerView} from './management/indexerView';
+import {ManagementView} from './management/managementView';
 
 
 var App = React.createClass({
@@ -50,7 +52,7 @@ clicked: function(index){
 render: function() {
     console.log("APP RENDER");
     var self = this;
-    var menuItems = ["search","management","about"];
+    var menuItems = ["search","management","indexer","about"];
     var sidebarInstance  = (
         <div>
         <ul className="sidebar-nav">
@@ -65,6 +67,8 @@ render: function() {
                         return <li><a className={style} onClick={self.clicked.bind(self, index)} href="#search">Search</a></li>;
                     else if(index == "management")
                         return <li><a className={style} onClick={self.clicked.bind(self, index)} href="#management">Management</a></li>;
+                    else if(index == "indexer")
+                        return <li><a className={style} onClick={self.clicked.bind(self, index)} href="#indexer">Indexer</a></li>;
                     else if(index == "about")
                         return <li><a className={style} onClick={self.clicked.bind(self, index)} href="#about">About</a></li>;
                     else
@@ -103,9 +107,9 @@ render: function() {
     return (<div/>);
 }
 });
-var HomePage = React.createClass({
+var ManagementPage = React.createClass({
 render: function() {
-    React.render(<div>Management Page</div>, document.getElementById("container"));
+    React.render(<ManagementView/>, document.getElementById("container"));
     return (<div/>);
 }
 });
@@ -128,6 +132,12 @@ render: function() {
     return (<div/>);
 }
 });
+var IndexerPage = React.createClass({
+render: function() {
+    React.render(<IndexerView/>, document.getElementById("container"));
+    return (<div/>);
+}
+});
 
 
 var Routing = function () {
@@ -137,7 +147,8 @@ var routes = (
         <Route name="search" addHandlerKey={true} handler={SearchPage}>
             <Route name="silo" path="/results" handler={ResultPage}/>
         </Route>
-     <Route name="management" addHandlerKey={true} handler={HomePage} />
+     <Route name="management" addHandlerKey={true} handler={ManagementPage} />
+       <Route name="indexer" addHandlerKey={true} handler={IndexerPage} />
      <Route name="about" addHandlerKey={true} handler={AboutPage} />
 
 

@@ -18,13 +18,13 @@ var DumpStore = Reflux.createStore({
 
     onGet : function(data){
       var self = this;
-      getImageInfo(data , 
+      getImageInfo(data ,
         function(data){
           //SUCCESS
           console.log("success", data);
           self._contents = data;
 
-          
+
           self.trigger({
             data:self._contents,
             success: true
@@ -44,4 +44,3 @@ var DumpStore = Reflux.createStore({
 });
 
 export {DumpStore};
-
