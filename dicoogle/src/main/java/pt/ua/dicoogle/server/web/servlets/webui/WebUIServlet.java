@@ -35,7 +35,7 @@ import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
 /**
  * Retrieval of web UI plugins and respective packages/modules.
  * 
- * <b>This API is unstable. It is currently only compatible with dicoogle-webcore 0.4.x and 0.5.x</b>
+ * <b>This API is unstable. It is currently only compatible with dicoogle-webcore 0.5.x</b>
  *
  * @author Eduardo Pinho
  */
@@ -91,8 +91,8 @@ public class WebUIServlet extends HttpServlet {
         
         StringBuilder writer = new StringBuilder();
         if (process) {
-            writer.append(String.format("define(\"%s\", "
-                    + "function(module,exports,require){\n",
+            writer.append(String.format("define(\"%s\",[\"require\",\"exports\",\"module\"],"
+                    + "function(require,exports,module){\nreturn ",
                     plugin.getName()));
         }
         writer.append(js);
