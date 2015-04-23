@@ -1,0 +1,13 @@
+{
+  "name": "simple-query",
+  "version": "0.0.1",
+  "description": "Simple Query Web UI plugin",
+  "scripts": {
+    "build": "cp simple-query.js module.js"
+  },
+  "dicoogle": {
+    "caption": "Simple Query",
+    "slot-id": "query",
+    "module-file": "module.js"
+  }
+}

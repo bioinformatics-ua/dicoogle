@@ -3,6 +3,7 @@
 /Plugins
 /clientConfig.xml
 /config.xml
+/nbactions.xml
 /DICOMLOG.log
 /foreignNames.ser
 /luceneplugin.log
