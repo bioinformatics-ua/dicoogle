@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import org.restlet.Application;
 import org.restlet.Restlet;
 import org.restlet.routing.Router;
-import pt.ua.dicoogle.server.web.rest.ExtResource;
 import pt.ua.dicoogle.server.web.rest.ExamTimeResource;
 import pt.ua.dicoogle.server.web.rest.ForceIndexing;
 import pt.ua.dicoogle.server.web.rest.RestDcmImageResource;
@@ -75,7 +74,8 @@ public class LegacyRestletApplication extends Application {
 
 //        internalRouter.attachDefault(ExtResource.class);
                 
-        LoggerFactory.getLogger(LegacyRestletApplication.class).debug(internalRouter.getRoutes().toString());
+        LoggerFactory.getLogger(LegacyRestletApplication.class).debug("Legacy service routes: {}",
+                internalRouter.getRoutes());
         return internalRouter;
     }
 }

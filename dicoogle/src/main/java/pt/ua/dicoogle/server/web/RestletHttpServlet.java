@@ -19,13 +19,13 @@
 package pt.ua.dicoogle.server.web;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.restlet.Restlet;
 import org.restlet.ext.servlet.ServletAdapter;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -42,7 +42,7 @@ public class RestletHttpServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        Logger.getLogger(RestletHttpServlet.class.getName()).info("Initializing restlet servlet");
+        LoggerFactory.getLogger(RestletHttpServlet.class).info("Initializing restlet servlet");
         super.init();
         this.adapter = new ServletAdapter(getServletContext());
         this.restlet.setContext(this.adapter.getContext());

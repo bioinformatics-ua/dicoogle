@@ -25,11 +25,6 @@ import org.restlet.Application;
 import org.restlet.Restlet;
 import org.restlet.resource.ServerResource;
 import org.restlet.routing.Router;
-import pt.ua.dicoogle.server.web.rest.ExtResource;
-import pt.ua.dicoogle.server.web.rest.ExamTimeResource;
-import pt.ua.dicoogle.server.web.rest.ForceIndexing;
-import pt.ua.dicoogle.server.web.rest.RestDcmImageResource;
-import pt.ua.dicoogle.server.web.rest.RestWADOResource;
 
 /** A Restlet Application for aggregating web services from plugins
  *
@@ -66,7 +61,8 @@ public class PluginRestletApplication extends Application {
             internalRouter.attach("/" + resource.toString(), resource.getClass());
         }
         
-        LoggerFactory.getLogger(PluginRestletApplication.class).debug("Installed plugin restlets: {}", pluginServices);
+        LoggerFactory.getLogger(PluginRestletApplication.class).debug("Installed plugin restlets: {}",
+                pluginServices);
         return internalRouter;
     }
     

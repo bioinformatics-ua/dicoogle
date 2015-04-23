@@ -27,9 +27,8 @@ import java.util.HashMap;
 import java.util.Map;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import pt.ua.dicoogle.plugins.PluginController;
 
 /** A class type for managing web UI plugins.
@@ -38,7 +37,7 @@ import pt.ua.dicoogle.plugins.PluginController;
  */
 public class WebUIPluginManager {
     
-    private static final Logger logger = LogManager.getLogger(PluginController.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(PluginController.class);
     
     private final String webBaseDir;
 
@@ -164,7 +163,7 @@ public class WebUIPluginManager {
             try {
                 File pluginSettingsFile = new File(settingsFolder + "/" + plugin.getName() + ".json");
                 if (!pluginSettingsFile.exists()) { 
-                    logger.log(Level.INFO, "Web plugin " + plugin.getName() + " has no settings file");
+                    logger.info("Web plugin {} has no settings file", plugin.getName());
                     continue;
                 }
                 BufferedReader reader = new BufferedReader(new FileReader(pluginSettingsFile));
@@ -176,7 +175,7 @@ public class WebUIPluginManager {
                 JSONObject settings = (JSONObject) JSONSerializer.toJSON(acc);
                 plugin.setSettings(settings);
             } catch (IOException ex) {
-                logger.log(Level.ERROR, (String)null, ex);
+                logger.error("Failed to load web plugin settings", ex);
             }
         }
     }    
