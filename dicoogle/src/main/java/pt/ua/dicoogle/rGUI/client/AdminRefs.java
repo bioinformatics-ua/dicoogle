@@ -45,8 +45,8 @@ import pt.ua.dicoogle.rGUI.interfaces.controllers.ITaskList;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IUsersManager;
 
 /**
- * Esta classe ?? respons??vel por ir buscar as refer??ncias para os objectos remotos da administra????o
- * e guardar as refer??ncias para esses objectos
+ * Esta classe é responsável por ir buscar as referências para os objectos remotos da administração
+ * e guardar as referências para esses objectos
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */

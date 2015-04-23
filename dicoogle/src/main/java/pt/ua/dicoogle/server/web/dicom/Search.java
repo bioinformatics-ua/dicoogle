@@ -56,7 +56,7 @@ import pt.ua.dicoogle.sdk.task.Task;
  * especially created to the issuing user. This holder is accessible via /search/holders.
  * 
  * @author Tiago Marques Godinho
- * @author Ant??nio Novo <antonio.novo@ua.pt>
+ * @author António Novo <antonio.novo@ua.pt>
  */
 public class Search {
 	private List<String> selectedProviders;

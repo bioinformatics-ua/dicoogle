@@ -28,7 +28,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
 
@@ -40,7 +41,7 @@ import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
  * @author Eduardo Pinho
  */
 public class WebUIServlet extends HttpServlet {
-    private static final Logger logger = Logger.getLogger(WebUIServlet.class);
+    private static final Logger logger = LoggerFactory.getLogger(WebUIServlet.class);
     
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

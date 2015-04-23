@@ -36,9 +36,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dcm4che2.data.BasicDicomObject;
@@ -53,14 +50,12 @@ import pt.ua.dicoogle.core.dim.Patient;
 import pt.ua.dicoogle.core.dim.Serie;
 import pt.ua.dicoogle.core.dim.Study;
 import pt.ua.dicoogle.plugins.PluginController;
-import pt.ua.dicoogle.sdk.StorageInputStream;
-import pt.ua.dicoogle.sdk.StorageInterface;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
 /**
  *
- * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @since 17 Fev 2009
  */
 public class SearchDicomResult implements Iterator<DicomObject>

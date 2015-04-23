@@ -24,9 +24,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.transform.OutputKeys;
@@ -43,10 +40,9 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 
-
 /**
  *
- * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class DIMGeneric
 {

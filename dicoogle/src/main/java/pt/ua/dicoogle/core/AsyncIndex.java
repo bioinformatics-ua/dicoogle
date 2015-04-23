@@ -21,9 +21,6 @@ package pt.ua.dicoogle.core;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
@@ -34,7 +31,7 @@ import pt.ua.dicoogle.plugins.PluginController;
 
 /**
  *
- * Lu??s A. Basti??o Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class AsyncIndex {
 
@@ -63,9 +60,6 @@ public class AsyncIndex {
                 LoggerFactory.getLogger(AsyncIndex.class).error(ex.getMessage(), ex);
             }
         }
-        
-        
-
 
         // to remove watch the watch
 //        boolean res = false;
