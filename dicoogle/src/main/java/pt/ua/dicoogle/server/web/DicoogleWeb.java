@@ -96,7 +96,7 @@ public class DicoogleWeb {
      * @param port the server port
      */
     public DicoogleWeb(int port) throws Exception {
-        logger.info("Starting Web Services in DicoogleWeb. Port: {0}", port);
+        logger.info("Starting Web Services in DicoogleWeb. Port: {}", port);
         System.setProperty("org.apache.jasper.compiler.disablejsr199", "true");
       //  System.setProperty("org.mortbay.jetty.webapp.parentLoaderPriority", "true");
         // System.setProperty("production.mode", "true");

@@ -73,7 +73,7 @@ public class WebUIServlet extends HttpServlet {
                 pkgList.add(pkg);
             }
         }
-        return "{\"plugins\":[" + StringUtils.join(pkgList, ",") + "]}";
+        return "{\"plugins\":[" + StringUtils.join(pkgList, ',') + "]}";
     }
 
     private String getPlugin(HttpServletResponse resp, String name) throws IOException {
