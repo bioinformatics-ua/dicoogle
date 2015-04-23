@@ -53,6 +53,7 @@ import org.eclipse.jetty.servlets.GzipFilter;
 import pt.ua.dicoogle.server.web.servlets.accounts.LogoutServlet;
 import pt.ua.dicoogle.server.web.servlets.management.UnindexServlet;
 import pt.ua.dicoogle.server.web.servlets.search.DumpServlet;
+import pt.ua.dicoogle.server.web.servlets.webui.WebUIServlet;
 import pt.ua.dicoogle.server.web.utils.LocalImageCache;
 
 /**
@@ -60,6 +61,7 @@ import pt.ua.dicoogle.server.web.utils.LocalImageCache;
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Frederico Valente
  * @author Frederico Silva <fredericosilva@ua.pt>
+ * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 public class DicoogleWeb {
 
@@ -191,8 +193,8 @@ public class DicoogleWeb {
             createServletHandler(new ServicesServlet(ServicesServlet.STORAGE), "/management/dicom/storage"),
             createServletHandler(new ServicesServlet(ServicesServlet.QUERY), "/management/dicom/query"),
             createServletHandler(new ServicesServlet(ServicesServlet.PLUGIN), "/management/plugins/"),
-            createServletHandler(new AETitleServlet(), "/management/settings/dicom")
-            ,
+            createServletHandler(new AETitleServlet(), "/management/settings/dicom"),
+            createServletHandler(new WebUIServlet(), "/webui"),
             webpages
 
         };

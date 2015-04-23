@@ -25,7 +25,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -59,7 +61,7 @@ public class SearchServlet extends HttpServlet {
          Example: http://localhost:8080/search?query=wrix&keyword=false&provicer=lucene
          */
         String query = request.getParameter("query");
-        String[] providers = request.getParameterValues("provider");
+        String providers[] = request.getParameterValues("provider");
         boolean keyword = Boolean.parseBoolean(request.getParameter("keyword"));
       
         if (StringUtils.isEmpty(query)) {
@@ -71,10 +73,16 @@ public class SearchServlet extends HttpServlet {
             QueryExpressionBuilder q = new QueryExpressionBuilder(query);
             query = q.getQueryString();
         }
-
+        
+        List<String> providerList = Collections.EMPTY_LIST;
         boolean queryAllProviders = false;
         if (providers == null || providers.length == 0) {
             queryAllProviders = true;
+        } else {
+            providerList = Arrays.asList(providers);
+            if (providerList.isEmpty()) {
+                queryAllProviders = true;
+            }
         }
 
         List<String> knownProviders = null;
@@ -104,12 +112,12 @@ public class SearchServlet extends HttpServlet {
 
             @Override
             public void onCompletion() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet.");
             }
 
             @Override
             public void onReceive(Task<Iterable<SearchResult>> e) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet.");
             }
         };
 

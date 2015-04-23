@@ -34,7 +34,7 @@ import javax.swing.JPanel;
  * </p>
  * 
  */
-
+@Deprecated
 public interface GraphicalInterface extends DicooglePlugin
 {
     

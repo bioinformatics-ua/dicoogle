@@ -10,9 +10,10 @@
 	<name>dicoogle</name>
 	<url>http://maven.apache.org</url>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+        <properties>
+            <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+            <jetty.version>9.0.3.v20130506</jetty.version>
+        </properties>
 
 	<repositories>
 		<repository>
@@ -163,7 +164,7 @@
 			</plugin>
 		</plugins>
 	</build>
-
+        
 	<dependencies>
 		<dependency>
 			<groupId>jaidcm4che</groupId>
@@ -236,12 +237,12 @@
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-webapp</artifactId>
-			<version>9.0.3.v20130506</version>
+			<version>${jetty.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-jsp</artifactId>
-			<version>9.0.3.v20130506</version>
+			<version>${jetty.version}</version>
 		</dependency>
 
 		<dependency>

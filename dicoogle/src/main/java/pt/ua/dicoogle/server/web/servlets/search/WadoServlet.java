@@ -82,8 +82,6 @@ public class WadoServlet extends HttpServlet{
         }
         
         resp.getWriter().print(uri);
-		
-		
 	}
 	
 	 private static class MyHolder extends JointQueryTask {
