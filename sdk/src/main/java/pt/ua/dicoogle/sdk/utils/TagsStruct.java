@@ -27,8 +27,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.SetUtils;
@@ -43,7 +45,7 @@ import org.apache.commons.collections4.bidimap.DualHashBidiMap;
  * 
  * Other fields is the common designation for fields that do not belong to the DIM.
  *
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
  * @author Tiago Marques Godinho <tmgodinho@ua.pt> Refactor
  */
 public class TagsStruct
@@ -81,7 +83,7 @@ public class TagsStruct
         }
         catch (InterruptedException ex)
         {
-            Logger.getLogger(TagsStruct.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(TagsStruct.class).error(ex.getMessage(), ex);
         }
         return instance;
     }

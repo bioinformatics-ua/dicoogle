@@ -35,8 +35,10 @@ import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
@@ -71,7 +73,7 @@ public class QueryHistory extends javax.swing.JFrame implements Observer {
         }
         catch (InterruptedException ex)
         {
-            Logger.getLogger(QueryHistory.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(QueryHistory.class).error(ex.getMessage(), ex);
         }
         return instance;
     }

@@ -27,8 +27,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -105,7 +104,7 @@ public class Zip implements Closeable
         {
             fi = new FileInputStream(file);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(Zip.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Zip.class).error(ex.getMessage(), ex);
         }
         origin = new BufferedInputStream(fi, BUFFER);
         ZipEntry entry = new ZipEntry(fullPath);
@@ -120,7 +119,7 @@ public class Zip implements Closeable
         {
             out.putNextEntry(entry);
         } catch (IOException ex) {
-            Logger.getLogger(Zip.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Zip.class).error(ex.getMessage(), ex);
         }
         int count;
         try {
@@ -128,12 +127,12 @@ public class Zip implements Closeable
                 out.write(data, 0, count);
             }
         } catch (IOException ex) {
-            Logger.getLogger(Zip.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Zip.class).error(ex.getMessage(), ex);
         }
         try {
             origin.close();
         } catch (IOException ex) {
-            Logger.getLogger(Zip.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Zip.class).error(ex.getMessage(), ex);
         }
 
     }
@@ -143,7 +142,7 @@ public class Zip implements Closeable
         try {
             out.close();
         } catch (IOException ex) {
-            Logger.getLogger(Zip.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Zip.class).error(ex.getMessage(), ex);
         }
 
     }

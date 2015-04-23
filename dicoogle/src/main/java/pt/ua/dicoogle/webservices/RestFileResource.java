@@ -19,15 +19,8 @@
 package pt.ua.dicoogle.webservices;
 
 import java.io.*;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
+import org.slf4j.LoggerFactory;
 import org.apache.commons.io.IOUtils;
-import org.restlet.data.Disposition;
 import org.restlet.data.MediaType;
 import org.restlet.representation.OutputRepresentation;
 import org.restlet.representation.StreamRepresentation;
@@ -73,7 +66,7 @@ public class RestFileResource extends ServerResource {
             try {
                 temp = File.createTempFile(SOPInstanceUID, Platform.homePath() + ".dcm");
             } catch (IOException ex) {
-                Logger.getLogger(RestWADOResource.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(RestWADOResource.class).error(ex.getMessage(), ex);
             }
             temp.deleteOnExit();
             FileOutputStream fos;
@@ -87,7 +80,7 @@ public class RestFileResource extends ServerResource {
                 bos.close();
                 gz.close();
             } catch (Exception ex) {
-                Logger.getLogger(RestWADOResource.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(RestWADOResource.class).error(ex.getMessage(), ex);
             }
 
         }*/
@@ -114,14 +107,13 @@ public class RestFileResource extends ServerResource {
         }
         @Override
         public void write(OutputStream out) throws IOException  {
-             try {
-                 IOUtils.copy(stream.getInputStream(), out);
-             } catch (IOException ex) {
-                 Logger.getLogger(RestFileResource.class.getName()).log(Level.SEVERE, null, ex);
-                 ex.printStackTrace();
-                 throw ex;
-             }
-           
+            try {
+                IOUtils.copy(stream.getInputStream(), out);
+            } catch (IOException ex) {
+                LoggerFactory.getLogger(RestFileResource.class).error(ex.getMessage(), ex);
+                ex.printStackTrace();
+                throw ex;
+            }
         }
      }
 }

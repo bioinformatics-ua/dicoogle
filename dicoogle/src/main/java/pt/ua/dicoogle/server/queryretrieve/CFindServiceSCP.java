@@ -24,7 +24,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.Executor;
-import java.util.logging.Level;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.transform.TransformerConfigurationException;
 
@@ -44,6 +44,8 @@ import pt.ua.dicoogle.core.LogLine;
 import pt.ua.dicoogle.core.LogXML;
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.rGUI.server.controllers.Logs;
+
+
 
 import pt.ua.dicoogle.server.DicomNetwork;
 
@@ -70,7 +72,7 @@ public class CFindServiceSCP extends CFindService {
         this.luke = luke;        
     }
     
-    /* CFIND */
+    /*** CFIND */
     @Override
     protected synchronized DimseRSP doCFind(Association as, int pcid,
             DicomObject cmd, DicomObject keys, DicomObject rsp)
@@ -90,7 +92,7 @@ public class CFindServiceSCP extends CFindService {
         /**
          * Verify Permited AETs
          */
-        //DebugManager.getInstance().debug(":: Verify Permited AETs @ C-FIND Action ");
+        //DebugManager.getInstance().debug(":: Verify Permited AETs @??C-FIND Action ");
         boolean permited = false;
 
         if (s.getPermitAllAETitles()) {
@@ -143,8 +145,7 @@ public class CFindServiceSCP extends CFindService {
         try {
             l.printXML();
         } catch (TransformerConfigurationException ex) {
-            java.util.logging.Logger.getLogger(
-                    QueryRetrieve.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(QueryRetrieve.class).error(ex.getMessage(), ex);
         }
         Logs.getInstance().addLog(ll);
 

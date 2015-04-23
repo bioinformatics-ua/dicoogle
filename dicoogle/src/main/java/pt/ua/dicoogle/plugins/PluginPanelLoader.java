@@ -74,7 +74,7 @@ public class PluginPanelLoader extends ClassLoader
             }
         } catch (RemoteException ex)
         {
-            Logger.getLogger(PluginPanelLoader.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(PluginPanelLoader.class).error(ex.getMessage(), ex);
         }
         return null;
     }
@@ -98,7 +98,7 @@ public class PluginPanelLoader extends ClassLoader
             }
         } catch (RemoteException ex)
         {
-            Logger.getLogger(PluginPanelLoader.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(PluginPanelLoader.class).error(ex.getMessage(), ex);
         }
         return null;
     }*/
@@ -118,7 +118,7 @@ public class PluginPanelLoader extends ClassLoader
         System.out.println(c.getName());
         } catch (ClassNotFoundException ex)
         {
-        Logger.getLogger(ServerOptions.class.getName()).log(Level.SEVERE, null, ex);
+        LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
         }*/
     }
 }

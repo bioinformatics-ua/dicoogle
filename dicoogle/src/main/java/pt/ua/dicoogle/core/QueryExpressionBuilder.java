@@ -36,11 +36,8 @@ import pt.ua.dicoogle.sdk.utils.TagsStruct;
 
 /**
  *
- * @author Lu√≠s A. Basti√£o Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-
-
-
 public class QueryExpressionBuilder
 {
 

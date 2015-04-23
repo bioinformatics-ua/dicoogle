@@ -26,8 +26,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.zip.Adler32;
 import java.util.zip.CheckedInputStream;
 import java.util.zip.ZipEntry;
@@ -39,8 +38,6 @@ import java.util.zip.ZipInputStream;
  */
 public class UnZip
 {
-
-
     final int BUFFER = 2048;
 
     private String filePath = null;
@@ -63,7 +60,7 @@ public class UnZip
             fis = new FileInputStream(this.filePath);
         }
         catch (FileNotFoundException ex) {
-            Logger.getLogger(UnZip.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UnZip.class).error(ex.getMessage(), ex);
         }
         checksum = new CheckedInputStream(fis, new Adler32());
         
@@ -97,7 +94,7 @@ public class UnZip
                 dest.close();
             }
         } catch (IOException ex) {
-            Logger.getLogger(UnZip.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UnZip.class).error(ex.getMessage(), ex);
         }
 
 
@@ -106,14 +103,12 @@ public class UnZip
     public void close()
     {
 
-
-
         try
         {
             zis.close();
         } catch (IOException ex)
         {
-            Logger.getLogger(UnZip.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UnZip.class).error(ex.getMessage(), ex);
         }
         System.out.println("Checksum:"+checksum.getChecksum().getValue());
 

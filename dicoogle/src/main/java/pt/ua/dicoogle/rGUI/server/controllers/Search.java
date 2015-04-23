@@ -25,8 +25,10 @@ import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
 import java.util.*;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.core.QueryExpressionBuilder;
 import pt.ua.dicoogle.plugins.NetworkMember;
@@ -50,7 +52,6 @@ import pt.ua.dicoogle.sdk.utils.TagsStruct;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
-@Deprecated
 public class Search implements ISearch
 {
 
@@ -88,7 +89,7 @@ public class Search implements ISearch
         } catch (RemoteException ex) {
         searchSignal = null;
         DebugManager.getInstance().debug("Failure to send the signal to the client..");
-        Logger.getLogger(Search.class.getName()).log(Level.SEVERE, null, ex);
+        LoggerFactory.getLogger(Search.class).error(ex.getMessage(), ex);
         }
          * 
          */
@@ -109,7 +110,7 @@ public class Search implements ISearch
         {
             searchSignal = null;
             //DebugManager.getInstance().debug("Failure to send the signal to the client..");
-            Logger.getLogger(Search.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Search.class).error(ex.getMessage(), ex);
         }
     }
     
@@ -127,7 +128,7 @@ public class Search implements ISearch
         {
             searchSignal = null;
             //DebugManager.getInstance().debug("Failure to send the signal to the client..");
-            Logger.getLogger(Search.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Search.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -148,7 +149,7 @@ public class Search implements ISearch
         {
             searchSignal = null;
             //DebugManager.getInstance().debug("Failure to send the signal to the client..");
-            Logger.getLogger(Search.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Search.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -174,7 +175,7 @@ public class Search implements ISearch
         {
             searchSignal = null;
             //DebugManager.getInstance().debug("Failure to send the signal to the client..");
-            Logger.getLogger(Search.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Search.class).error(ex.getMessage(), ex);
         }
         
     }
@@ -200,7 +201,7 @@ public class Search implements ISearch
         {
             searchSignal = null;
             //DebugManager.getInstance().debug("Failure to send the signal to the client..");
-            Logger.getLogger(Search.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Search.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -283,7 +284,7 @@ public class Search implements ISearch
                 try {
                     this.wait(WAIT_TIME);
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(Search.class.getName()).log(Level.SEVERE, null, ex);
+                    LoggerFactory.getLogger(Search.class).error(ex.getMessage(), ex);
                 }
             }
             //System.out.println("Received the results + "+resultArr.size());

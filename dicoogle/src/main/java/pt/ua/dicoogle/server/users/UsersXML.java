@@ -20,10 +20,10 @@ package pt.ua.dicoogle.server.users;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -46,13 +46,9 @@ import org.xml.sax.helpers.XMLReaderFactory;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
-@Deprecated
 public class UsersXML extends DefaultHandler
 {
-
-    private UsersStruct users = UsersStruct.getInstance() ;
-
-
+    private UsersStruct users = UsersStruct.getInstance();
     private boolean isUsers = false ;
 
     private String username;
@@ -140,9 +136,9 @@ public class UsersXML extends DefaultHandler
             r.parse(src);
             return users;
         }
-        catch (Exception ex)
+        catch (SAXException | IOException ex)
         {
-            Logger.getLogger(UsersXML.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UsersXML.class).error(ex.getMessage(), ex);
         }
         return null;
     }
@@ -166,7 +162,7 @@ public class UsersXML extends DefaultHandler
             hd = tf.newTransformerHandler();
         } catch (TransformerConfigurationException ex)
         {
-            Logger.getLogger(UsersXML.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UsersXML.class).error(ex.getMessage(), ex);
         }
         
         Transformer serializer = hd.getTransformer();
@@ -180,7 +176,7 @@ public class UsersXML extends DefaultHandler
             hd.startDocument();
         } catch (SAXException ex)
         {
-            Logger.getLogger(UsersXML.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UsersXML.class).error(ex.getMessage(), ex);
         }
 
         AttributesImpl atts = new AttributesImpl();
@@ -215,7 +211,7 @@ public class UsersXML extends DefaultHandler
             hd.endDocument();
         } catch (SAXException ex)
         {
-            Logger.getLogger(UsersXML.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(UsersXML.class).error(ex.getMessage(), ex);
         }
         finally {
             try {
@@ -224,7 +220,7 @@ public class UsersXML extends DefaultHandler
                 UserFileHandle file = new UserFileHandle();
                 file.printFile(out.toByteArray());
             } catch (Exception ex) {
-                  Logger.getLogger(UsersXML.class.getName()).log(Level.SEVERE, null, ex);
+                  LoggerFactory.getLogger(UsersXML.class).error(ex.getMessage(), ex);
             }
         }
 

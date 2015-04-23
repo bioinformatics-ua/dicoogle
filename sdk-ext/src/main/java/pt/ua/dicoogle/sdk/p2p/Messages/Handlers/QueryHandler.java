@@ -26,8 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -124,9 +123,6 @@ public class QueryHandler implements MessageHandler, Observer
 
         // ArrayList<SearchResult> resultsAll = IndexEngine.getInstance().search(query, extra);
         //
-
-
-
     }
 
     public void update(Observable o, Object arg)
@@ -168,7 +164,7 @@ public class QueryHandler implements MessageHandler, Observer
                 newMessage = builder.buildQueryResponse(results, (String) task.getParameters().get(TaskRequestsConstants.P_QUERY_NUMBER), this.plugin.getName());
             } catch (IOException ex)
             {
-                Logger.getLogger(QueryHandler.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(QueryHandler.class).error(ex.getMessage(), ex);
             }
 
             /**

@@ -32,8 +32,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import pt.ua.dicoogle.rGUI.client.AdminRefs;
@@ -79,7 +81,7 @@ public class ActiveSessions extends javax.swing.JFrame {
         try {
             adminID = activeSessions.getAdminID();
         } catch (RemoteException ex) {
-            Logger.getLogger(ActiveSessions.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ActiveSessions.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -97,7 +99,7 @@ public class ActiveSessions extends javax.swing.JFrame {
 
             jListUsers.setModel(model);
         } catch (RemoteException ex) {
-            Logger.getLogger(ActiveSessions.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ActiveSessions.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -195,7 +197,7 @@ public class ActiveSessions extends javax.swing.JFrame {
                 "User Selection", JOptionPane.INFORMATION_MESSAGE);
 
         } catch (RemoteException ex) {
-            Logger.getLogger(ActiveSessions.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ActiveSessions.class).error(ex.getMessage(), ex);
         }
     }//GEN-LAST:event_jButtonLogoutActionPerformed
 

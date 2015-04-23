@@ -21,8 +21,7 @@ package pt.ua.dicoogle.core;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import net.contentobjects.jnotify.JNotify;
@@ -32,7 +31,7 @@ import pt.ua.dicoogle.plugins.PluginController;
 
 /**
  *
- * Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class AsyncIndex {
 
@@ -58,19 +57,16 @@ public class AsyncIndex {
             try {
                 watchID = JNotify.addWatch(path, mask, watchSubtree, new Listener());
             } catch (JNotifyException ex) {
-                Logger.getLogger(AsyncIndex.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(AsyncIndex.class).error(ex.getMessage(), ex);
             }
         }
-        
-        
-
 
         // to remove watch the watch
 //        boolean res = false;
 //        try {
 //            res = JNotify.removeWatch(watchID);
 //        } catch (JNotifyException ex) {
-//            Logger.getLogger(AsyncIndex.class.getName()).log(Level.SEVERE, null, ex);
+//            LoggerFactory.getLogger(AsyncIndex.class).error(ex.getMessage(), ex);
 //        }
 //        if (!res) {
 //            // invalid watch ID specified.
@@ -97,7 +93,7 @@ class Listener implements JNotifyListener {
         try {
             PluginController.getInstance().unindex(new URI(rootPath + File.pathSeparator+ name));
         } catch (URISyntaxException ex) {
-            Logger.getLogger(Listener.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Listener.class.getName()).error(ex.getMessage(), ex);
         }
         
         
@@ -108,7 +104,7 @@ class Listener implements JNotifyListener {
             print("created " + rootPath + " : " + name);
             PluginController.getInstance().index(new URI(rootPath + File.pathSeparator+ name));
         } catch (URISyntaxException ex) {
-            Logger.getLogger(Listener.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Listener.class).error(ex.getMessage(), ex);
         }
     }
 

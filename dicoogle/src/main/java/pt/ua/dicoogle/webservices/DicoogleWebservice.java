@@ -18,10 +18,8 @@
  */
 package pt.ua.dicoogle.webservices;
 
-import deletion.RestCountQueryResults;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 import org.restlet.Application;
 import org.restlet.Component;
 import org.restlet.Restlet;
@@ -60,7 +58,7 @@ public class DicoogleWebservice extends Application {
 
             // And starts the component.
             component.start();
-            org.restlet.engine.Engine.setLogLevel(Level.OFF);
+            org.restlet.engine.Engine.setLogLevel(java.util.logging.Level.OFF);
         }
         catch(Exception e){
             //TODO:log this properly...
@@ -75,7 +73,7 @@ public class DicoogleWebservice extends Application {
             try {
                 server.stop();
             } catch (Exception ex) {
-                Logger.getLogger(DicoogleWebservice.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(DicoogleWebservice.class).error(ex.getMessage(), ex);
             }
         }
         component=null;

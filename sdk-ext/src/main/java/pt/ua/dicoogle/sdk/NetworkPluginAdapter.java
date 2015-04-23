@@ -25,8 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.sdk.Utils.QueryNumber;
 import pt.ua.dicoogle.sdk.Utils.TaskQueue;
 import pt.ua.dicoogle.sdk.Utils.TaskRequest;
@@ -48,7 +47,7 @@ public abstract class NetworkPluginAdapter implements GenericPluginInterface, Ob
 
     private boolean isRunning = false;
     protected MainMessageHandler MMH;
-    private ListObservableSearch<SearchResult> searchResults = new ListObservableSearch<SearchResult>();
+    private ListObservableSearch<SearchResult> searchResults = new ListObservableSearch<>();
     private TaskQueue TaskRequestsList;
     private MessageObservable mo;
     private List<FileObservable> requestedFiles = Collections.synchronizedList(new ArrayList<FileObservable>());
@@ -91,7 +90,6 @@ public abstract class NetworkPluginAdapter implements GenericPluginInterface, Ob
     @Override
     public void attendTask(TaskRequest task)
     {
-        return;
     }
 
     @Override
@@ -129,7 +127,7 @@ public abstract class NetworkPluginAdapter implements GenericPluginInterface, Ob
             message = mb.buildQueryMessage(query, extrafields, this.getName(), qNumber);
         } catch (IOException ex)
         {
-            Logger.getLogger(NetworkPluginAdapter.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(NetworkPluginAdapter.class).error(ex.getMessage(), ex);
             return null;
         }
 
@@ -153,7 +151,7 @@ public abstract class NetworkPluginAdapter implements GenericPluginInterface, Ob
             message = mb.buildQueryMessage(query, Extrafields, this.getName(), qNumber);
         } catch (IOException ex)
         {
-            Logger.getLogger(NetworkPluginAdapter.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(NetworkPluginAdapter.class).error(ex.getMessage(), ex);
             return null;
         }
 
@@ -171,7 +169,7 @@ public abstract class NetworkPluginAdapter implements GenericPluginInterface, Ob
             message = mb.buildFileRequest(name, hash, this.getName());
         } catch (IOException ex)
         {
-            Logger.getLogger(NetworkPluginAdapter.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(NetworkPluginAdapter.class).error(ex.getMessage(), ex);
             return null;
         }
         FileObservable newFileObservable = new FileObservable(address, name);

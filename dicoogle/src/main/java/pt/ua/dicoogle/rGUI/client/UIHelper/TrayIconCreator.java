@@ -31,8 +31,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URL;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.rGUI.client.ClientCore;
 import pt.ua.dicoogle.rGUI.client.windows.About;
@@ -59,7 +61,7 @@ public class TrayIconCreator {
             }
             sem.release();
         } catch (InterruptedException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(MainWindow.class).error(ex.getMessage(), ex);
         }
         return instance;
     }

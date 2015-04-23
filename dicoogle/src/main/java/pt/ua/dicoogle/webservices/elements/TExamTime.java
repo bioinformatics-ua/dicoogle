@@ -27,8 +27,10 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -49,7 +51,7 @@ public class TExamTime extends Thread {
 
     public synchronized void stopThread() {
         if(stop)
-            return; // A Thread já parou ou está a parar
+            return; // A Thread j?? parou ou est?? a parar
         
         stop = true;
 
@@ -58,7 +60,7 @@ public class TExamTime extends Thread {
                 wait();
             }
         } catch (InterruptedException ex) {
-            Logger.getLogger(TExamTime.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(TExamTime.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -170,12 +172,12 @@ public class TExamTime extends Thread {
             examTime.threadFinished();
             
         } catch (Exception ex) {
-            Logger.getLogger(TExamTime.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(TExamTime.class).error(ex.getMessage(), ex);
         } finally {
             try {
                 out.close();
             } catch (IOException ex) {
-                Logger.getLogger(TExamTime.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(TExamTime.class).error(ex.getMessage(), ex);
             }
         }
 
@@ -205,8 +207,8 @@ public class TExamTime extends Thread {
     }
 
     /**
-     * Calcula o tempo de duração de cada uma das Séries, dado tempos em "Ano,
-     * Mês, Dia, Hora, Minuto, Segundo"
+     * Calcula o tempo de dura????o de cada uma das S??ries, dado tempos em "Ano,
+     * M??s, Dia, Hora, Minuto, Segundo"
      *
      * @param dateTime
      * @return

@@ -36,8 +36,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.dcm4che2.data.BasicDicomObject;
 import org.dcm4che2.data.DicomObject;
@@ -51,8 +50,6 @@ import pt.ua.dicoogle.core.dim.Patient;
 import pt.ua.dicoogle.core.dim.Serie;
 import pt.ua.dicoogle.core.dim.Study;
 import pt.ua.dicoogle.plugins.PluginController;
-import pt.ua.dicoogle.sdk.StorageInputStream;
-import pt.ua.dicoogle.sdk.StorageInterface;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
@@ -244,13 +241,13 @@ public class SearchDicomResult implements Iterator<DicomObject>
                             try {
                                 din = new DicomInputStream(str.getInputStream());
                             } catch (IOException ex) {
-                                Logger.getLogger(SearchDicomResult.class.getName()).log(Level.SEVERE, null, ex);
+                                LoggerFactory.getLogger(SearchDicomResult.class).error(ex.getMessage(), ex);
                             }
                     }
                     
                     //DebugManager.getInstance().debug("Imagem: "+path+"..."+next);
                 } catch (URISyntaxException ex) {
-                    Logger.getLogger(SearchDicomResult.class.getName()).log(Level.SEVERE, null, ex);
+                    LoggerFactory.getLogger(SearchDicomResult.class).error(ex.getMessage(), ex);
                 }
                 */
                 
@@ -297,12 +294,12 @@ public class SearchDicomResult implements Iterator<DicomObject>
                 try {
                     patientName = new String(studyTmp.getParent().getPatientName().getBytes("ISO-8859-1"), "ISO-8859-1");
                 } catch (Exception ex) {
-                    Logger.getLogger(SearchDicomResult.class.getName()).log(Level.SEVERE, null, ex);
+                    LoggerFactory.getLogger(SearchDicomResult.class).error(ex.getMessage(), ex);
                 }
                 try {
                     result.putBytes(Tag.PatientName, VR.PN, patientName.getBytes("ISO-8859-1"));
                 } catch (Exception ex) {
-                    Logger.getLogger(SearchDicomResult.class.getName()).log(Level.SEVERE, null, ex);
+                    LoggerFactory.getLogger(SearchDicomResult.class).error(ex.getMessage(), ex);
                 }
                 
                 //System.out.println("PatientName:"+patientName);

@@ -37,9 +37,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.restlet.resource.ServerResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.restlet.resource.ServerResource;
 
 import pt.ua.dicoogle.core.ServerSettings;
@@ -82,8 +82,7 @@ import pt.ua.dicoogle.webservices.DicoogleWebservice;
  */
 public class PluginController{
 
-    private static final Logger logger = LogManager.getLogger(PluginController.class.getName());
-    
+    private static final Logger logger = LoggerFactory.getLogger(PluginController.class);
     private static PluginController instance;
 
     public synchronized static PluginController getInstance() {
@@ -141,9 +140,13 @@ public class PluginController{
                 }
                 plugin.setSettings(holder);
             }
-            catch (ConfigurationException | UnsupportedOperationException e){
-                logger.log(Level.ERROR, (String)null, e);
+            catch (ConfigurationException e){
+                logger.error("Failed to create configuration holder", e);
 			}
+            catch (UnsupportedOperationException e){
+                // TODO log this properly, remove plugin from plugin list
+                logger.error(e.getMessage(),e);
+            }
         }
         logger.info("Settings pushed to plugins");
         webUI.loadSettings(settingsFolder);
@@ -194,18 +197,18 @@ public class PluginController{
 
     private void initJettyInterface(Collection<PluginSet> plugins) {
         System.err.println("initializing jetty interface");
-        
-        ArrayList<JettyPluginInterface> jettyInterfaces = new ArrayList<>();
-        for(PluginSet set : plugins){
-            Collection<JettyPluginInterface> jettyInterface = set.getJettyPlugins();
-            if(jettyInterface == null) continue;
-            jettyInterfaces.addAll(jettyInterface);
-        }
+                
+         ArrayList<JettyPluginInterface> jettyInterfaces = new ArrayList<>();
+         for(PluginSet set : plugins){
+        	 Collection<JettyPluginInterface> jettyInterface = set.getJettyPlugins();
+        	 if(jettyInterface == null) continue;
+        	 jettyInterfaces.addAll(jettyInterface);
+         }
          
-        DicoogleWeb jettyServer = ControlServices.getInstance().getWebServicePlatform();
-        for(JettyPluginInterface resource : jettyInterfaces){
-            jettyServer.addContextHandlers( resource.getJettyHandlers() );
-        }
+         DicoogleWeb jettyServer = ControlServices.getInstance().getWebServicePlatform();
+         for(JettyPluginInterface resource : jettyInterfaces){
+        	 jettyServer.addContextHandlers( resource.getJettyHandlers() );
+         }
     }
 
     /**
@@ -332,7 +335,7 @@ public class PluginController{
 		try {
 			uri = new URI(schema, "", "");
 		} catch (URISyntaxException e) {
-            logger.log(Level.ERROR, (String)null, e);
+            logger.error("Bad URI", e);
 		}
 		return getStorageForSchema(uri);
     }
@@ -464,18 +467,18 @@ public class PluginController{
         	
         	Task<Report> task = indexer.index(store.at(path));
             if(task == null) continue;
-            task.onCompletion(new Runnable() {
+                task.onCompletion(new Runnable() {
 
-                @Override
-                public void run() {
-                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                    System.out.println("Task accomplished " + pathF);
-                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                }
-            });
-            
+                    @Override
+                    public void run() {
+                        System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
+                        System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
+                        System.out.println("Task accomplished " + pathF);
+                        System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
+                        System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
+                    }
+                });
+                
             taskManager.dispatch(task);
             rettasks.add(task);
         }
@@ -510,8 +513,8 @@ public class PluginController{
                     System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
                 }
             });
-
-            taskManager.dispatch(task);
+            
+	        taskManager.dispatch(task);
 	        rettasks.add(task);
 	        logger.info("FIRED INDEXER: {} FOR URI: {}", pluginName, path.toString());
         }
@@ -519,9 +522,9 @@ public class PluginController{
         
         return rettasks;    	
     }
-    
+
     public void unindex(URI path) {
-    	logger.info("Starting unindexing procedure for "+path.toString());
+    	logger.info("Starting unindexing procedure for {}", path.toString());
         this.doUnindex(path, this.getIndexingPlugins(true));
     }
 
@@ -531,7 +534,7 @@ public class PluginController{
      * @param indexProviders a collection of providers
      */
     public void unindex(URI path, Collection<String> indexProviders) {
-    	logger.info("Starting unindexing procedure for "+path.toString());
+    	logger.info("Starting unindexing procedure for {}", path);
         
         if (indexProviders != null) {
             List<IndexerInterface> indexers = new ArrayList<>();
@@ -552,22 +555,22 @@ public class PluginController{
     private void doUnindex(URI path, Collection<IndexerInterface> indexers) {
         StorageInterface store = getStorageForSchema(path);
 
-        if(store==null){ 
+        if (store==null) { 
         	logger.error("No storage plugin detected");
         }
         
-        for(IndexerInterface indexer : indexers){            
+        for (IndexerInterface indexer : indexers) {            
         	indexer.unindex(path);
         }
-        logger.info("Finished unindexing "+path.toString());
-    }
+        logger.info("Finished unindexing {}", path);
+    }    
     
     /*
      * Convinience method that calls index(URI) and runs the returned
      * tasks on the executing thread 
      */
     public List<Report> indexBlocking(URI path) {
-    	logger.info("Starting Indexing Blocking procedure for "+path.toString());
+    	logger.info("Starting Indexing Blocking procedure for {}", path);
         List<Task<Report>> ret = index(path);
         
         ArrayList<Report> reports = new ArrayList<>(ret.size());
@@ -576,10 +579,10 @@ public class PluginController{
 				reports.add(t.get());
 			}
             catch (InterruptedException | ExecutionException e) {
-                logger.log(Level.ERROR, (String)null, e);
+                logger.error(e.getMessage(), e);
 			}
         }
-        logger.info("Finished Indexing Blocking procedure for "+path.toString());
+        logger.info("Finished Indexing Blocking procedure for {}", path);
         
         return reports;
     }
@@ -590,21 +593,18 @@ public class PluginController{
  
     @Deprecated
 	public List<JMenuItem> getRightButtonItems() {
-        logger.info("getRightButtonItems");
-        logger.info(pluginSets);
+        logger.info("getRightButtonItems()");
         ArrayList<JMenuItem> rightMenuItems = new ArrayList<>();
-        
-        
+                
         for (PluginSet set : pluginSets) {
-            System.out.println("Set plugins: ");
-            System.out.println(set.getGraphicalPlugins());
+            logger.info("Set plugins: {}", set.getGraphicalPlugins());
             Collection<GraphicalInterface> graphicalPlugins = set.getGraphicalPlugins();
             if (graphicalPlugins == null) {
                 continue;
             }
-            System.out.println("Looking for plugin");
+            logger.info("Looking for plugin");
             for (GraphicalInterface gpi : graphicalPlugins) {
-                System.out.println("GPI: " + gpi);
+                logger.info("GPI: {}", gpi);
                 ArrayList<JMenuItem> rbPanels = gpi.getRightButtonItems();
                 if (rbPanels == null) {
                     continue;
@@ -619,7 +619,6 @@ public class PluginController{
     @Deprecated
     public List<JPanel> getTabItems() {
         logger.info("getTabItems");
-        logger.info(pluginSets);
         ArrayList<JPanel> panels = new ArrayList<>();
 
         for (PluginSet set : pluginSets) {
@@ -641,7 +640,6 @@ public class PluginController{
     @Deprecated
     public List<JMenuItem> getMenuItems() {
         logger.info("getMenuItems");
-        logger.info(pluginSets);
         ArrayList<JMenuItem> items = new ArrayList<>();
 
         for (PluginSet set : pluginSets) {
@@ -660,7 +658,7 @@ public class PluginController{
         }
         return items;
     }
-
+    
     // Methods for Web UI 
 
     /** Retrieve all web UI plugin descriptors for the given slot id.
@@ -669,7 +667,7 @@ public class PluginController{
      * @return a collection of web UI plugins.
      */
     public Collection<WebUIPlugin> getWebUIPlugins(String... ids) {
-        logger.log(Level.INFO, "getWebUIPlugins(slot ids: {})", (Object[])ids);
+        logger.info("getWebUIPlugins(slot ids: {})", (Object[])ids);
         List<WebUIPlugin> plugins = new ArrayList<>();
         Set<String> idSet = new HashSet();
         if (ids != null) {
@@ -692,7 +690,7 @@ public class PluginController{
      * @return a web UI plugin descriptor object, or null if no such plugin exists or is inactive
      */
     public WebUIPlugin getWebUIPlugin(String name) {
-        logger.log(Level.INFO, "getWebUIPlugin(name: {})", name);
+        logger.info("getWebUIPlugin(name: {})", name);
         WebUIPlugin plugin = webUI.get(name);
         return plugin == null ? null
                 : plugin.isEnabled() ? plugin : null;
@@ -704,14 +702,14 @@ public class PluginController{
      * @return the full contents of the package.json, null if the plugin is not available
      */
     public String getWebUIPackageJSON(String name) {
-        logger.log(Level.INFO, "getWebUIPackageJSON(name: {})", name);
+        logger.info("getWebUIPackageJSON(name: {})", name);
         try {
             Object o = webUI.retrieveJSON(name);
             return (o != null)
                     ? o.toString()
                     : null;
         } catch (IOException ex) {
-            logger.log(Level.ERROR, ex.getMessage(), ex);
+            logger.error("Failed to retrieve package JSON", ex);
             return null;
         }
     }
@@ -722,11 +720,11 @@ public class PluginController{
      * @return the full contents of the module file, null if the plugin is not available
      */
     public String getWebUIModuleJS(String name) {
-        logger.log(Level.INFO, "getWebUIModuleJS(name: {})", name);
+        logger.info("getWebUIModuleJS(name: {})", name);
         try {
             return webUI.retrieveModuleJS(name);
         } catch (IOException ex) {
-            logger.log(Level.ERROR, (String)null, ex);
+            logger.error("Failed to retrieve module", ex);
             return null;
         }
     }
@@ -736,7 +734,7 @@ public class PluginController{
      * @return whether the plugin exists and was successfully loaded
      */
     public boolean loadWebUIPlugin(String name) {
-        logger.log(Level.INFO, "loadWebUIPlugin(name: {})", name);
+        logger.info("loadWebUIPlugin(name: {})", name);
         try {
             this.webUI.load(name);
         } catch (IOException | PluginFormatException ex) {
@@ -745,8 +743,6 @@ public class PluginController{
         }
         return true;
     }
-
-
 
     //METHODS FOR SERVICE:JAVA
     /**

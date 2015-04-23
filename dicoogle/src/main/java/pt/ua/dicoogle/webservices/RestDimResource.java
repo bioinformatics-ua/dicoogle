@@ -28,8 +28,6 @@ import java.util.concurrent.ExecutionException;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
@@ -38,6 +36,8 @@ import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.core.QueryExpressionBuilder;
 import pt.ua.dicoogle.core.dim.DIMGeneric;
@@ -56,7 +56,7 @@ import pt.ua.dicoogle.sdk.task.Task;
 //TODO:add type to file search
 public class RestDimResource extends ServerResource{
     
-	private static final Logger log = LogManager.getLogger(RestDimResource.class.getName());
+	private static final Logger log = LoggerFactory.getLogger(RestDimResource.class);
 	
     @Get
     public Representation represent(){
@@ -190,7 +190,7 @@ public class RestDimResource extends ServerResource{
             return dim.getXML();
         }
         catch (Exception ex) {
-//            Logger.getLogger(RestDimResource.class.getName()).log(Level.SEVERE, null, ex);
+//            LoggerFactory.getLogger(RestDimResource.class).error(ex.getMessage(), ex);
         	ex.printStackTrace();
         }
         //and returns an xml version of our dim search

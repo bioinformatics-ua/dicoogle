@@ -23,8 +23,10 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.dcm4che2.data.UID;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.ISOPClass;
 import pt.ua.dicoogle.server.SOPList;
@@ -54,7 +56,7 @@ public class SOPClass implements ISOPClass {
             }
             sem.release();
         } catch (InterruptedException ex) {
-            Logger.getLogger(QRServers.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(QRServers.class).error(ex.getMessage(), ex);
         }
         return instance;
     }

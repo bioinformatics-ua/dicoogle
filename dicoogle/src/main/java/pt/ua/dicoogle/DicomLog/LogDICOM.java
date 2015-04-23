@@ -21,12 +21,8 @@ package pt.ua.dicoogle.DicomLog;
 
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 import javax.xml.transform.TransformerConfigurationException;
-
-
-
 
 /**
  *
@@ -58,7 +54,7 @@ public class LogDICOM{
         }
         catch (InterruptedException ex)
         {
-            Logger.getLogger(LogDICOM.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(LogDICOM.class).error(ex.getMessage(), ex);
         }
         return instance;
     }
@@ -76,7 +72,7 @@ public class LogDICOM{
             LogXML log = new LogXML();
             log.printXML();
         } catch (TransformerConfigurationException ex) {
-            Logger.getLogger(LogDICOM.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(LogDICOM.class.getName()).error(ex.getMessage(), ex);
         }
     }
 

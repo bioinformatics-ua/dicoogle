@@ -27,8 +27,10 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.SSLServerSocketFactory;
 
@@ -68,7 +70,7 @@ public class FileSender extends Thread {
                 //(DebugManager.getInstance().debug("There was an error transfering the file: " + file.getName());
 
         } catch (IllegalAccessException ex) {
-            Logger.getLogger(FileSender.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(FileSender.class).error(ex.getMessage(), ex);
         }
         
         return;
@@ -144,7 +146,7 @@ public class FileSender extends Thread {
             socket.close();
 
         } catch (Exception ex) {
-           // Logger.getLogger(FileSender.class.getName()).log(Level.SEVERE, null, ex);
+           // LoggerFactory.getLogger(FileSender.class).error(ex.getMessage(), ex);
 
             return -1;
         }

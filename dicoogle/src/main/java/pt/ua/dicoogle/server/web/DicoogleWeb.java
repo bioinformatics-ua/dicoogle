@@ -42,7 +42,8 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServlet;
@@ -65,7 +66,7 @@ import pt.ua.dicoogle.server.web.utils.LocalImageCache;
  */
 public class DicoogleWeb {
 
-    private static final Logger log = Logger.getLogger("dicoogle");
+    private static final Logger logger = LoggerFactory.getLogger("dicoogle");
     /**
      * Sets the path where the web-pages/scripts or .war are.
      */
@@ -89,7 +90,7 @@ public class DicoogleWeb {
      * Initializes and starts the Dicoogle Web service.
      */
     public DicoogleWeb(int port) throws Exception {
-        log.info("Starting Web Services... in DicoogleWeb. POrt: " + port);
+        logger.info("Starting Web Services... in DicoogleWeb. POrt: " + port);
         System.setProperty("org.apache.jasper.compiler.disablejsr199", "true");
       //  System.setProperty("org.mortbay.jetty.webapp.parentLoaderPriority", "true");
         // System.setProperty("production.mode", "true");

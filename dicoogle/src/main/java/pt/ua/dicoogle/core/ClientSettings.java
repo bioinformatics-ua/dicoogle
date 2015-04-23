@@ -18,9 +18,6 @@
  */
 package pt.ua.dicoogle.core;
 
-import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import pt.ua.dicoogle.server.users.HashService;
 
 /**
@@ -39,29 +36,17 @@ public class ClientSettings {
     private String defaultPassword;
     private boolean autoConnect;
     
-
     private static ClientSettings instance = null;
-    private static Semaphore sem = new Semaphore(1, true);
 
     public static synchronized ClientSettings getInstance()
     {
-        try
-        {
-            sem.acquire();
-            if (instance == null)
-            {
-                instance = new ClientSettings();
-            }
-            sem.release();
-        }
-        catch (InterruptedException ex)
-        {
-            Logger.getLogger(ServerSettings.class.getName()).log(Level.SEVERE, null, ex);
+        if (instance == null) {
+            instance = new ClientSettings();
         }
         return instance;
     }
 
-    private ClientSettings(){
+    private ClientSettings() {
         tempFilesDir = "";
         externalViewer = "";
         defaultServerHost = "";

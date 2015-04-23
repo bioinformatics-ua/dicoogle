@@ -27,8 +27,7 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.ISearch;
@@ -157,12 +156,12 @@ public class ExportDataSupport extends Observable implements Observer, Serializa
             
             if (obsAux!=null)
             {
-                Logger.getLogger(ExportDataSupport.class.getName()).log(Level.SEVERE, "obsAux " + obsAux.isFinish() );
+                LoggerFactory.getLogger(ExportDataSupport.class).error("obsAux " + obsAux.isFinish() );
                 this.notifyObservers(obsAux.isFinish());
             }
             else
             {
-                Logger.getLogger(ExportDataSupport.class.getName()).log(Level.SEVERE, "not obsAux " );
+                LoggerFactory.getLogger(ExportDataSupport.class).error("not obsAux " );
                 this.notifyObservers(false);
             }
             //this.deleteObservers();
@@ -188,7 +187,7 @@ public class ExportDataSupport extends Observable implements Observer, Serializa
 
             obsAux = ((ListObservableSearch) o);
         }
-        Logger.getLogger(ExportDataSupport.class.getName()).log(Level.SEVERE, "Update @ obs");
+        LoggerFactory.getLogger(ExportDataSupport.class).error("Update @ obs");
         ArrayList tmp = ((ListObservableSearch) o).getArray();
         
         if (tmp==null)
@@ -198,13 +197,13 @@ public class ExportDataSupport extends Observable implements Observer, Serializa
         
         if (tmp==null)
         {
-            Logger.getLogger(ExportDataSupport.class.getName()).log(Level.SEVERE, "Update is null, sending block signal");
+            LoggerFactory.getLogger(ExportDataSupport.class).error("Update is null, sending block signal");
             PluginController.getInstance().addTask(new TaskRequest(TaskRequestsConstants.T_BLOCK_SIGNAL, null, null));
             return;
         }
         
         boolean finish = ((ListObservableSearch) obsAux).isFinish();
-        Logger.getLogger(ExportDataSupport.class.getName()).log(Level.SEVERE, "Finished @ " + finish);
+        LoggerFactory.getLogger(ExportDataSupport.class).error("Finished @ " + finish);
         if (finish)
         {
             // only intended to notify the observers of the fist time
@@ -228,13 +227,13 @@ public class ExportDataSupport extends Observable implements Observer, Serializa
                     PluginController.getInstance().addTask(new TaskRequest(TaskRequestsConstants.T_BLOCK_SIGNAL, null, null));
                     return;
                 }
-                Logger.getLogger(ExportDataSupport.class.getName()).log(Level.SEVERE, "Print lines");
+                LoggerFactory.getLogger(ExportDataSupport.class).error("Print lines");
                 printLines(results);
                 PluginController.getInstance().addTask(new TaskRequest(TaskRequestsConstants.T_BLOCK_SIGNAL, null, null));
 
             } catch (Exception ex) 
             {
-                Logger.getLogger(ExportDataSupport.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(ExportDataSupport.class).error(ex.getMessage(), ex);
             }
         }
     }

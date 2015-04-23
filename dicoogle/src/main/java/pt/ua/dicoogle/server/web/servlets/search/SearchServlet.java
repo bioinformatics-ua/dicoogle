@@ -32,8 +32,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.json.JSONObject;
 
@@ -73,7 +75,7 @@ public class SearchServlet extends HttpServlet {
             QueryExpressionBuilder q = new QueryExpressionBuilder(query);
             query = q.getQueryString();
         }
-        
+
         List<String> providerList = Collections.EMPTY_LIST;
         boolean queryAllProviders = false;
         if (providers == null || providers.length == 0) {
@@ -130,7 +132,7 @@ public class SearchServlet extends HttpServlet {
                 results = PluginController.getInstance().query(queryTaskHolder, knownProviders, query, extraFields).get();
             }
         } catch (InterruptedException | ExecutionException ex) {
-            Logger.getLogger(SearchServlet.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(SearchServlet.class).error(ex.getMessage(), ex);
         }
         elapsedTime = System.currentTimeMillis()-elapsedTime;
         

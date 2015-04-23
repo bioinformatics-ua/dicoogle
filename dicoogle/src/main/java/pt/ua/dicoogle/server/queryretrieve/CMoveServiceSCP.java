@@ -25,8 +25,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.xml.transform.TransformerConfigurationException;
 import org.dcm4che2.data.DicomElement;
 import org.dcm4che2.data.DicomObject;
@@ -76,7 +78,7 @@ public class CMoveServiceSCP extends CMoveService {
         /**
          * Verify Permited AETs
          */
-        //DebugManager.getInstance().debug(":: Verify Permited AETs @ C-MOVE Action ");
+        //DebugManager.getInstance().debug(":: Verify Permited AETs @??C-MOVE Action ");
 
         boolean permited = false;
 
@@ -206,7 +208,7 @@ public class CMoveServiceSCP extends CMoveService {
                         
                            files.add(nURI);
                     } catch (URISyntaxException ex) {
-                        Logger.getLogger(CMoveServiceSCP.class.getName()).log(Level.SEVERE, null, ex);
+                        LoggerFactory.getLogger(CMoveServiceSCP.class).error(ex.getMessage(), ex);
                     }
                 }
 
@@ -242,7 +244,7 @@ public class CMoveServiceSCP extends CMoveService {
             {
                 l.printXML();
             } catch (TransformerConfigurationException ex) {
-                Logger.getLogger(CMoveServiceSCP.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(CMoveServiceSCP.class).error(ex.getMessage(), ex);
             }
 
             Logs.getInstance().addLog(ll);
@@ -285,7 +287,7 @@ public class CMoveServiceSCP extends CMoveService {
         //replay = new MoveRSP(keys, rsp, this.core); // Third Party Move
         } catch (IOException ex)
         {
-        Logger.getLogger(CMoveServiceSCP.class.getName()).log(Level.SEVERE, null, ex);
+        LoggerFactory.getLogger(CMoveServiceSCP.class).error(ex.getMessage(), ex);
         }
         try
         {
@@ -293,7 +295,7 @@ public class CMoveServiceSCP extends CMoveService {
         //replay = new MoveRSP(keys, rsp, this.core); // Third Party Move
         } catch (InterruptedException ex)
         {
-        Logger.getLogger(CMoveServiceSCP.class.getName()).log(Level.SEVERE, null, ex);
+        LoggerFactory.getLogger(CMoveServiceSCP.class).error(ex.getMessage(), ex);
         }
          */
         replay = new MoveRSP(data, rsp); // Third Party Move

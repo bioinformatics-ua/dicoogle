@@ -16,10 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package pt.ua.dicoogle.core;
 
 import java.io.*;
@@ -43,7 +39,7 @@ import pt.ua.dicoogle.sdk.Utils.Platform;
 
 /**
  *
- * @author Lu√≠s A. Basti√£o Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class LogXML extends DefaultHandler
 {

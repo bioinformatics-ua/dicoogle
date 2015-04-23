@@ -25,9 +25,12 @@ import java.util.concurrent.Semaphore;
 import pt.ua.dicoogle.server.RSIStorage;
 import pt.ua.dicoogle.server.queryretrieve.QueryRetrieve;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IServices;
 import pt.ua.dicoogle.server.SOPList;
 import pt.ua.dicoogle.server.web.DicoogleWeb;
@@ -37,7 +40,6 @@ import pt.ua.dicoogle.taskManager.TaskManager;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
-@Deprecated
 public class ControlServices implements IServices
 {
 
@@ -60,12 +62,18 @@ public class ControlServices implements IServices
 
     public static synchronized ControlServices getInstance()
     {
-//      sem.acquire();
-        if (instance == null)
+        try
         {
-            instance = new ControlServices();
+            sem.acquire();
+            if (instance == null)
+            {
+                instance = new ControlServices();
+            }
+            sem.release();
+        } catch (InterruptedException ex)
+        {
+//            LoggerFactory.getLogger(MainWindow.class.getName()).log(Level.FATAL, null, ex);
         }
-//      sem.release();
         return instance;
     }
 
@@ -104,7 +112,7 @@ public class ControlServices implements IServices
 
         } catch (Exception ex)
         {
-            Logger.getLogger(ControlServices.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ControlServices.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -122,7 +130,7 @@ public class ControlServices implements IServices
             stopWebServices();
         } catch (Exception ex)
         {
-            Logger.getLogger(ControlServices.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ControlServices.class).error(ex.getMessage(), ex);
             return false;
         }
 
@@ -298,7 +306,7 @@ public class ControlServices implements IServices
                 webServices = new DicoogleWeb( 8080);
                 webServerRunning = true;
             } catch (Exception ex) {
-                Logger.getLogger(ControlServices.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(ControlServices.class).error(ex.getMessage(), ex);
             }
         }
         
@@ -317,7 +325,7 @@ public class ControlServices implements IServices
                 
                 webServices = null;
             } catch (Exception ex) {
-                Logger.getLogger(ControlServices.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(ControlServices.class).error(ex.getMessage(), ex);
             }
         }
         Logs.getInstance().addServerLog("Stopping Dicoogle Web");

@@ -28,8 +28,8 @@ import java.net.SocketException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JOptionPane;
 
@@ -59,12 +59,14 @@ import pt.ua.ieeta.emailreport.Configuration;
  * @author Filipe Freitas
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Samuel Campos <samuelcampos@ua.pt>
+ * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 public class Main
 {
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     private static boolean optimizeMemory = true;
-    //static Logger logger = Logger.getLogger(Main.class);
+    //static Logger logger = LoggerFactory.getLogger(Main.class);
     private static boolean isGUIServer = false;
     //indicates whether the client and the server were pulled at the same time
     private static boolean isFixedClient = false;
@@ -86,7 +88,7 @@ public class Main
      */
     public static void main(String[] args)
     {
-    	System.setProperty("log4j.configurationFile", "log4j-2.xml");
+    	//System.setProperty("log4j.configurationFile", "log4j-2.xml");
         //PropertyConfigurator.configure("log4j.properties");
         if (Platform.getMode() == Platform.MODE.BUNDLE)
         {
@@ -102,9 +104,8 @@ public class Main
             System.setProperty("java.rmi.server.hostname", addressString(localAddresses()));
         } catch (SocketException ex)
         {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage(), ex);
         }
-        System.setProperty("log4j.configurationFile", "log4j-2.xml");
         switch (args.length)
         {
             case 0:
@@ -144,21 +145,18 @@ public class Main
                             URI uri = new URI("http://localhost:" + settings.getWeb().getServerPort());
                             Desktop.getDesktop().browse(uri);
                         } catch (IOException | URISyntaxException ex) {
-                            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                            System.err.println("Request to open web application ignored: " + ex.getMessage());
+                            logger.error("Request to open web application ignored", ex);
                         }
                     }
                 }
                 else if (args[0].equals("-h") || args[0].equals("--h") || args[0].equals("-help") || args[0].equals("--help"))
                 {
-                    
                     System.out.println("Dicoogle PACS: help");
                     System.out.println("-c : Run Client version");
                     System.out.println("-s : Run Server version");
                     System.out.println("-w : Run Server version and load web application in default browser");
                     System.out.println("without any option run a standalone version.");  
                 }
-                
                 else
                 {
                     System.out.println("Wrong arguments!");
@@ -169,7 +167,6 @@ public class Main
             default:
                 System.out.println("Wrong arguments!");
         }
-        System.setProperty("log4j.configurationFile", "log4j-2.xml");
         /** Register System Exceptions Hook */
         ExceptionHandler.registerExceptionHandler();
 
@@ -233,15 +230,8 @@ public class Main
             //load DICOM Services Log
             LogDICOM ll = new LogXML().getXML();
 
-        } catch (FileNotFoundException ex)
-        {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SAXException ex)
-        {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex)
-        {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SAXException | IOException ex) {
+            logger.error(ex.getMessage(), ex);
         }
 
         /***
@@ -289,23 +279,16 @@ public class Main
         // Start the Inicial Services of Dicoogle
         pt.ua.dicoogle.rGUI.server.controllers.ControlServices.getInstance();
 
-
-
         // Lauch Async Index 
         // It monitors a folder, and when a file is touched an event
         // triggers and index is updated.
 
         AsyncIndex asyncIndex = new AsyncIndex();
 
-        
-
         //Signals that this application is GUI Server
         isGUIServer = true;
 
         GUIServer GUIserv = new GUIServer();
-
-
-
     }
 
     private static void LaunchGUIClient()
@@ -319,7 +302,7 @@ public class Main
             remoteGUIPort = ServerSettings.getInstance().getRemoteGUIPort();
 
             RunClient rc = new RunClient();
-            ((Thread) rc).run();
+            rc.run();
         } else
         {
             ConnectWindow.getInstance();
@@ -339,7 +322,7 @@ public class Main
 
     private static Set<InetAddress> localAddresses() throws SocketException
     {
-        Set<InetAddress> localAddrs = new HashSet<InetAddress>();
+        Set<InetAddress> localAddrs = new HashSet<>();
 
         /*Enumeration<NetworkInterface> ifaces = NetworkInterface.getNetworkInterfaces();
 
@@ -360,7 +343,7 @@ public class Main
 
         } catch (UnknownHostException ex)
         {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage(), ex);
         }
 
         return localAddrs;
