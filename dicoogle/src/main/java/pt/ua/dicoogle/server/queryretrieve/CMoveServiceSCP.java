@@ -49,7 +49,7 @@ import pt.ua.dicoogle.rGUI.server.controllers.Logs;
 
 /**
  *
- * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class CMoveServiceSCP extends CMoveService {
 

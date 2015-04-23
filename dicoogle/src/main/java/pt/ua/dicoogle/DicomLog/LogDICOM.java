@@ -21,15 +21,12 @@ package pt.ua.dicoogle.DicomLog;
 
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.xml.transform.TransformerConfigurationException;
 
 /**
  *
- * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class LogDICOM{
 

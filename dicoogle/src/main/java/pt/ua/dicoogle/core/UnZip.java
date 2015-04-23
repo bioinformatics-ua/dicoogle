@@ -26,9 +26,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.zip.Adler32;
 import java.util.zip.CheckedInputStream;
@@ -37,12 +34,10 @@ import java.util.zip.ZipInputStream;
 
 /**
  *
- * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class UnZip
 {
-
-
     final int BUFFER = 2048;
 
     private String filePath = null;

@@ -27,7 +27,7 @@ import javax.swing.filechooser.FileSystemView;
 
 /**
  * System information methods
- * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author psytek
  */
 public class SystemInfo{

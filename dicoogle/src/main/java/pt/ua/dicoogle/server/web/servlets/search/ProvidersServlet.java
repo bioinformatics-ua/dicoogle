@@ -46,6 +46,7 @@ public class ProvidersServlet extends HttpServlet{
         JSONArray json = new JSONArray();
         json.addAll(activeProviders);
 		
+        resp.setContentType("application/json");
 		resp.getWriter().print(json.toString());
 			
 	}

@@ -22,25 +22,20 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.plugins.PluginController;
-import pt.ua.dicoogle.sdk.IndexerInterface;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.task.Task;
 
 /**
  * A wrapper used to manage the indexer remotely through the web environment/app.
  *
- * @author Ant??nio Novo <antonio.novo@ua.pt>
+ * @author António Novo <antonio.novo@ua.pt>
  */
 public class Indexer{
 	/**

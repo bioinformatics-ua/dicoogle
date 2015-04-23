@@ -16,44 +16,30 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package pt.ua.dicoogle.core;
 
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.xml.transform.TransformerConfigurationException;
 
-
-
-
 /**
  *
- * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class LogDICOM
 {
-
     private static LogDICOM instance = null ;
 
     private static Semaphore sem = new Semaphore(1, true);
 
-
-    private ArrayList<LogLine> ll = new ArrayList<LogLine>(); 
-
+    private ArrayList<LogLine> ll = new ArrayList<>(); 
 
     private LogDICOM()
     {
         // Nothing to do.
     }
-
 
     public static synchronized LogDICOM getInstance()
     {

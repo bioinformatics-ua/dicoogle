@@ -42,7 +42,7 @@ import org.xml.sax.XMLReader;
 
 /**
  *
- * @author Luis A. Basti√£o Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class LogXML extends DefaultHandler
 {

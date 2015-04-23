@@ -18,10 +18,6 @@
  */
 package dicoogle.tentative;
 
-import java.io.File;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.contentobjects.jnotify.JNotify;
 import net.contentobjects.jnotify.JNotifyException;
@@ -30,7 +26,7 @@ import pt.ua.dicoogle.core.ServerSettings;
 
 /**
  *
- * Lu??s A. Basti??o Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class AsyncIndex {
 

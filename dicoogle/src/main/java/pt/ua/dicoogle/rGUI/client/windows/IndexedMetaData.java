@@ -26,9 +26,6 @@
 package pt.ua.dicoogle.rGUI.client.windows;
 
 import java.rmi.RemoteException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.awt.Dimension;
 import java.awt.Image;
@@ -49,7 +46,7 @@ import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 
 /**
  *
- * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 @Deprecated
 public class IndexedMetaData extends javax.swing.JFrame

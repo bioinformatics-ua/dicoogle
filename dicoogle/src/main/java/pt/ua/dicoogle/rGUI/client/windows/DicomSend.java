@@ -41,7 +41,7 @@ import pt.ua.dicoogle.rGUI.interfaces.controllers.IDicomSend;
 
 /**
  *
- * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
 @Deprecated
