@@ -171,7 +171,7 @@ public class DicoogleWeb {
         this.legacyApp = new LegacyRestletApplication();
         this.legacyHandler = new ServletContextHandler();
         this.legacyHandler.setContextPath(CONTEXTPATH);
-        this.legacyHandler.addServlet(new ServletHolder(new RestletHttpServlet(this.pluginApp)), "/legacy/*");
+        this.legacyHandler.addServlet(new ServletHolder(new RestletHttpServlet(this.legacyApp)), "/legacy/*");
         
         // list the all the handlers mounted above
         Handler[] handlers = new Handler[]{
