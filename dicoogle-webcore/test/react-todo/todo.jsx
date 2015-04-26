@@ -45,10 +45,8 @@ define('react-todo', function(require) {
 
   var Module = function() {
     var r = <TodoApp />;
-    this.render = function() {
-      var e = document.createElement('div');
-      React.render(r, e);
-      return e;
+    this.render = function(parent) {
+      React.render(r, parent);
     };
   }
 

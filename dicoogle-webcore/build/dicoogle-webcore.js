@@ -134,6 +134,7 @@ define("dicoogle-webcore", function(require) {
     /** Issue a query to the system. This operation is asynchronous
    * and will automatically issue back a result exposal. The query service requested will be "search" unless modified
    * with the overrideService option.
+   * function(query, options, callback)
    * @param query an object containing the query
    * @param options an object containing additional options (such as query plugins to use, result limit, etc.)
    *      - overrideService [string] the name of the service to use instead of "search" 
@@ -175,17 +176,18 @@ define("dicoogle-webcore", function(require) {
         this.attachments = [];
         this.attachPlugin = function(plugin) {
             if (plugin.SlotId !== this.id) {
-                console.error("Attempt to attach plugin " + plugin.Name + " to the wrong slot");
+                console.error("Attempt to attach plugin ", plugin.Name, " to the wrong slot");
                 return;
             }
-            var slotDOM = this.dom;
             if (this.attachments.length === 0) {
-                slotDOM.innerHTML = "";
+                this.dom.innerHTML = "";
             }
             if (this.attachments.length > 0) {
-                slotDOM.appendChild(document.createElement("hr"));
+                this.dom.appendChild(document.createElement("hr"));
             }
-            slotDOM.appendChild(plugin.render());
+            var pluginDOM = document.createElement("div");
+            this.dom.appendChild(pluginDOM);
+            plugin.render(pluginDOM);
             this.attachments.push(plugin);
             plugin.TabIndex = this.attachments.length - 1;
             plugin.Slot = this;
@@ -197,7 +199,9 @@ define("dicoogle-webcore", function(require) {
                 if (i > 0) {
                     slotDOM.appendChild(document.createElement("hr"));
                 }
-                slotDOM.appendChild(this.attachments[i].render());
+                var pluginDOM = document.createElement("div");
+                slotDOM.appendChild(pluginDOM);
+                this.attachments[i].render(pluginDOM);
             }
         };
     };
@@ -218,16 +222,16 @@ define("dicoogle-webcore", function(require) {
         }
         getScript(packageJSON.name, function() {
             setTimeout(function() {
-                console.log("Requiring ", packageJSON.name, "...");
+                //console.log('Requiring ', packageJSON.name, '...');
                 require([ packageJSON.name ], function(PluginModule) {
-                    console.log("Obtained, reading ...");
+                    //console.log('Obtained, reading ...');
                     if (!isFunction(PluginModule)) {
                         console.error("Plugin module is not a function! ", PluginModule);
                     } else {
                         onRegister(new PluginModule(), packageJSON.name);
                     }
                 });
-            }, 200);
+            }, 100);
         });
     }
     function onRegister(pluginInstance, name) {
@@ -241,7 +245,7 @@ define("dicoogle-webcore", function(require) {
             console.error("Dicoogle web UI plugin ", name, " does not provide onResult");
             return;
         }
-        console.log("Executed plugin:" + name);
+        console.log("Executed plugin: ", name);
         pluginInstance.Name = name;
         pluginInstance.SlotId = slotId;
         pluginInstance.Caption = thisPackage.dicoogle.caption || name;

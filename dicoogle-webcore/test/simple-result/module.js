@@ -47,11 +47,11 @@
         }
     });
     module.exports = function() {
+        var resultTable;
         var handler;
-        this.render = function() {
-            var e = document.createElement("div");
-            handler = React.render(React.createElement(ResultTable, null), e);
-            return e;
+        this.render = function(parent) {
+            resultTable = React.createElement(ResultTable, null);
+            handler = React.render(resultTable, parent);
         };
         this.onResult = function(data, requestTime, options) {
             if (!handler) {

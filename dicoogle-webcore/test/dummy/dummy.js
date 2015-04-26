@@ -40,7 +40,7 @@ define('dummy', function(require) {
     button.value = 'Click me!';
     button.onclick = onClick;
     
-    this.render = function() {
+    this.render = function(parent) {
        var d = document.createElement('div');
        d.innerHTML = '<h3>DUMMY Module</h3>';
        d.innerHTML +=
@@ -54,7 +54,7 @@ define('dummy', function(require) {
        d.appendChild(button);
        d.appendChild(document.createElement('br'));
        d.appendChild(exhibit);
-       return d;
+       parent.appendChild(d);
      };
    };
  });

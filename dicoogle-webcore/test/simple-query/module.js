@@ -39,12 +39,12 @@ define("simple-query", function() {
     button.value = 'Search';
     button.onclick = onClick;
     
-    this.render = function() {
+    this.render = function(parent) {
        var d = document.createElement('div');
        d.appendChild(input);
        d.appendChild(chkKeyword);
        d.appendChild(button);
-       return d;
+       parent.appendChild(d);
      };
   };
 });

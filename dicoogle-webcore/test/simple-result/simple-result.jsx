@@ -41,11 +41,11 @@ var ResultTable = React.createClass({
 });
 
 module.exports = function() {
+    var resultTable;
     var handler;
-    this.render = function() {
-      var e = document.createElement('div');
-      handler = React.render(<ResultTable />, e);
-      return e;
+    this.render = function(parent) {
+      resultTable = <ResultTable />;
+      handler = React.render(resultTable, parent);
     };
     this.onResult = function(data, requestTime, options) {
       if (!handler) {
