@@ -20,12 +20,18 @@
 package pt.ua.dicoogle.server.web.servlets.management;
 
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import net.sf.json.JSONObject;
+
 import org.apache.commons.lang3.StringUtils;
+
 import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.core.XMLSupport;
 
 /**
  *
@@ -35,7 +41,7 @@ public class IndexerSettingsServlet extends HttpServlet {
 
     public enum SettingsType {
 
-        path, zip, effort, thumbnail,thumbnailSize;
+        all,path, zip, effort, thumbnail,thumbnailSize, watcher;
     }
     private SettingsType type;
 
@@ -44,11 +50,32 @@ public class IndexerSettingsServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String param = req.getParameter(type.toString());
-        if (StringUtils.isEmpty(param)) {
-            resp.sendError(400, "Invalid path");
-        }
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	resp.addHeader("Access-Control-Allow-Origin", "*");
+    	
+    	String param = null;
+    	String path = null;
+    	boolean watcher=false, zip = false, saveT = false;
+    	int ieffort = 0;
+    	String tumbnailSize = null;
+    	if(type != SettingsType.all)
+    	{
+    		param = req.getParameter(type.toString());
+    	
+    		if (StringUtils.isEmpty(param)) {
+                resp.sendError(400, "Invalid " + type.toString());
+            }
+    	}
+    	else{
+    		path = req.getParameter("path");
+    		watcher = Boolean.parseBoolean(req.getParameter("watcher"));
+    		zip = Boolean.parseBoolean(req.getParameter("zip"));
+    		saveT = Boolean.parseBoolean(req.getParameter("saveThumbnail"));
+    		ieffort = Integer.parseInt(req.getParameter("effort"));
+    		tumbnailSize = req.getParameter("thumbnailSize");
+    	}
+    	
+    	
 
         switch (type) {
             case path:
@@ -75,12 +102,28 @@ public class IndexerSettingsServlet extends HttpServlet {
             	//int thumbSize = Integer.parseInt(param);
             	ServerSettings.getInstance().setThumbnailsMatrix(param);
             	break;
+            case watcher:
+            	ServerSettings.getInstance().setMonitorWatcher(Boolean.parseBoolean(param));
+            	break;
+            case all:
+            	 ServerSettings.getInstance().setDicoogleDir(path);
+            	 ServerSettings.getInstance().setGzipStorage(zip);
+            	 ServerSettings.getInstance().setIndexerEffort(ieffort);
+            	 ServerSettings.getInstance().setSaveThumbnails(saveT);
+            	 ServerSettings.getInstance().setThumbnailsMatrix(tumbnailSize);
+            	 ServerSettings.getInstance().setMonitorWatcher(watcher);
+            	 
+            	 
+            	break;
+            	
+            	
         }
-
+        new XMLSupport().printXML();
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	resp.addHeader("Access-Control-Allow-Origin", "*");
         String result = "";
         switch (type) {
             case path:
@@ -97,6 +140,20 @@ public class IndexerSettingsServlet extends HttpServlet {
             	break;
             case thumbnailSize:
             	result = String.valueOf(ServerSettings.getInstance().getThumbnailsMatrix());
+            	break;
+            case watcher:
+            	result = String.valueOf(ServerSettings.getInstance().isMonitorWatcher());
+            	break;
+            case all:
+            	JSONObject allresponse = new JSONObject();
+            	allresponse.put("path", ServerSettings.getInstance().getDicoogleDir());
+            	allresponse.put("zip", ServerSettings.getInstance().isGzipStorage());
+            	allresponse.put("effort", String.valueOf(ServerSettings.getInstance().getIndexerEffort()));
+            	allresponse.put("thumbnail", ServerSettings.getInstance().getSaveThumbnails());
+            	allresponse.put("thumbnailSize", String.valueOf(ServerSettings.getInstance().getThumbnailsMatrix()));
+            	allresponse.put("watcher", ServerSettings.getInstance().isMonitorWatcher());
+            	
+            	resp.getWriter().write(allresponse.toString());
             	break;
         }
 

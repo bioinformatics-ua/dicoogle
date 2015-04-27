@@ -26,9 +26,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import net.sf.json.JSONSerializer;
 
+import net.sf.json.JSONSerializer;
 import pt.ua.dicoogle.core.XMLSupport;
+import pt.ua.dicoogle.server.SOPList;
 import pt.ua.dicoogle.server.TransfersStorage;
 import pt.ua.dicoogle.server.web.utils.ResponseUtil;
 
@@ -42,37 +43,26 @@ public class TransferenceOptionsServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-
-		XMLSupport xmlSupport = new XMLSupport();
-		xmlSupport.printXML();
-		TransfersStorage ts = xmlSupport.getLocalTS();
-
-		resp.getWriter().print(TransferenceOptionsResponse.getJSON(ts.getTS()));
+		resp.addHeader("Access-Control-Allow-Origin", "*");
+		
+		String uid = req.getParameter("uid");
+		
+		String soplist = SOPList.getInstance().getSOPList();
+		resp.getWriter().write(soplist);
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-
+		resp.addHeader("Access-Control-Allow-Origin", "*");
+		
+		String UID = req.getParameter("uid");
 		String option = req.getParameter("option");
 		String valueS = req.getParameter("value");
 		boolean value = Boolean.parseBoolean(req.getParameter("value"));
 
-		XMLSupport xmlSupport = new XMLSupport();
-		xmlSupport.printXML();
-		TransfersStorage ts = xmlSupport.getLocalTS();
-
-		int index = -1;
-		for (int i = 0; i < TransfersStorage.globalTransferMap.size(); i++) {
-			if (TransfersStorage.globalTransferMap.get(i).equals(option)) {
-				index = i;
-				break;
-			}
-		}
-		// TODO: VERIFY INDEX
-		ts.setTS(value, index);
-		xmlSupport.printXML();
-
+		SOPList.getInstance().updateTSField(UID, option, value);
+		new XMLSupport().printXML();
 		ResponseUtil.simpleResponse(resp, "success", true);
 	}
 
