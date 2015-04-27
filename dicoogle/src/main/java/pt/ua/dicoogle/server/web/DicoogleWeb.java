@@ -29,6 +29,8 @@ import pt.ua.dicoogle.server.web.servlets.management.AETitleServlet;
 import pt.ua.dicoogle.server.web.servlets.management.DicomSettingsServlet;
 import pt.ua.dicoogle.server.web.servlets.management.ForceIndexing;
 import pt.ua.dicoogle.server.web.servlets.management.IndexerSettingsServlet;
+import pt.ua.dicoogle.server.web.servlets.management.LoggerServlet;
+import pt.ua.dicoogle.server.web.servlets.management.RunningTasksServlet;
 import pt.ua.dicoogle.server.web.servlets.management.ServicesServlet;
 import pt.ua.dicoogle.server.web.servlets.management.TransferenceOptionsServlet;
 
@@ -182,7 +184,9 @@ public class DicoogleWeb {
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.zip), "/management/settings/index/zip"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.effort), "/management/settings/index/effort"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnail), "/management/settings/index/thumbnail"),
+            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.watcher), "/management/settings/index/watcher"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnailSize), "/management/settings/index/thumbnail/size"),
+            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.all), "/management/settings/index"),
             createServletHandler(new TransferenceOptionsServlet(), "/management/settings/transfer"),
             createServletHandler(new WadoServlet(), "/wado"),
             createServletHandler(new ProvidersServlet(), "/providers"),
@@ -191,7 +195,9 @@ public class DicoogleWeb {
             createServletHandler(new ServicesServlet(ServicesServlet.STORAGE), "/management/dicom/storage"),
             createServletHandler(new ServicesServlet(ServicesServlet.QUERY), "/management/dicom/query"),
             createServletHandler(new ServicesServlet(ServicesServlet.PLUGIN), "/management/plugins/"),
-            createServletHandler(new AETitleServlet(), "/management/settings/dicom")
+            createServletHandler(new AETitleServlet(), "/management/settings/dicom"),
+            createServletHandler(new LoggerServlet(), "/logger"),
+            createServletHandler(new RunningTasksServlet(), "/index/task")
             ,
             webpages
 
