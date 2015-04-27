@@ -30,14 +30,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletOutputStream;
 
 import net.sf.json.JSONObject;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.StorageInputStream;
+import pt.ua.dicoogle.sdk.StorageInterface;
 import pt.ua.dicoogle.server.web.dicom.Convert2PNG;
 import pt.ua.dicoogle.server.web.dicom.Information;
 import pt.ua.dicoogle.server.web.utils.LocalImageCache;
@@ -74,7 +80,7 @@ public class ImageServlet extends HttpServlet
 		String uri = request.getParameter("uri");
 		if (sopInstanceUID == null) {
             if (uri == null) {
-                response.sendError(400, "Invalid UID!");
+                response.sendError(400, "URI or SOP Instance UID not provided");
                 return;
             }
         } else if (sopInstanceUID.trim().isEmpty()) {
@@ -84,24 +90,48 @@ public class ImageServlet extends HttpServlet
 		String[] providerArray = request.getParameterValues("provider");
         List<String> providers = providerArray == null ? null : Arrays.asList(providerArray);
 		String sFrame = request.getParameter("frame");
-		if (sFrame == null)
-			sFrame = "0";
-		int frame = Integer.parseInt(sFrame);
-
-		// get the image file for that SOP Instance UID
-		StorageInputStream imgFile = Information.getFileFromSOPInstanceUID(sopInstanceUID, providers);
-		// if no .dcm file was found tell the client
-		if ((imgFile == null))
-		{
-			response.sendError(404, "No image file for supplied SOP Instance UID!");
-			return;
-		}
+        int frame;
+		if (sFrame == null) {
+            frame = 0;
+        } else {
+            frame = Integer.parseInt(sFrame);
+        }
+        
+        StorageInputStream imgFile;
+        if (sopInstanceUID != null) {
+            // get the image file for that SOP Instance UID
+            imgFile = Information.getFileFromSOPInstanceUID(sopInstanceUID, providers);
+            // if no .dcm file was found tell the client
+            if ((imgFile == null)) {
+                response.sendError(404, "No image file for supplied SOP Instance UID!");
+                return;
+            }
+        } else {
+            try {
+                // get the image file by the URI
+                URI imgUri = new URI(uri);
+                StorageInterface storageInt = PluginController.getInstance().getStorageForSchema(imgUri);
+                Iterator<StorageInputStream> storages = storageInt.at(imgUri).iterator();
+                // take the first valid storage
+                if (storages.hasNext()) {
+                    imgFile = storages.next();
+                } else {
+                    // if no image file was found tell the client
+                    response.sendError(404, "No image file for supplied URI!");
+                    return;
+                }
+            } catch (URISyntaxException ex) {
+                response.sendError(404, "No image file for supplied SOP Instance UID!");
+                return;
+            }
+        }
 
 		// the temporary file containing the cache contents for this DICOM image
 		File cf;
 		// if there is a cache available then use it
 		if ((cache != null) && (cache.isRunning())) {
-			cf = cache.getFileFromName(sopInstanceUID + "_" + frame + ".png");
+			//cf = cache.getFileFromName(sopInstanceUID + "_" + frame + ".png");
+            cf = cache.getFile(sopInstanceUID, frame);
 
 			// if the cache was able to get a file to cache to
 			if (cf != null) {
@@ -177,9 +207,7 @@ public class ImageServlet extends HttpServlet
 
 		// finally tell the local cache manager that we are finished reading the file
 		cache.finishedUsingFile(cf);
-	}
-
-
+    }
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
