@@ -98,8 +98,6 @@ var Search = React.createClass({
         this.setState({label:data});
     },
     renderFilter : function(){
-      console.log("beidjinhos", React);
-
       //React.render(<AdvancedSearch/>, this.getDOMNode());
       var switchState;
       if(this.state.searchState =="simple"){
@@ -131,7 +129,13 @@ var Search = React.createClass({
       }
 
     },
+  isAutocompletOpened:function(){
+    if($('.ui-autocomplete').css('display')==='none'){return false;}
+    return true;
+},
+
     enableAutocomplete : function(){
+      var self =this;
       function split( val ) {
       return val.split( /\sAND\s/ );
     }
@@ -142,9 +146,13 @@ var Search = React.createClass({
     $( "#free_text" )
       // don't navigate away from the field on tab when selecting an item
       .bind( "keydown", function( event ) {
-        if ( event.keyCode === $.ui.keyCode.TAB &&
+      /*  if ( event.keyCode === $.ui.keyCode.TAB &&
             $( this ).autocomplete( "instance" ).menu.active ) {
           event.preventDefault();
+        }*/
+        if(event.keyCode==13){
+          //event.preventDefault();
+          event.stopPropagation();
         }
       })
       .autocomplete({
@@ -153,6 +161,7 @@ var Search = React.createClass({
           // delegate back to autocomplete, but extract the last term
           response( $.ui.autocomplete.filter(
             DimFields, extractLast( request.term ) ) );
+
         },
         focus: function() {
           // prevent value inserted on focus
@@ -172,6 +181,7 @@ var Search = React.createClass({
           // add placeholder to get the comma-and-space at the end
           terms.push( "" );
           this.value = (terms.join( "" ) + ": ");
+
           return false;
         }
       });
@@ -179,12 +189,26 @@ var Search = React.createClass({
 
     enableEnterKey:function(){
       var self = this;
-      $('#free_text').keyup(function(e){
-          if(e.keyCode == 13)
+      /*$('#free_text').keyup(function(e){
+        if(e.keyCode == 13)
           {
-            self.onSearchClicked();
+            //self.onSearchClicked();
+            console.log("OPENED: ",self.isAutocompletOpened());
           }
         });
+        */
+        //
+        //Trick to not search when press enter on autocomplete
+        //
+        var count = 0;
+        jQuery("#free_text").keypress(function(e) {
+        if (e.keyCode == 13) {
+            if (++count >= 1) {
+                self.onSearchClicked();
+                count = 0;
+            }
+        }
+    });
     }
 });
 

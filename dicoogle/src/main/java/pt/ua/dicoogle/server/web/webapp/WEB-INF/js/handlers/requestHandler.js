@@ -49,6 +49,79 @@ function getImageInfo(uid, callbackSucccess, callbackError){
         });
 }
 
+function request(url, callbackSucccess, callbackError){
+    console.log("request: "+url);
+        $.ajax({
 
+          url: url,
+          dataType: 'json',
+          success: function(data) {
 
-export {getPatients, getImageInfo};
+          callbackSucccess(data);
+
+          },
+          error: function(xhr, status, err) {
+            callbackError(xhr);
+          }
+        });
+}
+
+/*
+INDEXER
+*/
+function setWatcher(state){
+  console.log(state);
+  $.post("http://localhost:8080/management/settings/index/watcher",
+  {
+    watcher: state
+  },
+    function(data, status){
+      //Response
+      console.log("Data: " + data + "\nStatus: " + status);
+    });
+
+}
+function setZip(state){
+  console.log(state);
+  $.post("http://localhost:8080/management/settings/index/zip",
+  {
+    zip: state
+  },
+    function(data, status){
+      //Response
+      console.log("Data: " + data + "\nStatus: " + status);
+    });
+
+}
+function setSaveT(state){
+  console.log(state);
+  $.post("http://localhost:8080/management/settings/index/thumbnail",
+  {
+    thumbnail: state
+  },
+    function(data, status){
+      //Response
+      console.log("Data: " + data + "\nStatus: " + status);
+    });
+
+}
+
+function saveIndexOptions(path, watcher, zip, saveThumbnail,effort,thumbnailSize){
+  //console.log(state);
+  $.post("http://localhost:8080/management/settings/index",
+  {
+    path: path,
+    watcher: watcher,
+    zip: zip,
+    saveThumbnail: saveThumbnail,
+    effort: effort,
+    thumbnailSize: thumbnailSize
+  },
+    function(data, status){
+      //Response
+      console.log("Data: " + data + "\nStatus: " + status);
+    });
+
+}
+
+export {getPatients, getImageInfo, request, setWatcher,setZip,setSaveT,saveIndexOptions};

@@ -4,6 +4,8 @@ var React = require('react');
 
 var ServicesView = React.createClass({
       render: function() {
+
+        return(<div>Services</div>);
         return (
           <div className="tab-pane" id="services">
 
@@ -85,7 +87,7 @@ var ServicesView = React.createClass({
                                   </div>
 
         );
-        }
+      },
       });
 
 export {

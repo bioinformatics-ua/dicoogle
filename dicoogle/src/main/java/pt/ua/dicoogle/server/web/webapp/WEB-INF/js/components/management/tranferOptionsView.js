@@ -1,9 +1,62 @@
 var React = require('react');
 
+import {TransferenceStore} from '../../stores/transferenceStore';
+import {TransferenceActions} from '../../actions/transferenceActions';
+
 
 
 var TransferenceOptionsView = React.createClass({
+
+      getInitialState: function() {
+        return {data: [],
+        status: "loading",
+        selectedIndex: 0};
+      },
+      componentDidMount: function(){
+        console.log("componentdidmount: get");
+
+        TransferenceActions.get();
+       },
+      componentWillMount: function() {
+       	// Subscribe to the store.
+         console.log("subscribe listener");
+         TransferenceStore.listen(this._onChange);
+     	},
+      _onChange: function(data){
+        if (this.isMounted()){
+          console.log(data);
+          this.setState({data:data,status: "done"});
+        }
+      },
       render: function() {
+        var self =this;
+
+        if(this.state.status == "loading")
+        {
+          return (<div>loading</div>);
+        }
+
+        var array = self.state.data;
+        console.log("array",array);
+        var options = (
+            array.data[this.state.selectedIndex].options.map(function(item, index){
+                return(
+                  (<div className="data-table-row">
+                      <label className="checkbox" title="1.2.840.10008.1.2.1.99">
+                          <input type="checkbox" id={item.name} name="GlobalTransferStorageTransferStorage0" checked={item.value}
+                            onChange={self.handleChange.bind(this, item.name, index)}/>{item.name}</label>
+                  </div>
+                  )
+                );
+            })
+          );
+
+        var sopclasses = (
+          array.data.map(function(item){
+            return (<option> <b>{item.sop_name}</b>  --  {item.uid}</option>);
+          })
+        );
+
         return (
           <div>
           <div className="tab-pane" id="transfer">
@@ -13,27 +66,10 @@ var TransferenceOptionsView = React.createClass({
                              </div>
                              <div className="panel-body">
                                  <ul className="list-group">
-                                     <li className="list-group-item list-group-item-management">
-                                         <div className="row">
-                                             <div className="col-xs-6 col-sm-4">
-                                                 Accept All
-                                             </div>
-                                             <div className="col-xs-6 col-sm-8">
-                                                 <div className="btn-group">
-                                                     <button type="button" className="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                                         Select one <span className="caret"></span>
-                                                     </button>
-                                                     <ul className="dropdown-menu" role="menu">
-                                                         <li><a href="#">Allow all</a>
-                                                         </li>
-                                                         <li><a href="#">Deny all</a>
-                                                         </li>
 
-                                                     </ul>
-                                                 </div>
-                                             </div>
-                                         </div>
-                                     </li>
+                                     <select id="sop_select"className="form-control" onChange={self.onSopSelected}>
+                                        {sopclasses}
+                                     </select>
                                      <li className="list-group-item list-group-item-management">
                                          <div className="row">
                                              <div className="col-xs-6 col-sm-4">
@@ -41,62 +77,7 @@ var TransferenceOptionsView = React.createClass({
                                              </div>
                                              <div className="col-xs-6 col-sm-8">
                                                  <div id="GlobalTransferStorage" className="data-table">
-                                                     <div className="data-table-row">
-                                                         <label className="checkbox" title="1.2.840.10008.1.2.1.99">
-                                                             <input type="checkbox" id="GlobalTransferStorageTransferStorage0" name="GlobalTransferStorageTransferStorage0" checked="checked"/>DeflatedExplicitVRLittleEndian</label>
-                                                     </div>
-                                                     <div className="data-table-row">
-                                                         <label className="checkbox" title="1.2.840.10008.1.2.4.100">
-                                                             <input type="checkbox" id="GlobalTransferStorageTransferStorage1" name="GlobalTransferStorageTransferStorage1" checked="checked"/>MPEG2</label>
-                                                     </div>
-                                                     <div className="data-table-row">
-                                                         <label className="checkbox" title="1.2.840.10008.1.2.4.57">
-                                                             <input type="checkbox" id="GlobalTransferStorageTransferStorage2" name="GlobalTransferStorageTransferStorage2" checked="checked"/>JPEG Lossless, Non-Hierarchical (Process 14)</label>
-                                                     </div>
-                                                     <div className="data-table-row">
-                                                         <label className="checkbox" title="1.2.840.10008.1.2.5">
-                                                             <input type="checkbox" id="GlobalTransferStorageTransferStorage3" name="GlobalTransferStorageTransferStorage3" checked="checked"/>RLE Lossless</label>
-                                                     </div>
-                                                     <div className="data-table-row">
-                                                         <label className="checkbox" title="1.2.840.10008.1.2.2">
-                                                             <input type="checkbox" id="GlobalTransferStorageTransferStorage4" name="GlobalTransferStorageTransferStorage4" checked="checked"/>ExplicitVRBigEndian</label>
-                                                     </div>
-                                                     <div className="data-table-row">
-                                                         <label className="checkbox" title="1.2.840.10008.1.2.4.91">
-                                                             <input type="checkbox" id="GlobalTransferStorageTransferStorage5" name="GlobalTransferStorageTransferStorage5" checked="checked"/>JPEG2000</label>
-                                                     </div>
-                                                     <div className="data-table-row">
-                                                         <label className="checkbox" title="1.2.840.10008.1.2.1">
-                                                             <input type="checkbox" id="GlobalTransferStorageTransferStorage6" name="GlobalTransferStorageTransferStorage6" checked="checked"/>ExplicitVRLittleEndian</label>
-                                                     </div>
-                                                     <div className="data-table-row">
-                                                         <label className="checkbox" title="1.2.840.10008.1.2.4.90">
-                                                             <input type="checkbox" id="GlobalTransferStorageTransferStorage7" name="GlobalTransferStorageTransferStorage7" checked="checked"/>JPEG2000 Lossless Only</label>
-                                                     </div>
-                                                     <div className="data-table-row">
-                                                         <label className="checkbox" title="1.2.840.10008.1.2.4.80">
-                                                             <input type="checkbox" id="GlobalTransferStorageTransferStorage8" name="GlobalTransferStorageTransferStorage8" checked="checked"/>JPEG Lossless LS</label>
-                                                     </div>
-                                                     <div className="data-table-row">
-                                                         <label className="checkbox" title="1.2.840.10008.1.2.4.50">
-                                                             <input type="checkbox" id="GlobalTransferStorageTransferStorage9" name="GlobalTransferStorageTransferStorage9" checked="checked"/>JPEG Baseline 1</label>
-                                                     </div>
-                                                     <div className="data-table-row">
-                                                         <label className="checkbox" title="1.2.840.10008.1.2">
-                                                             <input type="checkbox" id="GlobalTransferStorageTransferStorage10" name="GlobalTransferStorageTransferStorage10" checked="true"/>ImplicitVRLittleEndian</label>
-                                                     </div>
-                                                     <div className="data-table-row">
-                                                         <label className="checkbox" title="1.2.840.10008.1.2.4.51">
-                                                             <input type="checkbox" id="GlobalTransferStorageTransferStorage11" name="GlobalTransferStorageTransferStorage11"/>JPEG Extended (Process 2 &amp; 4)</label>
-                                                     </div>
-                                                     <div className="data-table-row">
-                                                         <label className="checkbox" title="1.2.840.10008.1.2.4.70">
-                                                             <input type="checkbox" id="GlobalTransferStorageTransferStorage12" name="GlobalTransferStorageTransferStorage12"/>JPEG Lossless</label>
-                                                     </div>
-                                                     <div className="data-table-row">
-                                                         <label className="checkbox" title="1.2.840.10008.1.2.4.81">
-                                                             <input type="checkbox" id="GlobalTransferStorageTransferStorage13" name="GlobalTransferStorageTransferStorage13"/>JPEG LS Lossy Near Lossless</label>
-                                                     </div>
+                                                    {options}
                                                  </div>
                                              </div>
                                          </div>
@@ -111,7 +92,58 @@ var TransferenceOptionsView = React.createClass({
 
           </div>
         );
-        }
+
+      },
+
+      handleChange:function(id, index){
+        console.log("Index ", index);
+        TransferenceActions.set(this.state.selectedIndex, index,document.getElementById(id).checked);
+        this.request(id,document.getElementById(id).checked);
+
+      },
+
+      /*
+      NOT USED
+      */
+      selectAll:function(){
+        var self = this;
+        this.state.data.data.options.map(function(item){
+          document.getElementById(item.name).checked = true;
+          self.request(item.name, true)
+        });
+      }
+      ,
+      selectNone:function(){
+        var self = this;
+        this.state.data.data.options.map(function(item){
+          document.getElementById(item.name).checked = false;
+          self.request(item.name, false);
+        });
+      },
+
+      onSopSelected: function(){
+
+        var selectedId=document.getElementById("sop_select").selectedIndex;
+        console.log("selected", selectedId );
+        this.setState({selectedIndex: selectedId});
+
+      },
+
+      request: function(id, value){
+        var uid = this.state.data.data[document.getElementById("sop_select").selectedIndex].uid;
+        console.log("Selected uid:",uid);
+        $.post("http://localhost:8080/management/settings/transfer",
+        {
+          uid: uid,
+          option: id,
+          value: value
+
+        },
+          function(data, status){
+            //Response
+            console.log("Data: " + data + "\nStatus: " + status);
+          });
+      }
       });
 
 export {

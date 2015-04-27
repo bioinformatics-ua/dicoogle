@@ -33,7 +33,7 @@ import {ActionCreators} from '../actions/searchActions';
 import {Search} from '../components/search/searchView';
 import {ResultSearch} from '../components/search/searchResultView';
 import {AboutView} from './about/aboutView';
-import {IndexerView} from './management/indexerView';
+import {IndexStatusView} from '../components/indexer/IndexStatusView';
 import {ManagementView} from './management/managementView';
 
 
@@ -134,7 +134,7 @@ render: function() {
 });
 var IndexerPage = React.createClass({
 render: function() {
-    React.render(<IndexerView/>, document.getElementById("container"));
+    React.render(<IndexStatusView/>, document.getElementById("container"));
     return (<div/>);
 }
 });

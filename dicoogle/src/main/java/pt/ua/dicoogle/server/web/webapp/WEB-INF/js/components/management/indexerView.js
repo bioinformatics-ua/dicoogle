@@ -1,23 +1,42 @@
 var React = require('react');
+
+import {IndexerStore} from '../../stores/indexerStore';
+import {IndexerActions} from '../../actions/indexerActions';
+
+import {setWatcher,setSaveT,setZip,saveIndexOptions} from '../../handlers/requestHandler';
+
 var IndexerView = React.createClass({
+
+        getInitialState: function() {
+          return {data: {path:"",zip:false,effort:0,thumbnail:false,thumbnailSize:0,watcher:false},
+          status: "loading"};
+        },
+        componentDidMount: function(){
+          console.log("componentdidmount: get");
+
+          IndexerActions.get();
+         },
+        componentWillMount: function() {
+         	// Subscribe to the store.
+           console.log("subscribe listener");
+           IndexerStore.listen(this._onChange);
+       	},
+        _onChange: function(data){
+          if (this.isMounted()){
+            console.log(data);
+
+            this.setState({data:data.data,status: "done"});
+          }
+        },
       render: function() {
+        var self = this;
+        if(this.state.status == "loading"){
+          return (<div>loading</div>);
+        }
         return (
           <div className="tab-content">
-              <div className="panel panel-primary topMargin">
-                                <div className="panel-heading">
-                                    <h3 className="panel-title">Indexing Status</h3>
-                                </div>
-                                <div className="panel-body">
-                                    <div className="progress">
-                                        <div className="indexprogress progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">
-                                            <span className="sr-only">40% Complete (success)</span>
-                                        </div>
-                                    </div>
 
-                                </div>
-            </div>
-
-            <div className="panel panel-primary">
+            <div className="panel panel-primary topMargin">
                               <div className="panel-heading">
                                   <h3 className="panel-title">Indexing Options</h3>
                               </div>
@@ -29,7 +48,7 @@ var IndexerView = React.createClass({
                                                   Enable Dicoogle Directory Watcher
                                               </div>
                                               <div className="col-xs-6 col-sm-8">
-                                                  <input type="checkbox" aria-label="..." checked/>
+                                                  <input id="watcher" type="checkbox" aria-label="..." defaultChecked={this.state.data.watcher} />
                                               </div>
                                             </div>
                                       </li>
@@ -39,7 +58,7 @@ var IndexerView = React.createClass({
                                                   Dicoogle Directory Monitorization
                                               </div>
                                               <div className="col-xs-6 col-sm-8">
-                                                  <input type="text" className="form-control" placeholder="/path/to/directory"/>
+                                                  <input id="mon_path" type="text" className="form-control" value={this.state.data.path} placeholder="/path/to/directory"/>
                                               </div>
                                           </div>
                                       </li>
@@ -50,7 +69,7 @@ var IndexerView = React.createClass({
                                                   Index Zip Files
                                               </div>
                                               <div className="col-xs-6 col-sm-8">
-                                                  <input type="checkbox" aria-label="..." checked/>
+                                                  <input id="zip" type="checkbox" aria-label="..." defaultChecked={this.state.data.zip} onChange={self.onZipClicked.bind(this,"zip")}/>
                                               </div>
                                           </div>
                                       </li>
@@ -60,7 +79,7 @@ var IndexerView = React.createClass({
                                                   Indexing effort(0-100)
                                               </div>
                                               <div className="col-xs-6 col-sm-8">
-                                                  <input className="bar" type="range" id="rangeinput" value="50" onchange="rangevalue.value=value" />
+                                                  <input  className="bar" type="range" id="effort_range" defaultValue={this.state.data.effort} onChange={self.onEffortChanged.bind(this,"effort_range")} />
                                               </div>
                                           </div>
                                       </li>
@@ -71,7 +90,7 @@ var IndexerView = React.createClass({
                                                   Save Thumbnail
                                               </div>
                                               <div className="col-xs-6 col-sm-8">
-                                                  <input type="checkbox" aria-label="..." checked/>
+                                                  <input id="save" type="checkbox" aria-label="..." defaultChecked={this.state.data.thumbnail} onChange={self.onSaveTClicked.bind(this,"save")}/>
                                               </div>
                                           </div>
                                       </li>
@@ -82,12 +101,13 @@ var IndexerView = React.createClass({
                                                   Thumbnails Size
                                               </div>
                                               <div className="col-xs-6 col-sm-8">
-                                                  <input type="text" className="form-control" placeholder="/path/to/directory" value="64"/>
+                                                  <input id="tsize" type="text" className="form-control" placeholder="/path/to/directory" defaultValue={this.state.data.thumbnailSize}/>
                                               </div>
                                           </div>
                                       </li>
 
                                   </ul>
+                                  <button className="btn btn_dicoogle" onClick={self.onSaveClicked}>Save</button>
                                   </div>
                               </div>
 
@@ -96,7 +116,32 @@ var IndexerView = React.createClass({
                           </div>
 
 
-      
+
+        );
+      },
+
+      onWatcherClicked:function(id){
+        //setWatcher(document.getElementById(id).checked);
+      },
+      onZipClicked:function(id){
+        //setZip(document.getElementById(id).checked);
+      },
+      onSaveTClicked:function(id){
+        //setSaveT(document.getElementById(id).checked);
+      },
+      onEffortChanged:function(id){
+        //console.log(document.getElementById(id).value);
+      },
+      onSaveClicked:function(){
+        console.log("onSaveClicked");
+        saveIndexOptions(
+          document.getElementById("mon_path").value,
+          document.getElementById("watcher").checked,
+          document.getElementById("zip").checked,
+          document.getElementById("save").checked,
+          document.getElementById("effort_range").value,
+          document.getElementById("tsize").value
+
         );
       }
     });

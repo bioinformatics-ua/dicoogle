@@ -39,6 +39,10 @@ input {
   height: auto !important;
   max-width: 100%; }
 
+.scrolldiv {
+  overflow-y: auto;
+  height: 500px; }
+
 .btn_dicoogle {
   background-color: #008C99;
   color: #ffffff;

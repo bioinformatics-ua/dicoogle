@@ -42,3 +42,9 @@ input {
     height: auto !important;
     max-width: 100%;
 }
+
+.scrolldiv{
+  overflow-y: auto;
+  //overflow: auto;
+  height: 500px;
+}
