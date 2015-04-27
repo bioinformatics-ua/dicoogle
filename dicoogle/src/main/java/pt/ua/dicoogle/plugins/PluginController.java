@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
@@ -56,6 +57,7 @@ import pt.ua.dicoogle.sdk.settings.ConfigurationHolder;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
 import pt.ua.dicoogle.server.web.DicoogleWeb;
+import pt.ua.dicoogle.taskManager.RunningIndexTasks;
 import pt.ua.dicoogle.taskManager.TaskManager;
 import pt.ua.dicoogle.webservices.DicoogleWebservice;
 
@@ -450,6 +452,7 @@ public class PluginController{
         	logger.error("No storage plugin detected");
             return Collections.emptyList(); 
         }
+        final String taskUniqueID = UUID.randomUUID().toString();
         
         Collection<IndexerInterface> indexers = getIndexingPlugins(true);
         ArrayList<Task<Report>> rettasks = new ArrayList<>();
@@ -466,13 +469,15 @@ public class PluginController{
                         System.out.println("Task accomplished " + pathF);
                         System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
                         System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
+                        
+                        RunningIndexTasks.getInstance().removeTask(taskUniqueID);
                     }
                 });
-                
                 
             if(task == null) continue;
             taskManager.dispatch(task);
             rettasks.add(task);
+            RunningIndexTasks.getInstance().addTask(taskUniqueID, task);
         }
         logger.info("Finised firing all Indexing plugins for "+path.toString());
         
@@ -489,6 +494,8 @@ public class PluginController{
             return Collections.emptyList(); 
         }
         
+        final String taskUniqueID = UUID.randomUUID().toString();
+        
         IndexerInterface indexer = getIndexerByName(pluginName, true);
         ArrayList<Task<Report>> rettasks = new ArrayList<>();
         final  String pathF = path.toString();
@@ -502,13 +509,18 @@ public class PluginController{
                     System.out.println("Task accomplished " + pathF);
                     System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
                     System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
+                    
+                    RunningIndexTasks.getInstance().removeTask(taskUniqueID);
                 }
             });
             
             
         if(task != null){
 	        taskManager.dispatch(task);
+	        
 	        rettasks.add(task);
+	        RunningIndexTasks.getInstance().addTask(taskUniqueID, task);
+	        
 	        logger.info("FIRED INDEXER: {} FOR URI: {}", pluginName, path.toString());
         }
         logger.error("UNKOWN ERROR CALLING INDEXER: {}", pluginName);
