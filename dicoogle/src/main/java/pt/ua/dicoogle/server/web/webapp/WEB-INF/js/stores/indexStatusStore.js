@@ -7,7 +7,7 @@ import {IndexStatusActions} from '../actions/indexStatusAction';
 
 import {Endpoints} from '../constants/endpoints';
 
-import {request} from '../handlers/requestHandler';
+import {request, forceIndex} from '../handlers/requestHandler';
 
 var IndexStatusStore = Reflux.createStore({
     listenables: IndexStatusActions,
@@ -22,7 +22,7 @@ var IndexStatusStore = Reflux.createStore({
       $.ajax({
 
         url: Endpoints.base+"/index/task",
-        dataType: 'text',
+        dataType: 'json',
         success: function(data) {
           self._contents = data;
 
@@ -41,10 +41,42 @@ var IndexStatusStore = Reflux.createStore({
         }
       });
 
+    },
 
+    onStart : function(uri){
+      var self = this;
+      forceIndex(uri);
 
+      self._contents.results.push({taskUid: "NA", taskName: uri, taskProgress: 0})
+      self._contents.count = self._contents.count +1;
+      self.trigger({
+        data:self._contents,
+        success: true
+      });
 
+      console.log(this._contents);
+    },
+
+    onClose : function(uid){
+      $.ajax({
+        url: "http://localhost:8080/index/task?type=close&uid="+uid,
+        type: 'DELETE',
+        success: function(result) {
+            console.log(result);
+        }
+      });
+
+      for(var i =0; i<this._contents.results.length; i++)
+      {
+        if(this._contents.results[i].uid == uid)
+          this._contents.results.splice(i,1);
+      }
+      this.trigger({
+        data:this._contents,
+        success: true
+      });
     }
+
 });
 
 export {IndexStatusStore};

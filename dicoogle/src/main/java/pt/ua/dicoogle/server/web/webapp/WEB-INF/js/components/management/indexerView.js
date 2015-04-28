@@ -41,6 +41,7 @@ var IndexerView = React.createClass({
                                   <h3 className="panel-title">Indexing Options</h3>
                               </div>
                               <div className="panel-body">
+
                                   <ul className="list-group">
                                       <li className="list-group-item list-group-item-management">
                                           <div className="row">
@@ -108,6 +109,7 @@ var IndexerView = React.createClass({
 
                                   </ul>
                                   <button className="btn btn_dicoogle" onClick={self.onSaveClicked}>Save</button>
+                                    <div className="toast">Saved</div>
                                   </div>
                               </div>
 
@@ -133,6 +135,7 @@ var IndexerView = React.createClass({
         //console.log(document.getElementById(id).value);
       },
       onSaveClicked:function(){
+        $('.toast').stop().fadeIn(400).delay(3000).fadeOut(400); //fade out after 3 seconds
         console.log("onSaveClicked");
         saveIndexOptions(
           document.getElementById("mon_path").value,

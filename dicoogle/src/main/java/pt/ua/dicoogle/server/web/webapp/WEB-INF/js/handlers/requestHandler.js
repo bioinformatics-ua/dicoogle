@@ -124,4 +124,17 @@ function saveIndexOptions(path, watcher, zip, saveThumbnail,effort,thumbnailSize
 
 }
 
-export {getPatients, getImageInfo, request, setWatcher,setZip,setSaveT,saveIndexOptions};
+function forceIndex(uri){
+  //console.log(state);
+  $.post("http://localhost:8080/management/tasks/index",
+  {
+    uri: uri
+  },
+    function(data, status){
+      //Response
+      console.log("Data: " + data + "\nStatus: " + status);
+    });
+
+}
+
+export {getPatients, getImageInfo, request, setWatcher,setZip,setSaveT,saveIndexOptions,forceIndex};

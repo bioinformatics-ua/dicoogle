@@ -1,7 +1,7 @@
 
 var React = require('react');
 var ReactBootstrap = require('react-bootstrap');
-
+var ModalTrigger = ReactBootstrap.ModalTrigger;
 var Button = ReactBootstrap.Button;
 
 import {SearchStore} from '../../stores/searchStore';
@@ -11,6 +11,7 @@ import {PatientView} from './result/patientView';
 import {StudyView} from './result/studyView';
 import {SerieView} from './result/serieView';
 import {ImageView} from './result/imageView';
+import {ExportView} from './exportView';
 
 
 
@@ -87,6 +88,9 @@ var ResultSearch = React.createClass({
         <Step current={this.state.current} onClick={this.onStepClicked}/>
         <div id="step-container"/>
 
+          <ModalTrigger modal={<ExportView/>}>
+            <button className="btn btn_dicoogle fa fa-download"> Export </button>
+       </ModalTrigger>
 
       </div>);
 
