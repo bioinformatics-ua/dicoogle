@@ -53,8 +53,12 @@ public class RunningIndexTasks {
 		taskRunningList.put(taskUid, task);
 	}
 
-	public void removeTask(String taskUid) {
-		taskRunningList.remove(taskUid);
+	public boolean removeTask(String taskUid) {
+		if(taskRunningList.remove(taskUid) != null)
+			return true;
+		
+		return false;
+	
 	}
 
 	public boolean stopTask(String taskUid) {
@@ -68,6 +72,9 @@ public class RunningIndexTasks {
 				return true;
 			}
 		}
+		else{
+			//TODO LOG inexistent uid(cannot be removed)
+		}
 
 		return false;
 	}
@@ -78,6 +85,7 @@ public class RunningIndexTasks {
 	}
 
 	public String toJson() {
+		JSONObject object = new JSONObject();
 		JSONArray array = new JSONArray();
 
 		Iterator it = taskRunningList.entrySet().iterator();
@@ -91,8 +99,21 @@ public class RunningIndexTasks {
 			array.add(entry);
 
 		}
-
-		return array.toString();
+		/*
+		 * DEBUG
+		 */
+//		JSONObject entry = new JSONObject();
+//		entry.put("taskUid", "SA5457G");
+//		entry.put("taskName", "gatinhos");
+//		entry.put("taskProgress", 0.5);
+//		array.add(entry);
+		/*
+		 * 
+		 */
+		object.put("results", array);
+		object.put("count", array.size());
+		
+		return object.toString();
 
 	}
 }
