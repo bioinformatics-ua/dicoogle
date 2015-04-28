@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import pt.ua.dicoogle.server.web.utils.ResponseUtil;
 import pt.ua.dicoogle.taskManager.RunningIndexTasks;
 
 /**
@@ -38,7 +39,26 @@ public class RunningTasksServlet extends HttpServlet {
 			throws ServletException, IOException {
 		resp.addHeader("Access-Control-Allow-Origin", "*");
 		
+		resp.setContentType("application/json");
 		resp.getWriter().write(RunningIndexTasks.getInstance().toJson());
+	}
+
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		resp.addHeader("Access-Control-Allow-Origin", "*");
+		String type = req.getParameter("type");
+		String taskUid = req.getParameter("uid");
+		if(type == null)
+		{
+			resp.sendError(400,"type param not existent");
+		}
+		if(type.equals("close"))
+			ResponseUtil.simpleResponse(resp, "removed", RunningIndexTasks.getInstance().removeTask(taskUid));
+		else if(type.equals("stop"))
+			ResponseUtil.simpleResponse(resp, "stoped", RunningIndexTasks.getInstance().stopTask(taskUid));
+		else
+			ResponseUtil.simpleResponse(resp, "error", true);
 	}
 	
 
