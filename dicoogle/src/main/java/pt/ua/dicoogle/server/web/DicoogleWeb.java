@@ -18,6 +18,8 @@
  */
 package pt.ua.dicoogle.server.web;
 
+import pt.ua.dicoogle.server.web.servlets.search.ExportServlet;
+import pt.ua.dicoogle.server.web.servlets.search.ExportServlet.ExportType;
 import pt.ua.dicoogle.server.web.servlets.search.ProvidersServlet;
 import pt.ua.dicoogle.server.web.servlets.search.SearchServlet;
 import pt.ua.dicoogle.server.web.servlets.search.SearchServlet.SearchType;
@@ -197,7 +199,9 @@ public class DicoogleWeb {
             createServletHandler(new ServicesServlet(ServicesServlet.PLUGIN), "/management/plugins/"),
             createServletHandler(new AETitleServlet(), "/management/settings/dicom"),
             createServletHandler(new LoggerServlet(), "/logger"),
-            createServletHandler(new RunningTasksServlet(), "/index/task")
+            createServletHandler(new RunningTasksServlet(), "/index/task"),
+            createServletHandler(new ExportServlet(ExportType.EXPORT_CVS), "/export/cvs"),
+            createServletHandler(new ExportServlet(ExportType.LIST), "/export/list")
             ,
             webpages
 
