@@ -470,7 +470,7 @@ public class PluginController{
                         System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
                         System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
                         
-                        RunningIndexTasks.getInstance().removeTask(taskUniqueID);
+                        //RunningIndexTasks.getInstance().removeTask(taskUniqueID);
                     }
                 });
                 
@@ -510,7 +510,8 @@ public class PluginController{
                     System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
                     System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
                     
-                    RunningIndexTasks.getInstance().removeTask(taskUniqueID);
+                    
+                    //RunningIndexTasks.getInstance().removeTask(taskUniqueID);
                 }
             });
             
