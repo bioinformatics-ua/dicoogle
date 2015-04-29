@@ -125,6 +125,9 @@ var IndexStatusView = React.createClass({
         if(type){
           IndexStatusActions.close(uid);
         }
+        else{
+          IndexStatusActions.stop(uid);
+        }
       }
       });
 
