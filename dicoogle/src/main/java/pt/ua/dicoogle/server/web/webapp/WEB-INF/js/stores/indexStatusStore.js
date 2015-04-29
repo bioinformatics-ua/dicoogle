@@ -58,23 +58,43 @@ var IndexStatusStore = Reflux.createStore({
     },
 
     onClose : function(uid){
-      $.ajax({
-        url: "http://localhost:8080/index/task?type=close&uid="+uid,
-        type: 'DELETE',
-        success: function(result) {
-            console.log(result);
-        }
-      });
+
+      $.post("http://localhost:8080/index/task",
+      {
+        uid: uid,
+        action: "delete",
+        type: "close"
+      },
+        function(data, status){
+          //Response
+          console.log("Data: " + data + "\nStatus: " + status);
+        });
+
 
       for(var i =0; i<this._contents.results.length; i++)
       {
-        if(this._contents.results[i].uid == uid)
+        if(this._contents.results[i].taskUid == uid){
           this._contents.results.splice(i,1);
+          this._contents.count = this._contents.count - 1;
+        }
       }
       this.trigger({
         data:this._contents,
         success: true
       });
+    },
+    onStop : function(uid){
+      console.log("Stop: ", uid);
+      $.post("http://localhost:8080/index/task",
+      {
+        uid: uid,
+        action: "delete",
+        type: "stop"
+      },
+        function(data, status){
+          //Response
+          console.log("Data: " + data + "\nStatus: " + status);
+        });
     }
 
 });
