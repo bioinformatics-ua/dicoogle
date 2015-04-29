@@ -4,6 +4,8 @@ var Button = ReactBootstrap.Button;
 var ModalTrigger = ReactBootstrap.ModalTrigger;
 var Modal = ReactBootstrap.Modal;
 
+import {ExportActions} from '../../actions/exportActions';
+import {ExportStore} from '../../stores/exportStore';
 
 var ExportView = React.createClass({
 	getInitialState: function() {
@@ -12,22 +14,60 @@ var ExportView = React.createClass({
     	current: 0};
   	},
     componentDidMount: function() {
+			//ExportActions.getFieldList();
+			//$("#consolediv").scrollTop
+      //$('#my-select').multiSelect();
 
-      $('#my-select').multiSelect();
     },
+		componentDidUpdate: function() {
 
+			$('#my-select').multiSelect();
+		},
+		componentWillMount: function() {
+			// Subscribe to the store.
+			console.log("subscribe listener");
+			ExportStore.listen(this._onChange);
+		},
+		_onChange: function(data){
+			if (this.isMounted()){
+
+				this.setState({data:data.data,status: "done"});
+			}
+		},
 
 	render:function(){
 	  //var url = Endpoints.base + "/dic2png?SOPInstanceUID="+this.props.uid;
+		//if(this.state.status == "loading"){
+			return (
+				<Modal  {...this.props} bsStyle='primary' title='Export to CSV' animation={true}>
+
+					<div className='modal-body'>
+
+										<textarea id="textFields" placeholder="Paste export fields here... (one per line)" rows="10" className="exportlist form-control"></textarea>
+										</div>
+							<div className='modal-footer'>
+								<Button onClick={this.onExportClicked}>Export</Button>
+							</div>
+				</Modal>
+
+				);
+			/*
+			DEAD CODE
+			*/
+		var options = this.state.data.map(
+			function(item){
+				//console.log(item);
+				return(
+					<option key={item}>{item}</option>
+				);
+			}
+		);
+
 		return (
 			<Modal  {...this.props} bsStyle='primary' title='Export to CSV' animation={true}>
 		        <div className='modal-body'>
               <select className="testdapissa" multiple="multiple" id="my-select" name="my-select[]">
-                  <option value='elem_1'>elem 1</option>
-                  <option value='elem_2'>elem 2</option>
-                  <option value='elem_3'>elem 3</option>
-                  <option value='elem_4'>elem 4</option>
-                  <option value='elem_100'>elem 100</option>
+                {options}
               </select>
 		        </div>
 		        <div className='modal-footer'>
@@ -39,7 +79,12 @@ var ExportView = React.createClass({
 	},
 
   onExportClicked : function(){
-    console.log("onExportCLicked");
+    //console.log("onExportCLicked", document.getElementById("textFields").value);
+		var fields = document.getElementById("textFields").value.split("\n");
+		console.log(fields);
+
+		var query = this.props.query;
+		ExportActions.exportCVS(query, fields);
   }
 });
 
