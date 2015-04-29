@@ -68,7 +68,7 @@ public class RunningIndexTasks {
 			boolean canceled =  task.cancel(true);
 			if(canceled)
 			{
-				removeTask(taskUid);
+				//removeTask(taskUid);
 				return true;
 			}
 		}
