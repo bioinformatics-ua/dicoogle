@@ -160,7 +160,7 @@ var routes = (
 Router.run(routes, function (Handler) {
 
     React.render(<Handler/>, document.getElementById("sidebar-wrapper"));
-
+    //React.render(<div>Not logged in</div>, document.getElementById("container"));
 });
 };
 
