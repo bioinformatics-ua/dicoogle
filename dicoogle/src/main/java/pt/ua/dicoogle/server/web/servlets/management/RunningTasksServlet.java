@@ -44,9 +44,16 @@ public class RunningTasksServlet extends HttpServlet {
 	}
 
 	@Override
-	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		resp.addHeader("Access-Control-Allow-Origin", "*");
+		String action = req.getParameter("action");
+		
+		if(action != null && !action.equals("delete"))
+		{
+			resp.sendError(400, "action param needed: only delete is supported");
+		}
+		
 		String type = req.getParameter("type");
 		String taskUid = req.getParameter("uid");
 		if(type == null)

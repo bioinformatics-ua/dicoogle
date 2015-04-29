@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import pt.ua.dicoogle.core.QueryExpressionBuilder;
 import pt.ua.dicoogle.core.query.ExportToCSVQueryTask;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.utils.DictionaryAccess;
@@ -50,14 +51,16 @@ public class ExportServlet extends HttpServlet{
 		Iterator iterator = tagList.entrySet().iterator();
 		
 		JSONArray array = new JSONArray();
+		
 		while(iterator.hasNext())
 		{
 			Map.Entry<String, Integer> entry = (Entry<String, Integer>) iterator.next();
-			JSONObject obj = new JSONObject();
-			obj.put("key", entry.getKey());
-			obj.put("value", entry.getValue());
+			//JSONObject obj = new JSONObject();
+			//obj.put("key", entry.getKey());
+			//obj.put("value", entry.getValue());
 			
-			array.add(obj);
+			
+			array.add(entry.getKey());
 		}
 		
 		resp.getWriter().write(array.toString());
@@ -68,12 +71,24 @@ public class ExportServlet extends HttpServlet{
 		String queryString = req.getParameter("query");
 		String[] fields = req.getParameterValues("fields");
 		String[] providers = req.getParameterValues("providers");
+		boolean keyword = Boolean.parseBoolean(req.getParameter("keyword"));
+		
+		System.out.println("queryString: "+ queryString);
+		for(String field: fields)
+		System.out.println("field: "+ field);
+		System.out.println("keyword: "+ keyword);
 		
 		if(queryString == null)
 			resp.sendError(401, "Query Parameters not found");
 		
 		if(fields == null || fields.length==0)
 			resp.sendError(402, "Fields Parameters not found");
+		
+		if (!keyword) {
+            QueryExpressionBuilder q = new QueryExpressionBuilder(queryString);
+            queryString = q.getQueryString();
+        }
+
 						    	
 	    List<String> fieldList = new ArrayList<>(fields.length);
 	    Map<String, String> fieldsMap = new HashMap<>();
