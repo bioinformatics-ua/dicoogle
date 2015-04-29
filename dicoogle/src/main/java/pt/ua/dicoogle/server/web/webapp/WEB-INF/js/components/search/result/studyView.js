@@ -8,10 +8,10 @@ var StudyView = React.createClass({
   	},
     componentDidMount: function(){
        var self = this;
-       $('#example').dataTable({paging: false,searching: false,info:false});
+       $('#example').dataTable({paging: true,searching: false,info:true});
      },
      componentDidUpdate: function(){
-       $('#example').dataTable({paging: false,searching: false,info: false});
+       $('#example').dataTable({paging: true,searching: false,info: true});
      },
 	render: function() {
 		var self = this;

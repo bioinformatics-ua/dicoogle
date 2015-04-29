@@ -14,12 +14,12 @@ var ImageView = React.createClass({
     componentDidMount: function(){
        var self = this;
 
-       $('#imagetable').dataTable({paging: false,searching: false,info:false});
+       $('#imagetable').dataTable({paging: true,searching: false,info:true});
 
      },
      componentDidUpdate: function(){
 
-      $('#imagetable').dataTable({paging: false,searching: false,info: false});
+      $('#imagetable').dataTable({paging: true,searching: false,info: true});
 
      },
 	render: function() {

@@ -88,7 +88,7 @@ var ResultSearch = React.createClass({
         <Step current={this.state.current} onClick={this.onStepClicked}/>
         <div id="step-container"/>
 
-          <ModalTrigger modal={<ExportView/>}>
+          <ModalTrigger modal={<ExportView query={this.props.items}/>}>
             <button className="btn btn_dicoogle fa fa-download"> Export </button>
        </ModalTrigger>
 
