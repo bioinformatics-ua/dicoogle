@@ -14,7 +14,7 @@ var ExportView = React.createClass({
     	current: 0};
   	},
     componentDidMount: function() {
-			//ExportActions.getFieldList();
+			ExportActions.getFieldList();
 			//$("#consolediv").scrollTop
       //$('#my-select').multiSelect();
 
@@ -38,7 +38,7 @@ var ExportView = React.createClass({
 	render:function(){
 	  //var url = Endpoints.base + "/dic2png?SOPInstanceUID="+this.props.uid;
 		//if(this.state.status == "loading"){
-			return (
+		/*	return (
 				<Modal  {...this.props} bsStyle='primary' title='Export to CSV' animation={true}>
 
 					<div className='modal-body'>
@@ -50,16 +50,15 @@ var ExportView = React.createClass({
 							</div>
 				</Modal>
 
-				);
+				);*/
 			/*
 			DEAD CODE
 			*/
 		var options = this.state.data.map(
 			function(item){
-				//console.log(item);
-				return(
-					<option key={item}>{item}</option>
-				);
+					return(
+						<option key={item}>{item}</option>
+					);
 			}
 		);
 
