@@ -13,7 +13,7 @@ The building process of Dicoogle Web Core is carried out by `grunt`. Install **n
 ## Using 
 
  - Add the resulting "build/dicoogle-webcore.js" as a `<script>` to the Dicoogle web page.
- - Place <dicoogle-slot> elements in the page. They must contain a unique slot id attribute `data-slot-id`.
+ - Place `<dicoogle-slot>` elements in the page. They must contain a unique slot id attribute `data-slot-id`.
  - Invoke `DicoogleWeb.init()` to automatically detect slots, as well as to fetch and attach plugins.
 
 ## Runtime Dependencies
@@ -70,7 +70,7 @@ plugin is to be attached to a result slot, it must also implement `onResult(resu
 services exposed by Dicoogle are easily accessible with `request(...)`. See the Dicoogle Web API below for a more
 thorough documentation.
 
-Modules are meant to work independently, but can have embedded libraries if so is desired (such as React). In
+Modules are meant to work independently, but can have embedded libraries if so is desired. In
 addition, if the underlying web page is known to contain specific libraries, then these can also used without being
 embedded. This is particularly useful to avoid replicating dependencies and prevent modules from being too large.
 
@@ -116,6 +116,43 @@ page's result module. The query service requested will be "search" unless modifi
  - _options_ an object containing additional options (such as query plugins to use, result limit, etc.)
      - _overrideService_ [string] the name of the service to use instead of "search"
  - _callback_ an optional callback function(error, result)
+
+####  **addEventListener** : `function(eventName, fn)`
+
+Add an event listener to an event triggered by the web core.
+
+ - _eventName_ : the name of the event (must be one of 'load','loadMenu','loadQuery','loadResult')
+ - _fn_ : a callback function (arguments vary) -- `function(...)`
+
+#### **addResultListener** : `function(fn)`
+
+Add a listener to the 'result' event, triggered when a query result is obtained.
+
+ - _fn_ : `function(result, requestTime, options)`
+
+#### **addPluginLoadListener** : `function(fn)`
+
+Add a listener to the 'load' event, triggered when a plugin is loaded.
+
+ - _fn_ : `function(name, slotId)`
+
+#### **addMenuPluginLoadListener** : `function(fn)`
+
+Add a listener to the 'loadMenu' event, triggered when a menu plugin is loaded.
+
+ - _fn_ : `function(name)`
+
+#### **addQueryPluginLoadListener** : `function(fn)`
+
+Add a listener to the 'loadQuery' event, triggered when a query plugin is loaded.
+
+ - _fn_ : `function(name)`
+ 
+#### **addResultPluginLoadListener** : `function(fn)`
+
+Add a listener to the 'loadResult' event, triggered when a result plugin is loaded.
+
+ - _fn_ : `function(name)`
 
 ## Installing Plugins
 

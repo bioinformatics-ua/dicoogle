@@ -219,17 +219,13 @@ define('dicoogle-webcore', function (require) {
       return;
     }
     getScript(packageJSON.name, function() {
-      setTimeout(function() {
-        //console.log('Requiring ', packageJSON.name, '...');
-        require([packageJSON.name], function(PluginModule) {
-          //console.log('Obtained, reading ...');
-          if (!isFunction(PluginModule)) {
-            console.error('Plugin module is not a function! ', PluginModule);
-          } else {
-            onRegister(new PluginModule(), packageJSON.name);
-          }
-        });
-      }, 100);
+      require([packageJSON.name], function(PluginModule) {
+        if (!isFunction(PluginModule)) {
+          console.error('Plugin module is not a function! ', PluginModule);
+        } else {
+          onRegister(new PluginModule(), packageJSON.name);
+        }
+      });
     });
   }
 
