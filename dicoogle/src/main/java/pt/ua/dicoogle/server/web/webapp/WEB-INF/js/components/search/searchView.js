@@ -17,8 +17,10 @@ var Route = Router.Route;
 var Link = Router.Link;
 var RouteHandler = Router.RouteHandler
 
-var Search = React.createClass({
+import {UserMixin} from '../mixins/userMixin';
 
+var Search = React.createClass({
+    mixins : [UserMixin],
     getInitialState: function (){
 
         return { label:'login', searchState: "simple" };
@@ -30,6 +32,9 @@ var Search = React.createClass({
     componentDidUpdate: function(){
       this.enableAutocomplete();
       this.enableEnterKey();
+    },
+    componentWillMount: function(){
+
     },
     render: function() {
         var selectionButtons = (
@@ -70,11 +75,7 @@ var Search = React.createClass({
             return (<div> {selectionButtons} <AdvancedSearch/> </div>);
        }
     },
-    componentWillMount: function() {
-    // Subscribe to the store.
-        //SearchStore.listen(this._onChange);
 
-    },
     muu : function(btn){
         console.log("dados", ActionCreators);
         //ActionCreators.search("dados");
