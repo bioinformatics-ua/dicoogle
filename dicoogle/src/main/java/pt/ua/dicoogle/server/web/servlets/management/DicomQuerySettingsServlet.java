@@ -35,7 +35,7 @@ import pt.ua.dicoogle.core.ServerSettings;
  *
  * @author Frederico Silva <fredericosilva@ua.pt>
  */
-public class DicomSettingsServlet extends HttpServlet {
+public class DicomQuerySettingsServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
