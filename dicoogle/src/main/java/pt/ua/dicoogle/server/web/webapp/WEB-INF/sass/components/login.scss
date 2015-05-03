@@ -1,0 +1,66 @@
+.logincontainer{
+  max-width: 750px;display: block;margin-left: auto;margin-right: auto;
+
+  background-color:rgba(0,0,0,0.2);
+  padding:20px;
+  -webkit-box-shadow: 5px 5px 5px 0px rgba(50, 50, 50, 0.75);
+  -moz-box-shadow:    5px 5px 5px 0px rgba(50, 50, 50, 0.75);
+  box-shadow:         5px 5px 5px 0px rgba(50, 50, 50, 0.75);
+}
+
+.loginlogo{
+  display:block;margin-left: auto; margin-right: auto; margin-top: 30px;
+  width:220px;
+}
+
+.loginA{
+  display:block;
+       width:40%;
+       margin: 0 auto;
+       text-align: center;
+       margin-top: 40px;
+}
+
+.loginTextA{
+  text-align: left; width: 100%;margin-left: 5px;color: white;
+}
+.loginInputUsername{
+  width: 100%;margin: 5px;margin-top: 0px;
+}
+.loginInputPassword{
+  width: 100%; margin: 5px;
+}
+
+.loginbody{
+  height:100vh;
+  padding-top:60px;
+  padding-right: 20px;
+  padding-left: 20px;
+  padding-bottom:120px;
+  background: url(/assets/login_bg.png) no-repeat center center fixed;
+  background-size: cover;
+}
+#footer {
+  //background-color:rgba(0,0,0,0.2);
+	width:100%;
+	height:auto;
+	position:absolute;
+	bottom:0;
+	left:0;
+}
+.footercontainer{
+  max-width:90%;display: block;margin-left: auto;margin-right: auto;
+  align:center;
+
+
+}
+#loginwrapper{
+  min-height:100%;
+  position:relative;
+}
+
+.loginloader{
+  display: block;margin-left: auto;margin-right: auto;
+  width: 0px;
+  margin-top: 30px;
+}
