@@ -59,6 +59,12 @@ public interface PluginSet extends Plugin {
      * @return List returns a list of RESTful resources
      */
     public Collection<ServerResource> getRestPlugins() ;   
+
+    /**
+     * Access to Restlets
+     * @return a collection containing all active restlets
+     */
+    public Collection<RestletInterface> getRestletPlugins() ;   
     
     /**
      * 

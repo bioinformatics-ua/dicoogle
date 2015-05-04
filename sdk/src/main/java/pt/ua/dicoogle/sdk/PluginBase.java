@@ -44,6 +44,7 @@ public abstract class PluginBase implements PluginSet, PlatformCommunicatorInter
     protected List<StorageInterface> storagePlugins = new LinkedList<>();
     
     protected List<ServerResource> services = new ArrayList<>();
+    protected List<RestletInterface> restlets = new ArrayList<>();
     protected ConfigurationHolder settings = null;
     
     protected DicooglePlatformInterface platform;
