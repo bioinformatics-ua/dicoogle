@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.sdk.PluginBase;
+import pt.ua.dicoogle.sdk.RestletInterface;
 import pt.ua.dicoogle.sdk.StorageInputStream;
 import pt.ua.dicoogle.sdk.StorageInterface;
 
@@ -133,6 +135,11 @@ public class DefaultFileStoragePlugin extends PluginBase implements StorageInter
 	public String getName() {
 		return "default-filesystem-plugin";
 	}
+
+    @Override
+    public Collection<RestletInterface> getRestletPlugins() {
+        return Collections.EMPTY_LIST;
+    }
 
 	private class MyIterable implements Iterable<StorageInputStream>{
 

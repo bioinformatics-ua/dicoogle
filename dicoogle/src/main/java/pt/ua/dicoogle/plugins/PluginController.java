@@ -189,7 +189,7 @@ public class PluginController{
         }
 
         for (ServerResource resource : restInterfaces) {
-            PluginRestletApplication.attachRestPlugin(resource);
+            PluginRestletApplication.attachRestResourcePlugin(resource);
         }
         logger.info("Finished initializing rest interfaces");
     }

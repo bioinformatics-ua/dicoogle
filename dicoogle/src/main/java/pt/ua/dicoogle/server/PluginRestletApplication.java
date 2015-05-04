@@ -25,6 +25,7 @@ import org.restlet.Application;
 import org.restlet.Restlet;
 import org.restlet.resource.ServerResource;
 import org.restlet.routing.Router;
+import pt.ua.dicoogle.sdk.RestletInterface;
 
 /** A Restlet Application for aggregating web services from plugins
  *
@@ -34,7 +35,8 @@ import org.restlet.routing.Router;
  */
 public class PluginRestletApplication extends Application {
 
-    private static final List<ServerResource> pluginServices = new ArrayList<>();
+    private static final List<ServerResource> pluginServerResources = new ArrayList<>();
+    private static final List<RestletInterface> pluginRestlets = new ArrayList<>();
     
     private Router internalRouter;
     
@@ -54,23 +56,34 @@ public class PluginRestletApplication extends Application {
         // Defines routing to resources
         this.internalRouter.setDefaultMatchingQuery(false);
         
-        //lets add plugin registred services
-        //this is still a little brittle... :(
-        for(ServerResource resource : pluginServices) {
-            LoggerFactory.getLogger(PluginRestletApplication.class).debug("Inbound: {}", resource);
+        // add plugin services
+
+        // server resources are attached to the path given by <tt>toString</tt> (sure is a little brittle...)
+        for(ServerResource resource : pluginServerResources) {
+            LoggerFactory.getLogger(PluginRestletApplication.class).debug("Inbound Server Resource: {}", resource.toString());
             internalRouter.attach("/" + resource.toString(), resource.getClass());
         }
         
+        // restlet interfaces provide a base path
+        for(RestletInterface restletInt : pluginRestlets) {
+            LoggerFactory.getLogger(PluginRestletApplication.class).debug("Inbound Restlet {}", restletInt.getPath());
+            internalRouter.attach("/" + restletInt.getPath() + "/*", restletInt.getRestlet());
+        }
+
         LoggerFactory.getLogger(PluginRestletApplication.class).debug("Installed plugin restlets: {}",
-                pluginServices);
+                pluginServerResources);
         return internalRouter;
     }
     
     protected void loadPlugins() {
     }
     
-    public static void attachRestPlugin(ServerResource resource){
-        pluginServices.add(resource);
+    public static void attachRestResourcePlugin(ServerResource resource){
+        pluginServerResources.add(resource);
+    }
+    
+    public static void attachRestletPlugin() {
+        
     }
     
 }
