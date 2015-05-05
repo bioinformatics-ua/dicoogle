@@ -1,17 +1,48 @@
 var React = require('react');
 
-
+import {ServiceAction} from '../../actions/servicesAction';
+import {ServicesStore} from '../../stores/servicesStore';
 
 var ServicesView = React.createClass({
+      getInitialState: function() {
+        return {
+
+          storageRunning: false,
+          storagePort: 0,
+          queryRunning: false,
+          queryPort: 0,
+
+        status: "loading"};
+      },
+      componentWillMount: function(){
+        ServicesStore.listen(this._onChange);
+       },
       componentDidMount: function(){
-        //TransferenceActions.get();
+        ServiceAction.getStorage();
+        ServiceAction.getQuery();
        },
        componentDidUpdate: function(){
          this.drawCanvas();
         },
-      render: function() {
+      _onChange:function(data){
+        console.log(data);
+        if(this.isMounted())
+        this.setState({
+          storageRunning: data.storageRunning,
+          storagePort: data.storagePort,
+          queryRunning: data.queryRunning,
+          queryPort: data.queryPort,
+          status: "done"
+          });
 
+      //  console.log(this.state.data.storagePort);
+      },
+      render: function() {
+        var self = this;
         //return(<div>Services</div>);
+        if(this.state.status == "loading"){
+          return (<div>loading</div>);
+        }
         return (
       <div className="panel panel-primary topMargin">
         <div className="panel-heading">
@@ -31,7 +62,7 @@ var ServicesView = React.createClass({
                       Port
                     </div>
                     <div className="inline_block">
-                      <input type="text" className="form-control" style={{}} placeholder defaultValue={8000} />
+                      <input type="text" className="form-control" style={{}} value={self.state.storagePort} placeholder="#port" onChange={self.handleStoragePortChange} />
                     </div>
                     <div className="checkbox">
                       <label>
@@ -43,7 +74,12 @@ var ServicesView = React.createClass({
                 <div className="col-xs-4">
                   <div id="GlobalTransferStorage" className="data-table">
                     <div className="inline_block">
-                      <button type="button" className="btn btn-danger" style={{marginTop: 20}}>Stop</button>
+                      {this.state.storageRunning=="true" ?
+                        (  <button type="button" className="btn btn-danger" style={{marginTop: 20}} onClick={this.stopStorage}>Stop</button>) :
+                        (  <button type="button" className="btn btn-success" style={{marginTop: 20}} onClick={this.startStorage}>Start</button>)
+
+                      }
+
                     </div>
                   </div>
                 </div>
@@ -61,7 +97,7 @@ var ServicesView = React.createClass({
                       Port
                     </div>
                     <div className="inline_block">
-                      <input type="text" className="form-control" style={{}} placeholder defaultValue={8001} />
+                      <input id="queryport" type="text" className="form-control" style={{}} placeholder="#port" value={self.state.queryPort} onChange={self.handleQueryPortChange}/>
                     </div>
                     <div className="checkbox">
                       <label>
@@ -73,7 +109,11 @@ var ServicesView = React.createClass({
                 <div className="col-xs-4">
                   <div id="GlobalTransferStorage" className="data-table">
                     <div className="inline_block">
-                      <button type="button" className="btn btn-success" style={{marginTop: 20}}>Start</button>
+                      {this.state.queryRunning=="true" ?
+                        (  <button type="button" className="btn btn-danger" style={{marginTop: 20}}onClick={this.stopQuery}>Stop</button>) :
+                        (  <button type="button" className="btn btn-success" style={{marginTop: 20}} onClick={this.startQuery}>Start</button>)
+
+                      }
                     </div>
                     <button type="button" className="btn btn-default" style={{marginTop: 20, float: 'right'}}>
                       <span className="glyphicon glyphicon-cog" />
@@ -90,13 +130,31 @@ var ServicesView = React.createClass({
 
         );
       },
-
+      handleQueryPortChange :function(event){
+        this.setState({queryPort: event.target.value});
+      },
+      handleStoragePortChange : function(event){
+        this.setState({storagePort: event.target.value});
+      },
+      startStorage : function(){
+        console.log("start storage");
+        ServiceAction.setStorage(true);
+      },
+      stopStorage : function(){
+        ServiceAction.setStorage(false);
+      },
+      startQuery : function(){
+        ServiceAction.setQuery(true);
+      },
+      stopQuery : function(){
+        ServiceAction.setQuery(false);
+      },
       drawCanvas:function(){
 
             var canvas1 = document.getElementById("myCanvas");
              var canvas2 = document.getElementById("myCanvas2");
-            draw(canvas1,1);
-            draw(canvas2,0);
+            draw(canvas1,(this.state.storageRunning == "true"));
+            draw(canvas2,(this.state.queryRunning == "true"));
             function draw(e, status){
                  var canvas = e;
             var context = canvas.getContext('2d');
@@ -106,7 +164,7 @@ var ServicesView = React.createClass({
 
             context.beginPath();
             context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-                if(Boolean(status))
+                if(status)
             context.fillStyle = 'green';
                 else
                     context.fillStyle = 'red';

@@ -20,8 +20,8 @@ var ExportView = React.createClass({
 
     },
 		componentDidUpdate: function() {
-
-			$('#my-select').multiSelect();
+			//this.clusterize();
+			//$('#my-select').multiSelect();
 		},
 		componentWillMount: function() {
 			// Subscribe to the store.
@@ -53,7 +53,7 @@ var ExportView = React.createClass({
 				);
 			/*
 			DEAD CODE
-			*/
+*/
 		var options = this.state.data.map(
 			function(item){
 					return(
@@ -64,9 +64,9 @@ var ExportView = React.createClass({
 
 		return (
 			<Modal  {...this.props} bsStyle='primary' title='Export to CSV' animation={true}>
-		        <div className='modal-body'>
-              <select className="testdapissa" multiple="multiple" id="my-select" name="my-select[]">
-                {options}
+		        <div id="bilo" className='modal-body clusterize-scroll '>
+              <select className="testdapissa clusterize-content" multiple="multiple" id="my-select" name="my-select[]">
+
               </select>
 		        </div>
 		        <div className='modal-footer'>
@@ -84,7 +84,24 @@ var ExportView = React.createClass({
 
 		var query = this.props.query;
 		ExportActions.exportCVS(query, fields);
-  }
+  },
+	clusterize: function(){
+		var data = [];
+		this.state.data.map(
+			function(item){
+
+						data.push('<option>'+item+'</option>');
+
+			}
+		);
+		// JavaScript
+	//var data = ['<option>balo</option>', '<option>balo</option>', '<option>balo</option>', '<option>balo</option>', '<option>balo</option>', '<option>balo</option>', '<option>balo</option>', '<option>balo</option>', '<option>balo</option>', '<option>balo</option>', '<option>balo</option>', '<option>balo</option>', '<option>balo</option>', '<option>balo</option>'];
+	var clusterize = new Clusterize({
+  	rows: data,
+  	scrollId: 'bilo',
+  	contentId: 'my-select'
+	});
+	}
 });
 
 export{ExportView}

@@ -44,6 +44,9 @@ var UserStore = Reflux.createStore({
           {
             //TODO: HANDLE LOGIN FAILED
             console.log("Login Failed");
+            self.trigger({
+              failed: true
+            });
           }
       });
 
