@@ -8,7 +8,8 @@ var LoginView = React.createClass({
   mixins : [Router.Navigation],
   getInitialState: function() {
     return {data: {},
-    status: "loading"};
+    status: "loading",
+    failed: false};
   },
   componentDidMount: function(){
 
@@ -25,6 +26,12 @@ var LoginView = React.createClass({
   },
   _onChange: function(data){
     console.log(data);
+    if(data.failed == true)
+    {
+      this.setState({failed: true});
+      return;
+    }
+
     if(data.isLoggedIn && this.isMounted())
     {
       React.unmountComponentAtNode(document.getElementById('login_container'));
@@ -66,8 +73,10 @@ var LoginView = React.createClass({
                 <p className="loginTextA">Sign In</p>
                 <input ref="user" type="text" id="username" name="username" placeholder="Username" className="loginInputUsername form-control"/>
                 <input ref="pass" type="password" id="password" name="password" placeholder="Password" className="loginInputPassword form-control" />
+                  {this.state.failed ? (<p style={{color: 'red'}}> Login Failed. Please try again. </p>) : ''}
                 <button type="button" className="btn submit btn_dicoogle" onClick={this.onLoginClick}>Login</button>
               </form>
+
 
             </div>
 
