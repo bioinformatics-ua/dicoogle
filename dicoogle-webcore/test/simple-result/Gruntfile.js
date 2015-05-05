@@ -16,31 +16,31 @@ module.exports = function(grunt) {
       options: {
       }
     },
-//    browserify: {
-//      all: {
-//        src: 'build/<%= pkg.name %>.js',
-//        dest: 'build/bundle.js',
-//        options: {
-//          browserifyOptions: {
-//          },
-//          external: externalDependencies
-//        }
-//      }
- //   },
-    umd: {
+    browserify: {
       all: {
+        src: 'build/<%= pkg.name %>.js',
+        dest: 'build/module.js',
         options: {
-          src: 'build/<%= pkg.name %>.js',
-          dest: 'build/module.js',
-          amdModuleId: '<%= pkg.name %>',
-          deps: {
-            amd: amdDependencies
+          browserifyOptions: {
+            standalone: '<%= pkg.name %>'
           },
-          template: 'template/returnModuleExports.hbs'
-//          template: 'template/unit.hbs'
-        },
+          external: ['react']
+        }
       }
-    }, 
+    },
+//    umd: {
+//      all: {
+//        options: {
+//          src: 'build/<%= pkg.name %>.js',
+//          dest: 'build/module.js',
+//          deps: {
+//            amd: amdDependencies
+//          },
+//          template: 'template/returnModuleExports.hbs'
+//          template: 'template/unit.hbs'
+//        },
+//      }
+//    }, 
     uglify: {
       options: {
         //banner: '<%= grunt.file.read("license-header.txt") %>'
@@ -84,13 +84,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-browserify');
   //grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-umd');
+  //grunt.loadNpmTasks('grunt-umd');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-clean');
 
   // Default task(s).
   grunt.registerTask('default',
-    ['react','jshint','umd','uglify:minimize','uglify:pretty','clean']);
+    ['react','jshint','browserify','uglify:minimize','uglify:pretty','clean']);
   grunt.registerTask('debug',
-    ['react','jshint','umd','uglify:debug']);
+    ['react','jshint','browserify','uglify:debug']);
 };

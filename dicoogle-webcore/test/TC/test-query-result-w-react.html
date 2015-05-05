@@ -5,24 +5,37 @@
     <script src='./document-register-element.js'></script>
     <script src='./require.js'></script>
     <script src='./react-0.13.0.js'></script>
-    <script src='./reactable.js'></script>
-    <script src='./react-dropzone.js'></script>
-    <script src='../../build/dicoogle-webcore.js'></script>
+<!--    <script src='./reactable.js'></script> -->
+<!--    <script src='./react-dropzone.js'></script> -->
+    <script src='../../dist/dicoogle-webcore.js'></script>
     <style>
+    td, th {
+      border: 1px solid #888;
+      padding: 0.4rem;
+    }
+    .reactable-page-button {
+      border: 1px solid #888;
+      padding: 0.15rem;
+      margin: 0.2rem;
+      cursor: pointer; cursor: hand;
+    }
+    .reactable-current-page {
+      background-color: #CCC;
+    }
     </style>
   </head>
   <body>
     <h2>Test Chamber (Query + Result)</h2>
     This page holds two Dicoogle Web UI slots! One with the id <tt>query</tt> and another with the id <tt>result</tt>.
-    It is excellent for experimenting with Dicoogle search operations. This page also includes React (<tt>'react'</tt>) and some components.
+    It is excellent for experimenting with Dicoogle search operations. This page also includes React (<tt>'react'</tt>).
     
     <dicoogle-slot data-slot-id='query' ></dicoogle-slot>
     <hr>
     <dicoogle-slot data-slot-id='result' ></dicoogle-slot>
     
     <script>
-      require(['dicoogle-webcore'], function(DicoogleWeb) {
-        DicoogleWeb.init('http://localhost:8080/');
+      require(['dicoogle-webcore','react','reactable'], function(DicoogleWebcore, React, Reactable) {
+        DicoogleWebcore.init('http://localhost:8080/');
       });
     </script>
   </body>

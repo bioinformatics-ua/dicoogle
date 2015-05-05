@@ -8,7 +8,6 @@
 
 // external dependencies
 var React = require('react');
-var DicoogleWeb = require('dicoogle-webcore');
 
 // bundled dependencies
 var Reactable = require('reactable');
@@ -34,7 +33,7 @@ var ResultTable = React.createClass({
     var Table = Reactable.Table;
     return (
         <div>
-        <Table className="table" data={this.state.results} itemsPerPage={20} />
+        <Table className="table" data={this.state.results} itemsPerPage={10} />
       </div>
     );
   }

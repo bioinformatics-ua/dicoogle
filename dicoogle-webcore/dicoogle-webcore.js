@@ -1,11 +1,10 @@
 /** Dicoogle web application core.
  * This module provides support to web interface plugins.
- * AMD module
  */
-define('dicoogle-webcore', function (require) {
+module.exports = (function () {
   'use strict';
   
-  var m = {};
+  var m = { constructors: {} };
   
   // hidden properties
   
@@ -162,6 +161,41 @@ define('dicoogle-webcore', function (require) {
     service_get(service, data, callback);
   };
   
+  m.onRegister = function(pluginInstance, name) {
+    if (typeof pluginInstance !== 'object' || typeof pluginInstance.render !== 'function') {
+      console.error('Dicoogle web UI plugin ', name, ' is corrupted or invalid: ', pluginInstance);
+      return;
+    }
+    let thisPackage = packages[name];
+    let slotId = thisPackage.dicoogle['slot-id'];
+    if (slotId === 'result' && typeof pluginInstance.onResult !== 'function') {
+      console.error('Dicoogle web UI plugin ', name, ' does not provide onResult');
+      return;
+    }
+    console.log('Executed plugin: ', name);
+    pluginInstance.Name = name;
+    pluginInstance.SlotId = slotId;
+    pluginInstance.Caption = thisPackage.dicoogle.caption || name;
+    plugins[name] = pluginInstance;
+    slots[slotId].attachPlugin(pluginInstance);
+    for (let i = 0 ; i < eventListeners.load.length ; i++) {
+      eventListeners.load[i](name, slotId);
+    }
+    if (slotId === 'query') {
+      for (let i = 0 ; i < eventListeners.loadQuery.length ; i++) {
+        eventListeners.loadQuery[i](name);
+      }
+    } else if (slotId === 'result') {
+      for (let i = 0 ; i < eventListeners.loadResult.length ; i++) {
+        eventListeners.loadResult[i](name);
+      }
+    } else if (slotId === 'menu') {
+      for (let i = 0 ; i < eventListeners.loadMenu.length ; i++) {
+        eventListeners.loadMenu[i](name);
+      }
+    }
+  };
+
   // ----------------------------------------------------------------------------
   m.WebUISlot = function(id, dom) {
     this.id = id;
@@ -202,13 +236,12 @@ define('dicoogle-webcore', function (require) {
   };
 
   // ---------------- private methods ----------------
+  const ostring = Object.prototype.toString;
   function isArray(it) {
-    const ostring = Object.prototype.toString;
     return ostring.call(it) === '[object Array]';
   }
   
   function isFunction(it) {
-    const ostring = Object.prototype.toString;
     return ostring.call(it) === '[object Function]';
   }
 
@@ -219,49 +252,24 @@ define('dicoogle-webcore', function (require) {
       return;
     }
     getScript(packageJSON.name, function() {
-      require([packageJSON.name], function(PluginModule) {
-        if (!isFunction(PluginModule)) {
-          console.error('Plugin module is not a function! ', PluginModule);
-        } else {
-          onRegister(new PluginModule(), packageJSON.name);
-        }
-      });
+      const {name} = packageJSON;
+      console.log('Loaded module ', name);
+      if (!isFunction(m.constructors[name])) {
+        console.error('The loaded module', name, 'is not a function!');
+      }
     });
   }
-
-  function onRegister(pluginInstance, name) {
-    if (typeof pluginInstance !== 'object' || typeof pluginInstance.render !== 'function') {
-      console.error('Dicoogle web UI plugin ', name, ' is corrupted or invalid: ', pluginInstance);
-      return;
+  
+  function camelize(s) {
+    let words = s.split('-');
+    if (words.length === 0) return '';
+    let t = words[0];
+    for (let i = 1 ; i < words.length ; i++) {
+        if (words[i].length !== 0) {
+            t += words[i][0].toUpperCase() + words[i].substring(1);
+        }
     }
-    let thisPackage = packages[name];
-    let slotId = thisPackage.dicoogle['slot-id'];
-    if (slotId === 'result' && typeof pluginInstance.onResult !== 'function') {
-      console.error('Dicoogle web UI plugin ', name, ' does not provide onResult');
-      return;
-    }
-    console.log('Executed plugin: ', name);
-    pluginInstance.Name = name;
-    pluginInstance.SlotId = slotId;
-    pluginInstance.Caption = thisPackage.dicoogle.caption || name;
-    plugins[name] = pluginInstance;
-    slots[slotId].attachPlugin(pluginInstance);
-    for (let i = 0 ; i < eventListeners.load.length ; i++) {
-      eventListeners.load[i](name, slotId);
-    }
-    if (slotId === 'query') {
-      for (let i = 0 ; i < eventListeners.loadQuery.length ; i++) {
-        eventListeners.loadQuery[i](name);
-      }
-    } else if (slotId === 'result') {
-      for (let i = 0 ; i < eventListeners.loadResult.length ; i++) {
-        eventListeners.loadResult[i](name);
-      }
-    } else if (slotId === 'menu') {
-      for (let i = 0 ; i < eventListeners.loadMenu.length ; i++) {
-        eventListeners.loadMenu[i](name);
-      }
-    }
+    return t;
   }
   
   /// @deprecated
@@ -326,7 +334,6 @@ define('dicoogle-webcore', function (require) {
     }
     end_url += qstring;
     
-    // This XDomainRequest thing is for IE support (lulz)
     let req = (typeof XDomainRequest !== 'undefined') ?
       new XDomainRequest() : new XMLHttpRequest();
     req.onreadystatechange = function() {
@@ -369,8 +376,7 @@ define('dicoogle-webcore', function (require) {
     };
 
     script.onload = script.onreadystatechange = onLoadHandler;
-
-    script.src = base_url+'webui?module='+moduleName+'&process=false';
+    script.src = base_url+'webui?module='+moduleName+'&process=true';
   }
 
   // custom element definitions
@@ -407,4 +413,4 @@ define('dicoogle-webcore', function (require) {
   console.log('Associated HTMLDicoogleSlotElement to DicoogleWeb');
   
   return m;
-});
+})();
