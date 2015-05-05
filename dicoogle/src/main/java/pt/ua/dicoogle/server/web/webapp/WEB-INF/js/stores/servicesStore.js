@@ -58,10 +58,36 @@ var ServicesStore = Reflux.createStore({
 
       );
     },
-    OnSetStorage :function(){
+    onSetStorage :function(state){
+      var self = this;
+      console.log(state);
+      $.post("http://localhost:8080/management/dicom/storage",
+      {
+        running: state
+      },
+        function(data, status){
+          //Response
+          console.log("Data: " + data + "\nStatus: " + status);
+          self._contents.storageRunning = state?"true":"false";
+          self.trigger(self._contents);
+
+        });
 
     },
-    OnSetQuery :function(){
+    onSetQuery :function(state){
+      var self = this;
+      console.log(state);
+      $.post("http://localhost:8080/management/dicom/query",
+      {
+        running: state
+      },
+        function(data, status){
+          //Response
+          console.log("Data: " + data + "\nStatus: " + status);
+          self._contents.queryRunning = state?"true":"false";
+          self.trigger(self._contents);
+
+        });
 
     }
 

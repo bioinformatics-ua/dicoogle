@@ -30,12 +30,12 @@ var ServicesView = React.createClass({
         this.setState({
           storageRunning: data.storageRunning,
           storagePort: data.storagePort,
-          queryRunning: data.queryeRunning,
+          queryRunning: data.queryRunning,
           queryPort: data.queryPort,
           status: "done"
           });
 
-        console.log(this.state.data.storagePort);
+      //  console.log(this.state.data.storagePort);
       },
       render: function() {
         var self = this;
@@ -75,8 +75,8 @@ var ServicesView = React.createClass({
                   <div id="GlobalTransferStorage" className="data-table">
                     <div className="inline_block">
                       {this.state.storageRunning=="true" ?
-                        (  <button type="button" className="btn btn-danger" style={{marginTop: 20}}>Stop</button>) :
-                        (  <button type="button" className="btn btn-success" style={{marginTop: 20}}>Start</button>)
+                        (  <button type="button" className="btn btn-danger" style={{marginTop: 20}} onClick={this.stopStorage}>Stop</button>) :
+                        (  <button type="button" className="btn btn-success" style={{marginTop: 20}} onClick={this.startStorage}>Start</button>)
 
                       }
 
@@ -110,8 +110,8 @@ var ServicesView = React.createClass({
                   <div id="GlobalTransferStorage" className="data-table">
                     <div className="inline_block">
                       {this.state.queryRunning=="true" ?
-                        (  <button type="button" className="btn btn-danger" style={{marginTop: 20}}>Stop</button>) :
-                        (  <button type="button" className="btn btn-success" style={{marginTop: 20}}>Start</button>)
+                        (  <button type="button" className="btn btn-danger" style={{marginTop: 20}}onClick={this.stopQuery}>Stop</button>) :
+                        (  <button type="button" className="btn btn-success" style={{marginTop: 20}} onClick={this.startQuery}>Start</button>)
 
                       }
                     </div>
@@ -135,6 +135,19 @@ var ServicesView = React.createClass({
       },
       handleStoragePortChange : function(event){
         this.setState({storagePort: event.target.value});
+      },
+      startStorage : function(){
+        console.log("start storage");
+        ServiceAction.setStorage(true);
+      },
+      stopStorage : function(){
+        ServiceAction.setStorage(false);
+      },
+      startQuery : function(){
+        ServiceAction.setQuery(true);
+      },
+      stopQuery : function(){
+        ServiceAction.setQuery(false);
       },
       drawCanvas:function(){
 
