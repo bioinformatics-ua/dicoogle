@@ -4,8 +4,9 @@
 module.exports = function() {
   var input = document.createElement('input');
   var button = document.createElement('input');
-  var chkKeyword = document.createElement('input');
-  
+  var chkKeyword = document.createElement('input'); 
+  var lblKeyword = document.createElement('label');
+
   function onClick() { 
     var query = input.value;
     DicoogleWeb.issueQuery(query, {
@@ -31,8 +32,10 @@ module.exports = function() {
   chkKeyword.type = 'checkbox';
   chkKeyword.value = 'keyword';
   chkKeyword.checked = true;
-  chkKeyword.innerHTML = 'keywords';
-  
+
+  lblKeyword.appendChild(chkKeyword);
+  lblKeyword.appendChild(document.createTextNode("keyword"));
+ 
   button.type = 'button';
   button.value = 'Search';
   button.onclick = onClick;
@@ -40,7 +43,7 @@ module.exports = function() {
   this.render = function(parent) {
      var d = document.createElement('div');
      d.appendChild(input);
-     d.appendChild(chkKeyword);
+     d.appendChild(lblKeyword);
      d.appendChild(button);
      parent.appendChild(d);
    };
