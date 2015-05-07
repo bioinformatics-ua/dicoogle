@@ -1,7 +1,7 @@
 # Dicoogle Web Core
 
 This JavaScript project aims to provide the backbone for Dicoogle Web UI plugins.
-The essence of this architectue is that Dicoogle web pages will contain stub slots where plugins can be attached to.
+The essence of this architecture is that Dicoogle web pages will contain stub slots where plugins can be attached to.
 
 ## Building
 
@@ -17,8 +17,8 @@ Install **npm** if not already installed, and perform the following commands in 
 
 ## Using 
 
- - Include a module management library that supports synchronous module loading. RequireJS is preferred (libraries must be
-   asynchronously loaded before initializing the web core).
+ - Include a module management library that supports synchronous module loading. RequireJS is preferred (RequireJS is supported,
+   but libraries must be asynchronously loaded before initializing the web core).
  - Include the resulting "dist/dicoogle-webcore.js" in your page. An HTML `<script>` element or another means of importing
    the module is sufficient.
  - Place `<dicoogle-slot>` elements in the page. They must contain a unique slot id attribute `data-slot-id`.
@@ -66,10 +66,10 @@ An example of a package:
 
 In addition, a JavaScript module must be implemented, containing the entire logic and rendering of the plugin.
 The final module script must define a module in loose CommonJS format (similar to the Node.js module standard).
-The developer may also choose to create the module under the UMD format. The developer can make a node-flavored
-CommonJS module and use tools like browserify to convert it (and embed dependencies). The exported module must be
+The developer may also choose to create the module under the UMD format. The developer can make multiple node-flavored
+CommonJS modules and use tools like browserify to bundle them and embed dependencies. The exported module must be
 a single constructor function, in which instances must have a `render(parent)` function, which will attach the
-contents of the plugin to the `parent` DOM element (as of 0.6.0, it should no longer return a DOM element).
+contents of the plugin to the `parent` DOM element.
 
 All modules will have access to the `DicoogleWeb` plugin-local alias for interfacing with Dicoogle. If the plugin
 is to be attached to a result slot, it must also implement `onResult(result)`. Query plugins can invoke
@@ -99,8 +99,8 @@ module.exports = function() {
 
 ### Dicoogle Web API
 
-Either `require` the `dicoogle-web` module (if the page supports the operation) or use alias `DicoogleWeb` to perform 
-operations to the Dicoogle server and the page's Dicoogle web core.
+Either `require` the `dicoogle-web` module (if the page supports the operation) or use the alias `DicoogleWeb` to 
+perform operations to the Dicoogle server and the page's Dicoogle web core.
 
 #### **request** : `function(service, [data,] callback)`
 
