@@ -33,6 +33,7 @@ import pt.ua.dicoogle.server.web.servlets.management.ForceIndexing;
 import pt.ua.dicoogle.server.web.servlets.management.IndexerSettingsServlet;
 import pt.ua.dicoogle.server.web.servlets.management.LoggerServlet;
 import pt.ua.dicoogle.server.web.servlets.management.RunningTasksServlet;
+import pt.ua.dicoogle.server.web.servlets.management.ServerStorageServlet;
 import pt.ua.dicoogle.server.web.servlets.management.ServicesServlet;
 import pt.ua.dicoogle.server.web.servlets.management.TransferenceOptionsServlet;
 
@@ -201,7 +202,8 @@ public class DicoogleWeb {
             createServletHandler(new LoggerServlet(), "/logger"),
             createServletHandler(new RunningTasksServlet(), "/index/task"),
             createServletHandler(new ExportServlet(ExportType.EXPORT_CVS), "/export/cvs"),
-            createServletHandler(new ExportServlet(ExportType.LIST), "/export/list")
+            createServletHandler(new ExportServlet(ExportType.LIST), "/export/list"),
+            createServletHandler(new ServerStorageServlet(), "/management/settings/storage/dicom")
             ,
             webpages
 
