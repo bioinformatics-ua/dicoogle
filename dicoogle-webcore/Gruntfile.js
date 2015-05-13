@@ -27,6 +27,17 @@ module.exports = function(grunt) {
         dest: 'build/<%= pkg.name %>.js'
       }
     }, 
+    umd: {
+      options: {
+        amdModuleId: 'dicoogle-webcore',
+        globalAlias: 'DicoogleWebcore',
+        template: 'unit'
+      },
+      all: {
+        src: 'build/<%= pkg.name %>.js',
+        dest: 'build/module.js'
+      }
+    },
     uglify: {
       options: {
         banner: '<%= grunt.file.read("license-header.txt") %>'
@@ -37,8 +48,8 @@ module.exports = function(grunt) {
           preserveComments: false,
           mangle: true
         },
-        src: 'build/<%= pkg.name %>.js',
-        dest: 'build/<%= pkg.name %>.min.js'
+        src: 'build/module.js',
+        dest: 'dist/<%= pkg.name %>.min.js'
       },
       pretty: {
         options: {
@@ -48,8 +59,8 @@ module.exports = function(grunt) {
           preserveComments: true,
           sourceMap: true
         },
-        src: 'build/<%= pkg.name %>.js',
-        dest: 'build/<%= pkg.name %>.js'
+        src: 'build/module.js',
+        dest: 'dist/<%= pkg.name %>.js'
       }
     }
   });
@@ -57,9 +68,10 @@ module.exports = function(grunt) {
   // Load plugin tasks.
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-babel');
+  grunt.loadNpmTasks('grunt-umd');
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
   // Default task(s).
-  grunt.registerTask('default', ['jshint','babel','uglify:minimize','uglify:pretty']);
+  grunt.registerTask('default', ['jshint','babel','umd','uglify:minimize','uglify:pretty']);
 
 };

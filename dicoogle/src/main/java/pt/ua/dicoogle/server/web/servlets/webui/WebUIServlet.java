@@ -36,7 +36,7 @@ import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
 /**
  * Retrieval of web UI plugins and respective packages/modules.
  * 
- * <b>This API is unstable. It is currently only compatible with dicoogle-webcore 0.5.x</b>
+ * <b>This API is unstable. It is currently only compatible with dicoogle-webcore 0.7.x</b>
  *
  * @author Eduardo Pinho
  */
@@ -55,7 +55,7 @@ public class WebUIServlet extends HttpServlet {
             resp.getWriter().append(this.getPlugin(resp, name));
         } else if (module != null) {
             resp.setContentType("application/javascript");
-            boolean doProcess = process != null && Boolean.parseBoolean(process);
+            boolean doProcess = process == null || Boolean.parseBoolean(process);
             resp.getWriter().append(this.getModule(resp, module, doProcess));
         } else {
             resp.setContentType("application/json");
@@ -90,17 +90,7 @@ public class WebUIServlet extends HttpServlet {
         }
         String js = PluginController.getInstance().getWebUIModuleJS(name);
         
-        StringBuilder writer = new StringBuilder();
-        if (process) {
-            writer.append(String.format("define(\"%s\",[\"require\",\"exports\",\"module\"],"
-                    + "function(require,exports,module){\nreturn ",
-                    plugin.getName()));
-        }
-        writer.append(js);
-        if (process) {
-            writer.append(String.format("\n});\n"));
-        }
-        return writer.toString();
+        return processModule(name, js, process);
     }
     
     /** Convert from dash-lowercase to camelCase
@@ -117,5 +107,27 @@ public class WebUIServlet extends HttpServlet {
             }
         }
         return t;
+    }
+    
+    public static String processModule(String name, String module, boolean process) {
+        StringBuilder writer = new StringBuilder();
+        if (process) {
+            writer.append("(function(root,factory){\n");
+            writer.append("var m={exports:{}};");
+            writer.append("var w=root.DicoogleWebcore||require(\"dicoogle-webcore\");");
+            writer.append("factory(w,m,m.exports);");
+            writer.append("w.constructors[\"");
+              writer.append(name);
+              writer.append("\"]=m.exports;");
+            writer.append("w.onRegister(new m.exports(),\"");
+              writer.append(name);
+              writer.append("\");");
+            writer.append("})(this,function(DicoogleWeb,module,exports){\n");
+        }
+        writer.append(module);
+        if (process) {
+            writer.append("});\n");
+        }
+        return writer.toString();
     }
 }
