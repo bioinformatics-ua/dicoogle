@@ -44,7 +44,7 @@ import pt.ua.dicoogle.server.DicomNetwork;
 
 /**
  *
- * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class QueryRetrieve extends DicomNetwork 
 {

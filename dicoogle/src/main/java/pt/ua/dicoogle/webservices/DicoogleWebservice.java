@@ -19,9 +19,7 @@
 package pt.ua.dicoogle.webservices;
 
 import java.util.ArrayList;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.restlet.Application;
 import org.restlet.Component;
 import org.restlet.Restlet;
@@ -34,7 +32,7 @@ import pt.ua.dicoogle.core.ServerSettings;
 /**
  *
  * @author psytek
- * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  *
  */
 public class DicoogleWebservice extends Application {

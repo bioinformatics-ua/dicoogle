@@ -25,15 +25,15 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
-import org.slf4j.LoggerFactory;
 import org.dcm4che2.data.UID;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.server.web.utils.types.DataTable;
 
 /**
  *
  * @author Marco Pereira
- * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
- * @author Ant??nio Novo <antonio.novo@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author António Novo <antonio.novo@ua.pt>
  * @see XMLSupport
  * 
  */

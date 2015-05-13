@@ -12,6 +12,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+            <jetty.version>9.0.3.v20130506</jetty.version>
 	</properties>
 
 	<repositories>
@@ -236,12 +237,12 @@
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-webapp</artifactId>
-			<version>9.0.3.v20130506</version>
+			<version>${jetty.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-jsp</artifactId>
-			<version>9.0.3.v20130506</version>
+			<version>${jetty.version}</version>
 		</dependency>
 
 		<dependency>

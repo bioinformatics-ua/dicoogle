@@ -1,0 +1,16 @@
+{
+  "name": "react-todo",
+  "version": "0.0.1",
+  "description": "A TODO list for Dicoogle",
+  "scripts": {
+    "build": "jsx todo.jsx > module.js"
+  },
+  "dicoogle": {
+    "caption": "TODO list",
+    "slot-id": "fordummy",
+    "module-file": "module.js"
+  },
+  "devDependencies": {
+    "react-tools": "^0.13.1"
+  }
+}

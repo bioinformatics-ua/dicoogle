@@ -57,7 +57,7 @@ import pt.ua.ieeta.emailreport.Configuration;
 /**
  * Main class for Dicoogle
  * @author Filipe Freitas
- * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Samuel Campos <samuelcampos@ua.pt>
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */

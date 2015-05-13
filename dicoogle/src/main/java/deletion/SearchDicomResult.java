@@ -16,12 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-/** 
- * Class SearchResult is responsable to get results from Lucene indexer
- * But no text results are returned instead we use names of DICOM file and 
- * instance a new DicomObject, so therory this is a abtract to a list of 
- * DicomObject, neither list of *names* of DICOM file.
- */
 package deletion;
 
 import java.io.*;
@@ -46,8 +40,12 @@ import pt.ua.dicoogle.core.dim.Serie;
 import pt.ua.dicoogle.core.dim.Study;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 /**
+ * Class SearchResult is responsable to get results from Lucene indexer
+ * But no text results are returned instead we use names of DICOM file and 
+ * instance a new DicomObject, so therory this is a abtract to a list of 
+ * DicomObject, neither list of *names* of DICOM file.
  *
- * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @since 17 Fev 2009
  */
 public class SearchDicomResult implements Iterator<DicomObject>{
