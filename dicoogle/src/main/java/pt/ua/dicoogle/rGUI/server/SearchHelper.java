@@ -19,14 +19,10 @@
 package pt.ua.dicoogle.rGUI.server;
 
 import java.net.URI;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.rGUI.server.controllers.Search;

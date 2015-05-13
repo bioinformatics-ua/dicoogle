@@ -16,13 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.webservices;
+package pt.ua.dicoogle.server.web.rest;
 
 import org.restlet.data.Status;
 import org.restlet.representation.OutputRepresentation;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
-import pt.ua.dicoogle.webservices.elements.FileDownloadUtils;
+import pt.ua.dicoogle.server.web.rest.elements.FileDownloadUtils;
 
 /**
  *
@@ -56,9 +56,8 @@ public class RestWADOResource extends ServerResource {
         }
 
         //the standard also requires that the request type is present and == WADO
-        if(!requestType.equals("WADO")){
+        if(requestType == null || !requestType.equals("WADO")){
                 setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
-                //result = generateErrorRepresentation("Please enter a UID", "400");
         }
         
         return FileDownloadUtils.gerFileRepresentation(objectUID);

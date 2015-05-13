@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.webservices;
+package pt.ua.dicoogle.server.web.rest;
 
 import java.io.StringWriter;
 import java.util.Set;
@@ -31,7 +31,7 @@ import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
-import pt.ua.dicoogle.webservices.elements.JaxbStrList;
+import pt.ua.dicoogle.server.web.rest.elements.JaxbStrList;
 
 /**
  *

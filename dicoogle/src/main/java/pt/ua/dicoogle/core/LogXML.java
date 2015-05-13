@@ -26,8 +26,7 @@ import javax.xml.transform.stream.*;
 import javax.xml.transform.sax.*;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -110,17 +109,15 @@ public class LogXML extends DefaultHandler
             try
             {
                 r = XMLReaderFactory.createXMLReader();
+                r.setContentHandler(this);
+                r.parse(src);
             } catch (SAXException ex)
             {
             }
-            r.setContentHandler(this);
-            r.parse(src);
             return logs;
         } catch (IOException ex)
         {
-        } catch (SAXException ex)
-        {
-        }
+        } 
         return null;
     }
 
@@ -168,7 +165,7 @@ public class LogXML extends DefaultHandler
             hd.endDocument();
 
         } catch (TransformerConfigurationException | SAXException | IOException ex) {
-            Logger.getLogger(LogXML.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(LogXML.class).error(ex.getMessage(), ex);
         }
     }
 }

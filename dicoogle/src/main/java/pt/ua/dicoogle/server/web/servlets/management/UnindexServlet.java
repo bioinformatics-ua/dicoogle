@@ -24,13 +24,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.plugins.PluginController;
 
@@ -40,7 +40,7 @@ import pt.ua.dicoogle.plugins.PluginController;
  */
 public class UnindexServlet extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(UnindexServlet.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(UnindexServlet.class);
     
     /**
      */
@@ -66,7 +66,7 @@ public class UnindexServlet extends HttpServlet {
                 effUris[i] = new URI(uris[i]);
             }
         } catch (URISyntaxException ex) {
-            logger.log(Level.INFO, "Received bad URI", ex);
+            logger.info("Received bad URI", ex);
             resp.sendError(400, "Bad URI: " + ex.getInput());
             return;
         }
@@ -76,11 +76,11 @@ public class UnindexServlet extends HttpServlet {
             try {
                 PluginController.getInstance().unindex(uri, providers);
             } catch (RuntimeException ex) {
-                logger.log(Level.SEVERE, ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
 
-        logger.log(Level.INFO, "Finished unindexing {0}", Arrays.asList(uris));
+        logger.info("Finished unindexing {}", Arrays.asList(uris));
         resp.setStatus(200);
     }
 }

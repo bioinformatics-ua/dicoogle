@@ -18,10 +18,9 @@
  */
 package pt.ua.dicoogle.plugins.webui;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
+import org.slf4j.LoggerFactory;
 
 /** A POJO data type containing the full description of a Web UI plugin.
  *
@@ -53,7 +52,7 @@ public class WebUIPlugin implements Cloneable {
         try {
             return clone();
         } catch (CloneNotSupportedException ex) {
-            Logger.getLogger(WebUIPlugin.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(WebUIPlugin.class).error("Failed to copy web UI plugin descriptor", ex);
             return new WebUIPlugin();
         }
     }

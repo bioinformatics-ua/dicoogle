@@ -23,8 +23,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -35,7 +33,7 @@ import pt.ua.dicoogle.Main;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.INetworkInterfaces;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IPluginControllerAdmin;
 
-import pt.ua.dicoogle.rGUI.server.controllers.ControlServices;
+import pt.ua.dicoogle.server.ControlServices;
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.core.XMLSupport;
 import pt.ua.dicoogle.rGUI.MultihomeSslRMIClientSocketFactory;

@@ -25,7 +25,7 @@
  * and open the template in the editor.
  */
 
-package pt.ua.dicoogle.webservices;
+package pt.ua.dicoogle.server.web.rest;
 
 import java.awt.image.BufferedImage;
 import java.io.*;

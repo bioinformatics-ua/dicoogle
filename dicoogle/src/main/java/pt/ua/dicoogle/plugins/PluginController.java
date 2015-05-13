@@ -37,15 +37,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.restlet.resource.ServerResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.restlet.resource.ServerResource;
 
 import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.server.ControlServices;
 import pt.ua.dicoogle.plugins.webui.PluginFormatException;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
-import pt.ua.dicoogle.rGUI.server.controllers.ControlServices;
 import pt.ua.dicoogle.sdk.GraphicalInterface;
 import pt.ua.dicoogle.sdk.IndexerInterface;
 import pt.ua.dicoogle.sdk.JettyPluginInterface;
@@ -64,7 +63,7 @@ import pt.ua.dicoogle.sdk.task.Task;
 import pt.ua.dicoogle.server.web.DicoogleWeb;
 import pt.ua.dicoogle.plugins.webui.WebUIPluginManager;
 import pt.ua.dicoogle.taskManager.TaskManager;
-import pt.ua.dicoogle.webservices.DicoogleWebservice;
+import pt.ua.dicoogle.server.PluginRestletApplication;
 
 /**
  *
@@ -126,7 +125,7 @@ public class PluginController{
         }
 
         for (PluginSet plugin : pluginSets) {
-            System.err.println("LOADING:" + plugin.getName());
+            logger.info("Loading plugin: " + plugin.getName());
                         
             File pluginSettingsFile = new File(settingsFolder + "/" + plugin.getName() + ".xml");       
             try {
@@ -178,7 +177,7 @@ public class PluginController{
      * profiles
      */
     private void initRestInterface(Collection<PluginSet> plugins) {
-        System.err.println("Initialize plugin rest interfaces");
+        logger.info("Initializing plugin rest interfaces");
 
         ArrayList<ServerResource> restInterfaces = new ArrayList<>();
         for (PluginSet set : plugins) {
@@ -190,13 +189,13 @@ public class PluginController{
         }
 
         for (ServerResource resource : restInterfaces) {
-            DicoogleWebservice.attachRestPlugin(resource);
+            PluginRestletApplication.attachRestPlugin(resource);
         }
-        System.err.println("Finished initializing rest interfaces");
+        logger.info("Finished initializing rest interfaces");
     }
 
     private void initJettyInterface(Collection<PluginSet> plugins) {
-        System.err.println("initializing jetty interface");
+        logger.info("Initializing jetty interface");
                 
          ArrayList<JettyPluginInterface> jettyInterfaces = new ArrayList<>();
          for(PluginSet set : plugins){
@@ -213,7 +212,6 @@ public class PluginController{
 
     /**
      * Stops the plugins and saves the settings
-     *
      */
     public void shutdown() throws IOException {
         for (PluginSet plugin : pluginSets) {
@@ -377,7 +375,7 @@ public class PluginController{
     			return p;
     		}
     	}
-    	logger.error("Could not retrive query provider:"+name+" OnlyEnabled: "+onlyEnabled);
+    	logger.error("Could not retrive query provider {} for onlyEnabled = {}", name, onlyEnabled);
     	return null;
     }
     
@@ -390,7 +388,7 @@ public class PluginController{
     			return p;
     		}
     	}
-    	logger.error("No Indexer Matching:"+name+" OnlyEnabled: "+onlyEnabled);
+    	logger.error("No indexer matching name {} for onlyEnabled = {}", name, onlyEnabled);
     	return null;
     }
     
@@ -451,7 +449,7 @@ public class PluginController{
      * or in a blocking way by calling the get() method of the task
      */
     public List<Task<Report>> index(URI path) {
-    	logger.info("Starting Indexing procedure for "+path.toString());
+    	logger.info("Starting Indexing procedure for {}", path.toString());
         StorageInterface store = getStorageForSchema(path);
 
         if(store==null){ 
@@ -471,6 +469,7 @@ public class PluginController{
 
                     @Override
                     public void run() {
+                        // TODO replace this output with something more appropriate
                         System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
                         System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
                         System.out.println("Task accomplished " + pathF);
@@ -482,14 +481,14 @@ public class PluginController{
             taskManager.dispatch(task);
             rettasks.add(task);
         }
-        logger.info("Finished firing all Indexing plugins for "+path.toString());
+        logger.info("Finished firing all indexing plugins for {}", path);
         
         return rettasks;    	
     }     
     
     //
     public List<Task<Report>> index(String pluginName, URI path) {
-    	logger.info("Starting Indexing procedure for "+path.toString());
+    	logger.info("Starting Indexing procedure for {}", path);
         StorageInterface store = getStorageForSchema(path);
 
         if(store==null){ 
@@ -506,6 +505,7 @@ public class PluginController{
 
                 @Override
                 public void run() {
+                    // TODO replace this output with something more appropriate
                     System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
                     System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
                     System.out.println("Task accomplished " + pathF);
@@ -516,9 +516,9 @@ public class PluginController{
             
 	        taskManager.dispatch(task);
 	        rettasks.add(task);
-	        logger.info("FIRED INDEXER: {} FOR URI: {}", pluginName, path.toString());
-        }
-        logger.error("UNKOWN ERROR CALLING INDEXER: {}", pluginName);
+	        logger.info("Fired indexer {} for URI {}", pluginName, path.toString());
+        } else
+            logger.error("Unknown error calling indexer {}", pluginName);
         
         return rettasks;    	
     }
@@ -570,7 +570,7 @@ public class PluginController{
      * tasks on the executing thread 
      */
     public List<Report> indexBlocking(URI path) {
-    	logger.info("Starting Indexing Blocking procedure for {}", path);
+    	logger.info("Starting indexing blocking procedure for {}", path);
         List<Task<Report>> ret = index(path);
         
         ArrayList<Report> reports = new ArrayList<>(ret.size());
@@ -582,7 +582,7 @@ public class PluginController{
                 logger.error(e.getMessage(), e);
 			}
         }
-        logger.info("Finished Indexing Blocking procedure for {}", path);
+        logger.info("Finished indexing {}", path);
         
         return reports;
     }
@@ -595,7 +595,7 @@ public class PluginController{
 	public List<JMenuItem> getRightButtonItems() {
         logger.info("getRightButtonItems()");
         ArrayList<JMenuItem> rightMenuItems = new ArrayList<>();
-                
+        
         for (PluginSet set : pluginSets) {
             logger.info("Set plugins: {}", set.getGraphicalPlugins());
             Collection<GraphicalInterface> graphicalPlugins = set.getGraphicalPlugins();
@@ -667,11 +667,11 @@ public class PluginController{
      * @return a collection of web UI plugins.
      */
     public Collection<WebUIPlugin> getWebUIPlugins(String... ids) {
-        logger.info("getWebUIPlugins(slot ids: {})", (Object[])ids);
+        logger.info("getWebUIPlugins(slot ids: {})", ids != null ? Arrays.asList(ids) : "<any>");
         List<WebUIPlugin> plugins = new ArrayList<>();
-        Set<String> idSet = new HashSet();
+        Set<String> idSet = Collections.EMPTY_SET;
         if (ids != null) {
-            idSet.addAll(Arrays.asList(ids));
+            idSet = new HashSet<>(Arrays.asList(ids));
         }
         for (WebUIPlugin plugin : webUI.pluginSet()) {
             if (!plugin.isEnabled()) {
@@ -762,5 +762,4 @@ public class PluginController{
     public HashMap<String, String> getAdvancedSettingsHelp(String pluginName) {
         return null;
     }
-
 }

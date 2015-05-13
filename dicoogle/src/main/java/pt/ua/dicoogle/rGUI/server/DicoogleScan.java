@@ -20,10 +20,6 @@ package pt.ua.dicoogle.rGUI.server;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.dcm4che2.io.DicomInputStream;
 
