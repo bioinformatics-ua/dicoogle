@@ -37,19 +37,11 @@ public class QueryReport  extends Report implements Iterable<SearchResult> {
     ArrayList<Iterable<SearchResult>> elementSources = new ArrayList<>();    
     
     public QueryReport(){}
-    
-    public QueryReport(Iterable<SearchResult> results){
-        this.elementSources.add(results);
-    }
-
-    public QueryReport(Collection<SearchResult> results){
-        this.elementSources.add(results);
-    }
+    public QueryReport(Iterable<SearchResult> results){this.elementSources.add(results);}
+    public QueryReport(Collection<SearchResult> results){this.elementSources.add(results);}
 
     @Override
-    public Iterator<SearchResult> iterator() {
-        return new Multirator<>(elementSources);
-    }
+    public Iterator<SearchResult> iterator() {return new Multirator<>(elementSources);}
 
     @Override
     public String toString(){

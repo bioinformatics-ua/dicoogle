@@ -100,8 +100,6 @@ public class Task<Type> extends FutureTask<Type> {
     public String getName(){return taskName;}
     public void setName(String name){name = taskName;}
  
-    
-    
     /**
      * returns the task progress, goes from 0 to 1
      * however, if we have an unbounded task a -1 is returned

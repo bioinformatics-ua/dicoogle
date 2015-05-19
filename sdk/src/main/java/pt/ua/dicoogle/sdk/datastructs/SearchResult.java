@@ -32,7 +32,7 @@ import java.util.HashMap;
  */
 public class SearchResult implements Serializable {
     private final URI location; //a uri that allows us to fetch the result object
-    private final double score; //score given by the querier
+    private double score; //score given by the querier
     
     //stores extra data, placed by specific plugins or inserted along the way
     private HashMap<String, Object> extraData = new HashMap<>(); 
@@ -51,6 +51,11 @@ public class SearchResult implements Serializable {
         if(!(o instanceof SearchResult)) return false;
         SearchResult r = (SearchResult)o;
         return (r.location.equals(location));
+    }
+    
+    @Override
+    public int hashCode(){
+        return location.hashCode();
     }
     
     /**
@@ -91,6 +96,8 @@ public class SearchResult implements Serializable {
      */
     public double getScore(){return score;}
     
+    public void setScore(double scr){score = scr;}
+        
     /**
      * Gets the extra documents fields
      * @return the table containing the extra fields

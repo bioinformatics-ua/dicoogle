@@ -18,6 +18,9 @@
  */
 package pt.ua.dicoogle.sdk.datastructs;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 /**
  *
  * @author Frederico Valente <fmvalente@ua.pt>
@@ -33,8 +36,13 @@ public class ErrorReport extends Report{
     }
     
     @Override
-    public String toString(){
-        return error+trappedException.toString();
+    public String toString(){        
+        StringWriter writer = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(writer);
+        trappedException.printStackTrace(printWriter);
+        printWriter.flush();
+        
+        return writer.toString();
     }
         
 }
