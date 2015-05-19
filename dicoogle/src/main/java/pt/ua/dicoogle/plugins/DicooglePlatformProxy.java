@@ -153,9 +153,4 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
     public Task<Report> indexAllClosure(URI path) {
         return pluginController.indexAllClosure(path);
     }    
-
-    @Override
-    public String getDicoogleDirectory() {
-        return pluginController.getDicoogleDirectory();
-    }
 }

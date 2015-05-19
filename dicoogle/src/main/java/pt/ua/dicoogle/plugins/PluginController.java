@@ -402,10 +402,12 @@ public class PluginController {
             public Report call() throws Exception {
                 ArrayList<Task<Report>> subtasks = new ArrayList<>();
                 for (IndexerInterface indexer : getIndexingPlugins(true)) {
-                    Task<Report> task = indexer.index(store.at(path));
-                    task.onCompletion(() -> {logger.info(indexer.getName()+": finished indexing");});
-                    taskManager.dispatch(task);
-                    subtasks.add(task);
+                    if(indexer.handles(path)){
+                        Task<Report> task = indexer.index(store.at(path));
+                        task.onCompletion(() -> {logger.info(indexer.getName()+": finished indexing");});
+                        taskManager.dispatch(task);
+                        subtasks.add(task);
+                    }
                 }
                 
                 Report ret = new Report();
@@ -454,12 +456,16 @@ public class PluginController {
         }
 
         final String pathF = path.toString();
-        Task<Report> task = indexer.index(store.at(path));
-        task.onCompletion(() -> {
-            logger.info("index task accomplished: " + task.getName());
-        });
+        if(indexer.handles(path)){
+            Task<Report> task = indexer.index(store.at(path));
+            task.onCompletion(() -> {logger.info("index task accomplished: " + task.getName());});
+            return task;
+        }
+        else{
+            return new Task<Report>(() -> {return Report.error(pathF.toString()+" is not handled by "+pluginName, null);});
+        }
 
-        return task;
+        
     }
 
     public void unindex(URI path) {

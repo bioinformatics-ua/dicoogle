@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.concurrent.Executor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.transform.TransformerConfigurationException;
 import org.dcm4che2.data.DicomElement;
 import org.dcm4che2.data.DicomObject;
 import org.dcm4che2.net.Association;
@@ -36,7 +35,6 @@ import org.dcm4che2.net.DimseRSP;
 import org.dcm4che2.net.Status;
 import pt.ua.dicoogle.core.exceptions.CFindNotSupportedException;
 
-import deletion.LogLine;
 import pt.ua.dicoogle.core.MoveDestination;
 import pt.ua.dicoogle.server.DicomNetwork;
 import pt.ua.dicoogle.server.SearchDicomResult;
@@ -234,8 +232,8 @@ public class CMoveServiceSCP extends CMoveService {
             }
 
 
-            LogLine ll = new LogLine("cmove", LogLine.getDateTime(), destination,
-                    "Files: " + files.size() + " -- (" + hostDest + ":" + portAddr + ")");
+            //LogLine ll = new LogLine("cmove", LogLine.getDateTime(), destination,
+            //        "Files: " + files.size() + " -- (" + hostDest + ":" + portAddr + ")");
     
 
             //Logs.getInstance().addLog(ll);
