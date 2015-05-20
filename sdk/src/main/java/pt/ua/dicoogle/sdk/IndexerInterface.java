@@ -19,6 +19,7 @@
 package pt.ua.dicoogle.sdk;
 
 import java.net.URI;
+import java.util.concurrent.Callable;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.task.Task;
 
@@ -39,7 +40,13 @@ public interface IndexerInterface extends DicooglePlugin {
      */
     public Task<Report> index(StorageInputStream file);
 
-    public Task<Report> index(Iterable<StorageInputStream> files);
+    default public Task<Report> index(Iterable<StorageInputStream> files){
+        return new Task<Report>("index using iterable", () -> {
+            Report report = new Report();
+            for(StorageInputStream s :files){report.addChild(index(s).get());}  
+            return report;            
+        });
+    }
 
     public boolean handles(URI uri);
     
