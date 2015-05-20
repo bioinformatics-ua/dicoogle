@@ -54,16 +54,8 @@ public class Task<Type> extends FutureTask<Type> {
     }
     
     /*creates a task that throws an exception. for error reporting, i dislike nulls*/
-    public static Task<Report> error(final String error) {
-        return new Task("error", new Callable<Report>() 
-            {
-                @Override
-                public Report call() throws Exception {
-                    throw new Exception(error);
-                }
-            }
-        );
-    }
+    public static Task<Report> error(final String error) {return new Task("error", () -> { throw new Exception(error);});}
+    public static Task<Report> error(final Exception error) {return new Task("error", () -> { throw error;});}
 
     @Override
     public void run(){
