@@ -36,7 +36,7 @@ input {
   background-color: rgba(0,0,0,0.5);
 }
 
-//FAKE DEFENITIONS
+//FAKE DEFINITIONS
 .resultfake {
     width: auto !important;
     height: auto !important;
@@ -44,6 +44,7 @@ input {
 }
 
 .scrolldiv{
+  white-space: pre-line;
   overflow-y: auto;
   //overflow: auto;
   height: 500px;
