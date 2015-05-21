@@ -35,8 +35,8 @@ import pt.ua.dicoogle.sdk.core.PlatformCommunicatorInterface;
  * @author Luís S. Ribeiro
  */
 public abstract class PluginBase implements PluginSet, PlatformCommunicatorInterface{
-    
-	protected List<IndexerInterface> indexPlugins = new ArrayList<>();
+   
+    protected List<IndexerInterface> indexPlugins = new ArrayList<>();
     protected List<GraphicalInterface> graphicPlugins = new ArrayList<>();
     protected List<QueryInterface> queryPlugins = new ArrayList<>();
     protected List<JettyPluginInterface> jettyPlugins = new ArrayList<>();
