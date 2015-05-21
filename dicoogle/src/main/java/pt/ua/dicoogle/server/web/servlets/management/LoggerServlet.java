@@ -20,10 +20,8 @@ package pt.ua.dicoogle.server.web.servlets.management;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.CharBuffer;
 import java.util.Date;
 import java.util.Map;
 import java.util.TimerTask;
