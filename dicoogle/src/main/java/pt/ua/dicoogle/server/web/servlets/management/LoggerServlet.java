@@ -85,7 +85,7 @@ public class LoggerServlet extends HttpServlet {
                 filename = ((RollingRandomAccessFileAppender)appender).getFileName();
             }
             if (filename != null) {
-                logger.debug("Using \"{}\" as the file for the server log.", filename);
+                classLogger.debug("Using \"{}\" as the file for the server log.", filename);
                 return filename;
             }
         }
