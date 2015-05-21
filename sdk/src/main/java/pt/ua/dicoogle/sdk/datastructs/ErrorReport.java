@@ -26,23 +26,25 @@ import java.io.StringWriter;
  * @author Frederico Valente <fmvalente@ua.pt>
  */
 public class ErrorReport extends Report{
-    Exception trappedException;
-    String error;
+    Exception trappedException = null;
+    String error = "exception caught";
     
-    
-    public ErrorReport(String error, Exception e){
-        this.error = error;
-        trappedException = e;
-    }
+    public ErrorReport(String error){this.error = error;}
+    public ErrorReport(Exception e){trappedException = e;}
+    public ErrorReport(String error, Exception e){this.error = error;trappedException = e;}
     
     @Override
-    public String toString(){        
-        StringWriter writer = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(writer);
-        trappedException.printStackTrace(printWriter);
-        printWriter.flush();
+    public String toString(){
+        if(trappedException != null){
+            StringWriter writer = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(writer);
+            printWriter.append(error).append("\n");
+            trappedException.printStackTrace(printWriter);
+            printWriter.flush();
+            return writer.toString();
+        }
         
-        return writer.toString();
+        return error;
     }
         
 }

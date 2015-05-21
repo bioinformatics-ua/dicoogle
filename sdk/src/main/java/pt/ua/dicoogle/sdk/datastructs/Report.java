@@ -37,10 +37,9 @@ public class Report {
     public void addChild(Report r){childs.add(r);}
     public Iterable<Report> childs(){return childs;}
     
-    
-    public static ErrorReport error(String error, Exception ex) {
-        return new ErrorReport(error,ex);        
-    }
+    public static ErrorReport error(String error) {return new ErrorReport(error);}
+    public static ErrorReport error(String error, Exception ex){return new ErrorReport(error,ex);}
+    public static ErrorReport error(Exception ex){return new ErrorReport(ex);}
 
     
     public Iterable<SearchResult> results(){return Collections.EMPTY_LIST;}
