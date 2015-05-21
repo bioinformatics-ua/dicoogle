@@ -329,5 +329,10 @@
                     <version>2.2</version>
                 </dependency>
 
-	</dependencies>
+                <dependency>
+                    <groupId>net.kencochrane.raven</groupId>
+                    <artifactId>raven-log4j2</artifactId>
+                    <version>5.0.2</version>
+                </dependency>
+        </dependencies>
 </project>
