@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.webservices;
+package pt.ua.dicoogle.server.web.rest;
 
 import java.io.*;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ import pt.ua.dicoogle.sdk.StorageInputStream;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
-import pt.ua.dicoogle.webservices.elements.FileDownloadUtils;
+import pt.ua.dicoogle.server.web.rest.elements.FileDownloadUtils;
 
 /**
  *

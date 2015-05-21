@@ -30,8 +30,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.rGUI.interfaces.controllers.ILogs;
 import pt.ua.dicoogle.core.LogDICOM;
@@ -71,7 +70,7 @@ public class Logs implements ILogs {
             sem.release();
 
         } catch (InterruptedException ex) {
-            Logger.getLogger(Logs.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(Logs.class).error(ex.getMessage(), ex);
         }
         return instance;
     }

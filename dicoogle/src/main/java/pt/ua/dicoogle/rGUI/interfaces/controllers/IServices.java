@@ -42,16 +42,9 @@ public interface IServices extends Remote {
 
     boolean stopAllServices() throws RemoteException;
 
-
-    void startPlugin(String pluginName) throws RemoteException;
-    void stopPlugin(String pluginName) throws RemoteException;
-    boolean pluginIsRunning(String pluginName) throws RemoteException;
-
-
     void startQueryRetrieve() throws RemoteException;
     void stopQueryRetrieve() throws RemoteException;
     boolean queryRetrieveIsRunning() throws RemoteException;
-
 
     /**
      *

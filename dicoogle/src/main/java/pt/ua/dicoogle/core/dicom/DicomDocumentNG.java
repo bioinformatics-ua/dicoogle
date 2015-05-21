@@ -23,13 +23,12 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
 import org.dcm4che2.data.*;
 import org.dcm4che2.io.DicomInputStream;
 import org.dcm4che2.io.StopTagInputHandler;
+import org.slf4j.LoggerFactory;
 
 import pt.ieeta.anonymouspatientdata.core.impl.MatchTable;
 import pt.ua.dicoogle.core.ServerSettings;
@@ -53,10 +52,10 @@ import pt.ua.dicoogle.sdk.utils.TagsStruct;
  */
 public class DicomDocumentNG {
     
-    private Set<String> sops = new HashSet<String>();
+    private Set<String> sops = new HashSet<>();
 
     public void resetSops() {
-        sops = new HashSet<String>();
+        sops = new HashSet<>();
     }
     private SearchURI search = new SearchURI();
     private IDoc doc;       // Input Doc
@@ -183,7 +182,7 @@ public class DicomDocumentNG {
             try {
                 value = new String(outputData, "UTF-8");
             } catch (UnsupportedEncodingException ex) {
-                Logger.getLogger(DicomDocumentNG.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(DicomDocumentNG.class).error(ex.getMessage(), ex);
             }
             /*
              * 

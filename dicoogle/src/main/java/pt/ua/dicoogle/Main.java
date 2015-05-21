@@ -27,17 +27,22 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Random;
+import java.util.Set;
+import java.util.TimerTask;
 
 import javax.swing.JOptionPane;
 
 import org.dcm4che2.data.TransferSyntax;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import pt.ieeta.anonymouspatientdata.core.Anonymous;
-
 
 import pt.ua.dicoogle.core.AsyncIndex;
 import pt.ua.dicoogle.core.ClientSettings;
@@ -66,7 +71,7 @@ public class Main
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     private static boolean optimizeMemory = true;
-    //static Logger logger = LoggerFactory.getLogger(Main.class);
+    //static Logger logger = Logger.getLogger(Main.class);
     private static boolean isGUIServer = false;
     //indicates whether the client and the server were pulled at the same time
     private static boolean isFixedClient = false;
@@ -137,7 +142,7 @@ public class Main
                     // open browser
                     LaunchDicoogle();
                     if (!Desktop.isDesktopSupported() || !Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-                        System.err.println("Desktop browsing is not supported in this machine!\n"
+                        logger.warn("Desktop browsing is not supported in this machine! "
                                 + "Request to open web application ignored.");
                     } else {
                         try {
@@ -277,7 +282,7 @@ public class Main
         PluginController PController = PluginController.getInstance();
 
         // Start the Inicial Services of Dicoogle
-        pt.ua.dicoogle.rGUI.server.controllers.ControlServices.getInstance();
+        pt.ua.dicoogle.server.ControlServices.getInstance();
 
         // Lauch Async Index 
         // It monitors a folder, and when a file is touched an event

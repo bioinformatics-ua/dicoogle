@@ -16,23 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.rGUI.server.controllers;
+package pt.ua.dicoogle.server;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.Semaphore;
-import pt.ua.dicoogle.server.RSIStorage;
+import org.slf4j.Logger;
 import pt.ua.dicoogle.server.queryretrieve.QueryRetrieve;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.core.ServerSettings;
-import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IServices;
-import pt.ua.dicoogle.server.SOPList;
+import pt.ua.dicoogle.rGUI.server.controllers.Logs;
 import pt.ua.dicoogle.server.web.DicoogleWeb;
 import pt.ua.dicoogle.taskManager.TaskManager;
 
@@ -42,12 +37,12 @@ import pt.ua.dicoogle.taskManager.TaskManager;
  */
 public class ControlServices implements IServices
 {
-
-    private static Semaphore sem = new Semaphore(1, true);
+    private static final Logger logger = LoggerFactory.getLogger(ControlServices.class);
+    
     private static ControlServices instance = null;
     // Services vars
     private RSIStorage storage = null;
-    private boolean webservicesRunning = false;
+    private boolean webServicesRunning = false;
     private boolean webServerRunning = false;
     private QueryRetrieve retrieve = null;
     
@@ -62,18 +57,12 @@ public class ControlServices implements IServices
 
     public static synchronized ControlServices getInstance()
     {
-        try
+//      sem.acquire();
+        if (instance == null)
         {
-            sem.acquire();
-            if (instance == null)
-            {
-                instance = new ControlServices();
-            }
-            sem.release();
-        } catch (InterruptedException ex)
-        {
-//            LoggerFactory.getLogger(MainWindow.class.getName()).log(Level.FATAL, null, ex);
+            instance = new ControlServices();
         }
+//      sem.release();
         return instance;
     }
 
@@ -100,19 +89,18 @@ public class ControlServices implements IServices
                 startQueryRetrieve();
             }
 
+            if(settings.getWeb().isWebServer()){
+            	startWebServer();
+            }
+
             if (settings.getWeb().isWebServices())
             {
                 startWebServices();
             }
-            
-            if(settings.getWeb().isWebServer()){
-            	startWebServer();
-            	
-            }
 
         } catch (Exception ex)
         {
-            LoggerFactory.getLogger(ControlServices.class).error(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -130,7 +118,7 @@ public class ControlServices implements IServices
             stopWebServices();
         } catch (Exception ex)
         {
-            LoggerFactory.getLogger(ControlServices.class).error(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return false;
         }
 
@@ -244,97 +232,62 @@ public class ControlServices implements IServices
     }
 
     @Override
-    public void startWebServices() throws IOException
+    @Deprecated
+    public void startWebServices()
     {
-        pt.ua.dicoogle.webservices.DicoogleWebservice.startWebservice();
-        webservicesRunning = true;
-        Logs.getInstance().addServerLog("Starting Dicoogle WebServices");
     }
 
     @Override
-    public void stopWebServices() throws IOException
+    @Deprecated
+    public void stopWebServices()
     {
-        pt.ua.dicoogle.webservices.DicoogleWebservice.stopWebservice();
-        webservicesRunning = false;
-        Logs.getInstance().addServerLog("Stopping Dicoogle WebService");
     }
 
     @Override
     public boolean webServicesIsRunning()
     {
-        return webservicesRunning;
-    }
-
-    @Override
-    public void startPlugin(String pluginName)
-    {
-        //TODO:DELETED
-    	//PluginController.getInstance().initializePlugin(pluginName);
-        
-    	//PeerEngine.getInstance().start();
-        //DebugManager.getInstance().debug("Starting P2P network");
-        Logs.getInstance().addServerLog("Starting " + pluginName);
-    }
-
-    @Override
-    public void stopPlugin(String pluginName)
-    {
-    	//TODO: DELETED
-    	/*
-        if (PluginController.getInstance().isPluginRunning(pluginName))
-        {
-            PluginController.getInstance().stopPlugin(pluginName);
-            Logs.getInstance().addServerLog("Stopping " + pluginName);
-        }*/
-    }
-
-    @Override
-    public boolean pluginIsRunning(String pluginName)
-    {
-    	//TODO: DELETED
-        //return PluginController.getInstance().isPluginRunning(pluginName);
-    	return false;
+        return webServicesRunning;
     }
     
     //TODO: Review those below!
     @Override
     public void startWebServer(){
-        System.err.println("Starting WebServer");
+        logger.info("Starting WebServer");
         
         if(webServices == null){
             try {
-                webServices = new DicoogleWeb( 8080);
+                webServices = new DicoogleWeb(8080);
                 webServerRunning = true;
+                webServicesRunning = true;
             } catch (Exception ex) {
-                LoggerFactory.getLogger(ControlServices.class).error(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
         
-        Logs.getInstance().addServerLog("Starting Dicoogle Web");
+        logger.info("Starting Dicoogle Web");
     }
 
     @Override
     public void stopWebServer(){
-        System.err.println("Stopping WebServer");
+        logger.info("Stopping Web Server");
         
         if(webServices != null){
             try { 
-                webservicesRunning = false;
+                webServicesRunning = false;
+                webServerRunning = false;
                 
                 webServices.stop();
                 
                 webServices = null;
             } catch (Exception ex) {
-                LoggerFactory.getLogger(ControlServices.class).error(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
-        Logs.getInstance().addServerLog("Stopping Dicoogle Web");
+        logger.info("Stopping Dicoogle Web");
     }
     
     public DicoogleWeb getWebServicePlatform(){
     	return webServices;
     }
-    
-    
     
 }

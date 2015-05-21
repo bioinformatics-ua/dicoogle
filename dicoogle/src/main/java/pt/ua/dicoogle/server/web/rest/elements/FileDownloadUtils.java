@@ -22,7 +22,7 @@
  * and open the template in the editor.
  */
 
-package pt.ua.dicoogle.webservices.elements;
+package pt.ua.dicoogle.server.web.rest.elements;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -43,8 +43,8 @@ import pt.ua.dicoogle.sdk.StorageInputStream;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
-import pt.ua.dicoogle.webservices.RestDimResource;
-import pt.ua.dicoogle.webservices.RestFileResource;
+import pt.ua.dicoogle.server.web.rest.RestDimResource;
+import pt.ua.dicoogle.server.web.rest.RestFileResource;
 
 /**
  *
@@ -55,9 +55,8 @@ public class FileDownloadUtils {
     public static OutputRepresentation gerFileRepresentation(String SOPInstanceUID) {
         String query = "SOPInstanceUID:" + SOPInstanceUID;
         
-        HashMap<String, String> extraFields = new HashMap<String, String>();
+        HashMap<String, String> extraFields = new HashMap<>();
         extraFields.put("SOPInstanceUID", "SOPInstanceUID");
-        
         
         PluginController pc = PluginController.getInstance();
         JointQueryTask task = new MyHolder();

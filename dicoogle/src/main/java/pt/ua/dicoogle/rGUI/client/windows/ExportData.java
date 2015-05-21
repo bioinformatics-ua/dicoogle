@@ -29,14 +29,13 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
+import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.common.ExtensionFilter;
 import pt.ua.dicoogle.core.ExportDataSupport;
@@ -87,7 +86,7 @@ public class ExportData extends javax.swing.JFrame implements Observer {
             fillLists();
 
         } catch (RemoteException ex) {
-            Logger.getLogger(ExportData.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(ExportData.class).error(ex.getMessage(), ex);
         }
     }
 
@@ -432,7 +431,7 @@ public class ExportData extends javax.swing.JFrame implements Observer {
                 jButtonCancel.setEnabled(false);
                 
             } catch (Exception ex) {
-                Logger.getLogger(ExportData.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(ExportData.class).error(ex.getMessage(), ex);
             }
         }
     }//GEN-LAST:event_jButtonExportActionPerformed
@@ -539,10 +538,10 @@ public class ExportData extends javax.swing.JFrame implements Observer {
     public void update(Observable o, Object arg) {
         if (o==null)
         {
-            Logger.getLogger(ExportData.class.getName()).log(Level.SEVERE, "Update, but it is null");
+            LoggerFactory.getLogger(ExportData.class).error("Update invoked with null o");
             return;
         }
-        Logger.getLogger(ExportData.class.getName()).log(Level.SEVERE, "Update");
+        LoggerFactory.getLogger(ExportData.class).debug("Update");
         Boolean finish = (Boolean) arg;
         
         class AuxThread extends Thread
