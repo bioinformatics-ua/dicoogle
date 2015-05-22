@@ -18,31 +18,45 @@
  */
 package pt.ua.dicoogle.server.web.servlets.management;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
 import java.util.TimerTask;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import net.sf.json.JSONSerializer;
+import org.apache.log4j.FileAppender;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.appender.RandomAccessFileAppender;
+import org.apache.logging.log4j.core.appender.RollingFileAppender;
+import org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.sdk.Utils.Platform;
 import pt.ua.dicoogle.server.FileWatcher;
 
 /**
- *
- * @author Frederico Silva<fredericosilva@ua.pt>
+ * @author Frederico Silva <fredericosilva@ua.pt>
+ * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 public class LoggerServlet extends HttpServlet {
-	private final String logfilename = Platform.homePath() + "DICOMLOG.log";
+    private static final Logger classLogger = LoggerFactory.getLogger(LoggerServlet.class);
+            
+	private final String logfilename;
 	private String serverLog;
 
 	public LoggerServlet() {
-		TimerTask task = new FileWatcher(new File(logfilename)) {
+        this.logfilename = getLogFilename();
+        this.serverLog = "";
+        File f = new File(logfilename);
+        reloadtext(f);
+		TimerTask task = new FileWatcher(f) {
 
 			@Override
 			protected void onChange(File file) {
@@ -53,8 +67,32 @@ public class LoggerServlet extends HttpServlet {
 		java.util.Timer timer = new java.util.Timer();
 		// repeat the check every second
 		timer.schedule(task, new Date(), 5000);
-
 	}
+    
+    private static String getLogFilename() {
+        org.apache.logging.log4j.Logger logger = LogManager.getLogger();
+        Map<String, Appender> appenderMap = ((org.apache.logging.log4j.core.Logger) logger).getAppenders();
+        for (Map.Entry<String,Appender> e : appenderMap.entrySet()) {
+            String filename = null;
+            Appender appender = e.getValue();
+            if (appender instanceof FileAppender) {
+                filename = ((FileAppender)appender).getFile();
+            } else if (appender instanceof RollingFileAppender) {
+                filename = ((RollingFileAppender)appender).getFileName();
+            } else if (appender instanceof RandomAccessFileAppender) {
+                filename = ((RandomAccessFileAppender)appender).getFileName();
+            } else if (appender instanceof RollingRandomAccessFileAppender) {
+                filename = ((RollingRandomAccessFileAppender)appender).getFileName();
+            }
+            if (filename != null) {
+                classLogger.debug("Using \"{}\" as the file for the server log.", filename);
+                return filename;
+            }
+        }
+        // no file appender found, use default DICOMLOG.log
+        classLogger.debug("No file appender found, using \"DICOMLOG.log\" as the default logger");
+        return Platform.homePath() + "DICOMLOG.log";
+    }
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -66,19 +104,20 @@ public class LoggerServlet extends HttpServlet {
 		resp.getWriter().write(serverLog);
 	}
 
-	public void reloadtext(File file) {
-		try {
-			FileInputStream fis = new FileInputStream(file);
-			int x = fis.available();
-			byte b[] = new byte[x];
-			fis.read(b);
-			String content = new String(b);
-			if (!content.equals(serverLog)) {
-				serverLog = content;
-
-			}
+	public final void reloadtext(File file) {
+        // TODO this method could be optimized by seeking the file
+        // to the line last read and only read the new lines
+		try (BufferedReader fis = new BufferedReader(new FileReader(file))) {
+            StringBuilder content = new StringBuilder();
+            String l;
+            while ((l = fis.readLine()) != null) {
+                content.append(l);
+                content.append('\n');
+            }
+            serverLog = content.toString();
 		} catch (IOException ex) {
 			//TODO
+            classLogger.warn("Failed to read log file, logger content not updated", ex);
 		}
 	}
 
