@@ -458,28 +458,20 @@ public class PluginController{
             logger.error("No storage plugin detected");
             return Collections.emptyList(); 
         }
-        final String taskUniqueID = UUID.randomUUID().toString();
         
         Collection<IndexerInterface> indexers= getIndexingPlugins(true);
         //Collection<IndexerInterface> indexers = getIndexingPluginsByMimeType(path);
         ArrayList<Task<Report>> rettasks = new ArrayList<>();
         final  String pathF = path.toString();
         for(IndexerInterface indexer : indexers){            
-        	
         	Task<Report> task = indexer.index(store.at(path));
             if(task == null) continue;
+            final String taskUniqueID = UUID.randomUUID().toString();
+            task.setName(String.format("[%s]index %s", indexer.getName(), path));
             task.onCompletion(new Runnable() {
-
                 @Override
                 public void run() {
-                    // TODO replace this output with something more appropriate
-                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                    System.out.println("Task accomplished " + pathF);
-                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-
-                    //RunningIndexTasks.getInstance().removeTask(taskUniqueID);
+                    logger.info("Task [{}] complete: {} is indexed", taskUniqueID, pathF);
                 }
             });
                 
@@ -508,7 +500,8 @@ public class PluginController{
         ArrayList<Task<Report>> rettasks = new ArrayList<>();
         final  String pathF = path.toString();
     	Task<Report> task = indexer.index(store.at(path));
-        if(task != null){
+        if(task != null) {
+            task.setName(String.format("[%s]index %s", pluginName, path));
             task.onCompletion(new Runnable() {
 
                 @Override
