@@ -30,9 +30,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.FileAppender;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.appender.FileAppender;
 import org.apache.logging.log4j.core.appender.RandomAccessFileAppender;
 import org.apache.logging.log4j.core.appender.RollingFileAppender;
 import org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender;
@@ -76,7 +76,7 @@ public class LoggerServlet extends HttpServlet {
             String filename = null;
             Appender appender = e.getValue();
             if (appender instanceof FileAppender) {
-                filename = ((FileAppender)appender).getFile();
+                filename = ((FileAppender)appender).getFileName();
             } else if (appender instanceof RollingFileAppender) {
                 filename = ((RollingFileAppender)appender).getFileName();
             } else if (appender instanceof RandomAccessFileAppender) {
