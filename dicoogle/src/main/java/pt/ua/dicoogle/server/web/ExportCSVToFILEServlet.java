@@ -41,6 +41,7 @@ import org.apache.commons.io.IOUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
+import pt.ua.dicoogle.core.QueryExpressionBuilder;
 import pt.ua.dicoogle.core.query.ExportToCSVQueryTask;
 import pt.ua.dicoogle.plugins.PluginController;
 
@@ -63,7 +64,7 @@ public class ExportCSVToFILEServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		resp.addHeader("Access-Control-Allow-Origin", "*");		// TODO Auto-generated method stub
 		String uid = req.getParameter("UID");
 		if(uid == null){
 			resp.sendError(401, "No Query UID Suplied: Please fill the field \"UID\"");
@@ -99,22 +100,24 @@ public class ExportCSVToFILEServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		resp.addHeader("Access-Control-Allow-Origin", "*");
 		// TODO Auto-generated method stub
-		String dataString = req.getParameter("JSON-DATA");
+		/*String dataString = req.getParameter("JSON-DATA");
 		if (dataString == null) {
 			resp.sendError(401,
 					"No data suplied: Please fill the field \"JSON-DATA\"");
 			return;
 		}
-
+*/
 		List<String> orderedFields = new ArrayList<>();
 		Map<String, String> fields = new HashMap<>();
 		String queryString = null;
-		JSONArray arr;		
+		String[] arr;		
+		boolean keyword;
 		
 		try {
-			JSONObject data = JSONObject.fromObject(dataString);
-			queryString = data.getString("queryString");
+			//JSONObject data = JSONObject.fromObject(dataString);
+			queryString = req.getParameter("query");
 			if (queryString == null) {
 				resp.sendError(
 						402,
@@ -122,24 +125,33 @@ public class ExportCSVToFILEServlet extends HttpServlet {
 				return;
 			}
 
-			arr = data.getJSONArray("extraFields");
-			if (arr.isEmpty()) {
+			System.out.println(req.getParameter("fields"));
+			JSONArray jsonObj = new JSONArray().fromObject(req.getParameter("fields"));
+			//arr = jsonObj.get;//getJSONArray("extraFields");
+			if (jsonObj.size()== 0) {
 				resp.sendError(403,
 						"No fields no suplied: Please fill the field \"extraFiekds\" in \"JSON-DATA\"");
 				return;
 			}
 
-			for (Object f : arr) {
+			for (Object f : jsonObj) {
+				System.out.println(f.toString());
 				fields.put(f.toString(), f.toString());
 				orderedFields.add(f.toString());
 			}
+			keyword = Boolean.parseBoolean(req.getParameter("keyword"));
 
-			arr = data.getJSONArray("providers");
+			arr = req.getParameterValues("providers");//data.getJSONArray("providers");
 		} catch (JSONException ex) {
 			resp.sendError(400,
 					"Error parsing the JSON String: " + ex.toString());
 			return;
 		}
+		
+		if (!keyword) {
+            QueryExpressionBuilder q = new QueryExpressionBuilder(queryString);
+            queryString = q.getQueryString();
+        }
 
 		String uid = UUID.randomUUID().toString();
 		//File tempFile = File.createTempFile("QueryResultsExport-", uid, tempDirectory);
@@ -154,7 +166,7 @@ public class ExportCSVToFILEServlet extends HttpServlet {
 		ExportToCSVQueryTask task = new ExportToCSVQueryTask(orderedFields,
 				bos);
 		
-		if (arr.isEmpty()) {
+		if (arr == null || arr.length ==0) {
 			PluginController.getInstance().queryAll(task, queryString, fields);
 		} else {
 			List<String> providers = new ArrayList<>();

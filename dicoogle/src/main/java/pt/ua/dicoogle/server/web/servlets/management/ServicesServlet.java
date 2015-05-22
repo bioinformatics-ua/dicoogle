@@ -19,15 +19,19 @@
 package pt.ua.dicoogle.server.web.servlets.management;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.server.ControlServices;
 import pt.ua.dicoogle.server.web.utils.ResponseUtil;
+import pt.ua.dicoogle.server.web.utils.ResponseUtil.Pair;
 
 /**
  * 
@@ -36,6 +40,7 @@ import pt.ua.dicoogle.server.web.utils.ResponseUtil;
 public class ServicesServlet extends HttpServlet {
 	private PluginController mPluginController;
 	private ControlServices mControlServices;
+	private ServerSettings mServerSettings;
 	
 	public final static int STORAGE = 0;
 	public final static int PLUGIN = 1;
@@ -50,14 +55,19 @@ public class ServicesServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		resp.addHeader("Access-Control-Allow-Origin", "*");
+
 		mPluginController = PluginController.getInstance();
 		mControlServices = ControlServices.getInstance();
+		mServerSettings = ServerSettings.getInstance();
 		
 		
 		boolean isRunning = false; 
+		int port = 0;
 		switch (mType) {
 		case 0:
 			isRunning = mControlServices.storageIsRunning();
+			port = mServerSettings.getStoragePort();
 			
 			break;
 		case 1:
@@ -67,13 +77,18 @@ public class ServicesServlet extends HttpServlet {
 			
 		case 2:
 			isRunning = mControlServices.queryRetrieveIsRunning();
+			port = mServerSettings.getWlsPort();
 			break;
 
 		default:
 			break;
 		}
 		
-		ResponseUtil.simpleResponse(resp, "running",isRunning);
+		List<Pair> response = new ArrayList<>();
+		response.add(new Pair("isRunning", isRunning));
+		response.add(new Pair("port", port));
+		
+		ResponseUtil.objectResponse(resp, response);
 		
 		
 	}
@@ -81,6 +96,8 @@ public class ServicesServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		resp.addHeader("Access-Control-Allow-Origin", "*");
+
 		mPluginController = PluginController.getInstance();
 		mControlServices = ControlServices.getInstance();
 		
@@ -106,7 +123,7 @@ public class ServicesServlet extends HttpServlet {
 			if(setState)
 				mControlServices.startQueryRetrieve();
 			else
-				mControlServices.stopStorage();
+				mControlServices.stopQueryRetrieve();;
 			
 			
 			ResponseUtil.simpleResponse(resp, "success", true);

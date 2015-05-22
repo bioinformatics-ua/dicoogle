@@ -38,13 +38,15 @@ import pt.ua.dicoogle.plugins.PluginController;
 public class ExportToCSVServlet extends HttpServlet {
 
 	/**
-	 * 
+	 * @autor: fredericosilva@ua.pt
 	 */
 	private static final long serialVersionUID = 1L;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		resp.addHeader("Access-Control-Allow-Origin", "*");
+		resp.setHeader("Content-disposition","attachment; filename=QueryResultsExport.csv");
 		String queryString = req.getParameter("query");
 		String[] fields = req.getParameterValues("fields");
 		String[] providers = req.getParameterValues("providers");

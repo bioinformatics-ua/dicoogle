@@ -18,16 +18,22 @@
  */
 package pt.ua.dicoogle.server.web;
 
+import pt.ua.dicoogle.server.web.servlets.search.ExportServlet;
+import pt.ua.dicoogle.server.web.servlets.search.ExportServlet.ExportType;
 import pt.ua.dicoogle.server.web.servlets.search.ProvidersServlet;
 import pt.ua.dicoogle.server.web.servlets.search.SearchServlet;
+import pt.ua.dicoogle.server.web.servlets.search.SearchServlet.SearchType;
 import pt.ua.dicoogle.server.web.servlets.search.WadoServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.LoginServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.UserServlet;
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.server.web.servlets.management.AETitleServlet;
-import pt.ua.dicoogle.server.web.servlets.management.DicomSettingsServlet;
+import pt.ua.dicoogle.server.web.servlets.management.DicomQuerySettingsServlet;
 import pt.ua.dicoogle.server.web.servlets.management.ForceIndexing;
 import pt.ua.dicoogle.server.web.servlets.management.IndexerSettingsServlet;
+import pt.ua.dicoogle.server.web.servlets.management.LoggerServlet;
+import pt.ua.dicoogle.server.web.servlets.management.RunningTasksServlet;
+import pt.ua.dicoogle.server.web.servlets.management.ServerStorageServlet;
 import pt.ua.dicoogle.server.web.servlets.management.ServicesServlet;
 import pt.ua.dicoogle.server.web.servlets.management.TransferenceOptionsServlet;
 
@@ -188,16 +194,19 @@ public class DicoogleWeb {
             createServletHandler(new LogoutServlet(), "/logout"),
             createServletHandler(new UserServlet(), "/user"),
             createServletHandler(new SearchServlet(), "/search"),
+            createServletHandler(new SearchServlet(SearchType.PATIENT), "/searchDIM"),
             createServletHandler(new DumpServlet(), "/dump"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.path) , "/management/settings/index/path"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.zip), "/management/settings/index/zip"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.effort), "/management/settings/index/effort"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnail), "/management/settings/index/thumbnail"),
+            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.watcher), "/management/settings/index/watcher"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnailSize), "/management/settings/index/thumbnail/size"),
+            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.all), "/management/settings/index"),
             createServletHandler(new TransferenceOptionsServlet(), "/management/settings/transfer"),
             createServletHandler(new WadoServlet(), "/wado"),
             createServletHandler(new ProvidersServlet(), "/providers"),
-            createServletHandler(new DicomSettingsServlet(), "/management/settings/dicom/query"),
+            createServletHandler(new DicomQuerySettingsServlet(), "/management/settings/dicom/query"),
             createServletHandler(new ForceIndexing(), "/management/tasks/index"),
             createServletHandler(new UnindexServlet(), "/management/tasks/unindex"),
             createServletHandler(new ServicesServlet(ServicesServlet.STORAGE), "/management/dicom/storage"),
@@ -205,6 +214,11 @@ public class DicoogleWeb {
             createServletHandler(new ServicesServlet(ServicesServlet.PLUGIN), "/management/plugins/"),
             createServletHandler(new AETitleServlet(), "/management/settings/dicom"),
             createServletHandler(new WebUIServlet(), "/webui"),
+            createServletHandler(new LoggerServlet(), "/logger"),
+            createServletHandler(new RunningTasksServlet(), "/index/task"),
+            createServletHandler(new ExportServlet(ExportType.EXPORT_CVS), "/export/cvs"),
+            createServletHandler(new ExportServlet(ExportType.LIST), "/export/list"),
+            createServletHandler(new ServerStorageServlet(), "/management/settings/storage/dicom"),
             webpages
         };
 
