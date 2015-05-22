@@ -452,14 +452,15 @@ public class PluginController{
         	logger.error("No storage plugin detected");
             return Collections.emptyList(); 
         }
-        final String taskUniqueID = UUID.randomUUID().toString();
         
         Collection<IndexerInterface> indexers = getIndexingPlugins(true);
         ArrayList<Task<Report>> rettasks = new ArrayList<>();
         final  String pathF = path.toString();
         for(IndexerInterface indexer : indexers){            
-        	
         	Task<Report> task = indexer.index(store.at(path));
+            final String taskUniqueID = UUID.randomUUID().toString();
+            if(task == null) continue;
+            task.setName(String.format("[%s]index %s", indexer.getName(), path));
                 task.onCompletion(new Runnable() {
 
                     @Override
@@ -474,7 +475,6 @@ public class PluginController{
                     }
                 });
                 
-            if(task == null) continue;
             taskManager.dispatch(task);
             rettasks.add(task);
             RunningIndexTasks.getInstance().addTask(taskUniqueID, task);
@@ -500,7 +500,8 @@ public class PluginController{
         ArrayList<Task<Report>> rettasks = new ArrayList<>();
         final  String pathF = path.toString();
     	Task<Report> task = indexer.index(store.at(path));
-            task.onCompletion(new Runnable() {
+        task.setName(String.format("[%s]index %s", pluginName, path));
+           task.onCompletion(new Runnable() {
 
                 @Override
                 public void run() {

@@ -70,6 +70,7 @@ public class LoginServlet extends HttpServlet {
 		LoggedIn mLoggedIn = Session.getUserLoggedIn(session);
 		if(mLoggedIn == null){
 			resp.sendError(401);
+            return;
 		}
 			
 		JSONObject json_resp = new JSONObject();
