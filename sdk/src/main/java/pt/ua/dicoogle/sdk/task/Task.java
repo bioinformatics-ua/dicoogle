@@ -54,24 +54,21 @@ public class Task<Type> extends FutureTask<Type> {
         }
     }
     
-    
     public void onCompletion(Runnable r){
         toRunWhenComplete.add(r);
     }
     
-    
-    
-    /**
-     * a task name, for presentation purposes
+    /** Get the task's name
+     * @return a task name, for presentation purposes
      */
-    public String getName(){return taskName;}
-    public void setName(String name){name = taskName;}
- 
+    public String getName(){return this.taskName;}
+    /** Set the task's name
+     * @param name the new task's name, for presentation purposes
+     */
+    public void setName(String name){this.taskName = name;}
     
-    
-    /**
-     * returns the task progress, goes from 0 to 1
-     * however, if we have an unbounded task a -1 is returned
+    /** Get the task's progress
+     * @return the task's progress from 0 to 1, or -1 if the task is unbounded
      */
     public float getProgress(){
         if (callable instanceof ProgressCallable){
