@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dicoogle web plugin test chamber</title>
+    
+    <script src='./document-register-element.js'></script>
+    <script src='./require.js'></script>
+    <script src="./react-0.13.0.js"></script>
+    <script src='../../dist/dicoogle-webcore.js'></script>
+    <script>
+    function onReveal() {
+      var slotdiv = document.getElementById("slotdiv");
+      slotdiv.innerHTML = '';
+      var dicoogleSlot = document.createElement("dicoogle-slot");
+      dicoogleSlot.setAttribute('data-slot-id', 'fordummy');
+      slotdiv.appendChild(dicoogleSlot);
+    }
+    </script>
+    <style>
+      div.slotdiv {
+        margin-right: auto;
+        width: 20cm;
+        border-style: ridge;
+        border-width: 4px;
+        border-color: #4499CC;
+        padding: 8px;
+      }
+      .dicoogle-webcore-fordummy_0 {
+        display: inline-block;
+        position: relative;
+        width: 10cm;
+        margin-right: auto;
+        vertical-align: top;
+        background: #CFF;
+      }
+      .dicoogle-webcore-fordummy_1 {
+        display: inline-block;
+        position: relative;
+        width: 10cm;
+        margin-left: auto;
+        vertical-align: top;
+        background: #FFC;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Test Chamber</h2>
+    <p>This page will create a Dicoogle Web UI slot with the slot id <tt>fordummy</tt> as soon as the button below is pressed. React was included.
+    If you are hosting this web page directly through the Dicoogle server, then any plugin for this slot will be loaded
+    automatically. Otherwise, try setting the server's base URL (in the code) and allow CORS on your browser.</p>
+    
+    <div id="slotdiv" class="slotdiv">
+      <input type="button" id="btnReveal" value="Open Dicoogle Slot" onclick="onReveal()"></input>
+    </div>
+    
+    <script>
+      require(['dicoogle-webcore','react'], function(DicoogleWeb) {
+        DicoogleWeb.init('http://localhost:8080/');
+      });
+    </script>
+  </body>
+</html>

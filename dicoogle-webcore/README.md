@@ -22,7 +22,7 @@ Install **npm** if not already installed, and perform the following commands in 
  - Include the resulting "dist/dicoogle-webcore.js" in your page. An HTML `<script>` element or another means of importing
    the module is sufficient.
  - Place `<dicoogle-slot>` elements in the page. They must contain a unique slot id attribute `data-slot-id`.
- - Invoke the module's `init()` to automatically detect slots, as well as to fetch and attach plugins.
+ - Invoke the module's `init()` to automatically detect slots, as well as to fetch and attach plugins. This should only be called once. New slots attached dynamically will be automatically filled.
 
 A few examples of web pages using the Dicoogle Web Core are available in "test/TC".
 
@@ -51,9 +51,10 @@ An example of a package:
 
 ```json
 {
-  "name" : "cbir-query",
+  "name" : "dicoogle-cbir-query",
   "version" : "0.0.1",
   "description" : "CBIR Query-By-Example plugin",
+  "tags": ["dicoogle", "dicoogle-webui"],
   "dicoogle" : {
     "caption" : "Query by Example",
     "slot-id" : "query",
@@ -69,7 +70,10 @@ The final module script must define a module in loose CommonJS format (similar t
 The developer may also choose to create the module under the UMD format. The developer can make multiple node-flavored
 CommonJS modules and use tools like browserify to bundle them and embed dependencies. The exported module must be
 a single constructor function, in which instances must have a `render(parent)` function, which will attach the
-contents of the plugin to the `parent` DOM element.
+contents of the plugin to the `parent` DOM element. The parent will be a div with its class defined as
+`"dicoogle-webcore-<slotid>_<plugin-index>"` (e.g. `"dicoogle-webcore-query_0"`). The div of these parents
+will have a class `"dicoogle-webcore-<slotid>"`. The Dicoogle web application may use these classes to style these
+additional UI elements.
 
 All modules will have access to the `DicoogleWeb` plugin-local alias for interfacing with Dicoogle. If the plugin
 is to be attached to a result slot, it must also implement `onResult(result)`. Query plugins can invoke
@@ -137,25 +141,25 @@ Add a listener to the 'result' event, triggered when a query result is obtained.
 
 Add a listener to the 'load' event, triggered when a plugin is loaded.
 
- - _fn_ : `function(name, slotId)`
+ - _fn_ : `function(Object{name, slotId, caption})`
 
 #### **addMenuPluginLoadListener** : `function(fn)`
 
 Add a listener to the 'loadMenu' event, triggered when a menu plugin is loaded.
 
- - _fn_ : `function(name)`
+ - _fn_ : `function(Object{name, slotId, caption})`
 
 #### **addQueryPluginLoadListener** : `function(fn)`
 
 Add a listener to the 'loadQuery' event, triggered when a query plugin is loaded.
 
- - _fn_ : `function(name)`
+ - _fn_ : `function(Object{name, slotId, caption})`
  
 #### **addResultPluginLoadListener** : `function(fn)`
 
 Add a listener to the 'loadResult' event, triggered when a result plugin is loaded.
 
- - _fn_ : `function(name)`
+ - _fn_ : `function(Object{name, slotId, caption})`
 
 ## Installing Plugins
 
