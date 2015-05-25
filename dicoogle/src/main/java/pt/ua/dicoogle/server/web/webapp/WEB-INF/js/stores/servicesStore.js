@@ -22,6 +22,17 @@ var ServicesStore = Reflux.createStore({
          queryRunning: false,
          queryPort: 0
          };
+
+      this._querySettings ={
+        acceptTimeout: "...",
+        connectionTimeout: "...",
+        idleTimeout: "...",
+        maxAssociations: "...",
+        maxPduReceive: "...",
+        maxPduSend: "...",
+        responseTimeout: "...",
+      };
+
     },
 
     onGetStorage :function(){
@@ -29,7 +40,7 @@ var ServicesStore = Reflux.createStore({
       request(
         Endpoints.base + "/management/dicom/storage",
         function(data){
-          console.log("merda", data );
+          //console.log("merda", data );
           self._contents.storageRunning = data.isRunning;
           self._contents.storagePort = data.port;
           self.trigger(self._contents);
@@ -46,7 +57,6 @@ var ServicesStore = Reflux.createStore({
       request(
         Endpoints.base + "/management/dicom/query",
         function(data){
-          console.log("merda", data );
           self._contents.queryRunning = data.isRunning;
           self._contents.queryPort = data.port;
           self.trigger(self._contents);
@@ -89,7 +99,41 @@ var ServicesStore = Reflux.createStore({
 
         });
 
-    }
+    },
+
+    onGetQuerySettings : function(){
+      var self = this;
+      request(
+        Endpoints.base + "/management/settings/dicom/query",
+        function(data){
+          //console.log("merda", data );
+          self._querySettings = data;
+          self.trigger(self._querySettings);
+
+        },
+        function(error){
+          console.log("omnGetqUERYSettigns: failure");
+        }
+
+      );
+    },
+  onSaveQuerySettings : function(connectionTimeout, acceptTimeout, idleTimeout,maxAssociations,maxPduReceive,maxPduSend, responseTimeout  ){
+    $.post(  Endpoints.base +"/management/settings/dicom/query",
+    {
+      connectionTimeout:connectionTimeout,
+      acceptTimeout:acceptTimeout,
+      idleTimeout:idleTimeout,
+      maxAssociations:maxAssociations,
+      maxPduReceive: maxPduReceive,
+      maxPduSend: maxPduSend,
+      responseTimeout: responseTimeout
+    },
+      function(data, status){
+        //Response
+        console.log("Data: " + data + "\nStatus: " + status);
+
+      });
+  }
 
 
 });
