@@ -88,6 +88,11 @@ var PopOverView = React.createClass({
     	// Subscribe to the store.
     	DumpStore.listen(this._onChange);
   	},
+    componentDidUpdate: function(){
+
+     $('#dumptable').dataTable({paging: false,searching: false,info: false});
+
+    },
 
   	_onChange: function(data){
   		if (this.isMounted())
@@ -108,15 +113,39 @@ var PopOverView = React.createClass({
 
 				var obj = this.state.data.data.results.fields;
 				var rows = [];
+
+        var fields = [];
 				Object.keys(obj).forEach(function(key, i) {
         			rows.push(<p key={i}><b>{key}:</b> {obj[key]}</p>);
+            fields.push({att: key, field: obj[key]});
    				 });
+
+var fieldstable = fields.map(function(item){
+  return (
+    <tr>
+      <td> {item.att}</td>
+      <td> {item.field}</td>
+      </tr>
+  );
+});
+
 
 
 		return (
 			<Modal  {...this.props} bsStyle='primary' title='Image Dump' animation={true}>
 		        <div className='modal-body'>
-              {rows}
+
+              <table id="dumptable" className="table table-striped table-bordered" cellspacing="0" width="100%">
+                <thead>
+                         <tr>
+                            <th>Attribute</th>
+                            <th>Field</th>
+                          </tr>
+                    </thead>
+                     <tbody>
+                         {fieldstable}
+                      </tbody>
+                </table>
             </div>
 		        <div className='modal-footer'>
 		          <Button onClick={this.props.onRequestHide}>Close</Button>
