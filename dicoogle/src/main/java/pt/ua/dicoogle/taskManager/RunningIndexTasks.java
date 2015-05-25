@@ -21,9 +21,11 @@ package pt.ua.dicoogle.taskManager;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import pt.ua.dicoogle.sdk.datastructs.IndexReport;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.task.Task;
 
@@ -84,7 +86,7 @@ public class RunningIndexTasks {
 		return taskRunningList;
 	}
 
-	public String toJson() {
+	public String toJson() throws InterruptedException, ExecutionException {
 		JSONObject object = new JSONObject();
 		JSONArray array = new JSONArray();
 
@@ -95,7 +97,12 @@ public class RunningIndexTasks {
 			entry.put("taskUid", pair.getKey());
 			entry.put("taskName", pair.getValue().getName());
 			entry.put("taskProgress", pair.getValue().getProgress());
-
+			
+			IndexReport r = (IndexReport) pair.getValue().get();
+			entry.put("nErrors", r.getNErrors());
+			entry.put("nIndexed", r.getNIndexed());
+			entry.put("nElapsedTime", r.getElapsedTime());
+			
 			array.add(entry);
 
 		}
