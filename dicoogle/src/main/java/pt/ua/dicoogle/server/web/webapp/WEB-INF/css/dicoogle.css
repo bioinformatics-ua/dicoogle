@@ -149,7 +149,7 @@ input {
   text-align: left;
   width: 100%;
   margin-left: 5px;
-  color: white; }
+  color: black; }
 
 .loginInputUsername {
   width: 100%;
@@ -166,7 +166,7 @@ input {
   padding-right: 20px;
   padding-left: 20px;
   padding-bottom: 120px;
-  background: url(/assets/login_bg.png) no-repeat center center fixed;
+  background-color: #DFEEF3;
   background-size: cover; }
 
 #footer {

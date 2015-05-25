@@ -4,6 +4,7 @@ import {TransferenceOptionsView} from '../management/tranferOptionsView';
 import {ServicesView} from '../management/servicesView';
 import {LoggerView} from '../management/loggerView';
 import {IndexerView} from '../management/indexerView';
+import {StorageView} from '../management/storageView';
 
 var ManagementView = React.createClass({
       getInitialState: function() {
@@ -13,7 +14,7 @@ var ManagementView = React.createClass({
         var views = [(<IndexerView/>),
         (<TransferenceOptionsView/>),
         (<ServicesView/>),
-        ("Storage"),
+        (<StorageView/>),
         (<LoggerView/>)];
         return (
           <div className="container-fluid content">
@@ -37,7 +38,7 @@ var ManagementView = React.createClass({
       },
       onTabClicked : function(index){
         console.log("tabSelected: ",index);
-        this.setState({selectedtab: index})
+        this.setState({selectedtab: index});
       }
       });
 

@@ -86,7 +86,7 @@ public class RunningIndexTasks {
 		return taskRunningList;
 	}
 
-	public String toJson() {
+	public String toJson() throws InterruptedException, ExecutionException {
 		JSONObject object = new JSONObject();
 		JSONArray array = new JSONArray();
 
@@ -112,7 +112,6 @@ public class RunningIndexTasks {
                     logger.warn("Could not retrieve task result, ignoring", ex);
                 }
             }
-            
 			array.add(entry);
 		}
 
