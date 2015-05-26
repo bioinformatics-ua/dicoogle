@@ -71,7 +71,7 @@ var ServicesStore = Reflux.createStore({
     onSetStorage :function(state){
       var self = this;
       console.log(state);
-      $.post("http://localhost:8080/management/dicom/storage",
+      $.post(Endpoints.base + "/management/dicom/storage",
       {
         running: state
       },
@@ -87,7 +87,7 @@ var ServicesStore = Reflux.createStore({
     onSetQuery :function(state){
       var self = this;
       console.log(state);
-      $.post("http://localhost:8080/management/dicom/query",
+      $.post(Endpoints.base + "/management/dicom/query",
       {
         running: state
       },
