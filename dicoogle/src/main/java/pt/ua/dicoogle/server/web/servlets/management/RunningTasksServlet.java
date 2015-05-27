@@ -19,6 +19,7 @@
 package pt.ua.dicoogle.server.web.servlets.management;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -40,7 +41,12 @@ public class RunningTasksServlet extends HttpServlet {
 		resp.addHeader("Access-Control-Allow-Origin", "*");
 		
 		resp.setContentType("application/json");
-		resp.getWriter().write(RunningIndexTasks.getInstance().toJson());
+		try {
+			resp.getWriter().write(RunningIndexTasks.getInstance().toJson());
+		} catch (InterruptedException | ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
