@@ -75,24 +75,6 @@ var Search = React.createClass({
             return (<div> {selectionButtons} <AdvancedSearch/> </div>);
        }
     },
-
-    muu : function(btn){
-        console.log("dados", ActionCreators);
-        //ActionCreators.search("dados");
-
-        var view = this;
-
-        ActionCreators.triggerPromise('http://localhost:8080/search?query=wrix&keyword=false&provicer=lucene').then(function(body) {
-            // Render the response body
-            console.log(body);
-
-            view.setState({"data" : body});
-
-          }).catch(function(err) {
-              // Handle the API error object
-              console.log(err);
-          });
-    },
     _onChange : function(data){
         console.log("onChange");
         if (this.isMounted())

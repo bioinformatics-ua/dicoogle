@@ -24,7 +24,7 @@ var UserStore = Reflux.createStore({
 
       var formData = {username: user,password:pass}; //Array
       $.ajax({
-          url : "http://localhost:8080/login",
+          url : Endpoints.base + "/login",
           type: "POST",
           dataType: 'json',
           data : formData,
@@ -61,7 +61,7 @@ var UserStore = Reflux.createStore({
         var li;
         $.ajax({
         type: "GET",
-        url: "http://localhost:8080/login",
+        url: Endpoints.base + "/login",
         dataType: 'json',
         async: true,
         success: function (result) {

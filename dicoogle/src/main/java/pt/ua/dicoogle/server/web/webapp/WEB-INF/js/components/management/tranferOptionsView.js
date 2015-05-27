@@ -3,6 +3,8 @@ var React = require('react');
 import {TransferenceStore} from '../../stores/transferenceStore';
 import {TransferenceActions} from '../../actions/transferenceActions';
 
+import {Endpoints} from '../../constants/endpoints';
+
 
 
 var TransferenceOptionsView = React.createClass({
@@ -132,7 +134,7 @@ var TransferenceOptionsView = React.createClass({
       request: function(id, value){
         var uid = this.state.data.data[document.getElementById("sop_select").selectedIndex].uid;
         console.log("Selected uid:",uid);
-        $.post("http://localhost:8080/management/settings/transfer",
+        $.post(Endpoints.base + "/management/settings/transfer",
         {
           uid: uid,
           option: id,

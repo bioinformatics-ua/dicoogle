@@ -59,7 +59,7 @@ var IndexStatusStore = Reflux.createStore({
 
     onClose : function(uid){
 
-      $.post("http://localhost:8080/index/task",
+      $.post(Endpoints.base + "/index/task",
       {
         uid: uid,
         action: "delete",
@@ -85,7 +85,7 @@ var IndexStatusStore = Reflux.createStore({
     },
     onStop : function(uid){
       console.log("Stop: ", uid);
-      $.post("http://localhost:8080/index/task",
+      $.post(Endpoints.base + "/index/task",
       {
         uid: uid,
         action: "delete",
