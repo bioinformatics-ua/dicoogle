@@ -20,7 +20,7 @@ var RouteHandler = Router.RouteHandler
 import {UserMixin} from '../mixins/userMixin';
 
 var Search = React.createClass({
-    mixins : [UserMixin],
+    //mixins : [UserMixin],
     getInitialState: function (){
 
         return { label:'login', searchState: "simple" };

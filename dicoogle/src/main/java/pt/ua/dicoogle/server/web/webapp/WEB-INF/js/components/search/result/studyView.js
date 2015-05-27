@@ -21,7 +21,7 @@ var StudyView = React.createClass({
 		var resultItems = (
 				resultArray.map(function(item){
 		      		return (
-				    	     <tr className="resultRow" onClick={self.onStudyClick.bind(this, item)}>
+				    	     <tr className="resultRow" style={{"cursor" : "pointer"}} onclick="" onClick={self.onStudyClick.bind(this, item)}>
 				    	     	<td> {item.studyDate}</td>
 				    	     	<td> {item.studyDescription}</td>
 				    	     	<td> {item.institutionName}</td>

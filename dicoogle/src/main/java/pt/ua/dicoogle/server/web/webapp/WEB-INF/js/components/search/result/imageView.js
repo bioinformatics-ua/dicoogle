@@ -90,7 +90,10 @@ var PopOverView = React.createClass({
   	},
     componentDidUpdate: function(){
 
-     $('#dumptable').dataTable({paging: false,searching: false,info: false});
+     $('#dumptable').dataTable({paging: false,searching: false,info: false,
+       responsive: false
+
+       });
 
     },
 
@@ -117,14 +120,14 @@ var PopOverView = React.createClass({
         var fields = [];
 				Object.keys(obj).forEach(function(key, i) {
         			rows.push(<p key={i}><b>{key}:</b> {obj[key]}</p>);
-            fields.push({att: key, field: obj[key]});
+              fields.push({att: key, field: obj[key]});
    				 });
 
 var fieldstable = fields.map(function(item){
   return (
     <tr>
-      <td> {item.att}</td>
-      <td> {item.field}</td>
+      <td> <p>{item.att}</p></td>
+      <td> <p>{item.field}</p></td>
       </tr>
   );
 });
@@ -135,7 +138,7 @@ var fieldstable = fields.map(function(item){
 			<Modal  {...this.props} bsStyle='primary' title='Image Dump' animation={true}>
 		        <div className='modal-body'>
 
-              <table id="dumptable" className="table table-striped table-bordered" cellspacing="0" width="100%">
+              <table id="dumptable" className="table-test table table-striped table-bordered responsive" cellspacing="0" width="100%">
                 <thead>
                          <tr>
                             <th>Attribute</th>
