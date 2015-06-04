@@ -21,7 +21,7 @@ var SerieView = React.createClass({
 		var resultItems = (
 				resultArray.map(function(item){
 		      		return (
-				    	     <tr className="resultRow" onClick={self.onSerieClick.bind(this, item)}>
+				    	     <tr className="resultRow" style={{"cursor" : "pointer"}} onclick="" onClick={self.onSerieClick.bind(this, item)}>
 				    	     	<td> {item.serieNumber}</td>
 				    	     	<td> {item.serieModality}</td>
 				    	     	<td> {item.serieDescription}</td>
