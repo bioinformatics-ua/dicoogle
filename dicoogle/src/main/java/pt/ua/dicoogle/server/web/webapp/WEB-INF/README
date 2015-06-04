@@ -1,14 +1,25 @@
-//INSTALL DEPENDENCIES
-npm install
+# Dicoogle Web Application
 
+## Installing for development
 
-//START
-npm start
+    npm install
 
+## Building
 
-//SERVER
-./run_server
+To build all js and html resources:
 
-SASS
-//
-./run_sass
+    npm run-script build-debug  # for development
+    npm run-script build        # for production
+
+To watch for changes in the SASS resources:
+
+    ./run_sass
+
+To build everything for development:
+   
+   npm run-script prepublish
+
+## Running as a standalone server
+
+    ./run_server
+
