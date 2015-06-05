@@ -39,8 +39,9 @@
   },
   "scripts": {
     "start": "watchify -o js/bundle.js -v -d .",
+    "test": "jest",
     "build": "NODE_ENV=production ./node_modules/browserify/bin/cmd.js . -t 6to5ify --full-path=false | uglifyjs -cm > js/bundle.min.js",
-    "test": "jest"
+    "build-debug": "./node_modules/browserify/bin/cmd.js . --debug -t 6to5ify --full-path=false > js/bundle.js"
   },
   "author": "Luís A. Bastião",
   "browserify": {

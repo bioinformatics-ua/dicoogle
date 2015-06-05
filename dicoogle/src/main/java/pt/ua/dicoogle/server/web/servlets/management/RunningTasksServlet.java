@@ -69,7 +69,7 @@ public class RunningTasksServlet extends HttpServlet {
 		if(type.equals("close"))
 			ResponseUtil.simpleResponse(resp, "removed", RunningIndexTasks.getInstance().removeTask(taskUid));
 		else if(type.equals("stop"))
-			ResponseUtil.simpleResponse(resp, "stoped", RunningIndexTasks.getInstance().stopTask(taskUid));
+			ResponseUtil.simpleResponse(resp, "stopped", RunningIndexTasks.getInstance().stopTask(taskUid));
 		else
 			ResponseUtil.simpleResponse(resp, "error", true);
 	}

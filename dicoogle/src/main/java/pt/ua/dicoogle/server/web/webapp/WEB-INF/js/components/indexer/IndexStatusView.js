@@ -45,18 +45,20 @@ var IndexStatusView = React.createClass({
       },
       render: function() {
         var self = this;
-        if(this.state.status == "loading"){
+        if(this.state.status === "loading"){
           return (<div>loading...</div>);
         }
 
         var items;
-        if(this.state.data.count == 0)
+        if(this.state.data.count === 0)
         {
           items = (<div>No running tasks</div>);
         }
         else
         items = this.state.data.results.map(function(item){
-          var percentage = (item.taskProgress * 100) + '%';
+          let complete = item.complete;
+          let percentage = complete ? '100%'
+            : (item.taskProgress >= 0) ? (item.taskProgress * 100 + '%') : '0%';
 
           var barstate = "indexprogress progress-bar progress-bar-striped progress-bar-success";
           if(item.nErrors > 0 && item.nIndexed > 0){
@@ -80,14 +82,14 @@ var IndexStatusView = React.createClass({
                     </div>
                   </div>
                   <div className="col-sm-2">
-                    <button className="btn btn-danger" onClick={self.onCloseStopClicked.bind(this,(item.taskProgress == 1), item.taskUid)}> {(item.taskProgress == 1)?"Close":"Stop"} </button>
+                    <button className="btn btn-danger" onClick={self.onCloseStopClicked.bind(this,complete, item.taskUid)}> {complete?"Close":"Stop"} </button>
                   </div>
               </div>
 
               <div>
                   <p><b>Uid: </b> {item.taskUid}</p>
                   <p><b>Name: </b> {item.taskName}</p>
-                  <p><b>Elapsed Time(ms): </b> {item.nElapsedTime} <b>Indexed: </b>{item.nIndexed} <b>Errors: </b>{item.nErrors}</p>
+                  <p><b>Elapsed Time(ms): </b> {item.elapsedTime} <b>Indexed: </b>{item.nIndexed} <b>Errors: </b>{item.nErrors}</p>
               </div>
 
             </div>

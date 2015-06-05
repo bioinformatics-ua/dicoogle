@@ -132,7 +132,7 @@ function forceIndex(uri){
   },
     function(data, status){
       //Response
-      console.log("Data: " + data + "\nStatus: " + status);
+      console.log("Status:", status);
     });
 
 }

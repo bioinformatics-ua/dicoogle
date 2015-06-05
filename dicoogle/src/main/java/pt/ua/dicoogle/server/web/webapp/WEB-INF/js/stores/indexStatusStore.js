@@ -47,7 +47,7 @@ var IndexStatusStore = Reflux.createStore({
       var self = this;
       forceIndex(uri);
 
-      self._contents.results.push({taskUid: "NA", taskName: uri, taskProgress: 0})
+      self._contents.results.push({taskUid: "...", taskName: uri, taskProgress: -1})
       self._contents.count = self._contents.count +1;
       self.trigger({
         data:self._contents,
@@ -67,7 +67,7 @@ var IndexStatusStore = Reflux.createStore({
       },
         function(data, status){
           //Response
-          console.log("Data: " + data + "\nStatus: " + status);
+          console.log("Data: ",  data, " ; Status: ", status);
         });
 
 
@@ -93,7 +93,7 @@ var IndexStatusStore = Reflux.createStore({
       },
         function(data, status){
           //Response
-          console.log("Data: " + data + "\nStatus: " + status);
+          console.log("Data: ",  data, " ; Status: ", status);
         });
     }
 

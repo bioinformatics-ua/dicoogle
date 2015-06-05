@@ -25,6 +25,8 @@ import java.util.concurrent.ExecutionException;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.sdk.datastructs.IndexReport;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.task.Task;
@@ -32,13 +34,15 @@ import pt.ua.dicoogle.sdk.task.Task;
 /**
  * Singleton that contains all running index tasks
  *
- * @author Frederico Silva<fredericosilva@ua.pt>
+ * @author Frederico Silva <fredericosilva@ua.pt>
+ * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 public class RunningIndexTasks {
-
+    private static final Logger logger = LoggerFactory.getLogger(RunningIndexTasks.class);
+    
 	public static RunningIndexTasks instance;
 
-	private Map<String, Task<Report>> taskRunningList;
+	private final Map<String, Task<Report>> taskRunningList;
 
 	public static RunningIndexTasks getInstance() {
 		if (instance == null)
@@ -56,26 +60,22 @@ public class RunningIndexTasks {
 	}
 
 	public boolean removeTask(String taskUid) {
-		if(taskRunningList.remove(taskUid) != null)
-			return true;
-		
-		return false;
-	
+		return taskRunningList.remove(taskUid) != null;
 	}
 
 	public boolean stopTask(String taskUid) {
 		Task<Report> task = taskRunningList.get(taskUid);
 		if (task != null)
 		{
-			boolean canceled =  task.cancel(true);
+			boolean canceled = task.cancel(true);
 			if(canceled)
 			{
 				//removeTask(taskUid);
 				return true;
 			}
 		}
-		else{
-			//TODO LOG inexistent uid(cannot be removed)
+        else {
+            logger.warn("Attempt to stop unexistent task {}, ignoring", taskUid);
 		}
 
 		return false;
@@ -90,34 +90,32 @@ public class RunningIndexTasks {
 		JSONObject object = new JSONObject();
 		JSONArray array = new JSONArray();
 
-		Iterator it = taskRunningList.entrySet().iterator();
+		Iterator<Map.Entry<String, Task<Report>>> it = taskRunningList.entrySet().iterator();
 		while (it.hasNext()) {
-			Map.Entry<String, Task<Report>> pair = (Map.Entry) it.next();
-			JSONObject entry = new JSONObject();
+			Map.Entry<String, Task<Report>> pair = it.next();
+			Task<Report> task = pair.getValue();
+            JSONObject entry = new JSONObject();
 			entry.put("taskUid", pair.getKey());
-			entry.put("taskName", pair.getValue().getName());
-			entry.put("taskProgress", pair.getValue().getProgress());
-			
-			IndexReport r = (IndexReport) pair.getValue().get();
-			entry.put("nErrors", r.getNErrors());
-			entry.put("nIndexed", r.getNIndexed());
-			entry.put("nElapsedTime", r.getElapsedTime());
-			
+			entry.put("taskName", task.getName());
+			entry.put("taskProgress", task.getProgress());
+            
+            if (task.isDone()) {
+                entry.put("complete", true);
+                try {
+                    Report r = task.get();
+                    if (r instanceof IndexReport) {
+                        entry.put("elapsedTime", ((IndexReport)r).getElapsedTime());
+                        entry.put("nIndexed", ((IndexReport)r).getNIndexed());
+                        entry.put("nErrors", ((IndexReport)r).getNErrors());
+                    }
+                } catch (InterruptedException | ExecutionException ex) {
+                    logger.warn("Could not retrieve task result, ignoring", ex);
+                }
+            }
 			array.add(entry);
-
 		}
-		/*
-		 * DEBUG
-		 */
-//		JSONObject entry = new JSONObject();
-//		entry.put("taskUid", "SA5457G");
-//		entry.put("taskName", "gatinhos");
-//		entry.put("taskProgress", 0.5);
-//		array.add(entry);
-		/*
-		 * 
-		 */
-		object.put("results", array);
+
+        object.put("results", array);
 		object.put("count", array.size());
 		
 		return object.toString();
