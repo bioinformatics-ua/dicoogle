@@ -40,6 +40,7 @@ input {
   max-width: 100%; }
 
 .scrolldiv {
+  white-space: pre-line;
   overflow-y: auto;
   height: 500px; }
 
