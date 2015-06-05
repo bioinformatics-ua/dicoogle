@@ -71,7 +71,7 @@ INDEXER
 */
 function setWatcher(state){
   console.log(state);
-  $.post("http://localhost:8080/management/settings/index/watcher",
+  $.post(Endpoints.base + "/management/settings/index/watcher",
   {
     watcher: state
   },
@@ -83,7 +83,7 @@ function setWatcher(state){
 }
 function setZip(state){
   console.log(state);
-  $.post("http://localhost:8080/management/settings/index/zip",
+  $.post(Endpoints.base + "/management/settings/index/zip",
   {
     zip: state
   },
@@ -95,7 +95,7 @@ function setZip(state){
 }
 function setSaveT(state){
   console.log(state);
-  $.post("http://localhost:8080/management/settings/index/thumbnail",
+  $.post(Endpoints.base + "/management/settings/index/thumbnail",
   {
     thumbnail: state
   },
@@ -108,7 +108,7 @@ function setSaveT(state){
 
 function saveIndexOptions(path, watcher, zip, saveThumbnail,effort,thumbnailSize){
   //console.log(state);
-  $.post("http://localhost:8080/management/settings/index",
+  $.post(Endpoints.base + "/management/settings/index",
   {
     path: path,
     watcher: watcher,
@@ -126,7 +126,7 @@ function saveIndexOptions(path, watcher, zip, saveThumbnail,effort,thumbnailSize
 
 function forceIndex(uri){
   //console.log(state);
-  $.post("http://localhost:8080/management/tasks/index",
+  $.post(Endpoints.base + "/management/tasks/index",
   {
     uri: uri
   },

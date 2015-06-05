@@ -18,7 +18,7 @@ var PatientView = React.createClass({
 		var resultItems = (
 				resultArray.map(function(item, index){
 		      		return (
-				    	     <tr className="resultRow" onClick={self.onPatientClick.bind(this, item.id, index)}>
+				    	     <tr className="resultRow" style={{"cursor" : "pointer"}} onclick="" onClick={self.onPatientClick.bind(this, item.id, index)}>
 				    	     	<td> {item.id}</td>
 				    	     	<td> {item.name}</td>
 				    	     	<td> {item.gender}</td>

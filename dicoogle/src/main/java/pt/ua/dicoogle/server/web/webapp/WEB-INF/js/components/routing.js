@@ -41,6 +41,8 @@ import {LoginView} from './login/loginView';
 import {LoadingView} from './login/loadingView';
 import {UserMixin} from './mixins/userMixin';
 
+import {Endpoints} from '../constants/endpoints';
+
 
 var App = React.createClass({
   mixins : [Router.Navigation],
@@ -66,7 +68,7 @@ var App = React.createClass({
 
   logout: function(){
     var self = this;
-    $.get("http://localhost:8080/logout",
+    $.get(Endpoints.base + "/logout",
       function(data, status){
         //Response
         console.log("Data: " + data + "\nStatus: " + status);
