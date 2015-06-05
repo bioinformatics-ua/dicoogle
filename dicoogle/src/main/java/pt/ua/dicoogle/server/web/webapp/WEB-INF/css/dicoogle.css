@@ -69,6 +69,12 @@ input {
 .indexstatusprogress {
   margin-top: 8px; }
 
+.table_text_wrap {
+  word-wrap: break-word; }
+
+.table-test {
+  column-width: auto !important; }
+
 .btn_dicoogle {
   background-color: #008C99;
   color: #ffffff;

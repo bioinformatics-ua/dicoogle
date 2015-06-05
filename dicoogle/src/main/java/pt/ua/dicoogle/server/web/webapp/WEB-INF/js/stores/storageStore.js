@@ -50,7 +50,7 @@ var StorageStore = Reflux.createStore({
       this._contents.push({AETitle: ae, ipAddrs: ip, port:port});
 
       var self = this;
-      $.post("http://localhost:8080/management/settings/storage/dicom",
+      $.post(Endpoints.base + "/management/settings/storage/dicom",
       {
         type: "add",
         aetitle: ae,
@@ -72,7 +72,7 @@ var StorageStore = Reflux.createStore({
       var ip = this._contents[index].ipAddrs;
       var port = this._contents[index].port;
       var self = this;
-      $.post("http://localhost:8080/management/settings/storage/dicom",
+      $.post(Endpoints.base + "/management/settings/storage/dicom",
       {
         type: "remove",
         aetitle: ae,

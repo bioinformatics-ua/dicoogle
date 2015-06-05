@@ -54,7 +54,7 @@ var ExportStore = Reflux.createStore({
       }
 
       console.log(fields);
-      $.post("http://localhost:8080/exportFile",
+      $.post(Endpoints.base + "/exportFile",
       {
         query: freetext,
         keyword: isKeyword,

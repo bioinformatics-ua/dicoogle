@@ -1,7 +1,7 @@
 var React = require('react');
 var AboutView = React.createClass({
     componentDidMount: function() {
-      $.ajax({
+      /*$.ajax({
 
         url: "http://localhost:8080/login",
         dataType: 'json',
@@ -29,6 +29,7 @@ var AboutView = React.createClass({
 		  sessionStorage.setItem("session_id","uma pussara");
 
       console.log(document.cookie);
+      */
 
     },
       render: function() {
