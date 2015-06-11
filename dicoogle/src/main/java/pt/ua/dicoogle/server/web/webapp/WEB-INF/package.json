@@ -1,0 +1,87 @@
+{
+  "name": "dicoogle-webapp",
+  "version": "0.1.0",
+  "description": "Dicoogle web application",
+  "author": "Universidade de Aveiro, DETI/IEETA, Bioinformatics Group (http://bioinformatics.ua.pt/)",
+  "license": "GPL-3.0+",
+  "keywords": [
+    "dicoogle", "webapp"
+  ],
+  "maintainers": [
+    "Luís A. Bastião <bastiao@ua.pt>",
+    "Frederico Silva <fredericosilva@ua.pt>",
+    "Eduardo Pinho <eduardopinho@ua.pt>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bioinformatics-ua/dicoogle"
+  },
+  "main": "js/app.js",
+  "files": [
+    "js/bundle.js",
+    "css/",
+    "fonts/",
+    "assets/",
+    "bootstrap/",
+    "lib/",
+    "index.html"
+  ],
+  "dependencies": {
+    "flux": "^2.0.1",
+    "keymirror": "~0.1.0",
+    "object-assign": "^1.0.0",
+    "jquery": "^1.10.2",
+    "jquery-ui": "^1.10.5",
+    "bootstrap": "^3.3.2",
+    "react": "^0.12.0",
+    "react-router": "^0.11.6",
+    "react-router-bootstrap": "^0.8.3",
+    "react-bootstrap": "^0.13.3",
+    "reflux": "^0.2.5",
+    "react-font-awesome": "https://github.com/tkurki/react-font-awesome/tarball/master",
+    "datatables": "1.10.5",
+    "promise": "*"
+  },
+  "browser": {
+    "jquery": "./node_modules/jquery/dist/jquery.js",
+    "jquery-ui": "./node_modules/jquery-ui/jquery-ui.js",
+    "bootstrap": "./node_modules/bootstrap/dist/js/bootstrap.js"
+  },
+  "devDependencies": {
+    "babel": "4.5.5",
+    "babelify": "^6.1.2",
+    "browserify": "^8.1.3",
+    "browserify-shim": "~3.8.2",
+    "envify": "^3.0.0",
+    "htmlprocessor": "^0.1.10",
+    "jest-cli": "~0.1.17",
+    "reactify": "^0.15.2",
+    "uglify-js": "~2.4.15",
+    "watchify": "^2.1.1"
+  },
+  "scripts": {
+    "prepublish": "NODE_ENV=production ./node_modules/browserify/bin/cmd.js . -t babelify --full-path=false | uglifyjs -cm > js/bundle.min.js;sass sass/dicoogle.scss:css/dicoogle.css;htmlprocessor index-template.html -o index.html -e dist -s",
+    "build": "NODE_ENV=production ./node_modules/browserify/bin/cmd.js . -t babelify --full-path=false | uglifyjs -cm > js/bundle.min.js; htmlprocessor index-template.html -o index.html -e dist -s",
+    "build-debug": "./node_modules/browserify/bin/cmd.js . --debug -t babelify --full-path=false > js/bundle.js; htmlprocessor index-template.html -o index.html -e dev -s",
+    "start": "watchify -o js/bundle.js -v -d .",
+    "test": "jest"
+  },
+  "browserify": {
+    "transform": [
+      "reactify",
+      "babelify",
+      "browserify-shim",
+      "envify"
+    ]
+  },
+  "browserify-shim": {
+    "bootstrap": {
+      "depends": [
+        "jquery:$"
+      ]
+    }
+  },
+  "jest": {
+    "rootDir": "./js"
+  }
+}

@@ -29,19 +29,26 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 
 import org.apache.commons.lang3.StringUtils;
 
 import pt.ua.dicoogle.core.QueryExpressionBuilder;
+import pt.ua.dicoogle.core.dim.DIMGeneric;
+import pt.ua.dicoogle.core.dim.Patient;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
@@ -55,10 +62,24 @@ import pt.ua.dicoogle.sdk.task.Task;
 public class SearchServlet extends HttpServlet {
 
   private static final long serialVersionUID = 1L;
+  	public enum SearchType {
 
+      ALL, PATIENT;
+  	}
+  	private SearchType searchType;
+  	public SearchServlet(){
+  		searchType = SearchType.ALL;
+  	}
+  	public SearchServlet(SearchType stype){
+  		if(stype == null)
+  			searchType = SearchType.ALL;
+  		else
+  		searchType = stype;
+  	}
     //TODO: QIDO;
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	response.addHeader("Access-Control-Allow-Origin", "*");
         /*
          Example: http://localhost:8080/search?query=wrix&keyword=false&provicer=lucene
          */
@@ -102,13 +123,19 @@ public class SearchServlet extends HttpServlet {
         //attaches the required extrafields
         extraFields.put("PatientName", "PatientName");
         extraFields.put("PatientID", "PatientID");
+        extraFields.put("PatientSex","PatientSex");
         extraFields.put("Modality", "Modality");
         extraFields.put("StudyDate", "StudyDate");
         extraFields.put("SeriesInstanceUID", "SeriesInstanceUID");
+        extraFields.put("SeriesNumber","SeriesNumber");
         extraFields.put("StudyID", "StudyID");
         extraFields.put("StudyInstanceUID", "StudyInstanceUID");
         extraFields.put("Thumbnail", "Thumbnail");
         extraFields.put("SOPInstanceUID", "SOPInstanceUID");
+        extraFields.put("InstitutionName", "InstitutionName");
+        extraFields.put("StudyDescription", "StudyDescription");
+        extraFields.put("SeriesDescription", "SeriesDescription");
+
 
         JointQueryTask queryTaskHolder = new JointQueryTask() {
 
@@ -146,7 +173,15 @@ public class SearchServlet extends HttpServlet {
             resultsArr.add(r);
         }
                 
-        String json = processJSON(resultsArr, elapsedTime);
+        String json;
+        if(searchType == SearchType.PATIENT)
+        {
+        	
+        	response.setContentType("application/json");
+            response.getWriter().append(getDIM(resultsArr));
+        	return;
+        }
+        json= processJSON(resultsArr, elapsedTime);
 
         response.setContentType("application/json");
         response.getWriter().append(json);
@@ -159,7 +194,8 @@ public class SearchServlet extends HttpServlet {
             rj.put("uri", r.getURI().toString());
 
             JSONObject fields = new JSONObject();
-            for (Entry<String, Object> f : r.getExtraData().entrySet()) {
+
+            for (Entry<String,Object> f : r.getExtraData().entrySet()) {
                 // remove padding from string representations before accumulating
                 fields.accumulate(f.getKey(), f.getValue().toString().trim());
             }
@@ -172,5 +208,16 @@ public class SearchServlet extends HttpServlet {
         resp.put("elapsedTime", elapsedTime);
 
         return resp.toString();
+    }
+    
+    private static String getDIM(ArrayList<SearchResult> allresults){
+    	DIMGeneric dimModel = null;
+    	try {
+			dimModel = new DIMGeneric(allresults);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	
+    	return dimModel.getJSON();
     }
 }

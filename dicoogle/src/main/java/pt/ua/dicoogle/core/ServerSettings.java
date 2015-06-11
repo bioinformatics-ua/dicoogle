@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 import org.dcm4che2.data.UID;
 import org.slf4j.LoggerFactory;
+
 import pt.ua.dicoogle.server.web.utils.types.DataTable;
 
 /**
@@ -458,9 +459,9 @@ public class ServerSettings
     private Web web = new Web() ;
 
 	private boolean wanmode;
-    
-    private static ServerSettings instance = null;
 
+    private static ServerSettings instance = null;
+    
     public static synchronized ServerSettings getInstance()
     {
         if (instance == null) {
@@ -809,6 +810,20 @@ public class ServerSettings
     public boolean remove(MoveDestination m)
     {
         return this.dest.remove(m);
+    }
+    public boolean removeMoveDestination(String AETitle, String ipAddr, int port)
+    {
+    	for(int i=0;i<dest.size(); i++)
+    	{
+    		MoveDestination mv = dest.get(i);
+    		if(mv.getAETitle().equals(AETitle) && mv.getIpAddrs().equals(ipAddr) && mv.getPort() == port)
+    		{
+    			dest.remove(i);
+    			return true;
+    		}
+    			
+    	}
+    	return false;
     }
     public boolean contains(MoveDestination m){
         return this.dest.contains(m);

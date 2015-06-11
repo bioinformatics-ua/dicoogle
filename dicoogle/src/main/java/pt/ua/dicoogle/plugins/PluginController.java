@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
@@ -62,6 +63,7 @@ import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
 import pt.ua.dicoogle.server.web.DicoogleWeb;
 import pt.ua.dicoogle.plugins.webui.WebUIPluginManager;
+import pt.ua.dicoogle.taskManager.RunningIndexTasks;
 import pt.ua.dicoogle.taskManager.TaskManager;
 import pt.ua.dicoogle.server.PluginRestletApplication;
 
@@ -462,24 +464,20 @@ public class PluginController{
         ArrayList<Task<Report>> rettasks = new ArrayList<>();
         final  String pathF = path.toString();
         for(IndexerInterface indexer : indexers){            
-        	
         	Task<Report> task = indexer.index(store.at(path));
             if(task == null) continue;
-                task.onCompletion(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        // TODO replace this output with something more appropriate
-                        System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                        System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                        System.out.println("Task accomplished " + pathF);
-                        System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                        System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                    }
-                });
+            final String taskUniqueID = UUID.randomUUID().toString();
+            task.setName(String.format("[%s]index %s", indexer.getName(), path));
+            task.onCompletion(new Runnable() {
+                @Override
+                public void run() {
+                    logger.info("Task [{}] complete: {} is indexed", taskUniqueID, pathF);
+                }
+            });
                 
             taskManager.dispatch(task);
             rettasks.add(task);
+            RunningIndexTasks.getInstance().addTask(taskUniqueID, task);
         }
         logger.info("Finished firing all indexing plugins for {}", path);
         
@@ -496,29 +494,30 @@ public class PluginController{
             return Collections.emptyList(); 
         }
         
+        final String taskUniqueID = UUID.randomUUID().toString();
+        
         IndexerInterface indexer = getIndexerByName(pluginName, true);
         ArrayList<Task<Report>> rettasks = new ArrayList<>();
         final  String pathF = path.toString();
     	Task<Report> task = indexer.index(store.at(path));
-        if(task != null){
+        if(task != null) {
+            task.setName(String.format("[%s]index %s", pluginName, path));
             task.onCompletion(new Runnable() {
 
                 @Override
                 public void run() {
-                    // TODO replace this output with something more appropriate
-                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                    System.out.println("Task accomplished " + pathF);
-                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
-                    System.out.println("## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ");
+                    logger.info("Task [{}] complete: {} is indexed", taskUniqueID, pathF);
+                    
+                    //RunningIndexTasks.getInstance().removeTask(taskUniqueID);
                 }
             });
             
 	        taskManager.dispatch(task);
+	        
 	        rettasks.add(task);
 	        logger.info("Fired indexer {} for URI {}", pluginName, path.toString());
-        } else
-            logger.error("Unknown error calling indexer {}", pluginName);
+	        RunningIndexTasks.getInstance().addTask(taskUniqueID, task);
+        }
         
         return rettasks;    	
     }

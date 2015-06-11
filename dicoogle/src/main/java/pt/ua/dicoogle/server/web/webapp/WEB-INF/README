@@ -1,0 +1,25 @@
+# Dicoogle Web Application
+
+## Installing for development
+
+    npm install
+
+## Building
+
+To build all js and html resources:
+
+    npm run-script build-debug  # for development
+    npm run-script build        # for production
+
+To watch for changes in the SASS resources:
+
+    ./run_sass
+
+To build everything for development:
+   
+   npm run-script prepublish
+
+## Running as a standalone server
+
+    ./run_server
+

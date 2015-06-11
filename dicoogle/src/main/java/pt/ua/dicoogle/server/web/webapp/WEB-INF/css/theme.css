@@ -1,0 +1,75 @@
+/*
+ * Copyright (c) 2014 BMD Software, Lda.
+ * All Rights Reserved
+ *
+ * All information contained herein is, and remains the property of BMD Software, Lda. and its suppliers, if any.
+ * The intellectual and technical concepts contained herein are proprietary to BMD Software, Lda. and its suppliers,
+ * being protected by trade secret or copyright law. Dissemination of this information or reproduction of this
+ * material is strictly forbidden unless prior written permission is obtained from BMD Software, Lda.
+ */
+
+
+body {
+  padding-top: 150px;
+  padding-bottom: 30px;
+  padding-left: 80px;
+  
+  
+}
+
+#container
+{
+  margin-left: 150px;
+  margin-right: 150px;
+  
+}
+
+.about
+{
+  margin-left: 10%;
+  margin-right: 10%;
+
+}
+
+
+.config
+{
+  margin-left: 10%;
+  margin-right: 10%;
+
+}
+
+.devices
+{
+
+  margin-left: 250px;
+  margin-right: 250px;
+}
+
+.gridAbout{
+  margin-top:10px;
+  border: #cdcdcd medium solid;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  
+}
+
+.theme-dropdown .dropdown-menu {
+  display: block;
+  position: static;
+  margin-bottom: 20px;
+}
+
+.theme-showcase > p > .btn {
+  margin: 5px 0;
+}
+
+
+.navbar-brand,
+.navbar-nav li a {
+  line-height: 100px;
+  height: 100px;
+  padding-top: 0;
+  font-size: 20px;
+}

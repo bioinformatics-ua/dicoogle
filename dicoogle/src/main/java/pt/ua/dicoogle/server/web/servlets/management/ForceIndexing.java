@@ -36,6 +36,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.IndexReport;
 import pt.ua.dicoogle.sdk.datastructs.Report;
@@ -46,6 +48,8 @@ import pt.ua.dicoogle.sdk.task.Task;
  * @author Frederico Silva <fredericosilva@ua.pt>
  */
 public class ForceIndexing extends HttpServlet {
+    
+    private static final Logger logger = LoggerFactory.getLogger(ForceIndexing.class);
 
   /**
    * 
@@ -55,6 +59,8 @@ public class ForceIndexing extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
       IOException {
+
+    resp.addHeader("Access-Control-Allow-Origin", "*");
 
     // Getting Parameters.
     String[] uris = req.getParameterValues("uri");
@@ -66,53 +72,64 @@ public class ForceIndexing extends HttpServlet {
     }
 
     int expectedReports = uris.length * ((pluginsName == null) ? 1 : pluginsName.length);
-    resp.setContentType("application/json");
 
     PluginController pc = PluginController.getInstance();
     
     //Firing Tasks.
     List<Task<Report>> reports = new ArrayList<>(expectedReports);
     for (String uri : uris) {
-      URI u = null;
-      try {
-        u = new URI(uri.replaceAll(" ", "%20"));
-      } catch (URISyntaxException ex) {
-        // log.error("Could not create URI", ex);
-        ex.printStackTrace();
-      }
-      if (u != null) {
-        // log.info("Sent Index Request: {}, {}",pluginName, u.toString());
-        if (pluginsName == null) {
-          reports.addAll(pc.index(u));
-        } else {
-          for (String pluginName : pluginsName) {
-            reports.addAll(pc.index(pluginName, u));
-          }
+        try {
+            URI u = new URI(uri.replaceAll(" ", "%20"));
+            // log.info("Sent Index Request: {}, {}",pluginName, u.toString());
+            if (pluginsName == null) {
+              reports.addAll(pc.index(u));
+            } else {
+              for (String pluginName : pluginsName) {
+                reports.addAll(pc.index(pluginName, u));
+              }
+            }
+        } catch (URISyntaxException ex) {
+            logger.debug("Client provided bad URI");
+            resp.sendError(400);
+            return;
         }
-
-      }
     }
-        
+
+    // waiting is bad, clearing all this and giving an ok
+    resp.setStatus(200);
+    
+    /*
     //Waiting for results, construct the output.
-    List<IndexReport> done = new ArrayList<>(reports.size());
+    List<Report> done = new ArrayList<>(reports.size());
     JSONArray ret = new JSONArray();
     for (Task<Report> t : reports) {
       try {
-        IndexReport r = (IndexReport) t.get();
-        JSONObject obj = convertReportToJSON(r);
-        done.add(r);
+        Report report = t.get();
+        done.add(report);
+        JSONObject obj;
+        if (report instanceof IndexReport) {
+            IndexReport indexReport = (IndexReport) report;
+            obj = convertReportToJSON(indexReport);
+        } else {
+            // no information is available
+            obj = new JSONObject();
+            obj.put("complete", true);
+            obj.put("errors", 0);
+        }
         ret.add(obj);
       } catch (InterruptedException | ExecutionException ex) {
         // log.error("UNKNOW ERROR", ex);
-        ex.printStackTrace();
       }
     }
     // log.info("Finished forced indexing procedure: {}", reports.size());
 
+    resp.setContentType("application/json");
     resp.getWriter().write(ret.toString());
     resp.getWriter().flush();
+    */
   }
   
+  @Deprecated
   private static JSONObject convertReportToJSON(IndexReport r){
     JSONObject obj = new JSONObject();
     obj.put("indexed", r.getNIndexed());
