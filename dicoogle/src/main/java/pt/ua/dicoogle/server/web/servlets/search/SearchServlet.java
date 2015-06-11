@@ -114,12 +114,12 @@ public class SearchServlet extends HttpServlet {
         }
 
         HashMap<String, String> extraFields = new HashMap<>();
-        extraFields.put("PatientID", "PatientID");
-        extraFields.put("SOPInstanceUID", "SOPInstanceUID");
-        extraFields.put("StudyInstanceUID", "StudyInstanceUID");
-        extraFields.put("SeriesInstanceUID", "SeriesInstanceUID");
         if (actualFields == null) {
             //attaches the required extrafields
+            extraFields.put("PatientID", "PatientID");
+            extraFields.put("SOPInstanceUID", "SOPInstanceUID");
+            extraFields.put("StudyInstanceUID", "StudyInstanceUID");
+            extraFields.put("SeriesInstanceUID", "SeriesInstanceUID");
             extraFields.put("PatientName", "PatientName");
             extraFields.put("Modality", "Modality");
             extraFields.put("StudyDate", "StudyDate");
