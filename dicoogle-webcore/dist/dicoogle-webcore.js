@@ -36,7 +36,6 @@
  */
     "use strict";
     module.exports = function() {
-        "use strict";
         var m = {
             constructors: {}
         };
@@ -44,7 +43,7 @@
         var slots = {};
         var plugins = {};
         var packages = {};
-        var base_url = "";
+        var base_url = null;
         var eventListeners = {
             load: [],
             loadMenu: [],
@@ -67,19 +66,19 @@
         m.addResultListener = function(fn) {
             eventListeners.result.push(fn);
         };
-        /** @param fn function(name, slotId) */
+        /** @param fn function(pluginDesc) */
         m.addPluginLoadListener = function(fn) {
             eventListeners.load.push(fn);
         };
-        /** @param fn function(name) */
+        /** @param fn function(pluginDesc) */
         m.addMenuPluginLoadListener = function(fn) {
             eventListeners.loadMenu.push(fn);
         };
-        /** @param fn function(name) */
+        /** @param fn function(pluginDesc) */
         m.addQueryPluginLoadListener = function(fn) {
             eventListeners.loadQuery.push(fn);
         };
-        /** @param fn function(name) */
+        /** @param fn function(pluginDesc) */
         m.addResultPluginLoadListener = function(fn) {
             eventListeners.loadResult.push(fn);
         };
@@ -107,7 +106,10 @@
                 m.loadSlot(slotsDOM[i]);
             }
             // finally, fetch the needed plugins and load each one of them
-            m.fetchPlugins(Object.keys(slots));
+            var slotIds = Object.keys(slots);
+            if (Object.keys(plugins).length !== slotIds.length) {
+                m.fetchPlugins(slotIds);
+            }
         };
         /** Load a new Dicoogle slot into the core.
    * @param a DOM element in the document with the correct tag name
@@ -116,8 +118,8 @@
         m.loadSlot = function(slotDOM) {
             var elemAttributes = slotDOM.attributes;
             if (!elemAttributes["data-slot-id"]) {
-                console.error("Dicoogle web UI slot lacking id attribute!");
-                return;
+                console.error("Dicoogle web UI slot has no data-slot-id attribute!");
+                return null;
             }
             var id = elemAttributes["data-slot-id"].value;
             slots[id] = new this.WebUISlot(id, slotDOM);
@@ -201,19 +203,35 @@
             plugins[name] = pluginInstance;
             slots[slotId].attachPlugin(pluginInstance);
             for (var i = 0; i < eventListeners.load.length; i++) {
-                eventListeners.load[i](name, slotId);
+                eventListeners.load[i]({
+                    name: name,
+                    slotId: slotId,
+                    caption: pluginInstance.Caption
+                });
             }
             if (slotId === "query") {
                 for (var i = 0; i < eventListeners.loadQuery.length; i++) {
-                    eventListeners.loadQuery[i](name);
+                    eventListeners.loadQuery[i]({
+                        name: name,
+                        slotId: slotId,
+                        caption: pluginInstance.Caption
+                    });
                 }
             } else if (slotId === "result") {
                 for (var i = 0; i < eventListeners.loadResult.length; i++) {
-                    eventListeners.loadResult[i](name);
+                    eventListeners.loadResult[i]({
+                        name: name,
+                        slotId: slotId,
+                        caption: pluginInstance.Caption
+                    });
                 }
             } else if (slotId === "menu") {
                 for (var i = 0; i < eventListeners.loadMenu.length; i++) {
-                    eventListeners.loadMenu[i](name);
+                    eventListeners.loadMenu[i]({
+                        name: name,
+                        slotId: slotId,
+                        caption: pluginInstance.Caption
+                    });
                 }
             }
         };
@@ -222,6 +240,7 @@
             this.id = id;
             this.dom = dom;
             this.attachments = [];
+            this.dom.className = "dicoogle-webcore-" + this.id;
             this.attachPlugin = function(plugin) {
                 if (plugin.SlotId !== this.id) {
                     console.error("Attempt to attach plugin ", plugin.Name, " to the wrong slot");
@@ -230,10 +249,8 @@
                 if (this.attachments.length === 0) {
                     this.dom.innerHTML = "";
                 }
-                if (this.attachments.length > 0) {
-                    this.dom.appendChild(document.createElement("hr"));
-                }
                 var pluginDOM = document.createElement("div");
+                pluginDOM.className = this.dom.className + "_" + this.attachments.length;
                 this.dom.appendChild(pluginDOM);
                 plugin.render(pluginDOM);
                 this.attachments.push(plugin);
@@ -244,10 +261,8 @@
                 var slotDOM = this.dom;
                 slotDOM.innerHTML = "";
                 for (var i = 0; i < this.attachments.length; i++) {
-                    if (i > 0) {
-                        slotDOM.appendChild(document.createElement("hr"));
-                    }
                     var pluginDOM = document.createElement("div");
+                    pluginDOM.className = slotDOM.className + "_" + i;
                     slotDOM.appendChild(pluginDOM);
                     this.attachments[i].render(pluginDOM);
                 }
@@ -271,7 +286,7 @@
                 var name = packageJSON.name;
                 console.log("Loaded module ", name);
                 if (!isFunction(m.constructors[name])) {
-                    console.error("The loaded module ", name, " is not a function!");
+                    console.error("The loaded module", name, "is not a function!");
                 }
             });
         }
@@ -411,6 +426,14 @@
                             if (!attSlotId || !attSlotId.value || attSlotId === "") {
                                 console.error("Dicoogle slot contains illegal data-slot-id!");
                                 return;
+                            }
+                            var sId = attSlotId.value;
+                            // add content if the webcore plugin is already available
+                            if (base_url !== null && !slots[sId]) {
+                                m.loadSlot(this);
+                                if (!plugins[sId]) {
+                                    m.fetchPlugins([ sId ]);
+                                }
                             }
                         }
                     },

@@ -12,12 +12,9 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    jshint: {
-      all: ['Gruntfile.js', '<%= pkg.name %>.js'],
-      options: {
-        esnext: true,
-        globals: globals
-      }
+    eslint: {
+      gruntfile: 'Gruntfile.js',
+      main: 'dicoogle-webcore.js'
     },
     babel: {
       options: {
@@ -66,12 +63,12 @@ module.exports = function(grunt) {
   });
 
   // Load plugin tasks.
-  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-babel');
   grunt.loadNpmTasks('grunt-umd');
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
   // Default task(s).
-  grunt.registerTask('default', ['jshint','babel','umd','uglify:minimize','uglify:pretty']);
+  grunt.registerTask('default', ['eslint','babel','umd','uglify:minimize','uglify:pretty']);
 
 };
