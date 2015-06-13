@@ -56,18 +56,12 @@ var LoginView = React.createClass({
                 Medical Imaging Repositories using Indexing System and P2P mechanisms
               </h4>
 
-
             </div>
 
-
-
-            <div className="loginA"
-              >
+            <div className="loginA">
 
 
               <form className="form-horizontal">
-
-
 
 
                 <p className="loginTextA">Sign In</p>
@@ -77,10 +71,7 @@ var LoginView = React.createClass({
                 <button type="button" className="btn submit btn_dicoogle" onClick={this.onLoginClick}>Login</button>
               </form>
 
-
             </div>
-
-
 
           </section>
 
@@ -96,15 +87,12 @@ var LoginView = React.createClass({
                 <a><img src="http://www.dicoogle.com/wp-content/themes/dicoogle/images/logoFCT.png" style={{height: 60, margin:5}} /></a>
               </div>
 
-
             </div>
           </footer>
 
         </div>
       </div>
     );
-
-
 
   },
 
