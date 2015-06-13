@@ -12,13 +12,12 @@ var LoginView = React.createClass({
     failed: false};
   },
   componentDidMount: function(){
-
     //LoggerActions.get();
     document.getElementById('container').style.display = 'none';
-
+    this.enableEnterKey();
   },
   componentDidUpdate:function(){
-
+    this.enableEnterKey();
   },
   componentWillMount: function() {
     UserStore.listen(this._onChange);
@@ -37,8 +36,18 @@ var LoginView = React.createClass({
       React.unmountComponentAtNode(document.getElementById('login_container'));
       this.replaceWith('/search');
     }
-  }
-  ,
+  },
+  enableEnterKey() {
+    var self = this;
+    var fh = function(e) {
+      if (e.keyCode === 13) {
+        self.onLoginClick();
+      }
+    };
+    jQuery("#username").keypress(fh);
+    jQuery("#password").keypress(fh);
+  },
+
   render: function() {
     return (
       <div id="loginwrapper">
