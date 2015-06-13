@@ -16,11 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.server.web;
+package pt.ua.dicoogle.server.web.servlets;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
@@ -48,6 +47,7 @@ import static pt.ua.dicoogle.sdk.settings.Utils.processAdvancedSettings;
  *
  * @author António Novo <antonio.novo@ua.pt>
  */
+@Deprecated
 public class SettingsServlet extends HttpServlet
 {
 	/**

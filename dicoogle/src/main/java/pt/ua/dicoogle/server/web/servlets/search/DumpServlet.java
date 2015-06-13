@@ -26,9 +26,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -51,7 +48,6 @@ public class DumpServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    	resp.addHeader("Access-Control-Allow-Origin", "*");
     	//http://localhost:8080/dump?uid=1.3.12.2.1107.5.2.5.11090.5.0.5823649644957102
         String uid = req.getParameter("uid");
         if (StringUtils.isEmpty(uid)) {

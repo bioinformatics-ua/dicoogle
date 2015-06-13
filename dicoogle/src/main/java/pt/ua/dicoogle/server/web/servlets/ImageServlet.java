@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.server.web;
+package pt.ua.dicoogle.server.web.servlets;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.server.web;
+package pt.ua.dicoogle.server.web.servlets;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -27,7 +27,7 @@ import org.restlet.Restlet;
 import org.restlet.ext.servlet.ServletAdapter;
 import org.slf4j.LoggerFactory;
 
-/**
+/** A servlet holding a Restlet.
  *
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */

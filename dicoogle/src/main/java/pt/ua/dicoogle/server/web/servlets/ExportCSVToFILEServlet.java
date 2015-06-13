@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.server.web;
+package pt.ua.dicoogle.server.web.servlets;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -64,7 +64,6 @@ public class ExportCSVToFILEServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.addHeader("Access-Control-Allow-Origin", "*");		// TODO Auto-generated method stub
 		String uid = req.getParameter("UID");
 		if(uid == null){
 			resp.sendError(401, "No Query UID Suplied: Please fill the field \"UID\"");
@@ -100,7 +99,6 @@ public class ExportCSVToFILEServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.addHeader("Access-Control-Allow-Origin", "*");
 		// TODO Auto-generated method stub
 		/*String dataString = req.getParameter("JSON-DATA");
 		if (dataString == null) {

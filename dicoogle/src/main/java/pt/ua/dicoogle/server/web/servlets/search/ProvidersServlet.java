@@ -34,6 +34,7 @@ import pt.ua.dicoogle.plugins.PluginController;
  * Retrieve active providers
  *
  * @author Frederico Silva <fredericosilva@ua.pt>
+ * @todo missing support for index providers
  */
 public class ProvidersServlet extends HttpServlet{
 

@@ -38,13 +38,11 @@ import pt.ua.dicoogle.server.web.utils.ResponseUtil;
 *
 * @author Frederico Silva<fredericosilva@ua.pt>
 */
-public class TransferenceOptionsServlet extends HttpServlet {
+public class TransferOptionsServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.addHeader("Access-Control-Allow-Origin", "*");
-		
 		String uid = req.getParameter("uid");
 		
 		String soplist = SOPList.getInstance().getSOPList();
@@ -54,7 +52,6 @@ public class TransferenceOptionsServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.addHeader("Access-Control-Allow-Origin", "*");
 		
 		String UID = req.getParameter("uid");
 		String option = req.getParameter("option");

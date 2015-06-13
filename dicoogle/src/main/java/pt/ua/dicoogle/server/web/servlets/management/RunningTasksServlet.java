@@ -38,7 +38,6 @@ public class RunningTasksServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.addHeader("Access-Control-Allow-Origin", "*");
 		
 		resp.setContentType("application/json");
 		try {
@@ -52,7 +51,6 @@ public class RunningTasksServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.addHeader("Access-Control-Allow-Origin", "*");
 		String action = req.getParameter("action");
 		
 		if(action != null && !action.equals("delete"))

@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import pt.ua.dicoogle.core.QueryExpressionBuilder;
 import pt.ua.dicoogle.core.query.ExportToCSVQueryTask;
 import pt.ua.dicoogle.plugins.PluginController;
@@ -51,7 +50,6 @@ public class ExportServlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.addHeader("Access-Control-Allow-Origin", "*");
 		switch(type){
 		case LIST:
 			doGetTagList(req, resp);
@@ -60,8 +58,6 @@ public class ExportServlet extends HttpServlet{
 			doGetExportCvs(req, resp);
 			break;
 		}
-		
-		
 	}
 	
 	private void doGetTagList(HttpServletRequest req, HttpServletResponse resp) throws IOException{

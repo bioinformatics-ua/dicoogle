@@ -29,26 +29,17 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
 
 import org.apache.commons.lang3.StringUtils;
 
 import pt.ua.dicoogle.core.QueryExpressionBuilder;
 import pt.ua.dicoogle.core.dim.DIMGeneric;
-import pt.ua.dicoogle.core.dim.Patient;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
@@ -63,7 +54,6 @@ public class SearchServlet extends HttpServlet {
 
   private static final long serialVersionUID = 1L;
   	public enum SearchType {
-
       ALL, PATIENT;
   	}
   	private SearchType searchType;
@@ -79,7 +69,6 @@ public class SearchServlet extends HttpServlet {
     //TODO: QIDO;
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	response.addHeader("Access-Control-Allow-Origin", "*");
         /*
          Example: http://localhost:8080/search?query=wrix&keyword=false&provicer=lucene
          */
