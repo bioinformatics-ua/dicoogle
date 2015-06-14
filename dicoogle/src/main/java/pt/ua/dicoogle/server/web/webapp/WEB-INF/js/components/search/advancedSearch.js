@@ -190,9 +190,18 @@ var AdvancedSearch = React.createClass({
          query = query + " AND StudyDate:["+date +" TO "+date+"]";
        }
 
+       var providerEl = document.getElementById("providersList");
+       var selectedId= providerEl.selectedIndex;
+       var provider = "";
+       if(selectedId == 0){
+         provider = "all"
+       }
+       else {
+          provider = providerEl.options[selectedId].text;
+       }
 
        ///////
-       var params = {text: query, keyword: true, other:true};
+       var params = {text: query, keyword: true, other:true, provider:provider};
 
        React.render(<ResultSearch items={params}/>, document.getElementById("container"));
   },
