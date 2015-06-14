@@ -12,13 +12,12 @@ var LoginView = React.createClass({
     failed: false};
   },
   componentDidMount: function(){
-
     //LoggerActions.get();
     document.getElementById('container').style.display = 'none';
-
+    this.enableEnterKey();
   },
   componentDidUpdate:function(){
-
+    this.enableEnterKey();
   },
   componentWillMount: function() {
     UserStore.listen(this._onChange);
@@ -37,8 +36,18 @@ var LoginView = React.createClass({
       React.unmountComponentAtNode(document.getElementById('login_container'));
       this.replaceWith('/search');
     }
-  }
-  ,
+  },
+  enableEnterKey() {
+    var self = this;
+    var fh = function(e) {
+      if (e.keyCode === 13) {
+        self.onLoginClick();
+      }
+    };
+    jQuery("#username").keypress(fh);
+    jQuery("#password").keypress(fh);
+  },
+
   render: function() {
     return (
       <div id="loginwrapper">
@@ -56,18 +65,12 @@ var LoginView = React.createClass({
                 Medical Imaging Repositories using Indexing System and P2P mechanisms
               </h4>
 
-
             </div>
 
-
-
-            <div className="loginA"
-              >
+            <div className="loginA">
 
 
               <form className="form-horizontal">
-
-
 
 
                 <p className="loginTextA">Sign In</p>
@@ -77,10 +80,7 @@ var LoginView = React.createClass({
                 <button type="button" className="btn submit btn_dicoogle" onClick={this.onLoginClick}>Login</button>
               </form>
 
-
             </div>
-
-
 
           </section>
 
@@ -96,15 +96,12 @@ var LoginView = React.createClass({
                 <a><img src="http://www.dicoogle.com/wp-content/themes/dicoogle/images/logoFCT.png" style={{height: 60, margin:5}} /></a>
               </div>
 
-
             </div>
           </footer>
 
         </div>
       </div>
     );
-
-
 
   },
 

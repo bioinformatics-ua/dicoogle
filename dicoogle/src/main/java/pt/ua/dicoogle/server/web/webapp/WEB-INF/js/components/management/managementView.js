@@ -1,6 +1,6 @@
 var React = require('react');
 
-import {TransferenceOptionsView} from '../management/tranferOptionsView';
+import {TransferOptionsView} from '../management/transferOptionsView';
 import {ServicesView} from '../management/servicesView';
 import {LoggerView} from '../management/loggerView';
 import {IndexerView} from '../management/indexerView';
@@ -12,7 +12,7 @@ var ManagementView = React.createClass({
       },
       render: function() {
         var views = [(<IndexerView/>),
-        (<TransferenceOptionsView/>),
+        (<TransferOptionsView/>),
         (<ServicesView/>),
         (<StorageView/>),
         (<LoggerView/>)];
@@ -21,7 +21,7 @@ var ManagementView = React.createClass({
               <ul className="nav nav-pills">
                 <li className="active" role="presentation"><a href="#indexer" data-toggle="tab" onClick={this.onTabClicked.bind(this,0)}>Index Options</a>
                 </li>
-                  <li role="presentation"><a href="#transfer" data-toggle="tab" onClick={this.onTabClicked.bind(this,1)}>Transference Options</a>
+                  <li role="presentation"><a href="#transfer" data-toggle="tab" onClick={this.onTabClicked.bind(this,1)}>Transfer Options</a>
                   </li>
                   <li role="presentation"><a href="#services" data-toggle="tab" onClick={this.onTabClicked.bind(this,2)}>Services and Plugins</a>
                   </li>

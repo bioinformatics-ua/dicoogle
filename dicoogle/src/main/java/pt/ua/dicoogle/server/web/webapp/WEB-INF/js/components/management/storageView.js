@@ -37,7 +37,6 @@ var StorageView = React.createClass({
         return (<option value={index}>{item.AETitle}@{item.ipAddrs}:{item.port}</option>);
       });
 
-
       return (
 
         <div className="panel panel-primary topMargin">
@@ -71,7 +70,6 @@ var StorageView = React.createClass({
     }
 
   });
-
 
   var AddStorageView = React.createClass({
     render: function() {
