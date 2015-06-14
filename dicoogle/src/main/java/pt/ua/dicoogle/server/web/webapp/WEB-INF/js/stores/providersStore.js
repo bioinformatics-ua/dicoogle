@@ -18,18 +18,15 @@ var ProvidersStore = Reflux.createStore({
 
     onGet : function(data){
       var self = this;
-      console.log("BALO");
       if(this._providers.length != 0)
       {
-        console.log("BILO",self._providers);
         self.trigger({
           data:self._providers,
           success: true
         });
         return;
       }
-      console.log("XUPALO");
-
+      
       request(Endpoints.base + "/providers" ,
         function(data){
           //SUCCESS
