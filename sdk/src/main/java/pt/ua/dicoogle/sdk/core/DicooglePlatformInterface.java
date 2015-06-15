@@ -48,8 +48,6 @@ import pt.ua.dicoogle.sdk.task.Task;
  */
 public interface DicooglePlatformInterface {
     
-    
-    
     /**
      * Get a implementation of the plugin name
      * @param name name of the plugin 
@@ -116,4 +114,9 @@ public interface DicooglePlatformInterface {
 	public List<Task<Report>> index(URI path);
 
 	public List<Report> indexBlocking(URI path);
+    
+    /** Obtain access to the server's settings.
+     * @return an object for read-only access to the settings
+     */
+    public ServerSettingsReader getSettings();
 }

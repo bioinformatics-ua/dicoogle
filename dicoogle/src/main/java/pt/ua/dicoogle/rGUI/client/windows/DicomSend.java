@@ -35,7 +35,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import pt.ua.dicoogle.Main;
-import pt.ua.dicoogle.core.MoveDestination;
+import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.rGUI.client.UserRefs;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IDicomSend;
 

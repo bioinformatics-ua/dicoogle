@@ -22,6 +22,7 @@ package pt.ua.dicoogle.core;
 /**
  *
  * @author carloscosta
+ * @MarkedForDeath currently unused
  */
 public class QueryResultRecord {
     private String patientName;

@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
-import pt.ua.dicoogle.core.MoveDestination;
+import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.core.XMLSupport;
 import pt.ua.dicoogle.server.web.utils.ResponseUtil;
