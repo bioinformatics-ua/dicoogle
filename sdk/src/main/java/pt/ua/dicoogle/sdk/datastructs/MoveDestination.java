@@ -28,15 +28,15 @@ public class MoveDestination implements Serializable
 {
     static final long serialVersionUID = 1L;
 
-    private String AETitle = null ;
-    private String ipAddrs = null ;
-    private int port ;
+    private final String AETitle;
+    private final String ipAddrs;
+    private final int port;
 
     public MoveDestination(String AETitle, String ipAddr, int port)
     {
-        this.AETitle = AETitle ;
-        this.ipAddrs = ipAddr ;
-        this.port = port ;
+        this.AETitle = AETitle;
+        this.ipAddrs = ipAddr;
+        this.port = port;
     }
 
     /**
@@ -50,10 +50,10 @@ public class MoveDestination implements Serializable
     /**
      * @param AETitle the AETitle to set
      */
-    public void setAETitle(String AETitle)
+/*    public void setAETitle(String AETitle)
     {
         this.AETitle = AETitle;
-    }
+    }*/
 
     /**
      * @return the ipAddrs
@@ -66,10 +66,10 @@ public class MoveDestination implements Serializable
     /**
      * @param ipAddrs the ipAddrs to set
      */
-    public void setIpAddrs(String ipAddrs)
+/*    public void setIpAddrs(String ipAddrs)
     {
         this.ipAddrs = ipAddrs;
-    }
+    } */
 
     /**
      * @return the port
@@ -82,10 +82,11 @@ public class MoveDestination implements Serializable
     /**
      * @param port the port to set
      */
-    public void setPort(int port)
+/*    public void setPort(int port)
     {
         this.port = port;
     }
+    */
 
     @Override
     public String toString()
