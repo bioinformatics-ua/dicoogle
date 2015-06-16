@@ -55,7 +55,6 @@ public class Convert2PNG
         Iterator<ImageReader> it = ImageIO.getImageReadersByFormatName("DICOM"); // gets the first registered ImageReader that can read DICOM data
         
         ImageReader sReader = it.next();
-        
         return sReader;
     }
     
@@ -65,7 +64,6 @@ public class Convert2PNG
         Iterator<ImageWriter> it = ImageIO.getImageWritersByFormatName("PNG"); // gets the first registered ImageWriter that can write PNG data
         
         ImageWriter sWriter = it.next();
-        
         return sWriter;
     }
     
@@ -187,8 +185,6 @@ public class Convert2PNG
 	public static ByteArrayOutputStream DICOM2PNGStream(StorageInputStream dcmStream, int frameIndex) throws IOException {
 		// setup the PNG writer
 		ImageWriter writer = createImageWriter();
-		if (writer == null)
-			return null;
 
 		ImageWriteParam writeParams = writer.getDefaultWriteParam(); // and set the default params for it (height, weight, alpha)
 		writeParams.setProgressiveMode(ImageWriteParam.MODE_DEFAULT); // activate progressive mode (adam7), best for low bandwidth connections
@@ -234,8 +230,6 @@ public class Convert2PNG
         
 		// setup the PNG writer
 		ImageWriter writer = createImageWriter();
-		if (writer == null)
-			return null;
 
 		ImageWriteParam writeParams = writer.getDefaultWriteParam(); // and set the default params for it
 		writeParams.setProgressiveMode(ImageWriteParam.MODE_DEFAULT); // activate progressive mode (adam7), best for low bandwidth connections
@@ -266,8 +260,6 @@ public class Convert2PNG
 	{	
 		// setup the DICOM reader
         ImageReader reader = createDICOMImageReader();                
-		if (reader == null) // if no valid reader was found abort
-			return -1;
 	
 		try (ImageInputStream inStream = ImageIO.createImageInputStream(dcmFile.getInputStream())) {
 
