@@ -23,41 +23,48 @@ import java.net.URI;
 import org.dcm4che2.data.DicomObject;
 import org.dcm4che2.io.DicomInputStream;
 
-/**
+/** Storage plugin interface. These types of plugins provide an abstraction to reading and writing from
+ * files or data blobs.
+ * 
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Frederico Valente
  */
 public interface StorageInterface extends DicooglePlugin {    
     
     /**
-     * Gets the Scheme of this storage plug-in URI.
+     * Get the scheme URI of this storage plugin.
      *
      * @see URI
-     * @return String denoting the scheme
+     * @return a string denoting the scheme that this plugin associates to
      */
     public String getScheme();
     
     /**
-     * 
-     * @param location, only the scheme matters
-     * @return true if this storage plugin is in charge of uris in the given form 
+     * Check whether the file in the given path can be handled by this storage plugin.
+     *
+     * @param location a URI containing a scheme to be verified
+     * @return true if this storage plugin is in charge of URIs in the given form 
      */
     public boolean handles(URI location);
     
     /**
-     * Allows iteration over a specified location 
-     * nice to use in foreach loops
-     * the scheme is redundant when calling directly in the interface
+     * Iterate over existing objects at a specified location.
+     * This method is particularly nice for use in for-each loops.
+     * The provided scheme is not relevant at this point, but the developer must avoid calling this method
+     * with a path of a different schema.
      * 
-     * for(StorageInputStream dicomObj : storagePlugin.at("file://dataset/")){
+     * <pre>for(StorageInputStream dicomObj : storagePlugin.at("file://dataset/")){
      *      System.err.println(dicomObj.getURI());
-     * }
+     * }</pre>
      * 
+     * @param location the location to read
+     * @return an iterable of storage input streams
+     * @see StorageInputStream
      */
     public Iterable<StorageInputStream> at(URI location);
     
     /**
-     * Stores a DicomObject in the Storage Plug-in
+     * Store a DICOM object into the storage.
      *
      * @param dicomObject Object to be Stored
      * @return The URI of the previously stored Object.
@@ -65,13 +72,17 @@ public interface StorageInterface extends DicooglePlugin {
     public URI store(DicomObject dicomObject);
 
     /**
-     * Stores a InputStream in the Storage
+     * Store a new element into the storage.
      *
-     * @param inputStream Stream to be stored.
-     * @return The URI of the previously stored data.
-     * @throws IOException If anything goes wrong
+     * @param inputStream an input stream with the contents to be stored
+     * @return the URI of the stored data
+     * @throws IOException if an I/O error occurs
      */
     public URI store(DicomInputStream inputStream) throws IOException;
     
+    /** Remove an element at the given URI.
+     * 
+     * @param location the URI of the stored data
+     */
     public void remove(URI location);
 }

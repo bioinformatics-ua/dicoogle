@@ -23,8 +23,8 @@ import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.task.Task;
 
 /**
- * Represents the Index Interface Plugin. It is related with the storage of the
- * document, for instance, DICOM metadata.
+ * Index Interface Plugin. Indexers analyze documents for performing queries. They may index
+ * documents by DICOM metadata for instance, but other document processing procedures may be involved.
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Frederico Valente <fmvalente@ua.pt>
@@ -32,23 +32,37 @@ import pt.ua.dicoogle.sdk.task.Task;
 public interface IndexerInterface extends DicooglePlugin {
 
     /**
-     * Index the file path to the database It can be a directory
+     * Index the file path to the database. It can be a directory.
      *
-     * @param path directory or file to index
+     * @param file directory or file to index
+     * @return a representation of the indexation task
      */
     public Task<Report> index(StorageInputStream file);
 
+    /**
+     * Index multiple file paths to the database.
+     *
+     * @param files a collection of directories and/or files to index
+     * @return a representation of the indexation task
+     */
     public Task<Report> index(Iterable<StorageInputStream> files);
 
     
+    /**
+     * Check whether the file in the given path can be indexed by this indexer. The indexer should verify if
+     * the file holds compatible content (e.g. a DICOM file). If this method returns false, the file will not
+     * be indexed.
+     *
+     * @param path a URI to the file to check
+     * @return whether the indexer can handle the file at the given path
+     */
     public boolean handles(URI path);    
     
-    /* 
-     * Remove the entry in the database
+    /**
+     * Remove the indexed file at the given path from the database.
      * 
-     * @param uri URI of the document
-     * @return boolean true if it was deleted from database, false otherwise.
-     * @see URI
+     * @param path the URI of the document
+     * @return whether it was successfully deleted from the database
      */
-    public boolean unindex(URI uri);
+    public boolean unindex(URI path);
 }
