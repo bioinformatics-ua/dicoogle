@@ -31,7 +31,6 @@ import pt.ua.dicoogle.sdk.StorageInputStream;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
@@ -52,7 +51,7 @@ public class Convert2PNG
     private static ImageReader sReader;
     private static ImageWriter sWriter;
     
-    private static ImageReader getDICOMImageReader() {
+    private synchronized static ImageReader getDICOMImageReader() {
         if(sReader != null)
             return sReader; 
         
@@ -65,13 +64,13 @@ public class Convert2PNG
         return sReader;
     }
     
-    private static ImageWriter getImageWriter() {
+    private synchronized static ImageWriter getImageWriter() {
         if(sWriter != null)
             return sWriter; 
         
         ImageIO.scanForPlugins();
         
-        Iterator<ImageWriter> it = ImageIO.getImageWritersByFormatName("PNG"); // gets the first registered ImageReader that can read DICOM data
+        Iterator<ImageWriter> it = ImageIO.getImageWritersByFormatName("PNG"); // gets the first registered ImageWriter that can write PNG data
         
         sWriter = it.next();
         
@@ -246,9 +245,8 @@ public class Convert2PNG
 		if (writer == null)
 			return null;
 
-		ImageWriteParam writeParams = writer.getDefaultWriteParam(); // and set the default params for it (height, weight, alpha)
+		ImageWriteParam writeParams = writer.getDefaultWriteParam(); // and set the default params for it
 		writeParams.setProgressiveMode(ImageWriteParam.MODE_DEFAULT); // activate progressive mode (adam7), best for low bandwidth connections
-		
         BufferedImage image = ImageLoader.loadImage(dcmStream);
         
         image = scaleImage(image, width, height);
@@ -331,7 +329,6 @@ public class Convert2PNG
 
 		Image scaledImage = image.getScaledInstance(-1, height, Image.SCALE_SMOOTH); // scale the input, smooth scaled
 		BufferedImage result = new BufferedImage(scaledImage.getWidth(null), scaledImage.getHeight(null), BufferedImage.TYPE_INT_RGB); // create the output image
-
 		result.getGraphics().drawImage(scaledImage, 0, 0, null); // draw the scaled image onto the output
 
 		return result;
