@@ -48,31 +48,23 @@ import pt.ua.dicoogle.server.web.utils.ImageLoader;
 public class Convert2PNG
 {	
     private static final Logger logger = LoggerFactory.getLogger(Convert2PNG.class);
-    private static ImageReader sReader;
-    private static ImageWriter sWriter;
     
-    private synchronized static ImageReader getDICOMImageReader() {
-        if(sReader != null)
-            return sReader; 
-        
+    private synchronized static ImageReader createDICOMImageReader() {
         ImageIO.scanForPlugins();
         
         Iterator<ImageReader> it = ImageIO.getImageReadersByFormatName("DICOM"); // gets the first registered ImageReader that can read DICOM data
         
-        sReader = it.next();
+        ImageReader sReader = it.next();
         
         return sReader;
     }
     
-    private synchronized static ImageWriter getImageWriter() {
-        if(sWriter != null)
-            return sWriter; 
-        
+    private synchronized static ImageWriter createImageWriter() {
         ImageIO.scanForPlugins();
         
         Iterator<ImageWriter> it = ImageIO.getImageWritersByFormatName("PNG"); // gets the first registered ImageWriter that can write PNG data
         
-        sWriter = it.next();
+        ImageWriter sWriter = it.next();
         
         return sWriter;
     }
@@ -114,14 +106,14 @@ public class Convert2PNG
 	public static ByteArrayOutputStream DICOM2PNGStream(StorageInputStream dcmStream, int frameIndex, int transformType, int transformParam1, float transformParam2)
 	{	
 		// setup the DICOM reader
-        ImageReader reader = getDICOMImageReader();                
+        ImageReader reader = createDICOMImageReader();                
 		if (reader == null) // if no valid reader was found abort
 			return null;
 		
 		DicomImageReadParam readParams = (DicomImageReadParam) reader.getDefaultReadParam(); // and set the default params for it (height, weight, alpha) // FIXME is this even needed?
 		
 		// setup the PNG writer
-		ImageWriter writer = getImageWriter(); // gets the first registered ImageWriter that can save PNG data
+		ImageWriter writer = createImageWriter(); // gets the first registered ImageWriter that can save PNG data
 		if (writer == null) // if no valid writer was found abort
 			return null;
 
@@ -194,7 +186,7 @@ public class Convert2PNG
 	 */
 	public static ByteArrayOutputStream DICOM2PNGStream(StorageInputStream dcmStream, int frameIndex) throws IOException {
 		// setup the PNG writer
-		ImageWriter writer = getImageWriter();
+		ImageWriter writer = createImageWriter();
 		if (writer == null)
 			return null;
 
@@ -241,7 +233,7 @@ public class Convert2PNG
         }
         
 		// setup the PNG writer
-		ImageWriter writer = getImageWriter();
+		ImageWriter writer = createImageWriter();
 		if (writer == null)
 			return null;
 
@@ -273,20 +265,17 @@ public class Convert2PNG
 	public static int getNumberOfFrames(StorageInputStream dcmFile)
 	{	
 		// setup the DICOM reader
-        ImageReader reader = getDICOMImageReader();                
+        ImageReader reader = createDICOMImageReader();                
 		if (reader == null) // if no valid reader was found abort
 			return -1;
 	
-		try {
-			ImageInputStream inStream = ImageIO.createImageInputStream(dcmFile.getInputStream());
+		try (ImageInputStream inStream = ImageIO.createImageInputStream(dcmFile.getInputStream())) {
 
 			reader.setInput(inStream);
 			
 			// make sure that we will read a frame within bounds
 			int frameCount = reader.getNumImages(true); 
 
-			inStream.close();
-			
 			return frameCount;
 
 		} catch (IOException e) {

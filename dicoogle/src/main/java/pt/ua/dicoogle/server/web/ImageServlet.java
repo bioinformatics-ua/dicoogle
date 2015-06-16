@@ -142,15 +142,15 @@ public class ImageServlet extends HttpServlet
                 {
                     try {
                         // get the requested frame as a PNG stream
-                        byte[] pngBytes = getPNGStream(imgFile, frame, thumbnail).toByteArray();
+                        ByteArrayOutputStream pngStream = getPNGStream(imgFile, frame, thumbnail);
                         // write the stream to the file
                         try (FileOutputStream fos = new FileOutputStream(cf)) {
-                            fos.write(pngBytes);
+                            pngStream.writeTo(fos);
                         }
                         response.setContentType("image/png");
-                        response.setContentLength(pngBytes.length);
+                        response.setContentLength(pngStream.size());
                         try(ServletOutputStream out = response.getOutputStream()) {
-                            out.write(pngBytes);
+                            pngStream.writeTo(out);
                         }
                     } catch (IOException ex) {
                         logger.error("Could not load cached image", ex);
@@ -179,13 +179,10 @@ public class ImageServlet extends HttpServlet
             }
 		} else {
             // if the cache is invalid or not running convert the image and return it "on-the-fly"
-
-            // get the requested frame as a PNG stream
             try {
                 ByteArrayOutputStream pngStream = getPNGStream(imgFile, frame, thumbnail);
                 response.setContentType("image/png"); // set the appropriate type for the PNG image
                 response.setContentLength(pngStream.size()); // set the image size
-                // write the PNG stream to the response output
                 try (ServletOutputStream out = response.getOutputStream()) {
                     pngStream.writeTo(out);
                     pngStream.flush();
@@ -197,7 +194,7 @@ public class ImageServlet extends HttpServlet
 		}
     }
     
-    private synchronized ByteArrayOutputStream getPNGStream(StorageInputStream imgFile, int frame, boolean thumbnail) throws IOException {
+    private ByteArrayOutputStream getPNGStream(StorageInputStream imgFile, int frame, boolean thumbnail) throws IOException {
         ByteArrayOutputStream pngStream;
         if (thumbnail) {
             int thumbSize;
