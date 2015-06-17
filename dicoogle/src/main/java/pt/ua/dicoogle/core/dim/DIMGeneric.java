@@ -76,7 +76,7 @@ public class DIMGeneric
      * it is allow to handle a ArrayList of Strings or SearchResults
      * @param arr
      */
-    public DIMGeneric(Collection<SearchResult> arr) throws Exception{
+    public DIMGeneric(Collection<SearchResult> arr) {
             HashMap<String, Object> extra = null;
             //DebugManager.getInstance().debug("Looking search results: " + arr.size() );
 
@@ -101,7 +101,7 @@ public class DIMGeneric
                 String StudyDescription = toTrimmedString( extra.get("StudyDescription"), false);
                 String InstitutionName = toTrimmedString( extra.get("InstitutionName"), false);
                 /**
-                 * Get data to Serie
+                 * Get data to Series
                  */
                 String serieUID =  toTrimmedString( extra.get("SeriesInstanceUID"), false);
                 //System.out.println("serieUID"+serieUID);
@@ -178,7 +178,7 @@ public class DIMGeneric
                      p.addStudy(s);
 
                      /**
-                     * Create Serie
+                     * Create Series
                      */
                      Serie serie = new Serie(s,serieUID, modality);
                      if (serieNumber!=null && !serieNumber.equals(""))
