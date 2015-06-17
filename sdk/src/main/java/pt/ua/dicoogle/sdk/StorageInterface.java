@@ -32,7 +32,7 @@ import org.dcm4che2.io.DicomInputStream;
 public interface StorageInterface extends DicooglePlugin {    
     
     /**
-     * Get the scheme URI of this storage plugin.
+     * Gets the scheme URI of this storage plugin.
      *
      * @see URI
      * @return a string denoting the scheme that this plugin associates to
@@ -40,7 +40,7 @@ public interface StorageInterface extends DicooglePlugin {
     public String getScheme();
     
     /**
-     * Check whether the file in the given path can be handled by this storage plugin.
+     * Checks whether the file in the given path can be handled by this storage plugin.
      *
      * @param location a URI containing a scheme to be verified
      * @return true if this storage plugin is in charge of URIs in the given form 
@@ -48,7 +48,7 @@ public interface StorageInterface extends DicooglePlugin {
     public boolean handles(URI location);
     
     /**
-     * Iterate over existing objects at a specified location.
+     * Provides a means of iteration over existing objects at a specified location.
      * This method is particularly nice for use in for-each loops.
      * The provided scheme is not relevant at this point, but the developer must avoid calling this method
      * with a path of a different schema.
@@ -64,7 +64,7 @@ public interface StorageInterface extends DicooglePlugin {
     public Iterable<StorageInputStream> at(URI location);
     
     /**
-     * Store a DICOM object into the storage.
+     * Stores a DICOM object into the storage.
      *
      * @param dicomObject Object to be Stored
      * @return The URI of the previously stored Object.
@@ -72,7 +72,7 @@ public interface StorageInterface extends DicooglePlugin {
     public URI store(DicomObject dicomObject);
 
     /**
-     * Store a new element into the storage.
+     * Stores a new element into the storage.
      *
      * @param inputStream an input stream with the contents to be stored
      * @return the URI of the stored data
@@ -80,7 +80,7 @@ public interface StorageInterface extends DicooglePlugin {
      */
     public URI store(DicomInputStream inputStream) throws IOException;
     
-    /** Remove an element at the given URI.
+    /** Removes an element at the given URI.
      * 
      * @param location the URI of the stored data
      */

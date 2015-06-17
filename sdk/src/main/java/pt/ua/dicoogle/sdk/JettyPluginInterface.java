@@ -27,9 +27,9 @@ import org.eclipse.jetty.server.handler.HandlerList;
  */
 public interface JettyPluginInterface extends DicooglePlugin {
     
-        /** Obtain the list of handlers to be attached to Dicoogle's web server resource hierarchy.
-         * 
-         * @return a list of servlet handlers to be attached
-         */
-        HandlerList getJettyHandlers();
+    /** Obtains the list of handlers to be attached to Dicoogle's web server resource hierarchy.
+     * 
+     * @return a list of servlet handlers to be attached
+     */
+    HandlerList getJettyHandlers();
 }

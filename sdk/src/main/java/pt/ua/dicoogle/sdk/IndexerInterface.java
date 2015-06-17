@@ -32,24 +32,28 @@ import pt.ua.dicoogle.sdk.task.Task;
 public interface IndexerInterface extends DicooglePlugin {
 
     /**
-     * Index the file path to the database. It can be a directory.
+     * Indexes the file path to the database. Indexation procedures are asynchronous, and will return
+     * immediately after the call. The outcome is a report that can be retrieved from the given task
+     * as a future.
      *
      * @param file directory or file to index
-     * @return a representation of the indexation task
+     * @return a representation of the asynchronous indexation task
      */
     public Task<Report> index(StorageInputStream file);
 
     /**
-     * Index multiple file paths to the database.
+     * Indexes multiple file paths to the database. Indexation procedures are asynchronous, and will return
+     * immediately after the call. The outcomes are aggregated into a single report and can be retrieved from
+     * the given task as a future.
      *
      * @param files a collection of directories and/or files to index
-     * @return a representation of the indexation task
+     * @return a representation of the asynchronous indexation task
      */
     public Task<Report> index(Iterable<StorageInputStream> files);
 
     
     /**
-     * Check whether the file in the given path can be indexed by this indexer. The indexer should verify if
+     * Checks whether the file in the given path can be indexed by this indexer. The indexer should verify if
      * the file holds compatible content (e.g. a DICOM file). If this method returns false, the file will not
      * be indexed.
      *
@@ -59,7 +63,7 @@ public interface IndexerInterface extends DicooglePlugin {
     public boolean handles(URI path);    
     
     /**
-     * Remove the indexed file at the given path from the database.
+     * Removes the indexed file at the given path from the database.
      * 
      * @param path the URI of the document
      * @return whether it was successfully deleted from the database
