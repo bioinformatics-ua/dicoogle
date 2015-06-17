@@ -23,11 +23,13 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.Semaphore;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.dcm4che2.data.UID;
+
+import pt.ua.dicoogle.server.web.management.Dicoogle.SOPClassSettings;
 
 /**
  * Support class for keeping SOPClass/TransferSyntax association
@@ -220,6 +222,34 @@ public class SOPList {
         }        
         return 0;    
     }   
+    /**
+     * Updates a given SOP Class accepted Tranfer Syntaxes
+     * @param UID SOP Class
+     * @param name
+     * @param vale
+     * @return -1 if something went wrong, 1 otherwise
+     */
+    public synchronized int updateTSField(String UID, String name, boolean value) {
+        TransfersStorage TS;
+        TS = table.get(UID);
+        
+        int index = -1;
+        for (int i = 0; i < TransfersStorage.globalTransferMap.size(); i++) {
+			if (TransfersStorage.globalTransferMap.get(i).equals(name)) {
+				index = i;
+				break;
+			}
+		}
+        if(TS !=null && index != -1)
+        {
+        	if(TS.setTS(value, index) != 0)
+        	{
+        		return -1;
+        	}
+        }
+      
+        return 0;    
+    }   
     
     /**
      * Remove a SOP Class from List
@@ -313,6 +343,33 @@ public class SOPList {
             }
         }
         return count;
+     }
+    
+     public String getSOPList(){
+    	 JSONArray sopList = new JSONArray();
+    	 for(String uid : SOP)
+    	 {	 JSONObject elem = new JSONObject();
+    	 	 elem.put("uid", uid);
+    	 	 elem.put("sop_name", SOPClassSettings.getInstance().getSOPClasses().get(uid));
+    		 JSONArray options = new JSONArray();
+    		 TransfersStorage ts = getTS(uid);
+    		 for(int i = 0; i< ts.getTS().length; i++)
+    		 {
+    			 JSONObject tsobj = new JSONObject();
+    			 String name = ts.globalTransferMap.get(i);
+    			 boolean value = ts.getTS()[i];
+    			 tsobj.put("name", name);
+    			 tsobj.put("value", value);
+    			 
+    			 options.add(tsobj);
+    		 }
+    		 elem.put("options", options);
+    		 sopList.add(elem);
+    		 
+    		 
+    	 }
+    	 return sopList.toString();
+    	 
      }
     
             

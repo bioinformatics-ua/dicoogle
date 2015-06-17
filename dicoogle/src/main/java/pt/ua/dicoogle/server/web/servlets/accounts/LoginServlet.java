@@ -25,8 +25,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import net.sf.json.JSONObject;
+import javax.servlet.http.HttpSession;
 
+import net.sf.json.JSONObject;
 import pt.ua.dicoogle.server.web.auth.LoggedIn;
 import pt.ua.dicoogle.server.web.auth.Session;
 
@@ -38,9 +39,9 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+    	resp.addHeader("Access-Control-Allow-Origin", "*");
         //Try login
-        LoggedIn mLoggedIn = Session.servletLogin(req, resp, true);//auth.login(user, pass);
+        LoggedIn mLoggedIn = Session.webappLogin(req, resp, true).getLogin();//servletLogin(req, resp, true);//auth.login(user, pass);
 
         if (mLoggedIn == null) {
             resp.sendError(401, "Login failed");
@@ -50,6 +51,31 @@ public class LoginServlet extends HttpServlet {
         JSONObject json_resp = new JSONObject();
         json_resp.put("user", mLoggedIn.getUserName());
         json_resp.put("admin", mLoggedIn.isAdmin());
+
+
+        //Set response content type
+        resp.setContentType("application/json");
+
+        //Write response
+        json_resp.write(resp.getWriter());
+    }
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		resp.addHeader("Access-Control-Allow-Origin", "*");
+		HttpSession session = req.getSession(false);
+		
+		LoggedIn mLoggedIn = Session.getUserLoggedIn(session);
+		if(mLoggedIn == null){
+			resp.sendError(401);
+            return;
+		}
+			
+		JSONObject json_resp = new JSONObject();
+        json_resp.put("user", mLoggedIn.getUserName());
+        json_resp.put("admin", mLoggedIn.isAdmin());
+        
 
         //Set response content type
         resp.setContentType("application/json");

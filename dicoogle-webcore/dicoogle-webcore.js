@@ -2,8 +2,6 @@
  * This module provides support to web interface plugins.
  */
 module.exports = (function () {
-  'use strict';
-  
   var m = { constructors: {} };
   
   // hidden properties
@@ -11,14 +9,14 @@ module.exports = (function () {
   var slots = {};
   var plugins = {};
   var packages = {};
-  var base_url = '';
+  var base_url = null;
 
   var eventListeners = {
-    load       : [],
-    loadMenu   : [],
-    loadQuery  : [],
-    loadResult : [],
-    result     : []
+    load: [],
+    loadMenu: [],
+    loadQuery: [],
+    loadResult: [],
+    result: []
   };
     
   /** @param eventName the name of the event (must be one of 'load','loadMenu','loadQuery','loadResult')
@@ -37,19 +35,19 @@ module.exports = (function () {
   m.addResultListener = function (fn) {
     eventListeners.result.push(fn);
   };
-  /** @param fn function(name, slotId) */
+  /** @param fn function(pluginDesc) */
   m.addPluginLoadListener = function (fn) {
     eventListeners.load.push(fn);
   };
-  /** @param fn function(name) */
+  /** @param fn function(pluginDesc) */
   m.addMenuPluginLoadListener = function (fn) {
     eventListeners.loadMenu.push(fn);
   };
-  /** @param fn function(name) */
+  /** @param fn function(pluginDesc) */
   m.addQueryPluginLoadListener = function (fn) {
     eventListeners.loadQuery.push(fn);
   };
-  /** @param fn function(name) */
+  /** @param fn function(pluginDesc) */
   m.addResultPluginLoadListener = function (fn) {
     eventListeners.loadResult.push(fn);
   };
@@ -76,12 +74,15 @@ module.exports = (function () {
     
     // take all <dicoogle-slot> elements in page
     var slotsDOM = document.getElementsByTagName('dicoogle-slot');
-    for (let i = 0 ; i < slotsDOM.length ; i++) {
+    for (let i = 0; i < slotsDOM.length; i++) {
       m.loadSlot(slotsDOM[i]);
     }
     
     // finally, fetch the needed plugins and load each one of them
-    m.fetchPlugins(Object.keys(slots));
+    let slotIds = Object.keys(slots);
+    if (Object.keys(plugins).length !== slotIds.length) {
+      m.fetchPlugins(slotIds);
+    }
   };
   
   /** Load a new Dicoogle slot into the core.
@@ -89,12 +90,12 @@ module.exports = (function () {
    * @return the id of the slot
    */
   m.loadSlot = function (slotDOM) {
-    var elemAttributes = slotDOM.attributes;
+    let elemAttributes = slotDOM.attributes;
     if (!elemAttributes['data-slot-id']) {
-      console.error('Dicoogle web UI slot lacking id attribute!');
-      return;
+      console.error('Dicoogle web UI slot has no data-slot-id attribute!');
+      return null;
     }
-    var id = elemAttributes['data-slot-id'].value;
+    let id = elemAttributes['data-slot-id'].value;
     slots[id] = new this.WebUISlot(id, slotDOM);
     console.log('Loaded Dicoogle slot', id);
     return id;
@@ -105,14 +106,14 @@ module.exports = (function () {
    */
   m.fetchPlugins = function (slotIds) {
     console.log('Fetching Dicoogle web UI plugin descriptors ...');
-    var uri = 'webui';
-    service_get(uri, {'slot-id':slotIds}, function(error, data) {
+    let uri = 'webui';
+    service_get(uri, {'slot-id': slotIds}, function(error, data) {
       if (error) {
         console.error('Failed to fetch plugin descriptors:' , error);
         return;
       }
       var packageArray = data.plugins;
-      for (let i = 0 ; i < packageArray.length ; i++) {
+      for (let i = 0; i < packageArray.length; i++) {
         packages[packageArray[i].name] = packageArray[i];
         load_plugin(packageArray[i]);
       }
@@ -152,9 +153,9 @@ module.exports = (function () {
    * @param callback function(error, result)
    */
   m.request = function(service, arg1, arg2) {
-    var data = (typeof arg1 === 'object') ? arg1 : {};
-    var callback = (typeof arg1 === 'function') ? arg1 : arg2;
-    if (typeof callback !== 'function')  {
+    let data = (typeof arg1 === 'object') ? arg1 : {};
+    let callback = (typeof arg1 === 'function') ? arg1 : arg2;
+    if (typeof callback !== 'function') {
       console.error('invalid call to DicoogleWeb.request : a callback function is required');
       return;
     }
@@ -178,20 +179,20 @@ module.exports = (function () {
     pluginInstance.Caption = thisPackage.dicoogle.caption || name;
     plugins[name] = pluginInstance;
     slots[slotId].attachPlugin(pluginInstance);
-    for (let i = 0 ; i < eventListeners.load.length ; i++) {
-      eventListeners.load[i](name, slotId);
+    for (let i = 0; i < eventListeners.load.length; i++) {
+      eventListeners.load[i]({name, slotId, caption: pluginInstance.Caption});
     }
     if (slotId === 'query') {
-      for (let i = 0 ; i < eventListeners.loadQuery.length ; i++) {
-        eventListeners.loadQuery[i](name);
+      for (let i = 0; i < eventListeners.loadQuery.length; i++) {
+        eventListeners.loadQuery[i]({name, slotId, caption: pluginInstance.Caption});
       }
     } else if (slotId === 'result') {
-      for (let i = 0 ; i < eventListeners.loadResult.length ; i++) {
-        eventListeners.loadResult[i](name);
+      for (let i = 0; i < eventListeners.loadResult.length; i++) {
+        eventListeners.loadResult[i]({name, slotId, caption: pluginInstance.Caption});
       }
     } else if (slotId === 'menu') {
-      for (let i = 0 ; i < eventListeners.loadMenu.length ; i++) {
-        eventListeners.loadMenu[i](name);
+      for (let i = 0; i < eventListeners.loadMenu.length; i++) {
+        eventListeners.loadMenu[i]({name, slotId, caption: pluginInstance.Caption});
       }
     }
   };
@@ -201,6 +202,7 @@ module.exports = (function () {
     this.id = id;
     this.dom = dom;
     this.attachments = [];
+    this.dom.className = 'dicoogle-webcore-' + this.id;
     
     this.attachPlugin = function(plugin) {
       if (plugin.SlotId !== this.id) {
@@ -210,10 +212,8 @@ module.exports = (function () {
       if (this.attachments.length === 0) {
         this.dom.innerHTML = '';
       }
-      if (this.attachments.length > 0) {
-        this.dom.appendChild(document.createElement('hr'));
-      }
       let pluginDOM = document.createElement('div');
+      pluginDOM.className = this.dom.className + '_' + this.attachments.length;
       this.dom.appendChild(pluginDOM);
       plugin.render(pluginDOM);
       this.attachments.push(plugin);
@@ -224,11 +224,9 @@ module.exports = (function () {
     this.refresh = function() {
       let slotDOM = this.dom;
       slotDOM.innerHTML = '';
-      for (let i = 0 ; i < this.attachments.length ; i++) {
-        if (i > 0) {
-          slotDOM.appendChild(document.createElement('hr'));
-        }
+      for (let i = 0; i < this.attachments.length; i++) {
         let pluginDOM = document.createElement('div');
+        pluginDOM.className = slotDOM.className + '_' + i;
         slotDOM.appendChild(pluginDOM);
         this.attachments[i].render(pluginDOM);
       }
@@ -264,7 +262,7 @@ module.exports = (function () {
     let words = s.split('-');
     if (words.length === 0) return '';
     let t = words[0];
-    for (let i = 1 ; i < words.length ; i++) {
+    for (let i = 1; i < words.length; i++) {
         if (words[i].length !== 0) {
             t += words[i][0].toUpperCase() + words[i].substring(1);
         }
@@ -275,7 +273,7 @@ module.exports = (function () {
   /// @deprecated
   function rename_element(node,name) {
     var renamed = document.createElement(name); 
-    for (var i = 0 ; i < node.attributes.length ; i++) {
+    for (var i = 0; i < node.attributes.length; i++) {
       let a = node.attributes[i];
       renamed.setAttribute(a.nodeName, a.nodeValue);
     }
@@ -292,10 +290,10 @@ module.exports = (function () {
       console.error('Cannot show results without a result slot.');
       return;
     }
-    for (let i = 0 ; i < resultSlot.attachments.length ; i++) {
+    for (let i = 0; i < resultSlot.attachments.length; i++) {
       resultSlot.attachments[i].onResult(result, requestTime, options);
     }
-    for (let i = 0 ; i < eventListeners.result.length ; i++) {
+    for (let i = 0; i < eventListeners.result.length; i++) {
       eventListeners.result[i](result, requestTime, options);
     }
   }
@@ -323,7 +321,7 @@ module.exports = (function () {
       let qparams = [];
       for (let pname in qs) {
         if (isArray(qs[pname])) {
-          for (let j = 0 ; j < qs[pname].length ; j++) {
+          for (let j = 0; j < qs[pname].length; j++) {
             qparams.push(pname + '=' + encodeURIComponent(qs[pname][j]));
           }
         } else {
@@ -393,10 +391,18 @@ module.exports = (function () {
           //console.log('[CALLBACK] Dicoogle slot ', this.slotId,' created: ', this);
         }},
         attachedCallback: { value () {
-          var attSlotId = this.attributes['data-slot-id'];
+          let attSlotId = this.attributes['data-slot-id'];
           if (!attSlotId || !attSlotId.value || attSlotId === '') {
             console.error('Dicoogle slot contains illegal data-slot-id!');
             return;
+          }
+          const sId = attSlotId.value;
+          // add content if the webcore plugin is already available
+          if (base_url !== null && !slots[sId]) {
+            m.loadSlot(this);
+            if (!plugins[sId]) {
+              m.fetchPlugins([sId]);
+            }
           }
           //console.log('[CALLBACK] Dicoogle slot attached: ', this);
         }},

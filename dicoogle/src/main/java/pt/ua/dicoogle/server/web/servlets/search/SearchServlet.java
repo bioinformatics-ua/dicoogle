@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -40,6 +41,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 
 import pt.ua.dicoogle.core.QueryExpressionBuilder;
+import pt.ua.dicoogle.core.dim.DIMGeneric;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
@@ -53,32 +55,38 @@ import pt.ua.dicoogle.sdk.task.Task;
 public class SearchServlet extends HttpServlet {
 
   private static final long serialVersionUID = 1L;
+  	public enum SearchType {
 
+      ALL, PATIENT;
+  	}
+  	private SearchType searchType;
+  	public SearchServlet(){
+  		searchType = SearchType.ALL;
+  	}
+  	public SearchServlet(SearchType stype){
+  		if(stype == null)
+  			searchType = SearchType.ALL;
+  		else
+  		searchType = stype;
+  	}
     //TODO: QIDO;
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	response.addHeader("Access-Control-Allow-Origin", "*");
         /*
          Example: http://localhost:8080/search?query=wrix&keyword=false&provicer=lucene
          */
         String query = request.getParameter("query");
         String providers[] = request.getParameterValues("provider");
         boolean keyword = Boolean.parseBoolean(request.getParameter("keyword"));
-        String[] superFields = request.getParameterValues("fields");
+        String[] fields = request.getParameterValues("field");
 
         // retrieve desired fields
         Set<String> actualFields;
-        if (superFields == null || superFields.length == 0) {
+        if (fields == null || fields.length == 0) {
             actualFields = null;
         } else {
-            actualFields = new HashSet<>();
-            for (String s : superFields) {
-                String[] moreFields = s.split(";");
-                for (String f : moreFields) {
-                    if (!f.isEmpty()) {
-                        actualFields.add(f);
-                    }
-                }
-            }
+            actualFields = new HashSet<>(Arrays.asList(fields));
         }
       
         if (StringUtils.isEmpty(query)) {
@@ -164,8 +172,14 @@ public class SearchServlet extends HttpServlet {
         for (SearchResult r : results) {
             resultsArr.add(r);
         }
-        
-        String json = processJSON(resultsArr, elapsedTime);
+                
+        String json;
+        if(searchType == SearchType.PATIENT) {
+        	response.setContentType("application/json");
+            response.getWriter().append(getDIM(resultsArr));
+        	return;
+        }
+        json = processJSON(resultsArr, elapsedTime);
 
         response.setContentType("application/json");
         response.getWriter().append(json);
@@ -178,7 +192,8 @@ public class SearchServlet extends HttpServlet {
             rj.put("uri", r.getURI().toString());
 
             JSONObject fields = new JSONObject();
-            for (Entry<String, Object> f : r.getExtraData().entrySet()) {
+
+            for (Entry<String,Object> f : r.getExtraData().entrySet()) {
                 // remove padding from string representations before accumulating
                 fields.accumulate(f.getKey(), f.getValue().toString().trim());
             }
@@ -191,5 +206,15 @@ public class SearchServlet extends HttpServlet {
         resp.put("elapsedTime", elapsedTime);
 
         return resp.toString();
+    }
+    
+    private static String getDIM(ArrayList<SearchResult> allresults){
+    	try {
+        	DIMGeneric dimModel = new DIMGeneric(allresults);
+            return dimModel.getJSON();
+		} catch (RuntimeException e) {
+            LoggerFactory.getLogger(SearchServlet.class).warn("failed to get DIM", e);
+            return "";
+		}
     }
 }
