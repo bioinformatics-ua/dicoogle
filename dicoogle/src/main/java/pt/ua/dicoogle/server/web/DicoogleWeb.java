@@ -60,7 +60,6 @@ import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServlet;
 
 import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.eclipse.jetty.servlets.GzipFilter;
 import org.slf4j.Logger;
@@ -98,7 +97,6 @@ public class DicoogleWeb {
     private final int port;
 
     private final ContextHandlerCollection contextHandlers;
-    private final FilterHolder corsFilter;
     private ServletContextHandler pluginHandler = null;
     private PluginRestletApplication pluginApp = null;
     private ServletContextHandler legacyHandler = null;
@@ -112,8 +110,8 @@ public class DicoogleWeb {
     public DicoogleWeb(int port) throws Exception {
         logger.info("Starting Web Services in DicoogleWeb. Port: {}", port);
         System.setProperty("org.apache.jasper.compiler.disablejsr199", "true");
-      //  System.setProperty("org.mortbay.jetty.webapp.parentLoaderPriority", "true");
-        // System.setProperty("production.mode", "true");
+        //System.setProperty("org.mortbay.jetty.webapp.parentLoaderPriority", "true");
+        //System.setProperty("production.mode", "true");
 
         this.port = port;
 
@@ -121,30 +119,16 @@ public class DicoogleWeb {
         final URL warUrl = Thread.currentThread().getContextClassLoader().getResource(WEBAPPDIR);
         final String warUrlString = warUrl.toExternalForm();
 
-        // CORS support
-        String origins = //ServerSettings.getInstance().getWeb().getAccessControlAllowOrigin();
-                "*";
-        if (origins != null) {
-            this.corsFilter = new FilterHolder(CrossOriginFilter.class);
-            corsFilter.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, origins);
-        } else {
-            this.corsFilter = null;
-        }
-
         //setup the DICOM to PNG image servlet, with a local cache
-        final ServletContextHandler dic2png = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        dic2png.setContextPath(CONTEXTPATH);
         cache = new LocalImageCache("dic2png", 300, 900); // pooling rate of 12/hr and max un-used cache age of 15 minutes
-        dic2png.addServlet(new ServletHolder(new ImageServlet(cache)), "/dic2png");
+        final ServletContextHandler dic2png = createServletHandler(new ImageServlet(cache), "/dic2png");
         cache.start(); // start the caching system
 
         // setup the DICOM to PNG image servlet
         final ServletContextHandler dictags = createServletHandler(new TagsServlet(), "/dictags");
 
         // setup the Export to CSV Servlet
-        final ServletContextHandler csvServletHolder = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        csvServletHolder.setContextPath(CONTEXTPATH);
-        csvServletHolder.addServlet(new ServletHolder(new ExportToCSVServlet()), "/export");
+        final ServletContextHandler csvServletHolder = createServletHandler(new ExportToCSVServlet(), "/export");
         File tempDir = new File(ServerSettings.getInstance().getPath());
         csvServletHolder.addServlet(new ServletHolder(new ExportCSVToFILEServlet(tempDir)), "/exportFile");
 
@@ -171,14 +155,10 @@ public class DicoogleWeb {
         FilterHolder gzFilter = webpages.addFilter(GzipFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
         
         this.pluginApp = new PluginRestletApplication();
-        this.pluginHandler = new ServletContextHandler();
-        this.pluginHandler.setContextPath(CONTEXTPATH);
-        this.pluginHandler.addServlet(new ServletHolder(new RestletHttpServlet(this.pluginApp)), "/ext/*");
+        this.pluginHandler = createServletHandler(new RestletHttpServlet(this.pluginApp), "/ext/*");
 
         this.legacyApp = new LegacyRestletApplication();
-        this.legacyHandler = new ServletContextHandler();
-        this.legacyHandler.setContextPath(CONTEXTPATH);
-        this.legacyHandler.addServlet(new ServletHolder(new RestletHttpServlet(this.legacyApp)), "/legacy/*");
+        this.legacyHandler = createServletHandler(new RestletHttpServlet(this.legacyApp), "/legacy/*");
         
         // list the all the handlers mounted above
         Handler[] handlers = new Handler[]{
@@ -236,11 +216,21 @@ public class DicoogleWeb {
     
     private ServletContextHandler createServletHandler(HttpServlet servlet, String path){
         ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
+        handler.setDisplayName("cross-origin");
         handler.setContextPath(CONTEXTPATH);
-        if (this.corsFilter != null) {
-            handler.addFilter(this.corsFilter, "/*", EnumSet.of(DispatcherType.REQUEST));
-        }
         handler.addServlet(new ServletHolder(servlet), path);
+        
+        // CORS support
+        String origins = //ServerSettings.getInstance().getWeb().getAccessControlAllowOrigin();
+                "*";
+        if (origins != null) {
+            // add cross-orign filter, and then use the provided FilterHolder to configure it
+            FilterHolder corsHolder = handler.addFilter(CrossOriginFilter.class,"/*",EnumSet.of(DispatcherType.REQUEST));
+            corsHolder.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, origins);
+            corsHolder.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, origins);
+            corsHolder.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,POST,HEAD,PUT,DELETE");
+            corsHolder.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "X-Requested-With,Content-Type,Accept,Origin");
+        }
         return handler;
     }
 
@@ -254,16 +244,19 @@ public class DicoogleWeb {
             return;
         }
 
-        // stop the server
-        server.stop();
+        try {
+            // stop the server
+            server.stop();
 
-        // voiding its value
-        server = null;
+            // voiding its value
+            server = null;
+        } finally {
 
-        // and remove the local cache, if any
-        if (cache != null) {
-            cache.terminate();
-            cache = null;
+            // and remove the local cache, if any
+            if (cache != null) {
+                cache.terminate();
+                cache = null;
+            }
         }
         
         this.pluginHandler = null;

@@ -253,18 +253,18 @@ public class ControlServices implements IServices
     @Override
     public void startWebServer(){
         logger.info("Starting WebServer");
-        
-        if(webServices == null){
-            try {
+
+        try {
+            if(webServices == null){
                 webServices = new DicoogleWeb(8080);
                 webServerRunning = true;
                 webServicesRunning = true;
-            } catch (Exception ex) {
-                logger.error(ex.getMessage(), ex);
+                logger.info("Starting Dicoogle Web");
             }
+        } catch (Exception ex) {
+            logger.error("Failed to launch the web server", ex);
         }
         
-        logger.info("Starting Dicoogle Web");
     }
 
     @Override
