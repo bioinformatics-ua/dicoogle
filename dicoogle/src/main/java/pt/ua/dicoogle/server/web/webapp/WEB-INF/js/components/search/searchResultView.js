@@ -23,16 +23,19 @@ var ResultSearch = React.createClass({
     current: 0};
   },
   componentDidMount: function() {
-  	this.initSearch();
+
+  	this.initSearch(this.props.items);
+
   },
+
   componentWillMount: function() {
     // Subscribe to the store.
     SearchStore.listen(this._onChange);
   },
 
-	initSearch: function(){
-    console.log("PARAM: ", this.props.items);
-    ActionCreators.search(this.props.items);
+	initSearch: function(props){
+    console.log("PARAM: ", props);
+    ActionCreators.search(props);
 	},
 
   render: function() {

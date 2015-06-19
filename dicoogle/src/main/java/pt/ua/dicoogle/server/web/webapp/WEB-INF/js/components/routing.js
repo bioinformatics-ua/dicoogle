@@ -182,11 +182,11 @@ var App = React.createClass({
           var Routing = function () {
 
             var routes = (
-              <Route handler={App} path="/">
-                <Route name="search" addHandlerKey={true} handler={SearchPage}>
-                  <Route name="silo" path="/results" handler={ResultPage}/>
+              <Route handler={App} >
+                <Route path="search" addHandlerKey={true} handler={SearchPage} >
                 </Route>
                 <Route name="management" addHandlerKey={true} handler={ManagementPage} />
+                  <Route name="results" addHandlerKey={true} handler={ResultPage} />
                 <Route name="indexer" addHandlerKey={true} handler={IndexerPage} />
                 <Route name="about" addHandlerKey={true} handler={AboutPage} />
                 <Route name="login" addHandlerKey={true} handler={LoginPage} />

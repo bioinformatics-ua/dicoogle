@@ -20,14 +20,21 @@ var RouteHandler = Router.RouteHandler
 import {UserMixin} from '../mixins/userMixin';
 
 var Search = React.createClass({
-    mixins : [UserMixin],
+    //mixins : [UserMixin],
     getInitialState: function (){
-
+      document.getElementById('container').style.display = 'block';
         return { label:'login', searchState: "simple" };
     },
     componentDidMount: function(){
       this.enableAutocomplete();
       this.enableEnterKey();
+
+      if(this.getUrlVars()['query'])
+      {
+        this.onSearchByUrl();
+      }
+
+
     },
     componentDidUpdate: function(){
       this.enableAutocomplete();
@@ -36,6 +43,18 @@ var Search = React.createClass({
     componentWillMount: function(){
 
     },
+    getUrlVars:function()
+   {
+       var vars = [], hash;
+       var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+       for(var i = 0; i < hashes.length; i++)
+       {
+           hash = hashes[i].split('=');
+           vars.push(hash[0]);
+           vars[hash[0]] = hash[1];
+       }
+       return vars;
+   },
     render: function() {
         var selectionButtons = (
             <div>
@@ -92,7 +111,12 @@ var Search = React.createClass({
     this.setState({searchState: switchState})
 
     },
+    onSearchByUrl : function(){
+      var params = {text: this.getUrlVars()['query'], keyword: this.getUrlVars()['keyword'], provider:this.getUrlVars()['provider']};
 
+      React.render(<ResultSearch items={params}/>, document.getElementById("container"));
+    }
+    ,
     onSearchClicked : function(){
         // console.log(React.getInitialState(<ResultSearch/>) );
         var text = document.getElementById("free_text").value;
