@@ -41,6 +41,9 @@ import {LoginView} from './login/loginView';
 import {LoadingView} from './login/loadingView';
 import {UserMixin} from './mixins/userMixin';
 
+import {DirectImageView} from '../components/direct/directImageView';
+import {DirectDumpView} from '../components/direct/directDumpView';
+
 import {Endpoints} from '../constants/endpoints';
 
 
@@ -179,6 +182,21 @@ var App = React.createClass({
             }
           });
 
+          var DirectImagePage = React.createClass({
+            render: function() {
+              React.render(<DirectImageView/>, document.getElementById("container"));
+              return (<div/>);
+            }
+          });
+
+          var DirectDumpPage = React.createClass({
+            render: function() {
+              React.render(<DirectDumpView/>, document.getElementById("container"));
+              return (<div/>);
+            }
+          });
+
+
           var Routing = function () {
 
             var routes = (
@@ -191,6 +209,8 @@ var App = React.createClass({
                 <Route name="about" addHandlerKey={true} handler={AboutPage} />
                 <Route name="login" addHandlerKey={true} handler={LoginPage} />
                 <Route name="loading" addHandlerKey={true} handler={LoadingPage} />
+                <Route name="image" addHandlerKey={true} handler={DirectImagePage} />
+                <Route name="dump" addHandlerKey={true} handler={DirectDumpPage} />
 
 
                 <DefaultRoute handler={LoadingPage} />

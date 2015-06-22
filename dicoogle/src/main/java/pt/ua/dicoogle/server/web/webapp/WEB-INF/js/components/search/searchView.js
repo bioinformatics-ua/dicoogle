@@ -18,6 +18,7 @@ var Link = Router.Link;
 var RouteHandler = Router.RouteHandler
 
 import {UserMixin} from '../mixins/userMixin';
+import {getUrlVars} from '../../utils/url';
 
 var Search = React.createClass({
     //mixins : [UserMixin],
@@ -29,7 +30,7 @@ var Search = React.createClass({
       this.enableAutocomplete();
       this.enableEnterKey();
 
-      if(this.getUrlVars()['query'])
+      if(getUrlVars()['query'])
       {
         this.onSearchByUrl();
       }
@@ -43,18 +44,6 @@ var Search = React.createClass({
     componentWillMount: function(){
 
     },
-    getUrlVars:function()
-   {
-       var vars = [], hash;
-       var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-       for(var i = 0; i < hashes.length; i++)
-       {
-           hash = hashes[i].split('=');
-           vars.push(hash[0]);
-           vars[hash[0]] = hash[1];
-       }
-       return vars;
-   },
     render: function() {
         var selectionButtons = (
             <div>
@@ -112,7 +101,7 @@ var Search = React.createClass({
 
     },
     onSearchByUrl : function(){
-      var params = {text: this.getUrlVars()['query'], keyword: this.getUrlVars()['keyword'], provider:this.getUrlVars()['provider']};
+      var params = {text: getUrlVars()['query'], keyword: getUrlVars()['keyword'], provider: getUrlVars()['provider']};
 
       React.render(<ResultSearch items={params}/>, document.getElementById("container"));
     }
