@@ -39,7 +39,9 @@ var Search = React.createClass({
     render: function() {
         var selectionButtons = (
             <div>
-            <button type="button" className="btn btn_dicoogle" onClick={this.renderFilter} data-trigger="advance-search" id="btn-advance">Advanced</button>
+            <button type="button" className="btn btn_dicoogle" onClick={this.renderFilter} data-trigger="advance-search" id="btn-advance">
+              {this.state.searchState === "simple" ? "Advanced" : "Basic"}
+            </button>
                 <div className="btn-group">
                     <button type="button" className="btn btn_dicoogle dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                         Select Providers <span className="caret"></span>
