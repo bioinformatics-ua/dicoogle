@@ -29,7 +29,7 @@ var AdvancedSearch = React.createClass({
                             </div>
                             <div className="globalmargin">
                                 <div className="subject_text">Patient ID</div>
-                                <input id="patient_id"type="text" className="form-control" placeholder="(All IDS)"></input>
+                                <input id="patient_id"type="text" className="form-control" placeholder="(All Patient IDs)"></input>
                             </div>
                             <div className="globalmargin">
                                 <div className="subject_text">Patient Gender</div>
@@ -43,7 +43,7 @@ var AdvancedSearch = React.createClass({
                             </div>
                             <div className="globalmargin">
                                 <div className="subject_text">Instituition Name</div>
-                                <input id="instituition" type="text" className="form-control" placeholder="(All Instituitions)"></input>
+                                <input id="instituition" type="text" className="form-control" placeholder="(All Institutions)"></input>
                             </div>
                             <div className="globalmargin">
                                 <div className="subject_text">Physician</div>
@@ -147,19 +147,19 @@ var AdvancedSearch = React.createClass({
        query = query + gender;
        //ID
        var patientId = document.getElementById("patient_id").value;
-       if(this.checkEmpty(patientId) != "*")
+       if(this.checkEmpty(patientId) !== "*")
        query = query + " AND PatientID: " + this.checkEmpty(patientId);
        //Instituition
        var instituition = document.getElementById("instituition").value;
-       if(this.checkEmpty(instituition) != "*")
+       if(this.checkEmpty(instituition) !== "*")
        query = query + " AND InstitutionName: " + this.checkEmpty(instituition);
        //Pshysician
        var physician = document.getElementById("physician").value;
-       if(this.checkEmpty(physician) != "*")
+       if(this.checkEmpty(physician) !== "*")
        query = query + " AND PerformingPhysicianName: " + this.checkEmpty(physician);
        //OperatorName
        var OperatorName = document.getElementById("OperatorName").value;
-       if(this.checkEmpty(OperatorName) != "*")
+       if(this.checkEmpty(OperatorName) !== "*")
        query = query + " AND OperatorName: " + this.checkEmpty(OperatorName);
        ///////
 
@@ -175,7 +175,7 @@ var AdvancedSearch = React.createClass({
          }
        })
 
-       if(modalities != "")
+       if(modalities !== "")
        {
          modalities = " AND Modality: ("+modalities+")";
          query = query + modalities;

@@ -3,14 +3,14 @@
 
 var Reflux = require('reflux');
 
-import {TransferenceActions} from '../actions/transferenceActions';
+import {TransferActions} from '../actions/transferActions';
 
 import {Endpoints} from '../constants/endpoints';
 
 import {request} from '../handlers/requestHandler';
 
-var TransferenceStore = Reflux.createStore({
-    listenables: TransferenceActions,
+var TransferStore = Reflux.createStore({
+    listenables: TransferActions,
     init: function () {
        this._contents = {};
     },
@@ -70,4 +70,4 @@ var TransferenceStore = Reflux.createStore({
     }
 });
 
-export {TransferenceStore};
+export {TransferStore};

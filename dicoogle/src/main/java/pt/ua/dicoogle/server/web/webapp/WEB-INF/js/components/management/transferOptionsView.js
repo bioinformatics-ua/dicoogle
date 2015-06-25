@@ -1,13 +1,10 @@
 var React = require('react');
 
-import {TransferenceStore} from '../../stores/transferenceStore';
-import {TransferenceActions} from '../../actions/transferenceActions';
-
+import {TransferStore} from '../../stores/transferStore';
+import {TransferActions} from '../../actions/transferActions';
 import {Endpoints} from '../../constants/endpoints';
 
-
-
-var TransferenceOptionsView = React.createClass({
+var TransferOptionsView = React.createClass({
 
       getInitialState: function() {
         return {data: [],
@@ -17,12 +14,12 @@ var TransferenceOptionsView = React.createClass({
       componentDidMount: function(){
         console.log("componentdidmount: get");
 
-        TransferenceActions.get();
+        TransferActions.get();
        },
       componentWillMount: function() {
        	// Subscribe to the store.
          console.log("subscribe listener");
-         TransferenceStore.listen(this._onChange);
+         TransferStore.listen(this._onChange);
      	},
       _onChange: function(data){
         if (this.isMounted()){
@@ -33,9 +30,11 @@ var TransferenceOptionsView = React.createClass({
       render: function() {
         var self =this;
 
-        if(this.state.status == "loading")
+        if(this.state.status === "loading")
         {
-          return (<div>loading</div>);
+          return (<div className="loader-inner ball-pulse">
+            <div/><div/><div/>
+           </div>);
         }
 
         var array = self.state.data;
@@ -99,7 +98,7 @@ var TransferenceOptionsView = React.createClass({
 
       handleChange:function(id, index){
         console.log("Index ", index);
-        TransferenceActions.set(this.state.selectedIndex, index,document.getElementById(id).checked);
+        TransferActions.set(this.state.selectedIndex, index,document.getElementById(id).checked);
         this.request(id,document.getElementById(id).checked);
 
       },
@@ -148,6 +147,4 @@ var TransferenceOptionsView = React.createClass({
       }
       });
 
-export {
-  TransferenceOptionsView
-}
+export { TransferOptionsView };

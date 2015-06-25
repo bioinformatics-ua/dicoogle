@@ -27,28 +27,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
 
 import org.apache.commons.lang3.StringUtils;
 
 import pt.ua.dicoogle.core.QueryExpressionBuilder;
 import pt.ua.dicoogle.core.dim.DIMGeneric;
-import pt.ua.dicoogle.core.dim.Patient;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
@@ -86,6 +79,15 @@ public class SearchServlet extends HttpServlet {
         String query = request.getParameter("query");
         String providers[] = request.getParameterValues("provider");
         boolean keyword = Boolean.parseBoolean(request.getParameter("keyword"));
+        String[] fields = request.getParameterValues("field");
+
+        // retrieve desired fields
+        Set<String> actualFields;
+        if (fields == null || fields.length == 0) {
+            actualFields = null;
+        } else {
+            actualFields = new HashSet<>(Arrays.asList(fields));
+        }
       
         if (StringUtils.isEmpty(query)) {
             response.sendError(400, "No query supplied!");
@@ -97,7 +99,7 @@ public class SearchServlet extends HttpServlet {
             query = q.getQueryString();
         }
 
-        List<String> providerList = Collections.EMPTY_LIST;
+        List<String> providerList;
         boolean queryAllProviders = false;
         if (providers == null || providers.length == 0) {
             queryAllProviders = true;
@@ -120,33 +122,31 @@ public class SearchServlet extends HttpServlet {
         }
 
         HashMap<String, String> extraFields = new HashMap<>();
-        //attaches the required extrafields
-        extraFields.put("PatientName", "PatientName");
-        extraFields.put("PatientID", "PatientID");
-        extraFields.put("PatientSex","PatientSex");
-        extraFields.put("Modality", "Modality");
-        extraFields.put("StudyDate", "StudyDate");
-        extraFields.put("SeriesInstanceUID", "SeriesInstanceUID");
-        extraFields.put("SeriesNumber","SeriesNumber");
-        extraFields.put("StudyID", "StudyID");
-        extraFields.put("StudyInstanceUID", "StudyInstanceUID");
-        extraFields.put("Thumbnail", "Thumbnail");
-        extraFields.put("SOPInstanceUID", "SOPInstanceUID");
-        extraFields.put("InstitutionName", "InstitutionName");
-        extraFields.put("StudyDescription", "StudyDescription");
-        extraFields.put("SeriesDescription", "SeriesDescription");
-
-
+        if (actualFields == null) {
+            //attaches the required extrafields
+            extraFields.put("PatientID", "PatientID");
+            extraFields.put("SOPInstanceUID", "SOPInstanceUID");
+            extraFields.put("StudyInstanceUID", "StudyInstanceUID");
+            extraFields.put("SeriesInstanceUID", "SeriesInstanceUID");
+            extraFields.put("PatientName", "PatientName");
+            extraFields.put("Modality", "Modality");
+            extraFields.put("StudyDate", "StudyDate");
+            extraFields.put("StudyID", "StudyID");
+            extraFields.put("Thumbnail", "Thumbnail");
+        } else {
+            for (String f : actualFields) {
+                extraFields.put(f, f);
+            }
+        }
+        
         JointQueryTask queryTaskHolder = new JointQueryTask() {
 
             @Override
             public void onCompletion() {
-                throw new UnsupportedOperationException("Not supported yet.");
             }
 
             @Override
             public void onReceive(Task<Iterable<SearchResult>> e) {
-                throw new UnsupportedOperationException("Not supported yet.");
             }
         };
 
@@ -174,14 +174,12 @@ public class SearchServlet extends HttpServlet {
         }
                 
         String json;
-        if(searchType == SearchType.PATIENT)
-        {
-        	
+        if(searchType == SearchType.PATIENT) {
         	response.setContentType("application/json");
             response.getWriter().append(getDIM(resultsArr));
         	return;
         }
-        json= processJSON(resultsArr, elapsedTime);
+        json = processJSON(resultsArr, elapsedTime);
 
         response.setContentType("application/json");
         response.getWriter().append(json);
@@ -211,13 +209,12 @@ public class SearchServlet extends HttpServlet {
     }
     
     private static String getDIM(ArrayList<SearchResult> allresults){
-    	DIMGeneric dimModel = null;
     	try {
-			dimModel = new DIMGeneric(allresults);
-		} catch (Exception e) {
-			e.printStackTrace();
+        	DIMGeneric dimModel = new DIMGeneric(allresults);
+            return dimModel.getJSON();
+		} catch (RuntimeException e) {
+            LoggerFactory.getLogger(SearchServlet.class).warn("failed to get DIM", e);
+            return "";
 		}
-    	
-    	return dimModel.getJSON();
     }
 }

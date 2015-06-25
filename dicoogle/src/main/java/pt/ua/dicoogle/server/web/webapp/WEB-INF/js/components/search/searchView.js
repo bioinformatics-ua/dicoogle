@@ -73,10 +73,10 @@ var Search = React.createClass({
                 </div>
             );
 
-       if(this.state.searchState == "simple"){
+       if(this.state.searchState === "simple"){
             return (<div> {selectionButtons} {simpleSearchInstance} </div>);
        }
-       else if(this.state.searchState == "advanced")
+       else if(this.state.searchState === "advanced")
        {
             return (<div> {selectionButtons} <AdvancedSearch/> </div>);
        }
@@ -88,7 +88,7 @@ var Search = React.createClass({
     renderFilter : function(){
       //React.render(<AdvancedSearch/>, this.getDOMNode());
       var switchState;
-      if(this.state.searchState =="simple"){
+      if(this.state.searchState === "simple"){
         switchState = "advanced";
     }
       else{

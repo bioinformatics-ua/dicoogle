@@ -7,31 +7,41 @@ import {setWatcher,setSaveT,setZip,saveIndexOptions} from '../../handlers/reques
 
 var IndexerView = React.createClass({
 
-        getInitialState: function() {
-          return {data: {path:"",zip:false,effort:0,thumbnail:false,thumbnailSize:0,watcher:false},
-          status: "loading"};
-        },
-        componentDidMount: function(){
-          console.log("componentdidmount: get");
+      getInitialState: function() {
+        return {data: {path:"",zip:false,effort:0,thumbnail:false,thumbnailSize:0,watcher:false},
+        status: "loading",
+        currentWatch: false
+        };
+      },
+      componentDidMount: function(){
+        console.log("componentdidmount: get");
 
-          IndexerActions.get();
-         },
-        componentWillMount: function() {
-         	// Subscribe to the store.
-           console.log("subscribe listener");
-           IndexerStore.listen(this._onChange);
-       	},
-        _onChange: function(data){
-          if (this.isMounted()){
-            console.log(data);
-
-            this.setState({data:data.data,status: "done"});
+        IndexerActions.get();
+       },
+      componentWillMount: function() {
+        // Subscribe to the store.
+         console.log("subscribe listener");
+         IndexerStore.listen(this._onChange);
+      },
+      _onChange: function(data){
+        if (this.isMounted()){
+          console.log(data);
+          var nState = {data:data.data,status: "done"};
+          if (data.data.watcher) {
+            nState.currentWatch = data.data.watcher;
           }
-        },
+          this.setState(nState);
+        }
+      },
+      onToggleWatcher() {
+        this.setState({currentWatch: !this.state.currentWatch});
+      },
       render: function() {
         var self = this;
         if(this.state.status == "loading"){
-          return (<div>loading</div>);
+          return (<div className="loader-inner ball-pulse">
+            <div/><div/><div/>
+           </div>);
         }
         return (
           <div className="tab-content">
@@ -49,17 +59,17 @@ var IndexerView = React.createClass({
                                                   Enable Dicoogle Directory Watcher
                                               </div>
                                               <div className="col-xs-6 col-sm-8">
-                                                  <input id="watcher" type="checkbox" aria-label="..." defaultChecked={this.state.data.watcher} />
+                                                  <input id="watcher" type="checkbox" aria-label="..." checked={this.state.currentWatch} onChange={this.onToggleWatcher} />
                                               </div>
                                             </div>
                                       </li>
                                       <li className="list-group-item list-group-item-management">
                                           <div className="row">
                                               <div className="col-xs-6 col-sm-4">
-                                                  Dicoogle Directory Monitorization
+                                                  Dicoogle Watcher Directory
                                               </div>
                                               <div className="col-xs-6 col-sm-8">
-                                                  <input id="mon_path" type="text" className="form-control" value={this.state.data.path} placeholder="/path/to/directory"/>
+                                                  <input id="mon_path" type="text" className="form-control" disabled={!this.state.currentWatch} value={this.state.data.path} placeholder="/path/to/directory"/>
                                               </div>
                                           </div>
                                       </li>
@@ -102,7 +112,7 @@ var IndexerView = React.createClass({
                                                   Thumbnails Size
                                               </div>
                                               <div className="col-xs-6 col-sm-8">
-                                                  <input id="tsize" type="text" className="form-control" placeholder="/path/to/directory" defaultValue={this.state.data.thumbnailSize}/>
+                                                  <input id="tsize" type="text" className="form-control" placeholder="Insert thumbnail size in pixels" defaultValue={this.state.data.thumbnailSize}/>
                                               </div>
                                           </div>
                                       </li>
@@ -112,13 +122,7 @@ var IndexerView = React.createClass({
                                     <div className="toast">Saved</div>
                                   </div>
                               </div>
-
-
-
                           </div>
-
-
-
         );
       },
 
@@ -144,7 +148,6 @@ var IndexerView = React.createClass({
           document.getElementById("save").checked,
           document.getElementById("effort_range").value,
           document.getElementById("tsize").value
-
         );
       }
     });
