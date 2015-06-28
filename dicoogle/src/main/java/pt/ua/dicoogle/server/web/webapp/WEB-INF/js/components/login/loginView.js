@@ -86,14 +86,27 @@ var LoginView = React.createClass({
 
           <footer id="footer">
             <div style={{width: '100%', textAlign: 'center'}} classname="footercontainer">
-              <div style={{display: 'inline-block', width: '100%'}}>
-                <a href="http://bioinformatics.ua.pt"><img src="http://www.dicoogle.com/wp-content/themes/dicoogle/images/logobio.png" style={{height: 50, margin:5}} /></a>
-                <a href="http://bmd-software.com/"><img src="http://www.bmd-software.com/wp-content/themes/BMD-code/images/logo.png" style={{height: 50, padding: 5, margin:5}} /></a>
-                <a href="http://www.ieeta.pt/"><img src="http://www.dicoogle.com/wp-content/themes/dicoogle/images/logo-ieeta.png" style={{height: 80, margin:5}} /></a>
-                <a href="http://www.ua.pt/"><img src="http://www.dicoogle.com/wp-content/themes/dicoogle/images/logo-ua.png" style={{height: 80, margin:5}} /></a>
+              <div className="row" style={{display: 'flex', 'align-items':'center',  width: '100%', 'margin-left': '10px'}}>
+                <div className="col-xs-3">
+                <a href="http://bioinformatics.ua.pt"><img src="http://www.dicoogle.com/wp-content/themes/dicoogle/images/logobio.png" style={{maxWidth: '100%'}} /></a>
+
+                </div>
+                <div className="col-xs-3">
+                    <a href="http://bmd-software.com/"><img src="http://www.bmd-software.com/wp-content/themes/BMD-code/images/logo.png"  style={{maxWidth: '100%'}} /></a>
+                </div>
+                <div className="col-xs-3">
+                  <a href="http://www.ieeta.pt/"><img src="http://www.dicoogle.com/wp-content/themes/dicoogle/images/logo-ieeta.png" style={{maxWidth: '100%'}} /></a>
+                </div>
+                <div className="col-xs-3">
+                    <a href="http://www.ua.pt/"><img src="http://www.dicoogle.com/wp-content/themes/dicoogle/images/logo-ua.png"   style={{maxWidth: '100%'}}/></a>
+                </div>
+
+
+
+
               </div>
               <div style={{display: 'inline-block'}}>
-                <a><img src="http://www.dicoogle.com/wp-content/themes/dicoogle/images/logoFCT.png" style={{height: 60, margin:5}} /></a>
+                <a><img src="http://www.dicoogle.com/wp-content/themes/dicoogle/images/logoFCT.png" style={{maxHeight: 60, maxWidth: '100%', margin:5}} /></a>
               </div>
 
             </div>
