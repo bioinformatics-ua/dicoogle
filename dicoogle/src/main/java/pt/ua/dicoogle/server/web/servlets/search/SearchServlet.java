@@ -48,18 +48,26 @@ import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
 
 /**
- * Search the DICOM metadata Perform queries on images. Return data in JSON
+ * Search the DICOM metadata, perform queries on images. Returns the data in JSON.
  *
  * @author Frederico Silva <fredericosilva@ua.pt>
+ * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 public class SearchServlet extends HttpServlet {
 
   private static final long serialVersionUID = 1L;
+  
+    private final Collection<String> DEFAULT_FIELDS = Arrays.asList(
+            "SOPInstanceUID", "StudyInstanceUID", "SeriesInstanceUID", "PatientID",
+            "PatientName",    "PatientSex",       "Modality",          "StudyDate",
+            "StudyID",        "StudyDescription", "SeriesNumber",      "SeriesDescription",
+            "InstitutionName");
+  
   	public enum SearchType {
 
       ALL, PATIENT;
   	}
-  	private SearchType searchType;
+  	private final SearchType searchType;
   	public SearchServlet(){
   		searchType = SearchType.ALL;
   	}
@@ -123,16 +131,11 @@ public class SearchServlet extends HttpServlet {
 
         HashMap<String, String> extraFields = new HashMap<>();
         if (actualFields == null) {
+            
             //attaches the required extrafields
-            extraFields.put("PatientID", "PatientID");
-            extraFields.put("SOPInstanceUID", "SOPInstanceUID");
-            extraFields.put("StudyInstanceUID", "StudyInstanceUID");
-            extraFields.put("SeriesInstanceUID", "SeriesInstanceUID");
-            extraFields.put("PatientName", "PatientName");
-            extraFields.put("Modality", "Modality");
-            extraFields.put("StudyDate", "StudyDate");
-            extraFields.put("StudyID", "StudyID");
-            extraFields.put("Thumbnail", "Thumbnail");
+            for (String field : DEFAULT_FIELDS) {
+                extraFields.put(field, field);
+            }
         } else {
             for (String f : actualFields) {
                 extraFields.put(f, f);
@@ -165,7 +168,9 @@ public class SearchServlet extends HttpServlet {
         
         if (results == null) {
             response.sendError(500, "Could not generate results!");
-            //return;
+            response.setContentType("application/json");
+            response.getWriter().append("{\"results\":[],\"error\":\"Could not generate results\"}");
+            return;
         }
 
         ArrayList<SearchResult> resultsArr = new ArrayList<>();

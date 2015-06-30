@@ -77,7 +77,6 @@ public class DIMGeneric
      * @param arr
      */
     public DIMGeneric(Collection<SearchResult> arr) {
-            HashMap<String, Object> extra = null;
             //DebugManager.getInstance().debug("Looking search results: " + arr.size() );
 
             //int size = arr.size();
@@ -90,7 +89,7 @@ public class DIMGeneric
                  */
 
                 //SearchResult r = (SearchResult) arr.get(i);
-                extra = r.getExtraData();
+                HashMap<String, Object> extra = r.getExtraData();
 
                 /** Get data from Study */
                 String studyUID = toTrimmedString(extra.get("StudyInstanceUID"),false);
@@ -128,13 +127,13 @@ public class DIMGeneric
 
                 /** Verify if Patient already exists */
 
-                if (this.patientsHash.containsKey(patientName))
+                if (this.patientsHash.containsKey(patientID))
                 {
                     /**
                      * Patient Already exists, let's check studys
                      */
 
-                    Patient p = this.patientsHash.get(patientName);
+                    Patient p = this.patientsHash.get(patientID);
 
 
                     /**
@@ -144,18 +143,18 @@ public class DIMGeneric
                      * data will be added for the Study that already exists
                      */
 
-                    Study s = new Study(p,studyUID,studyDate) ;
+                    Study s = new Study(p,studyUID,studyDate);
                     s.setInstitutuionName(InstitutionName);
                     s.setAccessionNumber(AccessionNumber);
                     s.setStudyTime(studyTime);
                     s.setStudyID(studyID);
                     s.setStudyDescription(StudyDescription);
                     Serie serie = new Serie(s, serieUID, modality);
-                    if (serieNumber!=null)
+                    if (serieNumber != null)
                         serie.setSerieNumber((int)Float.parseFloat(serieNumber));
                     serie.setSeriesDescription(serieDescription);
                     serie.addImage(r.getURI(),sopInstUID);
-                    s.addSerie(serie) ;
+                    s.addSerie(serie);
                     p.addStudy(s);
                 }
                 else {
@@ -187,7 +186,7 @@ public class DIMGeneric
                      serie.addImage(r.getURI(),sopInstUID);
                      s.addSerie(serie);
                      this.patients.add(p);
-                     this.patientsHash.put(patientName, p);
+                     this.patientsHash.put(patientID, p);
                 }
             }
 
