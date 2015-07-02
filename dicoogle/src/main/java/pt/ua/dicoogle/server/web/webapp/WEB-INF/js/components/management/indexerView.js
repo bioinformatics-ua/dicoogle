@@ -69,7 +69,7 @@ var IndexerView = React.createClass({
                                                   Dicoogle Watcher Directory
                                               </div>
                                               <div className="col-xs-6 col-sm-8">
-                                                  <input id="mon_path" type="text" className="form-control" disabled={!this.state.currentWatch} value={this.state.data.path} placeholder="/path/to/directory"/>
+                                                  <input id="mon_path" type="text" className="form-control" disabled={!this.state.currentWatch} defaultValue={this.state.data.path} placeholder="/path/to/directory"/>
                                               </div>
                                           </div>
                                       </li>
