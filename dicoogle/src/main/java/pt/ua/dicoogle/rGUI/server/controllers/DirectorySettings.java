@@ -19,12 +19,13 @@
 package pt.ua.dicoogle.rGUI.server.controllers;
 
 //import com.sun.tools.javac.util.DefaultFileManager.ZipArchive;
+import pt.ua.dicoogle.server.ControlServices;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.RemoteException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IDirectory;
@@ -38,6 +39,8 @@ import pt.ua.dicoogle.server.DicomDirCreator;
 @Deprecated
 public class DirectorySettings implements IDirectory {
 
+    private static final Logger logger = LoggerFactory.getLogger(DirectorySettings.class);
+    
     private String storagePath;
     private String dicoogleDir;
     private int effort;
@@ -107,11 +110,6 @@ public class DirectorySettings implements IDirectory {
      *          false - not
      */
     public boolean unsavedSettings(){
-        
- 
-        
-        
-        
         
         if(!storagePath.equals(settings.getPath()) || !dicoogleDir.equals(settings.getDicoogleDir()) ||
                 effort != settings.getIndexerEffort() || saveTumbnails != settings.getSaveThumbnails() ||
@@ -239,7 +237,7 @@ public class DirectorySettings implements IDirectory {
             try {
                 PluginController.getInstance().index(new URI(f.getAbsolutePath()));
             } catch (URISyntaxException ex) {
-                Logger.getLogger(DirectorySettings.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error(ex.getMessage(), ex);
             }
             
         } else
@@ -277,9 +275,6 @@ public class DirectorySettings implements IDirectory {
 
         return 0;
     }
-
-
-
 
     @Override
     public boolean isIndexZip() throws RemoteException

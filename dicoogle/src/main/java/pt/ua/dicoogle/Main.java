@@ -27,17 +27,22 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Random;
+import java.util.Set;
+import java.util.TimerTask;
 
 import javax.swing.JOptionPane;
 
 import org.dcm4che2.data.TransferSyntax;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import pt.ieeta.anonymouspatientdata.core.Anonymous;
-
 
 import pt.ua.dicoogle.core.AsyncIndex;
 import pt.ua.dicoogle.core.ClientSettings;
@@ -66,7 +71,6 @@ public class Main
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     private static boolean optimizeMemory = true;
-    //static Logger logger = LoggerFactory.getLogger(Main.class);
     private static boolean isGUIServer = false;
     //indicates whether the client and the server were pulled at the same time
     private static boolean isFixedClient = false;
@@ -98,74 +102,51 @@ public class Main
                 homeDir.mkdir();
             }
         }
-        try
+        
+        if (args.length == 0)
         {
-            //System.out.println("\n"+addressString(localAddresses()) + "\n");
-            System.setProperty("java.rmi.server.hostname", addressString(localAddresses()));
-        } catch (SocketException ex)
-        {
-            logger.error(ex.getMessage(), ex);
-        }
-        switch (args.length)
-        {
-            case 0:
-                isFixedClient = true;
+            isFixedClient = true;
 
+            LaunchDicoogle();
+            LaunchWebApplication();
+        } else {
+
+            if (args[0].equals("-v"))
+            {
+                isFixedClient = true;
+                //DebugManager.getInstance().setDebug(true);
                 LaunchDicoogle();
                 //DebugManager.getInstance().debug("Starting Client Thread");
+                LaunchWebApplication();
+            }
+            if (args[0].equals("-s"))
+            {
+                LaunchDicoogle();
+            } else if (args[0].equals("-g") || args[0].equals("--gui"))
+            {
+                LaunchDicoogle();
                 LaunchGUIClient();
-                break;
-
-            case 1:
-                
-                if (args[0].equals("-v"))
-                {
-                    isFixedClient = true;
-                    //DebugManager.getInstance().setDebug(true);
-                    LaunchDicoogle();
-                    //DebugManager.getInstance().debug("Starting Client Thread");
-                    LaunchGUIClient();
-                }
-                if (args[0].equals("-s"))
-                {
-                    LaunchDicoogle();
-                } else if (args[0].equals("-c"))
-                {
-                    LaunchGUIClient();
-                }
-                else if (args[0].equals("-w") || args[0].equals("--web") || args[0].equals("--webapp")) {
-                    // open browser
-                    LaunchDicoogle();
-                    if (!Desktop.isDesktopSupported() || !Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-                        System.err.println("Desktop browsing is not supported in this machine!\n"
-                                + "Request to open web application ignored.");
-                    } else {
-                        try {
-                            ServerSettings settings = ServerSettings.getInstance();
-                            URI uri = new URI("http://localhost:" + settings.getWeb().getServerPort());
-                            Desktop.getDesktop().browse(uri);
-                        } catch (IOException | URISyntaxException ex) {
-                            logger.error("Request to open web application ignored", ex);
-                        }
-                    }
-                }
-                else if (args[0].equals("-h") || args[0].equals("--h") || args[0].equals("-help") || args[0].equals("--help"))
-                {
-                    System.out.println("Dicoogle PACS: help");
-                    System.out.println("-c : Run Client version");
-                    System.out.println("-s : Run Server version");
-                    System.out.println("-w : Run Server version and load web application in default browser");
-                    System.out.println("without any option run a standalone version.");  
-                }
-                else
-                {
-                    System.out.println("Wrong arguments!");
-                }
-
-                break;
-
-            default:
+            } else if (args[0].equals("-c"))
+            {
+                LaunchGUIClient();
+            }
+            else if (args[0].equals("-w") || args[0].equals("--web") || args[0].equals("--webapp")) {
+                // open browser
+                LaunchDicoogle();
+                LaunchWebApplication();
+            }
+            else if (args[0].equals("-h") || args[0].equals("--h") || args[0].equals("-help") || args[0].equals("--help"))
+            {
+                System.out.println("Dicoogle PACS: help");
+                System.out.println("-s : Start the server");
+                System.out.println("-w : Start the server and load web application in default browser (default)");
+                System.out.println("-g : [deprecated] Start the server and run the desktop client application");
+                System.out.println("-c : [deprecated] Run the desktop client application");
+            }
+            else
+            {
                 System.out.println("Wrong arguments!");
+            }
         }
         /** Register System Exceptions Hook */
         ExceptionHandler.registerExceptionHandler();
@@ -199,25 +180,50 @@ public class Main
             //timer.schedule(freeMemTask, 5000, 5000);
         }
     }
+    
+    public static boolean LaunchWebApplication() {
+        if (!Desktop.isDesktopSupported() || !Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+            logger.warn("Desktop browsing is not supported in this machine! "
+                    + "Request to open web application ignored.");
+            return false;
+        } else {
+            try {
+                ServerSettings settings = ServerSettings.getInstance();
+                URI uri = URI.create("http://localhost:" + settings.getWeb().getServerPort());
+                Desktop.getDesktop().browse(uri);
+                return true;
+            } catch (IOException ex) {
+                logger.warn("Request to open web application ignored", ex);
+                return false;
+            }
+        }
+    }
 
     public static void LaunchDicoogle()
     {
-        //DebugManager.getInstance().log("Starting Dicoogle\n");
+        try
+        {
+            //System.out.println("\n"+addressString(localAddresses()) + "\n");
+            System.setProperty("java.rmi.server.hostname", addressString(localAddresses()));
+        } catch (SocketException ex) {
+            logger.warn(ex.getMessage(), ex);
+        }
+        
+        logger.debug("Starting Dicoogle");
         try
         {
             Anonymous.getInstance().start();
+        } catch(Exception e) {
+            logger.warn("Could not start Anonimize service", e);
         }
-        catch(Exception e)
-        {
-            //DebugManager.getInstance().log("Missing databases to Anonymize\n");
-        }
-        //System.out.println("Loading conf:"+Platform.homePath());
+        logger.debug("Loading configuration file: {}", Platform.homePath());
         Configuration.initInstance(Platform.homePath());
         try {
             Configuration.getInstance().readValues();
             Configuration.getInstance().setProps(new Properties());
         } catch (FileNotFoundException ex) {
             //DebugManager.getInstance().log("Missing crash report configuration (sender)\n");
+            logger.info("No configuration file");
         }
 
         /* Load all Server Settings from XML */
@@ -253,7 +259,7 @@ public class Main
             }
 
             String response = (String) JOptionPane.showInputDialog(null,
-                    "What is the name of machine?",
+                    "What is the name of the machine?",
                     "Enter Node name",
                     JOptionPane.QUESTION_MESSAGE, null, null,
                     hostname);
@@ -266,18 +272,16 @@ public class Main
             _xml.printXML();
         }
 
-        //DebugManager.getInstance().debug("-----> NAME: " + ServerSettings.getInstance().getNodeName());
-
+        logger.debug("Name: {}", ServerSettings.getInstance().getNodeName());
         
         TransferSyntax.add(new TransferSyntax("1.2.826.0.1.3680043.2.682.1.40", false,false, false, true));
         TransferSyntax.add(new TransferSyntax("1.2.840.10008.1.2.4.70", true,false, false, true));
         TransferSyntax.add(new TransferSyntax("1.2.840.10008.1.2.5.50", false,false, false, true));    
 
-
         PluginController PController = PluginController.getInstance();
 
         // Start the Inicial Services of Dicoogle
-        pt.ua.dicoogle.rGUI.server.controllers.ControlServices.getInstance();
+        pt.ua.dicoogle.server.ControlServices.getInstance();
 
         // Lauch Async Index 
         // It monitors a folder, and when a file is touched an event
@@ -291,6 +295,7 @@ public class Main
         GUIServer GUIserv = new GUIServer();
     }
 
+    @Deprecated
     private static void LaunchGUIClient()
     {
 
@@ -372,7 +377,7 @@ public class Main
         return s;
     }
 
-    private static class RunClient extends Thread
+    private static class RunClient implements Runnable
     {
 
         @Override

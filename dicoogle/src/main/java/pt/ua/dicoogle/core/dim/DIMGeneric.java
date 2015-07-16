@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import org.slf4j.LoggerFactory;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -33,6 +35,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.SAXException;
@@ -43,6 +48,7 @@ import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 /**
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Frederico Silva <fredericosilva@ua.pt>
  */
 public class DIMGeneric
 {
@@ -70,7 +76,7 @@ public class DIMGeneric
      * it is allow to handle a ArrayList of Strings or SearchResults
      * @param arr
      */
-    public DIMGeneric(Collection<SearchResult> arr) throws Exception{
+    public DIMGeneric(Collection<SearchResult> arr) {
             HashMap<String, Object> extra = null;
             //DebugManager.getInstance().debug("Looking search results: " + arr.size() );
 
@@ -95,7 +101,7 @@ public class DIMGeneric
                 String StudyDescription = toTrimmedString( extra.get("StudyDescription"), false);
                 String InstitutionName = toTrimmedString( extra.get("InstitutionName"), false);
                 /**
-                 * Get data to Serie
+                 * Get data to Series
                  */
                 String serieUID =  toTrimmedString( extra.get("SeriesInstanceUID"), false);
                 //System.out.println("serieUID"+serieUID);
@@ -172,7 +178,7 @@ public class DIMGeneric
                      p.addStudy(s);
 
                      /**
-                     * Create Serie
+                     * Create Series
                      */
                      Serie serie = new Serie(s,serieUID, modality);
                      if (serieNumber!=null && !serieNumber.equals(""))
@@ -187,6 +193,76 @@ public class DIMGeneric
 
     }
 
+    public String getJSON(){
+    	JSONObject result = new JSONObject();
+    	result.put("numResults", this.patients.size());
+    	JSONArray patients = new JSONArray();
+    	
+    	for (Patient p : this.patients){
+    		JSONObject patient = new JSONObject();
+    		patient.put("id", p.getPatientID());
+    		patient.put("name", p.getPatientName());
+    		patient.put("gender", p.getPatientSex());
+    		patient.put("nStudies", p.getStudies().size());
+    		patient.put("birthdate", p.getPatientBirthDate());
+    		
+    		JSONArray studies = new JSONArray();
+    		for(Study s: p.getStudies())
+    		{
+    			JSONObject study = new JSONObject();
+    			study.put("studyDate", s.getStudyData());
+    			study.put("studyDescription", s.getStudyDescription());
+    			study.put("institutionName", s.getInstitutuionName());
+    			
+    			JSONArray modalities = new JSONArray();
+    			JSONArray series = new JSONArray();
+    			
+    			Set<String> modalitiesSet = new HashSet<>();
+    			for(Serie serie : s.getSeries())
+    			{
+    				modalitiesSet.add(serie.getModality());
+    				modalities.add(serie.getModality());
+    				
+    				JSONObject _serie = new JSONObject();
+    				_serie.put("serieNumber", serie.getSerieNumber());
+    				_serie.put("serieInstanceUID", serie.getSerieInstanceUID());
+    				_serie.put("serieDescription", serie.getSeriesDescription());
+    				_serie.put("serieModality", serie.getModality());
+    				
+    				JSONArray _sopInstanceUID = new JSONArray();
+    				for(int i=0; i<serie.getSOPInstanceUIDList().size();i++){
+    					JSONObject image = new JSONObject();
+    					image.put("sopInstanceUID", serie.getSOPInstanceUIDList().get(i));
+    					String rawPath = serie.getImageList().get(i).getRawPath();
+    					image.put("rawPath", rawPath);
+    					image.put("filename", rawPath.substring(rawPath.lastIndexOf("/")+1, rawPath.length()));
+    					
+    					_sopInstanceUID.add(image);
+    				}
+    				_serie.put("images", _sopInstanceUID);
+    
+    				series.add(_serie);
+    			}
+    			study.put("modalities", StringUtils.join(modalitiesSet,","));
+    			study.put("series", series);
+    			
+    			
+    			
+    			
+    			studies.add(study);
+    			
+    		}
+    		patient.put("studies", studies);
+    		
+    		
+    		patients.add(patient);
+    	}
+    	
+    	result.put("results", patients);
+    	
+    	return result.toString();
+    }
+    
     public String getXML()
     {
 

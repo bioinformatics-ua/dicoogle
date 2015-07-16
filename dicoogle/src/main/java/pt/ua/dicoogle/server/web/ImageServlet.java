@@ -30,16 +30,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
 
-
-
-
 import net.sf.json.JSONObject;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.StorageInputStream;
+import pt.ua.dicoogle.sdk.StorageInterface;
 import pt.ua.dicoogle.server.web.dicom.Convert2PNG;
 import pt.ua.dicoogle.server.web.dicom.Information;
 import pt.ua.dicoogle.server.web.utils.LocalImageCache;
@@ -49,147 +55,162 @@ import pt.ua.dicoogle.server.web.utils.LocalImageCache;
  * Also maintains a cache of the images already served to speed-up the next requests (minimizing server load by doing way less conversions).
  *
  * @author Antonio
+ * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 public class ImageServlet extends HttpServlet
 {
-	/**
-	 * 
-	 */
+    private static final Logger logger = LoggerFactory.getLogger(ImageServlet.class);
 	private static final long serialVersionUID = 1L;
 
 	public static final int BUFFER_SIZE = 1500; // byte size for read-write ring bufer, optimized for regular TCP connection windows
 
-	private LocalImageCache cache;
+	private final LocalImageCache cache;
 	
-        /**
-	 * Creates a image servlet.
+    /**
+	 * Creates an image servlet.
 	 *
 	 * @param cache the local image caching system, can be null and if so no caching mechanism will be used.
 	 */
-	public ImageServlet(LocalImageCache cache)
-	{
-		this.cache = cache;
+	public ImageServlet(LocalImageCache cache) {
+        this.cache = cache;
 	}
-
-	
-
+    
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
 		String sopInstanceUID = request.getParameter("SOPInstanceUID");
-		if (sopInstanceUID == null || sopInstanceUID.trim().isEmpty()) // make sure that the SOPInstanceUID param is supplied
-		{
+		String uri = request.getParameter("uri");
+        boolean thumbnail = Boolean.valueOf(request.getParameter("thumbnail"));
+        
+		if (sopInstanceUID == null) {
+            if (uri == null) {
+                response.sendError(400, "URI or SOP Instance UID not provided");
+                return;
+            }
+        } else if (sopInstanceUID.trim().isEmpty()) {
 			response.sendError(400, "Invalid SOP Instance UID!");
 			return;
 		}
 		String[] providerArray = request.getParameterValues("provider");
         List<String> providers = providerArray == null ? null : Arrays.asList(providerArray);
 		String sFrame = request.getParameter("frame");
-		if (sFrame == null)
-			sFrame = "0";
-		int frame = Integer.parseInt(sFrame);
+        int frame;
+		if (sFrame == null) {
+            frame = 0;
+        } else {
+            frame = Integer.parseInt(sFrame);
+        }
+        
+        StorageInputStream imgFile;
+        if (sopInstanceUID != null) {
+            // get the image file for that SOP Instance UID
+            imgFile = Information.getFileFromSOPInstanceUID(sopInstanceUID, providers);
+            // if no .dcm file was found tell the client
+            if ((imgFile == null)) {
+                response.sendError(404, "No image file for supplied SOP Instance UID!");
+                return;
+            }
+        } else {
+            try {
+                // get the image file by the URI
+                URI imgUri = new URI(uri);
+                StorageInterface storageInt = PluginController.getInstance().getStorageForSchema(imgUri);
+                Iterator<StorageInputStream> storages = storageInt.at(imgUri).iterator();
+                // take the first valid storage
+                if (!storages.hasNext()) {
+                    response.sendError(404, "No image file for supplied URI!");
+                    return;
+                }
+                imgFile = storages.next();
+                 
+            } catch (URISyntaxException ex) {
+                response.sendError(400, "Bad URI syntax");
+                return;
+            }
+        }
 
-		// get the .dcm file for that SOP Instance UID
-		//File dcmFile = Information.getFileFromSOPInstanceUID(sopInstanceUID);
-		StorageInputStream dcmFile = Information.getFileFromSOPInstanceUID(sopInstanceUID, providers);
-		
-		// if no .dcm file was found tell the client
-		if ((dcmFile == null))
-		{
-			response.sendError(404, "No DICOM file for supplied SOP Instance UID!");
-			return;
-		}
-
-		// the temporary file containing the cache contents for this DICOM image
-		File cf = null;
-				
+        // the temporary file containing the cache contents for this DICOM image
+		File cf;
 		// if there is a cache available then use it
-		if ((cache != null) && (cache.isRunning()))
-		{
-			cf = cache.getFileFromName(sopInstanceUID + "_" + frame + ".png");
+		if ((cache != null) && (cache.isRunning())) {
+            String instanceName = sopInstanceUID != null ? sopInstanceUID : uri.replace('/', '_');
+            synchronized (cache) {
+                cf = cache.getFile(instanceName, frame, thumbnail);
+        
+                // check if the file already has contents in it, and if it's empty, cache the converted image contents to it
+                if (!cf.exists() || cf.length() <= 0)
+                {
+                    try {
+                        // get the requested frame as a PNG stream
+                        ByteArrayOutputStream pngStream = getPNGStream(imgFile, frame, thumbnail);
+                        // write the stream to the file
+                        try (FileOutputStream fos = new FileOutputStream(cf)) {
+                            pngStream.writeTo(fos);
+                        }
+                        response.setContentType("image/png");
+                        response.setContentLength(pngStream.size());
+                        try(ServletOutputStream out = response.getOutputStream()) {
+                            pngStream.writeTo(out);
+                        }
+                    } catch (IOException ex) {
+                        logger.error("Could not load cached image", ex);
+                        response.setStatus(500);
+                    } finally {
+                        // finally tell the local cache manager that we are finished writing to the file,
+                        // so that other threads don't need to synchronize on it
+                        // (even if the synch occurred we would still be able to read the contents in
+                        // parallel across multiple threads, this is just an optimization for a cache
+                        // that is designed to run for a very long time, to keep the linked list of files
+                        // from being used empty for most of the time)
+                        cache.finishedUsingFile(cf);
+                    }
+                } else {
+                    // if we reach this point, then we are sure that there is a valid cache file and that its content is the cache of the requested image/frame, so read it and return it
 
-			// if the cache was able to get a file to cache to
-			if (cf != null)
-			{				
-				// we synchronize this bit so that no thread is reading while we write the contents to this file, paralelized reading is still enabled, once the writing is finished ofcourse
-				synchronized (cf)
-				{
-					// check if the file already has contents in it, and if it's empty, cache the converted image contents to it
-					
-					if (cf.length() < 1)
-					{
-						// get the requested frame as a PNG stream
-						ByteArrayOutputStream pngStream = Convert2PNG.DICOM2PNGStream(dcmFile, frame);
-						
-						if (pngStream == null)
-						{
-							response.sendError(500, "Could not convert DICOM to PNG!");
-							return;
-						}
+                    response.setContentType("image/png");
+                    // write the cache file contents to the response output
+                    try(FileInputStream in = new FileInputStream(cf); ServletOutputStream out = response.getOutputStream()) {
+                        IOUtils.copy(in,out);
+                    }
 
-						// write the stream to the file
-						FileOutputStream fos = new FileOutputStream(cf);
-						fos.write(pngStream.toByteArray());
-						fos.close();
-						
-
-						// finally tell the local cache manager that we are finished writing to the file, so that other threads don't need to synchronize on it even (if the synch occurred we would still be able to read the contents in parallel across multiple threads, this is just a optimization for a cache that is designed to run for a very long time, to keep the linked list of files being used empty for most of the time)
-						cache.finishedUsingFile(cf);
-						
-					}
-				}
-			}
-			else
-			{
-				response.sendError(500, "Unable to get cached contents!");
-				return;
-			}
+                    // finally tell the local cache manager that we are finished reading the file
+                    cache.finishedUsingFile(cf);
+                }
+            }
+		} else {
+            // if the cache is invalid or not running convert the image and return it "on-the-fly"
+            try {
+                ByteArrayOutputStream pngStream = getPNGStream(imgFile, frame, thumbnail);
+                response.setContentType("image/png"); // set the appropriate type for the PNG image
+                response.setContentLength(pngStream.size()); // set the image size
+                try (ServletOutputStream out = response.getOutputStream()) {
+                    pngStream.writeTo(out);
+                    pngStream.flush();
+                }
+            } catch (IOException ex) {
+                logger.warn("Could not convert the image", ex);
+                response.sendError(500, "Could not convert the image");
+            }
 		}
-		else // if the cache is invalid or not running convert the image and return it "on-the-fly"
-		{
-			// get the requested frame as a PNG stream
-			ByteArrayOutputStream pngStream = Convert2PNG.DICOM2PNGStream(dcmFile, frame);
-			if (pngStream == null)
-			{
-				response.sendError(500, "Could not convert DICOM to PNG!");
-				return;
-			}
-			
-			response.setContentType("image/png"); // set the appropriate type for the PNG image
-			response.setContentLength(pngStream.size()); // set the image size
-
-			// write the PNG stream to the response output
-			ServletOutputStream out = response.getOutputStream();
-			pngStream.writeTo(out);
-			out.close();
-			
-			return;
-		}
-		
-		// if we reach this point, then we are sure that there is a valid cache file and that its content is the cache of the requested image/frame, so read it and return it
-
-		response.setContentType("image/png"); // set the appropriate type for the PNG image
-		response.setContentLength((int) cf.length()); // set the image size
-
-		// write the cache file contents to the response output
-		FileInputStream in = new FileInputStream(cf);
-		ServletOutputStream out = response.getOutputStream();
-		int bytesRead = 0;
-		byte[] buffer = new byte[BUFFER_SIZE];
-		bytesRead = in.read(buffer, 0, buffer.length);
-		while (bytesRead != -1)
-		{
-			out.write(buffer);
-			bytesRead = in.read(buffer, 0, buffer.length);
-		}
-		out.close();
-		in.close();
-
-		// finally tell the local cache manager that we are finished reading the file
-		cache.finishedUsingFile(cf);
-	}
-
-
+    }
+    
+    private ByteArrayOutputStream getPNGStream(StorageInputStream imgFile, int frame, boolean thumbnail) throws IOException {
+        ByteArrayOutputStream pngStream;
+        if (thumbnail) {
+            int thumbSize;
+            try {
+                // retrieve thumbnail dimension settings
+                thumbSize = Integer.parseInt(ServerSettings.getInstance().getThumbnailsMatrix());
+            } catch (NumberFormatException ex) {
+                logger.warn("Failed to parse ThumbnailMatrix, using default thumbnail size");
+                thumbSize = 64;
+            }
+            pngStream = Convert2PNG.DICOM2ScaledPNGStream(imgFile, frame, thumbSize, thumbSize);
+        } else {
+            pngStream = Convert2PNG.DICOM2PNGStream(imgFile, frame);
+        }
+        return pngStream;
+    }
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)

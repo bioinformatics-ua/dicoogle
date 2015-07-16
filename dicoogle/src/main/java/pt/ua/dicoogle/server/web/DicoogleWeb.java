@@ -18,16 +18,22 @@
  */
 package pt.ua.dicoogle.server.web;
 
+import pt.ua.dicoogle.server.web.servlets.search.ExportServlet;
+import pt.ua.dicoogle.server.web.servlets.search.ExportServlet.ExportType;
 import pt.ua.dicoogle.server.web.servlets.search.ProvidersServlet;
 import pt.ua.dicoogle.server.web.servlets.search.SearchServlet;
+import pt.ua.dicoogle.server.web.servlets.search.SearchServlet.SearchType;
 import pt.ua.dicoogle.server.web.servlets.search.WadoServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.LoginServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.UserServlet;
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.server.web.servlets.management.AETitleServlet;
-import pt.ua.dicoogle.server.web.servlets.management.DicomSettingsServlet;
+import pt.ua.dicoogle.server.web.servlets.management.DicomQuerySettingsServlet;
 import pt.ua.dicoogle.server.web.servlets.management.ForceIndexing;
 import pt.ua.dicoogle.server.web.servlets.management.IndexerSettingsServlet;
+import pt.ua.dicoogle.server.web.servlets.management.LoggerServlet;
+import pt.ua.dicoogle.server.web.servlets.management.RunningTasksServlet;
+import pt.ua.dicoogle.server.web.servlets.management.ServerStorageServlet;
 import pt.ua.dicoogle.server.web.servlets.management.ServicesServlet;
 import pt.ua.dicoogle.server.web.servlets.management.TransferenceOptionsServlet;
 
@@ -42,20 +48,21 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServlet;
 
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlets.GzipFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pt.ua.dicoogle.server.LegacyRestletApplication;
 
 import pt.ua.dicoogle.server.web.servlets.accounts.LogoutServlet;
 import pt.ua.dicoogle.server.web.servlets.management.UnindexServlet;
 import pt.ua.dicoogle.server.web.servlets.search.DumpServlet;
 import pt.ua.dicoogle.server.web.servlets.webui.WebUIServlet;
 import pt.ua.dicoogle.server.web.utils.LocalImageCache;
+import pt.ua.dicoogle.server.PluginRestletApplication;
 
 /**
  * @author António Novo <antonio.novo@ua.pt>
@@ -66,7 +73,7 @@ import pt.ua.dicoogle.server.web.utils.LocalImageCache;
  */
 public class DicoogleWeb {
 
-    private static final Logger logger = LoggerFactory.getLogger("dicoogle");
+    private static final Logger logger = LoggerFactory.getLogger(DicoogleWeb.class);
     /**
      * Sets the path where the web-pages/scripts or .war are.
      */
@@ -78,9 +85,13 @@ public class DicoogleWeb {
     public static final String CONTEXTPATH = "/";
     private LocalImageCache cache = null;
     private Server server = null;
-    private int port;
+    private final int port;
 
     private ContextHandlerCollection contextHandlers;
+    private ServletContextHandler pluginHandler = null;
+    private PluginRestletApplication pluginApp = null;
+    private ServletContextHandler legacyHandler = null;
+    private LegacyRestletApplication legacyApp = null;
 
     /**
      * The global list of GUI hooks and actions.
@@ -88,22 +99,15 @@ public class DicoogleWeb {
 
     /**
      * Initializes and starts the Dicoogle Web service.
+     * @param port the server port
      */
     public DicoogleWeb(int port) throws Exception {
-        logger.info("Starting Web Services... in DicoogleWeb. POrt: " + port);
+        logger.info("Starting Web Services in DicoogleWeb. Port: {}", port);
         System.setProperty("org.apache.jasper.compiler.disablejsr199", "true");
       //  System.setProperty("org.mortbay.jetty.webapp.parentLoaderPriority", "true");
         // System.setProperty("production.mode", "true");
 
         this.port = port;
-
-        // abort if the server is already running
-        if (server != null) {
-            System.err.println("Server is not null!!");
-            return;
-        }
-
-        System.err.println("Server is not null");
 
         // "build" the input location, based on the www directory/.war chosen
         final URL warUrl = Thread.currentThread().getContextClassLoader().getResource(WEBAPPDIR);
@@ -130,9 +134,9 @@ public class DicoogleWeb {
         csvServletHolder.addServlet(new ServletHolder(new ExportCSVToFILEServlet(tempDir)), "/exportFile");
 
         // setup the search (DIMSE-service-user C-FIND ?!?) servlet
-        final ServletContextHandler search = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        search.setContextPath(CONTEXTPATH);
-        search.addServlet(new ServletHolder(new SearchServlet()), "/search");
+        //final ServletContextHandler search = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
+        //search.setContextPath(CONTEXTPATH);
+        //search.addServlet(new ServletHolder(new SearchServlet()), "/search");
 
         // setup the plugins data, xslt and pages servlet
         final ServletContextHandler plugin = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
@@ -165,9 +169,20 @@ public class DicoogleWeb {
         webpages.addServlet(new ServletHolder(new SearchHolderServlet()), "/search/holders");
         FilterHolder filter = webpages.addFilter(GzipFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
 
+        this.pluginApp = new PluginRestletApplication();
+        this.pluginHandler = new ServletContextHandler();
+        this.pluginHandler.setContextPath(CONTEXTPATH);
+        this.pluginHandler.addServlet(new ServletHolder(new RestletHttpServlet(this.pluginApp)), "/ext/*");
 
+        this.legacyApp = new LegacyRestletApplication();
+        this.legacyHandler = new ServletContextHandler();
+        this.legacyHandler.setContextPath(CONTEXTPATH);
+        this.legacyHandler.addServlet(new ServletHolder(new RestletHttpServlet(this.legacyApp)), "/legacy/*");
+        
         // list the all the handlers mounted above
         Handler[] handlers = new Handler[]{
+            pluginHandler,
+            legacyHandler,
             dic2png,
             dictags,
             plugin,
@@ -179,16 +194,19 @@ public class DicoogleWeb {
             createServletHandler(new LogoutServlet(), "/logout"),
             createServletHandler(new UserServlet(), "/user"),
             createServletHandler(new SearchServlet(), "/search"),
+            createServletHandler(new SearchServlet(SearchType.PATIENT), "/searchDIM"),
             createServletHandler(new DumpServlet(), "/dump"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.path) , "/management/settings/index/path"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.zip), "/management/settings/index/zip"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.effort), "/management/settings/index/effort"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnail), "/management/settings/index/thumbnail"),
+            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.watcher), "/management/settings/index/watcher"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnailSize), "/management/settings/index/thumbnail/size"),
+            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.all), "/management/settings/index"),
             createServletHandler(new TransferenceOptionsServlet(), "/management/settings/transfer"),
             createServletHandler(new WadoServlet(), "/wado"),
             createServletHandler(new ProvidersServlet(), "/providers"),
-            createServletHandler(new DicomSettingsServlet(), "/management/settings/dicom/query"),
+            createServletHandler(new DicomQuerySettingsServlet(), "/management/settings/dicom/query"),
             createServletHandler(new ForceIndexing(), "/management/tasks/index"),
             createServletHandler(new UnindexServlet(), "/management/tasks/unindex"),
             createServletHandler(new ServicesServlet(ServicesServlet.STORAGE), "/management/dicom/storage"),
@@ -196,8 +214,12 @@ public class DicoogleWeb {
             createServletHandler(new ServicesServlet(ServicesServlet.PLUGIN), "/management/plugins/"),
             createServletHandler(new AETitleServlet(), "/management/settings/dicom"),
             createServletHandler(new WebUIServlet(), "/webui"),
+            createServletHandler(new LoggerServlet(), "/logger"),
+            createServletHandler(new RunningTasksServlet(), "/index/task"),
+            createServletHandler(new ExportServlet(ExportType.EXPORT_CVS), "/export/cvs"),
+            createServletHandler(new ExportServlet(ExportType.LIST), "/export/list"),
+            createServletHandler(new ServerStorageServlet(), "/management/settings/storage/dicom"),
             webpages
-
         };
 
         // setup the server
@@ -208,7 +230,7 @@ public class DicoogleWeb {
         this.contextHandlers = new ContextHandlerCollection();
         this.contextHandlers.setHandlers(handlers);
         server.setHandler(this.contextHandlers);
-
+        
         // and then start the server
         server.start();
     }
@@ -222,6 +244,7 @@ public class DicoogleWeb {
 
     /**
      * Stops the Dicoogle Web service.
+     * @throws java.lang.Exception if a problem occurs when stopping the server
      */
     public void stop() throws Exception {
         // abort if the server is not running
@@ -240,11 +263,25 @@ public class DicoogleWeb {
             cache.terminate();
             cache = null;
         }
+        
+        this.pluginHandler = null;
     }
 
     public void addContextHandlers(Handler handler) {
         this.contextHandlers.addHandler(handler);
         //this.server.setHandler(this.contextHandlers);
+    }
+
+    public void stopPluginWebServices() {
+        if (this.pluginHandler != null) {
+            this.contextHandlers.removeHandler(this.pluginHandler);
+        }
+    }
+ 
+    public void stopLegacyWebServices() {
+        if (this.legacyHandler != null) {
+            this.contextHandlers.removeHandler(this.legacyHandler);
+        }
     }
 
 }

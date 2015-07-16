@@ -1,0 +1,42 @@
+.step{
+	height: 45px;
+	padding: 5px;
+	cursor: pointer;
+	margin-bottom: 10px;
+
+}
+.step.done{
+	background-color: $blue5;
+}
+.step.current{
+	background-color: $blue5;
+	border-color: $blue1;
+	border-style: solid;
+    border-width: 4px;
+
+		-webkit-box-shadow: 5px 5px 5px 0px rgba(50, 50, 50, 0.75);
+		-moz-box-shadow:    5px 5px 5px 0px rgba(50, 50, 50, 0.75);
+		box-shadow:         5px 5px 5px 0px rgba(50, 50, 50, 0.75);
+
+}
+.step.disabled{
+	background-color: $blue6;
+	cursor: default;
+}
+.stepa{
+	padding: 10px;
+}
+
+.resultRow{
+	&:hover{
+		background-color: $blue6;
+	}
+}
+
+.table-striped > tbody > tr:nth-child(odd){
+	&.resultRow{
+		&:hover{
+		background-color: $blue6;
+	 }
+ }
+}

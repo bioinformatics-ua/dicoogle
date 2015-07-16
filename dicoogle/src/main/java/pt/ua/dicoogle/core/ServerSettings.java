@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 import org.dcm4che2.data.UID;
 import org.slf4j.LoggerFactory;
+
 import pt.ua.dicoogle.server.web.utils.types.DataTable;
 
 /**
@@ -49,7 +50,9 @@ public class ServerSettings
     private String ID;
     private int storagePort;
 
+    @Deprecated
     private int rGUIPort;
+    @Deprecated
     private String RGUIExternalIP;
 
     //Dicoogle Settings
@@ -320,6 +323,7 @@ public class ServerSettings
     /**
      * @return the RGUIExternalIP
      */
+    @Deprecated
     public String getRGUIExternalIP() {
         return RGUIExternalIP;
     }
@@ -327,6 +331,7 @@ public class ServerSettings
     /**
      * @param RGUIExternalIP the RGUIExternalIP to set
      */
+    @Deprecated
     public void setRGUIExternalIP(String RGUIExternalIP) {
         this.RGUIExternalIP = RGUIExternalIP;
     }
@@ -455,22 +460,13 @@ public class ServerSettings
 
 	private boolean wanmode;
 
-
-
-    
     private static ServerSettings instance = null;
     
-
     public static synchronized ServerSettings getInstance()
     {
-        
-        
-        if (instance == null)
-        {
+        if (instance == null) {
             instance = new ServerSettings();
         }
-
-
         return instance;
     }
 
@@ -595,10 +591,12 @@ public class ServerSettings
         return storagePort;
     }
 
+    @Deprecated
     public void setRemoteGUIPort(int port){
         rGUIPort = port;
     }
 
+    @Deprecated
     public int getRemoteGUIPort(){
         return rGUIPort;
     }
@@ -624,7 +622,6 @@ public class ServerSettings
         return saveThumbnails;
     }
 
-    // Yet another bug...
     public void setSaveThumbnails(boolean saveThumbnails) {
         this.saveThumbnails = saveThumbnails;
     }
@@ -813,6 +810,20 @@ public class ServerSettings
     public boolean remove(MoveDestination m)
     {
         return this.dest.remove(m);
+    }
+    public boolean removeMoveDestination(String AETitle, String ipAddr, int port)
+    {
+    	for(int i=0;i<dest.size(); i++)
+    	{
+    		MoveDestination mv = dest.get(i);
+    		if(mv.getAETitle().equals(AETitle) && mv.getIpAddrs().equals(ipAddr) && mv.getPort() == port)
+    		{
+    			dest.remove(i);
+    			return true;
+    		}
+    			
+    	}
+    	return false;
     }
     public boolean contains(MoveDestination m){
         return this.dest.contains(m);

@@ -1,0 +1,23 @@
+#sidebar-wrapper {
+    background-color: $main_color;
+}
+.sidebar-nav {
+    li {
+        a {
+            &:hover {
+                background: $hover_color;
+            }
+            color:#6CB7C5;
+            font-size:17px;
+            font-weight:bold;
+            
+        }
+    }
+    margin-top:50px;
+    .active{
+        background: $hover_color;
+        color: #ffffff;
+     
+    }
+}
+

@@ -25,10 +25,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -36,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
@@ -48,6 +47,7 @@ import pt.ua.dicoogle.sdk.utils.DictionaryAccess;
  * @author Frederico Silva <fredericosilva@ua.pt>
  */
 public class DumpServlet extends HttpServlet {
+    private static final Logger logger = LoggerFactory.getLogger(DumpServlet.class);
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -71,53 +71,44 @@ public class DumpServlet extends HttpServlet {
         }
 
         JointQueryTask queryTaskHolder = new JointQueryTask() {
-
             @Override
             public void onCompletion() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
-
             @Override
             public void onReceive(Task<Iterable<SearchResult>> e) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         };
 
+        long tick = System.currentTimeMillis();
         Iterable<SearchResult> results;
         try {
             results = PluginController.getInstance().query(queryTaskHolder, providers, query, extraFields).get();
         } catch (InterruptedException | ExecutionException ex) {
-            LoggerFactory.getLogger(SearchServlet.class).error(ex.getMessage(), ex);
+            logger.warn("Failed to generate results", ex);
             resp.sendError(500, "Could not generate results!");
             return;
         }
 
-        ArrayList<SearchResult> resultsArr = new ArrayList<>();
-        for (SearchResult r : results) {
-            resultsArr.add(r);
-        }
-        String json = processJSON(resultsArr, 0);
+        long time = System.currentTimeMillis()-tick;
+        String json = processJSON(results, time);
 
         resp.setContentType("application/json");
         resp.getWriter().append(json);
     }
 
-    private static String processJSON(Collection<SearchResult> results, long elapsedTime) {
+    private static String processJSON(Iterable<SearchResult> results, long elapsedTime) {
         JSONObject resp = new JSONObject();
+        JSONObject rj = new JSONObject();
+        JSONObject fields = new JSONObject();
         for (SearchResult r : results) {
-            JSONObject rj = new JSONObject();
             rj.put("uri", r.getURI().toString());
-
-            JSONObject fields = new JSONObject();
-            fields.accumulateAll(r.getExtraData());
-
-            rj.put("fields", fields);
-
-            resp.accumulate("results", rj);
+            for (Map.Entry<String,Object> e : r.getExtraData().entrySet()) {
+                fields.put(e.getKey(), e.getValue());
+            }
         }
-        resp.put("numResults", results.size());
-        resp.put("elapsedTime", "NA");
-
+        rj.put("fields", fields);
+        resp.put("results", rj);
+        resp.put("elapsedTime", elapsedTime);
         return resp.toString();
     }
 

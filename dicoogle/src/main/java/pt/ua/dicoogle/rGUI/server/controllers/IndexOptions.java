@@ -21,14 +21,11 @@ package pt.ua.dicoogle.rGUI.server.controllers;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.core.TagsXML;
 import pt.ua.dicoogle.core.dicom.PrivateDictionary;
@@ -66,7 +63,7 @@ public class IndexOptions implements IIndexOptions {
             }
             sem.release();
         } catch (InterruptedException ex) {
-            Logger.getLogger(QRServers.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(QRServers.class).error(ex.getMessage(), ex);
         }
         return instance;
     }
@@ -234,7 +231,7 @@ public class IndexOptions implements IIndexOptions {
                     try {
                         PluginController.getInstance().index(new URI(Path));
                     } catch (URISyntaxException ex) {
-                        Logger.getLogger(DirectorySettings.class.getName()).log(Level.SEVERE, null, ex);
+                        LoggerFactory.getLogger(DirectorySettings.class).error(ex.getMessage(), ex);
                     }
             }
         }
@@ -263,7 +260,7 @@ public class IndexOptions implements IIndexOptions {
                     try {
                         PluginController.getInstance().index(new URI(Path));
                     } catch (URISyntaxException ex) {
-                        Logger.getLogger(DirectorySettings.class.getName()).log(Level.SEVERE, null, ex);
+                        LoggerFactory.getLogger(DirectorySettings.class).error(ex.getMessage(), ex);
                     }
                 
                     if (delete)

@@ -40,8 +40,6 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.GroupLayout.Group;
@@ -56,6 +54,7 @@ import javax.swing.tree.TreeSelectionModel;
 import org.apache.commons.codec.binary.Base64;
 import org.jvnet.substance.SubstanceLookAndFeel;
 import org.jvnet.substance.skin.*;
+import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.Main;
 import pt.ua.dicoogle.core.ClientSettings;
@@ -116,7 +115,7 @@ public class MainWindow extends javax.swing.JFrame {
             }
             sem.release();
         } catch (InterruptedException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(MainWindow.class).error(ex.getMessage(), ex);
         }
         return instance;
     }
@@ -143,7 +142,7 @@ public class MainWindow extends javax.swing.JFrame {
                 this.ranges.add(newJCB);
             }
         } catch (RemoteException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(MainWindow.class).error(ex.getMessage(), ex);
         }
 
         initComponents();
@@ -262,7 +261,7 @@ public class MainWindow extends javax.swing.JFrame {
                 }
             }
         } catch (RemoteException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(MainWindow.class).error(ex.getMessage(), ex);
         }
 
         try {
@@ -273,7 +272,7 @@ public class MainWindow extends javax.swing.JFrame {
                 }
             }
         } catch (RemoteException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(MainWindow.class).error(ex.getMessage(), ex);
         }
 
         try {
@@ -285,7 +284,7 @@ public class MainWindow extends javax.swing.JFrame {
                 }
             }
         } catch (RemoteException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(MainWindow.class).error(ex.getMessage(), ex);
         }
 
         taskList = new TaskList();
@@ -1816,7 +1815,7 @@ private void jMenuDirScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
             JOptionPane.showMessageDialog(this, peerNames, "P2P Peers", JOptionPane.INFORMATION_MESSAGE);
 
         } catch (RemoteException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(MainWindow.class).error(ex.getMessage(), ex);
         }
     }//GEN-LAST:event_jButtonPeersActionPerformed
 
@@ -1996,7 +1995,7 @@ private void jMenuDirScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
             clientCore.getUser().logout();
 
         } catch (RemoteException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(MainWindow.class).error(ex.getMessage(), ex);
         }
         File toDelete = new File("pluginClasses");
         String[] deleteArray = toDelete.list();
@@ -2093,7 +2092,7 @@ private void jTreeResultsKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:e
                     AdminRefs.getInstance().getIndexOptions().removeFilesFromIndexer(files, false);
                 }
             } catch (RemoteException ex) {
-                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                LoggerFactory.getLogger(MainWindow.class).error(ex.getMessage(), ex);
             }
         }
     }
@@ -2328,9 +2327,9 @@ private void jButtonViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
                     ts.toFront();
 
                 } catch (RemoteException ex) {
-                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    LoggerFactory.getLogger(MainWindow.class).error(ex.getMessage(), ex);
                 } catch (IOException ex) {
-                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    LoggerFactory.getLogger(MainWindow.class).error(ex.getMessage(), ex);
                 }
             }
         }
@@ -2352,7 +2351,7 @@ private void jButtonDownloadActionPerformed(java.awt.event.ActionEvent evt) {//G
             UserRefs.getInstance().getSearch().RequestP2PFile(temp);
 
         } catch (RemoteException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(MainWindow.class).error(ex.getMessage(), ex);
         }
     }
 }//GEN-LAST:event_jButtonDownloadActionPerformed
@@ -2396,10 +2395,10 @@ private void SearchTipsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
 
     public void search() {
 
-        Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, "State: " + state);
+        LoggerFactory.getLogger(MainWindow.class).debug("State: {}", state);
         if (state == QUERY_STATE.WAITING_FOR_RESULTS) {
 
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, "Prunning query");
+            LoggerFactory.getLogger(MainWindow.class).debug("Pruning query");
 
             pruneQuery();
             return;
