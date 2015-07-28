@@ -27,6 +27,7 @@ package pt.ua.dicoogle.core;
  */
 
 
+import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.server.*;
 
 import java.io.*;

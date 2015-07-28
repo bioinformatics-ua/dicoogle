@@ -21,12 +21,14 @@ package pt.ua.dicoogle.plugins;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+import pt.ua.dicoogle.core.ServerSettings;
 
 import pt.ua.dicoogle.sdk.IndexerInterface;
 import pt.ua.dicoogle.sdk.QueryInterface;
 import pt.ua.dicoogle.sdk.StorageInputStream;
 import pt.ua.dicoogle.sdk.StorageInterface;
 import pt.ua.dicoogle.sdk.core.DicooglePlatformInterface;
+import pt.ua.dicoogle.sdk.core.ServerSettingsReader;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
@@ -143,5 +145,10 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
 	public List<Report> indexBlocking(URI path) {
 		return pluginController.indexBlocking(path);
 	}
+
+    @Override
+    public ServerSettingsReader getSettings() {
+        return ServerSettings.getInstance();
+    }
     
 }

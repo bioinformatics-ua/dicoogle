@@ -180,4 +180,9 @@ public interface DicooglePlatformInterface {
      * @return a list of reports, one for each provider
      */
 	public List<Report> indexBlocking(URI path);
+    
+    /** Obtain access to the server's settings.
+     * @return an object for read-only access to the settings
+     */
+    public ServerSettingsReader getSettings();
 }

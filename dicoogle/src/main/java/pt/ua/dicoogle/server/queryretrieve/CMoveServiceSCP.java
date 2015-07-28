@@ -41,7 +41,7 @@ import pt.ua.dicoogle.core.exceptions.CFindNotSupportedException;
 import pt.ua.dicoogle.core.LogDICOM;
 import pt.ua.dicoogle.core.LogLine;
 import pt.ua.dicoogle.core.LogXML;
-import pt.ua.dicoogle.core.MoveDestination;
+import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.server.DicomNetwork;
 import pt.ua.dicoogle.server.SearchDicomResult;
 import pt.ua.dicoogle.core.ServerSettings;
