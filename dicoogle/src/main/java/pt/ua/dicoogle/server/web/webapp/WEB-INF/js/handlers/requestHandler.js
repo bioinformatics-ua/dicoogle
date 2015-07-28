@@ -1,5 +1,5 @@
 import {Endpoints} from '../constants/endpoints';
-function getPatients(freetext, isKeyword,callbackSucccess, callbackError){
+function getPatients(freetext, isKeyword,provider,callbackSucccess, callbackError){
         console.log("store param: ", freetext);
 
         //'http://localhost:8080/search?query=wrix&keyword=false&provicer=lucene'
@@ -9,7 +9,11 @@ function getPatients(freetext, isKeyword,callbackSucccess, callbackError){
           isKeyword = true;
         }
 
-        var url = Endpoints.base + '/searchDIM?query='+freetext+'&keyword='+isKeyword+'&provicer=lucene';
+        var url = Endpoints.base + '/searchDIM?query='+freetext+'&keyword='+isKeyword;
+        if(provider != "all")
+        {
+          url = url + "&provider=" + provider;
+        }
         console.log("store url;",url);
 
         $.ajax({
