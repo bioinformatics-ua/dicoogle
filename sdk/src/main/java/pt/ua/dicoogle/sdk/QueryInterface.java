@@ -21,25 +21,26 @@ package pt.ua.dicoogle.sdk;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 
 /**
- *  Base class for all plugins able to handle queries
+ * Query Interface Plugin. Query plugins provide a means of handling queries and obtaining search results.
+ * They will usually rely on indices created by an indexer plugin.
+ *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author fmvalente
  */
-
 public interface QueryInterface extends DicooglePlugin 
 {
-    
     /**
-     * Search in the database
+     * Performs a search on the database.
      * 
-     * @param query Query string based on Lucene
-     * @param parameters Object parameters of the query. The plugin can use 
-     * the generic parameters to communicate between each other.
+     * The consumer of the results would either request an iterator or use a for-each loop. The underlying
+     * iterator implementation can be redefined to wait for more results at the caller.
+     *
+     * @param query a string describing the query. The underlying plugin is currently free to follow any
+     * query format, but only those based on Lucene with work with the search user interface.
+     * @param parameters A variable list of parameters of the query. The plugin can use them to establish
+     * their own API's, which may require more complex data structures (e.g. images).
      * 
-     * The consumer of the results will use Iterator and get the results until
-     * has next. The iterator can be redefined, and wait until results.
-     * 
-     * @return Iterator returns the results.
+     * @return the results of the query as a (possibly lazy) iterable
      */
-    public Iterable<SearchResult> query(String query, Object ... parameters) ;
+    public Iterable<SearchResult> query(String query, Object ... parameters);
 }
