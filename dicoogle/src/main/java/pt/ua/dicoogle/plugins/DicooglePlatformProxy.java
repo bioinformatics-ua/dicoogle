@@ -21,26 +21,28 @@ package pt.ua.dicoogle.plugins;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+import pt.ua.dicoogle.core.ServerSettings;
 
 import pt.ua.dicoogle.sdk.IndexerInterface;
 import pt.ua.dicoogle.sdk.QueryInterface;
 import pt.ua.dicoogle.sdk.StorageInputStream;
 import pt.ua.dicoogle.sdk.StorageInterface;
 import pt.ua.dicoogle.sdk.core.DicooglePlatformInterface;
+import pt.ua.dicoogle.sdk.core.ServerSettingsReader;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
 
 /**
- * Proxy to the implementations of Plugin Controller
+ * A proxy to the implementations of Plugin Controller.
  * 
  * @author psytek
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class DicooglePlatformProxy implements DicooglePlatformInterface {
 
-    private PluginController pluginController;
+    private final PluginController pluginController;
     
     public DicooglePlatformProxy(PluginController pluginController){
         this.pluginController = pluginController;
@@ -90,48 +92,63 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
         return pluginController.resolveURI(location);
     }
 
+    @Override
 	public Collection<StorageInterface> getStoragePlugins(boolean onlyEnabled) {
 		return pluginController.getStoragePlugins(onlyEnabled);
 	}
 
+    @Override
 	public StorageInterface getStorageForSchema(String schema) {
 		return pluginController.getStorageForSchema(schema);
 	}
 
+    @Override
 	public Collection<QueryInterface> getQueryPlugins(boolean onlyEnabled) {
 		return pluginController.getQueryPlugins(onlyEnabled);
 	}
 
+    @Override
 	public List<String> getQueryProvidersName(boolean enabled) {
 		return pluginController.getQueryProvidersName(enabled);
 	}
 
+    @Override
 	public QueryInterface getQueryProviderByName(String name,
 			boolean onlyEnabled) {
 		return pluginController.getQueryProviderByName(name, onlyEnabled);
 	}
 
+    @Override
 	public JointQueryTask queryAll(JointQueryTask holder, String query,
 			Object... parameters) {
 		return pluginController.queryAll(holder, query, parameters);
 	}
 
+    @Override
 	public Task<Iterable<SearchResult>> query(String querySource, String query,
 			Object... parameters) {
 		return pluginController.query(querySource, query, parameters);
 	}
 
+    @Override
 	public JointQueryTask query(JointQueryTask holder,
 			List<String> querySources, String query, Object... parameters) {
 		return pluginController.query(holder, querySources, query, parameters);
 	}
 
+    @Override
 	public List<Task<Report>> index(URI path) {
 		return pluginController.index(path);
 	}
 
+    @Override
 	public List<Report> indexBlocking(URI path) {
 		return pluginController.indexBlocking(path);
 	}
+
+    @Override
+    public ServerSettingsReader getSettings() {
+        return ServerSettings.getInstance();
+    }
     
 }

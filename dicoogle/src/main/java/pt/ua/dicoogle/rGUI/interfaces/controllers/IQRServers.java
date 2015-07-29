@@ -19,7 +19,7 @@
 package pt.ua.dicoogle.rGUI.interfaces.controllers;
 
 import java.util.ArrayList;
-import pt.ua.dicoogle.core.MoveDestination;
+import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 

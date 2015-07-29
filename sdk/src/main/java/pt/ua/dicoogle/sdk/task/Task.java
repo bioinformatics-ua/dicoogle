@@ -22,9 +22,9 @@ import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
-/**
+/** An entity for describing an asynchronous task in Dicoogle.
  *
- * Type is the return type of the FutureTask
+ * @param <Type> the return type of the FutureTask
  * 
  * @author psytek
  */
@@ -58,16 +58,17 @@ public class Task<Type> extends FutureTask<Type> {
         toRunWhenComplete.add(r);
     }
     
-    /** Get the task's name
+    /** Gets the task's name
      * @return a task name, for presentation purposes
      */
     public String getName(){return this.taskName;}
-    /** Set the task's name
+    
+    /** Sets the task's name
      * @param name the new task's name, for presentation purposes
      */
     public void setName(String name){this.taskName = name;}
     
-    /** Get the task's progress
+    /** Gets the task's progress
      * @return the task's progress from 0 to 1, or -1 if the task is unbounded
      */
     public float getProgress(){
@@ -75,7 +76,7 @@ public class Task<Type> extends FutureTask<Type> {
             return ((ProgressCallable)this.callable).getProgress();
         }
         return -1;
-    };
+    }
     
 }
 

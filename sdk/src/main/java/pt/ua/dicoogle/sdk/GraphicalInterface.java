@@ -23,22 +23,19 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 /**
- *
- * @author Frederico Valente
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
- * <p>
- * This interface exposes the graphical GUI of Dicoogle in a controlled way
+ * This interface exposes the GUI of Dicoogle in a controlled way.
  * Plugins implementing this interface should override this methods
  * If some of the functionality is not required (for instance, if there is
  * no need for a top icon), the respective methods overloads should return null
- * </p>
+ *
+ * @author Frederico Valente
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * 
+ * @deprecated The remote Swing-based GUI is outdated and will no longer be supported.
  */
 @Deprecated
 public interface GraphicalInterface extends DicooglePlugin
 {
-    
-    
     public ArrayList<JMenuItem> getRightButtonItems();
     public ArrayList<JPanel> getTopIcons();
     public ArrayList<JPanel> getTabPanels();

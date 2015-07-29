@@ -9,7 +9,7 @@ import {ActionCreators} from '../../actions/searchActions';
 
 import {PatientView} from './result/patientView';
 import {StudyView} from './result/studyView';
-import {SerieView} from './result/serieView';
+import {SeriesView} from './result/serieView';
 import {ImageView} from './result/imageView';
 import {ExportView} from './exportView';
 
@@ -127,7 +127,7 @@ var ResultSearch = React.createClass({
     else if(stepComponent == 1)
       view = ( <StudyView patient={this.state.patient} onItemClick={this.onStudyClicked}/>);
     else if(stepComponent == 2)
-      view = ( <SerieView study={this.state.study} onItemClick={this.onSerieClicked}/>);
+      view = ( <SeriesView study={this.state.study} onItemClick={this.onSeriesClicked}/>);
     else if(stepComponent == 3)
       view = ( <ImageView serie={this.state.serie} />);
 
@@ -141,9 +141,9 @@ var ResultSearch = React.createClass({
   },
   onStudyClicked:function(study){
     this.setState({current: 2, study: study});
-    React.render(<SerieView study={study} onItemClick={this.onSerieClicked} />, document.getElementById("step-container"));
+    React.render(<SeriesView study={study} onItemClick={this.onSeriesClicked} />, document.getElementById("step-container"));
   },
-  onSerieClicked:function(serie){
+  onSeriesClicked:function(serie){
     this.setState({current: 3, serie: serie});
     React.render(<ImageView serie={serie} />, document.getElementById("step-container"));
   }
@@ -168,7 +168,7 @@ var Step = React.createClass({
             <div className={this.getStep(this.state.current,1)} onClick={this.onStepClicked.bind(this,1)}>Study</div>
           </div>
           <div className="col-xs-3 stepa">
-            <div className={this.getStep(this.state.current,2)} onClick={this.onStepClicked.bind(this,2)}>Serie</div>
+            <div className={this.getStep(this.state.current,2)} onClick={this.onStepClicked.bind(this,2)}>Series</div>
           </div>
           <div className="col-xs-3 stepa">
             <div className={this.getStep(this.state.current,3)} onClick={this.onStepClicked.bind(this,3)}>Image</div>
