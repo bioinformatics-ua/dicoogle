@@ -58,7 +58,9 @@ var Search = React.createClass({
 
         var selectionButtons = (
             <div>
-            <button type="button" className="btn btn_dicoogle" onClick={this.renderFilter} data-trigger="advance-search" id="btn-advance">Advanced</button>
+            <button type="button" className="btn btn_dicoogle" onClick={this.renderFilter} data-trigger="advance-search" id="btn-advance">
+              {this.state.searchState === "simple" ? "Advanced" : "Basic"}
+            </button>
                 <div className="btn-group">
                     <select id="providersList" className="btn btn_dicoogle form-control">
                       {providersList}
