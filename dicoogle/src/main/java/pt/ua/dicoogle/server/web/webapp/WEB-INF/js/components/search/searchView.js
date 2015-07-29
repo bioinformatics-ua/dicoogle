@@ -21,16 +21,23 @@ var Link = Router.Link;
 var RouteHandler = Router.RouteHandler
 
 import {UserMixin} from '../mixins/userMixin';
+import {getUrlVars} from '../../utils/url';
 
 var Search = React.createClass({
-    mixins : [UserMixin],
+    //mixins : [UserMixin],
     getInitialState: function (){
-
+        document.getElementById('container').style.display = 'block';
         return { label:'login', searchState: "simple" , providers:["All providers"]};
     },
     componentDidMount: function(){
       this.enableAutocomplete();
       this.enableEnterKey();
+
+      if(getUrlVars()['query'])
+      {
+        this.onSearchByUrl();
+      }
+
 
       ProvidersActions.get();
     },
@@ -97,7 +104,12 @@ var Search = React.createClass({
     this.setState({searchState: switchState})
 
     },
+    onSearchByUrl : function(){
+      var params = {text: getUrlVars()['query'], keyword: getUrlVars()['keyword'], provider: getUrlVars()['provider']};
 
+      React.render(<ResultSearch items={params}/>, document.getElementById("container"));
+    }
+    ,
     onSearchClicked : function(){
         // console.log(React.getInitialState(<ResultSearch/>) );
         var text = document.getElementById("free_text").value;

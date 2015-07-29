@@ -304,8 +304,9 @@ input {
 #container {
   max-width: 1000px;
   margin: auto;
-  display: block;
+  display: flex;
   padding: 20px;
-  padding-top: 70px; }
+  padding-top: 70px;
+  justify-content: center; }
 
 /*# sourceMappingURL=dicoogle.css.map */

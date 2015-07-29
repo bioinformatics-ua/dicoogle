@@ -41,6 +41,9 @@ import {LoginView} from './login/loginView';
 import {LoadingView} from './login/loadingView';
 import {UserMixin} from './mixins/userMixin';
 
+import {DirectImageView} from '../components/direct/directImageView';
+import {DirectDumpView} from '../components/direct/directDumpView';
+
 import {Endpoints} from '../constants/endpoints';
 
 
@@ -179,18 +182,35 @@ var App = React.createClass({
             }
           });
 
+          var DirectImagePage = React.createClass({
+            render: function() {
+              React.render(<DirectImageView/>, document.getElementById("container"));
+              return (<div/>);
+            }
+          });
+
+          var DirectDumpPage = React.createClass({
+            render: function() {
+              React.render(<DirectDumpView/>, document.getElementById("container"));
+              return (<div/>);
+            }
+          });
+
+
           var Routing = function () {
 
             var routes = (
-              <Route handler={App} path="/">
-                <Route name="search" addHandlerKey={true} handler={SearchPage}>
-                  <Route name="silo" path="/results" handler={ResultPage}/>
+              <Route handler={App} >
+                <Route path="search" addHandlerKey={true} handler={SearchPage} >
                 </Route>
                 <Route name="management" addHandlerKey={true} handler={ManagementPage} />
+                  <Route name="results" addHandlerKey={true} handler={ResultPage} />
                 <Route name="indexer" addHandlerKey={true} handler={IndexerPage} />
                 <Route name="about" addHandlerKey={true} handler={AboutPage} />
                 <Route name="login" addHandlerKey={true} handler={LoginPage} />
                 <Route name="loading" addHandlerKey={true} handler={LoadingPage} />
+                <Route name="image" addHandlerKey={true} handler={DirectImagePage} />
+                <Route name="dump" addHandlerKey={true} handler={DirectDumpPage} />
 
 
                 <DefaultRoute handler={LoadingPage} />
