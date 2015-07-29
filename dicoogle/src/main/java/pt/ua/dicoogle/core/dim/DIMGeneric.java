@@ -186,7 +186,7 @@ public class DIMGeneric
                      serie.addImage(r.getURI(),sopInstUID);
                      s.addSerie(serie);
                      this.patients.add(p);
-                     this.patientsHash.put(patientID, p);
+                     this.patientsHash.put(patientName, p);
                 }
             }
 
