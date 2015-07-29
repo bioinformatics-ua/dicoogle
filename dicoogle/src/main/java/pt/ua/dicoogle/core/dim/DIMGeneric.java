@@ -127,13 +127,13 @@ public class DIMGeneric
 
                 /** Verify if Patient already exists */
 
-                if (this.patientsHash.containsKey(patientID))
+                if (this.patientsHash.containsKey(patientName))
                 {
                     /**
                      * Patient Already exists, let's check studys
                      */
-
-                    Patient p = this.patientsHash.get(patientID);
+		    // Real data does not have Patient Id - sometimes.
+                    Patient p = this.patientsHash.get(patientName);
 
 
                     /**
