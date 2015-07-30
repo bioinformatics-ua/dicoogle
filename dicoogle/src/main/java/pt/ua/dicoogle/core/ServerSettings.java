@@ -18,6 +18,7 @@
  */
 package pt.ua.dicoogle.core;
 
+import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,18 +28,20 @@ import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 import org.dcm4che2.data.UID;
 import org.slf4j.LoggerFactory;
+import pt.ua.dicoogle.sdk.core.ServerSettingsReader;
+import pt.ua.dicoogle.sdk.core.WebSettingsReader;
 
 import pt.ua.dicoogle.server.web.utils.types.DataTable;
 
-/**
+/** Singleton class of all server settings.
  *
  * @author Marco Pereira
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author António Novo <antonio.novo@ua.pt>
+ * @author Eduardo Pinho <eduardopinho@ua.pt>
  * @see XMLSupport
- * 
  */
-public class ServerSettings
+public class ServerSettings implements ServerSettingsReader
 {
     private String AETitle;
 
@@ -153,21 +156,20 @@ public class ServerSettings
     /* DEFAULT Connection timeout (in sec) */
     private int connectionTimeout ;
     
-    
     private int maxMessages = 2000;
     private String SOPClass  ; 
     private String transfCAP ; 
     
      /* DEFAULT Max Client Associations */
-    private int MAX_CLIENT_ASSOCS  ; 
+    private int maxClientAssocs  ; 
    
-    private int MAX_PDU_LENGTH_RECEIVE ;
-    private int MAX_PDU_LENGTH_SEND ;
+    private int maxPDULengthReceive ;
+    private int maxPDULengthSend ;
 
 
-    HashMap<String, String> modalityFind = new HashMap<String, String>();
+    HashMap<String, String> modalityFind = new HashMap<>();
 
-    ArrayList<MoveDestination> dest = new ArrayList<MoveDestination>();
+    ArrayList<MoveDestination> dest = new ArrayList<>();
 
     private boolean indexAnonymous = false;
 
@@ -188,7 +190,7 @@ public class ServerSettings
     /** Indexer */
     private String indexer = "lucene2.2";
     private int indexerEffort = 0 ;
-    private HashSet<String> extensionsAllowed = new HashSet();
+    private HashSet<String> extensionsAllowed = new HashSet<>();
 
     private boolean gzipStorage = false;
     private final String aclxmlFileName = "aetitleFilter.xml";
@@ -196,6 +198,7 @@ public class ServerSettings
     /**
      * @return the web
      */
+    @Override
     public Web getWeb()
     {
         return web;
@@ -226,6 +229,7 @@ public class ServerSettings
     /**
      * @return the indexer
      */
+    @Override
     public String getIndexer() {
         return indexer;
     }
@@ -240,6 +244,7 @@ public class ServerSettings
     /**
      * @return the nodeName
      */
+    @Override
     public String getNodeName() {
         return nodeName;
     }
@@ -254,6 +259,7 @@ public class ServerSettings
     /**
      * @return the nodeNameDefined
      */
+    @Override
     public boolean isNodeNameDefined() {
         return nodeNameDefined;
     }
@@ -265,6 +271,7 @@ public class ServerSettings
         this.nodeNameDefined = nodeNameDefined;
     }
 
+    @Override
     public String getNetworkInterfaceName()
     {
         return networkInterfaceName;
@@ -279,6 +286,7 @@ public class ServerSettings
     /**
      * @return the indexerEffort
      */
+    @Override
     public int getIndexerEffort() {
         return indexerEffort;
     }
@@ -293,6 +301,7 @@ public class ServerSettings
     /**
      * @return the encryptUsersFile
      */
+    @Override
     public boolean isEncryptUsersFile() {
         return encryptUsersFile;
     }
@@ -307,6 +316,7 @@ public class ServerSettings
     /**
      * @return the indexZIPFiles
      */
+    @Override
     public boolean isIndexZIPFiles() {
         return indexZIPFiles;
     }
@@ -337,6 +347,7 @@ public class ServerSettings
     /**
      * @return the monitorWatcher
      */
+    @Override
     public boolean isMonitorWatcher() {
         return monitorWatcher;
     }
@@ -351,6 +362,7 @@ public class ServerSettings
     /**
      * @return the indexAnonymous
      */
+    @Override
     public boolean isIndexAnonymous() {
         return indexAnonymous;
     }
@@ -365,6 +377,7 @@ public class ServerSettings
     /**
      * @return the gzipStorage
      */
+    @Override
     public boolean isGzipStorage() {
         return gzipStorage;
     }
@@ -376,6 +389,7 @@ public class ServerSettings
         this.gzipStorage = gzipStorage;
     }
 
+    @Override
     public String getAccessListFileName() {
         return this.aclxmlFileName;
     }
@@ -383,13 +397,15 @@ public class ServerSettings
     /**
      * Web (including web server, webservices, etc)
      */
-    public class Web
+    public class Web implements WebSettingsReader
     {
-
         private boolean webServer = true;
-        private boolean webServices = false;
+        private int serverPort = 8080;
+        private String accessControlAllowOrigins = null;
 
-        private int serverPort = 8080 ;
+        @Deprecated
+        private boolean webServices = false;
+        @Deprecated
         private int servicePort = 6060;
         
         private String accessControlAllowOrigin = null;
@@ -401,6 +417,7 @@ public class ServerSettings
         /**
          * @return the webServer
          */
+        @Override
         public boolean isWebServer() {
             return webServer;
         }
@@ -415,6 +432,7 @@ public class ServerSettings
         /**
          * @return the webServices
          */
+        @Deprecated
         public boolean isWebServices() {
             return webServices;
         }
@@ -422,6 +440,7 @@ public class ServerSettings
         /**
          * @param webServices the webServices to set
          */
+        @Deprecated
         public void setWebServices(boolean webServices) {
             this.webServices = webServices;
         }
@@ -429,6 +448,7 @@ public class ServerSettings
         /**
          * @return the serverPort
          */
+        @Override
         public int getServerPort() {
             return serverPort;
         }
@@ -443,6 +463,7 @@ public class ServerSettings
         /**
          * @return the servicePort
          */
+        @Deprecated
         public int getServicePort() {
             return servicePort;
         }
@@ -450,8 +471,18 @@ public class ServerSettings
         /**
          * @param servicePort the servicePort to set
          */
+        @Deprecated
         public void setServicePort(int servicePort) {
             this.servicePort = servicePort;
+        }
+        
+        @Override
+        public String getAccessControlAllowOrigins() {
+            return this.accessControlAllowOrigins;
+        }
+
+        public void setAccessControlAllowOrigins(String accessControlAllowOrigins) {
+            this.accessControlAllowOrigins = accessControlAllowOrigins;
         }
 
         public String getAccessControlAllowOrigin() {
@@ -464,7 +495,7 @@ public class ServerSettings
 
     }
 
-    private Web web = new Web() ;
+    private Web web = new Web();
 
 	private boolean wanmode;
 
@@ -514,12 +545,12 @@ public class ServerSettings
         + "|" + UID.PatientRootQueryRetrieveInformationModelFIND;
                
         fillModalityFindDefault();
-        this.MAX_CLIENT_ASSOCS = 20 ; 
-        this.MAX_PDU_LENGTH_RECEIVE = 16364 ; 
-        this.MAX_PDU_LENGTH_SEND = 16364 ;
+        this.maxClientAssocs = 20 ; 
+        this.maxPDULengthReceive = 16364 ; 
+        this.maxPDULengthSend = 16364 ;
         System.setProperty("java.net.preferIPv4Stack", "true");
 
-    	autoStartPlugin = new ConcurrentHashMap<>();
+        autoStartPlugin = new ConcurrentHashMap<>();
     }
 
     // Nasty bug fix; no thumbnails references here = null pointers
@@ -545,6 +576,7 @@ public class ServerSettings
         AETitle = AE;
     }
 
+    @Override
     public String getAE()
     {
         return AETitle;
@@ -555,6 +587,7 @@ public class ServerSettings
         ID = I;
     }
 
+    @Override
     public String getID()
     {
         return ID;
@@ -565,6 +598,7 @@ public class ServerSettings
         CAETitle = CAET;            
     }
 
+    @Override
     public String[] getCAET()
     {
         return CAETitle;
@@ -574,6 +608,7 @@ public class ServerSettings
         permitAllAETitles = value;
     }
 
+    @Override
     public boolean getPermitAllAETitles(){
         return permitAllAETitles;
     }
@@ -588,11 +623,13 @@ public class ServerSettings
         Path = p;
     }
 
+    @Override
     public String getPath()
     {
         return Path;
     }
 
+    @Override
     public int getStoragePort()
     {
         return storagePort;
@@ -608,6 +645,7 @@ public class ServerSettings
         return rGUIPort;
     }
 
+    @Override
     public String getDicoogleDir() {
         return dicoogleDir;
     }
@@ -617,6 +655,7 @@ public class ServerSettings
     }
 
 
+    @Override
     public boolean getFullContentIndex() {
         return fullContentIndex;
     }
@@ -625,6 +664,7 @@ public class ServerSettings
         this.fullContentIndex = fullContentIndex;
     }
 
+    @Override
     public boolean getSaveThumbnails() {
         return saveThumbnails;
     }
@@ -633,6 +673,7 @@ public class ServerSettings
         this.saveThumbnails = saveThumbnails;
     }
     
+    @Override
     public String getThumbnailsMatrix() {
         return thumbnailsMatrix;
     }
@@ -641,7 +682,7 @@ public class ServerSettings
         this.thumbnailsMatrix = thumbnailsMatrix;
     }
 
-    /**
+    /*
      * Query Retrieve Server
      */
 
@@ -650,6 +691,7 @@ public class ServerSettings
         this.wlsPort = port ;
     }
 
+    @Override
     public int getWlsPort()
     {
         return this.wlsPort ;
@@ -660,6 +702,7 @@ public class ServerSettings
         this.idleTimeout = timeout ;
     }
 
+    @Override
     public int getIdleTimeout()
     {
         return this.idleTimeout ;
@@ -670,6 +713,7 @@ public class ServerSettings
         this.rspDelay = delay ;
     }
 
+    @Override
     public int getRspDelay()
     {
         return this.rspDelay  ;
@@ -679,6 +723,7 @@ public class ServerSettings
     {
         this.acceptTimeout = timeout ;
     }
+    @Override
     public int getAcceptTimeout()
     {
         return this.acceptTimeout;
@@ -688,6 +733,7 @@ public class ServerSettings
     {
         this.connectionTimeout = timeout; 
     }
+    @Override
     public int getConnectionTimeout()
     {
         return this.connectionTimeout ;
@@ -698,6 +744,7 @@ public class ServerSettings
         this.SOPClass = SOPClass ;
     }
     
+    @Override
     public String[] getSOPClasses()
     {
         String []tmp = {
@@ -707,6 +754,7 @@ public class ServerSettings
         return tmp ; 
     }
 
+    @Override
     public String getSOPClass()
     {
         return this.SOPClass ; 
@@ -715,6 +763,7 @@ public class ServerSettings
     {
         this.DIMSERspTimeout = timeout ; 
     }
+    @Override
     public int getDIMSERspTimeout()
     {
         return this.DIMSERspTimeout ; 
@@ -724,6 +773,7 @@ public class ServerSettings
         this.deviceDescription = desc ; 
     }
     
+    @Override
     public String getDeviceDescription()
     {
         return this.deviceDescription;
@@ -734,62 +784,70 @@ public class ServerSettings
         this.transfCAP = transfCap;
     }
         
+    @Override
     public String getTransfCap()
     {
-        return this.transfCAP ; 
+        return this.transfCAP; 
     }
     
     public void setMaxClientAssoc(int maxClients)
     {
-        this.MAX_CLIENT_ASSOCS = maxClients ; 
+        this.maxClientAssocs = maxClients; 
     }
     
+    @Override
     public int getMaxClientAssoc()
     {
-        return this.MAX_CLIENT_ASSOCS ; 
+        return this.maxClientAssocs; 
     }
     
     public void setMaxPDULengthReceive(int len)
     {
-        this.MAX_PDU_LENGTH_RECEIVE = len ;
+        this.maxPDULengthReceive = len;
     }
     
+    @Override
     public int getMaxPDULengthReceive()
     {
-        return this.MAX_PDU_LENGTH_RECEIVE ; 
+        return this.maxPDULengthReceive; 
     }
     public void setMaxPDULengthSend(int len)
     {
-        this.MAX_PDU_LENGTH_SEND = len ;
+        this.maxPDULengthSend = len;
     }
-    public int getMaxPDULenghtSend()
+    @Override
+    public int getMaxPDULenghtSend() // FIXME typo
     {
-        return this.MAX_PDU_LENGTH_SEND; 
+        return this.maxPDULengthSend; 
     }
     
     public void setLocalAETName(String name)
     {
-        this.localAETName = name ; 
+        this.localAETName = name; 
     }
+    @Override
     public String getLocalAETName()
     {
-        return this.localAETName ; 
+        return this.localAETName; 
     }
     
     public void setPermitedLocalInterfaces(String localInterfaces)
     {
-        this.permitedLocalInterfaces  = localInterfaces ; 
+        this.permitedLocalInterfaces  = localInterfaces; 
     }
     
+    @Override
     public String getPermitedLocalInterfaces()
     {
-        return this.permitedLocalInterfaces ; 
+        return this.permitedLocalInterfaces; 
     }
     
     public void setPermitedRemoteHostnames(String remoteHostnames)
     {
-        this.permitedRemoteHostnames = remoteHostnames ; 
+        this.permitedRemoteHostnames = remoteHostnames; 
     }
+    
+    @Override
     public String getPermitedRemoteHostnames()
     {
         return this.permitedRemoteHostnames;
@@ -801,9 +859,11 @@ public class ServerSettings
    /* public boolean isP2P() {
         return P2P;
     }*/
+    @Override
     public boolean isStorage() {
         return storage;
     }
+    @Override
     public boolean isQueryRetrive() {
         return queryRetrieve;
     }
@@ -835,6 +895,7 @@ public class ServerSettings
     public boolean contains(MoveDestination m){
         return this.dest.contains(m);
     }
+    @Override
     public ArrayList<MoveDestination> getMoves()
     {
         return this.dest ;
@@ -880,7 +941,8 @@ public class ServerSettings
      *
      * @return HashMap with Modalitys FIND
      */
-    public HashMap getModalityFind()
+    @Override
+    public HashMap<String, String> getModalityFind()
     {
         return this.modalityFind;
     }
@@ -910,6 +972,7 @@ public class ServerSettings
      * @param name the name of the plugin.
      * @return true if the plugin is to be auto started on server init or false if it is not.
      */
+    @Override
     public boolean getAutoStartPlugin(String name)
     {
     	Boolean result = autoStartPlugin.get(name);
@@ -924,6 +987,7 @@ public class ServerSettings
 	 *
 	 * @return the current settings for plugin auto start on server init.
 	 */
+    @Override
 	public ConcurrentHashMap<String, Boolean> getAutoStartPluginsSettings()
 	{
 		return autoStartPlugin;
@@ -993,6 +1057,7 @@ public class ServerSettings
 	 *
 	 * @return and HashMap containing the Query Retrieve list of settings (name, value/type pairs).
 	 */
+    @Override
 	public HashMap<String, Object> getQueryRetrieveSettings()
 	{
 		HashMap<String, Object> result = new HashMap<>();
@@ -1057,6 +1122,7 @@ public class ServerSettings
 	 *
 	 * @return and HashMap containing the Storage list of settings (name, value/type pairs).
 	 */
+    @Override
 	public HashMap<String, Object> getStorageSettings()
 	{
 		HashMap<String, Object> result = new HashMap<>();
@@ -1138,6 +1204,7 @@ public class ServerSettings
         this.queryRetrieve = queryRetrieve;
     }
 
+    @Override
     public ArrayList<String> getNetworkInterfacesNames()
     {
         ArrayList<String> interfaces = new ArrayList<String>();
@@ -1174,6 +1241,7 @@ public class ServerSettings
         return interfaces;
     }
 
+    @Override
     public String getNetworkInterfaceAddress()
     {
         Enumeration<NetworkInterface> nets = null;
@@ -1220,6 +1288,7 @@ public class ServerSettings
 
 
 
+    @Override
     public HashSet<String> getExtensionsAllowed()
     {
         return extensionsAllowed;
@@ -1228,6 +1297,7 @@ public class ServerSettings
     /**
      * @return the maxMessages
      */
+    @Override
     public int getMaxMessages() {
         return maxMessages;
     }
@@ -1239,6 +1309,7 @@ public class ServerSettings
         this.maxMessages = maxMessages;
     }
 
+    @Override
 	public boolean isWANModeEnabled() {
 		// TODO Auto-generated method stub
 		return wanmode;

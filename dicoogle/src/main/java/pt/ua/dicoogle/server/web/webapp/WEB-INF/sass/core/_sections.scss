@@ -1,7 +1,8 @@
 #container {
     max-width: $app_content_max_width;
     margin: auto;
-    display: block;
+    display: flex;
     padding: 20px;
     padding-top: 70px;
+    justify-content: center;
 }

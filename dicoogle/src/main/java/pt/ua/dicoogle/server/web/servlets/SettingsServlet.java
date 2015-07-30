@@ -34,7 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
-import pt.ua.dicoogle.core.MoveDestination;
+import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.core.XMLSupport;
 import pt.ua.dicoogle.server.web.management.Dicoogle;
@@ -223,7 +223,6 @@ public class SettingsServlet extends HttpServlet
 					response.sendError(401,"No Moves Defined");
 					return;
 				}
-				
 				
 				ServerSettings set = ServerSettings.getInstance();
 				ArrayList<MoveDestination> nmoves = new ArrayList<MoveDestination>();

@@ -23,6 +23,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 import org.slf4j.LoggerFactory;
@@ -261,41 +264,43 @@ public class LocalImageCache extends Thread
 
     // delegating cache entry writing to the caller is bound to bring issues in the long run
     @Deprecated
-    public synchronized File getFile(String name, int frameNumber, boolean thumbnail) {
+    public synchronized File getFile(String name, int frameNumber, boolean thumbnail) throws IOException {
         return this.implGetFile(toFileName(name, frameNumber, thumbnail));
     }
 
     // delegating cache entry writing to the caller is bound to bring issues in the long run
     @Deprecated
-    public synchronized File getFile(String name, boolean thumbnail) {
+    public synchronized File getFile(String name, boolean thumbnail) throws IOException {
         return getFile(name, 1, thumbnail);
     }
 
     // delegating cache entry writing to the caller is bound to bring issues in the long run
     @Deprecated
-    public synchronized File getFile(String name, int frameNumber) {
+    public synchronized File getFile(String name, int frameNumber) throws IOException {
         return getFile(name, frameNumber, false);
     }
 
     // delegating cache entry writing to the caller is bound to bring issues in the long run
     @Deprecated
-    public synchronized File getFile(String name) {
+    public synchronized File getFile(String name) throws IOException {
         return getFile(name, 1, false);
     }
     
     // delegating cache entry writing to the caller is bound to bring issues in the long run
 	@Deprecated
-    public synchronized File getFileFromName(String fileName) {
+    public synchronized File getFileFromName(String fileName) throws IOException {
         return implGetFile(fileName);
     }
     
-	private File implGetFile(String fileName) {
+	private File implGetFile(String fileName) throws IOException {
 		// check if the file is currently being written to
+        Path thatFilePath = Paths.get(fileName);
 		for (File f : filesBeingWritten)
 		{
 			// and if it is, return a common handle for it (common so outside code can synchronize on it, same object, to allow other threads to wait for the write to finish)
-			if (f.getName().equalsIgnoreCase(fileName))
+			if (Files.isSameFile(f.toPath(), thatFilePath)) {
 				return f;
+            }
 		}
 
 		String absoluteFileName = cacheFolder + File.separator + fileName;
@@ -307,15 +312,8 @@ public class LocalImageCache extends Thread
 
 		// if it does not exist add it to the list of files being written (because new content is going to be written to it outside this class) and create the empty file
 		filesBeingWritten.add(f);
-		try
-		{
-			f.createNewFile();
-			f.deleteOnExit();
-		}
-		catch (IOException ex)
-		{
-			return null; // abort
-		}
+        f.createNewFile();
+        f.deleteOnExit();
 
 		// return the common handle to the currently created and empty file
 		return f;

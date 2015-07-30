@@ -32,8 +32,10 @@ var LoggerView = React.createClass({
     }
   },
       render: function() {
-        if(this.state.status == "loading"){
-          return (<div>loading...</div>);
+        if(this.state.status === "loading"){
+          return (<div className="loader-inner ball-pulse">
+            <div/><div/><div/>
+           </div>);
         }
         return (
           <div className="panel panel-primary topMargin">

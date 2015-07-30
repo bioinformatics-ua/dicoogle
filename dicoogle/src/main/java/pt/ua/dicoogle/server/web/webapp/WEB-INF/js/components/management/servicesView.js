@@ -46,7 +46,9 @@ var ServicesView = React.createClass({
         var self = this;
         //return(<div>Services</div>);
         if(this.state.status == "loading"){
-          return (<div>loading</div>);
+          return (<div className="loader-inner ball-pulse">
+            <div/><div/><div/>
+           </div>);
         }
         return (
       <div className="panel panel-primary topMargin">
@@ -82,9 +84,7 @@ var ServicesView = React.createClass({
                       {this.state.storageRunning=="true" ?
                         (  <button type="button" className="btn btn-danger" style={{marginTop: 20}} onClick={this.stopStorage}>Stop</button>) :
                         (  <button type="button" className="btn btn-success" style={{marginTop: 20}} onClick={this.startStorage}>Start</button>)
-
                       }
-
                     </div>
                   </div>
                 </div>
@@ -117,7 +117,6 @@ var ServicesView = React.createClass({
                       {this.state.queryRunning=="true" ?
                         (  <button type="button" className="btn btn-danger" style={{marginTop: 20}}onClick={this.stopQuery}>Stop</button>) :
                         (  <button type="button" className="btn btn-success" style={{marginTop: 20}} onClick={this.startQuery}>Start</button>)
-
                       }
                     </div>
                     <ModalTrigger modal={<QueryAdvancedOptions/>}>

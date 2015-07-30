@@ -7,6 +7,9 @@ var Button = ReactBootstrap.Button;
 import {SearchStore} from '../../stores/searchStore';
 import {ActionCreators} from '../../actions/searchActions';
 
+import {ProvidersStore} from '../../stores/providersStore';
+import {ProvidersActions} from '../../actions/providersActions';
+
 import {AdvancedSearch} from '../search/advancedSearch';
 import {ResultSearch} from '../search/searchResultView';
 
@@ -18,39 +21,51 @@ var Link = Router.Link;
 var RouteHandler = Router.RouteHandler
 
 import {UserMixin} from '../mixins/userMixin';
+import {getUrlVars} from '../../utils/url';
 
 var Search = React.createClass({
-    mixins : [UserMixin],
+    //mixins : [UserMixin],
     getInitialState: function (){
-
-        return { label:'login', searchState: "simple" };
+        document.getElementById('container').style.display = 'block';
+        return { label:'login', searchState: "simple" , providers:["All providers"]};
     },
     componentDidMount: function(){
       this.enableAutocomplete();
       this.enableEnterKey();
+
+      if(getUrlVars()['query'])
+      {
+        this.onSearchByUrl();
+      }
+
+
+      ProvidersActions.get();
     },
     componentDidUpdate: function(){
       this.enableAutocomplete();
       this.enableEnterKey();
     },
     componentWillMount: function(){
-
+      ProvidersStore.listen(this._onChange);
     },
     render: function() {
+      var self = this;
+      var providersList = (
+        self.state.providers.map(function(item){
+          return (<option> {item} </option>);
+        })
+      );
+
         var selectionButtons = (
             <div>
-            <button type="button" className="btn btn_dicoogle" onClick={this.renderFilter} data-trigger="advance-search" id="btn-advance">Advanced</button>
+            <button type="button" className="btn btn_dicoogle" onClick={this.renderFilter} data-trigger="advance-search" id="btn-advance">
+              {this.state.searchState === "simple" ? "Advanced" : "Basic"}
+            </button>
                 <div className="btn-group">
-                    <button type="button" className="btn btn_dicoogle dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                        Select Providers <span className="caret"></span>
-                    </button>
-                    <ul className="dropdown-menu" role="menu">
-                        <li><a href="#">Lucene</a>
-                        </li>
-                        <li><a href="#">All</a></li>
-                        <li> { this.state.data   }</li>
+                    <select id="providersList" className="btn btn_dicoogle form-control">
+                      {providersList}
 
-                    </ul>
+                    </select>
                 </div>
                 </div>
             );
@@ -67,23 +82,22 @@ var Search = React.createClass({
                 </div>
             );
 
-       if(this.state.searchState == "simple"){
+       if(this.state.searchState === "simple"){
             return (<div> {selectionButtons} {simpleSearchInstance} </div>);
        }
-       else if(this.state.searchState == "advanced")
+       else if(this.state.searchState === "advanced")
        {
             return (<div> {selectionButtons} <AdvancedSearch/> </div>);
        }
     },
     _onChange : function(data){
-        console.log("onChange");
         if (this.isMounted())
-        this.setState({label:data});
+        this.setState({providers:data.data});
     },
     renderFilter : function(){
       //React.render(<AdvancedSearch/>, this.getDOMNode());
       var switchState;
-      if(this.state.searchState =="simple"){
+      if(this.state.searchState === "simple"){
         switchState = "advanced";
     }
       else{
@@ -92,12 +106,27 @@ var Search = React.createClass({
     this.setState({searchState: switchState})
 
     },
+    onSearchByUrl : function(){
+      var params = {text: getUrlVars()['query'], keyword: getUrlVars()['keyword'], provider: getUrlVars()['provider']};
 
+      React.render(<ResultSearch items={params}/>, document.getElementById("container"));
+    }
+    ,
     onSearchClicked : function(){
         // console.log(React.getInitialState(<ResultSearch/>) );
         var text = document.getElementById("free_text").value;
 
-        var params = {text: text, keyword: this.isKeyword(text), other:true};
+        var providerEl = document.getElementById("providersList");
+        var selectedId= providerEl.selectedIndex;
+        var provider = "";
+        if(selectedId == 0){
+          provider = "all"
+        }
+        else {
+          provider = providerEl.options[selectedId].text;
+        }
+
+        var params = {text: text, keyword: this.isKeyword(text), other:true, provider: provider};
 
         React.render(<ResultSearch items={params}/>, document.getElementById("container"));
         //console.log("asadfgh");

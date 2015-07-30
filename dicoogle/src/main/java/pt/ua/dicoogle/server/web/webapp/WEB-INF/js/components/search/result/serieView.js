@@ -1,7 +1,7 @@
 var React = require('react');
 var ReactBootstrap = require('react-bootstrap');
 
-var SerieView = React.createClass({
+var SeriesView = React.createClass({
   	getInitialState: function() {
     	return {data: [],
     	status: "loading"};
@@ -21,7 +21,7 @@ var SerieView = React.createClass({
 		var resultItems = (
 				resultArray.map(function(item){
 		      		return (
-				    	     <tr className="resultRow" style={{"cursor" : "pointer"}} onclick="" onClick={self.onSerieClick.bind(this, item)}>
+				    	     <tr className="resultRow" style={{"cursor" : "pointer"}} onclick="" onClick={self.onSeriesClick.bind(this, item)}>
 				    	     	<td> {item.serieNumber}</td>
 				    	     	<td> {item.serieModality}</td>
 				    	     	<td> {item.serieDescription}</td>
@@ -50,10 +50,10 @@ var SerieView = React.createClass({
 		);
 	},
 
-	onSerieClick:function(item){
+	onSeriesClick:function(item){
 		this.props.onItemClick(item);
 	}
 
 });
 
-export {SerieView};
+export {SeriesView};

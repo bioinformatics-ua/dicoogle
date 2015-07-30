@@ -46,7 +46,9 @@ var IndexStatusView = React.createClass({
       render: function() {
         var self = this;
         if(this.state.status === "loading"){
-          return (<div>loading...</div>);
+          return (<div className="loader-inner ball-pulse">
+            <div/><div/><div/>
+           </div>);
         }
 
         var items;
@@ -105,7 +107,7 @@ var IndexStatusView = React.createClass({
 
                                   <div className="row">
                                       <div className="col-xs-6 col-sm-2">
-                                          Dicoogle Directory
+                                          Index directory:
                                       </div>
                                       <div className="col-xs-6 col-sm-10">
                                           <input id="path" type="text" className="form-control" value={this.state.data.path} placeholder="/path/to/directory"/>
@@ -119,7 +121,7 @@ var IndexStatusView = React.createClass({
             </div>
               <div className="panel panel-primary topMargin">
                                 <div className="panel-heading">
-                                    <h3 className="panel-title">Indexing Status ({this.state.data.count} Running)</h3>
+                                    <h3 className="panel-title">Indexing Status ({this.state.data.count} running)</h3>
                                 </div>
                                 <div className="panel-body">
 

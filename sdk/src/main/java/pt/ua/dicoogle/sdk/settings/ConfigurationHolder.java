@@ -35,15 +35,7 @@ public class ConfigurationHolder {
     }
     
     public ConfigurationHolder(File settingsFile, boolean autosave) throws ConfigurationException{        
-    	/*if(!settingsFile.exists()){
-			try {
-				settingsFile.createNewFile();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    	}*/
-    	
+
     	if(!settingsFile.exists()){
     		cnf = new XMLConfiguration();
     		cnf.setFile(settingsFile);

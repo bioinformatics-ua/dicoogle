@@ -44,7 +44,7 @@ import javax.swing.JTextField;
 
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IQRServers;
 import pt.ua.dicoogle.Main;
-import pt.ua.dicoogle.core.MoveDestination;
+import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.rGUI.client.AdminRefs;
 import pt.ua.dicoogle.rGUI.client.UIHelper.AllowBlankMaskFormatter;
 
