@@ -219,7 +219,7 @@ public class DicoogleWeb {
         handler.setContextPath(CONTEXTPATH);
         
         // CORS support
-        String origins = ServerSettings.getInstance().getWeb().getAccessControlAllowOrigin();
+        String origins = ServerSettings.getInstance().getWeb().getAllowedOrigins();
         if (origins != null) {
             FilterHolder corsHolder = new FilterHolder(CORSFilter.class);
             corsHolder.setInitParameter(CORSFilter.ALLOWED_ORIGINS_PARAM, origins);

@@ -370,19 +370,12 @@ public class XMLSupport extends DefaultHandler
             String tmp = "";
             ServerSettings.Web web = ServerSettings.getInstance().getWeb() ;
             tmp = this.resolveAttrib("enable", attribs, localName);
-            if (tmp.equals("true"))
-            {
-                web.setWebServer(true);
-            }
-            else
-            {
-                web.setWebServer(false);
-            }
+            web.setWebServer(Boolean.parseBoolean(tmp));
             int port = Integer.valueOf(this.resolveAttrib("port", attribs, localName));
             web.setServerPort(port);
 
-
-
+            String allowedOrigins = this.resolveAttrib("allowedOrigins", attribs, "");
+            web.setAllowedOrigins(allowedOrigins);
         }
 
         else if (localName.equals("services") && this.isWeb)
@@ -1591,6 +1584,7 @@ public class XMLSupport extends DefaultHandler
             atts.clear();
             atts.addAttribute("", "", "enable", "", tmp);
             atts.addAttribute("", "", "port", "", String.valueOf(web.getServerPort()));
+            atts.addAttribute("", "", "allowedOrigins", "", web.getAllowedOrigins());
 
             hd.startElement("", "", "server", atts);
 
