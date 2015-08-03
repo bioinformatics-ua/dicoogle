@@ -15,7 +15,6 @@ var IndexStatusStore = Reflux.createStore({
        this._contents = {};
     },
 
-
     onGet : function(data){
       var self = this;
 
@@ -70,12 +69,11 @@ var IndexStatusStore = Reflux.createStore({
           console.log("Data: ",  data, " ; Status: ", status);
         });
 
-
-      for(var i =0; i<this._contents.results.length; i++)
+      for (var i = 0; i < this._contents.results.length; i++)
       {
-        if(this._contents.results[i].taskUid == uid){
+        if (this._contents.results[i].taskUid === uid) {
           this._contents.results.splice(i,1);
-          this._contents.count = this._contents.count - 1;
+          break;
         }
       }
       this.trigger({
