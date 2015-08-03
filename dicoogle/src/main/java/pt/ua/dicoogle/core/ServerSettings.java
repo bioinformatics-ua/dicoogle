@@ -72,7 +72,7 @@ public class ServerSettings implements ServerSettingsReader
     /** 
      * Indicates, for each plugin, if it is to start at server init or not.
      */
-    private ConcurrentHashMap<String, Boolean> autoStartPlugin; // NOTE the concurrent hash map is used to prevent having to synchronize the methods that use it, however it requires JRE 1.5+ (which was launched on 2004 so we should be ok)
+    private final ConcurrentHashMap<String, Boolean> autoStartPlugin; // NOTE the concurrent hash map is used to prevent having to synchronize the methods that use it
 
     /**
      * The name of the Remote GUI setting that indicates the External IP address.
@@ -477,20 +477,12 @@ public class ServerSettings implements ServerSettingsReader
         }
         
         @Override
-        public String getAccessControlAllowOrigins() {
+        public String getAllowedOrigins() {
             return this.accessControlAllowOrigins;
         }
 
-        public void setAccessControlAllowOrigins(String accessControlAllowOrigins) {
-            this.accessControlAllowOrigins = accessControlAllowOrigins;
-        }
-
-        public String getAccessControlAllowOrigin() {
-            return accessControlAllowOrigin;
-        }
-
-        public void setAccessControlAllowOrigin(String accessControlAllowOrigin) {
-            this.accessControlAllowOrigin = accessControlAllowOrigin;
+        public void setAllowedOrigins(String origins) {
+            this.accessControlAllowOrigins = origins;
         }
 
     }

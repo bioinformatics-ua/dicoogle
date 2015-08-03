@@ -50,11 +50,15 @@ import javax.swing.DefaultListModel;
 
 import org.xml.sax.XMLReader;
 import org.dcm4che2.data.UID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.sdk.Utils.Platform;
 
 public class XMLSupport extends DefaultHandler
 {
+    private static final Logger logger = LoggerFactory.getLogger(XMLSupport.class);
+    
     private boolean isEncrypt = false;
     private boolean isPort = false;
     private boolean isRGUIPort = false;
@@ -1028,7 +1032,7 @@ public class XMLSupport extends DefaultHandler
     public ServerSettings getXML()
     {        
         try 
-        {            
+        {
             File file = new File(Platform.homePath() + "config.xml");
             if (!file.exists())
             {   
@@ -1042,14 +1046,10 @@ public class XMLSupport extends DefaultHandler
             r.setContentHandler(this);
             r.parse(src);
             return s;
-        } 
-        catch (IOException ex)
-        {
-            
         }
-        catch (SAXException ex)
+        catch (IOException | SAXException ex)
         {
-            
+            logger.warn("Failed to read XML config file", ex);
         }        
         return null;
     }

@@ -204,7 +204,6 @@ public class DicoogleWeb {
 
         // setup the server
         server = new Server(port);
-        server = new Server(ServerSettings.getInstance().getWeb().getServerPort());
         // register the handlers on the server
         this.contextHandlers = new ContextHandlerCollection();
         this.contextHandlers.setHandlers(handlers);
@@ -218,19 +217,18 @@ public class DicoogleWeb {
         ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
         handler.setDisplayName("cross-origin");
         handler.setContextPath(CONTEXTPATH);
-        handler.addServlet(new ServletHolder(servlet), path);
         
         // CORS support
-        String origins = //ServerSettings.getInstance().getWeb().getAccessControlAllowOrigin();
-                "*";
+        String origins = ServerSettings.getInstance().getWeb().getAccessControlAllowOrigin();
         if (origins != null) {
-            // add cross-orign filter, and then use the provided FilterHolder to configure it
-            FilterHolder corsHolder = handler.addFilter(CrossOriginFilter.class,"/*",EnumSet.of(DispatcherType.REQUEST));
-            corsHolder.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, origins);
-            corsHolder.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, origins);
-            corsHolder.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,POST,HEAD,PUT,DELETE");
-            corsHolder.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "X-Requested-With,Content-Type,Accept,Origin");
+            FilterHolder corsHolder = new FilterHolder(CORSFilter.class);
+            corsHolder.setInitParameter(CORSFilter.ALLOWED_ORIGINS_PARAM, origins);
+            corsHolder.setInitParameter(CORSFilter.ALLOWED_METHODS_PARAM, "GET,POST,HEAD,PUT,DELETE");
+            corsHolder.setInitParameter(CORSFilter.ALLOWED_HEADERS_PARAM, "X-Requested-With,Content-Type,Accept,Origin");
+            handler.addFilter(corsHolder, "/*", EnumSet.of(DispatcherType.REQUEST));
         }
+
+        handler.addServlet(new ServletHolder(servlet), path);
         return handler;
     }
 

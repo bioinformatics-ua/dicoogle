@@ -255,8 +255,8 @@ public class ControlServices implements IServices
         logger.info("Starting WebServer");
 
         try {
-            if(webServices == null){
-                webServices = new DicoogleWeb(8080);
+            if (webServices == null) {
+                webServices = new DicoogleWeb(ServerSettings.getInstance().getWeb().getServerPort());
                 webServerRunning = true;
                 webServicesRunning = true;
                 logger.info("Starting Dicoogle Web");
