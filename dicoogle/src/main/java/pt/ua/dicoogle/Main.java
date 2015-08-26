@@ -210,12 +210,15 @@ public class Main
         }
         
         logger.debug("Starting Dicoogle");
+        /* This logic will be not neccessary. This should be sent to the Plugins.
         try
         {
             Anonymous.getInstance().start();
         } catch(Exception e) {
             logger.warn("Could not start Anonimize service", e);
-        }
+        }*/
+        
+        
         logger.debug("Loading configuration file: {}", Platform.homePath());
         Configuration.initInstance(Platform.homePath());
         try {
