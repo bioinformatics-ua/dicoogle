@@ -72,7 +72,7 @@ public class ServerSettings implements ServerSettingsReader
     /** 
      * Indicates, for each plugin, if it is to start at server init or not.
      */
-    private ConcurrentHashMap<String, Boolean> autoStartPlugin; // NOTE the concurrent hash map is used to prevent having to synchronize the methods that use it, however it requires JRE 1.5+ (which was launched on 2004 so we should be ok)
+    private final ConcurrentHashMap<String, Boolean> autoStartPlugin; // NOTE the concurrent hash map is used to prevent having to synchronize the methods that use it
 
     /**
      * The name of the Remote GUI setting that indicates the External IP address.
@@ -407,6 +407,8 @@ public class ServerSettings implements ServerSettingsReader
         private boolean webServices = false;
         @Deprecated
         private int servicePort = 6060;
+        
+        private String accessControlAllowOrigin = null;
 
         public Web()
         {
@@ -473,14 +475,17 @@ public class ServerSettings implements ServerSettingsReader
         public void setServicePort(int servicePort) {
             this.servicePort = servicePort;
         }
-        
-        @Override
+
         public String getAccessControlAllowOrigins() {
             return this.accessControlAllowOrigins;
         }
+        
+        public String getAllowedOrigins() {
+            return this.accessControlAllowOrigins;
+        }
 
-        public void setAccessControlAllowOrigins(String accessControlAllowOrigins) {
-            this.accessControlAllowOrigins = accessControlAllowOrigins;
+        public void setAllowedOrigins(String origins) {
+            this.accessControlAllowOrigins = origins;
         }
 
     }
@@ -556,8 +561,7 @@ public class ServerSettings implements ServerSettingsReader
         fullContentIndex = false;
         saveThumbnails = false;
         thumbnailsMatrix = "64";
-
-	autoStartPlugin.clear();
+        autoStartPlugin.clear();
 
         setEncryptUsersFile(false);
     }
@@ -989,6 +993,7 @@ public class ServerSettings implements ServerSettingsReader
 	 *
 	 * @return and HashMap containing the Remote GUI list of settings (name, value/type pairs).
 	 */
+    @Deprecated
 	public HashMap<String, Object> getRGUISettings()
 	{
 		HashMap<String, Object> result = new HashMap<String, Object>();
@@ -1004,6 +1009,7 @@ public class ServerSettings implements ServerSettingsReader
 	 * @param settings a HashMap containing the new setting values.
 	 * @return true if all the values are valid and can be applied, false otherwise.
 	 */
+    @Deprecated
 	public boolean tryRGUISettings(HashMap<String, Object> settings)
 	{
 		// TODO
@@ -1016,6 +1022,7 @@ public class ServerSettings implements ServerSettingsReader
 	 * @param settings a HashMap containing the new setting values.
 	 * @return true if all the values are valid and were applied successfully, false otherwise.
 	 */
+    @Deprecated
 	public boolean setRGUISettings(HashMap<String, Object> settings)
 	{
 		if (! tryRGUISettings(settings))
@@ -1048,15 +1055,15 @@ public class ServerSettings implements ServerSettingsReader
     @Override
 	public HashMap<String, Object> getQueryRetrieveSettings()
 	{
-		HashMap<String, Object> result = new HashMap<String, Object>();
+		HashMap<String, Object> result = new HashMap<>();
 
-		result.put(QUERYRETRIEVE_MAX_ASSOCIATIONS, new Integer(getMaxClientAssoc()));
-		result.put(QUERYRETRIEVE_MAX_PDU_RECEIVE, new Integer(getMaxPDULengthReceive()));
-		result.put(QUERYRETRIEVE_MAX_PDU_SEND, new Integer(getMaxPDULenghtSend()));
-		result.put(QUERYRETRIEVE_IDLE_TIMEOUT, new Integer(getIdleTimeout()));
-		result.put(QUERYRETRIEVE_ACCEPT_TIMEOUT, new Integer(getAcceptTimeout()));
-		result.put(QUERYRETRIEVE_RESPONSE_TIMEOUT, new Integer(getRspDelay()));
-		result.put(QUERYRETRIEVE_CONNECTION_TIMEOUT, new Integer(getConnectionTimeout()));
+		result.put(QUERYRETRIEVE_MAX_ASSOCIATIONS, getMaxClientAssoc());
+		result.put(QUERYRETRIEVE_MAX_PDU_RECEIVE, getMaxPDULengthReceive());
+		result.put(QUERYRETRIEVE_MAX_PDU_SEND, getMaxPDULenghtSend());
+		result.put(QUERYRETRIEVE_IDLE_TIMEOUT, getIdleTimeout());
+		result.put(QUERYRETRIEVE_ACCEPT_TIMEOUT, getAcceptTimeout());
+		result.put(QUERYRETRIEVE_RESPONSE_TIMEOUT, getRspDelay());
+		result.put(QUERYRETRIEVE_CONNECTION_TIMEOUT, getConnectionTimeout());
 
 		return result;
 	}

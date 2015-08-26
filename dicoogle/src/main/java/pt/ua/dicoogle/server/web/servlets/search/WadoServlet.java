@@ -36,9 +36,8 @@ import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
 
 /**
- * Retrive the image
- *
  * @author Frederico Silva <fredericosilva@ua.pt>
+ * @todo
  */
 public class WadoServlet extends HttpServlet{
 

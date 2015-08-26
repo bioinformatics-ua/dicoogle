@@ -64,7 +64,6 @@ public class SearchServlet extends HttpServlet {
             "InstitutionName");
   
   	public enum SearchType {
-
       ALL, PATIENT;
   	}
   	private final SearchType searchType;
@@ -80,7 +79,6 @@ public class SearchServlet extends HttpServlet {
     //TODO: QIDO;
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	response.addHeader("Access-Control-Allow-Origin", "*");
         /*
          Example: http://localhost:8080/search?query=wrix&keyword=false&provicer=lucene
          */

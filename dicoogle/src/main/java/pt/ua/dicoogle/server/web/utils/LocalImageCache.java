@@ -84,6 +84,8 @@ public class LocalImageCache extends Thread
 
 		filesBeingWritten = new HashSet<>();
 		running = false;
+        
+        this.setDaemon(true);
 	}
 
 	/**

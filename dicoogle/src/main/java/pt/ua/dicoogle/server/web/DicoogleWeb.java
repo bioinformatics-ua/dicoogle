@@ -18,6 +18,14 @@
  */
 package pt.ua.dicoogle.server.web;
 
+import pt.ua.dicoogle.server.web.servlets.RestletHttpServlet;
+import pt.ua.dicoogle.server.web.servlets.ExportToCSVServlet;
+import pt.ua.dicoogle.server.web.servlets.SettingsServlet;
+import pt.ua.dicoogle.server.web.servlets.TagsServlet;
+import pt.ua.dicoogle.server.web.servlets.ExportCSVToFILEServlet;
+import pt.ua.dicoogle.server.web.servlets.SearchHolderServlet;
+import pt.ua.dicoogle.server.web.servlets.IndexerServlet;
+import pt.ua.dicoogle.server.web.servlets.ImageServlet;
 import pt.ua.dicoogle.server.web.servlets.search.ExportServlet;
 import pt.ua.dicoogle.server.web.servlets.search.ExportServlet.ExportType;
 import pt.ua.dicoogle.server.web.servlets.search.ProvidersServlet;
@@ -35,7 +43,7 @@ import pt.ua.dicoogle.server.web.servlets.management.LoggerServlet;
 import pt.ua.dicoogle.server.web.servlets.management.RunningTasksServlet;
 import pt.ua.dicoogle.server.web.servlets.management.ServerStorageServlet;
 import pt.ua.dicoogle.server.web.servlets.management.ServicesServlet;
-import pt.ua.dicoogle.server.web.servlets.management.TransferenceOptionsServlet;
+import pt.ua.dicoogle.server.web.servlets.management.TransferOptionsServlet;
 
 import java.io.File;
 import java.net.URL;
@@ -52,6 +60,7 @@ import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServlet;
 
 import org.eclipse.jetty.servlet.FilterHolder;
+import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.eclipse.jetty.servlets.GzipFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,25 +96,22 @@ public class DicoogleWeb {
     private Server server = null;
     private final int port;
 
-    private ContextHandlerCollection contextHandlers;
+    private final ContextHandlerCollection contextHandlers;
     private ServletContextHandler pluginHandler = null;
     private PluginRestletApplication pluginApp = null;
     private ServletContextHandler legacyHandler = null;
     private LegacyRestletApplication legacyApp = null;
 
     /**
-     * The global list of GUI hooks and actions.
-     */
-
-    /**
      * Initializes and starts the Dicoogle Web service.
      * @param port the server port
+     * @throws java.lang.Exception
      */
     public DicoogleWeb(int port) throws Exception {
         logger.info("Starting Web Services in DicoogleWeb. Port: {}", port);
         System.setProperty("org.apache.jasper.compiler.disablejsr199", "true");
-      //  System.setProperty("org.mortbay.jetty.webapp.parentLoaderPriority", "true");
-        // System.setProperty("production.mode", "true");
+        //System.setProperty("org.mortbay.jetty.webapp.parentLoaderPriority", "true");
+        //System.setProperty("production.mode", "true");
 
         this.port = port;
 
@@ -114,22 +120,15 @@ public class DicoogleWeb {
         final String warUrlString = warUrl.toExternalForm();
 
         //setup the DICOM to PNG image servlet, with a local cache
-        final ServletContextHandler dic2png = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        dic2png.setContextPath(CONTEXTPATH);
         cache = new LocalImageCache("dic2png", 300, 900); // pooling rate of 12/hr and max un-used cache age of 15 minutes
-        dic2png.addServlet(new ServletHolder(new ImageServlet(cache)), "/dic2png");
+        final ServletContextHandler dic2png = createServletHandler(new ImageServlet(cache), "/dic2png");
         cache.start(); // start the caching system
 
         // setup the DICOM to PNG image servlet
-        final ServletContextHandler dictags = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        dictags.setContextPath(CONTEXTPATH);
-        dictags.addServlet(new ServletHolder(new TagsServlet()), "/dictags");
+        final ServletContextHandler dictags = createServletHandler(new TagsServlet(), "/dictags");
 
         // setup the Export to CSV Servlet
-        final ServletContextHandler csvServletHolder = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        csvServletHolder.setContextPath(CONTEXTPATH);
-        csvServletHolder.addServlet(new ServletHolder(new ExportToCSVServlet()), "/export");
-
+        final ServletContextHandler csvServletHolder = createServletHandler(new ExportToCSVServlet(), "/export");
         File tempDir = new File(ServerSettings.getInstance().getPath());
         csvServletHolder.addServlet(new ServletHolder(new ExportCSVToFILEServlet(tempDir)), "/exportFile");
 
@@ -145,39 +144,21 @@ public class DicoogleWeb {
          plugin.addServlet(new ServletHolder(new PluginsServlet(hooks)), "/plugin/*");
          */
 
-        // setup the plugins data, xslt and pages servlet
-        final ServletContextHandler indexer = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        indexer.setContextPath(CONTEXTPATH);
-        indexer.addServlet(new ServletHolder(new IndexerServlet()), "/indexer");
-
-        final ServletContextHandler indexeres = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        indexer.setContextPath(CONTEXTPATH);
-        indexer.addServlet(new ServletHolder(new IndexControlServlet()), "/indexamos");
-
-        // setup the general/advanced Dicoogle settings servlet
-        final ServletContextHandler settings = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        settings.setContextPath(CONTEXTPATH);
-        settings.addServlet(new ServletHolder(new SettingsServlet()), "/settings");
-
         // setup the web pages/scripts app
         final WebAppContext webpages = new WebAppContext(warUrlString, CONTEXTPATH);
         webpages.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false"); // disables directory listing
         webpages.setInitParameter("useFileMappedBuffer", "false");
         webpages.setInitParameter("cacheControl", "max-age=0, public");
 
-        webpages.setWelcomeFiles(new String[]{"newsearch.jsp"});
+        webpages.setWelcomeFiles(new String[]{"index.html"});
         webpages.addServlet(new ServletHolder(new SearchHolderServlet()), "/search/holders");
-        FilterHolder filter = webpages.addFilter(GzipFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
-
+        FilterHolder gzFilter = webpages.addFilter(GzipFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
+        
         this.pluginApp = new PluginRestletApplication();
-        this.pluginHandler = new ServletContextHandler();
-        this.pluginHandler.setContextPath(CONTEXTPATH);
-        this.pluginHandler.addServlet(new ServletHolder(new RestletHttpServlet(this.pluginApp)), "/ext/*");
+        this.pluginHandler = createServletHandler(new RestletHttpServlet(this.pluginApp), "/ext/*");
 
         this.legacyApp = new LegacyRestletApplication();
-        this.legacyHandler = new ServletContextHandler();
-        this.legacyHandler.setContextPath(CONTEXTPATH);
-        this.legacyHandler.addServlet(new ServletHolder(new RestletHttpServlet(this.legacyApp)), "/legacy/*");
+        this.legacyHandler = createServletHandler(new RestletHttpServlet(this.legacyApp), "/legacy/*");
         
         // list the all the handlers mounted above
         Handler[] handlers = new Handler[]{
@@ -186,9 +167,8 @@ public class DicoogleWeb {
             dic2png,
             dictags,
             plugin,
-            indexer,
-            indexeres,
-            settings,
+            createServletHandler(new IndexerServlet(), "/indexer"), // DEPRECATED
+            createServletHandler(new SettingsServlet(), "/settings"),
             csvServletHolder,
             createServletHandler(new LoginServlet(), "/login"),
             createServletHandler(new LogoutServlet(), "/logout"),
@@ -203,7 +183,7 @@ public class DicoogleWeb {
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.watcher), "/management/settings/index/watcher"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnailSize), "/management/settings/index/thumbnail/size"),
             createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.all), "/management/settings/index"),
-            createServletHandler(new TransferenceOptionsServlet(), "/management/settings/transfer"),
+            createServletHandler(new TransferOptionsServlet(), "/management/settings/transfer"),
             createServletHandler(new WadoServlet(), "/wado"),
             createServletHandler(new ProvidersServlet(), "/providers"),
             createServletHandler(new DicomQuerySettingsServlet(), "/management/settings/dicom/query"),
@@ -224,8 +204,6 @@ public class DicoogleWeb {
 
         // setup the server
         server = new Server(port);
-        server = new Server(ServerSettings.getInstance().getWeb().getServerPort());
-
         // register the handlers on the server
         this.contextHandlers = new ContextHandlerCollection();
         this.contextHandlers.setHandlers(handlers);
@@ -237,7 +215,19 @@ public class DicoogleWeb {
     
     private ServletContextHandler createServletHandler(HttpServlet servlet, String path){
         ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
+        handler.setDisplayName("cross-origin");
         handler.setContextPath(CONTEXTPATH);
+        
+        // CORS support
+        String origins = ServerSettings.getInstance().getWeb().getAllowedOrigins();
+        if (origins != null) {
+            FilterHolder corsHolder = new FilterHolder(CORSFilter.class);
+            corsHolder.setInitParameter(CORSFilter.ALLOWED_ORIGINS_PARAM, origins);
+            corsHolder.setInitParameter(CORSFilter.ALLOWED_METHODS_PARAM, "GET,POST,HEAD,PUT,DELETE");
+            corsHolder.setInitParameter(CORSFilter.ALLOWED_HEADERS_PARAM, "X-Requested-With,Content-Type,Accept,Origin");
+            handler.addFilter(corsHolder, "/*", EnumSet.of(DispatcherType.REQUEST));
+        }
+
         handler.addServlet(new ServletHolder(servlet), path);
         return handler;
     }
@@ -252,16 +242,19 @@ public class DicoogleWeb {
             return;
         }
 
-        // stop the server
-        server.stop();
+        try {
+            // stop the server
+            server.stop();
 
-        // voiding its value
-        server = null;
+            // voiding its value
+            server = null;
+        } finally {
 
-        // and remove the local cache, if any
-        if (cache != null) {
-            cache.terminate();
-            cache = null;
+            // and remove the local cache, if any
+            if (cache != null) {
+                cache.terminate();
+                cache = null;
+            }
         }
         
         this.pluginHandler = null;
