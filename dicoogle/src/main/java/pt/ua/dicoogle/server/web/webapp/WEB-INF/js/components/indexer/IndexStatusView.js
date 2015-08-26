@@ -97,7 +97,7 @@ var IndexStatusView = React.createClass({
           });
         }
         return (
-          <div className="container">
+          <div className="">
             <div className="panel panel-primary topMargin">
               <div className="panel-heading">
                 <h3 className="panel-title">Start indexing</h3>
