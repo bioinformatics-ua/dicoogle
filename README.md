@@ -129,6 +129,14 @@ Brief Documentation
   In order to integrate new functionality in Dicoogle, you may create your own PluginSet. A PluginSet is a set of plugins that developed with the intent of supporting a given functionality
 
 
+## Development 
+
+If you are in the development process and using the UI, you may need to change your configuration is done in the config.xml file:
+
+```
+<server enable="true" port="8080" allowedOrigins="*" />
+```
+
 
 
 Web site

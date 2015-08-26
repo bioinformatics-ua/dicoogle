@@ -55,7 +55,6 @@ public class ServicesServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.addHeader("Access-Control-Allow-Origin", "*");
 
 		mPluginController = PluginController.getInstance();
 		mControlServices = ControlServices.getInstance();
@@ -96,7 +95,6 @@ public class ServicesServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.addHeader("Access-Control-Allow-Origin", "*");
 
 		mPluginController = PluginController.getInstance();
 		mControlServices = ControlServices.getInstance();
