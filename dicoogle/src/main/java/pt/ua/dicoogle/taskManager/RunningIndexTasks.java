@@ -91,6 +91,8 @@ public class RunningIndexTasks {
 		JSONArray array = new JSONArray();
 
 		Iterator<Map.Entry<String, Task<Report>>> it = taskRunningList.entrySet().iterator();
+        int countComplete = 0;
+        int countCancelled = 0;
 		while (it.hasNext()) {
 			Map.Entry<String, Task<Report>> pair = it.next();
 			Task<Report> task = pair.getValue();
@@ -101,6 +103,7 @@ public class RunningIndexTasks {
             
             if (task.isDone()) {
                 entry.put("complete", true);
+                countComplete += 1;
                 try {
                     Report r = task.get();
                     if (r instanceof IndexReport) {
@@ -112,11 +115,14 @@ public class RunningIndexTasks {
                     logger.warn("Could not retrieve task result, ignoring", ex);
                 }
             }
+            if (task.isCancelled()) {
+                countCancelled += 1;
+            }
 			array.add(entry);
 		}
 
         object.put("results", array);
-		object.put("count", array.size());
+		object.put("count", array.size() - countComplete - countCancelled);
 		
 		return object.toString();
 
