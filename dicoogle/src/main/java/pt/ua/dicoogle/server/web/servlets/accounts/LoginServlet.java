@@ -39,7 +39,7 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    	resp.addHeader("Access-Control-Allow-Origin", "*");
+    	//resp.addHeader("Access-Control-Allow-Origin", "*");
         //Try login
         LoggedIn mLoggedIn = Session.webappLogin(req, resp, true).getLogin();//servletLogin(req, resp, true);//auth.login(user, pass);
 
@@ -63,7 +63,7 @@ public class LoginServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.addHeader("Access-Control-Allow-Origin", "*");
+        //resp.addHeader("Access-Control-Allow-Origin", "*");
 		HttpSession session = req.getSession(false);
 		
 		LoggedIn mLoggedIn = Session.getUserLoggedIn(session);

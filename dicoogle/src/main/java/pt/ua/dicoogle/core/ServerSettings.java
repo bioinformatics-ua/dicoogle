@@ -475,8 +475,11 @@ public class ServerSettings implements ServerSettingsReader
         public void setServicePort(int servicePort) {
             this.servicePort = servicePort;
         }
+
+        public String getAccessControlAllowOrigins() {
+            return this.accessControlAllowOrigins;
+        }
         
-        @Override
         public String getAllowedOrigins() {
             return this.accessControlAllowOrigins;
         }
