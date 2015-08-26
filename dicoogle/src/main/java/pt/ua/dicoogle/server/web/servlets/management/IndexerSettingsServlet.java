@@ -51,7 +51,6 @@ public class IndexerSettingsServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    	resp.addHeader("Access-Control-Allow-Origin", "*");
     	
     	String param = null;
     	String path = null;
@@ -113,7 +112,6 @@ public class IndexerSettingsServlet extends HttpServlet {
             	 ServerSettings.getInstance().setThumbnailsMatrix(tumbnailSize);
             	 ServerSettings.getInstance().setMonitorWatcher(watcher);
             	 
-            	 
             	break;
             	
             	
@@ -123,7 +121,6 @@ public class IndexerSettingsServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    	resp.addHeader("Access-Control-Allow-Origin", "*");
         String result = "";
         switch (type) {
             case path:

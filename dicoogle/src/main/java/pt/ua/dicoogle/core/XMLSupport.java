@@ -50,11 +50,15 @@ import javax.swing.DefaultListModel;
 
 import org.xml.sax.XMLReader;
 import org.dcm4che2.data.UID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.sdk.Utils.Platform;
 
 public class XMLSupport extends DefaultHandler
 {
+    private static final Logger logger = LoggerFactory.getLogger(XMLSupport.class);
+    
     private boolean isEncrypt = false;
     private boolean isPort = false;
     private boolean isRGUIPort = false;
@@ -366,19 +370,12 @@ public class XMLSupport extends DefaultHandler
             String tmp = "";
             ServerSettings.Web web = ServerSettings.getInstance().getWeb() ;
             tmp = this.resolveAttrib("enable", attribs, localName);
-            if (tmp.equals("true"))
-            {
-                web.setWebServer(true);
-            }
-            else
-            {
-                web.setWebServer(false);
-            }
+            web.setWebServer(Boolean.parseBoolean(tmp));
             int port = Integer.valueOf(this.resolveAttrib("port", attribs, localName));
             web.setServerPort(port);
 
-
-
+            String allowedOrigins = this.resolveAttrib("allowedOrigins", attribs, "");
+            web.setAllowedOrigins(allowedOrigins);
         }
 
         else if (localName.equals("services") && this.isWeb)
@@ -1028,7 +1025,7 @@ public class XMLSupport extends DefaultHandler
     public ServerSettings getXML()
     {        
         try 
-        {            
+        {
             File file = new File(Platform.homePath() + "config.xml");
             if (!file.exists())
             {   
@@ -1042,14 +1039,10 @@ public class XMLSupport extends DefaultHandler
             r.setContentHandler(this);
             r.parse(src);
             return s;
-        } 
-        catch (IOException ex)
-        {
-            
         }
-        catch (SAXException ex)
+        catch (IOException | SAXException ex)
         {
-            
+            logger.warn("Failed to read XML config file", ex);
         }        
         return null;
     }
@@ -1591,6 +1584,7 @@ public class XMLSupport extends DefaultHandler
             atts.clear();
             atts.addAttribute("", "", "enable", "", tmp);
             atts.addAttribute("", "", "port", "", String.valueOf(web.getServerPort()));
+            atts.addAttribute("", "", "allowedOrigins", "", web.getAllowedOrigins());
 
             hd.startElement("", "", "server", atts);
 

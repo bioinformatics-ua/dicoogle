@@ -29,5 +29,5 @@ public interface WebSettingsReader {
     
     public int getServerPort();
     
-    public String getAccessControlAllowOrigins();
+    public String getAllowedOrigins();
 }

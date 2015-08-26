@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.server.web;
+package pt.ua.dicoogle.server.web.servlets;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,17 +35,16 @@ import net.sf.json.JSONObject;
 import pt.ua.dicoogle.core.query.ExportToCSVQueryTask;
 import pt.ua.dicoogle.plugins.PluginController;
 
+/**
+ * @author fredericosilva@ua.pt
+ */
 public class ExportToCSVServlet extends HttpServlet {
 
-	/**
-	 * @autor: fredericosilva@ua.pt
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.addHeader("Access-Control-Allow-Origin", "*");
 		resp.setHeader("Content-disposition","attachment; filename=QueryResultsExport.csv");
 		String queryString = req.getParameter("query");
 		String[] fields = req.getParameterValues("fields");

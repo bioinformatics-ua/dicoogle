@@ -40,7 +40,6 @@ public class DicomQuerySettingsServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.addHeader("Access-Control-Allow-Origin", "*");
 		ServerSettings ss = ServerSettings.getInstance();
 
 		int responseTimeout = ss.getRspDelay();
@@ -61,7 +60,6 @@ public class DicomQuerySettingsServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.addHeader("Access-Control-Allow-Origin", "*");
 		String responseTimeout = req.getParameter("responseTimeout");
 		String connectionTimeout = req.getParameter("connectionTimeout");
 		String idleTimeout = req.getParameter("idleTimeout");
