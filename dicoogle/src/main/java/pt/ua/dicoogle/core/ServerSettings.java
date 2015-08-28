@@ -401,14 +401,14 @@ public class ServerSettings implements ServerSettingsReader
     {
         private boolean webServer = true;
         private int serverPort = 8080;
-        private String accessControlAllowOrigins = null;
+        private String accessControlAllowOrigins = "";
 
         @Deprecated
         private boolean webServices = false;
         @Deprecated
         private int servicePort = 6060;
         
-        private String accessControlAllowOrigin = null;
+
 
         public Web()
         {
