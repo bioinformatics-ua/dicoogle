@@ -62,7 +62,7 @@ var LoginView = React.createClass({
             <div text-align="center" >
 
               <h4 style={{textAlign: 'center'}}>
-                Medical Imaging Repositories using Indexing System and P2P mechanisms
+                Improve your knowledge from your medical imaging repository.
               </h4>
 
             </div>
@@ -87,13 +87,13 @@ var LoginView = React.createClass({
           <footer id="footer">
             <div style={{width: '100%', textAlign: 'center'}} classname="footercontainer">
               <div style={{display: 'inline-block', width: '100%'}}>
-                <a href="http://bioinformatics.ua.pt"><img src="assets/logos/logobio.png" style={{height: 50, margin:5}} /></a>
-                <a href="http://bmd-software.com/"><img src="assets/logos/logo.png" style={{height: 50, padding: 5, margin:5}} /></a>
-                <a href="http://www.ieeta.pt/"><img src="assets/logos/logo-ieeta.png" style={{height: 80, margin:5}} /></a>
-                <a href="http://www.ua.pt/"><img src="assets/logos/logo-ua.png" style={{height: 80, margin:5}} /></a>
+                <a href="http://bioinformatics.ua.pt"><img src="assets/logos/logobio.png" style={{height: 40, margin:5}} /></a>
+                <a href="http://bmd-software.com/"><img src="assets/logos/logo.png" style={{height: 40, padding: 5, margin:5}} /></a>
+                <a href="http://www.ieeta.pt/"><img src="assets/logos/logo-ieeta.png" style={{height: 60, margin:5}} /></a>
+                <a href="http://www.ua.pt/"><img src="assets/logos/logo-ua.png" style={{height: 60, margin:5}} /></a>
               </div>
               <div style={{display: 'inline-block'}}>
-                <a><img src="assets/logos/logoFCT.png" style={{height: 60, margin:5}} /></a>
+                <a><img src="assets/logos/logoFCT.png" style={{height: 30, margin:5}} /></a>
               </div>
 
             </div>
