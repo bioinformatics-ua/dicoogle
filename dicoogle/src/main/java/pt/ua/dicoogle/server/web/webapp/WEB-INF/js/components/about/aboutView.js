@@ -95,7 +95,7 @@ var AboutView = React.createClass({
           </Panel>
           <Panel header="Developers" bsStyle="primary">
           As an open source software, Dicoogle can accept contributions from developers around the world.
-          Dicoogle OSS is lead and supported by Bioinformatics UA and BMD Software. Please check <a target="_new" href="http://www.dicoogle.com">the Dicoogle website</a> for more information.
+          Dicoogle OSS is led and supported by Bioinformatics UA and BMD Software. Please check <a target="_new" href="http://www.dicoogle.com">the Dicoogle website</a> for more information.
        
           <div style={{display: 'inline-block', width: '100%'}}>
             <a href="http://bioinformatics.ua.pt"><img src="assets/logos/logobio.png" style={{height: 40, margin:5}} /></a>
