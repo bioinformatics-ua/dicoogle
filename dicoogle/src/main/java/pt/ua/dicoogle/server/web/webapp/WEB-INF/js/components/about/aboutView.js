@@ -65,14 +65,14 @@ var AboutView = React.createClass({
           var panelsInstance = (
               <div className="about">
           <Panel header={title} bsStyle="primary">
-          Dicoogle is an open source medical imaging repository using Indexing System and Distributed mechanisms. 
-          Our solution can be used as PACS archive or can read your PACS archive file system and
-          allow you to do PACS mining. Morever, it can be used to create your own extensions.
-          Until now, we already indexed around 22 million of DICOM images and this
-          number tends to increase. 
-          There are several researchers working to evaluate and improve the quality of medical records and Dicoogle contributed to several case studies
+          Dicoogle is an open source medical imaging repository with an extensible indexing system and distributed mechanisms. 
+          Our solution can be used as a PACS archive, or as a client for reading your PACS archive file system, thus
+          allowing you to do PACS mining. Moreover, it can be easily extended with your own pluggable components.
 
-              <br />
+          At present, we have already indexed around 22 million DICOM images, and this number tends to increase.
+          There are several researchers working to evaluate and improve the quality of medical records, and Dicoogle has contributed to many of such case studies.
+
+          <br />
 
           </Panel>
 
@@ -80,7 +80,7 @@ var AboutView = React.createClass({
               
           {licenses}
               
-           Note: not only this components are used, but these are the main components used.
+           Note: Although these are not the only components used, these are considered the main ones.
           </Panel>
 
           <Panel header="Disclaimer" bsStyle="primary">
@@ -95,7 +95,8 @@ var AboutView = React.createClass({
           </Panel>
           <Panel header="Developers" bsStyle="primary">
           As an open source software, Dicoogle can accept contributions from developers around the world.
-          The lead team of Dicoogle OSS is Bioinformatics UA and BMD Software (and supported as well). More information check it  <a target="_new" href="http://www.dicoogle.com">in the Dicoogle website.</a>
+          Dicoogle OSS is led and supported by Bioinformatics UA and BMD Software. Please check <a target="_new" href="http://www.dicoogle.com">the Dicoogle website</a> for more information.
+       
           <div style={{display: 'inline-block', width: '100%'}}>
             <a href="http://bioinformatics.ua.pt"><img src="assets/logos/logobio.png" style={{height: 40, margin:5}} /></a>
             <a href="http://bmd-software.com/"><img src="assets/logos/logo.png" style={{height: 40, padding: 5, margin:5}} /></a>
