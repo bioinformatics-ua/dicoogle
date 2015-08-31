@@ -21,12 +21,9 @@ package pt.ua.dicoogle.core.dim;
 
 import java.io.StringWriter;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
+
 import org.slf4j.LoggerFactory;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -71,18 +68,38 @@ public class DIMGeneric
     	
     	return StringUtils.trimToEmpty(o.toString());
     }
+
+    private ConcatTags tags;
+
+    public DIMGeneric(ConcatTags tags,List arr) throws Exception
+    {
+        this.tags = tags;
+        fill(arr);
+
+    }
+
+    /**
+     * it is allow to handle a ArrayList of Strings or SearchResults
+     * @param arr
+     */
+    public DIMGeneric(List arr) throws Exception{
+        fill(arr);
+
+    }
+    
     
     /**
      * it is allow to handle a ArrayList of Strings or SearchResults
      * @param arr
      */
-    public DIMGeneric(Collection<SearchResult> arr) {
+    private void fill(Collection<SearchResult> arr) {
             //DebugManager.getInstance().debug("Looking search results: " + arr.size() );
 
-            //int size = arr.size();
+            Map<String, String> descriptions = new HashMap<String, String>();
+
+
             for(SearchResult r : arr){
-            //for (int i = 0 ; i<size ; i++ ){
-                //DebugManager.getInstance().debug("Adding new Image ");
+
             
                 /**
                  * Looking for SeachResults and put it in right side :) 
@@ -99,16 +116,39 @@ public class DIMGeneric
                 String AccessionNumber = toTrimmedString( extra.get("AccessionNumber"), false);
                 String StudyDescription = toTrimmedString( extra.get("StudyDescription"), false);
                 String InstitutionName = toTrimmedString( extra.get("InstitutionName"), false);
+                String operatorsName = toTrimmedString (extra.get("OperatorsName"), false);
+                String RequestingPhysician = toTrimmedString (extra.get("RequestingPhysician"), false);
+        
+                
                 /**
                  * Get data to Series
                  */
                 String serieUID =  toTrimmedString( extra.get("SeriesInstanceUID"), false);
+                String BodyPartThickness = (String) extra.get("BodyPartThickness");
                 //System.out.println("serieUID"+serieUID);
                 String serieNumber = toTrimmedString(extra.get("SeriesNumber"), true);
                 String serieDescription = toTrimmedString(  extra.get("SeriesDescription"), false);
                 String modality = toTrimmedString( extra.get("Modality"), false);
                 String patientID =  toTrimmedString( extra.get("PatientID"), false);
+                
+                
+                
+                
+                
+                
 
+                String ViewPosition = toTrimmedString( extra.get("ViewPosition"), false);
+                String ImageLaterality = toTrimmedString( extra.get("ImageLaterality"), false);
+                String AcquisitionDeviceProcessingDescription = toTrimmedString( extra.get("AcquisitionDeviceProcessingDescription"), false);
+
+
+                String ViewCodeSequence_CodeValue =  toTrimmedString( extra.get("ViewCodeSequence_CodeValue"), false);
+                String ViewCodeSequence_CodingSchemeDesignator =  toTrimmedString( extra.get("ViewCodeSequence_CodingSchemeDesignator"), false);
+                String ViewCodeSequence_CodingSchemeVersion =  toTrimmedString( extra.get("ViewCodeSequence_CodingSchemeVersion"), false);
+                String ViewCodeSequence_CodeMeaning =  toTrimmedString( extra.get("ViewCodeSequence_CodeMeaning"), false);
+
+
+                /* Get Patient Data */
 
                 String patientSex = toTrimmedString(  extra.get("PatientSex"), false);
                 String patientBirthDate = toTrimmedString(  extra.get("PatientBirthDate"), false);
@@ -125,15 +165,69 @@ public class DIMGeneric
                 if(sopInstUID == null)
                     sopInstUID ="no uid";
 
+                
+                // This is a quick fix for changing the parameters for the query.
+                if ((StudyDescription==null||StudyDescription.equals("")||StudyDescription.toLowerCase().contains("fuji"))
+                        &&
+                        this.tags!=null)
+                {
+
+                    String description = "";
+
+                    if (descriptions.containsKey(studyUID))
+                    {
+                        description = descriptions.get(studyUID);
+                    }
+
+                    for (ConcatTags.Rule rule : this.tags.getRules())
+                    {
+
+                        if (modality.equals(rule.getModality()))
+                        {
+
+
+                            String valueTagToReplace = (String) extra.get(rule.getTagToReplace());
+
+
+                            if (valueTagToReplace!=null)
+                            {
+                                // Required to production enviroment. I'm not changing to toTrimmedString until get a stable release.
+                                // complete ported.
+                                valueTagToReplace = valueTagToReplace.trim().replaceAll("[^a-zA-Z0-9\\. ÉéàÀÃ;,]+","");
+                                description = description + valueTagToReplace + "; ";
+
+                            }
+
+
+                        }
+
+                    }
+                    StudyDescription = description;
+                    descriptions.put(studyUID, StudyDescription);
+
+
+                }
+
+                String patientIdentifier = "";
+                if (patientID.equals(""))
+                {
+                    patientIdentifier = patientName;
+                }
+                else
+                {
+                    patientIdentifier = patientID;
+                }
+                
+
                 /** Verify if Patient already exists */
 
-                if (this.patientsHash.containsKey(patientName))
+                if (this.patientsHash.containsKey(patientIdentifier))
                 {
                     /**
                      * Patient Already exists, let's check studys
                      */
-		    // Real data does not have Patient Id - sometimes.
-                    Patient p = this.patientsHash.get(patientName);
+		            // Real data does not have Patient Id - sometimes.
+                    Patient p = this.patientsHash.get(patientIdentifier);
 
 
                     /**
@@ -144,18 +238,47 @@ public class DIMGeneric
                      */
 
                     Study s = new Study(p,studyUID,studyDate);
+
                     s.setInstitutuionName(InstitutionName);
                     s.setAccessionNumber(AccessionNumber);
                     s.setStudyTime(studyTime);
                     s.setStudyID(studyID);
                     s.setStudyDescription(StudyDescription);
+
+                    s.setPatientName(patientName);
+
+                    s.setOperatorsName(operatorsName);
+                    s.setRequestingPhysician(RequestingPhysician);
+
+
                     Serie serie = new Serie(s, serieUID, modality);
-                    if (serieNumber != null)
-                        serie.setSerieNumber((int)Float.parseFloat(serieNumber));
+                    try
+                    {
+                        if (serieNumber!=null)
+                            serie.setSerieNumber((int)Float.parseFloat(serieNumber));
+                    }
+                    catch (Exception ex)
+                    {
+                        // nothing to do anyway
+                    }
                     serie.setSeriesDescription(serieDescription);
+                    serie.setSeriesDescription(serieDescription);
+                    serie.setProtocolName(ProtocolName);
+                    serie.setSeriesDate(SeriesData);
+                    serie.setBodyPartThickness(BodyPartThickness);
+                    serie.setViewPosition(ViewPosition);
+                    serie.setImageLaterality(ImageLaterality);
+                    serie.setAcquisitionDeviceProcessingDescription(AcquisitionDeviceProcessingDescription);
+                    serie.setViewCodeSequence_CodeMeaning(ViewCodeSequence_CodeMeaning);
+                    serie.setViewCodeSequence_CodeValue(ViewCodeSequence_CodeValue);
+                    serie.setViewCodeSequence_CodingSchemeDesignator(ViewCodeSequence_CodingSchemeDesignator);
+                    serie.setViewCodeSequence_CodingSchemeVersion(ViewCodeSequence_CodingSchemeVersion);
+
                     serie.addImage(r.getURI(),sopInstUID);
                     s.addSerie(serie);
                     p.addStudy(s);
+                    
+                    
                 }
                 else {
                     /**
@@ -169,24 +292,43 @@ public class DIMGeneric
                       * Create Study
                       */
                      Study s = new Study(p, studyUID,studyDate) ;
-                     s.setAccessionNumber(AccessionNumber);
-                     s.setStudyTime(studyTime);
-                     s.setStudyDescription(StudyDescription);
-                     s.setStudyID(studyID);
-                     s.setInstitutuionName(InstitutionName);
-                     p.addStudy(s);
+                    s.setAccessionNumber(AccessionNumber);
+                    s.setStudyTime(studyTime);
+                    s.setStudyDescription(StudyDescription);
+                    s.setStudyID(studyID);
+                    s.setInstitutuionName(InstitutionName);
+                    s.setPatientName(patientName);
 
-                     /**
-                     * Create Series
-                     */
-                     Serie serie = new Serie(s,serieUID, modality);
-                     if (serieNumber!=null && !serieNumber.equals(""))
-                        serie.setSerieNumber((int)Float.parseFloat(serieNumber));
-                     serie.setSeriesDescription(serieDescription);
-                     serie.addImage(r.getURI(),sopInstUID);
-                     s.addSerie(serie);
-                     this.patients.add(p);
-                     this.patientsHash.put(patientName, p);
+                    s.setOperatorsName(operatorsName);
+                    s.setRequestingPhysician(RequestingPhysician);
+
+
+                    p.addStudy(s);
+
+                    /**
+                    * Create Series
+                    */
+                    Serie serie = new Serie(s,serieUID, modality);
+                    if (serieNumber!=null && !serieNumber.equals(""))
+                       serie.setSerieNumber((int)Float.parseFloat(serieNumber));
+                    serie.setSeriesDescription(serieDescription);
+                    serie.setProtocolName(ProtocolName);
+
+                    serie.setSeriesDate(SeriesData);
+                    serie.setViewPosition(ViewPosition);
+                    serie.setImageLaterality(ImageLaterality);
+                    serie.setAcquisitionDeviceProcessingDescription(AcquisitionDeviceProcessingDescription);
+                    serie.setViewCodeSequence_CodeMeaning(ViewCodeSequence_CodeMeaning);
+                    serie.setViewCodeSequence_CodeValue(ViewCodeSequence_CodeValue);
+                    serie.setViewCodeSequence_CodingSchemeDesignator(ViewCodeSequence_CodingSchemeDesignator);
+                    serie.setViewCodeSequence_CodingSchemeVersion(ViewCodeSequence_CodingSchemeVersion);
+
+
+
+                    serie.addImage(r.getURI(),sopInstUID);
+                    s.addSerie(serie);
+                    this.patients.add(p);
+                    this.patientsHash.put(patientName, p);
                 }
             }
 

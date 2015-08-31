@@ -28,6 +28,7 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.slf4j.Logger;
 import pt.ua.dicoogle.core.ServerSettings;
 
 import java.util.ArrayList;
@@ -45,10 +46,7 @@ import org.dcm4che2.data.VR;
 import org.dcm4che2.io.DicomInputStream;
 
 
-import pt.ua.dicoogle.core.dim.DIMGeneric;
-import pt.ua.dicoogle.core.dim.Patient;
-import pt.ua.dicoogle.core.dim.Serie;
-import pt.ua.dicoogle.core.dim.Study;
+import pt.ua.dicoogle.core.dim.*;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
@@ -78,8 +76,15 @@ public class SearchDicomResult implements Iterator<DicomObject>
     
     String currentFile ;
 
-    
-	public SearchDicomResult(String searchQuery, boolean isNetwork,
+
+
+    private static ConcatTags concatTags = null;
+    private static  boolean concatTagsCheck = true;
+
+
+    private static final Logger logger = LoggerFactory.getLogger(SearchDicomResult.class);
+
+    public SearchDicomResult(String searchQuery, boolean isNetwork,
 			ArrayList<String> extrafields, QUERYLEVEL level) {
 
 		queryLevel = level;
@@ -88,11 +93,19 @@ public class SearchDicomResult implements Iterator<DicomObject>
 		 * Get the array list of resulst match searchQuery
 		 */
 
-		System.out.println("QUERY: " + searchQuery);
-		System.out.println("QUERYLEVEL: " + queryLevel);
-		// TODO: How about search in Network?
-		// DebugManager.getInstance().debug(searchQuery);
-		// list = core.searchSync(searchQuery, extrafields);
+        logger.info("QUERY: " + searchQuery);
+        logger.info("QUERYLEVEL: " + queryLevel);
+
+        if (concatTags==null&& concatTagsCheck)
+        {
+            concatTags = new ConcatTags();
+            try {
+                concatTags.parseConfig(ConcatTags.FILENAME);
+            } catch (FileNotFoundException ex) {
+                concatTags = null;
+                concatTagsCheck = false;
+            }
+        }
 
 		HashMap<String, String> extraFields = new HashMap<String, String>();
 		for (String s : extrafields) {
@@ -173,12 +186,7 @@ public class SearchDicomResult implements Iterator<DicomObject>
     {
       if (it!=null)
       {
-        //DebugManager.getInstance().debug("It has a iterator");
-        if (it.hasNext())
-        {
-            //DebugManager.getInstance().debug("and we have a next");
-        }
-         return it.hasNext();
+        return it.hasNext();
       }
       else
       {
