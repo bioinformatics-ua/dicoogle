@@ -162,11 +162,18 @@ public class SearchDicomResult implements Iterator<DicomObject>
 			it = studyList.iterator();
 
 		} else if (level == QUERYLEVEL.SERIE) {
-			DIMGeneric dimModel = null;
-			try {
-				dimModel = new DIMGeneric(list);
-			} catch (Exception ex) {
-			}
+
+            DIMGeneric dimModel = null;
+            try
+            {
+                if (concatTags==null)
+                    dimModel = new DIMGeneric(list);
+                else
+                    dimModel = new DIMGeneric(concatTags, list);
+            } catch (Exception ex)
+            {
+            }
+            
 
 			ArrayList<Patient> listPatients = dimModel.getPatients();
 			for (Patient p : listPatients) {

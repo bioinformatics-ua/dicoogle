@@ -71,7 +71,7 @@ public class DIMGeneric
 
     private ConcatTags tags;
 
-    public DIMGeneric(ConcatTags tags,List arr) throws Exception
+    public DIMGeneric(ConcatTags tags,Collection<SearchResult> arr) throws Exception
     {
         this.tags = tags;
         fill(arr);
@@ -82,7 +82,7 @@ public class DIMGeneric
      * it is allow to handle a ArrayList of Strings or SearchResults
      * @param arr
      */
-    public DIMGeneric(List arr) throws Exception{
+    public DIMGeneric(Collection<SearchResult> arr) throws Exception{
         fill(arr);
 
     }
@@ -154,7 +154,10 @@ public class DIMGeneric
                 String patientBirthDate = toTrimmedString(  extra.get("PatientBirthDate"), false);
                 
                 String patientName =  toTrimmedString(extra.get("PatientName"), false);
-                                
+
+                String SeriesDate =  toTrimmedString(extra.get("SeriesDate"), false);
+                String ProtocolName =  toTrimmedString(extra.get("ProtocolName"), false);
+
                 /**
                  * Get data to Image
                  */
@@ -264,7 +267,7 @@ public class DIMGeneric
                     serie.setSeriesDescription(serieDescription);
                     serie.setSeriesDescription(serieDescription);
                     serie.setProtocolName(ProtocolName);
-                    serie.setSeriesDate(SeriesData);
+                    serie.setSeriesDate(SeriesDate);
                     serie.setBodyPartThickness(BodyPartThickness);
                     serie.setViewPosition(ViewPosition);
                     serie.setImageLaterality(ImageLaterality);
@@ -314,7 +317,7 @@ public class DIMGeneric
                     serie.setSeriesDescription(serieDescription);
                     serie.setProtocolName(ProtocolName);
 
-                    serie.setSeriesDate(SeriesData);
+                    serie.setSeriesDate(SeriesDate);
                     serie.setViewPosition(ViewPosition);
                     serie.setImageLaterality(ImageLaterality);
                     serie.setAcquisitionDeviceProcessingDescription(AcquisitionDeviceProcessingDescription);
