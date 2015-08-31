@@ -150,13 +150,15 @@ Authors
 
 * Luís Bastião
 * Frederico Valente
-* Luís Ribeiro
-* Carlos Ferreira
 * Eriksson Monteiro
 * Tiago Godinho
+* Eduardo Pinho
+
+Past developers:
+
 * Samuel Campos
-
-
+* Luís Ribeiro
+* Carlos Ferreira
 
 Project leaders
 ========
