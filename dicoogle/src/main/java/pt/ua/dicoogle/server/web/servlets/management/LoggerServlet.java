@@ -44,39 +44,42 @@ import pt.ua.dicoogle.sdk.Utils.Platform;
  */
 public class LoggerServlet extends HttpServlet {
     private static final Logger classLogger = LoggerFactory.getLogger(LoggerServlet.class);
+
+    private String logFilename = null;
     
-	public LoggerServlet() {
-	}
-    
-    private static String getLogFilename() {
-        org.apache.logging.log4j.Logger logger = LogManager.getLogger();
-        Map<String, Appender> appenderMap = ((org.apache.logging.log4j.core.Logger) logger).getAppenders();
-        for (Map.Entry<String,Appender> e : appenderMap.entrySet()) {
-            String filename = null;
-            Appender appender = e.getValue();
-            if (appender instanceof FileAppender) {
-                filename = ((FileAppender)appender).getFileName();
-            } else if (appender instanceof RollingFileAppender) {
-                filename = ((RollingFileAppender)appender).getFileName();
-            } else if (appender instanceof RandomAccessFileAppender) {
-                filename = ((RandomAccessFileAppender)appender).getFileName();
-            } else if (appender instanceof RollingRandomAccessFileAppender) {
-                filename = ((RollingRandomAccessFileAppender)appender).getFileName();
+    protected String logFilename() {
+        if (this.logFilename == null) {
+            org.apache.logging.log4j.Logger logger = LogManager.getLogger();
+            Map<String, Appender> appenderMap = ((org.apache.logging.log4j.core.Logger) logger).getAppenders();
+            for (Map.Entry<String,Appender> e : appenderMap.entrySet()) {
+                String filename = null;
+                Appender appender = e.getValue();
+                if (appender instanceof FileAppender) {
+                    filename = ((FileAppender)appender).getFileName();
+                } else if (appender instanceof RollingFileAppender) {
+                    filename = ((RollingFileAppender)appender).getFileName();
+                } else if (appender instanceof RandomAccessFileAppender) {
+                    filename = ((RandomAccessFileAppender)appender).getFileName();
+                } else if (appender instanceof RollingRandomAccessFileAppender) {
+                    filename = ((RollingRandomAccessFileAppender)appender).getFileName();
+                }
+                if (filename != null) {
+                    classLogger.debug("Using \"{}\" as the file for the server log.", filename);
+                    this.logFilename = filename;
+                    return this.logFilename;
+                }
             }
-            if (filename != null) {
-                classLogger.debug("Using \"{}\" as the file for the server log.", filename);
-                return filename;
-            }
+            // no file appender found, use default DICOMLOG.log
+            classLogger.debug("No file appender found, using \"DICOMLOG.log\" as the default logger");
+            this.logFilename = Platform.homePath() + "DICOMLOG.log";
         }
-        // no file appender found, use default DICOMLOG.log
-        classLogger.debug("No file appender found, using \"DICOMLOG.log\" as the default logger");
-        return Platform.homePath() + "DICOMLOG.log";
+        return this.logFilename;
     }
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		try (BufferedReader fis = new BufferedReader(new FileReader(getLogFilename()))) {
+		try (BufferedReader fis = new BufferedReader(new FileReader(logFilename()))) {
             PrintWriter respWriter = resp.getWriter();
             String l;
             while ((l = fis.readLine()) != null) {
