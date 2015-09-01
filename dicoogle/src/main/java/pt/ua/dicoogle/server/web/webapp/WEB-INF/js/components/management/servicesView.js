@@ -9,40 +9,47 @@ var ModalTrigger = ReactBootstrap.ModalTrigger;
 var Modal = ReactBootstrap.Modal;
 
 var ServicesView = React.createClass({
-      getInitialState: function() {
-        return {
 
+    getInitialState () {
+        return {
           storageRunning: false,
           storagePort: 0,
+          storageAutostart: false,
           queryRunning: false,
           queryPort: 0,
-
-        status: "loading"};
-      },
-      componentWillMount: function(){
+          queryAutostart: false,
+          status: "loading"};
+    },
+      
+      componentWillMount () {
         ServicesStore.listen(this._onChange);
-       },
-      componentDidMount: function(){
+      },
+      
+      componentDidMount () {
         ServiceAction.getStorage();
         ServiceAction.getQuery();
-       },
-       componentDidUpdate: function(){
-         this.drawCanvas();
-        },
-      _onChange:function(data){
+      },
+      
+      componentDidUpdate () {
+        this.drawCanvas();
+      },
+      
+      _onChange (data) {
         console.log(data);
         if(this.isMounted())
         this.setState({
           storageRunning: data.storageRunning,
           storagePort: data.storagePort,
+          storageAutostart: data.storageAutostart,
           queryRunning: data.queryRunning,
           queryPort: data.queryPort,
+          queryAutostart: data.queryAutostart,
           status: "done"
           });
 
       //  console.log(this.state.data.storagePort);
       },
-      render: function() {
+      render () {
         var self = this;
         //return(<div>Services</div>);
         if(this.state.status == "loading"){
@@ -73,7 +80,7 @@ var ServicesView = React.createClass({
                     </div>
                     <div className="checkbox">
                       <label>
-                        <input type="checkbox" />Auto Start
+                        <input type="checkbox" checked={self.state.storageAutostart} onClick={this.toggleStorageAutoStart} />Auto Start
                       </label>
                     </div>
                   </div>
@@ -106,7 +113,7 @@ var ServicesView = React.createClass({
                     </div>
                     <div className="checkbox">
                       <label>
-                        <input type="checkbox" />Auto Start
+                        <input type="checkbox" checked={self.state.queryAutostart} onClick={this.toggleQueryAutoStart} />Auto Start
                       </label>
                     </div>
                   </div>
@@ -132,30 +139,32 @@ var ServicesView = React.createClass({
         </div>
       </div>
 
-
-
         );
       },
-      handleQueryPortChange :function(event){
+      handleQueryPortChange (event) {
         this.setState({queryPort: event.target.value});
       },
-      handleStoragePortChange : function(event){
+      handleStoragePortChange (event) {
         this.setState({storagePort: event.target.value});
       },
-      startStorage : function(){
+      startStorage () {
         console.log("start storage");
         ServiceAction.setStorage(true);
       },
-      stopStorage : function(){
+      stopStorage () {
         ServiceAction.setStorage(false);
       },
-      startQuery : function(){
+      toggleStorageAutostart (event) {
+        
+      },
+      startQuery () {
         ServiceAction.setQuery(true);
       },
-      stopQuery : function(){
+      stopQuery () {
         ServiceAction.setQuery(false);
       },
-      drawCanvas:function(){
+      
+      drawCanvas () {
 
             var canvas1 = document.getElementById("myCanvas");
              var canvas2 = document.getElementById("myCanvas2");

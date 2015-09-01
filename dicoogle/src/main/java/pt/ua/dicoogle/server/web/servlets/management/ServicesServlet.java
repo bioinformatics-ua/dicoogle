@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import net.sf.json.JSONObject;
 
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.plugins.PluginController;
@@ -98,34 +99,45 @@ public class ServicesServlet extends HttpServlet {
 
 		mPluginController = PluginController.getInstance();
 		mControlServices = ControlServices.getInstance();
-		
-		boolean setState = Boolean.parseBoolean(req.getParameter("running")); 
+
+        JSONObject obj = new JSONObject();
+        
+        
+        String paramAutostart = req.getParameter("autostart");
+        if (paramAutostart != null) {
+            boolean autostart = Boolean.parseBoolean(paramAutostart);
+            ServerSettings.getInstance().setStorage(autostart);
+        }
+        
+        String paramRunning = req.getParameter("running");
+        if (paramRunning == null) {
+            resp.getWriter().print(obj.toString());
+			ResponseUtil.simpleResponse(resp, "success", true);
+            return;
+        }
+        
+		boolean running = Boolean.parseBoolean(paramRunning); 
 		switch (mType) {
-		case 0:
+		case STORAGE:
 			boolean success = true;
-			if(setState)
-				success = (mControlServices.startStorage() ==0)?true:false;
+			if(running)
+				success = mControlServices.startStorage() == 0;
 			else
 				mControlServices.stopStorage();
 			
-			
 			ResponseUtil.simpleResponse(resp, "success", success);
-			
 			break;
-		case 1:
+		case PLUGIN:
 			//TODO: START AND STOP PLUGINS
-			
 			break;
 			
-		case 2:
-			if(setState)
+		case QUERY:
+			if(running)
 				mControlServices.startQueryRetrieve();
 			else
-				mControlServices.stopQueryRetrieve();;
-			
+				mControlServices.stopQueryRetrieve();
 			
 			ResponseUtil.simpleResponse(resp, "success", true);
-			
 			break;
 
 		default:

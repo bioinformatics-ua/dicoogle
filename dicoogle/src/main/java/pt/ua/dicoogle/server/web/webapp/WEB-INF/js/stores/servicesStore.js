@@ -4,9 +4,7 @@
 var Reflux = require('reflux');
 
 import {ServiceAction} from '../actions/servicesAction';
-
 import {Endpoints} from '../constants/endpoints';
-
 import {request} from '../handlers/requestHandler';
 
 var ServicesStore = Reflux.createStore({
@@ -19,9 +17,11 @@ var ServicesStore = Reflux.createStore({
        this._contents = {
          storageRunning: false,
          storagePort: 0,
+         storageAutostart: false,
          queryRunning: false,
-         queryPort: 0
-         };
+         queryPort: 0,
+         queryAutostart: false
+        };
 
       this._querySettings ={
         acceptTimeout: "...",
@@ -39,17 +39,15 @@ var ServicesStore = Reflux.createStore({
       var self = this;
       request(
         Endpoints.base + "/management/dicom/storage",
-        function(data){
-          //console.log("merda", data );
-          self._contents.storageRunning = data.isRunning;
-          self._contents.storagePort = data.port;
-          self.trigger(self._contents);
-
-        },
-        function(error){
-          console.log("omnGetStoreage: failure");
-        }
-
+          function(data) {
+            self._contents.storageRunning = data.isRunning;
+            self._contents.storagePort = data.port;
+            self._contents.storageAutostart = data.autostart;
+            self.trigger(self._contents);
+          },
+          function(error) {
+            console.log("onGetStoreage: failure");
+          }
       );
     },
     onGetQuery :function(){
@@ -59,6 +57,7 @@ var ServicesStore = Reflux.createStore({
         function(data){
           self._contents.queryRunning = data.isRunning;
           self._contents.queryPort = data.port;
+          self._contents.queryAutostart = data.autostart;
           self.trigger(self._contents);
 
         },
@@ -106,7 +105,6 @@ var ServicesStore = Reflux.createStore({
       request(
         Endpoints.base + "/management/settings/dicom/query",
         function(data){
-          //console.log("merda", data );
           self._querySettings = data;
           self.trigger(self._querySettings);
 
