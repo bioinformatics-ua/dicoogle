@@ -88,130 +88,126 @@ var App = React.createClass({
         <div>
           <ul className="sidebar-nav">
             {
-              menuItems.map(function(index){
+              menuItems.map(function(value, i) {
                 var style = '';
 
-                if(self.state.selected == index){
+                if(self.state.selected === value) {
                   style = 'active';
                 }
-                if(index == "search")
-                return <li><a className={style} onClick={self.clicked.bind(self, index)} href="#search">Search</a></li>;
-                  else if(index == "management")
-                  return <li><a className={style} onClick={self.clicked.bind(self, index)} href="#management">Management</a></li>;
-                    else if(index == "indexer")
-                    return <li><a className={style} onClick={self.clicked.bind(self, index)} href="#indexer">Indexer</a></li>;
-                      else if(index == "about")
-                      return <li><a className={style} onClick={self.clicked.bind(self, index)} href="#about">About</a></li>;
-                        else
-                        return "";
-                      })
-
-                    }
-
-                  </ul>
-
-                  <div className="user-wrapper">
-                    <div className="col-sm-10">
-                      <div className="user-name vertical_center">
-                        {UserStore.getUsername()}
-                      </div>
-                    </div>
-                    <div className="col-sm-2">
-                      <div className="user-name vertical_center">
-                        <span onClick={this.logout} className="glyphicon glyphicon-log-out"></span>
-                      </div>
-
-                    </div>
-                  </div>
-                  <RouteHandler/>
-                </div>
-              );
-
-              return sidebarInstance;
+                if (value === "search")
+                  return <li key={i}><a className={style} onClick={self.clicked.bind(self, value)} href="#search">Search</a></li>;
+                else if (value === "management")
+                  return <li key={i}><a className={style} onClick={self.clicked.bind(self, value)} href="#management">Management</a></li>;
+                else if (value === "indexer")
+                  return <li key={i}><a className={style} onClick={self.clicked.bind(self, value)} href="#indexer">Indexer</a></li>;
+                else if (value === "about")
+                  return <li key={i}><a className={style} onClick={self.clicked.bind(self, value)} href="#about">About</a></li>;
+                else
+                  return "";
+                })
             }
-          });
+
+          </ul>
+            <div className="user-wrapper">
+              <div className="col-sm-10">
+                <div className="user-name vertical_center">
+                  {UserStore.getUsername()}
+                </div>
+              </div>
+              <div className="col-sm-2">
+                <div className="user-name vertical_center">
+                  <span onClick={this.logout} className="glyphicon glyphicon-log-out"></span>
+                </div>
+
+              </div>
+            </div>
+            <RouteHandler/>
+          </div>
+        );
+
+        return sidebarInstance;
+      }
+    });
 
           var SearchPage = React.createClass({
-            render: function() {
+            render: function() { // FIXME
               React.render(<Search/>, document.getElementById("container"));
               //React.render(<div>Search Page</div>, document.getElementById("container"));
               return (<div/>);
             }
           });
           var ManagementPage = React.createClass({
-            render: function() {
+            render: function() { // FIXME
               React.render(<ManagementView/>, document.getElementById("container"));
               return (<div/>);
             }
           });
 
           var NotFound = React.createClass({
-            render: function() {
+            render: function() { // FIXME
               React.render(<div>Not found Page</div>, document.getElementById("container"));
               return (<div/>);
             }
           });
           var ResultPage = React.createClass({
-            render: function() {
+            render: function() { // FIXME
               React.render(<ResultSearch/>, document.getElementById("container"));
               return (<div/>);
             }
           });
           var AboutPage = React.createClass({
-            render: function() {
+            render: function() { // FIXME
               React.render(<AboutView/>, document.getElementById("container"));
               return (<div/>);
             }
           });
           var IndexerPage = React.createClass({
-            render: function() {
+            render: function() { // FIXME
               React.render(<IndexStatusView/>, document.getElementById("container"));
               return (<div/>);
             }
           });
           var LoginPage = React.createClass({
-            render: function() {
+            render: function() { // FIXME
               React.render(<LoginView/>, document.getElementById("login_container"));
               return (<div/>);
             }
           });
           var LoadingPage = React.createClass({
-            render: function() {
+            render: function() { // FIXME
               React.render(<LoadingView/>, document.getElementById("login_container"));
               return (<div/>);
             }
           });
 
           var DirectImagePage = React.createClass({
-            render: function() {
+            render: function() { // FIXME
               React.render(<DirectImageView/>, document.getElementById("container"));
               return (<div/>);
             }
           });
 
           var DirectDumpPage = React.createClass({
-            render: function() {
+            render: function() { // FIXME
               React.render(<DirectDumpView/>, document.getElementById("container"));
               return (<div/>);
             }
           });
 
-
           var Routing = function () {
 
             var routes = (
               <Route handler={App} >
-                <Route path="search" addHandlerKey={true} handler={SearchPage} >
+                <Route key={0} path="search" addHandlerKey={true} handler={SearchPage} >
                 </Route>
-                <Route name="management" addHandlerKey={true} handler={ManagementPage} />
-                  <Route name="results" addHandlerKey={true} handler={ResultPage} />
-                <Route name="indexer" addHandlerKey={true} handler={IndexerPage} />
-                <Route name="about" addHandlerKey={true} handler={AboutPage} />
-                <Route name="login" addHandlerKey={true} handler={LoginPage} />
-                <Route name="loading" addHandlerKey={true} handler={LoadingPage} />
-                <Route name="image" addHandlerKey={true} handler={DirectImagePage} />
-                <Route name="dump" addHandlerKey={true} handler={DirectDumpPage} />
-
+                <Route key={1} name="management" addHandlerKey={true} handler={ManagementPage} />
+                <Route key={2} name="results" addHandlerKey={true} handler={ResultPage} />
+                <Route key={3} name="indexer" addHandlerKey={true} handler={IndexerPage} />
+                <Route key={4} name="about" addHandlerKey={true} handler={AboutPage} />
+                <Route key={5} name="login" addHandlerKey={true} handler={LoginPage} />
+                <Route key={6} name="loading" addHandlerKey={true} handler={LoadingPage} />
+                <Route key={7} name="image" addHandlerKey={true} handler={DirectImagePage} />
+                <Route key={8} name="dump" addHandlerKey={true} handler={DirectDumpPage} />
 
                 <DefaultRoute handler={LoadingPage} />
                 <NotFoundRoute handler={NotFound} />
@@ -220,9 +216,9 @@ var App = React.createClass({
 
             Router.run(routes, function (Handler) {
 
-              React.render(<Handler/>, document.getElementById("sidebar-wrapper"));
-              //React.render(<div>BIlo</div>, document.body);
-            });
-          };
+            React.render(<Handler/>, document.getElementById("sidebar-wrapper"));
+            //React.render(<div>BIlo</div>, document.body);
+          });
+        };
 
-          module.exports = Routing;
+export default Routing;

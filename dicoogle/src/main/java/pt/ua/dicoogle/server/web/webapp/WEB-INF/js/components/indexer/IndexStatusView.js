@@ -55,7 +55,7 @@ var IndexStatusView = React.createClass({
         if (this.state.data.results.length === 0) {
           items = (<div>No tasks</div>);
         } else {
-          items = this.state.data.results.map(function(item){
+          items = this.state.data.results.map(function(item, index){
             let complete = item.complete;
             let percentage = complete ? '100%'
               : (item.taskProgress >= 0) ? (item.taskProgress * 100 + '%') : '0%';
@@ -72,7 +72,7 @@ var IndexStatusView = React.createClass({
               barstate = "indexprogress progress-bar progress-bar-striped progress-bar-success";
             }
             return (
-              <div className="well well-sm">
+              <div key={index} className="well well-sm">
                 <div className="row">
                     <div className="col-sm-10">
                       <div className="progress indexstatusprogress">
