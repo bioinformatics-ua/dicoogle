@@ -82,7 +82,19 @@
                 <directory>src/main/resources</directory>
             </resource>
             <resource>
-                <directory>src/main/java/pt/ua/dicoogle/server/web/webapp</directory>
+                <directory>src/main/java/pt/ua/dicoogle/server/web/webapp/WEB-INF</directory>
+                <targetPath>WEB-INF</targetPath>
+                <includes>
+                    <include>assets/**</include>
+                    <include>bootstrap/css/*.css</include>
+                    <include>bootstrap/fonts/*</include>
+                    <include>fonts/**</include>
+                    <include>css/**</include>
+                    <include>lib/**</include>
+                    <include>js/bundle.min.js</include>
+                    <include>js/bundle.js</include>
+                    <include>index.html</include>
+                </includes>
             </resource>
         </resources>
 
@@ -142,7 +154,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>2.4.3</version>
+                <version>2.7</version>
                 <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
@@ -195,8 +207,8 @@
         <dependency>
             <groupId>net.sf.json-lib</groupId>
             <artifactId>json-lib</artifactId>
-            <version>2.4</version>
             <classifier>jdk15</classifier>
+            <version>2.4</version>
         </dependency>
 
         <dependency>
