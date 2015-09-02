@@ -1,5 +1,5 @@
 var Endpoints ={
-  base: "http://localhost:8080",
+  base: "",
   search:"/search"
 };
 export {Endpoints};
