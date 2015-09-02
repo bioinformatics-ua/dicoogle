@@ -137,7 +137,7 @@ var PopOverView = React.createClass({
     });
 
 		return (
-			<Modal onHide={this.props.onHide} show={this.props.uid !== null} bsStyle='primary' title='Image Dump' animation={true}>
+			<Modal onHide={this.props.onHide} show={this.props.uid !== null} bsClass='modal' bsStyle='primary' dialogClassName='table-dump' title='Image Dump' animation={true}>
 		        <div className='modal-body'>
               <table id="dumptable" className="table-test table table-striped table-bordered responsive" cellspacing="0" width="100%">
                 <thead>
