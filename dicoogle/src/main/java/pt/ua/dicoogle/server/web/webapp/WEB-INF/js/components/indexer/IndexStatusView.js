@@ -91,9 +91,12 @@ var IndexStatusView = React.createClass({
                     <p><b>Uid: </b> {item.taskUid}</p>
                     <p><b>Name: </b> {item.taskName}</p>
                     {item.complete && <p>
-                        {item.elapsedTime && ([<b>Elapsed Time(ms): </b>, item.elapsedTime])}
-                        {item.nIndexed && ([<b>Indexed: </b>, item.nIndexed])}
-                        {item.nErrors && ([<b>Errors: </b>, item.nErrors])}
+                        {(typeof item.elapsedTime === 'number') && (
+                          <p><b>Elapsed Time: </b> {item.elapsedTime} ms</p>)}
+                        {(typeof item.nIndexed === 'number') && (
+                          <p><b>Indexed: </b> {item.nIndexed} </p>)}
+                        {(typeof item.nErrors === 'number') && (
+                          <p><b>Errors: </b> {item.nErrors} </p>)}
                     </p>}
                 </div>
 
