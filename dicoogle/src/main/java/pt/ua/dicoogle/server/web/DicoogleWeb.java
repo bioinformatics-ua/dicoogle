@@ -60,7 +60,6 @@ import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServlet;
 
 import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.eclipse.jetty.servlets.GzipFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

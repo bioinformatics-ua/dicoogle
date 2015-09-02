@@ -697,6 +697,7 @@ public class Services {
      * @return an HTML String containing the form element to see and modify the
      * advanced/internal options of a plugin or service name by the brokerURL.
      */
+    @Deprecated
     private String getHTMLAdvancedOptionForm(String brokerURL, String name) {
         String result = "<form action=\"" + brokerURL + "\" method=\"get\"><input type=\"hidden\" name=\"" + PARAM_SERVICE + "\" value=\"" + name + "\" />";
 
@@ -728,6 +729,7 @@ public class Services {
      * @return a String containing the HTML code for a row to the HTML service
      * management table, based o the parameters passed to it.
      */
+    @Deprecated
     private String getHTMLServiceManagementTableRow(boolean isRunning, String brokerURL, String name, boolean canBeStopped, boolean canBeDisabled, boolean startInitially, boolean hasPort, int port, boolean hasAdvancedOptions, String advancedOptionsManagerURL) {
         String result = "<tr " + (name.equalsIgnoreCase(webServerName) ? "class=\"warning\"" : "") + ">"; // add a little warning for stopping the web server, making it unable to be used remotely again
 
@@ -776,6 +778,7 @@ public class Services {
      * @return an HTML String containing the list of all plugins and services
      * available, their status and action that can be taken.
      */
+    @Deprecated
     public String getHTMLServiceManagementTable(String brokerURL, String advancedOptionsManagerURL, String id) {
         String result = "";
         if ((id == null) || id.trim().isEmpty()) {
@@ -828,6 +831,7 @@ public class Services {
      * @return an HTML String containing the list of all plugins and services
      * available, their status and action that can be taken.
      */
+    @Deprecated
     public String getHTMLServiceManagementTable(String brokerURL, String advancedOptionsManagerURL) {
         return getHTMLServiceManagementTable(brokerURL, advancedOptionsManagerURL, null);
     }
@@ -1016,6 +1020,7 @@ public class Services {
      * Saves the settings for use between server inits.
      */
     public void saveSettings() {
+        
         xmlSupport.printXML();
     }
 

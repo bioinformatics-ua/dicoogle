@@ -476,10 +476,7 @@ public class ServerSettings implements ServerSettingsReader
             this.servicePort = servicePort;
         }
 
-        public String getAccessControlAllowOrigins() {
-            return this.accessControlAllowOrigins;
-        }
-        
+        @Override
         public String getAllowedOrigins() {
             return this.accessControlAllowOrigins;
         }
@@ -862,8 +859,6 @@ public class ServerSettings implements ServerSettingsReader
     public boolean isQueryRetrive() {
         return queryRetrieve;
     }
-
-
 
     public void add(MoveDestination m)
     {

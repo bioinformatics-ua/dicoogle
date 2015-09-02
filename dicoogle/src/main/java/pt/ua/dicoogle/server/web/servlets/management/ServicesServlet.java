@@ -26,10 +26,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import net.sf.json.JSONObject;
 
 import pt.ua.dicoogle.core.ServerSettings;
-import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.server.ControlServices;
+import pt.ua.dicoogle.server.web.management.Services;
 import pt.ua.dicoogle.server.web.utils.ResponseUtil;
 import pt.ua.dicoogle.server.web.utils.ResponseUtil.Pair;
 
@@ -38,15 +39,12 @@ import pt.ua.dicoogle.server.web.utils.ResponseUtil.Pair;
  * @author Frederico Silva <fredericosilva@ua.pt>
  */
 public class ServicesServlet extends HttpServlet {
-	private PluginController mPluginController;
-	private ControlServices mControlServices;
-	private ServerSettings mServerSettings;
 	
 	public final static int STORAGE = 0;
 	public final static int PLUGIN = 1;
 	public final static int QUERY = 2;
 	
-	private int mType;
+	private final int mType;
 	public ServicesServlet(int type) {
 		mType = type;
 		
@@ -56,81 +54,104 @@ public class ServicesServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		mPluginController = PluginController.getInstance();
-		mControlServices = ControlServices.getInstance();
-		mServerSettings = ServerSettings.getInstance();
+		ControlServices controlServices = ControlServices.getInstance();
+		ServerSettings serverSettings = ServerSettings.getInstance();
 		
 		
 		boolean isRunning = false; 
-		int port = 0;
+		int port = -1;
+        boolean autostart = false;
 		switch (mType) {
-		case 0:
-			isRunning = mControlServices.storageIsRunning();
-			port = mServerSettings.getStoragePort();
-			
+		case STORAGE:
+			isRunning = controlServices.storageIsRunning();
+			port = serverSettings.getStoragePort();
+			autostart = serverSettings.isStorage();
 			break;
-		case 1:
+		case PLUGIN:
 			//TODO: RETRIEVE STATE OF PLUGIN
 			
 			break;
 			
-		case 2:
-			isRunning = mControlServices.queryRetrieveIsRunning();
-			port = mServerSettings.getWlsPort();
+		case QUERY:
+			isRunning = controlServices.queryRetrieveIsRunning();
+			port = serverSettings.getWlsPort();
+			autostart = serverSettings.isQueryRetrive();
 			break;
 
 		default:
 			break;
 		}
 		
-		List<Pair> response = new ArrayList<>();
-		response.add(new Pair("isRunning", isRunning));
-		response.add(new Pair("port", port));
-		
-		ResponseUtil.objectResponse(resp, response);
-		
-		
+        JSONObject obj = new JSONObject();
+        obj.element("isRunning", isRunning);
+        obj.element("port", port);
+        obj.element("autostart", autostart);
+
+        resp.getWriter().print(obj.toString());
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		mPluginController = PluginController.getInstance();
-		mControlServices = ControlServices.getInstance();
-		
-		boolean setState = Boolean.parseBoolean(req.getParameter("running")); 
+		ControlServices controlServices = ControlServices.getInstance();
+
+        JSONObject obj = new JSONObject();
+                
+        String paramAutostart = req.getParameter("autostart");
+        if (paramAutostart != null) {
+            boolean autostart = Boolean.parseBoolean(paramAutostart);
+            switch (mType) {
+                case STORAGE:
+                    ServerSettings.getInstance().setStorage(autostart);
+                    obj.element("success", true);
+                    obj.element("autostart", autostart);
+                    break;
+                case QUERY:
+                    ServerSettings.getInstance().setQueryRetrive(autostart);
+                    obj.element("success", true);
+                    obj.element("autostart", autostart);
+                    break;
+                default:
+                    obj.element("unsupported", true);
+            }
+            Services.getInstance().saveSettings();
+        }
+        
+        String paramRunning = req.getParameter("running");
+        if (paramRunning == null) {
+            resp.getWriter().print(obj.toString());
+            return;
+        }
+        
+		boolean running = Boolean.parseBoolean(paramRunning); 
 		switch (mType) {
-		case 0:
+		case STORAGE:
 			boolean success = true;
-			if(setState)
-				success = (mControlServices.startStorage() ==0)?true:false;
+			if(running)
+				success = controlServices.startStorage() == 0;
 			else
-				mControlServices.stopStorage();
+				controlServices.stopStorage();
 			
-			
-			ResponseUtil.simpleResponse(resp, "success", success);
-			
+            obj.element("success", true);
 			break;
-		case 1:
+		case PLUGIN:
 			//TODO: START AND STOP PLUGINS
-			
 			break;
 			
-		case 2:
-			if(setState)
-				mControlServices.startQueryRetrieve();
+		case QUERY:
+			if(running)
+				controlServices.startQueryRetrieve();
 			else
-				mControlServices.stopQueryRetrieve();;
+				controlServices.stopQueryRetrieve();
 			
-			
-			ResponseUtil.simpleResponse(resp, "success", true);
-			
+            obj.element("success", true);
 			break;
 
 		default:
 			break;
 		}
+        resp.getWriter().print(obj.toString());
 	}
 
 }

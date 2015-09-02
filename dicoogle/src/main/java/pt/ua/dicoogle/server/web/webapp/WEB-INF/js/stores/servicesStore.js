@@ -3,10 +3,8 @@
 
 var Reflux = require('reflux');
 
-import {ServiceAction} from '../actions/servicesAction';
-
+import ServiceAction from '../actions/servicesAction';
 import {Endpoints} from '../constants/endpoints';
-
 import {request} from '../handlers/requestHandler';
 
 var ServicesStore = Reflux.createStore({
@@ -14,14 +12,18 @@ var ServicesStore = Reflux.createStore({
     init: function () {
        this._storageRunning = false;
        this._storagePort = 0;
+       this._storageAutostart = false;
        this._queryRunning = false;
        this._queryPort = 0;
+       this._queryAutostart = false;
        this._contents = {
          storageRunning: false,
          storagePort: 0,
+         storageAutostart: false,
          queryRunning: false,
-         queryPort: 0
-         };
+         queryPort: 0,
+         queryAutostart: false
+        };
 
       this._querySettings ={
         acceptTimeout: "...",
@@ -39,17 +41,15 @@ var ServicesStore = Reflux.createStore({
       var self = this;
       request(
         Endpoints.base + "/management/dicom/storage",
-        function(data){
-          //console.log("merda", data );
-          self._contents.storageRunning = data.isRunning;
-          self._contents.storagePort = data.port;
-          self.trigger(self._contents);
-
-        },
-        function(error){
-          console.log("omnGetStoreage: failure");
-        }
-
+          function(data) {
+            self._contents.storageRunning = data.isRunning;
+            self._contents.storagePort = data.port;
+            self._contents.storageAutostart = data.autostart;
+            self.trigger(self._contents);
+          },
+          function(error) {
+            console.log("onGetStoreage: failure");
+          }
       );
     },
     onGetQuery :function(){
@@ -59,6 +59,7 @@ var ServicesStore = Reflux.createStore({
         function(data){
           self._contents.queryRunning = data.isRunning;
           self._contents.queryPort = data.port;
+          self._contents.queryAutostart = data.autostart;
           self.trigger(self._contents);
 
         },
@@ -78,11 +79,23 @@ var ServicesStore = Reflux.createStore({
         function(data, status){
           //Response
           console.log("Data: " + data + "\nStatus: " + status);
-          self._contents.storageRunning = state?"true":"false";
+          self._contents.storageRunning = state;
           self.trigger(self._contents);
 
         });
 
+    },
+    onSetStorageAutostart (enabled) {
+      let self = this;
+      $.post(Endpoints.base + "/management/dicom/storage",
+      {
+        autostart: enabled
+      },
+        function(data, status){
+          console.log("Data: " + data + "\nStatus: " + status);
+          self._contents.storageAutostart = enabled;
+          self.trigger(self._contents);
+        });
     },
     onSetQuery :function(state){
       var self = this;
@@ -91,14 +104,25 @@ var ServicesStore = Reflux.createStore({
       {
         running: state
       },
-        function(data, status){
+        function(data, status) {
           //Response
           console.log("Data: " + data + "\nStatus: " + status);
-          self._contents.queryRunning = state?"true":"false";
+          self._contents.queryRunning = state;
           self.trigger(self._contents);
 
         });
-
+    },
+    onSetQueryAutostart (enabled) {
+      let self = this;
+      $.post(Endpoints.base + "/management/dicom/query",
+      {
+        autostart: enabled
+      },
+        function(data, status){
+          console.log("Data: " + data + "\nStatus: " + status);
+          self._contents.queryAutostart = enabled;
+          self.trigger(self._contents);
+        });
     },
 
     onGetQuerySettings : function(){
@@ -106,13 +130,12 @@ var ServicesStore = Reflux.createStore({
       request(
         Endpoints.base + "/management/settings/dicom/query",
         function(data){
-          //console.log("merda", data );
           self._querySettings = data;
           self.trigger(self._querySettings);
 
         },
         function(error){
-          console.log("omnGetqUERYSettigns: failure");
+          console.log("onGetQuerySettigns: failure");
         }
 
       );
@@ -138,4 +161,4 @@ var ServicesStore = Reflux.createStore({
 
 });
 
-export {ServicesStore};
+export default ServicesStore;
