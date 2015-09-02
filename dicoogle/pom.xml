@@ -108,6 +108,7 @@
                                         <Extension-Name>com.sun.media.imageio</Extension-Name>
                                         <Implementation-Vendor>MyCompany</Implementation-Vendor>
                                         <Specification-Vendor>MyCompany</Specification-Vendor>
+                                        <Class-Path>./src/main/resources/</Class-Path>
                                         <Sealed>true</Sealed>
                                     </manifestEntries>
                                 </transformer>

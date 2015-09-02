@@ -4,18 +4,21 @@
         <Console name="STDOUT" target="SYSTEM_OUT">
             <PatternLayout pattern="%-5p %C{2} (%F:%L) - %m%n"/>
         </Console>
-        <File name="File" fileName="dicoogle.log" bufferedIO="true">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} | %-5p [%t] %C{2} (%F:%L) - %m%n"/>
-        </File>
+        <RollingRandomAccessFile name="Rolling" fileName="dicoogle.log" filePattern="dicoogle-%i.log" >
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} | %-5p [%t] (%F:%L) - %m%n"/>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="2.0 MB"/>
+            </Policies>
+        </RollingRandomAccessFile>
     </Appenders>
     <Loggers>
-        <Root level="info">
-            <AppenderRef ref="STDOUT" />
-            <AppenderRef ref="File" />
-        </Root>
-        <Logger level="debug" name="pt.ua.dicoogle.*" additivity="false">
+        <Root level="debug">
             <AppenderRef ref="STDOUT" level="info" />
-            <AppenderRef ref="File" level="debug" />
+            <AppenderRef ref="Rolling" level="info" />
+        </Root>
+        <Logger name="pt.ua.dicoogle" level="info" additivity="false">
+            <AppenderRef ref="Rolling" level="info" />
         </Logger>
     </Loggers>
 </Configuration>
