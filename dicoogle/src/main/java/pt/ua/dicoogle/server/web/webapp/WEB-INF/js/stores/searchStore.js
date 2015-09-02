@@ -8,6 +8,7 @@ import {ActionCreators} from '../actions/searchActions';
 import {Endpoints} from '../constants/endpoints';
 
 import {getPatients} from '../handlers/requestHandler';
+import {unindex} from '../handlers/requestHandler';
 
 var SearchStore = Reflux.createStore({
     listenables: ActionCreators,
@@ -88,7 +89,17 @@ var SearchStore = Reflux.createStore({
         //this.trigger(data);
         */
     },
-
+    onUnindex: function(uris, provider){
+      console.log("fired action");
+      console.log(uris);
+      
+      unindex(uris, provider, 
+          function() {
+        console.log("sucess");
+      }, function(){
+        console.log("Error");
+      });
+    },
     triggerWithDelay :function(){
       this.trigger({
         data:this._contents,

@@ -76,7 +76,6 @@ var ResultSearch = React.createClass({
        })
 	    );
 
-
 		/*return (
       <div>
 			   <ul className="result_list">
@@ -123,7 +122,7 @@ var ResultSearch = React.createClass({
      //React.render(<ResultSearch items={params}/>, document.getElementById("container"));
     var view;
     if(stepComponent == 0)
-      view = ( <PatientView items={this.state.data} onItemClick={this.onPatientClicked}/>);
+      view = ( <PatientView items={this.state.data} provider={this.props.items.provider} onItemClick={this.onPatientClicked}/>);
     else if(stepComponent == 1)
       view = ( <StudyView patient={this.state.patient} onItemClick={this.onStudyClicked}/>);
     else if(stepComponent == 2)
@@ -147,7 +146,6 @@ var ResultSearch = React.createClass({
     this.setState({current: 3, serie: serie});
     React.render(<ImageView serie={serie} />, document.getElementById("step-container"));
   }
-
 });
 
 var Step = React.createClass({

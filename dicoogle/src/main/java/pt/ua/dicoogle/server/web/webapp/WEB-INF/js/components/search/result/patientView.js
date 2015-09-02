@@ -1,5 +1,11 @@
 var React = require('react');
 var ReactBootstrap = require('react-bootstrap');
+var ModalTrigger = ReactBootstrap.ModalTrigger;
+
+import {ActionCreators} from '../../../actions/searchActions';
+
+import {unindex} from '../../../handlers/requestHandler';
+import {ConfirmModal} from './confirmModal';
 
 var PatientView = React.createClass({
 	componentDidMount: function(){
@@ -18,11 +24,16 @@ var PatientView = React.createClass({
 		var resultItems = (
 				resultArray.map(function(item, index){
 		      		return (
-				    	     <tr className="resultRow" style={{"cursor" : "pointer"}} onclick="" onClick={self.onPatientClick.bind(this, item.id, index)}>
-				    	     	<td> {item.id}</td>
-				    	     	<td> {item.name}</td>
-				    	     	<td> {item.gender}</td>
-				    	     	<td> {item.nStudies}</td>
+				    	     <tr className="resultRow" style={{"cursor" : "pointer"}}>
+				    	     	<td onclick="" onClick={self.onPatientClick.bind(null, item.id, index)}> {item.id}</td>
+				    	     	<td onclick="" onClick={self.onPatientClick.bind(null, item.id, index)}> {item.name}</td>
+				    	     	<td onclick="" onClick={self.onPatientClick.bind(null, item.id, index)}> {item.gender}</td>
+				    	     	<td onclick="" onClick={self.onPatientClick.bind(null, item.id, index)}> {item.nStudies}</td>				    	     	   
+				    	     	<td> 
+				    	     	<ModalTrigger modal={<ConfirmModal onConfirm={self.onUnindexClick.bind(null, index)}/>}>
+							      <button className="btn btn_dicoogle fa fa-eraser"> Unindex</button>
+							    </ModalTrigger>
+				    	     	</td>
 				    	     </tr>
 			           	);
        			})
@@ -37,6 +48,7 @@ var PatientView = React.createClass({
                 			<th>Name</th>
                 			<th>Gender</th>
                 			<th>Studies</th>
+                			<th>Options</th>
             			</tr>
         			</thead>
         			 <tbody>
@@ -46,10 +58,20 @@ var PatientView = React.createClass({
 			</div>
 		);
 	},
+	onUnindexClick: function(index){
+		var uris = []; 
+		for(let s in this.props.items.results[index].studies)
+			for(let ss in this.props.items.results[index].studies[s].series)
+				for(let i in this.props.items.results[index].studies[s].series[ss].images)
+					uris.push(this.props.items.results[index].studies[s].series[ss].images[i].uri);
+		
+		let p = this.props.provider;
 
+		ActionCreators.unindex(uris, p);
+	},
 	onPatientClick:function(id, index){
 		console.log(id," clicked");
-		this.props.onItemClick(this.props.items.results[index]);
+		//this.props.onItemClick(this.props.items.results[index]);
 	}
 
 });
