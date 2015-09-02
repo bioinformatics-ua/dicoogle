@@ -1,7 +1,6 @@
 
 var React = require('react');
 var ReactBootstrap = require('react-bootstrap');
-var ModalTrigger = ReactBootstrap.ModalTrigger;
 var Button = ReactBootstrap.Button;
 
 import {SearchStore} from '../../stores/searchStore';
@@ -13,13 +12,12 @@ import {SeriesView} from './result/serieView';
 import {ImageView} from './result/imageView';
 import {ExportView} from './exportView';
 
-
-
 var ResultSearch = React.createClass({
 
   getInitialState: function() {
     return {data: [],
     status: "loading",
+    showExport: false,
     current: 0};
   },
   componentDidMount: function() {
@@ -37,6 +35,14 @@ var ResultSearch = React.createClass({
     console.log("PARAM: ", props);
     ActionCreators.search(props);
 	},
+  
+  onClickExport() {
+    this.setState({showExport: true});
+  },
+
+  onHideExport() {
+    this.setState({showExport: false});
+  },
 
   render: function() {
     var self = this;
@@ -87,17 +93,12 @@ var ResultSearch = React.createClass({
     );
 */
     return (<div>
-
         <Step current={this.state.current} onClick={this.onStepClicked}/>
         <div id="step-container"/>
 
-          <ModalTrigger modal={<ExportView query={this.props.items}/>}>
-            <button className="btn btn_dicoogle fa fa-download"> Export </button>
-       </ModalTrigger>
-
+        <button className="btn btn_dicoogle fa fa-download" onClick={this.onClickExport}>Export</button>
+        <ExportView show={this.state.showExport} onHide={this.onHideExport} query={this.props.items}/>
       </div>);
-
-
 	},
 
   _onChange : function(data){

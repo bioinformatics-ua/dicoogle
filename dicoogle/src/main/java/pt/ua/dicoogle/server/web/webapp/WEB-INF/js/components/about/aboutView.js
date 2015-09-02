@@ -1,6 +1,5 @@
 var React = require('react');
 
-
 require('bootstrap');
 var React = require('react');
 var Router = require('react-router');
@@ -29,12 +28,11 @@ var Navbar = ReactBootstrap.Navbar;
 var NavItem = ReactBootstrap.NavItem;
 var DropdownButton = ReactBootstrap.DropdownButton;
 var MenuItem = ReactBootstrap.MenuItem;
-var  RouteHandler = Router.RouteHandler;
+var RouteHandler = Router.RouteHandler;
 var ButtonToolbar = ReactBootstrap.ButtonToolbar;
 var Button= ReactBootstrap.Button;
 var ProgressBar= ReactBootstrap.ProgressBar;
 var Table= ReactBootstrap.Table;
-
 
 var AboutView = React.createClass({
     componentDidMount: function() {

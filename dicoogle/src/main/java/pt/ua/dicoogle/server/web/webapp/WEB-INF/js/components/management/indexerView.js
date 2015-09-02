@@ -19,7 +19,7 @@ var IndexerView = React.createClass({
         IndexerActions.get();
        },
       componentWillMount: function() {
-        // Subscribe to the store.
+        // Subscribe to the store
          console.log("subscribe listener");
          IndexerStore.listen(this._onChange);
       },

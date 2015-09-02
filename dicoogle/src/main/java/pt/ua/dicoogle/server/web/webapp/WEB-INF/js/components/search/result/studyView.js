@@ -1,5 +1,4 @@
 var React = require('react');
-var ReactBootstrap = require('react-bootstrap');
 
 var StudyView = React.createClass({
   	getInitialState: function() {

@@ -83,14 +83,10 @@ var TransferOptionsView = React.createClass({
                                              </div>
                                          </div>
                                      </li>
-
-
                                  </ul>
                              </div>
                          </div>
-
                      </div>
-
           </div>
         );
 
@@ -100,7 +96,6 @@ var TransferOptionsView = React.createClass({
         console.log("Index ", index);
         TransferActions.set(this.state.selectedIndex, index,document.getElementById(id).checked);
         this.request(id,document.getElementById(id).checked);
-
       },
 
       /*
