@@ -25,6 +25,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
+
+import org.dcm4che2.data.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -38,9 +40,9 @@ import org.dcm4che2.net.DimseRSP;
 import org.dcm4che2.net.Status;
 import pt.ua.dicoogle.core.exceptions.CFindNotSupportedException;
 
-import pt.ua.dicoogle.core.LogDICOM;
-import pt.ua.dicoogle.core.LogLine;
-import pt.ua.dicoogle.core.LogXML;
+import pt.ua.dicoogle.DicomLog.LogDICOM;
+import pt.ua.dicoogle.DicomLog.LogLine;
+import pt.ua.dicoogle.DicomLog.LogXML;
 import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.server.DicomNetwork;
 import pt.ua.dicoogle.server.SearchDicomResult;
@@ -235,8 +237,9 @@ public class CMoveServiceSCP extends CMoveService {
             }
 
 
+
             LogLine ll = new LogLine("cmove", LogLine.getDateTime(), destination,
-                    "Files: " + files.size() + " -- (" + hostDest + ":" + portAddr + ")");
+                    "Files: " + files.size() + " -- (" + hostDest + ":" + portAddr + ")","studyUID="+data.getString(Tag.StudyInstanceUID));
             LogDICOM.getInstance().addLine(ll);
             LogXML l = new LogXML();
 

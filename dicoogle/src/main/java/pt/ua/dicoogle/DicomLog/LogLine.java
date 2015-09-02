@@ -40,13 +40,15 @@ public class LogLine implements Serializable
     private String date;
     private String ae;
     private String add;
+    private String params;
 
-    public LogLine(String type, String date, String ae, String add)
+    public LogLine(String type, String date, String ae, String add, String params)
     {
         this.type = type ; 
         this.date = date ; 
         this.ae = ae ; 
-        this.add = add ; 
+        this.add = add ;
+        this.params = params;
     }
 
      public static String getDateTime() {
@@ -122,4 +124,11 @@ public class LogLine implements Serializable
     }
 
 
+    public String getParams() {
+        return params;
+    }
+
+    public void setParams(String params) {
+        this.params = params;
+    }
 }

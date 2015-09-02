@@ -56,6 +56,7 @@ public class LogXML extends DefaultHandler
     private String date = "";
     private String ae = "";
     private String add = "";
+    private String params = "";
 
     public LogXML()
     {
@@ -89,7 +90,7 @@ public class LogXML extends DefaultHandler
             this.logOn = false;
         } else if (!localName.equals(""))
         {
-            logs.addLine(new LogLine(type, date, ae, add));
+            logs.addLine(new LogLine(type, date, ae, add, params));
         }
     }
 
@@ -166,6 +167,7 @@ public class LogXML extends DefaultHandler
                 atts.addAttribute("", "", "date", "", l.getDate());
                 atts.addAttribute("", "", "ae", "", l.getAe());
                 atts.addAttribute("", "", "add", "", l.getAdd());
+                atts.addAttribute("","","params","",l.getParams());
 
                 hd.startElement("", "", l.getType(), atts);
                 atts.clear();
