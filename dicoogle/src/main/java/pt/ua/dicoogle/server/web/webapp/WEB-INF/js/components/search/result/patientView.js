@@ -1,13 +1,11 @@
 var React = require('react');
-var ReactBootstrap = require('react-bootstrap');
 
 var PatientView = React.createClass({
 	componentDidMount: function(){
-		var self = this;
-		$('#example').dataTable({paging: true,searching: false,info:true});
+		$('#patient-table').dataTable({paging: true, searching: false, info:true});
 	},
 	componentDidUpdate: function(){
-		$('#example').dataTable({paging: true,searching: false,info: true});
+		$('#patient-table').dataTable({paging: true, searching: false, info: true});
 	},
 	render: function() {
 
@@ -30,7 +28,7 @@ var PatientView = React.createClass({
 
 	return (
 			<div>
-				<table id="example" className="table table-striped table-bordered" cellspacing="0" width="100%">
+				<table id="patient-table" className="table table-striped table-bordered" cellspacing="0" width="100%">
 					<thead>
            				<tr>
                 			<th>Id</th>
@@ -48,7 +46,7 @@ var PatientView = React.createClass({
 	},
 
 	onPatientClick:function(id, index){
-		console.log(id," clicked");
+		console.log("Patient clicked");
 		this.props.onItemClick(this.props.items.results[index]);
 	}
 

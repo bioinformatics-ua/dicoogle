@@ -8,12 +8,20 @@
 
 To build all js and html resources:
 
-    npm run-script build-debug  # for development
-    npm run-script build        # for production
+    npm run build-debug  # for development
+    npm run build        # for production
+
+To build css files:
+
+    npm run css
+
+To watch for changes in JavaScript resources (when building while developing):
+
+    npm run js:watch
 
 To watch for changes in the SASS resources (thus building css):
 
-    ./run_sass
+    npm run css:watch
 
 Everything is build for production (js, html and css) in the prepublish script (this is also run automatically for `npm install`):
    

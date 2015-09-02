@@ -16,16 +16,8 @@ var ServicesStore = Reflux.createStore({
        this._queryRunning = false;
        this._queryPort = 0;
        this._queryAutostart = false;
-       this._contents = {
-         storageRunning: false,
-         storagePort: 0,
-         storageAutostart: false,
-         queryRunning: false,
-         queryPort: 0,
-         queryAutostart: false
-        };
 
-      this._querySettings ={
+      this._querySettings = {
         acceptTimeout: "...",
         connectionTimeout: "...",
         idleTimeout: "...",
@@ -35,6 +27,15 @@ var ServicesStore = Reflux.createStore({
         responseTimeout: "...",
       };
 
+      this._contents = {
+        storageRunning: false,
+        storagePort: 0,
+        storageAutostart: false,
+        queryRunning: false,
+        queryPort: 0,
+        queryAutostart: false,
+        querySettings: this._querySettings
+       };
     },
 
     onGetStorage :function(){
@@ -131,8 +132,8 @@ var ServicesStore = Reflux.createStore({
         Endpoints.base + "/management/settings/dicom/query",
         function(data){
           self._querySettings = data;
-          self.trigger(self._querySettings);
-
+          self._contents.querySettings = self._querySettings;
+          self.trigger(self._contents);
         },
         function(error){
           console.log("onGetQuerySettigns: failure");
@@ -140,7 +141,7 @@ var ServicesStore = Reflux.createStore({
 
       );
     },
-  onSaveQuerySettings : function(connectionTimeout, acceptTimeout, idleTimeout,maxAssociations,maxPduReceive,maxPduSend, responseTimeout  ){
+  onSaveQuerySettings : function(connectionTimeout, acceptTimeout, idleTimeout,maxAssociations, maxPduReceive, maxPduSend, responseTimeout  ){
     $.post(  Endpoints.base +"/management/settings/dicom/query",
     {
       connectionTimeout:connectionTimeout,

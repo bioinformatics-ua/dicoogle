@@ -1,5 +1,4 @@
 var React = require('react');
-var ReactBootstrap = require('react-bootstrap');
 
 var SeriesView = React.createClass({
   	getInitialState: function() {
