@@ -2,10 +2,9 @@ import React from 'react';
 
 import {StorageActions} from '../../actions/storageActions';
 import {StorageStore} from '../../stores/storageStore';
-
 import {Button, Modal} from 'react-bootstrap';
 
-const AddStorageView = React.createClass({
+const AddStorageModal = React.createClass({
   render: function() {
     return(<Modal  {...this.props} bsStyle='primary' title='Add storage server' animation={true}>
 
@@ -34,8 +33,7 @@ const AddStorageView = React.createClass({
       document.getElementById("storage_aetitle").value,
       document.getElementById("storage_ip").value,
       document.getElementById("storage_port").value);
-
-      this.props.onRequestHide();
+      this.props.onHide();
     }
 });
 
@@ -43,6 +41,7 @@ const StorageView = React.createClass({
   getInitialState: function() {
     return {
       data: [],
+      showAdd: false,
       status: "loading"};
     },
     componentDidMount: function(){
@@ -80,13 +79,18 @@ const StorageView = React.createClass({
               <button className="btn btn_dicoogle"onClick={this.onRemove}>Remove</button>
             </div>
           </div>
+          <AddStorageModal show={this.state.showAdd} onHide={this.onHideAdd} />
         </div>
       );
-//              <ModalTrigger modal={<AddStorageView query={this.props.items}/>}>
-//                <button className="btn btn_dicoogle" OnClick={this.onAdd}>Add new</button>
-//              </ModalTrigger>
+//          <ModalTrigger modal={<AddStorageView query={this.props.items}/>}>
+//            <button className="btn btn_dicoogle" OnClick={this.onAdd}>Add new</button>
+//          </ModalTrigger>
     },
     onAdd() {
+      this.setState({showAdd: true});
+    },
+    onHideAdd() {
+      this.setState({showAdd: false});
     },
     onRemove() {
       var index = document.getElementById("moves").selectedIndex;

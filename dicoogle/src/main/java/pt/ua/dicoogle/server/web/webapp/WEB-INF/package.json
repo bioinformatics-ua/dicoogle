@@ -43,7 +43,7 @@
     "babelify": "^6.3.0",
     "browserify": "^11.0.1",
     "browserify-shim": "~3.8.2",
-    "datatables": "1.10.8",
+    "datatables": "~1.10.8",
     "envify": "^3.0.0",
     "flux": "^2.0.1",
     "htmlprocessor": "^0.1.10",
@@ -74,7 +74,7 @@
     "js-debug": "browserify . --debug -t babelify > js/bundle.js",
     "html-debug": "htmlprocessor index-template.html -o index.html -e dev -s",
     "css:watch": "sass --watch sass/dicoogle.scss:css/dicoogle.css",
-    "js:watch": "watchify -o js/bundle.js -v -d .",
+    "js:watch": "watchify -o js/bundle.js -v -d -t babelify .",
     "test": "jest",
     "clean": "rimraf js/build.js js/build.min.js css/dicoogle.css css/dicoogle.css.map index.html"
   },

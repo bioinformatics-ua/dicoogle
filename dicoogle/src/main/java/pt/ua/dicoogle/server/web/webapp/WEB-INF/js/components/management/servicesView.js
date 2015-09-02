@@ -39,8 +39,8 @@ var ServicesView = React.createClass({
       
       _onChange (data) {
         console.log(data);
-        if(this.isMounted())
-        this.setState({
+        if(this.isMounted()) {
+          this.setState({
           storageRunning: data.storageRunning,
           storagePort: data.storagePort,
           storageAutostart: data.storageAutostart,
@@ -52,7 +52,8 @@ var ServicesView = React.createClass({
           queryLoading: false
           });
 
-      //  console.log(this.state.data.storagePort);
+          console.log("Service data update: ", data);
+        }
       },
       render () {
         var self = this;
@@ -152,6 +153,7 @@ var ServicesView = React.createClass({
       },
       showAdvanced() {
         this.setState({showingAdvanced: true});
+        ServiceAction.getQuerySettings();
       },
       onHideAdvanced() {
         this.setState({showingAdvanced: false});

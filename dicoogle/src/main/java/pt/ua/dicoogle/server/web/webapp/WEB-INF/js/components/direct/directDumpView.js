@@ -1,13 +1,11 @@
 var React = require('react');
 var ReactBootstrap = require('react-bootstrap');
 var Button = ReactBootstrap.Button;
-var ModalTrigger = ReactBootstrap.ModalTrigger;
 var Modal = ReactBootstrap.Modal;
 import {DumpStore} from '../../stores/dumpStore';
 import {DumpActions} from '../../actions/dumpActions';
 
 import {getUrlVars} from '../../utils/url';
-
 import {Endpoints} from '../../constants/endpoints';
 
 
@@ -26,12 +24,7 @@ var DirectDumpView = React.createClass({
     	DumpStore.listen(this._onChange);
   	},
     componentDidUpdate: function(){
-
-     $('#dumptable').dataTable({paging: false,searching: false,info: false,
-       responsive: false
-
-       });
-
+      $('#dumptable').dataTable({paging: false, searching: false, info: false, responsive: false});
     },
 
   	_onChange: function(data){

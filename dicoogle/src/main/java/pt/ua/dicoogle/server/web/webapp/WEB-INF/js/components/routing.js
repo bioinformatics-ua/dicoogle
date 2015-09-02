@@ -15,18 +15,9 @@ var Routes = Router.Routes;
 
 var Link = Router.Link;
 var NotFoundRoute = Router.NotFoundRoute;
-var  RouteHandler = Router.RouteHandler;
+var RouteHandler = Router.RouteHandler;
 
-var Nav = ReactBootstrap.Nav;
-
-var Button = ReactBootstrap.Button;
-var NavItemLink = ReactBootstrap.NavItemLink;
-var ButtonLink = ReactBootstrap.ButtonLink;
-
-var Navbar = ReactBootstrap.Navbar;
-var NavItem = ReactBootstrap.NavItem;
-var DropdownButton = ReactBootstrap.DropdownButton;
-var MenuItem = ReactBootstrap.MenuItem;
+const {Nav, Button, NavItemLink, ButtonLink, Navbar, NavItem, DropdownButton, MenuItem} = ReactBootstrap;
 
 import {SearchStore} from '../stores/searchStore';
 import {UserStore} from '../stores/userStore';

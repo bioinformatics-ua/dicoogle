@@ -20,20 +20,21 @@ var QueryAdvancedOptionsModal = React.createClass({
     ServicesStore.listen(this._onChange);
   },
   componentDidMount: function() {
-    ServiceAction.getQuerySettings();
   },
   _onChange: function(data){
-    if (this.isMounted())
+    if (this.isMounted()) {
+      const querySettings = data.querySettings;
       this.setState({
-        connectionTimeout: data.connectionTimeout,
-        acceptTimeout: data.acceptTimeout,
-        idleTimeout: data.idleTimeout,
-        maxAssociations: data.maxAssociations,
-        maxPduReceive: data.maxPduReceive,
-        maxPduSend: data.maxPduSend,
-        responseTimeout: data.responseTimeout,
+        connectionTimeout: querySettings.connectionTimeout,
+        acceptTimeout: querySettings.acceptTimeout,
+        idleTimeout: querySettings.idleTimeout,
+        maxAssociations: querySettings.maxAssociations,
+        maxPduReceive: querySettings.maxPduReceive,
+        maxPduSend: querySettings.maxPduSend,
+        responseTimeout: querySettings.responseTimeout,
         status: "done"
       });
+    }
    },
   render: function() {
     return (<Modal  {...this.props} bsStyle='primary' title='Query Retrieve - Advanced Settings' animation={true}>

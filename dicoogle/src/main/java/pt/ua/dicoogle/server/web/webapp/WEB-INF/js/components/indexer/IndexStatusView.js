@@ -71,6 +71,7 @@ var IndexStatusView = React.createClass({
             else {
               barstate = "indexprogress progress-bar progress-bar-striped progress-bar-success";
             }
+            
             return (
               <div key={index} className="well well-sm">
                 <div className="row">
@@ -89,7 +90,11 @@ var IndexStatusView = React.createClass({
                 <div>
                     <p><b>Uid: </b> {item.taskUid}</p>
                     <p><b>Name: </b> {item.taskName}</p>
-                    {item.complete && <p><b>Elapsed Time(ms): </b> {item.elapsedTime} <b>Indexed: </b>{item.nIndexed} <b>Errors: </b>{item.nErrors}</p>}
+                    {item.complete && <p>
+                        {item.elapsedTime && ([<b>Elapsed Time(ms): </b>, item.elapsedTime])}
+                        {item.nIndexed && ([<b>Indexed: </b>, item.nIndexed])}
+                        {item.nErrors && ([<b>Errors: </b>, item.nErrors])}
+                    </p>}
                 </div>
 
               </div>
