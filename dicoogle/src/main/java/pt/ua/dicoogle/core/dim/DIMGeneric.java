@@ -233,8 +233,9 @@ public class DIMGeneric
     					JSONObject image = new JSONObject();
     					image.put("sopInstanceUID", serie.getSOPInstanceUIDList().get(i));
     					String rawPath = serie.getImageList().get(i).getRawPath();
-    					image.put("rawPath", rawPath);
-    					image.put("filename", rawPath.substring(rawPath.lastIndexOf("/")+1, rawPath.length()));
+    					image.put("rawPath", rawPath);    					
+    					image.put("uri", serie.getImageList().get(i).toString());
+                        image.put("filename", rawPath.substring(rawPath.lastIndexOf("/")+1, rawPath.length()));
     					
     					_sopInstanceUID.add(image);
     				}
