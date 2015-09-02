@@ -23,7 +23,7 @@
   },
   "main": "js/app.js",
   "files": [
-    "js/bundle.js",
+    "js/bundle.min.js",
     "css/",
     "fonts/",
     "assets/",
@@ -62,9 +62,9 @@
     "watchify": "^2.1.1"
   },
   "scripts": {
-    "prepublish": "NODE_ENV=production ./node_modules/browserify/bin/cmd.js . -t babelify --full-path=false | uglifyjs -c dead_code,drop_console,warnings=false -m > js/bundle.min.js;sass sass/dicoogle.scss:css/dicoogle.css;htmlprocessor index-template.html -o index.html -e dist -s",
-    "build": "NODE_ENV=production ./node_modules/browserify/bin/cmd.js . -t babelify --full-path=false | uglifyjs -c dead_code,drop_console -m > js/bundle.min.js; htmlprocessor index-template.html -o index.html -e dist -s",
-    "build-debug": "./node_modules/browserify/bin/cmd.js . --debug -t babelify --full-path=false > js/bundle.js; htmlprocessor index-template.html -o index.html -e dev -s",
+    "prepublish": "rm -f js/bundle.js;NODE_ENV=production ./node_modules/browserify/bin/cmd.js . -t babelify --full-path=false | uglifyjs -c dead_code,drop_console,warnings=false -m > js/bundle.min.js;sass sass/dicoogle.scss:css/dicoogle.css;htmlprocessor index-template.html -o index.html -e dist -s",
+    "build": "rm -f js/bundle.js;NODE_ENV=production ./node_modules/browserify/bin/cmd.js . -t babelify --full-path=false | uglifyjs -c dead_code,drop_console -m > js/bundle.min.js; htmlprocessor index-template.html -o index.html -e dist -s",
+    "build-debug": "rm -f js/bundle.min.js;./node_modules/browserify/bin/cmd.js . --debug -t babelify --full-path=false > js/bundle.js; htmlprocessor index-template.html -o index.html -e dev -s",
     "start": "watchify -o js/bundle.js -v -d .",
     "test": "jest"
   },
