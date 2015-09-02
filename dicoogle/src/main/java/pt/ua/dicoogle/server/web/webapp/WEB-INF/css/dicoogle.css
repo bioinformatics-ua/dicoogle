@@ -76,6 +76,9 @@ input {
 .table-test {
   column-width: auto !important; }
 
+.table-dump {
+  min-width: 800px; }
+
 .btn_dicoogle {
   background-color: #008C99;
   color: #ffffff;

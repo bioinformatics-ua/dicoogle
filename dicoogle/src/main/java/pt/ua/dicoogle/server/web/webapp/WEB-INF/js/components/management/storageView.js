@@ -84,9 +84,6 @@ const StorageView = React.createClass({
           <AddStorageModal show={this.state.showAdd} onHide={this.onHideAdd} />
         </div>
       );
-//          <ModalTrigger modal={<AddStorageView query={this.props.items}/>}>
-//            <button className="btn btn_dicoogle" OnClick={this.onAdd}>Add new</button>
-//          </ModalTrigger>
     },
     onAdd() {
       this.setState({showAdd: true});
