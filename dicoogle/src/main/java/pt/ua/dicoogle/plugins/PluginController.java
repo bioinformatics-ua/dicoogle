@@ -551,12 +551,6 @@ public class PluginController{
      * @param indexProviders a collection of providers
      */
     private void doUnindex(URI path, Collection<IndexerInterface> indexers) {
-        StorageInterface store = getStorageForSchema(path);
-
-        if (store==null) { 
-        	logger.error("No storage plugin detected");
-        }
-        
         for (IndexerInterface indexer : indexers) {            
         	indexer.unindex(path);
         }
