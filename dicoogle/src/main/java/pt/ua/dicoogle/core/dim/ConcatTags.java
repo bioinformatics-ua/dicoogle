@@ -20,12 +20,15 @@
 package pt.ua.dicoogle.core.dim;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import pt.ua.dicoogle.sdk.Utils.Platform;
+
 
 
 /**
@@ -35,7 +38,9 @@ import pt.ua.dicoogle.sdk.Utils.Platform;
 public class ConcatTags
 {
 
-    public static final String FILENAME= Platform.homePath() + "concatTags.conf";
+    public static final String FILENAME=  "concatTags.conf";
+    private static final Logger logger = LoggerFactory.getLogger(ConcatTags.class);
+
 
     /**
      * @return the rules
@@ -93,16 +98,19 @@ public class ConcatTags
     public void parseConfig(String file) throws FileNotFoundException
     {
 
-        StringBuilder text = new StringBuilder();
-        String NL = System.getProperty("line.separator");
+        //StringBuilder text = new StringBuilder();
+        //String NL = System.getProperty("line.separator");
         Scanner scanner = new Scanner(new FileInputStream(file));
         try {
             while (scanner.hasNextLine()){
-
-                Rule r = parseLine(scanner.nextLine());
+                String text = scanner.nextLine();
+                logger.info("Rule for: " + text);
+                Rule r = parseLine(text);
+                logger.info("Rule for: " + r.getModality());
                 if (r!=null)
                 {
                     this.rules.add(r);
+                    logger.info("Rule added: " + r.getModality());
                 }
             }
         }
@@ -116,13 +124,12 @@ public class ConcatTags
 
     public Rule parseLine(String line)
     {
+        logger.info("Rule parse for: " + line);
         if (line==null || line.equals(""))
             return null;
-        System.out.println(line);
+
         Rule r = new Rule();
         String [] tmp = line.split(";");
-        for (int i = 0;i<tmp.length;i++)
-            System.out.println(tmp[i]);
         String modality = tmp[0];
         String tag = tmp[3];
         r.setModality(modality);

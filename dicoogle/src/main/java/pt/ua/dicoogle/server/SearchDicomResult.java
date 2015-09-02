@@ -28,6 +28,7 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.dcm4che2.data.*;
 import org.slf4j.Logger;
 import pt.ua.dicoogle.core.ServerSettings;
 
@@ -39,10 +40,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import org.slf4j.LoggerFactory;
 
-import org.dcm4che2.data.BasicDicomObject;
-import org.dcm4che2.data.DicomObject;
-import org.dcm4che2.data.Tag;
-import org.dcm4che2.data.VR;
 import org.dcm4che2.io.DicomInputStream;
 
 
@@ -102,6 +99,7 @@ public class SearchDicomResult implements Iterator<DicomObject>
             try {
                 concatTags.parseConfig(ConcatTags.FILENAME);
             } catch (FileNotFoundException ex) {
+                logger.info("There is not file: " + ConcatTags.FILENAME);
                 concatTags = null;
                 concatTagsCheck = false;
             }
@@ -134,7 +132,6 @@ public class SearchDicomResult implements Iterator<DicomObject>
 			
 			list = new ArrayList<SearchResult>();
 			while (it.hasNext()) {
-				// System.out.println("results: +++");
 				list.add((SearchResult) it.next());
 			}
 		} catch (InterruptedException | ExecutionException e1) {
@@ -147,11 +144,17 @@ public class SearchDicomResult implements Iterator<DicomObject>
 		
 		if (level == QUERYLEVEL.PATIENT || level == QUERYLEVEL.STUDY) {
 			DIMGeneric dimModel = null;
-			try {
-				dimModel = new DIMGeneric(list);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
+            try
+            {
+                if (concatTags==null)
+                    dimModel = new DIMGeneric(list);
+                else
+                    dimModel = new DIMGeneric(concatTags, list);
+
+            } catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
 
 			ArrayList<Patient> listPatients = dimModel.getPatients();
 
@@ -234,7 +237,7 @@ public class SearchDicomResult implements Iterator<DicomObject>
                 path = sR.getURI().toString();
                 currentFile = path ;
                 //DebugManager.getInstance().debug("-> Next::: " + next.toString());
-                    DicomInputStream din = null;
+                DicomInputStream din = null;
                 /*try
                 {
                     if (path.endsWith(".gz"))
@@ -271,13 +274,8 @@ public class SearchDicomResult implements Iterator<DicomObject>
                  * It will increase the performace
                  */
                 BasicDicomObject result = new BasicDicomObject();
-                if (queryLevel==QUERYLEVEL.PATIENT)
-                {
 
-                    // Experimental branch
-                }
                 // Fill fields of study now
-
 
 
                 //System.out.println("Serie : "+ serieTmp);
@@ -332,7 +330,17 @@ public class SearchDicomResult implements Iterator<DicomObject>
                 result.putString(Tag.ModalitiesInStudy, VR.CS,modality);
                 result.putString(Tag.Modality, VR.CS,modality);
                 result.putString(Tag.InstitutionName, VR.CS, studyTmp.getInstitutuionName());
-                
+
+                int instances = 0;
+                for (Serie serieTmp : studyTmp.getSeries())
+                {
+                    instances+=serieTmp.getImageList().size();
+                }
+
+                result.putString(Tag.NumberOfStudyRelatedInstances, VR.IS,""+instances);
+                result.putString(Tag.NumberOfSeriesRelatedInstances, VR.IS,""+studyTmp.getSeries().size());
+
+
                 return result;
                 
             }
@@ -356,6 +364,34 @@ public class SearchDicomResult implements Iterator<DicomObject>
                 result.putString(Tag.Modality, VR.CS,modality);
                 
                 result.putString(Tag.SeriesNumber, VR.IS, "" + serieTmp.getSerieNumber());
+
+
+                result.putString(Tag.Modality, VR.CS,modality);
+                if (serieTmp.getModality().equals("MG")||serieTmp.getModality().equals("CR"))
+                {
+
+                    result.putString(Tag.ViewPosition, null, serieTmp.getViewPosition());
+                    result.putString(Tag.ImageLaterality, null, serieTmp.getImageLaterality());
+                    result.putString(Tag.AcquisitionDeviceProcessingDescription, VR.AE, serieTmp.getAcquisitionDeviceProcessingDescription());
+                    DicomElement viewCodeSequence = result.putSequence(Tag.ViewCodeSequence);
+                    DicomObject viewCodeSequenceObj = new BasicDicomObject();
+                    viewCodeSequenceObj.setParent(result);
+                    viewCodeSequenceObj.putString(Tag.CodeValue, null, serieTmp.getViewCodeSequence_CodeValue());
+                    viewCodeSequenceObj.putString(Tag.CodingSchemeDesignator, null, serieTmp.getViewCodeSequence_CodingSchemeDesignator());
+                    viewCodeSequenceObj.putString(Tag.CodingSchemeVersion, null, serieTmp.getViewCodeSequence_CodingSchemeVersion());
+                    viewCodeSequenceObj.putString(Tag.CodeMeaning, null, serieTmp.getViewCodeSequence_CodeMeaning());
+
+                    viewCodeSequence.addDicomObject(viewCodeSequenceObj);
+                    result.putNestedDicomObject(Tag.ViewCodeSequence, viewCodeSequenceObj);
+                }
+                result.putString(Tag.NumberOfSeriesRelatedInstances, VR.IS,""+serieTmp.getImageList().size());
+
+
+                result.putString(Tag.SeriesNumber, VR.IS, "" + serieTmp.getSerieNumber());
+                result.putString(Tag.ProtocolName, VR.LO, "" + serieTmp.getProtocolName());
+                result.putString(Tag.BodyPartThickness, VR.LO, "" + serieTmp.getBodyPartThickness());
+
+
                 return result;
 
             }

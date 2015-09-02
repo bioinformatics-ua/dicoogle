@@ -61,8 +61,8 @@ public class Patient
              * The studie exists, so it will take the series and add the series
              */
 
-            Study es = this.studiesHash.get(s.getStudyInstanceUID()) ; 
-
+            Study es = this.studiesHash.get(s.getStudyInstanceUID()) ;
+            es.setStudyDescription(s.getStudyDescription());
             for (Serie e: s.getSeries())
             {
                 es.addSerie(e) ; 

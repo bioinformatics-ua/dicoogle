@@ -23,6 +23,7 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.util.*;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.transform.OutputKeys;
@@ -70,6 +71,8 @@ public class DIMGeneric
     }
 
     private ConcatTags tags;
+
+    private static final Logger logger = LoggerFactory.getLogger(DIMGeneric.class);
 
     public DIMGeneric(ConcatTags tags,Collection<SearchResult> arr) throws Exception
     {
@@ -131,11 +134,6 @@ public class DIMGeneric
                 String modality = toTrimmedString( extra.get("Modality"), false);
                 String patientID =  toTrimmedString( extra.get("PatientID"), false);
                 
-                
-                
-                
-                
-                
 
                 String ViewPosition = toTrimmedString( extra.get("ViewPosition"), false);
                 String ImageLaterality = toTrimmedString( extra.get("ImageLaterality"), false);
@@ -168,13 +166,14 @@ public class DIMGeneric
                 if(sopInstUID == null)
                     sopInstUID ="no uid";
 
+                logger.debug("StudyDescription: " + StudyDescription);
                 
                 // This is a quick fix for changing the parameters for the query.
                 if ((StudyDescription==null||StudyDescription.equals("")||StudyDescription.toLowerCase().contains("fuji"))
                         &&
                         this.tags!=null)
                 {
-
+                    logger.debug("Checking if the Rule applies." + studyUID);
                     String description = "";
 
                     if (descriptions.containsKey(studyUID))
@@ -184,12 +183,15 @@ public class DIMGeneric
 
                     for (ConcatTags.Rule rule : this.tags.getRules())
                     {
+                        logger.debug("Checking if the Rule applies." + modality);
 
                         if (modality.equals(rule.getModality()))
                         {
 
 
                             String valueTagToReplace = (String) extra.get(rule.getTagToReplace());
+                            logger.debug("Checking if the Rule value." + valueTagToReplace);
+                            logger.debug("Checking if the Rule value." + rule.getTagToReplace());
 
 
                             if (valueTagToReplace!=null)
