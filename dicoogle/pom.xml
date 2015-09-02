@@ -92,6 +92,7 @@
                     <include>css/**</include>
                     <include>lib/**</include>
                     <include>js/bundle.min.js</include>
+                    <include>js/bundle.js</include>
                     <include>index.html</include>
                 </includes>
             </resource>
