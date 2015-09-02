@@ -215,7 +215,7 @@ public class SearchServlet extends HttpServlet {
     	try {
         	DIMGeneric dimModel = new DIMGeneric(allresults);
             return dimModel.getJSON();
-		} catch (RuntimeException e) {
+		} catch (Exception e) {
             LoggerFactory.getLogger(SearchServlet.class).warn("failed to get DIM", e);
             return "";
 		}
