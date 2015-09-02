@@ -38,6 +38,13 @@ public class Study
     private String StudyDescription;
     private String InstitutuionName;
 
+    private String operatorsName;
+    private String RequestingPhysician;
+
+    // Look in the cases where there same patient identifier with different
+    // patient names
+    private String patientName;
+
 
     private ArrayList<Serie> series = new ArrayList<Serie>() ;
     private Hashtable<String, Serie> seriesHash = new Hashtable<String, Serie>();
@@ -49,6 +56,16 @@ public class Study
         this.StudyData = StudyDate ;
 
     }
+
+
+    public String getPatientName() {
+        return patientName;
+    }
+
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
+    }
+
 
     /**
      * @return the StudyInstanceUID
@@ -189,6 +206,35 @@ public class Study
      */
     public void setInstitutuionName(String InstitutuionName) {
         this.InstitutuionName = InstitutuionName;
+    }
+
+
+    /**
+     * @return the operatorsName
+     */
+    public String getOperatorsName() {
+        return operatorsName;
+    }
+
+    /**
+     * @param operatorsName the operatorsName to set
+     */
+    public void setOperatorsName(String operatorsName) {
+        this.operatorsName = operatorsName;
+    }
+
+    /**
+     * @return the RequestingPhysician
+     */
+    public String getRequestingPhysician() {
+        return RequestingPhysician;
+    }
+
+    /**
+     * @param RequestingPhysician the RequestingPhysician to set
+     */
+    public void setRequestingPhysician(String RequestingPhysician) {
+        this.RequestingPhysician = RequestingPhysician;
     }
 
     
