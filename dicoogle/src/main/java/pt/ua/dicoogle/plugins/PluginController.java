@@ -164,9 +164,8 @@ public class PluginController{
     
     private void initializePlugins(Collection<PluginSet> plugins) {
         for (PluginSet set : plugins) {
-            System.out.println("SetPlugins: " + set);
+            logger.debug("SetPlugins: {}", set);
             if (set instanceof PlatformCommunicatorInterface) {
-                
                 ((PlatformCommunicatorInterface) set).setPlatformProxy(new DicooglePlatformProxy(this));
             }
         }

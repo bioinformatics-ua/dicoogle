@@ -114,6 +114,28 @@ public class FindRSP implements DimseRSP
         extrafields.add("ModalitiesInStudy");
         extrafields.add("StudyInstanceUID");
         extrafields.add("InstitutionName");
+        extrafields.add("AcquisitionDeviceProcessingDescription");
+        extrafields.add("ProtocolName");
+
+        extrafields.add("SeriesDate");
+
+        extrafields.add("OperatorsName");
+        extrafields.add("RequestingPhysician");
+        extrafields.add("BodyPartThickness");
+        extrafields.add("PatientOrientation");
+        extrafields.add("CompressionForce");
+
+        extrafields.add("ViewPosition");
+        extrafields.add("ImageLaterality");
+        extrafields.add("AcquisitionDeviceProcessingDescription");
+
+
+        extrafields.add("ViewCodeSequence_CodeValue");
+        extrafields.add("ViewCodeSequence_CodingSchemeDesignator");
+        extrafields.add("ViewCodeSequence_CodingSchemeVersion");
+        extrafields.add("ViewCodeSequence_CodeMeaning");
+
+
         extrafields.add("SOPInstanceUID");
         
         String query = getQueryString(keys, rsp);
