@@ -8,7 +8,7 @@
 
 To build all js and html resources:
 
-    npm run build-debug  # for development
+    npm run debug        # for development
     npm run build        # for production
 
 To build css files:
