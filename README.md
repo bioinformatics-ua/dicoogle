@@ -10,7 +10,7 @@ Brief Documentation
 
 
 #### Setup Dicoogle Platform Environment
-  1. Copy Dicoogle.jar to the installation folder. For example DicoogleDir/
+  1. Copy dicoogle.jar to the installation folder. For example DicoogleDir/
   2. Create the Folder DicoogleDir/Plugins.
 
       This folder will hold the plugins used by our instance of the Dicoogle Platform.
@@ -20,12 +20,12 @@ Brief Documentation
       We supply an implementation of such plugin based in the Lucene Search Engine (Lucene-plugin.jar). 
   4. Run Dicoogle.
   
-      Dicoogle may be run as a server: ```java -jar Dicoogle.jar -s```
+      Dicoogle may be run as a server: ```java -jar dicoogle.jar -s```
 
-      or using the RMI Graphical Interface: ```java -jar Dicoogle.jar```
+      or using the Graphical Interface: ```java -jar dicoogle.jar```
 
 #### Available Plugins
-  * Lucene Index/Query Plugin - (Lucene.jar)
+  * Lucene Index/Query Plugin - (lucene.jar)
       
       Plugin Based on lucene to support index and query of DICOM Meta-data.
   * File Storage Plugin - (filestorage.jar)
@@ -137,6 +137,11 @@ If you are in the development process and using the UI, you may need to change y
 <server enable="true" port="8080" allowedOrigins="*" />
 ```
 
+### Compile the web server
+
+
+[Learn how to compile the web server](dicoogle/src/main/java/pt/ua/dicoogle/server/web/webapp/WEB-INF/README.md)
+
 
 
 Web site
@@ -153,11 +158,11 @@ Authors
 * Eriksson Monteiro
 * Tiago Godinho
 * Eduardo Pinho
+* Luis Ribeiro
 
 Past developers:
 
 * Samuel Campos
-* Luís Ribeiro
 * Carlos Ferreira
 
 Project leaders
