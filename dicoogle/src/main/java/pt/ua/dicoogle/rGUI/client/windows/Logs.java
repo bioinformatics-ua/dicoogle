@@ -39,7 +39,7 @@ import pt.ua.dicoogle.rGUI.client.signals.LogsSignal;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.ILogs;
 import pt.ua.dicoogle.Main;
 
-import pt.ua.dicoogle.core.LogLine;
+import pt.ua.dicoogle.DicomLog.LogLine;
 import pt.ua.dicoogle.rGUI.MultihomeRMIClientSocketFactory;
 import pt.ua.dicoogle.rGUI.client.AdminRefs;
 import pt.ua.dicoogle.rGUI.interfaces.signals.ILogsSignal;
