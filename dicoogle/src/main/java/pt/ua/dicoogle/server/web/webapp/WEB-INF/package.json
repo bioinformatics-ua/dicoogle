@@ -65,7 +65,7 @@
     "watchify": "^3.3.1"
   },
   "scripts": {
-    "prepublish": "rimraf js/build.js && parallelshell \"npm run css\" \"npm run html\" \"npm run js\"",
+    "prepublish": "rimraf js/bundle.js && parallelshell \"npm run css\" \"npm run html\" \"npm run js\"",
     "build": "parallelshell \"npm run html\" \"npm run js\"",
     "js": "NODE_ENV=production browserify . -t babelify | uglifyjs -c dead_code,drop_console,warnings=false -m > js/bundle.min.js",
     "css": "sass sass/dicoogle.scss:css/dicoogle.css",
@@ -76,7 +76,7 @@
     "css:watch": "sass --watch sass/dicoogle.scss:css/dicoogle.css",
     "js:watch": "watchify -o js/bundle.js -v -d -t babelify .",
     "test": "jest",
-    "clean": "rimraf js/build.js js/build.min.js css/dicoogle.css css/dicoogle.css.map index.html"
+    "clean": "rimraf js/bundle.js js/bundle.min.js css/dicoogle.css css/dicoogle.css.map index.html"
   },
   "browserify": {
     "transform": [
