@@ -1,12 +1,10 @@
-dicoogle
+Dicoogle
 ========
 
-Project  Medical Imaging Repositories using Indexing System and P2P mechanisms
-
+Dicoogle is an extensible, platform-independent and open-source PACS archive software that replaces the traditional centralized database with a more agile indexing and retrieval mechanism. It was designed with automatic extraction, indexing and storage of all meta-data detected in medical images, including private DICOM attribute tags, without re-engineering or reconfiguration requirements.
 
 Brief Documentation
-========
-
+===================
 
 #### Setup Dicoogle Platform Environment
   1. Copy dicoogle.jar to the installation folder. For example DicoogleDir/
