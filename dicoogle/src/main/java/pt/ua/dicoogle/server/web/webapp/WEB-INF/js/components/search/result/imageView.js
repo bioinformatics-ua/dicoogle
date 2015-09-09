@@ -4,6 +4,10 @@ var Button = ReactBootstrap.Button;
 var ModalTrigger = ReactBootstrap.ModalTrigger;
 var Modal = ReactBootstrap.Modal;
 
+import {ActionCreators} from '../../../actions/searchActions';
+import {unindex} from '../../../handlers/requestHandler';
+import {ConfirmModal} from './confirmModal';
+
 import {Endpoints} from '../../../constants/endpoints';
 
 var ImageView = React.createClass({
@@ -42,6 +46,11 @@ var ImageView = React.createClass({
                    <button type="button" className="btn btn_dicoogle">Show Image</button>
                  </ModalTrigger>
   								</td>
+                    <td> 
+                      <ModalTrigger modal={<ConfirmModal onConfirm={self.onUnindexClick.bind(null, item)}/>}>
+                        <button className="btn btn_dicoogle fa fa-eraser"> Unindex</button>
+                      </ModalTrigger>
+                    </td>
 				    	     </tr>
 			           	);
        			})
@@ -56,6 +65,7 @@ var ImageView = React.createClass({
                 			<th>SopInstanceUID</th>
                 			<th>Thumbnail</th>
                       <th></th>
+                      <th>Options</th>  
                     </tr>
         			</thead>
         			 <tbody>
@@ -65,8 +75,13 @@ var ImageView = React.createClass({
 			</div>
 		);
 	},
-
-
+  onUnindexClick: function(item){
+    console.log(item)
+    var uris = []; 
+    uris.push(item.uri);
+    let p = this.props.provider;
+    ActionCreators.unindex(uris, p);
+  }
 });
 
 
