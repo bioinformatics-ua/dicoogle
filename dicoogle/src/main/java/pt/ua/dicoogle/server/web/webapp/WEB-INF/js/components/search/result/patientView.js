@@ -71,7 +71,7 @@ var PatientView = React.createClass({
 	},
 	onPatientClick:function(id, index){
 		console.log(id," clicked");
-		//this.props.onItemClick(this.props.items.results[index]);
+		this.props.onItemClick(this.props.items.results[index]);
 	}
 
 });
