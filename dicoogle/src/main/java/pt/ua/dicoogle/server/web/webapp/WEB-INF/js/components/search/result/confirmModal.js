@@ -12,7 +12,7 @@ var ConfirmModal = React.createClass({
     },
     render: function() {
         return (
-        <Modal show={typeof this.props.unindexSelected === 'number'} {...this.props} title="Are you sure?" animation={false}>
+        <Modal {...this.props} title="Are you sure?" animation={false}>
           <div className="modal-body">
             The following files will be unindexed. This operation might be irreversible. 
           </div>

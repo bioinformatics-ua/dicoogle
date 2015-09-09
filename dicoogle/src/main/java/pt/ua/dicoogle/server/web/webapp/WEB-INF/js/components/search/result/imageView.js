@@ -1,6 +1,8 @@
-var React = require('react');
-
+import React from 'react';
 import {Button, Modal} from 'react-bootstrap';
+import {ActionCreators} from '../../../actions/searchActions';
+import {unindex} from '../../../handlers/requestHandler';
+import {ConfirmModal} from './confirmModal';
 import {Endpoints} from '../../../constants/endpoints';
 import {DumpStore} from '../../../stores/dumpStore';
 import {DumpActions} from '../../../actions/dumpActions';
@@ -10,14 +12,14 @@ var ImageView = React.createClass({
     	return {data: [],
         image: null,
         dump: null,
-    	  status: "loading"};
+    	  status: "loading",
+        unindexSelected: null
+      };
   	},
     componentDidMount: function() {
-      console.log("componentDidMount : Paginating...");
       $('#image-table').dataTable({paging: true, searching: false, info: true});
     },
     componentDidUpdate: function() {
-//        $('#image-table').dataTable({paging: true, searching: false, info: true});
     },
 	render: function() {
 		let self = this;
@@ -37,11 +39,14 @@ var ImageView = React.createClass({
                   <button type="button" onClick={self.showDump.bind(self, uid)} className="btn btn_dicoogle">Dump Image</button>
                   <button type="button" onClick={self.showImage.bind(self, uid)} className="btn btn_dicoogle">Show Image</button>
                 </td>
+                <td> 
+                  <button onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle fa fa-eraser"> Unindex</button>
+                </td>
               </tr>
               );
         });
 
-	  return (
+	return (
 			<div>
 				<table id="image-table" className="table table-striped table-bordered" cellspacing="0" width="100%">
 					<thead>
@@ -50,6 +55,7 @@ var ImageView = React.createClass({
                 			<th>SopInstanceUID</th>
                 			<th>Thumbnail</th>
                       <th></th>
+                      <th>Options</th>  
                     </tr>
         			</thead>
         			 <tbody>
@@ -58,6 +64,9 @@ var ImageView = React.createClass({
     			</table>
           <PopOverView uid={this.state.dump} onHide={this.onHideDump} />
           <PopOverImageViewer uid={this.state.image} onHide={this.onHideImage}/>
+          <ConfirmModal show={self.state.unindexSelected !== null}
+                        onHide={self.hideUnindex}
+                        onConfirm={self.onUnindexClick.bind(self, self.state.unindexSelected)}/>
 			</div>
 		);
 	},
@@ -74,7 +83,23 @@ var ImageView = React.createClass({
   showImage(uid) {
     this.setState({dump: null, image: uid});
   }
-
+  hideUnindex () {
+    this.setState({
+      unindexSelected: null
+    });
+  },
+  showUnindex (item) {
+    this.setState({
+      unindexSelected: item
+    });
+  },
+  onUnindexConfirm (item){
+    console.log(item)
+    var uris = []; 
+    uris.push(item.uri);
+    let p = this.props.provider;
+    ActionCreators.unindex(uris, p);
+  }
 });
 
 var PopOverView = React.createClass({

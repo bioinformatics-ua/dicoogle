@@ -54,9 +54,9 @@ var PatientView = React.createClass({
               {resultItems}
             </tbody>
     			</table>
-          <ConfirmModal selected={self.state.unindexSelected}
+          <ConfirmModal selected={self.state.unindexSelected !== null}
                         onHide={self.hideUnindex}
-                        onConfirm={self.onUnindexClick.bind(self)}/>
+                        onConfirm={self.onUnindexClick.bind(self, self.state.unindexSelected)}/>
       </div>
 		);
 	},
