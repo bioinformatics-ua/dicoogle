@@ -82,7 +82,7 @@ var PatientView = React.createClass({
 		ActionCreators.unindex(uris, p);
 	},
 	onPatientClick:function(id, index){
-		console.log("Patient clicked");
+		console.log("Patient", id, "clicked");
 		this.props.onItemClick(this.props.items.results[index]);
 	}
 
