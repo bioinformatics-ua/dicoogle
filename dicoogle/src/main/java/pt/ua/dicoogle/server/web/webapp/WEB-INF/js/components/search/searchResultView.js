@@ -1,7 +1,5 @@
-
-var React = require('react');
-var ReactBootstrap = require('react-bootstrap');
-var Button = ReactBootstrap.Button;
+import React from 'react';
+import {Button} from 'react-bootstrap';
 
 import {SearchStore} from '../../stores/searchStore';
 import {ActionCreators} from '../../actions/searchActions';
@@ -91,10 +89,10 @@ var ResultSearch = React.createClass({
       </div>
     );
 */
+    var toogleModalClassNames = (this.state.data.advancedOptions) ? "btn btn_dicoogle fa fa-toggle-on" : "btn btn_dicoogle fa fa-toggle-off";
     return (<div>
         <Step current={this.state.current} onClick={this.onStepClicked}/>
         <div id="step-container"/>
-
         <button className="btn btn_dicoogle fa fa-download" onClick={this.onClickExport}>Export</button>
         <ExportView show={this.state.showExport} onHide={this.onHideExport} query={this.props.items}/>
       </div>);
@@ -108,10 +106,12 @@ var ResultSearch = React.createClass({
     {
       this.setState({data:data.data,
       status:"stopped",
+      current: this.state.current,
       success: data.success});
 
       //init StepView
-      this.onStepClicked(0);
+      if(!this.state.current)
+        this.onStepClicked(0);
     }
 
   },
@@ -123,13 +123,13 @@ var ResultSearch = React.createClass({
      //React.render(<ResultSearch items={params}/>, document.getElementById("container"));
     var view;
     if(stepComponent == 0)
-      view = ( <PatientView items={this.state.data} provider={this.props.items.provider} onItemClick={this.onPatientClicked}/>);
+      view = ( <PatientView items={this.state.data} provider={this.props.items.provider} enableAdvancedSearch={this.state.data.advancedOptions} onItemClick={this.onPatientClicked}/>);
     else if(stepComponent == 1)
-      view = ( <StudyView patient={this.state.patient} onItemClick={this.onStudyClicked}/>);
+      view = ( <StudyView patient={this.state.patient} enableAdvancedSearch={this.state.data.advancedOptions} onItemClick={this.onStudyClicked}/>);
     else if(stepComponent == 2)
-      view = ( <SeriesView study={this.state.study} onItemClick={this.onSeriesClicked}/>);
+      view = ( <SeriesView study={this.state.study} enableAdvancedSearch={this.state.data.advancedOptions} onItemClick={this.onSeriesClicked}/>);
     else if(stepComponent == 3)
-      view = ( <ImageView serie={this.state.serie} />);
+      view = ( <ImageView serie={this.state.serie} enableAdvancedSearch={this.state.data.advancedOptions}/>);
 
     React.render(view, document.getElementById("step-container"));
   },
@@ -137,15 +137,18 @@ var ResultSearch = React.createClass({
   onPatientClicked:function(patient){
     //console.log("patient id: ",id," Index: ",index);
     this.setState({current: 1, patient:patient});
-    React.render(<StudyView patient={patient} onItemClick={this.onStudyClicked}/>, document.getElementById("step-container"));
+    React.render(<StudyView patient={patient} enableAdvancedSearch={this.state.data.advancedOptions} onItemClick={this.onStudyClicked}/>, document.getElementById("step-container"));
   },
   onStudyClicked:function(study){
     this.setState({current: 2, study: study});
-    React.render(<SeriesView study={study} onItemClick={this.onSeriesClicked} />, document.getElementById("step-container"));
+    React.render(<SeriesView study={study} enableAdvancedSearch={this.state.data.advancedOptions} onItemClick={this.onSeriesClicked} />, document.getElementById("step-container"));
   },
   onSeriesClicked:function(serie){
     this.setState({current: 3, serie: serie});
-    React.render(<ImageView serie={serie} />, document.getElementById("step-container"));
+    React.render(<ImageView serie={serie} enableAdvancedSearch={this.state.data.advancedOptions} />, document.getElementById("step-container"));
+  },
+  toggleAdvOpt: function(){
+    ActionCreators.advancedOptionsChange();
   }
 });
 
@@ -197,7 +200,6 @@ var Step = React.createClass({
       this.props.onClick(current);
   }
 
-}
-);
+});
 
 export {ResultSearch};

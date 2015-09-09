@@ -1,8 +1,9 @@
 import React from 'react';
 import {Button, Modal} from 'react-bootstrap';
+import {SearchStore} from '../../../stores/searchStore';
 import {ActionCreators} from '../../../actions/searchActions';
 import {unindex} from '../../../handlers/requestHandler';
-import {ConfirmModal} from './confirmModal';
+import ConfirmModal from './confirmModal';
 import {Endpoints} from '../../../constants/endpoints';
 import {DumpStore} from '../../../stores/dumpStore';
 import {DumpActions} from '../../../actions/dumpActions';
@@ -16,10 +17,18 @@ var ImageView = React.createClass({
         unindexSelected: null
       };
   	},
-    componentDidMount: function() {
-      $('#image-table').dataTable({paging: true, searching: false, info: true});
-    },
-    componentDidUpdate: function() {
+    componentDidMount: function(){
+       var self = this;
+
+       $('#imagetable').dataTable({paging: true,searching: false,info:true});
+
+     },
+     componentDidUpdate: function(){
+
+     },
+    componentWillMount: function() {
+      // Subscribe to the store.
+      SearchStore.listen(this._onChange);
     },
 	render: function() {
 		let self = this;
@@ -29,6 +38,10 @@ var ImageView = React.createClass({
           let thumbUrl;
           if (false)
             thumbUrl = Endpoints.base + "/dic2png?thumbnail=true&SOPInstanceUID=" + uid;
+
+          var advOpt = (self.state.enableAdvancedSearch) ? (<td>
+              <button nClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> Unindex</button>
+            </td>) : undefined;
               
           return (
               <tr key={i}>
@@ -39,24 +52,32 @@ var ImageView = React.createClass({
                   <button type="button" onClick={self.showDump.bind(self, uid)} className="btn btn_dicoogle">Dump Image</button>
                   <button type="button" onClick={self.showImage.bind(self, uid)} className="btn btn_dicoogle">Show Image</button>
                 </td>
-                <td> 
-                  <button onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle fa fa-eraser"> Unindex</button>
-                </td>
+                {advOpt}
               </tr>
               );
         });
+    var header = (self.state.enableAdvancedSearch) ? (
+      <tr>
+            <th>FileName</th>
+            <th>SopInstanceUID</th>
+            <th>Thumbnail</th>
+            <th></th>
+            <th>Options</th>
+          </tr>
+      ) : (
+      <tr>
+            <th>FileName</th>
+            <th>SopInstanceUID</th>
+            <th>Thumbnail</th>
+            <th></th>
+          </tr>
+      );
 
 	return (
 			<div>
 				<table id="image-table" className="table table-striped table-bordered" cellspacing="0" width="100%">
 					<thead>
-           				<tr>
-                			<th>FileName</th>
-                			<th>SopInstanceUID</th>
-                			<th>Thumbnail</th>
-                      <th></th>
-                      <th>Options</th>  
-                    </tr>
+           				{header}
         			</thead>
         			 <tbody>
            				{resultItems}
@@ -66,7 +87,7 @@ var ImageView = React.createClass({
           <PopOverImageViewer uid={this.state.image} onHide={this.onHideImage}/>
           <ConfirmModal show={self.state.unindexSelected !== null}
                         onHide={self.hideUnindex}
-                        onConfirm={self.onUnindexClick.bind(self, self.state.unindexSelected)}/>
+                        onConfirm={self.onUnindexConfirm.bind(self, self.state.unindexSelected)}/>
 			</div>
 		);
 	},
@@ -77,11 +98,11 @@ var ImageView = React.createClass({
     this.setState({image: null});
   },
   showDump(uid) {
-    this.setState({dump: uid, image: null});
+    this.setState({dump: uid, image: null, unindexSelected: null});
     DumpActions.get(uid);
   },
   showImage(uid) {
-    this.setState({dump: null, image: uid});
+    this.setState({dump: null, image: uid, unindexSelected: null});
   }
   hideUnindex () {
     this.setState({
@@ -90,7 +111,7 @@ var ImageView = React.createClass({
   },
   showUnindex (item) {
     this.setState({
-      unindexSelected: item
+      unindexSelected: item, dump: null, image: null
     });
   },
   onUnindexConfirm (item){
@@ -99,27 +120,44 @@ var ImageView = React.createClass({
     uris.push(item.uri);
     let p = this.props.provider;
     ActionCreators.unindex(uris, p);
-  }
+  },
+    _onChange : function(data){
+      console.log("onchange");
+      console.log(data.success);
+      console.log(data.status);
+      if (this.isMounted())
+      {
+        this.setState({data: data.data,
+        status:"stopped",
+        success: data.success, 
+        enableAdvancedSearch: data.data.advancedOptions});
+      }
+    }
 });
 
 var PopOverView = React.createClass({
 	getInitialState: function() {
-    return {data: null};
+    return {data: null,
+    	status: "loading",
+    	current: 0,
+      enableAdvancedSearch: this.props.enableAdvancedSearch
+    };
   },
   componentDidMount: function() {
-    //$("#image1").imgViewer();
   },
   componentWillMount: function() {
     // Subscribe to the store.
     DumpStore.listen(this._onChange);
   },
-  componentDidUpdate: function() {
-    //$('#dumptable').dataTable({paging: false, searching: false, info: false, responsive: false});
+  componentDidUpdate: function(){
+    $('#dumptable').dataTable({paging: false,searching: false,info: false,
+      responsive: false
+    });
   },
 
   _onChange: function(data){
     if (this.isMounted()) {
-      this.setState({data:data});
+      this.setState({data:data, status: "stopped"});
     }
   },
     
@@ -129,7 +167,7 @@ var PopOverView = React.createClass({
   },
 
 	render: function(){
-		if(this.state.data === null)
+		if(this.state.data === null) {
 			return (
 				<Modal {...this.props} show={this.props.uid !== null} bsStyle='primary' title='Image Dump' animation={true}>
           <div className="loader-inner ball-pulse">
@@ -138,6 +176,7 @@ var PopOverView = React.createClass({
             <div/>
           </div>
         </Modal>);
+    }
 
     var obj = this.state.data.data.results.fields;
     var rows = [];

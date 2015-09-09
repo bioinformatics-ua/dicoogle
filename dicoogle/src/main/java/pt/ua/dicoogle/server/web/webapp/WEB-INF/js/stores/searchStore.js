@@ -14,8 +14,7 @@ var SearchStore = Reflux.createStore({
     listenables: ActionCreators,
     init: function () {
         console.log("sadasd");
-        this._contents = {};
-
+        this._contents = {advancedOptions: false};
         //this.listenTo(ActionCreators, "request");
 
         // subscribe to listen for whole ProductStore first as there is no `waitFor` in Reflux
@@ -33,6 +32,7 @@ var SearchStore = Reflux.createStore({
         function(data){
           //SUCCESS
           console.log("success", data);
+          data["advancedOptions"] = self._contents.advancedOptions;
           self._contents = data;
 
           //DEBUG WAIT
@@ -92,12 +92,19 @@ var SearchStore = Reflux.createStore({
     onUnindex: function(uris, provider){
       console.log("fired action");
       console.log(uris);
-      
+
       unindex(uris, provider, 
           function() {
         console.log("sucess");
       }, function(){
         console.log("Error");
+      });
+    },
+    onAdvancedOptionsChange: function(){
+      this._contents.advancedOptions = !this._contents.advancedOptions;
+      this.trigger({
+        data:this._contents,
+        success: true
       });
     },
     triggerWithDelay :function(){
