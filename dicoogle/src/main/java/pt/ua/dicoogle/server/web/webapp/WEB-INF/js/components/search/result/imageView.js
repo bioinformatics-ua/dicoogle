@@ -4,6 +4,8 @@ var Button = ReactBootstrap.Button;
 var ModalTrigger = ReactBootstrap.ModalTrigger;
 var Modal = ReactBootstrap.Modal;
 
+import {SearchStore} from '../../../stores/searchStore';
+
 import {ActionCreators} from '../../../actions/searchActions';
 import {unindex} from '../../../handlers/requestHandler';
 import {ConfirmModal} from './confirmModal';
@@ -23,9 +25,11 @@ var ImageView = React.createClass({
      },
      componentDidUpdate: function(){
 
-      $('#imagetable').dataTable({paging: true,searching: false,info: true});
-
      },
+    componentWillMount: function() {
+      // Subscribe to the store.
+      SearchStore.listen(this._onChange);
+    },
 	render: function() {
 		var self = this;
 
@@ -33,6 +37,13 @@ var ImageView = React.createClass({
 
 		var resultItems = (
 				resultArray.map(function(item){
+              
+              var advOpt = (self.state.enableAdvancedSearch) ? (<td> 
+                      <ModalTrigger modal={<ConfirmModal onConfirm={self.onUnindexClick.bind(null, item)}/>}>
+                        <button className="btn btn_dicoogle btn-xs fa fa-eraser"> Unindex</button>
+                      </ModalTrigger>
+                    </td>) : undefined;
+
 		      		return (
 				    	     <tr>
 				    	     	<td> {item.filename}</td>
@@ -40,33 +51,39 @@ var ImageView = React.createClass({
 				    	     	<td> NA</td>
 				    	     	<td>
 				    	     		<ModalTrigger modal={<PopOverView uid={item.sopInstanceUID}/>}>
-    									<button type="button" className="btn btn_dicoogle">Dump Image</button>
-  									</ModalTrigger>
-                    <ModalTrigger modal={<PopOverImageViewer uid={item.sopInstanceUID}/>}>
-                   <button type="button" className="btn btn_dicoogle">Show Image</button>
-                 </ModalTrigger>
-  								</td>
-                    <td> 
-                      <ModalTrigger modal={<ConfirmModal onConfirm={self.onUnindexClick.bind(null, item)}/>}>
-                        <button className="btn btn_dicoogle fa fa-eraser"> Unindex</button>
+    									 <button type="button" className="btn btn_dicoogle">Dump Image</button>
+  									  </ModalTrigger>
+                      <ModalTrigger modal={<PopOverImageViewer uid={item.sopInstanceUID}/>}>
+                        <button type="button" className="btn btn_dicoogle">Show Image</button>
                       </ModalTrigger>
-                    </td>
-				    	     </tr>
-			           	);
-       			})
+  								  </td>
+                    {advOpt}
+				    	     </tr>)
+                    })
+       			
 			);
+    var header = (self.state.enableAdvancedSearch) ? (
+      <tr>
+            <th>FileName</th>
+            <th>SopInstanceUID</th>
+            <th>Thumbnail</th>
+            <th></th>            
+            <th>Options</th>          
+          </tr>
+      ) : (
+      <tr>
+            <th>FileName</th>
+            <th>SopInstanceUID</th>
+            <th>Thumbnail</th>
+            <th></th>
+          </tr>
+      );
 
 	return (
 			<div>
 				<table id="imagetable" className="table table-striped table-bordered" cellspacing="0" width="100%">
 					<thead>
-           				<tr>
-                			<th>FileName</th>
-                			<th>SopInstanceUID</th>
-                			<th>Thumbnail</th>
-                      <th></th>
-                      <th>Options</th>  
-                    </tr>
+           				{header}
         			</thead>
         			 <tbody>
            				{resultItems}
@@ -81,7 +98,19 @@ var ImageView = React.createClass({
     uris.push(item.uri);
     let p = this.props.provider;
     ActionCreators.unindex(uris, p);
-  }
+  },
+    _onChange : function(data){
+      console.log("onchange");
+      console.log(data.success);
+      console.log(data.status);
+      if (this.isMounted())
+      {
+        this.setState({data: data.data,
+        status:"stopped",
+        success: data.success, 
+        enableAdvancedSearch: data.data.advancedOptions});
+      }
+    }
 });
 
 
@@ -92,7 +121,7 @@ var PopOverView = React.createClass({
 	getInitialState: function() {
     	return {data: [],
     	status: "loading",
-    	current: 0};
+    	current: 0, enableAdvancedSearch: this.props.enableAdvancedSearch};
   	},
   	componentDidMount: function() {
   		console.log("BILO ",this.props.uid);
