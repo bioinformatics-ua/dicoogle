@@ -555,8 +555,24 @@ public class PluginController{
         	indexer.unindex(path);
         }
         logger.info("Finished unindexing {}", path);
-    }    
+    }
     
+    public void remove(URI uri){
+      StorageInterface si = getStorageForSchema(uri);
+      if(si != null)
+        doRemove(uri, si);
+      else
+        logger.error("Could not find storage plugin to handle URI: {}", uri);      
+    }
+    
+    public void doRemove(URI uri, StorageInterface si) {
+      if(si.handles(uri)){
+        si.remove(uri); 
+      }else
+        logger.error("Storage Plugin does not handle URI: {},{}", uri, si);
+    
+      logger.info("Finished removing {}", uri);
+  }    
     /*
      * Convinience method that calls index(URI) and runs the returned
      * tasks on the executing thread 
