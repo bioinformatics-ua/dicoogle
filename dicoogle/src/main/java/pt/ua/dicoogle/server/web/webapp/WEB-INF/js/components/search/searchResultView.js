@@ -16,6 +16,7 @@ var ResultSearch = React.createClass({
     return {data: [],
     status: "loading",
     showExport: false,
+    showDangerousOptions: false,
     current: 0};
   },
   componentDidMount: function() {
@@ -80,22 +81,15 @@ var ResultSearch = React.createClass({
        })
 	    );
 
-		/*return (
-      <div>
-			   <ul className="result_list">
-                { resultNodes }
-        </ul>
-
-      </div>
-    );
-*/
-    var toogleModalClassNames = (this.state.data.advancedOptions) ? "btn btn_dicoogle fa fa-toggle-on" : "btn btn_dicoogle fa fa-toggle-off";
+    var toggleModalClassNames = this.state.showDangerousOptions ? "btn btn_dicoogle fa fa-toggle-on" : "btn btn_dicoogle fa fa-toggle-off";
     return (<div>
         <Step current={this.state.current} onClick={this.onStepClicked}/>
-        <div id="step-container"/>
+        <div id="step-container">
+          {this.getCurrentView()}
+        </div>
         <button className="btn btn_dicoogle fa fa-download" onClick={this.onClickExport}>Export</button>
         <ExportView show={this.state.showExport} onHide={this.onHideExport} query={this.props.items}/>
-        <button className={toogleModalClassNames} onClick={this.toggleAdvOpt}> Advanced Options </button>
+        <button className={toggleModalClassNames} onClick={this.toggleAdvOpt}> Advanced Options </button>
       </div>);
 	},
 
@@ -116,40 +110,66 @@ var ResultSearch = React.createClass({
     }
 
   },
+  
+  getCurrentView() {
+    let view;
+    switch (this.state.current) {
+      case 0:
+        view = ( <PatientView items={this.state.data}
+                              provider={this.props.items.provider}
+                              enableAdvancedSearch={this.state.showDangerousOptions}
+                              onItemClick={this.onPatientClicked}/>);
+        break;
+      case 1:
+        view = ( <StudyView patient={this.state.patient}
+                            enableAdvancedSearch={this.state.showDangerousOptions}
+                            onItemClick={this.onStudyClicked}/>);
+        break;
+      case 2:
+        view = ( <SeriesView  study={this.state.study}
+                              enableAdvancedSearch={this.state.showDangerousOptions}
+                              onItemClick={this.onSeriesClicked}/>);
+        break;
+      case 3:
+        view = ( <ImageView serie={this.state.serie}
+                            enableAdvancedSearch={this.state.showDangerousOptions}/>);
+        break;
+    }
+    return view;
+  },
 
   onStepClicked:function(stepComponent){
     console.log(stepComponent);
     this.setState({current: stepComponent});
 
-     //React.render(<ResultSearch items={params}/>, document.getElementById("container"));
-    var view;
-    if(stepComponent == 0)
-      view = ( <PatientView items={this.state.data} provider={this.props.items.provider} enableAdvancedSearch={this.state.data.advancedOptions} onItemClick={this.onPatientClicked}/>);
-    else if(stepComponent == 1)
-      view = ( <StudyView patient={this.state.patient} enableAdvancedSearch={this.state.data.advancedOptions} onItemClick={this.onStudyClicked}/>);
-    else if(stepComponent == 2)
-      view = ( <SeriesView study={this.state.study} enableAdvancedSearch={this.state.data.advancedOptions} onItemClick={this.onSeriesClicked}/>);
-    else if(stepComponent == 3)
-      view = ( <ImageView serie={this.state.serie} enableAdvancedSearch={this.state.data.advancedOptions}/>);
-
-    React.render(view, document.getElementById("step-container"));
+//    var view;
+//    if(stepComponent == 0)
+//      view = ( <PatientView items={this.state.data} provider={this.props.items.provider} enableAdvancedSearch={this.state.data.advancedOptions} onItemClick={this.onPatientClicked}/>);
+//    else if(stepComponent == 1)
+//      view = ( <StudyView patient={this.state.patient} enableAdvancedSearch={this.state.data.advancedOptions} onItemClick={this.onStudyClicked}/>);
+//    else if(stepComponent == 2)
+//      view = ( <SeriesView study={this.state.study} enableAdvancedSearch={this.state.data.advancedOptions} onItemClick={this.onSeriesClicked}/>);
+//    else if(stepComponent == 3)
+//      view = ( <ImageView serie={this.state.serie} enableAdvancedSearch={this.state.data.advancedOptions}/>);
+//
+//    React.render(view, document.getElementById("step-container"));
   },
 
   onPatientClicked:function(patient){
     //console.log("patient id: ",id," Index: ",index);
     this.setState({current: 1, patient:patient});
-    React.render(<StudyView patient={patient} enableAdvancedSearch={this.state.data.advancedOptions} onItemClick={this.onStudyClicked}/>, document.getElementById("step-container"));
+//    React.render(<StudyView patient={patient} enableAdvancedSearch={this.state.showDangerousOptions} onItemClick={this.onStudyClicked}/>, document.getElementById("step-container"));
   },
   onStudyClicked:function(study){
     this.setState({current: 2, study: study});
-    React.render(<SeriesView study={study} enableAdvancedSearch={this.state.data.advancedOptions} onItemClick={this.onSeriesClicked} />, document.getElementById("step-container"));
+//    React.render(<SeriesView study={study} enableAdvancedSearch={this.state.showDangerousOptions} onItemClick={this.onSeriesClicked} />, document.getElementById("step-container"));
   },
   onSeriesClicked:function(serie){
     this.setState({current: 3, serie: serie});
-    React.render(<ImageView serie={serie} enableAdvancedSearch={this.state.data.advancedOptions} />, document.getElementById("step-container"));
+//    React.render(<ImageView serie={serie} enableAdvancedSearch={this.state.showDangerousOptions} />, document.getElementById("step-container"));
   },
   toggleAdvOpt: function(){
-    ActionCreators.advancedOptionsChange();
+    this.setState({showDangerousOptions : !this.state.showDangerousOptions});
   }
 });
 

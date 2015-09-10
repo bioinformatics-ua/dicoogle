@@ -15,8 +15,7 @@ var ImageView = React.createClass({
         dump: null,
     	  status: "loading",
         unindexSelected: null,
-        removeSelected: null,
-        enableAdvancedSearch: this.props.enableAdvancedSearch
+        removeSelected: null
       };
   	},
     componentDidMount: function(){
@@ -35,14 +34,9 @@ var ImageView = React.createClass({
 		var resultItems = resultArray.map(function(item, i) {
           let uid = item.sopInstanceUID;
           let thumbUrl;
-          if (false)
+          if (false) {
             thumbUrl = Endpoints.base + "/dic2png?thumbnail=true&SOPInstanceUID=" + uid;
-
-          var advOpt = (self.state.enableAdvancedSearch) ? (<td>
-              <button onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> Unindex</button>
-              <button onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> Remove</button>
-            </td>) : undefined;
-              
+          }
           return (
               <tr key={i}>
                 <td> {item.filename}</td>
@@ -52,11 +46,13 @@ var ImageView = React.createClass({
                   <button type="button" onClick={self.showDump.bind(self, uid)} className="btn btn_dicoogle">Dump Image</button>
                   <button type="button" onClick={self.showImage.bind(self, uid)} className="btn btn_dicoogle">Show Image</button>
                 </td>
-                {advOpt}
-              </tr>
-              );
+                {(self.props.enableAdvancedSearch) && (<td>
+                  <button onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> Unindex</button>
+                  <button onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> Remove</button>
+                </td>)}
+              </tr>);
         });
-    var header = (self.state.enableAdvancedSearch) ? (
+    var header = (self.props.enableAdvancedSearch) ? (
       <tr>
             <th>FileName</th>
             <th>SopInstanceUID</th>
@@ -77,21 +73,21 @@ var ImageView = React.createClass({
 			<div>
 				<table id="image-table" className="table table-striped table-bordered" cellspacing="0" width="100%">
 					<thead>
-           				{header}
-        			</thead>
-        			 <tbody>
-           				{resultItems}
-            		</tbody>
-    			</table>
-          <PopOverView uid={this.state.dump} onHide={this.onHideDump} />
-          <PopOverImageViewer uid={this.state.image} onHide={this.onHideImage}/>
-          <ConfirmModal show={self.state.unindexSelected !== null}
-                        onHide={self.hideUnindex}
-                        onConfirm={self.onUnindexConfirm.bind(self, self.state.unindexSelected)}/>
-          <ConfirmModal show={self.state.removeSelected !== null}
-                        message="The following files will be unindexed and then deleted from their storage."
-                        onHide={self.hideRemove}
-                        onConfirm={self.onRemoveConfirm.bind(self, self.state.removeSelected)}/>
+            {header}
+          </thead>
+          <tbody>
+            {resultItems}
+          </tbody>
+        </table>
+        <ConfirmModal show={self.state.unindexSelected !== null}
+                      onHide={self.hideUnindex}
+                      onConfirm={self.onUnindexConfirm.bind(self, self.state.unindexSelected)}/>
+        <ConfirmModal show={self.state.removeSelected !== null}
+                      message="The following files will be unindexed and then deleted from their storage."
+                      onHide={self.hideRemove}
+                      onConfirm={self.onRemoveConfirm.bind(self, self.state.removeSelected)}/>
+        <PopOverView uid={this.state.dump} onHide={this.onHideDump} />
+        <PopOverImageViewer uid={this.state.image} onHide={this.onHideImage}/>
 			</div>
 		);
 	},
@@ -141,15 +137,13 @@ var ImageView = React.createClass({
     ActionCreators.remove(uris);
   },
     _onChange : function(data){
-      console.log("onchange");
-      console.log(data.success);
-      console.log(data.status);
+      console.log("onchange", data.success, data.status);
       if (this.isMounted())
       {
         this.setState({data: data.data,
-        status:"stopped",
-        success: data.success, 
-        enableAdvancedSearch: data.data.advancedOptions});
+          status:"stopped",
+          success: data.success
+        });
       }
     }
 });
@@ -158,8 +152,7 @@ var PopOverView = React.createClass({
 	getInitialState: function() {
     return {data: null,
     	status: "loading",
-    	current: 0,
-      enableAdvancedSearch: this.props.enableAdvancedSearch
+    	current: 0
     };
   },
   componentDidMount: function() {
@@ -169,7 +162,10 @@ var PopOverView = React.createClass({
     DumpStore.listen(this._onChange);
   },
   componentDidUpdate: function(){
-    $('#dumptable').dataTable({paging: false,searching: false,info: false,
+    $('#dumptable').dataTable({
+      paging: false,
+      searching: false,
+      info: false,
       responsive: false
     });
   },
@@ -220,7 +216,10 @@ var PopOverView = React.createClass({
     });
 
 		return (
-			<Modal onHide={this.props.onHide} show={this.props.uid !== null} bsClass='modal' bsStyle='primary' dialogClassName='table-dump' title='Image Dump' animation={true}>
+			<Modal onHide={this.props.onHide} show={this.props.uid !== null} bsClass='modal' bsStyle='primary' dialogClassName='table-dump'animation={true}>
+          <Modal.Header>
+            <Modal.Title>Image Dump</Modal.Title>
+          </Modal.Header>
 		        <div className='modal-body'>
               <table id="dumptable" className="table-test table table-striped table-bordered responsive" cellspacing="0" width="100%">
                 <thead>
@@ -250,7 +249,10 @@ var PopOverImageViewer = React.createClass({
 	render:function() {
 	  let url = (this.props.uid !== null) && Endpoints.base + "/dic2png?SOPInstanceUID="+this.props.uid;
 		return (
-			<Modal onHide={this.props.onHide} show={this.props.uid !== null} bsStyle='primary' title='Image Dump' animation={true}>
+			<Modal onHide={this.props.onHide} show={this.props.uid !== null} bsStyle='primary' animation={true}>
+          <Modal.Header>
+            <Modal.Title>View Image</Modal.Title>
+          </Modal.Header>
           <div className='modal-body'>
             <img id="image1" src={this.props.uid ? url : null} width="100%" />
           </div>

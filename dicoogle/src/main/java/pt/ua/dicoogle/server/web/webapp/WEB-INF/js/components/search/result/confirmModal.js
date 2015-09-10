@@ -10,7 +10,10 @@ var ConfirmModal = React.createClass({
     render: function() {
         var body_message = this.props.message || "The following files will be unindexed. This operation might be irreversible.";
         return (
-          <Modal {...this.props} title="Are you sure?" animation={false}>
+          <Modal {...this.props} animation={false}>
+            <Modal.Header>
+              <Modal.Title>Are you sure?</Modal.Title>
+            </Modal.Header>
             <div className="modal-body">
               {body_message}
             </div>

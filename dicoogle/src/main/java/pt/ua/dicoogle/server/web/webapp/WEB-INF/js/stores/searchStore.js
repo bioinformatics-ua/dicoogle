@@ -115,6 +115,7 @@ var SearchStore = Reflux.createStore({
         console.log("Error");
       });
     },
+/*    
     onAdvancedOptionsChange: function(){
       this._contents.advancedOptions = !this._contents.advancedOptions;
       this.trigger({
@@ -122,6 +123,7 @@ var SearchStore = Reflux.createStore({
         success: true
       });
     },
+*/
     triggerWithDelay :function(){
       this.trigger({
         data:this._contents,

@@ -11,8 +11,7 @@ var StudyView = React.createClass({
         data: [],
     	  status: "loading",
         unindexSelected: null,
-        removeSelected: null,
-        enableAdvancedSearch: this.props.enableAdvancedSearch
+        removeSelected: null
       };
   	},
     componentDidMount: function(){
@@ -28,7 +27,7 @@ var StudyView = React.createClass({
 		var self = this;
 		var resultArray = this.props.patient.studies;
 		var resultItems = resultArray.map(function(item){
-        let advOpt = (self.state.enableAdvancedSearch) && (<td> 
+        let advOpt = (self.props.enableAdvancedSearch) && (<td> 
               <button onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> Unindex</button>
               <button onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> Remove</button>
           </td>);
@@ -43,24 +42,7 @@ var StudyView = React.createClass({
             );
     });
 
-		var header = (self.state.enableAdvancedSearch) ? (
-				<tr>
-					<th>Data</th>
-        			<th>Description</th>
-        			<th>Institution name</th>
-        			<th>Modalities</th>
-        			<th>Options</th>
-        		</tr>
-    		) : (
-				<tr>
-					<th>Data</th>
-        			<th>Description</th>
-        			<th>Institution name</th>
-        			<th>Modalities</th>
-        		</tr>
-    		);
-
-		var header = (self.state.enableAdvancedSearch) ? (
+		var header = (self.props.enableAdvancedSearch) ? (
 				<tr>
 					<th>Data</th>
         			<th>Description</th>

@@ -11,12 +11,10 @@ var SeriesView = React.createClass({
         data: [],
     	  status: "loading",
         unindexSelected: null,
-        removeSelected: null,
-        enableAdvancedSearch: this.props.enableAdvancedSearch
+        removeSelected: null
       };
   	},
     componentDidMount: function(){
-   		var self = this;
    		$('#series-table').dataTable({paging: true,searching: false,info:true});
    	},
    	componentDidUpdate: function(){
@@ -32,7 +30,7 @@ var SeriesView = React.createClass({
 
 		var resultItems = (
 				resultArray.map(function(item){
-					let advOpt = (self.state.enableAdvancedSearch) && (<td> 
+					let advOpt = (self.props.enableAdvancedSearch) && (<td> 
                 <button onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> Unindex</button>
                 <button onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> Remove</button>
               </td>);
@@ -41,13 +39,13 @@ var SeriesView = React.createClass({
                 <td  onclick="" onClick={self.onSeriesClick.bind(this, item)}> {item.serieNumber}</td>
                 <td  onclick="" onClick={self.onSeriesClick.bind(this, item)}> {item.serieModality}</td>
                 <td  onclick="" onClick={self.onSeriesClick.bind(this, item)}> {item.serieDescription}</td>
-                <td  onclick="" onClick={self.onSeriesClick.bind(this, item)}> {item.images.length}</td>	
+                <td  onclick="" onClick={self.onSeriesClick.bind(this, item)}> {item.images.length}</td>
                 {advOpt}
                </tr>
               );
           })
 			);
-		var header = (self.state.enableAdvancedSearch) ? (
+		var header = (self.props.enableAdvancedSearch) ? (
 				<tr>
         			<th>Number</th>
         			<th>Modality</th>

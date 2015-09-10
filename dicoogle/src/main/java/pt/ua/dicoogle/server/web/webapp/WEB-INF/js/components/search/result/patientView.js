@@ -3,8 +3,6 @@ import {ActionCreators} from '../../../actions/searchActions';
 import {SearchStore} from '../../../stores/searchStore';
 import {unindex} from '../../../handlers/requestHandler';
 import ConfirmModal from './confirmModal';
-import {ActionCreators} from '../../../actions/searchActions';
-import {SearchStore} from '../../../stores/searchStore';
 
 var PatientView = React.createClass({
   getInitialState() {
