@@ -20,7 +20,7 @@ var ImageView = React.createClass({
       };
   	},
     componentDidMount: function(){
-       $('#imagetable').dataTable({paging: true,searching: false,info:true});
+       $('#image-table').dataTable({paging: true,searching: false,info:true});
      },
      componentDidUpdate: function(){
 
@@ -106,7 +106,7 @@ var ImageView = React.createClass({
   },
   showImage(uid) {
     this.setState({dump: null, image: uid, unindexSelected: null});
-  }
+  },
   hideUnindex () {
     this.setState({
       unindexSelected: null
