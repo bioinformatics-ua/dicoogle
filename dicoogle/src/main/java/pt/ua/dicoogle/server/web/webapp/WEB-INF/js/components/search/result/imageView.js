@@ -15,7 +15,8 @@ import {Endpoints} from '../../../constants/endpoints';
 var ImageView = React.createClass({
   	getInitialState: function() {
     	return {data: [],
-    	status: "loading"};
+    	status: "loading", 
+      enableAdvancedSearch: this.props.enableAdvancedSearch};
   	},
     componentDidMount: function(){
        var self = this;
@@ -42,6 +43,9 @@ var ImageView = React.createClass({
                       <ModalTrigger modal={<ConfirmModal onConfirm={self.onUnindexClick.bind(null, item)}/>}>
                         <button className="btn btn_dicoogle btn-xs fa fa-eraser"> Unindex</button>
                       </ModalTrigger>
+                      <ModalTrigger modal={<ConfirmModal onConfirm={self.onRemoveClick.bind(null, item)}/>}>
+                    <button className="btn btn_dicoogle btn-xs fa fa-trash-o"> Remove</button>
+                  </ModalTrigger>
                     </td>) : undefined;
 
 		      		return (
@@ -98,6 +102,11 @@ var ImageView = React.createClass({
     uris.push(item.uri);
     let p = this.props.provider;
     ActionCreators.unindex(uris, p);
+  },
+  onRemoveClick: function(item){
+    var uris = []; 
+    uris.push(item.uri);
+    ActionCreators.remove(uris);
   },
     _onChange : function(data){
       console.log("onchange");

@@ -9,6 +9,7 @@ import {Endpoints} from '../constants/endpoints';
 
 import {getPatients} from '../handlers/requestHandler';
 import {unindex} from '../handlers/requestHandler';
+import {remove} from '../handlers/requestHandler';
 
 var SearchStore = Reflux.createStore({
     listenables: ActionCreators,
@@ -94,6 +95,14 @@ var SearchStore = Reflux.createStore({
       console.log(uris);
 
       unindex(uris, provider, 
+          function() {
+        console.log("sucess");
+      }, function(){
+        console.log("Error");
+      });
+    },
+    onRemove: function(uris){
+      remove(uris, 
           function() {
         console.log("sucess");
       }, function(){

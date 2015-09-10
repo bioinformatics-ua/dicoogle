@@ -32,6 +32,9 @@ var PatientView = React.createClass({
 				    	     	<ModalTrigger modal={<ConfirmModal onConfirm={self.onUnindexClick.bind(null, index)}/>}>
 							      <button className="btn btn_dicoogle btn-xs fa fa-eraser"> Unindex</button>
 							    </ModalTrigger>
+				    	     	<ModalTrigger modal={<ConfirmModal onConfirm={self.onRemoveClick.bind(null, index)}/>}>
+							      <button className="btn btn_dicoogle btn-xs fa fa-trash-o"> Remove</button>
+							    </ModalTrigger>
 				    	     	</td>) : undefined;
 
 		      		return (
@@ -76,16 +79,23 @@ var PatientView = React.createClass({
 			</div>
 		);
 	},
-	onUnindexClick: function(index){
+	extractURISFromData: function(index){
 		var uris = []; 
 		for(let s in this.props.items.results[index].studies)
 			for(let ss in this.props.items.results[index].studies[s].series)
 				for(let i in this.props.items.results[index].studies[s].series[ss].images)
 					uris.push(this.props.items.results[index].studies[s].series[ss].images[i].uri);
-		
+		return uris;
+	},
+	onUnindexClick: function(index){
+		let uris = this.extractURISFromData(index);
 		let p = this.props.provider;
 
 		ActionCreators.unindex(uris, p);
+	},	
+	onRemoveClick: function(index){
+		let uris = this.extractURISFromData(index);
+		ActionCreators.remove(uris);
 	},
 	onPatientClick:function(id, index){
 		console.log(id," clicked");

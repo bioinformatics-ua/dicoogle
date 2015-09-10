@@ -37,6 +37,9 @@ var SeriesView = React.createClass({
 				    	     	<ModalTrigger modal={<ConfirmModal onConfirm={self.onUnindexClick.bind(null, item)}/>}>
 							      <button className="btn btn_dicoogle btn-xs fa fa-eraser"> Unindex</button>
 							    </ModalTrigger>
+							    <ModalTrigger modal={<ConfirmModal onConfirm={self.onRemoveClick.bind(null, item)}/>}>
+							      <button className="btn btn_dicoogle btn-xs fa fa-trash-o"> Remove</button>
+							    </ModalTrigger>
 				    	     	</td>) : undefined;
 		      		return (
 				    	     <tr className="resultRow" style={{"cursor" : "pointer"}}>
@@ -81,15 +84,23 @@ var SeriesView = React.createClass({
 			</div>
 		);
 	},
-	onUnindexClick: function(item){
-		console.log(item)
+	extractURISFromData: function(item){
 		var uris = []; 
 		for(let i in item.images)
 			uris.push(item.images[i].uri);
+		return uris;
+	},
+	onUnindexClick: function(item){
+		console.log(item)
+		var uris = this.extractURISFromData(item);
 		
 		let p = this.props.provider;
 
 		ActionCreators.unindex(uris, p);
+	},
+	onRemoveClick: function(item){
+		let uris = this.extractURISFromData(item);
+		ActionCreators.remove(uris);
 	},
 	onSeriesClick:function(item){
 		this.props.onItemClick(item);
