@@ -20,9 +20,8 @@ var SeriesView = React.createClass({
    		$('#series-table').dataTable({paging: true,searching: false,info:true});
    	},
    	componentDidUpdate: function(){
-       $('#series-table').dataTable({paging: true,searching: false,info: true});
    	},
-	componentWillMount: function() {
+    componentWillMount: function() {
     	// Subscribe to the store.
     	SearchStore.listen(this._onChange);
   	},
@@ -48,7 +47,6 @@ var SeriesView = React.createClass({
               );
           })
 			);
-
 		var header = (self.state.enableAdvancedSearch) ? (
 				<tr>
         			<th>Number</th>
@@ -80,6 +78,7 @@ var SeriesView = React.createClass({
                       onHide={self.hideUnindex}
                       onConfirm={self.onUnindexConfirm.bind(self, self.state.unindexSelected)}/>
         <ConfirmModal show={self.state.removeSelected !== null}
+                      message="The following files will be unindexed and then deleted from their storage."
                       onHide={self.hideRemove}
                       onConfirm={self.onRemoveConfirm.bind(self, self.state.removeSelected)}/>
 			</div>
@@ -126,19 +125,18 @@ var SeriesView = React.createClass({
 	onSeriesClick:function(item){
 		this.props.onItemClick(item);
 	},
-  	_onChange : function(data){
-	    console.log("onchange");
-	    console.log(data.success);
-	    console.log(data.status);
-	    if (this.isMounted())
-	    {
-	      this.setState({data: data.data,
-	      status:"stopped",
-	      success: data.success, 
-	      enableAdvancedSearch: data.data.advancedOptions});
-	    }
-  	}
-
+  _onChange : function(data){
+    console.log("onchange");
+    console.log(data.success);
+    console.log(data.status);
+    if (this.isMounted())
+    {
+      this.setState({data: data.data,
+      status:"stopped",
+      success: data.success, 
+      enableAdvancedSearch: data.data.advancedOptions});
+    }
+  }
 });
 
 export {SeriesView};

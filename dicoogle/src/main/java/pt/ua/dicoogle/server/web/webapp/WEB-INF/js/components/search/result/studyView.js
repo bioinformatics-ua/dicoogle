@@ -18,18 +18,15 @@ var StudyView = React.createClass({
     componentDidMount: function(){
        $('#study-table').dataTable({paging: true,searching: false,info:true});
      },
-     componentDidUpdate: function(){
-       $('#study-table').dataTable({paging: true,searching: false,info: true});
-     },
+    componentDidUpdate: function(){
+    },
    	componentWillMount: function() {
     	// Subscribe to the store.
     	SearchStore.listen(this._onChange);
   	},
 	render: function() {
 		var self = this;
-
 		var resultArray = this.props.patient.studies;
-
 		var resultItems = resultArray.map(function(item){
         let advOpt = (self.state.enableAdvancedSearch) && (<td> 
               <button onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> Unindex</button>
@@ -63,6 +60,23 @@ var StudyView = React.createClass({
         		</tr>
     		);
 
+		var header = (self.state.enableAdvancedSearch) ? (
+				<tr>
+					<th>Data</th>
+        			<th>Description</th>
+        			<th>Institution name</th>
+        			<th>Modalities</th>
+        			<th>Options</th>
+        		</tr>
+    		) : (
+				<tr>
+					<th>Data</th>
+        			<th>Description</th>
+        			<th>Institution name</th>
+        			<th>Modalities</th>
+        		</tr>
+    		);
+
 	return (
 			<div>
 				<table id="study-table" className="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -77,6 +91,7 @@ var StudyView = React.createClass({
                       onHide={self.hideUnindex}
                       onConfirm={self.onUnindexConfirm.bind(self, self.state.unindexSelected)} />
         <ConfirmModal show={self.state.removeSelected !== null}
+                      message="The following files will be unindexed and then deleted from their storage."
                       onHide={self.hideRemove}
                       onConfirm={self.onRemoveConfirm.bind(self, self.state.removeSelected)} />
 			</div>

@@ -1,7 +1,7 @@
 /*jshint esnext: true*/
 'use strict';
 
-var Reflux = require('reflux');
+import Reflux from 'reflux';
 
 import {ActionCreators} from '../actions/searchActions';
 
@@ -102,6 +102,12 @@ var SearchStore = Reflux.createStore({
       });
     },
     onRemove: function(uris){
+      unindex(uris, "all", 
+          function() {
+        console.log("sucess");
+      }, function(){
+        console.log("Error");
+      });
       remove(uris, 
           function() {
         console.log("sucess");
@@ -122,7 +128,6 @@ var SearchStore = Reflux.createStore({
         success: true
       });
     }
-
 
 });
 

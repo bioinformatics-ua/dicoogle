@@ -95,6 +95,7 @@ var ResultSearch = React.createClass({
         <div id="step-container"/>
         <button className="btn btn_dicoogle fa fa-download" onClick={this.onClickExport}>Export</button>
         <ExportView show={this.state.showExport} onHide={this.onHideExport} query={this.props.items}/>
+        <button className={toogleModalClassNames} onClick={this.toggleAdvOpt}> Advanced Options </button>
       </div>);
 	},
 

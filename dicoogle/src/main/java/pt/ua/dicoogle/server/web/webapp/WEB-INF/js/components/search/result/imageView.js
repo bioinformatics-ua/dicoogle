@@ -89,6 +89,7 @@ var ImageView = React.createClass({
                         onHide={self.hideUnindex}
                         onConfirm={self.onUnindexConfirm.bind(self, self.state.unindexSelected)}/>
           <ConfirmModal show={self.state.removeSelected !== null}
+                        message="The following files will be unindexed and then deleted from their storage."
                         onHide={self.hideRemove}
                         onConfirm={self.onRemoveConfirm.bind(self, self.state.removeSelected)}/>
 			</div>

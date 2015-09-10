@@ -1,9 +1,10 @@
-var React = require('react');
-
+import React from 'react';
 import {ActionCreators} from '../../../actions/searchActions';
 import {SearchStore} from '../../../stores/searchStore';
 import {unindex} from '../../../handlers/requestHandler';
 import ConfirmModal from './confirmModal';
+import {ActionCreators} from '../../../actions/searchActions';
+import {SearchStore} from '../../../stores/searchStore';
 
 var PatientView = React.createClass({
   getInitialState() {
@@ -20,7 +21,7 @@ var PatientView = React.createClass({
     SearchStore.listen(this._onChange);
   },
 	componentDidUpdate: function(){
-		$('#patient-table').dataTable({paging: true, searching: false, info: true});
+		//$('#example').dataTable({paging: true,searching: false,info: true});
 	},
 	render: function() {
 
@@ -73,13 +74,14 @@ var PatientView = React.createClass({
           <tbody>
             {resultItems}
           </tbody>
-    			</table>
-          <ConfirmModal selected={this.state.unindexSelected !== null}
-                        onHide={this.hideUnindex}
-                        onConfirm={this.onUnindexConfirm.bind(this, this.state.unindexSelected)}/>
-          <ConfirmModal selected={this.state.removeSelected !== null}
-                        onHide={this.hideRemove}
-                        onConfirm={this.onRemoveConfirm.bind(this, this.state.removeSelected)}/>
+        </table>
+        <ConfirmModal selected={this.state.unindexSelected !== null}
+                      onHide={this.hideUnindex}
+                      onConfirm={this.onUnindexConfirm.bind(this, this.state.unindexSelected)}/>
+        <ConfirmModal selected={this.state.removeSelected !== null}
+                      message="The following files will be unindexed and then deleted from their storage."
+                      onHide={this.hideRemove}
+                      onConfirm={this.onRemoveConfirm.bind(this, this.state.removeSelected)}/>
       </div>
 		);
 	},
