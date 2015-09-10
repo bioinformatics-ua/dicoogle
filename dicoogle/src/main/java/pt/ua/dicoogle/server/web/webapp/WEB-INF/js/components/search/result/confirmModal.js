@@ -5,7 +5,8 @@ var Modal = ReactBootstrap.Modal;
 
 var ConfirmModal = React.createClass({
     getInitialState: function(){
-        return { showModal: false };
+        var body_message = (this.props.message) ? this.props.message: "The following files will be unindex. This operation might be irreversible.";
+        return { showModal: false, body_message: body_message};
     },
     close: function(){
         this.setState({ showModal: false });
@@ -21,7 +22,7 @@ var ConfirmModal = React.createClass({
         return (
         <Modal {...this.props} title="Are you sure?" animation={false}>
           <div className="modal-body">
-            The following files will be unindex. This operation might be irreversible. 
+            {this.state.body_message}
           </div>
           <div className="modal-footer">
               <button className="btn btn_dicoogle" onClick={this.props.onRequestHide}> Cancel</button>

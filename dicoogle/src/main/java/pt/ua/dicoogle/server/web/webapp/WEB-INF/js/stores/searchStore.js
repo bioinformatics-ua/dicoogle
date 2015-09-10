@@ -102,6 +102,13 @@ var SearchStore = Reflux.createStore({
       });
     },
     onRemove: function(uris){
+      unindex(uris, "all", 
+          function() {
+        console.log("sucess");
+      }, function(){
+        console.log("Error");
+      });
+
       remove(uris, 
           function() {
         console.log("sucess");

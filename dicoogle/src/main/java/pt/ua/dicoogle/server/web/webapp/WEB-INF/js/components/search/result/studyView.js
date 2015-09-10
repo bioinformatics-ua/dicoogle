@@ -35,7 +35,7 @@ var StudyView = React.createClass({
 				    	     	<ModalTrigger modal={<ConfirmModal onConfirm={self.onUnindexClick.bind(null, item)}/>}>
 							      <button className="btn btn_dicoogle btn-xs fa fa-eraser"> Unindex</button>
 							    </ModalTrigger>
-							    <ModalTrigger modal={<ConfirmModal onConfirm={self.onRemoveClick.bind(null, item)}/>}>
+							    <ModalTrigger modal={<ConfirmModal onConfirm={self.onRemoveClick.bind(null, item)} message="The following files will be unindexed and then deleted from their storage"/>}>
 							      <button className="btn btn_dicoogle btn-xs fa fa-trash-o"> Remove</button>
 							    </ModalTrigger>
 				    	     	</td>) : undefined;
