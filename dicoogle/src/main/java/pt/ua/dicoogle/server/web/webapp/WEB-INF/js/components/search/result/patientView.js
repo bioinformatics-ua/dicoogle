@@ -8,16 +8,17 @@ import ConfirmModal from './confirmModal';
 var PatientView = React.createClass({
   getInitialState() {
     return {
-      unindexSelected: null
+      unindexSelected: null,
+      removeSelected: null
     }
   },
 	componentDidMount: function(){
 		$('#patient-table').dataTable({paging: true, searching: false, info:true});
 	},
-  	componentWillMount: function() {
-    	// Subscribe to the store.
-    	SearchStore.listen(this._onChange);
-  	},
+  componentWillMount: function() {
+    // Subscribe to the store.
+    SearchStore.listen(this._onChange);
+  },
 	componentDidUpdate: function(){
 		$('#patient-table').dataTable({paging: true, searching: false, info: true});
 	},
@@ -31,6 +32,7 @@ var PatientView = React.createClass({
 				resultArray.map(function(item, index){
 					var advOpt = (self.props.enableAdvancedSearch) && (<td> 
                 <button onClick={self.showUnindex.bind(null, index)} className="btn btn_dicoogle btn-xs fa fa-eraser"> Unindex</button>
+                <button onClick={self.showRemove.bind(null, index)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> Remove</button>
               </td>);
 
 		      		return (
@@ -75,6 +77,9 @@ var PatientView = React.createClass({
           <ConfirmModal selected={this.state.unindexSelected !== null}
                         onHide={this.hideUnindex}
                         onConfirm={this.onUnindexConfirm.bind(this, this.state.unindexSelected)}/>
+          <ConfirmModal selected={this.state.removeSelected !== null}
+                        onHide={this.hideRemove}
+                        onConfirm={this.onRemoveConfirm.bind(this, this.state.removeSelected)}/>
       </div>
 		);
 	},
@@ -88,32 +93,50 @@ var PatientView = React.createClass({
       unindexSelected: index
     });
   },
-	onUnindexConfirm: function(index){
+  hideRemove () {
+    this.setState({
+      removeSelected: null
+    });
+  },
+  showRemove (index) {
+    this.setState({
+      removeSelected: index,
+      unindexSelected: null
+    });
+  },
+	extractURISFromData: function(index){
 		var uris = []; 
 		for(let s in this.props.items.results[index].studies)
 			for(let ss in this.props.items.results[index].studies[s].series)
 				for(let i in this.props.items.results[index].studies[s].series[ss].images)
 					uris.push(this.props.items.results[index].studies[s].series[ss].images[i].uri);
-		
+		return uris;
+	},
+	onUnindexConfirm: function(index){
+		let uris = this.extractURISFromData(index);
 		let p = this.props.provider;
 
 		ActionCreators.unindex(uris, p);
+	},
+	onRemoveConfirm: function(index){
+		let uris = this.extractURISFromData(index);
+		ActionCreators.remove(uris);
 	},
 	onPatientClick:function(id, index){
 		console.log("Patient", id, "clicked");
 		this.props.onItemClick(this.props.items.results[index]);
 	},
-  	_onChange : function(data){
-	    console.log("onchange");
-	    console.log(data.success);
-	    console.log(data.status);
-	    if (this.isMounted())
-	    {
-	      this.setState({data:data.data,
-	      status:"stopped",
-	      success: data.success});
-	    }
-  	}
+  _onChange : function(data){
+    console.log("onchange");
+    console.log(data.success);
+    console.log(data.status);
+    if (this.isMounted())
+    {
+      this.setState({data:data.data,
+      status:"stopped",
+      success: data.success});
+    }
+  }
 });
 
 export {PatientView};

@@ -14,14 +14,13 @@ var ImageView = React.createClass({
         image: null,
         dump: null,
     	  status: "loading",
-        unindexSelected: null
+        unindexSelected: null,
+        removeSelected: null,
+        enableAdvancedSearch: this.props.enableAdvancedSearch
       };
   	},
     componentDidMount: function(){
-       var self = this;
-
        $('#imagetable').dataTable({paging: true,searching: false,info:true});
-
      },
      componentDidUpdate: function(){
 
@@ -40,7 +39,8 @@ var ImageView = React.createClass({
             thumbUrl = Endpoints.base + "/dic2png?thumbnail=true&SOPInstanceUID=" + uid;
 
           var advOpt = (self.state.enableAdvancedSearch) ? (<td>
-              <button nClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> Unindex</button>
+              <button onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> Unindex</button>
+              <button onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> Remove</button>
             </td>) : undefined;
               
           return (
@@ -88,6 +88,9 @@ var ImageView = React.createClass({
           <ConfirmModal show={self.state.unindexSelected !== null}
                         onHide={self.hideUnindex}
                         onConfirm={self.onUnindexConfirm.bind(self, self.state.unindexSelected)}/>
+          <ConfirmModal show={self.state.removeSelected !== null}
+                        onHide={self.hideRemove}
+                        onConfirm={self.onRemoveConfirm.bind(self, self.state.removeSelected)}/>
 			</div>
 		);
 	},
@@ -114,12 +117,27 @@ var ImageView = React.createClass({
       unindexSelected: item, dump: null, image: null
     });
   },
+  hideRemove () {
+    this.setState({
+      removeSelected: null
+    });
+  },
+  showRemove (item) {
+    this.setState({
+      removeSelected: item, dump: null, image: null
+    });
+  },
   onUnindexConfirm (item){
     console.log(item)
     var uris = []; 
     uris.push(item.uri);
     let p = this.props.provider;
     ActionCreators.unindex(uris, p);
+  },
+  onRemoveConfirm: function(item){
+    var uris = []; 
+    uris.push(item.uri);
+    ActionCreators.remove(uris);
   },
     _onChange : function(data){
       console.log("onchange");

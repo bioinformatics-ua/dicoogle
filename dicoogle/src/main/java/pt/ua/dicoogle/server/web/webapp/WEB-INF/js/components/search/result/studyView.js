@@ -11,6 +11,7 @@ var StudyView = React.createClass({
         data: [],
     	  status: "loading",
         unindexSelected: null,
+        removeSelected: null,
         enableAdvancedSearch: this.props.enableAdvancedSearch
       };
   	},
@@ -29,22 +30,21 @@ var StudyView = React.createClass({
 
 		var resultArray = this.props.patient.studies;
 
-		var resultItems = (
-				resultArray.map(function(item){
-				  let advOpt = (self.state.enableAdvancedSearch) && (<td> 
-                <button onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> Unindex</button>
-              </td>);
-		      		return (
-				    	     <tr className="resultRow" style={{"cursor" : "pointer"}}>
-				    	     	<td onclick="" onClick={self.onStudyClick.bind(this, item)}> {item.studyDate}</td>
-				    	     	<td onclick="" onClick={self.onStudyClick.bind(this, item)}> {item.studyDescription}</td>
-				    	     	<td onclick="" onClick={self.onStudyClick.bind(this, item)}> {item.institutionName}</td>
-				    	     	<td onclick="" onClick={self.onStudyClick.bind(this, item)}> {item.modalities}</td>
-				    	     	{advOpt}
-				    	     </tr>
-			           	);
-       			})
-			);
+		var resultItems = resultArray.map(function(item){
+        let advOpt = (self.state.enableAdvancedSearch) && (<td> 
+              <button onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> Unindex</button>
+              <button onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> Remove</button>
+          </td>);
+        return (
+             <tr className="resultRow" style={{"cursor" : "pointer"}}>
+              <td onclick="" onClick={self.onStudyClick.bind(this, item)}> {item.studyDate}</td>
+              <td onclick="" onClick={self.onStudyClick.bind(this, item)}> {item.studyDescription}</td>
+              <td onclick="" onClick={self.onStudyClick.bind(this, item)}> {item.institutionName}</td>
+              <td onclick="" onClick={self.onStudyClick.bind(this, item)}> {item.modalities}</td>
+              {advOpt}
+             </tr>
+            );
+    });
 
 		var header = (self.state.enableAdvancedSearch) ? (
 				<tr>
@@ -67,15 +67,18 @@ var StudyView = React.createClass({
 			<div>
 				<table id="study-table" className="table table-striped table-bordered" cellspacing="0" width="100%">
 					<thead>
-           				{header}
-        			</thead>
-        			 <tbody>
-           				{resultItems}
-            		</tbody>
-    			</table>
-          <ConfirmModal show={self.state.unindexSelected !== null}
-                        onHide={self.hideUnindex}
-                        onConfirm={self.onUnindexConfirm.bind(self, self.state.unindexSelected)} />
+            {header}
+          </thead>
+          <tbody>
+            {resultItems}
+          </tbody>
+        </table>
+        <ConfirmModal show={self.state.unindexSelected !== null}
+                      onHide={self.hideUnindex}
+                      onConfirm={self.onUnindexConfirm.bind(self, self.state.unindexSelected)} />
+        <ConfirmModal show={self.state.removeSelected !== null}
+                      onHide={self.hideRemove}
+                      onConfirm={self.onRemoveConfirm.bind(self, self.state.removeSelected)} />
 			</div>
 		);
 	},
@@ -86,19 +89,38 @@ var StudyView = React.createClass({
   },
   showUnindex (item) {
     this.setState({
-      unindexSelected: item
+      unindexSelected: item,
+      removeSelected: null
     });
   },
-	onUnindexConfirm: function(item){
-		console.log(item)
+  hideRemove () {
+    this.setState({
+      removeSelected: null
+    });
+  },
+  showRemove (item) {
+    this.setState({
+      removeSelected: item,
+      unindexSelected: null
+    });
+  },
+	extractURISFromData: function(item){
 		var uris = []; 
 		for(let ss in item.series)
 			for(let i in item.series[ss].images)
 				uris.push(item.series[ss].images[i].uri);
-		
+		return uris;
+	},
+	onUnindexConfirm: function(item){
+		console.log(item)
+		var uris = this.extractURISFromData(item);
 		let p = this.props.provider;
 
 		ActionCreators.unindex(uris, p);
+	},
+	onRemoveConfirm: function(item){
+		let uris = this.extractURISFromData(item);
+		ActionCreators.remove(uris);
 	},
 	onStudyClick:function(item){
 		this.props.onItemClick(item);

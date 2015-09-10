@@ -11,6 +11,7 @@ var SeriesView = React.createClass({
         data: [],
     	  status: "loading",
         unindexSelected: null,
+        removeSelected: null,
         enableAdvancedSearch: this.props.enableAdvancedSearch
       };
   	},
@@ -34,19 +35,19 @@ var SeriesView = React.createClass({
 				resultArray.map(function(item){
 					let advOpt = (self.state.enableAdvancedSearch) && (<td> 
                 <button onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> Unindex</button>
+                <button onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> Remove</button>
               </td>);
-		      		return (
-				    	     <tr className="resultRow" style={{"cursor" : "pointer"}}>
-				    	     	<td  onclick="" onClick={self.onSeriesClick.bind(this, item)}> {item.serieNumber}</td>
-				    	     	<td  onclick="" onClick={self.onSeriesClick.bind(this, item)}> {item.serieModality}</td>
-				    	     	<td  onclick="" onClick={self.onSeriesClick.bind(this, item)}> {item.serieDescription}</td>
-				    	     	<td  onclick="" onClick={self.onSeriesClick.bind(this, item)}> {item.images.length}</td>	
-				    	     	{advOpt}
-				    	     </tr>
-			           	);
-       			})
+          return (
+               <tr className="resultRow" style={{"cursor" : "pointer"}}>
+                <td  onclick="" onClick={self.onSeriesClick.bind(this, item)}> {item.serieNumber}</td>
+                <td  onclick="" onClick={self.onSeriesClick.bind(this, item)}> {item.serieModality}</td>
+                <td  onclick="" onClick={self.onSeriesClick.bind(this, item)}> {item.serieDescription}</td>
+                <td  onclick="" onClick={self.onSeriesClick.bind(this, item)}> {item.images.length}</td>	
+                {advOpt}
+               </tr>
+              );
+          })
 			);
-
 
 		var header = (self.state.enableAdvancedSearch) ? (
 				<tr>
@@ -65,7 +66,7 @@ var SeriesView = React.createClass({
         		</tr>
     		);
 
-	return (
+    return (
 			<div>
 				<table id="series-table" className="table table-striped table-bordered" cellspacing="0" width="100%">
 					<thead>
@@ -77,7 +78,10 @@ var SeriesView = React.createClass({
         </table>
         <ConfirmModal show={self.state.unindexSelected !== null}
                       onHide={self.hideUnindex}
-                      onConfirm={self.onUnindexClick.bind(self, self.state.unindexSelected)}/>
+                      onConfirm={self.onUnindexConfirm.bind(self, self.state.unindexSelected)}/>
+        <ConfirmModal show={self.state.removeSelected !== null}
+                      onHide={self.hideRemove}
+                      onConfirm={self.onRemoveConfirm.bind(self, self.state.removeSelected)}/>
 			</div>
 		);
 	},
@@ -91,15 +95,33 @@ var SeriesView = React.createClass({
       unindexSelected: item
     });
   },
-	onUnindexClick: function(item){
-		console.log(item)
+  hideRemove () {
+    this.setState({
+      removeSelected: null
+    });
+  },
+  showRemove (item) {
+    this.setState({
+      removeSelected: item
+    });
+  },
+	extractURISFromData: function(item){
 		var uris = []; 
 		for(let i in item.images)
 			uris.push(item.images[i].uri);
+		return uris;
+	},
+	onUnindexConfirm: function(item){
+		console.log(item)
+		var uris = this.extractURISFromData(item);
 		
 		let p = this.props.provider;
 
 		ActionCreators.unindex(uris, p);
+	},
+	onRemoveConfirm: function(item){
+		let uris = this.extractURISFromData(item);
+		ActionCreators.remove(uris);
 	},
 	onSeriesClick:function(item){
 		this.props.onItemClick(item);
