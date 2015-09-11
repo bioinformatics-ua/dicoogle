@@ -108,7 +108,7 @@ var ImageView = React.createClass({
               <TableHeaderColumn dataAlign="center" 
                 dataField="nStudies" width="20%" 
                 dataFormat={this.formatViewOptions} 
-                dataSort={true}>View options
+                dataSort={true}>View
               </TableHeaderColumn>
 
               <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} 
