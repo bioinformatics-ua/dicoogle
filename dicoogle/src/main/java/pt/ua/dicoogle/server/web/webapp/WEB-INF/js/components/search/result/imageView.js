@@ -58,15 +58,15 @@ var ImageView = React.createClass({
     let uid = item.sopInstanceUID;
     return (<div>
             <button title="Dump Image" type="button" onClick={self.showDump.bind(self, uid)} className="btn btn_dicoogle btn-xs fa fa-table"> </button>
-            <button title="Show Image" type="button" onClick={self.showImage.bind(self, uid)} className="btn btn_dicoogle  btn-xs fa fa-eye"> </button>
+            <button title="Show Image" type="button" onClick={self.showImage.bind(self, uid)} className="btn btn_dicoogle btn-xs fa fa-eye"> </button>
           </div>);
   },
     
   formatOptions : function(cell, item){
       let self = this;
       if (this.props.enableAdvancedSearch)
-          return (<div><button title="Unindex (does not remove file phisically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> </button>
-        <button title="Removes the file phisically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> </button></div>
+          return (<div><button title="Unindex (does not remove file physically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> </button>
+        <button title="Removes the file physically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> </button></div>
 
       );
       return (<div></div>);

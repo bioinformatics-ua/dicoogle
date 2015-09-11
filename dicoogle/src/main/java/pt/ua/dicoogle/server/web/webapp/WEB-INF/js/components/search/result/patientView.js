@@ -59,8 +59,8 @@ var PatientView = React.createClass({
   formatOptions : function(cell, item){
       let self = this;
       if (this.props.enableAdvancedSearch)
-          return (<div><button title="Unindex (does not remove file phisically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> </button>
-        <button title="Removes the file phisically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> </button></div>
+          return (<div><button title="Unindex (does not remove file physically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> </button>
+        <button title="Removes the file physically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> </button></div>
 
       );
       return (<div></div>);

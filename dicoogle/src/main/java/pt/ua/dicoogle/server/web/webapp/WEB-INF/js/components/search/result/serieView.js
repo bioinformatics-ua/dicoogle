@@ -50,8 +50,8 @@ var SeriesView = React.createClass({
   formatOptions : function(cell, item){
       let self = this;
       if (this.props.enableAdvancedSearch)
-          return (<div><button title="Unindex (does not remove file phisically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> </button>
-        <button title="Removes the file phisically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> </button></div>
+          return (<div><button title="Unindex (does not remove file physically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> </button>
+        <button title="Removes the file physically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> </button></div>
 
       );
       return (<div></div>);
@@ -76,7 +76,7 @@ var SeriesView = React.createClass({
     };
     
 
-    return (
+    return ( // FIXME bad labels and bad values in table
 			<div>
         <BootstrapTable  data={resultArray}  selectRow={selectRowProp} pagination={true} striped={true} hover={true}  width="100%">
           <TableHeaderColumn dataAlign="right" dataField="id" width="20%" isKey={true} dataFormat={this.formatNumber} dataSort={true}>Number</TableHeaderColumn>
