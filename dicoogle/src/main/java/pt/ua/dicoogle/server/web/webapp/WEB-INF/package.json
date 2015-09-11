@@ -43,7 +43,6 @@
     "babelify": "^6.3.0",
     "browserify": "^11.0.1",
     "browserify-shim": "~3.8.2",
-    "datatables": "~1.10.8",
     "envify": "^3.0.0",
     "flux": "^2.0.1",
     "htmlprocessor": "^0.1.10",
