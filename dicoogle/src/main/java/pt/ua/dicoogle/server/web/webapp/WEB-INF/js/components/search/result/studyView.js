@@ -1,5 +1,6 @@
 import React from 'react';
 import {SearchStore} from '../../../stores/searchStore';
+import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table'; 
 
 import {ActionCreators} from '../../../actions/searchActions';
 import {unindex} from '../../../handlers/requestHandler';
@@ -14,88 +15,104 @@ var StudyView = React.createClass({
         removeSelected: null
       };
   	},
-    componentDidMount: function(){
-       $('#study-table').dataTable({paging: true,searching: false,info:true});
-     },
-    componentDidUpdate: function(){
-    },
+    
    	componentWillMount: function() {
     	// Subscribe to the store.
     	SearchStore.listen(this._onChange);
   	},
+    
+   /**
+   * 2015-09-11:
+   * This method returns a React Component that only has the text and couple of 
+   * events (such as click). Today, react-bootstrap-table does not support selectRows
+   * without appear radio ou checkbox.
+   * 
+   */
+  
+  formatGlobal : function(text, item){
+    let self = this;
+    return (<div onClick={self.onStudyClick.bind(this, item)} className="" style={{"cursor" : "pointer"}}>&nbsp;  {text}
+    </div>)
+  },
+  formatStudyDate : function(cell, item){
+    return this.formatGlobal(item.studyDate, item);
+  },
+  formatStudyDescription : function(cell, item){
+    return this.formatGlobal(item.studyDescription, item);
+  },
+  formatInstitutionName : function(cell, item){
+    return this.formatGlobal(item.institutionName, item);
+  },
+  formatModalities : function(cell, item){
+    return this.formatGlobal(item.modalities, item);
+  }, 
+  
+  formatOptions : function(cell, item){
+      let self = this;
+      if (this.props.enableAdvancedSearch)
+          return (<div><button title="Unindex (does not remove file phisically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> </button>
+        <button title="Removes the file phisically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> </button></div>
+
+      );
+      return (<div></div>);
+  },
+    
+    
+    
 	render: function() {
 		var self = this;
 		var resultArray = this.props.patient.studies;
-		var resultItems = resultArray.map(function(item){
-        let advOpt = (self.props.enableAdvancedSearch) && (<td> 
-              <button onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> Unindex</button>
-              <button onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> Remove</button>
-          </td>);
-        return (
-             <tr className="resultRow" style={{"cursor" : "pointer"}}>
-              <td onclick="" onClick={self.onStudyClick.bind(this, item)}> {item.studyDate}</td>
-              <td onclick="" onClick={self.onStudyClick.bind(this, item)}> {item.studyDescription}</td>
-              <td onclick="" onClick={self.onStudyClick.bind(this, item)}> {item.institutionName}</td>
-              <td onclick="" onClick={self.onStudyClick.bind(this, item)}> {item.modalities}</td>
-              {advOpt}
-             </tr>
-            );
-    });
+    
+    let sizeOptions = "20%"
 
-		var header = (self.props.enableAdvancedSearch) ? (
-				<tr>
-					<th>Data</th>
-        			<th>Description</th>
-        			<th>Institution name</th>
-        			<th>Modalities</th>
-        			<th>Options</th>
-        		</tr>
-    		) : (
-				<tr>
-					<th>Data</th>
-        			<th>Description</th>
-        			<th>Institution name</th>
-        			<th>Modalities</th>
-        		</tr>
-    		);
-
-	return (
-			<div>
-				<table id="study-table" className="table table-striped table-bordered" cellspacing="0" width="100%">
-					<thead>
-            {header}
-          </thead>
-          <tbody>
-            {resultItems}
-          </tbody>
-        </table>
-        <ConfirmModal show={self.state.unindexSelected !== null}
-                      onHide={self.hideUnindex}
-                      onConfirm={self.onUnindexConfirm.bind(self, self.state.unindexSelected)} />
-        <ConfirmModal show={self.state.removeSelected !== null}
-                      message="The following files will be unindexed and then deleted from their storage."
-                      onHide={self.hideRemove}
-                      onConfirm={self.onRemoveConfirm.bind(self, self.state.removeSelected)} />
-			</div>
-		);
+    var selectRowProp = {
+      clickToSelect: true,
+      mode: "none",
+      bgColor: "rgb(163, 210, 216)",
+      onSelect: this.onRowSelect
+    };
+  
+  
+    return (
+        <div>
+            <BootstrapTable  data={resultArray}  selectRow={selectRowProp} pagination={true} striped={false} hover={true}  width="100%">
+            <TableHeaderColumn dataAlign="right" dataField="studyDate" width="20%" isKey={true} dataFormat={this.formatStudyDate} dataSort={true}>Date</TableHeaderColumn>
+            <TableHeaderColumn dataAlign="left" dataField="studyDescription" dataFormat={this.formatStudyDescription} width="40%"  isKey={false} dataSort={true}>Description</TableHeaderColumn>
+            <TableHeaderColumn dataAlign="center" dataField="institutionName" dataFormat={this.formatInstitutionName} width="20%"  dataSort={true}>Institution</TableHeaderColumn>
+            <TableHeaderColumn dataAlign="center" dataField="modalities" width="20%" dataFormat={this.formatModalities} dataSort={true}>Modality</TableHeaderColumn>
+            <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="" width={sizeOptions} isKey={false} dataSort={false} dataFormat={this.formatOptions}>Options</TableHeaderColumn>
+            </BootstrapTable>
+          <ConfirmModal show={self.state.unindexSelected !== null}
+                        onHide={self.hideUnindex}
+                        onConfirm={self.onUnindexConfirm.bind(self, self.state.unindexSelected)} />
+          <ConfirmModal show={self.state.removeSelected !== null}
+                        message="The following files will be unindexed and then deleted from their storage."
+                        onHide={self.hideRemove}
+                        onConfirm={self.onRemoveConfirm.bind(self, self.state.removeSelected)} />
+        </div>
+      );
 	},
   hideUnindex () {
+      if (this.isMounted())
     this.setState({
       unindexSelected: null
     });
   },
   showUnindex (item) {
+      if (this.isMounted())
     this.setState({
       unindexSelected: item,
       removeSelected: null
     });
   },
   hideRemove () {
+      if (this.isMounted())
     this.setState({
       removeSelected: null
     });
   },
   showRemove (item) {
+      if (this.isMounted())
     this.setState({
       removeSelected: item,
       unindexSelected: null
@@ -122,6 +139,9 @@ var StudyView = React.createClass({
 	onStudyClick:function(item){
 		this.props.onItemClick(item);
 	},
+  onRowSelect: function(row, isSelected){
+    this.props.onItemClick(row);
+  },
   	_onChange : function(data){
 	    console.log("onchange");
 	    console.log(data.success);

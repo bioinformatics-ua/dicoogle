@@ -120,8 +120,13 @@ input {
 .resultRow:hover {
   background-color: #a3d2d8; }
 
-.table-striped > tbody > tr:nth-child(odd).resultRow:hover {
+.table tbody tr:hover td, .table tbody tr:hover th {
   background-color: #a3d2d8; }
+
+.table thead th {
+  background-color: #CCCCCC;
+  color: black;
+  font-style: bold; }
 
 .modalities {
   width: 200px; }

@@ -32,11 +32,12 @@
 		background-color: $blue6;
 	}
 }
+.table tbody tr:hover td, .table tbody tr:hover th {
+    background-color: $blue6;
+}
 
-.table-striped > tbody > tr:nth-child(odd){
-	&.resultRow{
-		&:hover{
-		background-color: $blue6;
-	 }
- }
+.table thead th {
+    background-color: #CCCCCC;
+	color: black;
+    font-style: bold;
 }

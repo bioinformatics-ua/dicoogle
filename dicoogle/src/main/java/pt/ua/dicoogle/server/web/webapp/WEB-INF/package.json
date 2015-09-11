@@ -62,7 +62,8 @@
     "reflux": "^0.2.12",
     "rimraf": "latest",
     "uglify-js": "^2.4.24",
-    "watchify": "^3.3.1"
+    "watchify": "^3.3.1",
+    "react-bootstrap-table": "0.9.14"
   },
   "scripts": {
     "prepublish": "rimraf js/build.js && parallelshell \"npm run css\" \"npm run html\" \"npm run js\"",

@@ -7,6 +7,8 @@ import ConfirmModal from './confirmModal';
 import {Endpoints} from '../../../constants/endpoints';
 import {DumpStore} from '../../../stores/dumpStore';
 import {DumpActions} from '../../../actions/dumpActions';
+import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
+
 
 var ImageView = React.createClass({
   	getInitialState: function() {
@@ -18,108 +20,153 @@ var ImageView = React.createClass({
         removeSelected: null
       };
   	},
-    componentDidMount: function(){
-       $('#image-table').dataTable({paging: true,searching: false,info:true});
-     },
-     componentDidUpdate: function(){
 
-     },
     componentWillMount: function() {
       // Subscribe to the store.
       SearchStore.listen(this._onChange);
     },
+    
+    
+  /**
+   * 2015-09-11:
+   * This method returns a React Component that only has the text and couple of 
+   * events (such as click). Today, react-bootstrap-table does not support selectRows
+   * without appear radio ou checkbox.
+   * 
+   */
+  
+  formatGlobal : function(text, item){
+    let self = this;
+    return (<div className="" style={{"cursor" : "pointer"}}>&nbsp;  {text} 
+    </div>)
+  },
+  formatFileName : function(cell, item){
+    return this.formatGlobal(item.filename, item);
+  },
+  formatSOPInstanceUID : function(cell, item){
+    return this.formatGlobal(item.sopInstanceUID, item);
+    
+  },
+  formatThumbUrl : function(cell, item){
+    let uid = item.sopInstanceUID;
+    let thumbUrl = Endpoints.base + "/dic2png?thumbnail=true&SOPInstanceUID=" + uid;
+    
+    return (<div>{thumbUrl ? <img src={thumbUrl} width="64px" /> : "NA"}</div>)
+  },
+  formatViewOptions : function(cell, item){
+    let self = this;
+    let uid = item.sopInstanceUID;
+    return (<div>
+            <button title="Dump Image" type="button" onClick={self.showDump.bind(self, uid)} className="btn btn_dicoogle btn-xs fa fa-table"> </button>
+            <button title="Show Image" type="button" onClick={self.showImage.bind(self, uid)} className="btn btn_dicoogle  btn-xs fa fa-eye"> </button>
+          </div>);
+  },
+    
+  formatOptions : function(cell, item){
+      let self = this;
+      if (this.props.enableAdvancedSearch)
+          return (<div><button title="Unindex (does not remove file phisically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> </button>
+        <button title="Removes the file phisically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> </button></div>
+
+      );
+      return (<div></div>);
+  },  
+  onRowSelect: function(row, isSelected){
+    this.props.onItemClick(row);
+  },
+
 	render: function() {
 		let self = this;
 		var resultArray = this.props.serie.images;
-		var resultItems = resultArray.map(function(item, i) {
-          let uid = item.sopInstanceUID;
-          let thumbUrl;
-          if (false) {
-            thumbUrl = Endpoints.base + "/dic2png?thumbnail=true&SOPInstanceUID=" + uid;
-          }
-          return (
-              <tr key={i}>
-                <td> {item.filename}</td>
-                <td> {item.sopInstanceUID}</td>
-                <td> {thumbUrl ? <img src={thumbUrl} width="64px" /> : "NA"} </td>
-                <td>
-                  <button type="button" onClick={self.showDump.bind(self, uid)} className="btn btn_dicoogle">Dump Image</button>
-                  <button type="button" onClick={self.showImage.bind(self, uid)} className="btn btn_dicoogle">Show Image</button>
-                </td>
-                {(self.props.enableAdvancedSearch) && (<td>
-                  <button onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> Unindex</button>
-                  <button onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> Remove</button>
-                </td>)}
-              </tr>);
-        });
-    var header = (self.props.enableAdvancedSearch) ? (
-      <tr>
-            <th>FileName</th>
-            <th>SopInstanceUID</th>
-            <th>Thumbnail</th>
-            <th></th>
-            <th>Options</th>
-          </tr>
-      ) : (
-      <tr>
-            <th>FileName</th>
-            <th>SopInstanceUID</th>
-            <th>Thumbnail</th>
-            <th></th>
-          </tr>
-      );
+    
+    let sizeOptions = "20%"
+    
+    var selectRowProp = {
+      clickToSelect: true,
+      mode: "none",
+      bgColor: "rgb(163, 210, 216)",
+      onSelect: this.onRowSelect
+    };
+    return (
+        <div>
 
-	return (
-			<div>
-				<table id="image-table" className="table table-striped table-bordered" cellspacing="0" width="100%">
-					<thead>
-            {header}
-          </thead>
-          <tbody>
-            {resultItems}
-          </tbody>
-        </table>
-        <ConfirmModal show={self.state.unindexSelected !== null}
-                      onHide={self.hideUnindex}
-                      onConfirm={self.onUnindexConfirm.bind(self, self.state.unindexSelected)}/>
-        <ConfirmModal show={self.state.removeSelected !== null}
-                      message="The following files will be unindexed and then deleted from their storage."
-                      onHide={self.hideRemove}
-                      onConfirm={self.onRemoveConfirm.bind(self, self.state.removeSelected)}/>
-        <PopOverView uid={this.state.dump} onHide={this.onHideDump} />
-        <PopOverImageViewer uid={this.state.image} onHide={this.onHideImage}/>
-			</div>
-		);
+          
+            <BootstrapTable  data={resultArray} selectRow={selectRowProp} 
+                  pagination={true} striped={true} hover={true}  width="100%">
+              <TableHeaderColumn dataAlign="left" dataField="filename" width="20%"
+                isKey={false} dataFormat={this.formatFileName}
+                dataSort={true}>File Name
+              </TableHeaderColumn>
+              <TableHeaderColumn dataAlign="left" dataField="sopInstanceUID" 
+                dataFormat={this.formatSOPInstanceUID} width="40%"  isKey={true} 
+                dataSort={true}>SOPInstanceUID
+              </TableHeaderColumn>
+              <TableHeaderColumn dataAlign="center" dataField="" 
+                dataFormat={this.formatThumbUrl} width="20%"  
+                dataSort={true}>Thumbnail
+              </TableHeaderColumn>
+              <TableHeaderColumn dataAlign="center" 
+                dataField="nStudies" width="20%" 
+                dataFormat={this.formatViewOptions} 
+                dataSort={true}>View options
+              </TableHeaderColumn>
+
+              <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} 
+                dataAlign="center" dataField="" width={sizeOptions} isKey={false} 
+                dataSort={false} dataFormat={this.formatOptions}>Options
+              </TableHeaderColumn>
+            </BootstrapTable>
+          
+          
+          <ConfirmModal show={self.state.unindexSelected !== null}
+                        onHide={self.hideUnindex}
+                        onConfirm={self.onUnindexConfirm.bind(self, self.state.unindexSelected)}/>
+          <ConfirmModal show={self.state.removeSelected !== null}
+                        message="The following files will be unindexed and then deleted from their storage."
+                        onHide={self.hideRemove}
+                        onConfirm={self.onRemoveConfirm.bind(self, self.state.removeSelected)}/>
+          <PopOverView uid={this.state.dump} onHide={this.onHideDump} />
+          <PopOverImageViewer uid={this.state.image} onHide={this.onHideImage}/>
+        </div>
+      );
 	},
   onHideDump() {
-    this.setState({dump: null});
+      if (this.isMounted())
+        this.setState({dump: null});
   },
   onHideImage() {
+      if (this.isMounted())
     this.setState({image: null});
   },
   showDump(uid) {
+      if (this.isMounted())
     this.setState({dump: uid, image: null, unindexSelected: null});
     DumpActions.get(uid);
   },
   showImage(uid) {
+      if (this.isMounted())
     this.setState({dump: null, image: uid, unindexSelected: null});
   },
   hideUnindex () {
+      if (this.isMounted())
     this.setState({
       unindexSelected: null
     });
   },
   showUnindex (item) {
+      if (this.isMounted())
     this.setState({
       unindexSelected: item, dump: null, image: null
     });
   },
   hideRemove () {
+      if (this.isMounted())
     this.setState({
       removeSelected: null
     });
   },
   showRemove (item) {
+      if (this.isMounted())
     this.setState({
       removeSelected: item, dump: null, image: null
     });
@@ -155,19 +202,9 @@ var PopOverView = React.createClass({
     	current: 0
     };
   },
-  componentDidMount: function() {
-  },
   componentWillMount: function() {
     // Subscribe to the store.
     DumpStore.listen(this._onChange);
-  },
-  componentDidUpdate: function(){
-    $('#dumptable').dataTable({
-      paging: false,
-      searching: false,
-      info: false,
-      responsive: false
-    });
   },
 
   _onChange: function(data){
@@ -201,37 +238,31 @@ var PopOverView = React.createClass({
           rows.push(<p key={i}><b>{key}:</b> {obj[key]}</p>);
           fields.push({att: key, field: obj[key]});
        });
+    
+    let sizeOptions = "20%"
 
-    var fieldstable = fields.map(function(item, i){
-      return (
-        <tr key={i}>
-          <td>
-            <p>{item.att}</p>
-          </td>
-          <td>
-            <p>{item.field}</p>
-          </td>
-        </tr>
-      );
-    });
-
+    var selectRowProp = {
+      clickToSelect: true,
+      mode: "none",
+      bgColor: "rgb(163, 210, 216)",
+      onSelect: this.onRowSelect
+    };
 		return (
 			<Modal onHide={this.props.onHide} show={this.props.uid !== null} bsClass='modal' bsStyle='primary' dialogClassName='table-dump'animation={true}>
           <Modal.Header>
-            <Modal.Title>Image Dump</Modal.Title>
+            <Modal.Title>Dump DICOM metadata</Modal.Title>
           </Modal.Header>
 		        <div className='modal-body'>
-              <table id="dumptable" className="table-test table table-striped table-bordered responsive" cellspacing="0" width="100%">
-                <thead>
-                  <tr>
-                     <th>Attribute</th>
-                     <th>Field</th>
-                   </tr>
-                </thead>
-                <tbody>
-                    {fieldstable}
-                </tbody>
-              </table>
+              
+              <BootstrapTable  search={true} columnFilter={true} data={fields}  selectRow={selectRowProp} pagination={true} striped={true} hover={true}  className="table-test table table-striped table-bordered responsive" cellspacing="0" width="100%">
+              <TableHeaderColumn dataAlign="right" 
+                dataField="att" width="20%" isKey={true} 
+                dataSort={true}>Attribute</TableHeaderColumn>
+              <TableHeaderColumn dataAlign="left" 
+                dataField="field"  
+                width="40%"  isKey={false} dataSort={true}>Field</TableHeaderColumn>
+              </BootstrapTable>
+              
             </div>
 		        <div className='modal-footer'>
 		          <Button onClick={this.props.onHide}>Close</Button>
