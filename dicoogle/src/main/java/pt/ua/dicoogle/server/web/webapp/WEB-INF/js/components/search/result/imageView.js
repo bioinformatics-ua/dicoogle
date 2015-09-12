@@ -6,6 +6,8 @@ import {unindex} from '../../../handlers/requestHandler';
 import ConfirmModal from './confirmModal';
 import {Endpoints} from '../../../constants/endpoints';
 import {DumpStore} from '../../../stores/dumpStore';
+import ImageLoader from 'react-imageloader';
+
 import {DumpActions} from '../../../actions/dumpActions';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 
@@ -47,11 +49,20 @@ var ImageView = React.createClass({
     return this.formatGlobal(item.sopInstanceUID, item);
     
   },
+  _preloader : function (){
+     return <img src="spinner.gif" />;
+
+  },
   formatThumbUrl : function(cell, item){
     let uid = item.sopInstanceUID;
     let thumbUrl = Endpoints.base + "/dic2png?thumbnail=true&SOPInstanceUID=" + uid;
     
-    return (<div>{thumbUrl ? <img src={thumbUrl} width="64px" /> : "NA"}</div>)
+    return (<div><ImageLoader
+                src={thumbUrl}
+                style={{"width":"64px"}}
+                wrapper={React.DOM.div}>
+              <img src="assets/image-not-found.png" width="30px" />  
+          </ImageLoader></div>)
   },
   formatViewOptions : function(cell, item){
     let self = this;
@@ -286,7 +297,12 @@ var PopOverImageViewer = React.createClass({
             <Modal.Title>View Image</Modal.Title>
           </Modal.Header>
           <div className='modal-body'>
-            <img id="image1" src={this.props.uid ? url : null} width="100%" />
+            <ImageLoader
+                src={url}
+                style={{"width":"100%"}}
+                wrapper={React.DOM.div}>
+              <img src="assets/image-not-found.png" width="100%" />  
+          </ImageLoader>
           </div>
           <div className='modal-footer'>
             <Button onClick={this.props.onHide}>Close</Button>
