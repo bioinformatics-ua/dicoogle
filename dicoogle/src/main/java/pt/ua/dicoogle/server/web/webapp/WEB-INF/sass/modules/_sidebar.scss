@@ -5,9 +5,9 @@
     li {
         a {
             &:hover {
-                background: $hover_color;
+                background: $blue5;
             }
-            color:#6CB7C5;
+            color:$blue1;
             font-size:17px;
             font-weight:bold;
             
@@ -15,7 +15,7 @@
     }
     margin-top:50px;
     .active{
-        background: $hover_color;
+        background: $blue5;
         color: #ffffff;
      
     }
