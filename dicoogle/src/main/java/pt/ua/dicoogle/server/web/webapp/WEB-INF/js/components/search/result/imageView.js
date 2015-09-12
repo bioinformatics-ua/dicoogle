@@ -103,11 +103,11 @@ var ImageView = React.createClass({
               </TableHeaderColumn>
               
               <TableHeaderColumn dataAlign="center" 
-                 width="20%" 
+                 width="15%" 
                 dataFormat={this.formatViewOptions} 
                 dataSort={true}>
               </TableHeaderColumn>
-              <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" 
+              <TableHeaderColumn dataAlign="center" 
                 dataFormat={this.formatThumbUrl} width="20%"  
                 dataSort={true}>
               </TableHeaderColumn>
