@@ -38,10 +38,10 @@ var SeriesView = React.createClass({
     return this.formatGlobal(item.serieNumber, item);
   },
   formatModality : function(cell, item){
-    return this.formatGlobal(item.modality, item);
+    return this.formatGlobal(item.serieModality, item);
   },
   formatDescription : function(cell, item){
-    return this.formatGlobal(item.description, item);
+    return this.formatGlobal(item.serieDescription, item);
   },
   formaImages : function(cell, item){
     return this.formatGlobal(item.images.length, item);
@@ -80,8 +80,8 @@ var SeriesView = React.createClass({
 			<div>
         <BootstrapTable  data={resultArray}  selectRow={selectRowProp} pagination={true} striped={true} hover={true}  width="100%">
           <TableHeaderColumn dataAlign="right" dataField="id" width="20%" isKey={true} dataFormat={this.formatNumber} dataSort={true}>Number</TableHeaderColumn>
-          <TableHeaderColumn dataAlign="left" dataField="name" dataFormat={this.formatModality} width="40%"  isKey={false} dataSort={true}>Modality</TableHeaderColumn>
-          <TableHeaderColumn dataAlign="center" dataField="gender" dataFormat={this.formatDescription} width="20%"  dataSort={true}>Description</TableHeaderColumn>
+          <TableHeaderColumn dataAlign="left" dataField="name" dataFormat={this.formatModality} width="20%"  isKey={false} dataSort={true}>Modality</TableHeaderColumn>
+          <TableHeaderColumn dataAlign="center" dataField="gender" dataFormat={this.formatDescription} width="40%"  dataSort={true}>Description</TableHeaderColumn>
           <TableHeaderColumn dataAlign="center" dataField="nStudies" width="20%" dataFormat={this.formaImages} dataSort={true}>#Images</TableHeaderColumn>
           <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="" width={sizeOptions} isKey={false} dataSort={false} dataFormat={this.formatOptions}>Options</TableHeaderColumn>
           </BootstrapTable>

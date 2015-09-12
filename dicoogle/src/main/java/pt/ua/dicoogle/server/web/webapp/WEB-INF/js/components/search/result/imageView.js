@@ -98,17 +98,18 @@ var ImageView = React.createClass({
                 dataSort={true}>File Name
               </TableHeaderColumn>
               <TableHeaderColumn dataAlign="left" dataField="sopInstanceUID" 
-                dataFormat={this.formatSOPInstanceUID} width="40%"  isKey={true} 
+                dataFormat={this.formatSOPInstanceUID} width="60%"  isKey={true} 
                 dataSort={true}>SOPInstanceUID
               </TableHeaderColumn>
-              <TableHeaderColumn dataAlign="center" dataField="" 
-                dataFormat={this.formatThumbUrl} width="20%"  
-                dataSort={true}>Thumbnail
-              </TableHeaderColumn>
+              
               <TableHeaderColumn dataAlign="center" 
-                dataField="nStudies" width="20%" 
+                 width="20%" 
                 dataFormat={this.formatViewOptions} 
-                dataSort={true}>View
+                dataSort={true}>
+              </TableHeaderColumn>
+              <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" 
+                dataFormat={this.formatThumbUrl} width="20%"  
+                dataSort={true}>
               </TableHeaderColumn>
 
               <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} 

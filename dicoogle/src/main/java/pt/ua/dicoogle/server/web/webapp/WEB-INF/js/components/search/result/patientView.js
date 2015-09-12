@@ -89,10 +89,10 @@ var PatientView = React.createClass({
 			<div>
 
         <BootstrapTable  data={resultArray}  selectRow={selectRowProp} pagination={true} striped={true} hover={true}  width="100%">
-          <TableHeaderColumn dataAlign="right" dataField="id" width="20%" isKey={true} dataFormat={this.formatID} dataSort={true}>ID</TableHeaderColumn>
-          <TableHeaderColumn dataAlign="left" dataField="name" dataFormat={this.formatName} width="40%"  isKey={false} dataSort={true}>Name</TableHeaderColumn>
-          <TableHeaderColumn dataAlign="center" dataField="gender" dataFormat={this.formatGender} width="20%"  dataSort={true}>Gender</TableHeaderColumn>
-          <TableHeaderColumn dataAlign="center" dataField="nStudies" width="20%" dataFormat={this.formatNumberOfStudies} dataSort={true}>Studies</TableHeaderColumn>
+          <TableHeaderColumn dataAlign="right" dataField="id" width="25%" isKey={true} dataFormat={this.formatID} dataSort={true}>ID</TableHeaderColumn>
+          <TableHeaderColumn dataAlign="left" dataField="name" dataFormat={this.formatName} width="50%"  isKey={false} dataSort={true}>Name</TableHeaderColumn>
+          <TableHeaderColumn dataAlign="center" dataField="gender" dataFormat={this.formatGender} width="12%"  dataSort={true}>Gender</TableHeaderColumn>
+          <TableHeaderColumn dataAlign="center" dataField="nStudies" width="13%" dataFormat={this.formatNumberOfStudies} dataSort={true}>#Studies</TableHeaderColumn>
           <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="" width={sizeOptions} isKey={false} dataSort={false} dataFormat={this.formatOptions}>Options</TableHeaderColumn>
           </BootstrapTable>
 

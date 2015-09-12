@@ -76,10 +76,10 @@ var StudyView = React.createClass({
     return (
         <div>
             <BootstrapTable  data={resultArray}  selectRow={selectRowProp} pagination={true} striped={false} hover={true}  width="100%">
-            <TableHeaderColumn dataAlign="right" dataField="studyDate" width="20%" isKey={true} dataFormat={this.formatStudyDate} dataSort={true}>Date</TableHeaderColumn>
+            <TableHeaderColumn dataAlign="right" dataField="studyDate" width="18%" isKey={true} dataFormat={this.formatStudyDate} dataSort={true}>Date</TableHeaderColumn>
             <TableHeaderColumn dataAlign="left" dataField="studyDescription" dataFormat={this.formatStudyDescription} width="40%"  isKey={false} dataSort={true}>Description</TableHeaderColumn>
-            <TableHeaderColumn dataAlign="center" dataField="institutionName" dataFormat={this.formatInstitutionName} width="20%"  dataSort={true}>Institution</TableHeaderColumn>
-            <TableHeaderColumn dataAlign="center" dataField="modalities" width="20%" dataFormat={this.formatModalities} dataSort={true}>Modality</TableHeaderColumn>
+            <TableHeaderColumn dataAlign="center" dataField="institutionName" dataFormat={this.formatInstitutionName} width="30%"  dataSort={true}>Institution</TableHeaderColumn>
+            <TableHeaderColumn dataAlign="center" dataField="modalities" width="14%" dataFormat={this.formatModalities} dataSort={true}>Modality</TableHeaderColumn>
             <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="" width={sizeOptions} isKey={false} dataSort={false} dataFormat={this.formatOptions}>Options</TableHeaderColumn>
             </BootstrapTable>
           <ConfirmModal show={self.state.unindexSelected !== null}
