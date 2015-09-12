@@ -136,6 +136,18 @@ input {
   overflow: hidden;
   text-overflow: ellipsis; }
 
+.pagination li.active a {
+  background-color: #008C99; }
+  .pagination li.active a:hover {
+    background: #008C99; }
+  .pagination li.active a:focus {
+    background: #008C99; }
+.pagination li a {
+  background-color: #DFEEF3;
+  color: #008C99; }
+  .pagination li a:hover {
+    background: #A3D2D8; }
+
 .modalities {
   width: 200px; }
 

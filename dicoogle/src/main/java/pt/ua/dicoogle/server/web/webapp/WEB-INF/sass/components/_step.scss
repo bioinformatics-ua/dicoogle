@@ -50,3 +50,26 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.pagination {
+    li.active {
+        a {
+            background-color: $blue1;
+            &:hover {
+                background: $blue1;
+            }
+            &:focus {
+                background: $blue1;
+            }
+        }
+    }
+    li {
+        a {
+            background-color: $main_color;
+            color: $blue1;
+            &:hover {
+                background: $hover_color;
+            }
+        }
+    }
+}
