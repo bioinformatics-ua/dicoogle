@@ -61,7 +61,7 @@ public class SearchServlet extends HttpServlet {
             "SOPInstanceUID", "StudyInstanceUID", "SeriesInstanceUID", "PatientID",
             "PatientName",    "PatientSex",       "Modality",          "StudyDate",
             "StudyID",        "StudyDescription", "SeriesNumber",      "SeriesDescription",
-            "InstitutionName");
+            "InstitutionName", "uri");
   
   	public enum SearchType {
       ALL, PATIENT;

@@ -31,6 +31,49 @@ function getPatients(freetext, isKeyword,provider,callbackSucccess, callbackErro
         });
 }
 
+function unindex(uri,provider, callbackSucccess, callbackError){
+    console.log("Unindex param: ", uri);
+
+    var url = Endpoints.base + '/management/tasks/unindex';
+    var data = {'uri': uri}
+    if(provider != 'all')
+      data['provider'] = provider;
+
+    $.ajax({
+
+      url: url,
+      data: data,
+      method: 'post',
+      traditional: true,
+      success: function(data) {
+    	 callbackSucccess(data); 
+      },
+      error: function(xhr, status, err) {
+        callbackError(xhr);
+      }
+    });
+}
+
+function remove(uri, callbackSucccess, callbackError){
+    console.log("Unindex param: ", uri);
+
+    var url = Endpoints.base + '/management/tasks/remove';
+    var data = {'uri': uri}
+    
+    $.ajax({
+      url: url,
+      data: data,
+      method: 'post',
+      traditional: true,
+      success: function(data) {
+       callbackSucccess(data); 
+      },
+      error: function(xhr, status, err) {
+        callbackError(xhr);
+      }
+    });
+}
+
 function getImageInfo(uid, callbackSucccess, callbackError){
         console.log("getImageInfo: ", uid);
 
@@ -141,4 +184,4 @@ function forceIndex(uri){
 
 }
 
-export {getPatients, getImageInfo, request, setWatcher,setZip,setSaveT,saveIndexOptions,forceIndex};
+export {getPatients, unindex, remove, getImageInfo, request, setWatcher,setZip,setSaveT,saveIndexOptions,forceIndex};

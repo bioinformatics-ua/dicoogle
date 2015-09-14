@@ -76,6 +76,9 @@ input {
 .table-test {
   column-width: auto !important; }
 
+.table-dump {
+  min-width: 800px; }
+
 .btn_dicoogle {
   background-color: #008C99;
   color: #ffffff;
@@ -117,8 +120,33 @@ input {
 .resultRow:hover {
   background-color: #a3d2d8; }
 
-.table-striped > tbody > tr:nth-child(odd).resultRow:hover {
+.table tbody tr:hover td, .table tbody tr:hover th {
   background-color: #a3d2d8; }
+
+.table thead th {
+  background-color: #EEEEEE;
+  color: black;
+  font-style: bold; }
+
+.table {
+  table-layout: fixed; }
+
+.table td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; }
+
+.pagination li.active a {
+  background-color: #008C99; }
+  .pagination li.active a:hover {
+    background: #008C99; }
+  .pagination li.active a:focus {
+    background: #008C99; }
+.pagination li a {
+  background-color: #DFEEF3;
+  color: #008C99; }
+  .pagination li a:hover {
+    background: #A3D2D8; }
 
 .modalities {
   width: 200px; }

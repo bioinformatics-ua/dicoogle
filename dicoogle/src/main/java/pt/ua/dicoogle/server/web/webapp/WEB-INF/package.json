@@ -43,7 +43,6 @@
     "babelify": "^6.3.0",
     "browserify": "^11.0.1",
     "browserify-shim": "~3.8.2",
-    "datatables": "~1.10.8",
     "envify": "^3.0.0",
     "flux": "^2.0.1",
     "htmlprocessor": "^0.1.10",
@@ -62,7 +61,9 @@
     "reflux": "^0.2.12",
     "rimraf": "latest",
     "uglify-js": "^2.4.24",
-    "watchify": "^3.3.1"
+    "watchify": "^3.3.1",
+    "react-bootstrap-table": "~0.9.14",
+    "react-imageloader": "~2.0.0"
   },
   "scripts": {
     "prepublish": "rimraf js/bundle.js && parallelshell \"npm run css\" \"npm run html\" \"npm run js\"",
