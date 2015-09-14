@@ -54,14 +54,15 @@ var ImageView = React.createClass({
 
   },
   formatThumbUrl : function(cell, item){
+    let self = this;
     let uid = item.sopInstanceUID;
     let thumbUrl = Endpoints.base + "/dic2png?thumbnail=true&SOPInstanceUID=" + uid;
     
-    return (<div><ImageLoader
+    return (<div onClick={self.showImage.bind(self, uid)}><ImageLoader
                 src={thumbUrl}
-                style={{"width":"64px"}}
+                style={{"width":"64px", "cursor" : "pointer"}}
                 wrapper={React.DOM.div}>
-              <img src="assets/image-not-found.png" width="30px" />  
+              <img src="assets/image-not-found.png" width="64px" />  
           </ImageLoader></div>)
   },
   formatViewOptions : function(cell, item){
