@@ -179,6 +179,7 @@ public class PluginController{
                     set.getRestPlugins()
             );
             for (Collection interfaces : all) {
+                if (interfaces == null) continue;
                 for (Object o : interfaces) {
                     if (o instanceof PlatformCommunicatorInterface) {
                         ((PlatformCommunicatorInterface)o).setPlatformProxy(proxy);
@@ -201,8 +202,9 @@ public class PluginController{
                 set.getIndexPlugins(),
                 set.getQueryPlugins(),
                 set.getJettyPlugins()
-       );
+        );
         for (Collection<? extends DicooglePlugin> interfaces : all) {
+            if (interfaces == null) continue;
             for (DicooglePlugin p : interfaces) {
                 p.setSettings(holder);
             }
