@@ -63,6 +63,7 @@ import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
 import pt.ua.dicoogle.server.web.DicoogleWeb;
 import pt.ua.dicoogle.plugins.webui.WebUIPluginManager;
+import pt.ua.dicoogle.sdk.DicooglePlugin;
 import pt.ua.dicoogle.taskManager.RunningIndexTasks;
 import pt.ua.dicoogle.taskManager.TaskManager;
 import pt.ua.dicoogle.server.PluginRestletApplication;
@@ -98,6 +99,7 @@ public class PluginController{
 
 	private PluginSet remoteQueryPlugins = null;
     private final WebUIPluginManager webUI;
+    private final DicooglePlatformProxy proxy;
     
     public PluginController(File pathToPluginDirectory) {
     	logger.info("Creating PluginController Instance");
@@ -139,7 +141,7 @@ public class PluginController{
                 	
                 	logger.info("Started Remote Communications Manager");
                 }
-                plugin.setSettings(holder);
+                applySettings(plugin, holder);
             }
             catch (ConfigurationException e){
                 logger.error("Failed to create configuration holder", e);
@@ -156,6 +158,8 @@ public class PluginController{
         pluginSets.add(new DefaultFileStoragePlugin());
         logger.info("Added default storage plugin");
         
+        this.proxy = new DicooglePlatformProxy(this);
+        
         initializePlugins(pluginSets);
         initRestInterface(pluginSets);
         initJettyInterface(pluginSets);
@@ -165,12 +169,49 @@ public class PluginController{
     private void initializePlugins(Collection<PluginSet> plugins) {
         for (PluginSet set : plugins) {
             logger.debug("SetPlugins: {}", set);
+            
+            // provide platform to each plugin interface
+            final Collection<Collection<?>> all = Arrays.asList(
+                    set.getStoragePlugins(),
+                    set.getIndexPlugins(),
+                    set.getQueryPlugins(),
+                    set.getJettyPlugins(),
+                    set.getRestPlugins()
+            );
+            for (Collection interfaces : all) {
+                for (Object o : interfaces) {
+                    if (o instanceof PlatformCommunicatorInterface) {
+                        ((PlatformCommunicatorInterface)o).setPlatformProxy(proxy);
+                    }
+                }
+            }
+
+            // and to the set itself
             if (set instanceof PlatformCommunicatorInterface) {
-                ((PlatformCommunicatorInterface) set).setPlatformProxy(new DicooglePlatformProxy(this));
+                ((PlatformCommunicatorInterface) set).setPlatformProxy(proxy);
             }
         }
     }
+    
+    private void applySettings(PluginSet set, ConfigurationHolder holder) {
 
+        // provide platform to each plugin interface
+        final Collection<Collection<? extends DicooglePlugin>> all = Arrays.asList(
+                set.getStoragePlugins(),
+                set.getIndexPlugins(),
+                set.getQueryPlugins(),
+                set.getJettyPlugins()
+       );
+        for (Collection<? extends DicooglePlugin> interfaces : all) {
+            for (DicooglePlugin p : interfaces) {
+                p.setSettings(holder);
+            }
+        }
+        
+        set.setSettings(holder);
+        
+    }
+    
     /**
      * Each pluginSet provides a collection of barebone rest interfaces Here we
      * check which interfaces are present and create a restlet component to

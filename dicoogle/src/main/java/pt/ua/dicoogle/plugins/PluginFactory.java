@@ -25,29 +25,34 @@ import java.util.Collection;
 import net.xeoh.plugins.base.PluginManager;
 import net.xeoh.plugins.base.impl.PluginManagerFactory;
 import net.xeoh.plugins.base.util.PluginManagerUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.sdk.PluginSet;
 
-/**
+/** A collection of factory methods for retrieving Dicoogle plugins from a directory.
  * 
  * @author psytek
+ * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 
 public class PluginFactory {
-    //TODO:configurable directory
+    private static final Logger logger = LoggerFactory.getLogger(PluginFactory.class);
+    
     public static Collection<PluginSet> getPlugins(File pluginDirectory){
+        if (pluginDirectory == null) {
+            throw new NullPointerException("pluginDirectory");
+        }
+        if (!pluginDirectory.isDirectory()) {
+            throw new IllegalArgumentException("Plugin base must be a directory");
+        }
         PluginManager pm = PluginManagerFactory.createPluginManager();
-        System.err.println(pluginDirectory.getAbsolutePath());
+        logger.debug("Plugin Directory: {}", pluginDirectory.getAbsolutePath());
         pm.addPluginsFrom(pluginDirectory.toURI());
         PluginManagerUtil pmu = new PluginManagerUtil(pm);
         return pmu.getPlugins(PluginSet.class);
     }
     
      public static Collection<PluginSet> getPlugins(){
-        PluginManager pm = PluginManagerFactory.createPluginManager();
-        File path = new File("Plugins");
-        System.err.println(path.getAbsolutePath());
-        pm.addPluginsFrom(path.toURI());
-        PluginManagerUtil pmu = new PluginManagerUtil(pm);
-        return pmu.getPlugins(PluginSet.class);
+        return getPlugins(new File("Plugins"));
     }
 }
