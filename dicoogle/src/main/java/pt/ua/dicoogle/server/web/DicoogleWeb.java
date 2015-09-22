@@ -124,7 +124,8 @@ public class DicoogleWeb {
         final String warUrlString = warUrl.toExternalForm();
 
         //setup the DICOM to PNG image servlet, with a local cache
-        cache = new LocalImageCache("dic2png", 300, 900); // pooling rate of 12/hr and max un-used cache age of 15 minutes
+        // FIXME
+        cache = new LocalImageCache("dic2png", 300, 900, null); // pooling rate of 12/hr and max un-used cache age of 15 minutes
         final ServletContextHandler dic2png = createServletHandler(new ImageServlet(cache), "/dic2png");
         cache.start(); // start the caching system
 

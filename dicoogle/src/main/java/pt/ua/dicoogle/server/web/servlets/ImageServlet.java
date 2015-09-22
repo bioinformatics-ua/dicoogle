@@ -106,7 +106,7 @@ public class ImageServlet extends HttpServlet
             // get the image file for that SOP Instance UID
             imgFile = Information.getFileFromSOPInstanceUID(sopInstanceUID, providers);
             // if no .dcm file was found tell the client
-            if ((imgFile == null)) {
+            if (imgFile == null) {
                 response.sendError(404, "No image file for supplied SOP Instance UID!");
                 return;
             }

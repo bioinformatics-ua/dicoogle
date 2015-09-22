@@ -67,9 +67,11 @@ public class ForceIndexing extends HttpServlet {
       return;
     }
 
-    int expectedReports = uris.length * ((pluginsName == null) ? 1 : pluginsName.length);
+    final PluginController pc = PluginController.getInstance();
 
-    PluginController pc = PluginController.getInstance();
+    int expectedReports = uris.length * ((pluginsName == null) ?
+            pc.getIndexingPlugins(true).size() :
+            pluginsName.length);
     
     //Firing Tasks.
     List<Task<Report>> reports = new ArrayList<>(expectedReports);
