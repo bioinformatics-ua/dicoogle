@@ -96,6 +96,27 @@ function getImageInfo(uid, callbackSucccess, callbackError){
         });
 }
 
+
+function getVersion(callbackSucccess, callbackError){
+
+
+    var url = Endpoints.base + '/ext/version';
+
+    $.ajax({
+
+        url: url,
+        dataType: 'json',
+        success: function(data) {
+
+            callbackSucccess(data);
+
+        },
+        error: function(xhr, status, err) {
+            callbackError(xhr);
+        }
+    });
+}
+
 function request(url, callbackSucccess, callbackError){
     console.log("request: "+url);
         $.ajax({
@@ -184,4 +205,4 @@ function forceIndex(uri){
 
 }
 
-export {getPatients, unindex, remove, getImageInfo, request, setWatcher,setZip,setSaveT,saveIndexOptions,forceIndex};
+export {getPatients, unindex, remove, getImageInfo, request, setWatcher,setZip,setSaveT,saveIndexOptions,forceIndex, getVersion};

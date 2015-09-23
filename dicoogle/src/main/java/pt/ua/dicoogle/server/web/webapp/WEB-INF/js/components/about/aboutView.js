@@ -1,10 +1,17 @@
 var React = require('react');
 
 require('bootstrap');
+import {VersionStore} from '../../stores/versionStore';
+import {VersionActions} from '../../actions/versionAction';
+
+
 var React = require('react');
 var Router = require('react-router');
 var Flux = require('flux');
 var ReactBootstrap = require('react-bootstrap');
+
+
+
 
 var Route = Router.Route;
 var DefaultRoute = Router.DefaultRoute;
@@ -35,13 +42,29 @@ var ProgressBar= ReactBootstrap.ProgressBar;
 var Table= ReactBootstrap.Table;
 
 var AboutView = React.createClass({
-    componentDidMount: function() {
 
+    getInitialState: function() {
+        return {version: ""};
+    },
+    componentWillMount: function() {
+        // Subscribe to the store.
+        VersionStore.listen(this._onChange);
+        
+        
+    },
+    componentDidMount: function() {
+        VersionActions.get();
+        
+    },
+    _onChange : function(data){
+        this.setState({version: data.data.version});
 
     },
       render: function() {
+          
+          let versionNumber =  this.state.version;
           var title = (
-              <h3>Dicoogle PACS</h3>
+              <h3>Dicoogle PACS, version: {versionNumber}</h3>
           );
           var divStyle = {
               width: '200px'
