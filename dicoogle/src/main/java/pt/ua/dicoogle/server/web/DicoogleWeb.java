@@ -18,6 +18,7 @@
  */
 package pt.ua.dicoogle.server.web;
 
+import pt.ua.dicoogle.server.web.rest.VersionResource;
 import pt.ua.dicoogle.server.web.servlets.RestletHttpServlet;
 import pt.ua.dicoogle.server.web.servlets.ExportToCSVServlet;
 import pt.ua.dicoogle.server.web.servlets.SettingsServlet;
@@ -159,6 +160,11 @@ public class DicoogleWeb {
 
         this.legacyApp = new LegacyRestletApplication();
         this.legacyHandler = createServletHandler(new RestletHttpServlet(this.legacyApp), "/legacy/*");
+        
+        
+        // Add Static RESTlet Plugins
+        pluginApp.attachRestPlugin(new VersionResource());
+        
         
         // list the all the handlers mounted above
         Handler[] handlers = new Handler[]{
