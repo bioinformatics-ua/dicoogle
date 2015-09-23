@@ -257,13 +257,13 @@ input {
 .sidebar-nav {
   margin-top: 50px; }
   .sidebar-nav li a {
-    color: #6CB7C5;
+    color: #008C99;
     font-size: 17px;
     font-weight: bold; }
     .sidebar-nav li a:hover {
-      background: #A3D2D8; }
+      background: #49AFBB; }
   .sidebar-nav .active {
-    background: #A3D2D8;
+    background: #49AFBB;
     color: #ffffff; }
 
 .topbar {
