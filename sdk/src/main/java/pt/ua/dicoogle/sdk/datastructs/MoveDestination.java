@@ -19,28 +19,37 @@
 package pt.ua.dicoogle.sdk.datastructs;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-/**
+/** An immutable data structure for describing a DICOM node (potential C-MOVE destinations).
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class MoveDestination implements Serializable
 {
-    static final long serialVersionUID = 1L;
+    static final long serialVersionUID = 2L;
 
     private final String AETitle;
     private final String ipAddrs;
     private final int port;
 
-    private String description = "" ;
-    private boolean isPublic = false;
+    private final String description;
+    private final boolean isPublic;
 
-
-    public MoveDestination(String AETitle, String ipAddr, int port)
-    {
+    public MoveDestination(String AETitle, String ipAddr, int port, boolean isPublic, String description) {
         this.AETitle = AETitle;
         this.ipAddrs = ipAddr;
         this.port = port;
+        this.isPublic = isPublic;
+        this.description = description;
+    }
+
+    public MoveDestination(String AETitle, String ipAddr, int port, boolean isPublic) {
+        this(AETitle, ipAddr, port, isPublic, "");
+    }
+
+    public MoveDestination(String AETitle, String ipAddr, int port) {
+        this(AETitle, ipAddr, port, false, "");
     }
 
     /**
@@ -83,23 +92,16 @@ public class MoveDestination implements Serializable
         return port;
     }
 
-    /**
-     * @param port the port to set
-     */
-/*    public void setPort(int port)
-    {
-        this.port = port;
-    }
-    */
-
     @Override
     public String toString()
     {
-        String result = "" ;
-
+        String result;
         result = "MoveDestination AET: " + this.AETitle + " (" + this.ipAddrs + ":" +
                 String.valueOf(this.port) + ")";
-
+        if (!description.isEmpty()) {
+            result += " - " + this.description;
+        }
+        
         return result ;
     }
 
@@ -112,24 +114,10 @@ public class MoveDestination implements Serializable
     }
 
     /**
-     * @param description the description to set
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    /**
      * @return the isPublic
      */
     public boolean isIsPublic() {
         return isPublic;
-    }
-
-    /**
-     * @param isPublic the isPublic to set
-     */
-    public void setIsPublic(boolean isPublic) {
-        this.isPublic = isPublic;
     }
 
     @Override
@@ -144,7 +132,14 @@ public class MoveDestination implements Serializable
 
         // To the list of MoveDestinations may not be repeated AETitles
         return move.AETitle.equals(AETitle) && move.ipAddrs.equals(ipAddrs) && move.port == port;
+    }
 
-        //return move.AETitle.equals(AETitle) && move.ipAddrs.equals(ipAddrs) && move.port == port;
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.AETitle);
+        hash = 97 * hash + Objects.hashCode(this.ipAddrs);
+        hash = 97 * hash + this.port;
+        return hash;
     }
 }
