@@ -362,19 +362,9 @@ public class XMLSupport extends DefaultHandler
             this.description = this.resolveAttrib("description", attribs, "");
             this.isPublic = this.resolveAttrib("public", attribs, "false");
 
-            MoveDestination tmp = new MoveDestination(this.AETitle, this.IP, this.port)  ;
-            tmp.setDescription(description);
-            if (isPublic.contains("true"))
-            {
-                tmp.setIsPublic(true);
-            }
-            else
-            {
-                tmp.setIsPublic(false);
-            }
-            
+            MoveDestination tmp = new MoveDestination(this.AETitle, this.IP,
+                    this.port, this.isPublic.contains("true"), this.description);
             s.add(tmp);
-
         }
         else if (localName.equals("web"))
         {
