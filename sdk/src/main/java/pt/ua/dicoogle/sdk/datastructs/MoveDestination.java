@@ -32,6 +32,10 @@ public class MoveDestination implements Serializable
     private final String ipAddrs;
     private final int port;
 
+    private String description = "" ;
+    private boolean isPublic = false;
+
+
     public MoveDestination(String AETitle, String ipAddr, int port)
     {
         this.AETitle = AETitle;
@@ -97,6 +101,35 @@ public class MoveDestination implements Serializable
                 String.valueOf(this.port) + ")";
 
         return result ;
+    }
+
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * @return the isPublic
+     */
+    public boolean isIsPublic() {
+        return isPublic;
+    }
+
+    /**
+     * @param isPublic the isPublic to set
+     */
+    public void setIsPublic(boolean isPublic) {
+        this.isPublic = isPublic;
     }
 
     @Override
