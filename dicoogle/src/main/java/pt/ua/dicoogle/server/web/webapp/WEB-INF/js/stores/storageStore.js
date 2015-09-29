@@ -2,11 +2,10 @@
 'use strict';
 
 var Reflux = require('reflux');
+import $ from 'jquery';
 
 import {StorageActions} from '../actions/storageActions';
-
 import {Endpoints} from '../constants/endpoints';
-
 import {request} from '../handlers/requestHandler';
 
 var StorageStore = Reflux.createStore({

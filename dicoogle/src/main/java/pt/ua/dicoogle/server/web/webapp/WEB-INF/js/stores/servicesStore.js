@@ -6,6 +6,7 @@ var Reflux = require('reflux');
 import ServiceAction from '../actions/servicesAction';
 import {Endpoints} from '../constants/endpoints';
 import {request} from '../handlers/requestHandler';
+import $ from 'jquery';
 
 var ServicesStore = Reflux.createStore({
     listenables: ServiceAction,

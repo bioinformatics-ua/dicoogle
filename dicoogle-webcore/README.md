@@ -3,26 +3,15 @@
 This JavaScript project aims to provide the backbone for Dicoogle Web UI plugins.
 The essence of this architecture is that Dicoogle web pages will contain stub slots where plugins can be attached to.
 
-## Building
+## Building and Using
 
-The building process of Dicoogle Web Core is carried out by `grunt` (the "build" script in the package will execute the default task).
-Install **npm** if not already installed, and perform the following commands in this directory:
+These details are only relevant to developers of Dicoogle and its web app. To learn how to develop web UI plugins, please skip this section.
+No building is required for this project. Simply `import` (or `require`) the package module directly to Dicoogle. An environment that supports
+ECMAScript 6 and the Harmony module standard is required. Then:
 
-    # install development dependencies
-    npm install
-    # then execute the task runner
-    grunt
-    # or run the package's build script
-    npm run-script build
-
-## Using 
-
- - Include a module management library that supports synchronous module loading. RequireJS is preferred (RequireJS is supported,
-   but libraries must be asynchronously loaded before initializing the web core).
- - Include the resulting "dist/dicoogle-webcore.js" in your page. An HTML `<script>` element or another means of importing
-   the module is sufficient.
  - Place `<dicoogle-slot>` elements in the page. They must contain a unique slot id attribute `data-slot-id`.
- - Invoke the module's `init()` to automatically detect slots, as well as to fetch and attach plugins. This should only be called once. New slots attached dynamically will be automatically filled.
+ - Invoke the module's `init()` to initialize the module. It will automatically detect slots, as well as fetch and attach plugins. This method
+   should only be called once. New slots attached dynamically will be automatically filled.
 
 A few examples of web pages using the Dicoogle Web Core are available in "test/TC".
 
@@ -43,17 +32,18 @@ A descriptor takes the form of a "package.json", an `npm` package descriptor, co
  - `version` : the version of the plugin (must be compliant with npm)
  - `description` _(optional)_ : a simple, one-line description of the package
  - `dicoogle` : an object containing Dicoogle-specific information:
-      - `caption` _(optional, defaults to name)_ : an appropriate title for being shown as a tab (or similar) in the web page
+      - `caption` _(optional, defaults to name)_ : an appropriate title for being shown as a tab (or similar) on the web page
       - `slot-id` : the unique ID of the slot where this plugin is meant to be attached
       - `module-file` _(optional, defaults to "module.js")_ : the name of the file containing the JavaScript module
 
-An example of a package:
+An example of a valid "package.json":
 
 ```json
 {
   "name" : "dicoogle-cbir-query",
   "version" : "0.0.1",
   "description" : "CBIR Query-By-Example plugin",
+  "author": "John Doe",
   "tags": ["dicoogle", "dicoogle-webui"],
   "dicoogle" : {
     "caption" : "Query by Example",

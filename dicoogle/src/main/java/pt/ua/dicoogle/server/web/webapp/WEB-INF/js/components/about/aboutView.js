@@ -1,41 +1,19 @@
-var React = require('react');
+import React from 'react';
 
 require('bootstrap');
 import {VersionStore} from '../../stores/versionStore';
 import {VersionActions} from '../../actions/versionAction';
 
-
-var React = require('react');
-var Router = require('react-router');
-var Flux = require('flux');
 var ReactBootstrap = require('react-bootstrap');
 
-
-
-
-var Route = Router.Route;
-var DefaultRoute = Router.DefaultRoute;
-var Routes = Router.Routes;
-
-var Link = Router.Link;
-var NotFoundRoute = Router.NotFoundRoute;
-var  RouteHandler = Router.RouteHandler;
-
-var Nav = ReactBootstrap.Nav;
-
-var NavItemLink = ReactBootstrap.NavItemLink;
-var ButtonLink = ReactBootstrap.ButtonLink;
-
-var Grid = ReactBootstrap.Grid;
-var Row = ReactBootstrap.Row;
-var Col = ReactBootstrap.Col;
+const {Nav, NavItemLink, ButtonLink} = ReactBootstrap;
+const {Grid, Row, Col} = ReactBootstrap;
 
 var Panel = ReactBootstrap.Panel;
 var Navbar = ReactBootstrap.Navbar;
 var NavItem = ReactBootstrap.NavItem;
 var DropdownButton = ReactBootstrap.DropdownButton;
 var MenuItem = ReactBootstrap.MenuItem;
-var RouteHandler = Router.RouteHandler;
 var ButtonToolbar = ReactBootstrap.ButtonToolbar;
 var Button= ReactBootstrap.Button;
 var ProgressBar= ReactBootstrap.ProgressBar;
@@ -49,16 +27,15 @@ var AboutView = React.createClass({
     componentWillMount: function() {
         // Subscribe to the store.
         VersionStore.listen(this._onChange);
-        
-        
+        VersionActions.get();
     },
     componentDidMount: function() {
-        VersionActions.get();
         
     },
     _onChange : function(data){
-        this.setState({version: data.data.version});
-
+        if (this.isMounted) {
+            this.setState({version: data.data.version});
+        }
     },
       render: function() {
           
@@ -133,10 +110,7 @@ var AboutView = React.createClass({
           );
           return panelsInstance;
           
-          
         }
       });
 
-    export {
-      AboutView
-    }
+export default AboutView;

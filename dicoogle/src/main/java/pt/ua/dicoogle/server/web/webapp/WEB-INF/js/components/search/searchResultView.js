@@ -58,7 +58,7 @@ var ResultSearch = React.createClass({
     //Check if search fails
     if(this.state.success === false)
     {
-      return (<div> Search error</div>);
+      return (<div>Search error</div>);
     }
     //Check if search return no results
     if(this.state.data.numResults === 0)
@@ -101,14 +101,12 @@ var ResultSearch = React.createClass({
     {
       this.setState({data:data.data,
       status:"stopped",
-      current: this.state.current,
       success: data.success});
 
       //init StepView
       if(!this.state.current)
         this.onStepClicked(0);
     }
-
   },
   
   getCurrentView() {

@@ -1,8 +1,8 @@
 /*jshint esnext: true*/
 
-var React = require('react');
-var ReactBootstrap = require('react-bootstrap');
-var Button = ReactBootstrap.Button;
+import React from 'react';
+import {Button} from 'react-bootstrap';
+import $ from 'jquery';
 
 import {SearchStore} from '../../stores/searchStore';
 import {ActionCreators} from '../../actions/searchActions';
@@ -15,10 +15,6 @@ import {ResultSearch} from '../search/searchResultView';
 
 import {DimFields} from '../../constants/dimFields';
 
-var Router = require('react-router');
-var Route = Router.Route;
-var Link = Router.Link;
-var RouteHandler = Router.RouteHandler
 
 import {UserMixin} from '../mixins/userMixin';
 import {getUrlVars} from '../../utils/url';
@@ -26,18 +22,22 @@ import {getUrlVars} from '../../utils/url';
 var Search = React.createClass({
     //mixins : [UserMixin],
     getInitialState: function (){
-        document.getElementById('container').style.display = 'block';
-        return { label:'login', searchState: "simple" , providers:["All providers"]};
+        return {
+          label: 'login',
+          searchState: "simple" ,
+          providers: ["All providers"],
+          requestedQuery: null
+        };
     },
     componentDidMount: function(){
       this.enableAutocomplete();
       this.enableEnterKey();
 
-      if(getUrlVars()['query'])
-      {
+      if(getUrlVars()['query']) {
         this.onSearchByUrl();
       }
 
+      //document.getElementById('container').style.display = 'block';
 
       ProvidersActions.get();
     },
@@ -78,11 +78,12 @@ var Search = React.createClass({
                     <div className="col-xs-4 col-sm-2">
                         <button type="button" className="btn btn_dicoogle" id="search-btn" onClick={this.onSearchClicked}>Search</button>
                     </div>
-                    <RouteHandler/>
                 </div>
             );
 
-       if(this.state.searchState === "simple"){
+       if (this.state.requestedQuery !== null) {
+         return <ResultSearch items={this.state.requestedQuery}/>;
+       } else if(this.state.searchState === "simple"){
             return (<div> {selectionButtons} {simpleSearchInstance} </div>);
        }
        else if(this.state.searchState === "advanced")
@@ -107,18 +108,18 @@ var Search = React.createClass({
 
     },
     onSearchByUrl : function(){
-      var params = {text: getUrlVars()['query'], keyword: getUrlVars()['keyword'], provider: getUrlVars()['provider']};
-
-      React.render(<ResultSearch items={params}/>, document.getElementById("container"));
-    }
-    ,
+      let params = {text: getUrlVars()['query'], keyword: getUrlVars()['keyword'], provider: getUrlVars()['provider']};
+      this.setState({
+        requestedQuery: params
+      });
+    },
     onSearchClicked : function(){
         // console.log(React.getInitialState(<ResultSearch/>) );
-        var text = document.getElementById("free_text").value;
+        let text = document.getElementById("free_text").value;
 
-        var providerEl = document.getElementById("providersList");
-        var selectedId= providerEl.selectedIndex;
-        var provider = "";
+        let providerEl = document.getElementById("providersList");
+        let selectedId= providerEl.selectedIndex;
+        let provider = "";
         if(selectedId == 0){
           provider = "all"
         }
@@ -126,25 +127,22 @@ var Search = React.createClass({
           provider = providerEl.options[selectedId].text;
         }
 
-        var params = {text: text, keyword: this.isKeyword(text), other:true, provider: provider};
-
-        React.render(<ResultSearch items={params}/>, document.getElementById("container"));
-        //console.log("asadfgh");
+        let params = {text: text, keyword: this.isKeyword(text), other:true, provider: provider};
+        this.setState({
+          requestedQuery: params
+        })
     },
     isKeyword: function(freetext){
-    for(var i=0; i<DimFields.length;i++)
-      {
-        if((freetext.indexOf(DimFields[i])) != -1)
-        {
-          return true;
+      for(var i=0; i<DimFields.length;i++) {
+          if((freetext.indexOf(DimFields[i])) != -1) {
+            return true;
+          }
         }
-      }
-
     },
   isAutocompletOpened:function(){
     if($('.ui-autocomplete').css('display')==='none'){return false;}
     return true;
-},
+  },
 
     enableAutocomplete : function(){
       var self =this;
@@ -213,7 +211,7 @@ var Search = React.createClass({
         //Trick to not search when press enter on autocomplete
         //
         var count = 0;
-        jQuery("#free_text").keypress(function(e) {
+        $("#free_text").keypress(function(e) {
         if (e.keyCode == 13) {
             if (++count >= 1) {
                 self.onSearchClicked();

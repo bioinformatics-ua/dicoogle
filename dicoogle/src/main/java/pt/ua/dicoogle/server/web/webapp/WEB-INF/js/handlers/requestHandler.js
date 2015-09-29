@@ -1,4 +1,6 @@
 import {Endpoints} from '../constants/endpoints';
+import $ from 'jquery';
+
 function getPatients(freetext, isKeyword,provider,callbackSucccess, callbackError){
         console.log("store param: ", freetext);
 
