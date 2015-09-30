@@ -25,16 +25,6 @@ var Sidebar = React.createClass({
     onLogout: React.PropTypes.func.isRequired
   },
 
-  getInitialState() {
-    return {
-      selected: "search"
-    };
-  },
-
-  clicked(index){
-    this.setState({selected: index});
-  },
-
   render() {
       console.log("APP RENDER");
       let self = this;
@@ -50,18 +40,12 @@ var Sidebar = React.createClass({
           <ul className="sidebar-nav">
             {
               menuItems.map(function(e, i) {
-                let style = '';
-
-                if(self.state.selected === e.value) {
-                  style = 'active';
-                }
                 const to = (e.isPlugin ?'/ext/':'/') + e.value;
                 return (<li key={i}>
-                  <Link className={style} to={to} onClick={self.clicked.bind(self, e.value)}>{e.caption}</Link>
+                  <Link activeClassName="active" to={to}>{e.caption}</Link>
                 </li>);
               })
             }
-
           </ul>
             <div className="user-wrapper">
               <div className="col-sm-10">
