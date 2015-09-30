@@ -23,6 +23,9 @@ import $ from 'jquery';
 require('bootstrap');
 require('jquery-ui');
 
+// custom elements polyfill
+require('document-register-element');
+
 // React.render(<div/>,
 //     document.getElementById('container')
 // );
