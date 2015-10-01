@@ -45,7 +45,6 @@
     "browserify": "~11.0.1",
     "browserify-shim": "~3.8.2",
     "dicoogle-webcore": "../../../../../../../../../../../dicoogle-webcore",
-    "document-register-element": "^0.4.5",
     "envify": "^3.0.0",
     "flux": "^2.0.1",
     "history": "^1.11.1",
