@@ -107,7 +107,7 @@ public class ExportToCSVQueryTask extends JointQueryTask {
 		for (String tag : tagsOrder) {
 			Object temp1 = extraFields.get(tag);
 
-			String s = StringUtils.trimToEmpty(temp1.toString());
+			String s = (temp1 != null) ? StringUtils.trimToEmpty(temp1.toString()) : "";
 			
 			if (s.length() > 0) {
 				String temp = StringUtils.replaceEach(s, searchChars, replaceChars);
