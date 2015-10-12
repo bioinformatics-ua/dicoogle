@@ -130,10 +130,16 @@ If you are in the development process and using the UI, you may need to change y
 <server enable="true" port="8080" allowedOrigins="*" />
 ```
 
-### Compile the web application
+### Building Dicoogle 
 
-[Learn how to compile the web application](dicoogle/src/main/java/pt/ua/dicoogle/server/web/webapp/WEB-INF/README.md)
 
+
+ 1. Retrieve the full source code from this repository: `git clone https://github.com/bioinformatics-ua/dicoogle.git`
+ 2. Navigate to the web app directory: "./dicoogle/src/main/java/pt/ua/dicoogle/server/web/webapp/WEB-INF/"
+ 3. Build the web application: `npm install`
+    - The full instructions can be read  [here](dicoogle/src/main/java/pt/ua/dicoogle/server/web/webapp/WEB-INF/README.md).
+ 4. Navigate to the project's base directory, and build the parent Maven project by calling `mvn install`.
+ 5. The resulting jar file can be found in "./dicoogle/target".
 
 Web site
 ========
