@@ -74,7 +74,7 @@ var ExportView = React.createClass({
 		console.log(fields);
 
 		var query = this.props.query;
-		ExportActions.exportCVS(query, fields);
+		ExportActions.exportCSV(query, fields);
   },
 	clusterize: function(){
 		var data = [];

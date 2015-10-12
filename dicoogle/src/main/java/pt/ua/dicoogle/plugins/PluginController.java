@@ -19,9 +19,11 @@
 package pt.ua.dicoogle.plugins;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,11 +35,16 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.jar.JarFile;
+import java.util.logging.Level;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.restlet.resource.ServerResource;
@@ -117,7 +124,27 @@ public class PluginController{
         pluginSets = PluginFactory.getPlugins(pathToPluginDirectory);
         //load web UI plugins (they are not Java, so the process is delegated to another entity)
         this.webUI = new WebUIPluginManager();
-        this.webUI.loadAll();
+        // loadByPluginName all at "WebPlugins"
+        this.webUI.loadAll(new File("WebPlugins"));
+        
+        for (File j : FileUtils.listFiles(pluginFolder, new String[]{"jar"}, false)) {
+            try {
+                this.webUI.loadAllFromJar(new JarFile(j));
+            } catch (IOException ex) {
+                // ignore
+            }
+        }
+        // go through each jar'd plugin and fetch their WebPlugins
+//        for (PluginSet set : pluginSets) {
+//            final URL url = set.getClass().getClassLoader().getResource("WebPlugins");
+//            if (url != null) {
+//                final String dirName = url.getFile();
+//                final File dir = new File(dirName);
+//                // 
+//            } else {
+//                logger.info("No web plugins in " + set.getName());
+//            }
+//        }
         
         logger.info("Loaded Local Plugins");
 
@@ -785,21 +812,6 @@ public class PluginController{
             logger.error("Failed to retrieve module", ex);
             return null;
         }
-    }
-
-    /** Load (or reload) a web UI plugin.
-     * @param name the name of the plugin
-     * @return whether the plugin exists and was successfully loaded
-     */
-    public boolean loadWebUIPlugin(String name) {
-        logger.info("loadWebUIPlugin(name: {})", name);
-        try {
-            this.webUI.load(name);
-        } catch (IOException | PluginFormatException ex) {
-            logger.error("could not load web UI plugin", ex);
-            return false;
-        }
-        return true;
     }
 
     //METHODS FOR SERVICE:JAVA

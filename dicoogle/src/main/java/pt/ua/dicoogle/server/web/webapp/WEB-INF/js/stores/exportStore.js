@@ -40,7 +40,7 @@ var ExportStore = Reflux.createStore({
 
     },
 
-    onExportCVS : function(data, fields){
+    onExportCSV : function(data, fields){
 
       var freetext = data.text;
       var isKeyword = data.keyword;

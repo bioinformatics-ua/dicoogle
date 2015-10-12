@@ -1,7 +1,8 @@
 /* module.js - Dummy module file
  */
 console.log("Hello, I'm dummy!");
-module.exports = function() {
+
+module.exports = function DummyModule() {
   // derp
   var index = null;
   var providers = [];
