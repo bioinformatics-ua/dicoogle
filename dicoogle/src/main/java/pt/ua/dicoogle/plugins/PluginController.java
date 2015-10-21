@@ -19,11 +19,8 @@
 package pt.ua.dicoogle.plugins;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,22 +33,18 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.restlet.resource.ServerResource;
 
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.server.ControlServices;
-import pt.ua.dicoogle.plugins.webui.PluginFormatException;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
 import pt.ua.dicoogle.sdk.GraphicalInterface;
 import pt.ua.dicoogle.sdk.IndexerInterface;
@@ -643,13 +636,13 @@ public class PluginController{
     }
     
     public void doRemove(URI uri, StorageInterface si) {
-      if(si.handles(uri)){
-        si.remove(uri); 
-      }else
-        logger.error("Storage Plugin does not handle URI: {},{}", uri, si);
-    
-      logger.info("Finished removing {}", uri);
-  }    
+        if(si.handles(uri)){
+            si.remove(uri); 
+        } else {
+            logger.warn("Storage Plugin does not handle URI: {},{}", uri, si);
+        }
+        logger.info("Finished removing {}", uri);
+    }
     /*
      * Convinience method that calls index(URI) and runs the returned
      * tasks on the executing thread 
@@ -752,7 +745,7 @@ public class PluginController{
      * @return a collection of web UI plugins.
      */
     public Collection<WebUIPlugin> getWebUIPlugins(String... ids) {
-        logger.info("getWebUIPlugins(slot ids: {})", ids != null ? Arrays.asList(ids) : "<any>");
+        logger.debug("getWebUIPlugins(slot ids: {})", ids != null ? Arrays.asList(ids) : "<any>");
         List<WebUIPlugin> plugins = new ArrayList<>();
         Set<String> idSet = Collections.EMPTY_SET;
         if (ids != null) {
@@ -775,7 +768,7 @@ public class PluginController{
      * @return a web UI plugin descriptor object, or null if no such plugin exists or is inactive
      */
     public WebUIPlugin getWebUIPlugin(String name) {
-        logger.info("getWebUIPlugin(name: {})", name);
+        logger.debug("getWebUIPlugin(name: {})", name);
         WebUIPlugin plugin = webUI.get(name);
         return plugin == null ? null
                 : plugin.isEnabled() ? plugin : null;
@@ -787,7 +780,7 @@ public class PluginController{
      * @return the full contents of the package.json, null if the plugin is not available
      */
     public String getWebUIPackageJSON(String name) {
-        logger.info("getWebUIPackageJSON(name: {})", name);
+        logger.debug("getWebUIPackageJSON(name: {})", name);
         try {
             Object o = webUI.retrieveJSON(name);
             return (o != null)
@@ -805,7 +798,7 @@ public class PluginController{
      * @return the full contents of the module file, null if the plugin is not available
      */
     public String getWebUIModuleJS(String name) {
-        logger.info("getWebUIModuleJS(name: {})", name);
+        logger.debug("getWebUIModuleJS(name: {})", name);
         try {
             return webUI.retrieveModuleJS(name);
         } catch (IOException ex) {
