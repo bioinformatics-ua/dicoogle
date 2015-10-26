@@ -60,6 +60,9 @@ import org.eclipse.jetty.webapp.WebAppContext;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServlet;
+import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.HandlerWrapper;
 
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlets.GzipFilter;
@@ -138,9 +141,6 @@ public class DicoogleWeb {
         //search.setContextPath(CONTEXTPATH);
         //search.addServlet(new ServletHolder(new SearchServlet()), "/search");
 
-        // setup the plugins data, xslt and pages servlet
-        final ServletContextHandler plugin = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        plugin.setContextPath(CONTEXTPATH);
         /*hooks = getRegisteredHookActions();
          plugin.addServlet(new ServletHolder(new PluginsServlet(hooks)), "/plugin/*");
          */
@@ -161,10 +161,8 @@ public class DicoogleWeb {
         this.legacyApp = new LegacyRestletApplication();
         this.legacyHandler = createServletHandler(new RestletHttpServlet(this.legacyApp), "/legacy/*");
         
-        
         // Add Static RESTlet Plugins
-        pluginApp.attachRestPlugin(new VersionResource());
-        
+        PluginRestletApplication.attachRestPlugin(new VersionResource());
         
         // list the all the handlers mounted above
         Handler[] handlers = new Handler[]{
@@ -172,7 +170,6 @@ public class DicoogleWeb {
             legacyHandler,
             dic2png,
             dictags,
-            plugin,
             createServletHandler(new IndexerServlet(), "/indexer"), // DEPRECATED
             createServletHandler(new SettingsServlet(), "/settings"),
             csvServletHolder,
@@ -222,21 +219,47 @@ public class DicoogleWeb {
     
     private ServletContextHandler createServletHandler(HttpServlet servlet, String path){
         ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        handler.setDisplayName("cross-origin");
         handler.setContextPath(CONTEXTPATH);
         
         // CORS support
+        this.addCORSFilter(handler);
+
+        handler.addServlet(new ServletHolder(servlet), path);
+        return handler;
+    }
+    
+    private void addCORSFilter(ServletContextHandler handler) {
         String origins = ServerSettings.getInstance().getWeb().getAllowedOrigins();
         if (origins != null) {
+            handler.setDisplayName("cross-origin");
             FilterHolder corsHolder = new FilterHolder(CORSFilter.class);
             corsHolder.setInitParameter(CORSFilter.ALLOWED_ORIGINS_PARAM, origins);
             corsHolder.setInitParameter(CORSFilter.ALLOWED_METHODS_PARAM, "GET,POST,HEAD,PUT,DELETE");
             corsHolder.setInitParameter(CORSFilter.ALLOWED_HEADERS_PARAM, "X-Requested-With,Content-Type,Accept,Origin");
             handler.addFilter(corsHolder, "/*", EnumSet.of(DispatcherType.REQUEST));
         }
+    }
 
-        handler.addServlet(new ServletHolder(servlet), path);
-        return handler;
+    private void addCORSFilter(Handler handler) {
+        String origins = ServerSettings.getInstance().getWeb().getAllowedOrigins();
+        if (origins == null) {
+            return;
+        }
+
+        logger.debug("Applying CORS filter to {}", handler);
+        if (handler instanceof ServletContextHandler) {
+            ServletContextHandler svHandler = (ServletContextHandler)handler;
+            this.addCORSFilter(svHandler);
+            logger.debug("Applied CORS filter to {}!", svHandler);
+        } else if (handler instanceof HandlerWrapper) {
+            for (Handler h : ((HandlerWrapper)handler).getHandlers()) {
+                addCORSFilter(h);
+            }
+        } else if (handler instanceof HandlerCollection) {
+            for (Handler h : ((HandlerCollection)handler).getHandlers()) {
+                addCORSFilter(h);
+            }
+        }
     }
 
     /**
@@ -267,8 +290,10 @@ public class DicoogleWeb {
         this.pluginHandler = null;
     }
 
-    public void addContextHandlers(Handler handler) {
+    public void addContextHandlers(HandlerList handler) {
         this.contextHandlers.addHandler(handler);
+
+        this.addCORSFilter(handler);
         //this.server.setHandler(this.contextHandlers);
     }
 
