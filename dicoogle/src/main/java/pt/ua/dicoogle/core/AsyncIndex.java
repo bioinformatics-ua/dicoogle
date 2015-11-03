@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import net.contentobjects.jnotify.JNotify;
 import net.contentobjects.jnotify.JNotifyException;
 import net.contentobjects.jnotify.JNotifyListener;
+import org.slf4j.Logger;
 import pt.ua.dicoogle.plugins.PluginController;
 
 /**
@@ -34,7 +35,8 @@ import pt.ua.dicoogle.plugins.PluginController;
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class AsyncIndex {
-
+    private static final Logger logger = LoggerFactory.getLogger(AsyncIndex.class);
+    
     public AsyncIndex() {
 
         // path to watch
@@ -51,64 +53,47 @@ public class AsyncIndex {
         boolean watchSubtree = true;
 
         // add actual watch
-        if (ServerSettings.getInstance().isMonitorWatcher())
-        {
-            int watchID = 0;
+        if (ServerSettings.getInstance().isMonitorWatcher()) {
             try {
-                watchID = JNotify.addWatch(path, mask, watchSubtree, new Listener());
+                int watchID = JNotify.addWatch(path, mask, watchSubtree, new Listener());
             } catch (JNotifyException ex) {
-                LoggerFactory.getLogger(AsyncIndex.class).error(ex.getMessage(), ex);
+                logger.error("Failed to create directory watcher", ex);
             }
         }
-
-        // to remove watch the watch
-//        boolean res = false;
-//        try {
-//            res = JNotify.removeWatch(watchID);
-//        } catch (JNotifyException ex) {
-//            LoggerFactory.getLogger(AsyncIndex.class).error(ex.getMessage(), ex);
-//        }
-//        if (!res) {
-//            // invalid watch ID specified.
-//        }
-
-
-
     }
 }
 
 class Listener implements JNotifyListener {
-
+    private static final Logger logger = LoggerFactory.getLogger(Listener.class);
+    
+    @Override
     public void fileRenamed(int wd, String rootPath, String oldName,
             String newName) {
-        print("renamed " + rootPath + " : " + oldName + " -> " + newName);
+        logger.debug("renamed {} : {} -> {}", rootPath, oldName, newName);
     }
 
+    @Override
     public void fileModified(int wd, String rootPath, String name) {
-        print("modified " + rootPath + " : " + name);
+        logger.debug("modified {} : {}", rootPath, name);
     }
 
+    @Override
     public void fileDeleted(int wd, String rootPath, String name) {
-        print("deleted " + rootPath + " : " + name);
+        logger.debug("deleted {} : {}", rootPath, name);
         try {
-            PluginController.getInstance().unindex(new URI(rootPath + File.pathSeparator+ name));
+            PluginController.getInstance().unindex(new URI(rootPath + File.separatorChar + name));
         } catch (URISyntaxException ex) {
-            LoggerFactory.getLogger(Listener.class.getName()).error(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
-        
-        
     }
 
+    @Override
     public void fileCreated(int wd, String rootPath, String name) {
         try {
-            print("created " + rootPath + " : " + name);
-            PluginController.getInstance().index(new URI(rootPath + File.pathSeparator+ name));
+            logger.debug("created {} : {}", rootPath, name);
+            PluginController.getInstance().index(new URI(rootPath + File.separatorChar + name));
         } catch (URISyntaxException ex) {
-            LoggerFactory.getLogger(Listener.class).error(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
-    }
-
-    void print(String msg) {
-        System.err.println(msg);
     }
 }
