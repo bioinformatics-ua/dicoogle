@@ -1,8 +1,8 @@
 var React = require('react');
+import $ from 'jquery';
 
 import {IndexerStore} from '../../stores/indexerStore';
 import {IndexerActions} from '../../actions/indexerActions';
-
 import {setWatcher,setSaveT,setZip,saveIndexOptions} from '../../handlers/requestHandler';
 
 var IndexerView = React.createClass({

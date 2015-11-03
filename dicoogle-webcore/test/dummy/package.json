@@ -7,7 +7,8 @@
     "build-debug": "uglifyjs dummy.js --source-map module.js.map -b -o module.js"
   },
   "dicoogle": {
-    "slot-id": "fordummy",
+    "slot-id": "menu",
+    "caption": "Dummy",
     "module-file": "module.js"
   },
   "devDependencies": {

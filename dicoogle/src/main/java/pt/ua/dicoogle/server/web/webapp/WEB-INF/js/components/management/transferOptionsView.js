@@ -6,30 +6,28 @@ import {Endpoints} from '../../constants/endpoints';
 
 var TransferOptionsView = React.createClass({
 
-      getInitialState: function() {
+      getInitialState () {
         return {data: [],
         status: "loading",
         selectedIndex: 0};
       },
-      componentDidMount: function(){
+      componentDidMount (){
         console.log("componentdidmount: get");
 
         TransferActions.get();
        },
-      componentWillMount: function() {
+      componentWillMount () {
        	// Subscribe to the store.
          console.log("subscribe listener");
          TransferStore.listen(this._onChange);
      	},
-      _onChange: function(data){
+      _onChange (data){
         if (this.isMounted()){
           console.log(data);
           this.setState({data:data,status: "done"});
         }
       },
-      render: function() {
-        var self =this;
-
+      render () {
         if(this.state.status === "loading")
         {
           return (<div className="loader-inner ball-pulse">
@@ -37,15 +35,15 @@ var TransferOptionsView = React.createClass({
            </div>);
         }
 
-        var array = self.state.data;
+        var array = this.state.data;
         console.log("array",array);
         var options = (
-            array.data[this.state.selectedIndex].options.map(function(item, index){
+            array.data[this.state.selectedIndex].options.map((item, index) => {
                 return(
-                  (<div className="data-table-row">
+                  (<div key={index} className="data-table-row">
                       <label className="checkbox" title="1.2.840.10008.1.2.1.99">
                           <input type="checkbox" id={item.name} name="GlobalTransferStorageTransferStorage0" checked={item.value}
-                            onChange={self.handleChange.bind(this, item.name, index)}/>{item.name}</label>
+                            onChange={this.handleChange.bind(this, item.name, index)}/>{item.name}</label>
                   </div>
                   )
                 );
@@ -53,8 +51,8 @@ var TransferOptionsView = React.createClass({
           );
 
         var sopclasses = (
-          array.data.map(function(item){
-            return (<option> <b>{item.sop_name}</b>  --  {item.uid}</option>);
+          array.data.map((item, index) => {
+            return (<option key={index}> <b>{item.sop_name}</b>  --  {item.uid}</option>);
           })
         );
 
@@ -68,7 +66,7 @@ var TransferOptionsView = React.createClass({
                              <div className="panel-body">
                                  <ul className="list-group">
 
-                                     <select id="sop_select"className="form-control" onChange={self.onSopSelected}>
+                                     <select id="sop_select"className="form-control" onChange={this.onSopSelected}>
                                         {sopclasses}
                                      </select>
                                      <li className="list-group-item list-group-item-management">
@@ -92,40 +90,19 @@ var TransferOptionsView = React.createClass({
 
       },
 
-      handleChange:function(id, index){
+      handleChange(id, index) {
         console.log("Index ", index);
         TransferActions.set(this.state.selectedIndex, index,document.getElementById(id).checked);
         this.request(id,document.getElementById(id).checked);
       },
 
-      /*
-      NOT USED
-      */
-      selectAll:function(){
-        var self = this;
-        this.state.data.data.options.map(function(item){
-          document.getElementById(item.name).checked = true;
-          self.request(item.name, true)
-        });
-      }
-      ,
-      selectNone:function(){
-        var self = this;
-        this.state.data.data.options.map(function(item){
-          document.getElementById(item.name).checked = false;
-          self.request(item.name, false);
-        });
-      },
-
-      onSopSelected: function(){
-
+      onSopSelected() {
         var selectedId=document.getElementById("sop_select").selectedIndex;
         console.log("selected", selectedId );
         this.setState({selectedIndex: selectedId});
-
       },
 
-      request: function(id, value){
+      request(id, value) {
         var uid = this.state.data.data[document.getElementById("sop_select").selectedIndex].uid;
         console.log("Selected uid:",uid);
         $.post(Endpoints.base + "/management/settings/transfer",

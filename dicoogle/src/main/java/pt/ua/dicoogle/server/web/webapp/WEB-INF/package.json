@@ -1,6 +1,7 @@
 {
   "name": "dicoogle-webapp",
-  "version": "1.0.0",
+  "version": "1.1.0",
+  "private": true,
   "description": "Dicoogle web application",
   "author": "Universidade de Aveiro, DETI/IEETA, Bioinformatics Group (http://bioinformatics.ua.pt/)",
   "homepage": "http://www.dicoogle.com",
@@ -41,56 +42,65 @@
   },
   "devDependencies": {
     "babelify": "^6.3.0",
-    "browserify": "^11.0.1",
+    "browserify": "~11.0.1",
     "browserify-shim": "~3.8.2",
+    "dicoogle-webcore": "../../../../../../../../../../../dicoogle-webcore",
     "envify": "^3.0.0",
     "flux": "^2.0.1",
+    "history": "^1.13.0",
     "htmlprocessor": "^0.1.10",
-    "jest-cli": "~0.1.17",
     "jquery": "^1.10.2",
     "jquery-ui": "^1.10.5",
     "keymirror": "~0.1.0",
-    "object-assign": "^1.0.0",
+    "object-assign": "^4.0.1",
     "parallelshell": "^2.0.0",
     "promise": "*",
     "react": "^0.13.3",
-    "react-bootstrap": "^0.25.1",
-    "react-router": "^0.13.3",
-    "react-router-bootstrap": "^0.18.1",
-    "reactify": "^1.1.1",
+    "react-bootstrap": "^0.25.2",
+    "react-bootstrap-table": "^0.9.17",
+    "react-imageloader": "~2.0.0",
+    "react-router": "^1.0.0-rc1",
+    "react-router-bootstrap": "^0.19.3",
     "reflux": "^0.2.12",
     "rimraf": "latest",
     "uglify-js": "^2.4.24",
-    "watchify": "^3.3.1",
-    "react-bootstrap-table": "~0.9.14",
-    "react-imageloader": "~2.0.0"
+    "watchify": "^3.5.0"
+  },
+  "optionalDependencies": {
+    "jest-cli": "~0.5.8",
+    "watchify": "^3.4.0"
   },
   "scripts": {
-    "prepublish": "rimraf js/bundle.js && parallelshell \"npm run css\" \"npm run html\" \"npm run js\"",
-    "build": "parallelshell \"npm run html\" \"npm run js\"",
-    "js": "NODE_ENV=production browserify . -t babelify | uglifyjs -c dead_code,drop_console,warnings=false -m > js/bundle.min.js",
+    "prepublish": "rimraf js/bundle.js && npm run build",
+    "build": "parallelshell \"npm run html\" \"npm run js\" \"npm run css\"",
+    "js": "NODE_ENV=production browserify -r react -r dicoogle-webcore . | uglifyjs -c dead_code,drop_console,warnings=false -m > js/bundle.min.js",
     "css": "sass sass/dicoogle.scss:css/dicoogle.css",
     "html": "htmlprocessor index-template.html -o index.html -e dist -s",
     "debug": "parallelshell \"npm run js-debug\" \"npm run html-debug\"",
-    "js-debug": "browserify . --debug -t babelify > js/bundle.js",
+    "js-debug": "NODE_ENV=development DICOOGLE_BASE_URL=\"http://localhost:8080\" browserify -d -r react -r dicoogle-webcore . > js/bundle.js",
     "html-debug": "htmlprocessor index-template.html -o index.html -e dev -s",
     "css:watch": "sass --watch sass/dicoogle.scss:css/dicoogle.css",
-    "js:watch": "watchify -o js/bundle.js -v -d -t babelify .",
+    "js:watch": "NODE_ENV=development DICOOGLE_BASE_URL=\"http://localhost:8080\" watchify -o js/bundle.js -v -d -r react -r dicoogle-webcore .",
     "test": "jest",
     "clean": "rimraf js/bundle.js js/bundle.min.js css/dicoogle.css css/dicoogle.css.map index.html"
   },
   "browserify": {
     "transform": [
-      "reactify",
       "babelify",
       "browserify-shim",
-      "envify"
+      [
+        "envify",
+        {
+          "_": "purge",
+          "global": true
+        }
+      ]
     ]
   },
   "browserify-shim": {
     "bootstrap": {
       "depends": [
-        "jquery:$"
+        "jquery:jQuery"
       ]
     }
   },

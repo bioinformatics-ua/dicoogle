@@ -4,10 +4,9 @@
 var Reflux = require('reflux');
 
 import {IndexStatusActions} from '../actions/indexStatusAction';
-
 import {Endpoints} from '../constants/endpoints';
-
 import {request, forceIndex} from '../handlers/requestHandler';
+import $ from 'jquery';
 
 var IndexStatusStore = Reflux.createStore({
     listenables: IndexStatusActions,

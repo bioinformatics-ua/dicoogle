@@ -15,4 +15,5 @@ sdk/.classpath
 sdk/.project
 sdk/.settings/*
 .idea
+.vscode
 *.iml

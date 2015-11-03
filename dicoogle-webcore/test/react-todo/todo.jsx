@@ -7,8 +7,8 @@ if (!React) {
 }
 
 var TodoItems = React.createClass({
-  render: function() {
-    var createItem = function(itemText) {
+  render() {
+    let createItem = function(itemText) {
       return <li>{itemText}</li>;
     };
     return <ul>{this.props.items.map(createItem)}</ul>;
@@ -16,22 +16,22 @@ var TodoItems = React.createClass({
 });
 
 var TodoApp = React.createClass({
-  getInitialState: function() {
+  getInitialState() {
     return {items: [], text: ''};
   },
-  onChange: function(e) {
+  onChange(e) {
     this.setState({text: e.target.value});
   },
-  handleSubmit: function(e) {
+  handleSubmit(e) {
     e.preventDefault();
-    var nextItems = this.state.items.concat([this.state.text]);
-    var nextText = '';
+    let nextItems = this.state.items.concat([this.state.text]);
+    let nextText = '';
     this.setState({items: nextItems, text: nextText});
   },
-  render: function() {
+  render() {
     return (
       <div>
-        <h3>TODO</h3>
+        <h3>TODO List:</h3>
         <TodoItems items={this.state.items} />
         <form onSubmit={this.handleSubmit}>
           <input onChange={this.onChange} value={this.state.text} />
@@ -42,10 +42,12 @@ var TodoApp = React.createClass({
   }
 });
 
-module.exports = function() {
-  var r = <TodoApp />;
-  this.render = function(parent) {
-    React.render(r, parent);
-  };
-}
-
+export default class Todo {
+  constructor() {
+    this.r = <TodoApp />;
+  }
+  
+  render(parent) {
+    React.render(this.r, parent);
+  }
+};

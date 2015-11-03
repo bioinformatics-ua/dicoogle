@@ -3,6 +3,7 @@
 
 var Reflux = require('reflux');
 
+import $ from 'jquery';
 import {UserActions} from '../actions/userActions';
 import {Endpoints} from '../constants/endpoints';
 import {request} from '../handlers/requestHandler';

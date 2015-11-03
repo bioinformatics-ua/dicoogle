@@ -1,10 +1,13 @@
 /* module.js - Dummy module file
  */
+console.log("Hello, I'm dummy!");
 module.exports = function() {
   // derp
   var index = null;
   var providers = [];
   var exhibit = document.createElement('b');
+  exhibit.style['font-size'] = '16px';
+  exhibit.style['font-family'] = 'Courier New';
   var interv = null;
   var button = document.createElement('input');
    
@@ -49,7 +52,12 @@ module.exports = function() {
        + ' embed some web interface technology, like React, to make them more interesting.</p>';
      
      d.appendChild(button);
+     var labelProviders = document.createElement('span');
+     labelProviders.style['font-size'] = '16px';
+     labelProviders.style.display = 'block-inline';
+     labelProviders.innerHTML = 'Query Providers: ';
      d.appendChild(document.createElement('br'));
+     d.appendChild(labelProviders);
      d.appendChild(exhibit);
      parent.appendChild(d);
    };

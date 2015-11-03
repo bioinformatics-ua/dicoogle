@@ -3,14 +3,14 @@
   "version": "0.0.1",
   "description": "A TODO list for Dicoogle",
   "scripts": {
-    "build": "jsx todo.jsx > module.js"
+    "build": "babel todo.jsx > module.js"
   },
   "dicoogle": {
     "caption": "TODO list",
-    "slot-id": "fordummy",
+    "slot-id": "menu",
     "module-file": "module.js"
   },
   "devDependencies": {
-    "react-tools": "^0.13.1"
+    "babel": "^5.8.23"
   }
 }

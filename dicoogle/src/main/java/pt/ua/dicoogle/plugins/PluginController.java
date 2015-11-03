@@ -179,7 +179,10 @@ public class PluginController{
                     set.getRestPlugins()
             );
             for (Collection interfaces : all) {
-                if (interfaces == null) continue;
+                if (interfaces == null) {
+                    logger.debug("Plugin set {} provided a null collection!");
+                    continue;
+                }
                 for (Object o : interfaces) {
                     if (o instanceof PlatformCommunicatorInterface) {
                         ((PlatformCommunicatorInterface)o).setPlatformProxy(proxy);

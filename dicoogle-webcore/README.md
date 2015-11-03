@@ -3,30 +3,25 @@
 This JavaScript project aims to provide the backbone for Dicoogle Web UI plugins.
 The essence of this architecture is that Dicoogle web pages will contain stub slots where plugins can be attached to.
 
-## Building
+## Building and Using
 
-The building process of Dicoogle Web Core is carried out by `grunt` (the "build" script in the package will execute the default task).
-Install **npm** if not already installed, and perform the following commands in this directory:
+These details are only relevant to developers of Dicoogle and its web app. To learn how to develop web UI plugins, please skip this section.
+No building is required for this project. Simply `import` (or `require`) the package module directly to Dicoogle. An environment that supports
+ECMAScript 6 and the Harmony module standard is required. Then:
 
-    # install development dependencies
-    npm install
-    # then execute the task runner
-    grunt
-    # or run the package's build script
-    npm run-script build
-
-## Using 
-
- - Include a module management library that supports synchronous module loading. RequireJS is preferred (RequireJS is supported,
-   but libraries must be asynchronously loaded before initializing the web core).
- - Include the resulting "dist/dicoogle-webcore.js" in your page. An HTML `<script>` element or another means of importing
-   the module is sufficient.
  - Place `<dicoogle-slot>` elements in the page. They must contain a unique slot id attribute `data-slot-id`.
- - Invoke the module's `init()` to automatically detect slots, as well as to fetch and attach plugins. This should only be called once. New slots attached dynamically will be automatically filled.
+ - Invoke the module's `init()` to initialize the module. It will automatically detect slots, as well as fetch and attach plugins. This method
+   should only be called once. New slots attached dynamically will be automatically filled.
+ - In order to know what menu plugins are available, invoke `fetchPlugins('menu'[, callback])`.
+
+Plugin web components will be attached to a div in the `<dicoogle-slot>` with its class defined as
+`"dicoogle-webcore-<slotid>_<plugin-index>"` (e.g. `"dicoogle-webcore-query_0"`). The div of these parents
+will have a class `"dicoogle-webcore-<slotid>"`. The Dicoogle web application may use these classes to style these
+additional UI elements (although usually this will not be necessary).
 
 A few examples of web pages using the Dicoogle Web Core are available in "test/TC".
 
-## Runtime Dependencies
+### Runtime Dependencies
 
 Dicoogle Web Core requires HTML custom element support.
 Include the "document-register-elements" script in order to extend HTML5 custom element support to other browsers.
@@ -43,17 +38,18 @@ A descriptor takes the form of a "package.json", an `npm` package descriptor, co
  - `version` : the version of the plugin (must be compliant with npm)
  - `description` _(optional)_ : a simple, one-line description of the package
  - `dicoogle` : an object containing Dicoogle-specific information:
-      - `caption` _(optional, defaults to name)_ : an appropriate title for being shown as a tab (or similar) in the web page
+      - `caption` _(optional, defaults to name)_ : an appropriate title for being shown as a tab (or similar) on the web page
       - `slot-id` : the unique ID of the slot where this plugin is meant to be attached
       - `module-file` _(optional, defaults to "module.js")_ : the name of the file containing the JavaScript module
 
-An example of a package:
+An example of a valid "package.json":
 
 ```json
 {
   "name" : "dicoogle-cbir-query",
   "version" : "0.0.1",
   "description" : "CBIR Query-By-Example plugin",
+  "author": "John Doe",
   "tags": ["dicoogle", "dicoogle-webui"],
   "dicoogle" : {
     "caption" : "Query by Example",
@@ -66,14 +62,11 @@ An example of a package:
 ### Module
 
 In addition, a JavaScript module must be implemented, containing the entire logic and rendering of the plugin.
-The final module script must define a module in loose CommonJS format (similar to the Node.js module standard).
+The final module script must be exported in loose CommonJS format (similar to the Node.js module standard).
 The developer may also choose to create the module under the UMD format. The developer can make multiple node-flavored
 CommonJS modules and use tools like browserify to bundle them and embed dependencies. The exported module must be
 a single constructor function, in which instances must have a `render(parent)` function, which will attach the
-contents of the plugin to the `parent` DOM element. The parent will be a div with its class defined as
-`"dicoogle-webcore-<slotid>_<plugin-index>"` (e.g. `"dicoogle-webcore-query_0"`). The div of these parents
-will have a class `"dicoogle-webcore-<slotid>"`. The Dicoogle web application may use these classes to style these
-additional UI elements.
+contents of the plugin to the `parent` DOM element.
 
 All modules will have access to the `DicoogleWeb` plugin-local alias for interfacing with Dicoogle. If the plugin
 is to be attached to a result slot, it must also implement `onResult(result)`. Query plugins can invoke
@@ -128,7 +121,7 @@ page's result module. The query service requested will be "search" unless modifi
 
 Add an event listener to an event triggered by the web core.
 
- - _eventName_ : the name of the event (must be one of 'load','loadMenu','loadQuery','loadResult')
+ - _eventName_ : the name of the event (must be one of 'load','loadMenu','loadQuery','loadResult','menu')
  - _fn_ : a callback function (arguments vary) -- `function(...)`
 
 #### **addResultListener** : `function(fn)`
@@ -143,21 +136,10 @@ Add a listener to the 'load' event, triggered when a plugin is loaded.
 
  - _fn_ : `function(Object{name, slotId, caption})`
 
-#### **addMenuPluginLoadListener** : `function(fn)`
+#### **addMenuPluginListener** : `function(fn)`
 
-Add a listener to the 'loadMenu' event, triggered when a menu plugin is loaded.
-
- - _fn_ : `function(Object{name, slotId, caption})`
-
-#### **addQueryPluginLoadListener** : `function(fn)`
-
-Add a listener to the 'loadQuery' event, triggered when a query plugin is loaded.
-
- - _fn_ : `function(Object{name, slotId, caption})`
- 
-#### **addResultPluginLoadListener** : `function(fn)`
-
-Add a listener to the 'loadResult' event, triggered when a result plugin is loaded.
+Add a listener to the 'menu' event, triggered when a menu plugin descriptor is retrieved.
+This may be useful for a web page to react to retrievals by automatically adding menu entries.
 
  - _fn_ : `function(Object{name, slotId, caption})`
 

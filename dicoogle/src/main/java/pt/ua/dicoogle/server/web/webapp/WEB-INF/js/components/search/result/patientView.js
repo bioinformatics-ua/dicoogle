@@ -14,6 +14,9 @@ import ConfirmModal from './confirmModal';
    * I understand your frustration, but I strongly believe, that I near future
    * we will be able to improve it as it desires. 
    * Best Regards.
+   * 
+   * ^^^
+   * WAT
    */
 var PatientView = React.createClass({
   getInitialState() {
@@ -27,8 +30,6 @@ var PatientView = React.createClass({
     // Subscribe to the store.
     SearchStore.listen(this._onChange);
   },
-
-
   
   /**
    * 2015-09-11:

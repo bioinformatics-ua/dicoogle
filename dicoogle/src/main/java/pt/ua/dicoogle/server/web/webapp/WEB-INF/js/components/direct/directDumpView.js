@@ -1,22 +1,21 @@
-var React = require('react');
-var ReactBootstrap = require('react-bootstrap');
-var Button = ReactBootstrap.Button;
-var Modal = ReactBootstrap.Modal;
+import React from 'react';
 import {DumpStore} from '../../stores/dumpStore';
 import {DumpActions} from '../../actions/dumpActions';
-
 import {getUrlVars} from '../../utils/url';
 import {Endpoints} from '../../constants/endpoints';
-
+import $ from 'jquery';
 
 var DirectDumpView = React.createClass({
-	getInitialState: function() {
+    propTypes: {
+      params: React.PropTypes.object.isRequired
+    },
+  	getInitialState: function() {
     	return {data: [],
     	status: "loading",
     	current: 0};
   	},
   	componentDidMount: function() {
-			var uid = getUrlVars()['SOPInstanceUID'];
+			var uid = this.props.params.uid || getUrlVars()['SOPInstanceUID'];
   		DumpActions.get(uid);
   	},
   	componentWillMount: function() {
