@@ -44,7 +44,6 @@ var IndexStatusView = React.createClass({
         }
       },
       render: function() {
-        var self = this;
         if(this.state.status === "loading"){
           return (<div className="loader-inner ball-pulse">
             <div/><div/><div/>
@@ -55,7 +54,7 @@ var IndexStatusView = React.createClass({
         if (this.state.data.results.length === 0) {
           items = (<div>No tasks</div>);
         } else {
-          items = this.state.data.results.map(function(item, index){
+          items = this.state.data.results.map((item, index) => {
             let complete = item.complete;
             let percentage = complete ? '100%'
               : (item.taskProgress >= 0) ? (item.taskProgress * 100 + '%') : '0%';
@@ -83,7 +82,7 @@ var IndexStatusView = React.createClass({
                       </div>
                     </div>
                     <div className="col-sm-2">
-                      <button className="btn btn-danger" onClick={self.onCloseStopClicked.bind(this,complete, item.taskUid)}> {complete?"Close":"Stop"} </button>
+                      <button className="btn btn-danger" onClick={this.onCloseStopClicked.bind(this, complete, item.taskUid)}> {complete?"Close":"Stop"} </button>
                     </div>
                 </div>
 

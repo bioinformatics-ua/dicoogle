@@ -25,7 +25,7 @@ var ServicesStore = Reflux.createStore({
         maxAssociations: "...",
         maxPduReceive: "...",
         maxPduSend: "...",
-        responseTimeout: "...",
+        responseTimeout: "..."
       };
 
       this._contents = {

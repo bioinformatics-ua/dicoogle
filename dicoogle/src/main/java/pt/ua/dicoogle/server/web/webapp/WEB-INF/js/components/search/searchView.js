@@ -51,8 +51,8 @@ var Search = React.createClass({
     render: function() {
       var self = this;
       var providersList = (
-        self.state.providers.map(function(item){
-          return (<option> {item} </option>);
+        self.state.providers.map(function(item, index){
+          return (<option key={index}> {item} </option>);
         })
       );
 
@@ -64,7 +64,6 @@ var Search = React.createClass({
                 <div className="btn-group">
                     <select id="providersList" className="btn btn_dicoogle form-control">
                       {providersList}
-
                     </select>
                 </div>
                 </div>
@@ -114,7 +113,7 @@ var Search = React.createClass({
       });
     },
     onSearchClicked : function(){
-        // console.log(React.getInitialState(<ResultSearch/>) );
+        // TODO don't do this, use state instead
         let text = document.getElementById("free_text").value;
 
         let providerEl = document.getElementById("providersList");

@@ -61,9 +61,9 @@ const StorageView = React.createClass({
 
           var cmoveItem = item.AETitle +"@" + item.ipAddrs + ":"+ item.port;
         if(index === 0)
-          return (<option selected value={index}>{cmoveItem}</option>);
+          return (<option key={index} selected value={index}>{cmoveItem}</option>);
         else
-          return (<option value={index}>{cmoveItem}</option>);
+          return (<option key={index} value={index}>{cmoveItem}</option>);
       });
 
       return (
