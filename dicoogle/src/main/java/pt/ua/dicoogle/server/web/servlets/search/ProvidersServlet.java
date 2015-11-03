@@ -19,6 +19,8 @@
 package pt.ua.dicoogle.server.web.servlets.search;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -29,6 +31,9 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONArray;
 
 import pt.ua.dicoogle.plugins.PluginController;
+import pt.ua.dicoogle.sdk.DicooglePlugin;
+import pt.ua.dicoogle.sdk.IndexerInterface;
+import pt.ua.dicoogle.sdk.StorageInterface;
 
 /**
  * Retrieve active providers
@@ -41,9 +46,24 @@ public class ProvidersServlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		//resp.addHeader("Access-Control-Allow-Origin", "*");
-		
-		List<String> activeProviders = PluginController.getInstance().getQueryProvidersName(true);
+        String paramType = req.getParameter("type");
+        
+        final String type = paramType != null ? paramType : "query";
+		Collection<String> activeProviders;
+        switch (type) {
+            case "index":
+                activeProviders = getIndexerNames();
+                break;
+            case "storage":
+                activeProviders = getStorageNames();
+                break;
+            case "query":
+                activeProviders = PluginController.getInstance().getQueryProvidersName(true);
+                break;
+            default:
+                resp.sendError(400);
+                return;
+        }
 		
         JSONArray json = new JSONArray();
         json.addAll(activeProviders);
@@ -53,5 +73,19 @@ public class ProvidersServlet extends HttpServlet{
 			
 	}
 	
+    private static Collection<String> getIndexerNames() {
+        return getPluginNames(PluginController.getInstance().getIndexingPlugins(true));
+    }
 
+    private Collection<String> getStorageNames() {
+        return getPluginNames(PluginController.getInstance().getStoragePlugins(true));
+    }
+    
+    private static Collection<String> getPluginNames(Collection<? extends DicooglePlugin> plugins) {
+        Collection<String> c = new ArrayList<>(plugins.size());
+        for (DicooglePlugin p : plugins) {
+            c.add(p.getName());
+        }
+        return c;
+    }
 }
