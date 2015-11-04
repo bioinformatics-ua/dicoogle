@@ -180,5 +180,11 @@ public class Main {
         if (settings.getArchiveSettings().isDirectoryWatcherEnabled()) {
             AsyncIndex asyncIndex = new AsyncIndex();
         }
+
+        /** Register shutdown hook */
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            PluginController.getInstance().shutdown();
+        }, "shutdown-plugins-hook"));
+        logger.debug("Shutdown hook registered.");
     }
 }

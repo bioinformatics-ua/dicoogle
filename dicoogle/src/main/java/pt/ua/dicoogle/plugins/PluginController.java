@@ -261,17 +261,10 @@ public class PluginController {
     }
 
     /**
-     * Stops the plugins and saves the settings
+     * Shut down all plugins.
      */
-    public void shutdown() throws IOException {
+    public void shutdown() {
         for (PluginSet plugin : pluginSets) {
-            // TODO: I Think it is better to enable auto-save settings
-            /*Settings settings = plugin.getSettings();
-            if (settings != null) {
-                settings.save();
-            }
-            */
-            // lets the plugin know we are shutting down
             plugin.shutdown();
         }
     }
