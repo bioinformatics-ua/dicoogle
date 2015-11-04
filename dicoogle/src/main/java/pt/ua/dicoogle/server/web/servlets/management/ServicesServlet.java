@@ -128,12 +128,15 @@ public class ServicesServlet extends HttpServlet {
 		switch (mType) {
 		case STORAGE:
 			boolean success = true;
-			if(running)
-				success = controlServices.startStorage() == 0;
+            int result = 0;
+			if(running) {
+                result = controlServices.startStorage();
+                success = (result == 0);
+            }
 			else
 				controlServices.stopStorage();
 			
-            obj.element("success", true);
+            obj.element("success", success);
 			break;
 		case PLUGIN:
 			//TODO: START AND STOP PLUGINS
