@@ -258,17 +258,10 @@ public class PluginController{
     }
 
     /**
-     * Stops the plugins and saves the settings
+     * Shut down all plugins.
      */
-    public void shutdown() throws IOException {
+    public void shutdown() {
         for (PluginSet plugin : pluginSets) {
-            //TODO: I Think it is better to enable auto-save settings
-            /*Settings settings = plugin.getSettings();
-            if (settings != null) {
-                settings.save();
-            }
-	*/
-            //lets the plugin know we are shutting down
             plugin.shutdown();
         }
     }
@@ -367,11 +360,11 @@ public class PluginController{
         
         for (StorageInterface store : storages) {
             if (store.handles(location)) {
-            	logger.debug("Retrieved Storage For Schema: {}", location);
+            	logger.debug("Retrieved Storage For scheme: {}", location);
                 return store;
             }
         }
-        logger.warn("Could not get storage for schema: {}", location);
+        logger.warn("Could not get storage for scheme: {}", location);
         return null;
     }
     
@@ -504,7 +497,7 @@ public class PluginController{
     	logger.info("Starting Indexing procedure for {}", path.toString());
         StorageInterface store = getStorageForSchema(path);
 
-        if(store==null){ 
+        if(store==null) {
             logger.error("No storage plugin detected");
             return Collections.emptyList(); 
         }
