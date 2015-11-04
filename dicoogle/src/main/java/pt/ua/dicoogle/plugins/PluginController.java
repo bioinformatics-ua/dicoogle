@@ -258,17 +258,10 @@ public class PluginController{
     }
 
     /**
-     * Stops the plugins and saves the settings
+     * Shut down all plugins.
      */
-    public void shutdown() throws IOException {
+    public void shutdown() {
         for (PluginSet plugin : pluginSets) {
-            //TODO: I Think it is better to enable auto-save settings
-            /*Settings settings = plugin.getSettings();
-            if (settings != null) {
-                settings.save();
-            }
-	*/
-            //lets the plugin know we are shutting down
             plugin.shutdown();
         }
     }
@@ -362,16 +355,14 @@ public class PluginController{
     		return null;
     	}
         Collection<StorageInterface> storages = getStoragePlugins(false);
-        //System.out.println("Number of Plugins: "+storages.size());
         
         for (StorageInterface store : storages) {
-            //System.out.println("Testing Storage Plugin: "+store.getScheme());
             if (store.handles(location)) {
-            	logger.info("Retrieved Storage For Schema: "+location.toString());
+            	logger.debug("Retrieved Storage For Schema: {}", location);
                 return store;
             }
         }
-        logger.error("Could not get storage for schema: "+location.toString());
+        logger.warn("Could not get storage for schema: {}", location.toString());
         return null;
     }
     
@@ -382,7 +373,7 @@ public class PluginController{
 		} catch (URISyntaxException e) {
             logger.error("Bad URI", e);
 		}
-		return getStorageForSchema(uri);
+        return getStorageForSchema(uri);
     }
 
     public Collection<QueryInterface> getQueryPlugins(boolean onlyEnabled) {
@@ -499,7 +490,7 @@ public class PluginController{
     	logger.info("Starting Indexing procedure for {}", path.toString());
         StorageInterface store = getStorageForSchema(path);
 
-        if(store==null){ 
+        if(store==null) {
             logger.error("No storage plugin detected");
             return Collections.emptyList(); 
         }
