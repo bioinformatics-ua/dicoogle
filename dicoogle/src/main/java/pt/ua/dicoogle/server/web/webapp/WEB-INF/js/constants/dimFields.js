@@ -27,6 +27,7 @@ var DimFields = [
 ,"StudyDate"
 ,"PatientTelephoneNumbers"
 ,"SOPInstanceUID"
-,"PatientName"];
+,"PatientName"
+,"SliceLocation"];
 
 export {DimFields};
