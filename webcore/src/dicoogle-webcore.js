@@ -78,9 +78,13 @@ const DicoogleWebcore = (function () {
     //m.updateSlots();
     
     // create dicoogle client access object
-    // and inject query issuer method
+    // and inject webcore related methods
     Dicoogle = client(base_url);
     Dicoogle.issueQuery = issueQuery;
+    Dicoogle.addMenuPluginListener = m.addMenuPluginListener;
+    Dicoogle.addPluginLoadListener = m.addPluginLoadListener;
+    Dicoogle.addEventListener = m.addEventListener;
+    Dicoogle.addResultListener = m.addResultListener;
   };
   
   m.updateSlots = function() {    
