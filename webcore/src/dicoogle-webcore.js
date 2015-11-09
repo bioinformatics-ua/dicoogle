@@ -1,4 +1,5 @@
 import request from './request';
+import client from 'dicoogle-client';
 
 /** Dicoogle web application core.
  * This module provides support to web interface plugins.
@@ -12,6 +13,7 @@ const DicoogleWebcore = (function () {
   var plugins = {};
   var packages = {};
   var base_url = null;
+  var Dicoogle = null;
 
   var eventListeners = {
     load: [],
@@ -74,6 +76,11 @@ const DicoogleWebcore = (function () {
     plugins = {};
     packages = {};
     //m.updateSlots();
+    
+    // create dicoogle client access object
+    // and inject query issuer method
+    Dicoogle = client(base_url);
+    Dicoogle.issueQuery = issueQuery;
   };
   
   m.updateSlots = function() {    
@@ -95,7 +102,7 @@ const DicoogleWebcore = (function () {
     let slotIds = Object.keys(slots);
     if (Object.keys(plugins).length !== slotIds.length) {
       m.fetchPlugins(slotIds, function(packages) {
-        for (let i = 0 ; i < packages.length ; i++) {
+        for (let i = 0; i < packages.length; i++) {
           load_plugin(packages[i]);
         }
       });
@@ -116,7 +123,7 @@ const DicoogleWebcore = (function () {
     // finally, fetch the needed plugin and load it
     if (!plugins[elem.slotId]) {
       m.fetchPlugins(elem.slotId, function(packages) {
-        for (let i = 0 ; i < packages.length ; i++) {
+        for (let i = 0; i < packages.length; i++) {
           load_plugin(packages[i], callback);
         }
       });
@@ -143,7 +150,7 @@ const DicoogleWebcore = (function () {
         if (!packages[packageArray[i].name]) {
           packages[packageArray[i].name] = packageArray[i];
           if (packageArray[i].dicoogle.slotId === 'menu') {
-            for (let k = 0 ; k < eventListeners.menu.length ; k++) {
+            for (let k = 0; k < eventListeners.menu.length; k++) {
               eventListeners.menu[k]({name: packageArray[i].name, slotId: 'menu', caption: packageArray[i].dicoogle.caption});
             }
           }
@@ -155,7 +162,7 @@ const DicoogleWebcore = (function () {
     });
   };
       
-  // --------------------- Plugin-accessible methods --------------------------------
+  // --------------------- Injected Plugin-accessible methods ----------------------------
   
   /** Issue a query to the system. This operation is asynchronous
    * and will automatically issue back a result exposal. The query service requested will be "search" unless modified
@@ -166,7 +173,7 @@ const DicoogleWebcore = (function () {
    *      - overrideService [string] the name of the service to use instead of "search" 
    * @param {function(error, result)} callback an optional callback function
    */
-  m.issueQuery = function(query, options, callback) {
+  function issueQuery(query, options, callback) {
     options = options || {};
     options.query = query;
     let requestTime = new Date();
@@ -179,23 +186,7 @@ const DicoogleWebcore = (function () {
       dispatch_result(data, requestTime, options);
       if (callback) callback(null, data);
     });
-  };
-  
-  /** Make a GET request to Dicoogle.
-   * function(service, [data,] callback)
-   * @param service the relative URI of the service
-   * @param data the data to pass
-   * @param callback function(error, result)
-   */
-  m.request = function(service, arg1, arg2) {
-    let data = (typeof arg1 === 'object') ? arg1 : {};
-    let callback = (typeof arg1 === 'function') ? arg1 : arg2;
-    if (typeof callback !== 'function') {
-      console.error('invalid call to DicoogleWeb.request : a callback function is required');
-      return;
-    }
-    service_get(service, data, callback);
-  };
+  }
   
   /** Invoked by the webUI service for registering a new plugin implementation.
    * @param {{render:function}} pluginInstance a module describing a plugin
@@ -462,7 +453,7 @@ const DicoogleWebcore = (function () {
   })();
 
   m.HTMLDicoogleSlotElement = HTMLDicoogleSlotElement;
-  
+    
   return m;
 })();
 

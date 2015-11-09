@@ -6,7 +6,7 @@ if (!React) {
   console.error("React is not supported in this page!");
 }
 
-var TodoItems = React.createClass({
+const TodoItems = React.createClass({
   render() {
     let createItem = function(itemText) {
       return <li>{itemText}</li>;
@@ -15,7 +15,7 @@ var TodoItems = React.createClass({
   }
 });
 
-var TodoApp = React.createClass({
+const TodoApp = React.createClass({
   getInitialState() {
     return {items: [], text: ''};
   },
@@ -50,4 +50,4 @@ export default class Todo {
   render(parent) {
     React.render(this.r, parent);
   }
-};
+}

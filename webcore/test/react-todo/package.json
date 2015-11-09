@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "A TODO list for Dicoogle",
   "scripts": {
-    "build": "babel todo.jsx > module.js"
+    "build": "babel todo.jsx > module.js",
+    "prepublish": "npm run build"
   },
   "dicoogle": {
     "caption": "TODO list",
@@ -11,6 +12,8 @@
     "module-file": "module.js"
   },
   "devDependencies": {
-    "babel": "^5.8.23"
+    "babel-cli": "^6.1.2",
+    "babel-preset-es2015": "^6.1.2",
+    "babel-preset-react": "^6.1.2"
   }
 }
