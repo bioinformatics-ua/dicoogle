@@ -56,10 +56,11 @@ var IndexStatusView = React.createClass({
         } else {
           items = this.state.data.results.map((item, index) => {
             let complete = item.complete;
-            let percentage = complete ? '100%'
-              : (item.taskProgress >= 0) ? (item.taskProgress * 100 + '%') : '0%';
+            let unknownPercentage = item.taskProgress < 0;
+            let percentage = (complete || unknownPercentage) ? '100%'
+                : (item.taskProgress * 100 + '%');
 
-            let barstate = "indexprogress progress-bar progress-bar-striped progress-bar-success";
+            let barstate;
             if(item.nErrors > 0 && item.nIndexed > 0){
               barstate = "indexprogress progress-bar progress-bar-striped progress-bar-warning";
             }
@@ -67,17 +68,22 @@ var IndexStatusView = React.createClass({
             {
               barstate = "indexprogress progress-bar progress-bar-striped progress-bar-danger";
             }
-            else {
+            else if (unknownPercentage && !complete) {
+              barstate = "indexprogress progress-bar progress-bar-striped progress-bar-info";
+            } else {
               barstate = "indexprogress progress-bar progress-bar-striped progress-bar-success";
+            }
+            if (!complete) {
+              barstate += " active";
             }
             
             return (
-              <div key={index} className="well well-sm">
+              <div key={item.taskUid} className="well well-sm">
                 <div className="row">
                     <div className="col-sm-10">
                       <div className="progress indexstatusprogress">
                           <div style={{width : percentage}} className={barstate} role="progressbar"  aria-valuemin="0" aria-valuemax="100">
-
+                                {!unknownPercentage && percentage}
                           </div>
                       </div>
                     </div>
