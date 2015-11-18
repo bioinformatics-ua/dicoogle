@@ -149,7 +149,7 @@ public class Main
             }
         }
         /** Register System Exceptions Hook */
-        ExceptionHandler.registerExceptionHandler();
+        //ExceptionHandler.registerExceptionHandler();
 
         optimizeMemoryUsage();
     }
