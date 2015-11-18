@@ -146,14 +146,14 @@ public class Main
             }
         }
         /** Register System Exceptions Hook */
-        ExceptionHandler.registerExceptionHandler();
+        //ExceptionHandler.registerExceptionHandler();
         
         /** Register shutdown hook */
         Runtime.getRuntime().addShutdownHook(new Thread("shutdown-plugins-hook") {
         
             @Override
             public void run() {
-                //StaticShutdownCallbackRegistry.invoke();
+                StaticShutdownCallbackRegistry.invoke();
                 PluginController.getInstance().shutdown();
                 System.out.flush();
                 System.err.flush();
