@@ -131,12 +131,8 @@ var Search = React.createClass({
           requestedQuery: params
         })
     },
-    isKeyword: function(freetext){
-      for(var i=0; i<DimFields.length;i++) {
-          if((freetext.indexOf(DimFields[i])) != -1) {
-            return true;
-          }
-        }
+    isKeyword: function(freetext) {
+      return !!freetext.match(/[^\s\\]:\S/);
     },
   isAutocompletOpened:function(){
     if($('.ui-autocomplete').css('display')==='none'){return false;}

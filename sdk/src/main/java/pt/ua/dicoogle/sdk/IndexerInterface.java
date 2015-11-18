@@ -39,7 +39,7 @@ public interface IndexerInterface extends DicooglePlugin {
      * @param file directory or file to index
      * @return a representation of the asynchronous indexation task
      */
-    public Task<Report> index(StorageInputStream file);
+    public Task<Report> index(StorageInputStream file, Object ... parameters);
 
     /**
      * Indexes multiple file paths to the database. Indexation procedures are asynchronous, and will return
@@ -49,7 +49,7 @@ public interface IndexerInterface extends DicooglePlugin {
      * @param files a collection of directories and/or files to index
      * @return a representation of the asynchronous indexation task
      */
-    public Task<Report> index(Iterable<StorageInputStream> files);
+    public Task<Report> index(Iterable<StorageInputStream> files, Object ... parameters);
 
     
     /**

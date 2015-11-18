@@ -19,8 +19,6 @@
 package pt.ua.dicoogle.server.web.servlets.management;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -31,8 +29,6 @@ import net.sf.json.JSONObject;
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.server.ControlServices;
 import pt.ua.dicoogle.server.web.management.Services;
-import pt.ua.dicoogle.server.web.utils.ResponseUtil;
-import pt.ua.dicoogle.server.web.utils.ResponseUtil.Pair;
 
 /**
  * 
@@ -86,7 +82,8 @@ public class ServicesServlet extends HttpServlet {
         obj.element("isRunning", isRunning);
         obj.element("port", port);
         obj.element("autostart", autostart);
-
+        
+        resp.setContentType("application/json");
         resp.getWriter().print(obj.toString());
 	}
 
@@ -128,12 +125,15 @@ public class ServicesServlet extends HttpServlet {
 		switch (mType) {
 		case STORAGE:
 			boolean success = true;
-			if(running)
-				success = controlServices.startStorage() == 0;
+            int result = 0;
+			if(running) {
+                result = controlServices.startStorage();
+                success = (result == 0);
+            }
 			else
 				controlServices.stopStorage();
 			
-            obj.element("success", true);
+            obj.element("success", success);
 			break;
 		case PLUGIN:
 			//TODO: START AND STOP PLUGINS
@@ -151,6 +151,7 @@ public class ServicesServlet extends HttpServlet {
 		default:
 			break;
 		}
+        resp.setContentType("application/json");
         resp.getWriter().print(obj.toString());
 	}
 

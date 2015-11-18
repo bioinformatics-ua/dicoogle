@@ -339,20 +339,22 @@ public class PluginController{
         return Collections.emptyList();    
     }
     
-    /**
+    /** Retrieve a storage interface capable of handling files on a given location.
+     * 
      * TODO: this can be heavily improved if we keep a map of scheme->indexer
      * However we are not supposed to call this every other cycle.
      *
-     * returns null if no suitable plugin is found
      * TODO: we should return a proxy storage that always returns error
      * 
-     * @param location only the scheme matters
-     * @return
+     * @todo "schema" is a typo, should read "scheme"
+     * 
+     * @param location a URI of the location, only the scheme matters
+     * @return a storage interface capable of handling the location, null if no suitable plugin is found
      */
     public StorageInterface getStorageForSchema(URI location) {
     	if(location == null){
-    		logger.error("NULL URI");
-    		return null;
+            logger.warn("URI for retrieving storage interface is null, ignoring");
+            return null;
     	}
         Collection<StorageInterface> storages = getStoragePlugins(false);
         
@@ -362,17 +364,23 @@ public class PluginController{
                 return store;
             }
         }
-        logger.warn("Could not get storage for schema: {}", location.toString());
+
+        logger.warn("Could not get storage for schema: {}", location);
         return null;
     }
     
-    public StorageInterface getStorageForSchema(String schema) {
-        URI uri = null;
-		try {
-			uri = new URI(schema, "", "");
-		} catch (URISyntaxException e) {
-            logger.error("Bad URI", e);
-		}
+    /** Retrieve a storage interface capable of handling files with the given scheme.
+     * 
+     * TODO: this can be heavily improved if we keep a map of scheme->indexer
+     * However we are not supposed to call this every other cycle.
+     *
+     * TODO: we should return a proxy storage that always returns error
+     * 
+     * @param scheme a URI of the location, only the scheme matters
+     * @return a storage interface capable of handling the location, null if no suitable plugin is found
+     */
+    public StorageInterface getStorageForSchema(String scheme) {
+        URI uri = URI.create(scheme + ":/");
         return getStorageForSchema(uri);
     }
 
