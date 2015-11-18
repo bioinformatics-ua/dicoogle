@@ -20,7 +20,6 @@ package pt.ua.dicoogle.server.web.rest;
 
 import org.restlet.data.MediaType;
 import org.restlet.ext.json.JsonRepresentation;
-import org.restlet.representation.OutputRepresentation;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 import pt.ua.dicoogle.core.Version;
@@ -33,7 +32,6 @@ public class VersionResource extends ServerResource {
     @Get("json")
     public JsonRepresentation represent() {
         
-        
         Version v = new Version();
         JsonRepresentation sr = new JsonRepresentation("{\"version\":\""+v.getVersion()+
                 "\"}");
@@ -44,8 +42,8 @@ public class VersionResource extends ServerResource {
 
     }
     
+    @Override
     public String toString(){
         return "version";
-        
     }
 }

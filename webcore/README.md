@@ -6,8 +6,8 @@ The essence of this architecture is that Dicoogle web pages will contain stub sl
 ## Building and Using
 
 These details are only relevant to developers of Dicoogle and its web app. To learn how to develop web UI plugins, please skip this section.
-No building is required for this project. Simply `import` (or `require`) the package module directly to Dicoogle. An environment that supports
-ECMAScript 6 and the Harmony module standard is required. Then:
+No building is required for this project. Simply install `dicoogle-webcore` as a dependency and `import` (or `require`) the package module
+directly to Dicoogle. Then:
 
  - Place `<dicoogle-slot>` elements in the page. They must contain a unique slot id attribute `data-slot-id`.
  - Invoke the module's `init()` to initialize the module. It will automatically detect slots, as well as fetch and attach plugins. This method
@@ -62,17 +62,19 @@ An example of a valid "package.json":
 ### Module
 
 In addition, a JavaScript module must be implemented, containing the entire logic and rendering of the plugin.
-The final module script must be exported in loose CommonJS format (similar to the Node.js module standard).
-The developer may also choose to create the module under the UMD format. The developer can make multiple node-flavored
-CommonJS modules and use tools like browserify to bundle them and embed dependencies. The exported module must be
-a single constructor function, in which instances must have a `render(parent)` function, which will attach the
-contents of the plugin to the `parent` DOM element.
+The final module script must be exported in CommonJS format (similar to the Node.js module standard), or using
+the ECMAScript Harmony import/export notation (as in ES2015).
+The developer may also choose to create the module under the UMD format, although this is not required. The developer
+can make multiple node-flavored CommonJS modules and use tools like browserify to bundle them and embed dependencies.
+The exported module must be a single constructor function, in which instances must have a `render(parent)` function,
+which will attach the contents of the plugin to the `parent` DOM element. Furthermore, the `onResult(results)` method
+must be implemented if the plugin is for a "result" slot.
 
-All modules will have access to the `DicoogleWeb` plugin-local alias for interfacing with Dicoogle. If the plugin
-is to be attached to a result slot, it must also implement `onResult(result)`. Query plugins can invoke
-`issueQuery(...)` to perform a query and expose the results on the page (via result plugins). Other REST
-services exposed by Dicoogle are easily accessible with `request(...)`. See the Dicoogle Web API below for a more
-thorough documentation.
+All modules will have access to the `Dicoogle` plugin-local alias for interfacing with Dicoogle.
+Query plugins can invoke `issueQuery(...)` to perform a query and expose the results on the page (via result plugins).
+Other REST services exposed by Dicoogle are easily accessible with `request(...)`.
+See the [Dicoogle JavaScript client package](https://github.com/bioinformatics-ua/dicoogle-client-js) and the Dicoogle
+Web API section below for a more thorough documentation.
 
 Modules are meant to work independently, but can have embedded libraries if so is desired. In
 addition, if the underlying web page is known to contain specific libraries, then these can also be used without being
@@ -96,16 +98,10 @@ module.exports = function() {
 
 ### Dicoogle Web API
 
-Either `require` the `dicoogle-web` module (if the page supports the operation) or use the alias `DicoogleWeb` to 
-perform operations to the Dicoogle server and the page's Dicoogle web core.
-
-#### **request** : `function(service, [data,] callback)`
-
-Make a request to Dicoogle's web services.
-
- - _service_ : the relative URI of the service
- - _data_ : the data to pass to the service (by default via the HTTP request's query string)
- - _callback_ : a callback function (`function(error, result)`)
+Either `require` the `dicoogle-client` module (if the page supports the operation) or use the alias `Dicoogle` to 
+access and perform operations on Dicoogle and the page's web core. All methods described in
+[`dicoogle-client`](https://github.com/bioinformatics-ua/dicoogle-client-js) are available. Furthermore, the web
+core injects the following methods:
 
 #### **issueQuery** : `function(query, options, callback)`
 
@@ -114,7 +110,7 @@ page's result module. The query service requested will be "search" unless modifi
 
  - _query_ an object or string containing the query to perform
  - _options_ an object containing additional options (such as query plugins to use, result limit, etc.)
-     - _overrideService_ [string] the name of the service to use instead of "search"
+     - \[_overrideService_\] {string} the name of the service to use instead of "search"
  - _callback_ an optional callback function(error, result)
 
 ####  **addEventListener** : `function(eventName, fn)`
@@ -146,9 +142,10 @@ This may be useful for a web page to react to retrievals by automatically adding
 ## Installing Plugins
 
 Place all contents of a plugin in a directory and insert the directory (by copying or linking)
-into the "WebPlugins" folder at the base working directory. Plugins can then be retrieved the
+into the "WebPlugins" folder at the base working directory. Plugins will then be retrieved the
 next time the Dicoogle server loads.
 
 ## Testing Plugins
 
-Web UI plugins can be tested either in a Dicoogle server or in separate pages. For the latter, please see the HTML pages in "test/TC/" for a few examples.
+Testing Web UI plugins in a Dicoogle server is recommended, although it can also be done in separate pages.
+For the latter, please see the HTML pages in "test/TC/" for a few examples.
