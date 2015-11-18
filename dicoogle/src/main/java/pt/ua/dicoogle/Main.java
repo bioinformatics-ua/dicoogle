@@ -36,6 +36,7 @@ import java.util.TimerTask;
 
 import javax.swing.JOptionPane;
 
+import com.djdch.log4j.StaticShutdownCallbackRegistry;
 import org.dcm4che2.data.TransferSyntax;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +66,12 @@ import pt.ua.ieeta.emailreport.Configuration;
  */
 public class Main
 {
+
+
+    static {
+        System.setProperty("log4j.shutdownCallbackRegistry", "com.djdch.log4j.StaticShutdownCallbackRegistry");
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     private static boolean optimizeMemory = true;
@@ -72,6 +79,9 @@ public class Main
     //indicates whether the client and the server were pulled at the same time
     private static boolean isFixedClient = false;
     private static int remoteGUIPort = 0;
+
+
+
     public static boolean MAC_OS_X = (System.getProperty("os.name").toLowerCase().startsWith("mac os x"));
     /**
      * Generate a random integer number between 0 and 100
@@ -143,6 +153,7 @@ public class Main
         
             @Override
             public void run() {
+                //StaticShutdownCallbackRegistry.invoke();
                 PluginController.getInstance().shutdown();
                 System.out.flush();
                 System.err.flush();

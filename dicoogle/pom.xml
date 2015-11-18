@@ -404,5 +404,12 @@
             <artifactId>raven-log4j2</artifactId>
             <version>5.0.2</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.djdch.log4j</groupId>
+            <artifactId>log4j-staticshutdown</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
     </dependencies>
 </project>
