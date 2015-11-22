@@ -32,8 +32,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.regex.Pattern;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 import org.slf4j.LoggerFactory;
@@ -138,11 +137,14 @@ public class WebUIPluginManager {
     public void loadAllFromJar(JarFile pluginJar) {
         assert pluginJar != null;
 
+        Pattern pckDescrMatcher = Pattern.compile("WebPlugins" + File.separatorChar + "[a-z0-9\\-]+" + File.separatorChar + "package.json");
         Enumeration<? extends JarEntry> entries = pluginJar.entries();
         if (entries.hasMoreElements()) {
             for (JarEntry e = entries.nextElement(); entries.hasMoreElements() ; e = entries.nextElement()) {
-                if (e.getName().startsWith("WebPlugins"))
-                    logger.info("Jar entry {} in {}", e.getName(), pluginJar.getName());
+                if (pckDescrMatcher.matcher(e.getName()).matches()) {
+                    logger.info("Found web UI plugin in {} at \"{}\"!", pluginJar.getName(), e.getName());
+                    // TODO register webui plugins and keep endpoint for resource access
+                }
             }
         }
         // TODO

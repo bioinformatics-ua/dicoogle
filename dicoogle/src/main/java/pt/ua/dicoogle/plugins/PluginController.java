@@ -347,6 +347,7 @@ public class PluginController{
     /**
      * Resolve a URI to a DicomInputStream
      * @param location
+     * @param args
      * @return 
      */
     public Iterable<StorageInputStream> resolveURI(URI location, Object ...args)
@@ -356,12 +357,12 @@ public class PluginController{
         for (StorageInterface store : storages) {
             if (store.handles(location)) 
             {
-            	logger.info("Resolving URI: "+location.toString()+" Storage: "+store.getName() );
+            	logger.debug("Resolving URI: {} Storage: {}", location, store.getName());
                 return store.at(location, args);
             }
         }
 
-    	logger.error("Could not resolve uri: "+location.toString());
+    	logger.error("Could not resolve uri: {}", location);
         return Collections.emptyList();    
     }
     
@@ -386,11 +387,11 @@ public class PluginController{
         
         for (StorageInterface store : storages) {
             if (store.handles(location)) {
-            	logger.debug("Retrieved Storage For Schema: {}", location);
+            	logger.debug("Retrieved storage for scheme: {}", location);
                 return store;
             }
         }
-        logger.warn("Could not get storage for schema: {}", location);
+        logger.warn("Could not get storage for scheme: {}", location);
         return null;
     }
     
