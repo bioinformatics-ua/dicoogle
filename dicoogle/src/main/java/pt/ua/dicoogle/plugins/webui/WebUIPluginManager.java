@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.Collections;
@@ -134,7 +135,7 @@ public class WebUIPluginManager {
     /** Load all web plugins from a jar file.
      * @param pluginJar the jar file containing the plugins
      */
-    public void loadAllFromJar(JarFile pluginJar) {
+    public void loadAllFromJar(JarFile pluginJar) throws IOException, PluginFormatException {
         assert pluginJar != null;
 
         Pattern pckDescrMatcher = Pattern.compile("WebPlugins" + File.separatorChar + "[a-z0-9\\-]+" + File.separatorChar + "package.json");
@@ -144,10 +145,21 @@ public class WebUIPluginManager {
                 if (pckDescrMatcher.matcher(e.getName()).matches()) {
                     logger.info("Found web UI plugin in {} at \"{}\"!", pluginJar.getName(), e.getName());
                     // TODO register webui plugins and keep endpoint for resource access
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(pluginJar.getInputStream(e)))) {
+                        String acc = "";
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            acc += line;
+                        }
+                        WebUIPlugin plugin = WebUIPlugin.fromPackageJSON((JSONObject)JSONSerializer.toJSON(acc));
+                        // TODO
+                          //  this.plugins.put(plugin.getName(), new WebUIEntry(plugin, pluginJar));
+                        this.justPlugins.add(plugin);
+                    }
+
                 }
             }
         }
-        // TODO
     }
     
         
