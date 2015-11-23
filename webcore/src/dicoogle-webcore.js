@@ -65,7 +65,6 @@ const DicoogleWebcore = (function () {
       throw "no DOM environment!";
     }
     console.log('Initializing Dicoogle web core ...');
-    base_url = '';
     if (typeof baseURL === 'string') {
       base_url = baseURL;
       if (base_url[base_url.length-1] === '/') {

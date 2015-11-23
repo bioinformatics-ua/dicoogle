@@ -1,10 +1,11 @@
 {
   "name": "dummy",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Dummy Web UI plugin",
   "scripts": {
-    "build": "babel dummy.js | uglifyjs --compress keep_fargs=true --mangle -r require,module,exports -o module.js",
-    "build-debug": "babel dummy.js | uglifyjs dummy.js --source-map module.js.map -b -o module.js"
+    "build": "uglifyjs dummy.js --compress keep_fargs=true --mangle -r require,module,exports -o module.js",
+    "build-debug": "uglifyjs dummy.js --source-map module.js.map -b -o module.js",
+    "prepublish": "npm run build"
   },
   "dicoogle": {
     "slot-id": "menu",
@@ -12,7 +13,6 @@
     "module-file": "module.js"
   },
   "devDependencies": {
-    "babel": "^5.8.23",
     "uglifyjs": "^2.4.10"
   }
 }

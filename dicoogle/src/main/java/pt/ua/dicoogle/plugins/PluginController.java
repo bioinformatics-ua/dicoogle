@@ -32,7 +32,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.jar.JarFile;
+import java.util.zip.ZipFile;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -120,11 +120,12 @@ public class PluginController{
         // loadByPluginName all at "WebPlugins"
         this.webUI.loadAll(new File("WebPlugins"));
         
-        for (File j : FileUtils.listFiles(pluginFolder, new String[]{"jar"}, false)) {
+        for (File j : FileUtils.listFiles(pluginFolder, new String[]{"jar", "zip"}, false)) {
             try {
-                this.webUI.loadAllFromJar(new JarFile(j));
+                this.webUI.loadAllFromZip(new ZipFile(j));
             } catch (IOException ex) {
                 // ignore
+                logger.warn("Failed to load web UI plugins from {}: {}", j.getName(), ex.getMessage());
             }
         }
         // go through each jar'd plugin and fetch their WebPlugins
