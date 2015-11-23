@@ -36,7 +36,7 @@ import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
 /**
  * Retrieval of web UI plugins and respective packages/modules.
  * 
- * <b>This API is unstable. It is currently only compatible with dicoogle-webcore 0.7.x</b>
+ * <b>This API is unstable. It is currently only compatible with dicoogle-webcore 0.10.x</b>
  *
  * @author Eduardo Pinho
  */
