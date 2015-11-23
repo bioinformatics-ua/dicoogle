@@ -120,6 +120,7 @@ public class PluginController{
         // loadByPluginName all at "WebPlugins"
         this.webUI.loadAll(new File("WebPlugins"));
         
+        // go through each jar'd plugin and fetch their WebPlugins
         for (File j : FileUtils.listFiles(pluginFolder, new String[]{"jar", "zip"}, false)) {
             try {
                 this.webUI.loadAllFromZip(new ZipFile(j));
@@ -128,17 +129,6 @@ public class PluginController{
                 logger.warn("Failed to load web UI plugins from {}: {}", j.getName(), ex.getMessage());
             }
         }
-        // go through each jar'd plugin and fetch their WebPlugins
-//        for (PluginSet set : pluginSets) {
-//            final URL url = set.getClass().getClassLoader().getResource("WebPlugins");
-//            if (url != null) {
-//                final String dirName = url.getFile();
-//                final File dir = new File(dirName);
-//                // 
-//            } else {
-//                logger.info("No web plugins in " + set.getName());
-//            }
-//        }
         
         logger.info("Loaded Local Plugins");
 
