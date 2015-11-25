@@ -1,56 +1,70 @@
 /*jshint esnext: true*/
 
-var React = require('react');
-var ReactBootstrap = require('react-bootstrap');
-var Button = ReactBootstrap.Button;
+import React from 'react';
+import {Button} from 'react-bootstrap';
+import $ from 'jquery';
 
 import {SearchStore} from '../../stores/searchStore';
 import {ActionCreators} from '../../actions/searchActions';
+
+import {ProvidersStore} from '../../stores/providersStore';
+import {ProvidersActions} from '../../actions/providersActions';
 
 import {AdvancedSearch} from '../search/advancedSearch';
 import {ResultSearch} from '../search/searchResultView';
 
 import {DimFields} from '../../constants/dimFields';
 
-var Router = require('react-router');
-var Route = Router.Route;
-var Link = Router.Link;
-var RouteHandler = Router.RouteHandler
 
 import {UserMixin} from '../mixins/userMixin';
+import {getUrlVars} from '../../utils/url';
 
 var Search = React.createClass({
-    mixins : [UserMixin],
+    //mixins : [UserMixin],
     getInitialState: function (){
-
-        return { label:'login', searchState: "simple" };
+        return {
+          label: 'login',
+          searchState: "simple" ,
+          providers: ["All providers"],
+          requestedQuery: null
+        };
     },
     componentDidMount: function(){
       this.enableAutocomplete();
       this.enableEnterKey();
+
+      if(getUrlVars()['query']) {
+        this.onSearchByUrl();
+      }
+
+      //document.getElementById('container').style.display = 'block';
+
+      ProvidersActions.get();
     },
     componentDidUpdate: function(){
       this.enableAutocomplete();
       this.enableEnterKey();
     },
     componentWillMount: function(){
-
+      ProvidersStore.listen(this._onChange);
     },
     render: function() {
+      var self = this;
+      var providersList = (
+        self.state.providers.map(function(item, index){
+          return (<option key={index}> {item} </option>);
+        })
+      );
+
         var selectionButtons = (
             <div>
-            <button type="button" className="btn btn_dicoogle" onClick={this.renderFilter} data-trigger="advance-search" id="btn-advance">Advanced</button>
+            <button type="button" className="btn btn_dicoogle" onClick={this.renderFilter} data-trigger="advance-search" id="btn-advance">
+              {this.state.searchState === "simple" ? "Advanced" : "Basic"}
+            </button>
                 <div className="btn-group">
-                    <button type="button" className="btn btn_dicoogle dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                        Select Providers <span className="caret"></span>
-                    </button>
-                    <ul className="dropdown-menu" role="menu">
-                        <li><a href="#">Lucene</a>
-                        </li>
-                        <li><a href="#">All</a></li>
-                        <li> { this.state.data   }</li>
-
-                    </ul>
+                    <select id="providersList" className="btn btn_dicoogle form-control">
+                      {providersList}
+                    </select>
                 </div>
                 </div>
             );
@@ -63,11 +77,12 @@ var Search = React.createClass({
                     <div className="col-xs-4 col-sm-2">
                         <button type="button" className="btn btn_dicoogle" id="search-btn" onClick={this.onSearchClicked}>Search</button>
                     </div>
-                    <RouteHandler/>
                 </div>
             );
 
-       if(this.state.searchState === "simple"){
+       if (this.state.requestedQuery !== null) {
+         return <ResultSearch items={this.state.requestedQuery}/>;
+       } else if(this.state.searchState === "simple"){
             return (<div> {selectionButtons} {simpleSearchInstance} </div>);
        }
        else if(this.state.searchState === "advanced")
@@ -76,9 +91,8 @@ var Search = React.createClass({
        }
     },
     _onChange : function(data){
-        console.log("onChange");
         if (this.isMounted())
-        this.setState({label:data});
+        this.setState({providers:data.data});
     },
     renderFilter : function(){
       //React.render(<AdvancedSearch/>, this.getDOMNode());
@@ -92,30 +106,38 @@ var Search = React.createClass({
     this.setState({searchState: switchState})
 
     },
-
-    onSearchClicked : function(){
-        // console.log(React.getInitialState(<ResultSearch/>) );
-        var text = document.getElementById("free_text").value;
-
-        var params = {text: text, keyword: this.isKeyword(text), other:true};
-
-        React.render(<ResultSearch items={params}/>, document.getElementById("container"));
-        //console.log("asadfgh");
+    onSearchByUrl : function(){
+      let params = {text: getUrlVars()['query'], keyword: getUrlVars()['keyword'], provider: getUrlVars()['provider']};
+      this.setState({
+        requestedQuery: params
+      });
     },
-    isKeyword: function(freetext){
-    for(var i=0; i<DimFields.length;i++)
-      {
-        if((freetext.indexOf(DimFields[i])) != -1)
-        {
-          return true;
-        }
-      }
+    onSearchClicked : function(){
+        // TODO don't do this, use state instead
+        let text = document.getElementById("free_text").value;
 
+        let providerEl = document.getElementById("providersList");
+        let selectedId= providerEl.selectedIndex;
+        let provider = "";
+        if(selectedId == 0){
+          provider = "all"
+        }
+        else {
+          provider = providerEl.options[selectedId].text;
+        }
+
+        let params = {text: text, keyword: this.isKeyword(text), other:true, provider: provider};
+        this.setState({
+          requestedQuery: params
+        })
+    },
+    isKeyword: function(freetext) {
+      return !!freetext.match(/[^\s\\]:\S/);
     },
   isAutocompletOpened:function(){
     if($('.ui-autocomplete').css('display')==='none'){return false;}
     return true;
-},
+  },
 
     enableAutocomplete : function(){
       var self =this;
@@ -184,7 +206,7 @@ var Search = React.createClass({
         //Trick to not search when press enter on autocomplete
         //
         var count = 0;
-        jQuery("#free_text").keypress(function(e) {
+        $("#free_text").keypress(function(e) {
         if (e.keyCode == 13) {
             if (++count >= 1) {
                 self.onSearchClicked();

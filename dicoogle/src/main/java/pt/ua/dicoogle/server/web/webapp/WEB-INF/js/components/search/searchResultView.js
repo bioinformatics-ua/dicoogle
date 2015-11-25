@@ -1,8 +1,5 @@
-
-var React = require('react');
-var ReactBootstrap = require('react-bootstrap');
-var ModalTrigger = ReactBootstrap.ModalTrigger;
-var Button = ReactBootstrap.Button;
+import React from 'react';
+import {Button} from 'react-bootstrap';
 
 import {SearchStore} from '../../stores/searchStore';
 import {ActionCreators} from '../../actions/searchActions';
@@ -13,27 +10,38 @@ import {SeriesView} from './result/serieView';
 import {ImageView} from './result/imageView';
 import {ExportView} from './exportView';
 
-
-
 var ResultSearch = React.createClass({
 
   getInitialState: function() {
     return {data: [],
     status: "loading",
+    showExport: false,
+    showDangerousOptions: false,
     current: 0};
   },
   componentDidMount: function() {
-  	this.initSearch();
+
+  	this.initSearch(this.props.items);
+
   },
+
   componentWillMount: function() {
     // Subscribe to the store.
     SearchStore.listen(this._onChange);
   },
 
-	initSearch: function(){
-    console.log("PARAM: ", this.props.items);
-    ActionCreators.search(this.props.items);
+	initSearch: function(props){
+    console.log("PARAM: ", props);
+    ActionCreators.search(props);
 	},
+  
+  onClickExport() {
+    this.setState({showExport: true});
+  },
+
+  onHideExport() {
+    this.setState({showExport: false});
+  },
 
   render: function() {
     var self = this;
@@ -50,7 +58,7 @@ var ResultSearch = React.createClass({
     //Check if search fails
     if(this.state.success === false)
     {
-      return (<div> Search error</div>);
+      return (<div>Search error</div>);
     }
     //Check if search return no results
     if(this.state.data.numResults === 0)
@@ -73,28 +81,16 @@ var ResultSearch = React.createClass({
        })
 	    );
 
-
-		/*return (
-      <div>
-			   <ul className="result_list">
-                { resultNodes }
-        </ul>
-
-      </div>
-    );
-*/
+    var toggleModalClassNames = this.state.showDangerousOptions ? "btn btn_dicoogle fa fa-toggle-on" : "btn btn_dicoogle fa fa-toggle-off";
     return (<div>
-
         <Step current={this.state.current} onClick={this.onStepClicked}/>
-        <div id="step-container"/>
-
-          <ModalTrigger modal={<ExportView query={this.props.items}/>}>
-            <button className="btn btn_dicoogle fa fa-download"> Export </button>
-       </ModalTrigger>
-
+        <div id="step-container">
+          {this.getCurrentView()}
+        </div>
+        <button className="btn btn_dicoogle fa fa-download" onClick={this.onClickExport}>Export</button>
+        <ExportView show={this.state.showExport} onHide={this.onHideExport} query={this.props.items}/>
+        <button className={toggleModalClassNames} onClick={this.toggleAdvOpt}> Advanced Options </button>
       </div>);
-
-
 	},
 
   _onChange : function(data){
@@ -108,43 +104,55 @@ var ResultSearch = React.createClass({
       success: data.success});
 
       //init StepView
-      this.onStepClicked(0);
+      if(!this.state.current)
+        this.onStepClicked(0);
     }
-
+  },
+  
+  getCurrentView() {
+    let view;
+    switch (this.state.current) {
+      case 0:
+        view = ( <PatientView items={this.state.data}
+                              provider={this.props.items.provider}
+                              enableAdvancedSearch={this.state.showDangerousOptions}
+                              onItemClick={this.onPatientClicked}/>);
+        break;
+      case 1:
+        view = ( <StudyView patient={this.state.patient}
+                            enableAdvancedSearch={this.state.showDangerousOptions}
+                            onItemClick={this.onStudyClicked}/>);
+        break;
+      case 2:
+        view = ( <SeriesView  study={this.state.study}
+                              enableAdvancedSearch={this.state.showDangerousOptions}
+                              onItemClick={this.onSeriesClicked}/>);
+        break;
+      case 3:
+        view = ( <ImageView serie={this.state.serie}
+                            enableAdvancedSearch={this.state.showDangerousOptions}/>);
+        break;
+    }
+    return view;
   },
 
   onStepClicked:function(stepComponent){
     console.log(stepComponent);
     this.setState({current: stepComponent});
-
-     //React.render(<ResultSearch items={params}/>, document.getElementById("container"));
-    var view;
-    if(stepComponent == 0)
-      view = ( <PatientView items={this.state.data} onItemClick={this.onPatientClicked}/>);
-    else if(stepComponent == 1)
-      view = ( <StudyView patient={this.state.patient} onItemClick={this.onStudyClicked}/>);
-    else if(stepComponent == 2)
-      view = ( <SeriesView study={this.state.study} onItemClick={this.onSeriesClicked}/>);
-    else if(stepComponent == 3)
-      view = ( <ImageView serie={this.state.serie} />);
-
-    React.render(view, document.getElementById("step-container"));
   },
 
   onPatientClicked:function(patient){
-    //console.log("patient id: ",id," Index: ",index);
     this.setState({current: 1, patient:patient});
-    React.render(<StudyView patient={patient} onItemClick={this.onStudyClicked}/>, document.getElementById("step-container"));
   },
   onStudyClicked:function(study){
     this.setState({current: 2, study: study});
-    React.render(<SeriesView study={study} onItemClick={this.onSeriesClicked} />, document.getElementById("step-container"));
   },
   onSeriesClicked:function(serie){
     this.setState({current: 3, serie: serie});
-    React.render(<ImageView serie={serie} />, document.getElementById("step-container"));
+  },
+  toggleAdvOpt: function(){
+    this.setState({showDangerousOptions : !this.state.showDangerousOptions});
   }
-
 });
 
 var Step = React.createClass({
@@ -195,7 +203,6 @@ var Step = React.createClass({
       this.props.onClick(current);
   }
 
-}
-);
+});
 
 export {ResultSearch};

@@ -4,12 +4,8 @@
 var Reflux = require('reflux');
 
 import {IndexerActions} from '../actions/indexerActions';
-
 import {Endpoints} from '../constants/endpoints';
-
 import {request} from '../handlers/requestHandler';
-
-
 
 var IndexerStore = Reflux.createStore({
     listenables: IndexerActions,

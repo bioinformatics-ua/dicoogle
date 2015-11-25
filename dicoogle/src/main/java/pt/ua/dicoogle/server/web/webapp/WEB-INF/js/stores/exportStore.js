@@ -2,11 +2,10 @@
 'use strict';
 
 var Reflux = require('reflux');
+import $ from 'jquery';
 
 import {ExportActions} from '../actions/exportActions';
-
 import {Endpoints} from '../constants/endpoints';
-
 import {request} from '../handlers/requestHandler';
 
 var ExportStore = Reflux.createStore({
@@ -14,7 +13,6 @@ var ExportStore = Reflux.createStore({
     init: function () {
        this._contents = {};
     },
-
 
     onGetFieldList : function(data){
       var self = this;
@@ -39,7 +37,6 @@ var ExportStore = Reflux.createStore({
             });
         }
       );
-
 
     },
 
@@ -69,7 +66,6 @@ var ExportStore = Reflux.createStore({
           link.href = Endpoints.base + "/exportFile?UID="+response.uid;
           link.click();
         });
-
 
     }
 });

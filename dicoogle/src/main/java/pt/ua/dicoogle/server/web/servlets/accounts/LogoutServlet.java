@@ -36,7 +36,7 @@ public class LogoutServlet extends HttpServlet{
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    	resp.addHeader("Access-Control-Allow-Origin", "*");
+    	//resp.addHeader("Access-Control-Allow-Origin", "*");
         boolean logout = Session.logout(req);
         
         ResponseUtil.simpleResponse(resp,"success", logout);

@@ -1,49 +1,116 @@
-var React = require('react');
+import React from 'react';
+
+require('bootstrap');
+import {VersionStore} from '../../stores/versionStore';
+import {VersionActions} from '../../actions/versionAction';
+
+var ReactBootstrap = require('react-bootstrap');
+
+const {Nav, NavItemLink, ButtonLink} = ReactBootstrap;
+const {Grid, Row, Col} = ReactBootstrap;
+
+var Panel = ReactBootstrap.Panel;
+var Navbar = ReactBootstrap.Navbar;
+var NavItem = ReactBootstrap.NavItem;
+var DropdownButton = ReactBootstrap.DropdownButton;
+var MenuItem = ReactBootstrap.MenuItem;
+var ButtonToolbar = ReactBootstrap.ButtonToolbar;
+var Button= ReactBootstrap.Button;
+var ProgressBar= ReactBootstrap.ProgressBar;
+var Table= ReactBootstrap.Table;
+
 var AboutView = React.createClass({
+
+    getInitialState: function() {
+        return {version: ""};
+    },
+    componentWillMount: function() {
+        // Subscribe to the store.
+        VersionStore.listen(this._onChange);
+        VersionActions.get();
+    },
     componentDidMount: function() {
-      /*$.ajax({
-
-        url: "http://localhost:8080/login",
-        dataType: 'json',
-        success: function(data) {
-          console.log(data);
-
-        },
-        error: function(xhr, status, err) {
-          console.log("not loggedin");
-          $.post("http://localhost:8080/login",
-          {
-            username: "dicoogle",
-            password: "dicoogle"
-          },
-            function(data, status){
-              //Response
-              console.log("Data: " + data + "\nStatus: " + status);
-            });
+        
+    },
+    _onChange : function(data){
+        if (this.isMounted) {
+            this.setState({version: data.data.version});
         }
-      });
-
-      var bilo =  sessionStorage.getItem("session_id")==null?"ERAAAA UMA VEZ":sessionStorage.getItem("session_id");
-      console.log(bilo);
-
-		  sessionStorage.setItem("session_id","uma pussara");
-
-      console.log(document.cookie);
-      */
-
     },
       render: function() {
-        return ( <div>
-          Lorem ipsum dolor sit amet, ei novum percipitur quo, patrioque consequuntur at vim.His everti regione alterum ex.Ei qui ancillae intellegat theophrastus, deleniti salutatus id ius, dolor insolens indoctum duo ut.Ne utinam diceret pro, in sit eleifend facilisis concludaturque, ne corrumpit rationibus definitiones his.Te vidisse virtute docendi est, mei ea exerci adversarium.
+          
+          let versionNumber =  this.state.version;
+          var title = (
+              <h3>Dicoogle PACS, version: {versionNumber}</h3>
+          );
+          var divStyle = {
+              width: '200px'
+          };
+          var licenses = (
+              <Grid className="">
 
-          An sea iusto putent posidonium.Quod nusquam in est, cibo erat habeo ut vis, ad melius albucius fabellas eam.Eu quodsi omnesque voluptaria sea, his essent voluptaria an.Consul legimus voluptua no ius, verear interesset has ea, mel cu prima insolens gubergren.Mea meis dolore postulant ad.
+          <Row className="show-grid">
+          <Col className="gridAbout" xs={2} md={2}><b>dcm4che2</b><br/>License: GPL</Col>
+          <Col className="gridAbout" xs={2} md={2}><b>react.js+flux</b><br/>License: GPL</Col>
+          <Col className="gridAbout" xs={2} md={2}><b>Jetty</b><br/>License: GPL</Col>
+          </Row>
 
-          Impetus vivendo vulputate cum ad, duo luptatum intellegebat at, duo ut quot mucius dolores.Meis ignota facilisis id sed.Ei est forensibus temporibus deterruisset.Ex solum pericula est, ipsum doctus repudiare cu eum.In evertitur temporibus definitiones eam, exerci oportere conclusionemque an vim.
 
-          Cu per timeam rationibus, ea vidit eligendi antiopam vel.Agam animal contentiones ex nec, propriae probatus sadipscing et sea.Cu mei fugit integre.Iusto affert nam cu, ullum simul recusabo ei pro, ut munere aperiam disputationi eos. </div>);
+          </Grid>
+          );
+
+
+          var panelsInstance = (
+              <div className="about">
+          <Panel header={title} bsStyle="primary">
+          Dicoogle is an open source medical imaging repository with an extensible indexing system and distributed mechanisms. 
+          Our solution can be used as a PACS archive, or as a client for reading your PACS archive file system, thus
+          allowing you to do PACS mining. Moreover, it can be easily extended with your own pluggable components.
+
+          At present, we have already indexed around 22 million DICOM images, and this number tends to increase.
+          There are several researchers working to evaluate and improve the quality of medical records, and Dicoogle has contributed to many of such case studies.
+
+          <br />
+
+          </Panel>
+
+          <Panel header="Main third party components" bsStyle="primary">
+              
+          {licenses}
+              
+           Note: Although these are not the only components used, these are considered the main ones.
+          </Panel>
+
+          <Panel header="Disclaimer" bsStyle="primary">
+          This software is provided by the copyright holders and contributors "as is" and any express or
+          implied warranties, including, but not limited to, the implied warranties of merchantability and
+          fitness for a particular purpose are disclaimed. In no event shall the copyright owner or contributors
+          be liable for any direct, indirect, incidental, special, exemplary, or consequential damages
+          (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption)
+          however caused and on any theory of liability, whether in contract, strict liability,
+              or tort (including negligence or otherwise) arising in any way out of the use of this software,
+              even if advised of the possibility of such damage.
+          </Panel>
+          <Panel header="Developers" bsStyle="primary">
+          As an open source software, Dicoogle can accept contributions from developers around the world.
+          Dicoogle OSS is led and supported by Bioinformatics UA and BMD Software. Please check <a target="_new" href="http://www.dicoogle.com">the Dicoogle website</a> for more information.
+       
+          <div style={{display: 'inline-block', width: '100%'}}>
+            <a href="http://bioinformatics.ua.pt"><img src="assets/logos/logobio.png" style={{height: 40, margin:5}} /></a>
+            <a href="http://bmd-software.com/"><img src="assets/logos/logo.png" style={{height: 40, padding: 5, margin:5}} /></a>
+            <a href="http://www.ieeta.pt/"><img src="assets/logos/logo-ieeta.png" style={{height: 60, margin:5}} /></a>
+            <a href="http://www.ua.pt/"><img src="assets/logos/logo-ua.png" style={{height: 60, margin:5}} /></a>
+        </div>
+        <div style={{display: 'inline-block'}}>
+            <a><img src="assets/logos/logoFCT.png" style={{height: 30, margin:5}} /></a>
+        </div>
+          </Panel>
+
+          </div>
+          );
+          return panelsInstance;
+          
         }
       });
 
-    export {
-      AboutView
-    }
+export default AboutView;

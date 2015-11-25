@@ -22,7 +22,7 @@ import pt.ua.dicoogle.rGUI.interfaces.signals.ILogsSignal;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import pt.ua.dicoogle.core.LogLine;
+import pt.ua.dicoogle.DicomLog.LogLine;
 
 /**
  * Methods avaliable for the Logs Window

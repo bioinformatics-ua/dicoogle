@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pt.ua.dicoogle.core.MoveDestination;
+import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.core.ServerSettings;
 
 /**

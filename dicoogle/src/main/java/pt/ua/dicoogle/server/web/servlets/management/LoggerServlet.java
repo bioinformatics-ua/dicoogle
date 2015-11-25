@@ -19,12 +19,10 @@
 package pt.ua.dicoogle.server.web.servlets.management;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Date;
+import java.io.PrintWriter;
 import java.util.Map;
-import java.util.TimerTask;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -39,7 +37,6 @@ import org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.sdk.Utils.Platform;
-import pt.ua.dicoogle.server.FileWatcher;
 
 /**
  * @author Frederico Silva <fredericosilva@ua.pt>
@@ -47,78 +44,47 @@ import pt.ua.dicoogle.server.FileWatcher;
  */
 public class LoggerServlet extends HttpServlet {
     private static final Logger classLogger = LoggerFactory.getLogger(LoggerServlet.class);
-            
-	private final String logfilename;
-	private String serverLog;
 
-	public LoggerServlet() {
-        this.logfilename = getLogFilename();
-        this.serverLog = "";
-        File f = new File(logfilename);
-        reloadtext(f);
-		TimerTask task = new FileWatcher(f) {
-
-			@Override
-			protected void onChange(File file) {
-				reloadtext(file);
-			}
-		};
-
-		java.util.Timer timer = new java.util.Timer();
-		// repeat the check every second
-		timer.schedule(task, new Date(), 5000);
-	}
+    private String logFilename = null;
     
-    private static String getLogFilename() {
-        org.apache.logging.log4j.Logger logger = LogManager.getLogger();
-        Map<String, Appender> appenderMap = ((org.apache.logging.log4j.core.Logger) logger).getAppenders();
-        for (Map.Entry<String,Appender> e : appenderMap.entrySet()) {
-            String filename = null;
-            Appender appender = e.getValue();
-            if (appender instanceof FileAppender) {
-                filename = ((FileAppender)appender).getFileName();
-            } else if (appender instanceof RollingFileAppender) {
-                filename = ((RollingFileAppender)appender).getFileName();
-            } else if (appender instanceof RandomAccessFileAppender) {
-                filename = ((RandomAccessFileAppender)appender).getFileName();
-            } else if (appender instanceof RollingRandomAccessFileAppender) {
-                filename = ((RollingRandomAccessFileAppender)appender).getFileName();
+    protected String logFilename() {
+        if (this.logFilename == null) {
+            org.apache.logging.log4j.Logger logger = LogManager.getLogger();
+            Map<String, Appender> appenderMap = ((org.apache.logging.log4j.core.Logger) logger).getAppenders();
+            for (Map.Entry<String,Appender> e : appenderMap.entrySet()) {
+                String filename = null;
+                Appender appender = e.getValue();
+                if (appender instanceof FileAppender) {
+                    filename = ((FileAppender)appender).getFileName();
+                } else if (appender instanceof RollingFileAppender) {
+                    filename = ((RollingFileAppender)appender).getFileName();
+                } else if (appender instanceof RandomAccessFileAppender) {
+                    filename = ((RandomAccessFileAppender)appender).getFileName();
+                } else if (appender instanceof RollingRandomAccessFileAppender) {
+                    filename = ((RollingRandomAccessFileAppender)appender).getFileName();
+                }
+                if (filename != null) {
+                    classLogger.debug("Using \"{}\" as the file for the server log.", filename);
+                    this.logFilename = filename;
+                    return this.logFilename;
+                }
             }
-            if (filename != null) {
-                classLogger.debug("Using \"{}\" as the file for the server log.", filename);
-                return filename;
-            }
+            // no file appender found, use default DICOMLOG.log
+            classLogger.debug("No file appender found, using \"DICOMLOG.log\" as the default logger");
+            this.logFilename = Platform.homePath() + "DICOMLOG.log";
         }
-        // no file appender found, use default DICOMLOG.log
-        classLogger.debug("No file appender found, using \"DICOMLOG.log\" as the default logger");
-        return Platform.homePath() + "DICOMLOG.log";
+        return this.logFilename;
     }
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		
-		resp.addHeader("Access-Control-Allow-Origin", "*");
-
-		// resp.getWriter().write(JSONSerializer.toJSON(LogDICOM.getInstance().getLl()).toString());
-		resp.getWriter().write(serverLog);
-	}
-
-	public final void reloadtext(File file) {
-        // TODO this method could be optimized by seeking the file
-        // to the line last read and only read the new lines
-		try (BufferedReader fis = new BufferedReader(new FileReader(file))) {
-            StringBuilder content = new StringBuilder();
+		try (BufferedReader fis = new BufferedReader(new FileReader(logFilename()))) {
+            PrintWriter respWriter = resp.getWriter();
             String l;
             while ((l = fis.readLine()) != null) {
-                content.append(l);
-                content.append('\n');
+                respWriter.println(l);
             }
-            serverLog = content.toString();
-		} catch (IOException ex) {
-			//TODO
-            classLogger.warn("Failed to read log file, logger content not updated", ex);
-		}
+        }
 	}
-
 }

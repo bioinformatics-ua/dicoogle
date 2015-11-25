@@ -23,25 +23,25 @@ import aclmanager.core.LuceneQueryACLManager;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.concurrent.Executor;
-import org.slf4j.LoggerFactory;
+
+import org.dcm4che2.data.*;
+
 
 import javax.xml.transform.TransformerConfigurationException;
 
-import org.dcm4che2.data.DicomElement;
-import org.dcm4che2.data.DicomObject;
-import org.dcm4che2.data.Tag;
 import org.dcm4che2.net.Association;
 import org.dcm4che2.net.DicomServiceException;
 import org.dcm4che2.net.DimseRSP;
 import org.dcm4che2.net.service.CFindService;
 
 
-import pt.ua.dicoogle.core.LogDICOM;
-import pt.ua.dicoogle.core.LogLine;
+import pt.ua.dicoogle.DicomLog.LogDICOM;
+import pt.ua.dicoogle.DicomLog.LogLine;
 
 
-import pt.ua.dicoogle.core.LogXML;
+import pt.ua.dicoogle.DicomLog.LogXML;
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.rGUI.server.controllers.Logs;
 
@@ -60,6 +60,8 @@ public class CFindServiceSCP extends CFindService {
     
     private DicomNetwork service = null;
     private LuceneQueryACLManager luke = null;
+
+    private boolean superSpeed = false;
     
 
     public CFindServiceSCP(String[] multiSop, Executor e) {
@@ -133,21 +135,39 @@ public class CFindServiceSCP extends CFindService {
          * So the FindRSP will fill the DimRSP
          */
         replay = new FindRSP(keys, rsp,  as.getCallingAET(), luke);
+
+
         DicomElement e = keys.get(Tag.PatientName);
         String add = "";
         if (e != null) {
             add = new String(e.getBytes());
         }
-        LogLine ll = new LogLine("cfind", getDateTime(), as.getCallingAET(),
-                as.toString() + " -- " + add);
-        LogDICOM.getInstance().addLine(ll);
-        LogXML l = new LogXML();
-        try {
-            l.printXML();
-        } catch (TransformerConfigurationException ex) {
-            LoggerFactory.getLogger(QueryRetrieve.class).error(ex.getMessage(), ex);
+
+        String queryParams = "";
+
+        for (Iterator<DicomElement> iterator = keys.iterator(); iterator.hasNext();)
+        {
+            DicomElement element = iterator.next();
+
+            if (!element.isEmpty())
+            {
+                if (!ElementDictionary.getDictionary().nameOf(element.tag()).contains("Sequence"))
+                    queryParams += ElementDictionary.getDictionary().nameOf(element.tag()) + " - " + element.getValueAsString(new SpecificCharacterSet("UTF-8"), 0) + " ";
+            }
         }
-        Logs.getInstance().addLog(ll);
+        if (!superSpeed)
+        {
+            LogLine ll = new LogLine("cfind", getDateTime(), as.getCallingAET(),
+                    as.toString() + " -- " + add, queryParams);
+            LogDICOM.getInstance().addLine(ll);
+            LogXML l = new LogXML();
+            try {
+                l.printXML();
+            } catch (TransformerConfigurationException ex) {
+                ex.printStackTrace();
+            }
+            Logs.getInstance().addLog(ll);
+        }
 
 
         return replay;

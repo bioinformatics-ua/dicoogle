@@ -145,19 +145,6 @@ public class ControlServices implements IServices
 
             int i;
 
-
-            //System.out.println(settings.getPath());
-            File f = new File(settings.getPath());
-
-            // Storage path must be defined before running the program
-            // Prompting the user if it isn't
-            if (!f.exists() || f.isFile())
-            {
-                //DebugManager.getInstance().debug("DICOM Storage not started. The server's storage path is not defined.");
-
-                return -1;
-            }
-
             List l = list.getKeys();
             String[] keys = new String[l.size()];
 
@@ -253,18 +240,18 @@ public class ControlServices implements IServices
     @Override
     public void startWebServer(){
         logger.info("Starting WebServer");
-        
-        if(webServices == null){
-            try {
-                webServices = new DicoogleWeb(8080);
+
+        try {
+            if (webServices == null) {
+                webServices = new DicoogleWeb(ServerSettings.getInstance().getWeb().getServerPort());
                 webServerRunning = true;
                 webServicesRunning = true;
-            } catch (Exception ex) {
-                logger.error(ex.getMessage(), ex);
+                logger.info("Starting Dicoogle Web");
             }
+        } catch (Exception ex) {
+            logger.error("Failed to launch the web server", ex);
         }
         
-        logger.info("Starting Dicoogle Web");
     }
 
     @Override

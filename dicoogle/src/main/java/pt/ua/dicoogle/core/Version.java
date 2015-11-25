@@ -16,34 +16,35 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-
 package pt.ua.dicoogle.core;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+
+import java.io.IOException;
+import java.net.URL;
+
 /**
- *
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * Created by bastiao on 23/09/15.
  */
-public class Version
-{
-
-    public static boolean DEVELOPMENT_MODE = true ;
-    public static String VERSION = "0.5 ALPHA";
-
-    public static String getVersion()
+public class Version {
+    
+    public Version()
     {
-        String version = "";
-        if (DEVELOPMENT_MODE)
-        {
-            version = VERSION + "-svn";
-        }
-        else
-        {
-            version = VERSION ;
-        }
-        version = VERSION ;
-        return version ;
-
+        
+        
     }
     
+    public String getVersion()
+    {
+        String version = "dev";
+        URL url = Resources.getResource("version.txt");
+        try {
+            version = Resources.toString(url, Charsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return version;
+
+    }
 }

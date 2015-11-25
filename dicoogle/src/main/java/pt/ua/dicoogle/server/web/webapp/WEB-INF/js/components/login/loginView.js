@@ -3,9 +3,10 @@ var Router = require('react-router');
 
 import {UserActions} from "../../actions/userActions";
 import {UserStore} from "../../stores/userStore";
+import $ from 'jquery';
 
 var LoginView = React.createClass({
-  mixins : [Router.Navigation],
+  mixins : [Router.History],
   getInitialState: function() {
     return {data: {},
     status: "loading",
@@ -13,7 +14,6 @@ var LoginView = React.createClass({
   },
   componentDidMount: function(){
     //LoggerActions.get();
-    document.getElementById('container').style.display = 'none';
     this.enableEnterKey();
   },
   componentDidUpdate:function(){
@@ -33,8 +33,8 @@ var LoginView = React.createClass({
 
     if(data.isLoggedIn && this.isMounted())
     {
-      React.unmountComponentAtNode(document.getElementById('login_container'));
-      this.replaceWith('/search');
+      //React.unmountComponentAtNode(document.getElementById('login_container'));
+      this.history.replaceState(null, '/search');
     }
   },
   enableEnterKey() {
@@ -44,34 +44,30 @@ var LoginView = React.createClass({
         self.onLoginClick();
       }
     };
-    jQuery("#username").keypress(fh);
-    jQuery("#password").keypress(fh);
+    $("#username").keypress(fh);
+    $("#password").keypress(fh);
   },
 
   render: function() {
     return (
-      <div id="loginwrapper">
+      <div id="loginwrapper" style={{position:'absolute', top:0, left:0, width:'100%', height:'100%', zIndex:10000}}>
         <div className="loginbody">
-
 
           <section className="container row-fluid loginbox logincontainer">
 
             <img className="loginlogo" src="assets/logo.png" alt="Smiley face"/>
 
-
             <div text-align="center" >
 
               <h4 style={{textAlign: 'center'}}>
-                Medical Imaging Repositories using Indexing System and P2P mechanisms
+                Improve your knowledge from your medical imaging repository.
               </h4>
 
             </div>
 
             <div className="loginA">
 
-
               <form className="form-horizontal">
-
 
                 <p className="loginTextA">Sign In</p>
                 <input ref="user" type="text" id="username" name="username" placeholder="Username" className="loginInputUsername form-control"/>
@@ -85,15 +81,15 @@ var LoginView = React.createClass({
           </section>
 
           <footer id="footer">
-            <div style={{width: '100%', textAlign: 'center'}} classname="footercontainer">
+            <div style={{width: '100%', textAlign: 'center'}} className="footercontainer">
               <div style={{display: 'inline-block', width: '100%'}}>
-                <a href="http://bioinformatics.ua.pt"><img src="http://www.dicoogle.com/wp-content/themes/dicoogle/images/logobio.png" style={{height: 50, margin:5}} /></a>
-                <a href="http://bmd-software.com/"><img src="http://www.bmd-software.com/wp-content/themes/BMD-code/images/logo.png" style={{height: 50, padding: 5, margin:5}} /></a>
-                <a href="http://www.ieeta.pt/"><img src="http://www.dicoogle.com/wp-content/themes/dicoogle/images/logo-ieeta.png" style={{height: 80, margin:5}} /></a>
-                <a href="http://www.ua.pt/"><img src="http://www.dicoogle.com/wp-content/themes/dicoogle/images/logo-ua.png" style={{height: 80, margin:5}} /></a>
+                <a href="http://bioinformatics.ua.pt"><img src="assets/logos/logobio.png" style={{height: 40, margin:5}} /></a>
+                <a href="http://bmd-software.com/"><img src="assets/logos/logo.png" style={{height: 40, padding: 5, margin:5}} /></a>
+                <a href="http://www.ieeta.pt/"><img src="assets/logos/logo-ieeta.png" style={{height: 60, margin:5}} /></a>
+                <a href="http://www.ua.pt/"><img src="assets/logos/logo-ua.png" style={{height: 60, margin:5}} /></a>
               </div>
               <div style={{display: 'inline-block'}}>
-                <a><img src="http://www.dicoogle.com/wp-content/themes/dicoogle/images/logoFCT.png" style={{height: 60, margin:5}} /></a>
+                <a><img src="assets/logos/logoFCT.png" style={{height: 30, margin:5}} /></a>
               </div>
 
             </div>
@@ -115,6 +111,4 @@ var LoginView = React.createClass({
 });
 
 
-export {
-  LoginView
-}
+export default LoginView;

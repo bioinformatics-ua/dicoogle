@@ -1,5 +1,7 @@
 import {Endpoints} from '../constants/endpoints';
-function getPatients(freetext, isKeyword,callbackSucccess, callbackError){
+import $ from 'jquery';
+
+function getPatients(freetext, isKeyword,provider,callbackSucccess, callbackError){
         console.log("store param: ", freetext);
 
         //'http://localhost:8080/search?query=wrix&keyword=false&provicer=lucene'
@@ -9,7 +11,11 @@ function getPatients(freetext, isKeyword,callbackSucccess, callbackError){
           isKeyword = true;
         }
 
-        var url = Endpoints.base + '/searchDIM?query='+freetext+'&keyword='+isKeyword+'&provicer=lucene';
+        var url = Endpoints.base + '/searchDIM?query='+freetext+'&keyword='+isKeyword;
+        if(provider != "all")
+        {
+          url = url + "&provider=" + provider;
+        }
         console.log("store url;",url);
 
         $.ajax({
@@ -25,6 +31,49 @@ function getPatients(freetext, isKeyword,callbackSucccess, callbackError){
             callbackError(xhr);
           }
         });
+}
+
+function unindex(uri,provider, callbackSucccess, callbackError){
+    console.log("Unindex param: ", uri);
+
+    var url = Endpoints.base + '/management/tasks/unindex';
+    var data = {'uri': uri}
+    if(provider != 'all')
+      data['provider'] = provider;
+
+    $.ajax({
+
+      url: url,
+      data: data,
+      method: 'post',
+      traditional: true,
+      success: function(data) {
+    	 callbackSucccess(data); 
+      },
+      error: function(xhr, status, err) {
+        callbackError(xhr);
+      }
+    });
+}
+
+function remove(uri, callbackSucccess, callbackError){
+    console.log("Unindex param: ", uri);
+
+    var url = Endpoints.base + '/management/tasks/remove';
+    var data = {'uri': uri}
+    
+    $.ajax({
+      url: url,
+      data: data,
+      method: 'post',
+      traditional: true,
+      success: function(data) {
+       callbackSucccess(data); 
+      },
+      error: function(xhr, status, err) {
+        callbackError(xhr);
+      }
+    });
 }
 
 function getImageInfo(uid, callbackSucccess, callbackError){
@@ -47,6 +96,27 @@ function getImageInfo(uid, callbackSucccess, callbackError){
             callbackError(xhr);
           }
         });
+}
+
+
+function getVersion(callbackSucccess, callbackError){
+
+
+    var url = Endpoints.base + '/ext/version';
+
+    $.ajax({
+
+        url: url,
+        dataType: 'json',
+        success: function(data) {
+
+            callbackSucccess(data);
+
+        },
+        error: function(xhr, status, err) {
+            callbackError(xhr);
+        }
+    });
 }
 
 function request(url, callbackSucccess, callbackError){
@@ -137,4 +207,4 @@ function forceIndex(uri){
 
 }
 
-export {getPatients, getImageInfo, request, setWatcher,setZip,setSaveT,saveIndexOptions,forceIndex};
+export {getPatients, unindex, remove, getImageInfo, request, setWatcher,setZip,setSaveT,saveIndexOptions,forceIndex, getVersion};

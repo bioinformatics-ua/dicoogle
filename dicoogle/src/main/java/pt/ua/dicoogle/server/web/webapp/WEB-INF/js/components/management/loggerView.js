@@ -1,7 +1,8 @@
-var React = require('react');
-
+import React from 'react';
+import $ from 'jquery';
 import {LoggerActions} from "../../actions/loggerActions";
 import {LoggerStore} from "../../stores/loggerStore";
+
 var LoggerView = React.createClass({
   getInitialState: function() {
     return {data: {},

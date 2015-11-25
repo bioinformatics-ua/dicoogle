@@ -1,8 +1,5 @@
-var React = require('react');
-var ReactBootstrap = require('react-bootstrap');
-var Button = ReactBootstrap.Button;
-var ModalTrigger = ReactBootstrap.ModalTrigger;
-var Modal = ReactBootstrap.Modal;
+import React from 'react';
+import {Button, Modal} from 'react-bootstrap';
 
 import {ExportActions} from '../../actions/exportActions';
 import {ExportStore} from '../../stores/exportStore';
@@ -14,26 +11,20 @@ var ExportView = React.createClass({
     	current: 0};
   	},
     componentDidMount: function() {
-			//ExportActions.getFieldList();
-			//$("#consolediv").scrollTop
-      //$('#my-select').multiSelect();
-
     },
-		componentDidUpdate: function() {
-			//this.clusterize();
-			//$('#my-select').multiSelect();
-		},
-		componentWillMount: function() {
-			// Subscribe to the store.
-			console.log("subscribe listener");
-			ExportStore.listen(this._onChange);
-		},
-		_onChange: function(data){
-			if (this.isMounted()){
+	componentDidUpdate: function() {
+	},
+	componentWillMount: function() {
+		// Subscribe to the store.
+		console.log("subscribe listener");
+		ExportStore.listen(this._onChange);
+	},
+	_onChange: function(data){
+		if (this.isMounted()){
 
-				this.setState({data:data.data,status: "done"});
-			}
-		},
+			this.setState({data:data.data,status: "done"});
+		}
+	},
 
 	render:function(){
 	  //var url = Endpoints.base + "/dic2png?SOPInstanceUID="+this.props.uid;

@@ -90,7 +90,7 @@ public class About extends javax.swing.JFrame {
             jTextPane1.setPage(page);
 
             // Set version
-            jLabelVersion.setText("Version: " + pt.ua.dicoogle.core.Version.getVersion());
+            //jLabelVersion.setText("Version: " + pt.ua.dicoogle.core.Version.getVersion());
 
             
             

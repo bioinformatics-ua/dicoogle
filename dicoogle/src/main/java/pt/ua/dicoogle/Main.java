@@ -48,8 +48,8 @@ import pt.ua.dicoogle.core.AsyncIndex;
 import pt.ua.dicoogle.core.ClientSettings;
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.core.XMLSupport;
-import pt.ua.dicoogle.core.LogDICOM;
-import pt.ua.dicoogle.core.LogXML;
+import pt.ua.dicoogle.DicomLog.LogDICOM;
+import pt.ua.dicoogle.DicomLog.LogXML;
 import pt.ua.dicoogle.core.TagsXML;
 import pt.ua.dicoogle.core.XMLClientSupport;
 import pt.ua.dicoogle.plugins.PluginController;
@@ -210,12 +210,15 @@ public class Main
         }
         
         logger.debug("Starting Dicoogle");
+        /* This logic will be not neccessary. This should be sent to the Plugins.
         try
         {
             Anonymous.getInstance().start();
         } catch(Exception e) {
             logger.warn("Could not start Anonimize service", e);
-        }
+        }*/
+        
+        
         logger.debug("Loading configuration file: {}", Platform.homePath());
         Configuration.initInstance(Platform.homePath());
         try {
@@ -292,7 +295,7 @@ public class Main
         //Signals that this application is GUI Server
         isGUIServer = true;
 
-        GUIServer GUIserv = new GUIServer();
+        //GUIServer GUIserv = new GUIServer();
     }
 
     @Deprecated

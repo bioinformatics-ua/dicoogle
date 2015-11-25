@@ -33,8 +33,8 @@ import java.util.concurrent.Semaphore;
 import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.rGUI.interfaces.controllers.ILogs;
-import pt.ua.dicoogle.core.LogDICOM;
-import pt.ua.dicoogle.core.LogLine;
+import pt.ua.dicoogle.DicomLog.LogDICOM;
+import pt.ua.dicoogle.DicomLog.LogLine;
 import pt.ua.dicoogle.rGUI.interfaces.signals.ILogsSignal;
 import pt.ua.dicoogle.server.users.UserSessionsLog;
 import pt.ua.dicoogle.server.FileWatcher;

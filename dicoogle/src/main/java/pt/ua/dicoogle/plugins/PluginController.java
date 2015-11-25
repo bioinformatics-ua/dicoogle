@@ -63,6 +63,7 @@ import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
 import pt.ua.dicoogle.server.web.DicoogleWeb;
 import pt.ua.dicoogle.plugins.webui.WebUIPluginManager;
+import pt.ua.dicoogle.sdk.DicooglePlugin;
 import pt.ua.dicoogle.taskManager.RunningIndexTasks;
 import pt.ua.dicoogle.taskManager.TaskManager;
 import pt.ua.dicoogle.server.PluginRestletApplication;
@@ -98,6 +99,7 @@ public class PluginController{
 
 	private PluginSet remoteQueryPlugins = null;
     private final WebUIPluginManager webUI;
+    private final DicooglePlatformProxy proxy;
     
     public PluginController(File pathToPluginDirectory) {
     	logger.info("Creating PluginController Instance");
@@ -139,7 +141,7 @@ public class PluginController{
                 	
                 	logger.info("Started Remote Communications Manager");
                 }
-                plugin.setSettings(holder);
+                applySettings(plugin, holder);
             }
             catch (ConfigurationException e){
                 logger.error("Failed to create configuration holder", e);
@@ -156,6 +158,8 @@ public class PluginController{
         pluginSets.add(new DefaultFileStoragePlugin());
         logger.info("Added default storage plugin");
         
+        this.proxy = new DicooglePlatformProxy(this);
+        
         initializePlugins(pluginSets);
         initRestInterface(pluginSets);
         initJettyInterface(pluginSets);
@@ -164,14 +168,55 @@ public class PluginController{
     
     private void initializePlugins(Collection<PluginSet> plugins) {
         for (PluginSet set : plugins) {
-            System.out.println("SetPlugins: " + set);
+            logger.debug("SetPlugins: {}", set);
+            
+            // provide platform to each plugin interface
+            final Collection<Collection<?>> all = Arrays.asList(
+                    set.getStoragePlugins(),
+                    set.getIndexPlugins(),
+                    set.getQueryPlugins(),
+                    set.getJettyPlugins(),
+                    set.getRestPlugins()
+            );
+            for (Collection interfaces : all) {
+                if (interfaces == null) {
+                    logger.debug("Plugin set {} provided a null collection!");
+                    continue;
+                }
+                for (Object o : interfaces) {
+                    if (o instanceof PlatformCommunicatorInterface) {
+                        ((PlatformCommunicatorInterface)o).setPlatformProxy(proxy);
+                    }
+                }
+            }
+
+            // and to the set itself
             if (set instanceof PlatformCommunicatorInterface) {
-                
-                ((PlatformCommunicatorInterface) set).setPlatformProxy(new DicooglePlatformProxy(this));
+                ((PlatformCommunicatorInterface) set).setPlatformProxy(proxy);
             }
         }
     }
+    
+    private void applySettings(PluginSet set, ConfigurationHolder holder) {
 
+        // provide platform to each plugin interface
+        final Collection<Collection<? extends DicooglePlugin>> all = Arrays.asList(
+                set.getStoragePlugins(),
+                set.getIndexPlugins(),
+                set.getQueryPlugins(),
+                set.getJettyPlugins()
+        );
+        for (Collection<? extends DicooglePlugin> interfaces : all) {
+            if (interfaces == null) continue;
+            for (DicooglePlugin p : interfaces) {
+                p.setSettings(holder);
+            }
+        }
+        
+        set.setSettings(holder);
+        
+    }
+    
     /**
      * Each pluginSet provides a collection of barebone rest interfaces Here we
      * check which interfaces are present and create a restlet component to
@@ -301,43 +346,48 @@ public class PluginController{
         return Collections.emptyList();    
     }
     
-    /**
+    /** Retrieve a storage interface capable of handling files on a given location.
+     * 
      * TODO: this can be heavily improved if we keep a map of scheme->indexer
      * However we are not supposed to call this every other cycle.
      *
-     * returns null if no suitable plugin is found
      * TODO: we should return a proxy storage that always returns error
      * 
-     * @param location only the scheme matters
-     * @return
+     * @todo "schema" is a typo, should read "scheme"
+     * 
+     * @param location a URI of the location, only the scheme matters
+     * @return a storage interface capable of handling the location, null if no suitable plugin is found
      */
     public StorageInterface getStorageForSchema(URI location) {
     	if(location == null){
-    		logger.error("NULL URI");
-    		return null;
+            logger.warn("URI for retrieving storage interface is null, ignoring");
+            return null;
     	}
         Collection<StorageInterface> storages = getStoragePlugins(false);
-        //System.out.println("Number of Plugins: "+storages.size());
         
         for (StorageInterface store : storages) {
-            //System.out.println("Testing Storage Plugin: "+store.getScheme());
             if (store.handles(location)) {
-            	logger.info("Retrieved Storage For Schema: "+location.toString());
+            	logger.debug("Retrieved Storage For Schema: {}", location);
                 return store;
             }
         }
-        logger.error("Could not get storage for schema: "+location.toString());
+        logger.warn("Could not get storage for schema: {}", location);
         return null;
     }
     
-    public StorageInterface getStorageForSchema(String schema) {
-        URI uri = null;
-		try {
-			uri = new URI(schema, "", "");
-		} catch (URISyntaxException e) {
-            logger.error("Bad URI", e);
-		}
-		return getStorageForSchema(uri);
+    /** Retrieve a storage interface capable of handling files with the given scheme.
+     * 
+     * TODO: this can be heavily improved if we keep a map of scheme->indexer
+     * However we are not supposed to call this every other cycle.
+     *
+     * TODO: we should return a proxy storage that always returns error
+     * 
+     * @param scheme a URI of the location, only the scheme matters
+     * @return a storage interface capable of handling the location, null if no suitable plugin is found
+     */
+    public StorageInterface getStorageForSchema(String scheme) {
+        URI uri = URI.create(scheme + ":/");
+        return getStorageForSchema(uri);
     }
 
     public Collection<QueryInterface> getQueryPlugins(boolean onlyEnabled) {
@@ -552,18 +602,28 @@ public class PluginController{
      * @param indexProviders a collection of providers
      */
     private void doUnindex(URI path, Collection<IndexerInterface> indexers) {
-        StorageInterface store = getStorageForSchema(path);
-
-        if (store==null) { 
-        	logger.error("No storage plugin detected");
-        }
-        
         for (IndexerInterface indexer : indexers) {            
         	indexer.unindex(path);
         }
         logger.info("Finished unindexing {}", path);
-    }    
+    }
     
+    public void remove(URI uri){
+      StorageInterface si = getStorageForSchema(uri);
+      if(si != null)
+        doRemove(uri, si);
+      else
+        logger.error("Could not find storage plugin to handle URI: {}", uri);      
+    }
+    
+    public void doRemove(URI uri, StorageInterface si) {
+      if(si.handles(uri)){
+        si.remove(uri); 
+      }else
+        logger.error("Storage Plugin does not handle URI: {},{}", uri, si);
+    
+      logger.info("Finished removing {}", uri);
+  }    
     /*
      * Convinience method that calls index(URI) and runs the returned
      * tasks on the executing thread 
