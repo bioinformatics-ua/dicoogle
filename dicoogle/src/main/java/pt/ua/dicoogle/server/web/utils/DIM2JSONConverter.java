@@ -26,10 +26,10 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.lang3.StringUtils;
 
-import pt.ua.dicoogle.core.dim.DIMGeneric;
-import pt.ua.dicoogle.core.dim.Patient;
-import pt.ua.dicoogle.core.dim.Serie;
-import pt.ua.dicoogle.core.dim.Study;
+import pt.ua.dicoogle.sdk.datastructs.dim.DIMGeneric;
+import pt.ua.dicoogle.sdk.datastructs.dim.Patient;
+import pt.ua.dicoogle.sdk.datastructs.dim.Serie;
+import pt.ua.dicoogle.sdk.datastructs.dim.Study;
 
 /**
  * Helper Class to tranlate DIMGeneric objects into JSON.
