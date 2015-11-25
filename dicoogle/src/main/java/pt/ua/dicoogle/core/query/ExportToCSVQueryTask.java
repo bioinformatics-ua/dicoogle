@@ -93,7 +93,7 @@ public class ExportToCSVQueryTask extends JointQueryTask {
 		log.debug("Started, Printing first line: ", tagsOrder);
 		
 		for (String tag : tagsOrder) {
-			builder.append(tag).append(";");
+			builder.append("\"").append(tag).append("\";");
 		}
 
 		this.writter.println(builder.toString());
@@ -111,7 +111,7 @@ public class ExportToCSVQueryTask extends JointQueryTask {
 			
 			if (s.length() > 0) {
 				String temp = StringUtils.replaceEach(s, searchChars, replaceChars);
-				builder.append(temp).append(";");
+				builder.append('\"').append(temp).append("\";");
 			} else {
 				builder.append(";");
 			}
