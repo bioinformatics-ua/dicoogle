@@ -181,6 +181,13 @@
             <artifactId>commons-collections4</artifactId>
             <version>4.0</version>
         </dependency>
+        
+        <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <classifier>jdk15</classifier>
+            <version>2.4</version>
+        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>

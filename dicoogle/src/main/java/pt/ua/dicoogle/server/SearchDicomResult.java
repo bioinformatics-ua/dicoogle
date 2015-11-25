@@ -24,6 +24,11 @@
  */
 package pt.ua.dicoogle.server;
 
+import pt.ua.dicoogle.sdk.datastructs.dim.Study;
+import pt.ua.dicoogle.sdk.datastructs.dim.Serie;
+import pt.ua.dicoogle.sdk.datastructs.dim.Patient;
+import pt.ua.dicoogle.sdk.datastructs.dim.ConcatTags;
+import pt.ua.dicoogle.sdk.datastructs.dim.DIMGeneric;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -43,7 +48,6 @@ import org.slf4j.LoggerFactory;
 import org.dcm4che2.io.DicomInputStream;
 
 
-import pt.ua.dicoogle.core.dim.*;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
