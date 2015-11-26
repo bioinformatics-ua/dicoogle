@@ -18,7 +18,6 @@
  */
 package pt.ua.dicoogle.sdk.datastructs.dim;
 
-
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.*;
@@ -41,40 +40,43 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
+import pt.ua.dicoogle.sdk.utils.MapedDICOMObject;
 
 /**
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Frederico Silva <fredericosilva@ua.pt>
  */
-public class DIMGeneric
-{
+public class DIMGeneric {
+
     /**
-     * There are double space to save the results but it decrease
-     * the search time and it is important because a querySearch should be
-     * little enough.
+     * There are double space to save the results but it decrease the search
+     * time and it is important because a querySearch should be little enough.
      */
     private ArrayList<Patient> patients = new ArrayList<>();
-    private HashMap<String, Patient> patientsHash  = new HashMap<>();
-    
-    private static String toTrimmedString(Object o, boolean allowNull){
-    	if(o == null)
-    		if(allowNull)
-    			return null;
-    		else return "";
-    		
-    	if(allowNull)
-    		return StringUtils.trimToNull(o.toString());
-    	
-    	return StringUtils.trimToEmpty(o.toString());
+    private HashMap<String, Patient> patientsHash = new HashMap<>();
+
+    private static String toTrimmedString(Object o, boolean allowNull) {
+        if (o == null) {
+            if (allowNull) {
+                return null;
+            } else {
+                return "";
+            }
+        }
+
+        if (allowNull) {
+            return StringUtils.trimToNull(o.toString());
+        }
+
+        return StringUtils.trimToEmpty(o.toString());
     }
 
     private ConcatTags tags;
 
     private static final Logger logger = LoggerFactory.getLogger(DIMGeneric.class);
 
-    public DIMGeneric(ConcatTags tags,Collection<SearchResult> arr) throws Exception
-    {
+    public DIMGeneric(ConcatTags tags, Collection<SearchResult> arr) throws Exception {
         this.tags = tags;
         fill(arr);
 
@@ -82,338 +84,329 @@ public class DIMGeneric
 
     /**
      * it is allow to handle a ArrayList of Strings or SearchResults
+     *
      * @param arr
      */
-    public DIMGeneric(Collection<SearchResult> arr) throws Exception{
+    public DIMGeneric(Collection<SearchResult> arr) throws Exception {
         fill(arr);
 
     }
-    
-    
+
+    /**
+     * it is allow to build dimGeneric with an Map
+     *
+     * @param arr
+     * @param uri
+     */
+    public DIMGeneric(Map<String, Object> arr) throws Exception {
+        URI uri = new URI((String)arr.get("uri"));
+        fillWithMap(arr, uri);
+    }
+
     /**
      * it is allow to handle a ArrayList of Strings or SearchResults
+     *
      * @param arr
      */
     private void fill(Collection<SearchResult> arr) {
-            //DebugManager.getInstance().debug("Looking search results: " + arr.size() );
+        for (SearchResult r : arr) {
+            /**
+             * Looking for SeachResults and put it in right side :)
+             */
+            //SearchResult r = (SearchResult) arr.get(i);
+            HashMap<String, Object> extra = r.getExtraData();
+            fillDim(extra, r.getURI());
 
-            Map<String, String> descriptions = new HashMap<String, String>();
+        }
 
+    }
 
-            for(SearchResult r : arr){
+    /**
+     * it is allow to handle a map with keys and values
+     *
+     * @param arr
+     * @param uri
+     */
+    private void fillWithMap(Map<String, Object> arr, URI uri) {
+        fillDim(arr, uri);
+    }
 
-            
-                /**
-                 * Looking for SeachResults and put it in right side :) 
-                 */
+    /**
+     * Generic function for fill dim object
+     * @param extra
+     * @param uri 
+     */
+    private void fillDim(Map<String, Object> extra, URI uri) {
+        Map<String, String> descriptions = new HashMap<String, String>();
+        /**
+         * Get data from Study
+         */
+        String studyUID = toTrimmedString(extra.get("StudyInstanceUID"), false);
+        String studyID = toTrimmedString(extra.get("StudyID"), false);
+        String studyDate = toTrimmedString(extra.get("StudyDate"), false);
+        String studyTime = toTrimmedString(extra.get("StudyTime"), true);
+        String AccessionNumber = toTrimmedString(extra.get("AccessionNumber"), false);
+        String StudyDescription = toTrimmedString(extra.get("StudyDescription"), false);
+        String InstitutionName = toTrimmedString(extra.get("InstitutionName"), false);
+        String operatorsName = toTrimmedString(extra.get("OperatorsName"), false);
+        String RequestingPhysician = toTrimmedString(extra.get("RequestingPhysician"), false);
 
-                //SearchResult r = (SearchResult) arr.get(i);
-                HashMap<String, Object> extra = r.getExtraData();
+        /**
+         * Get data to Series
+         */
+        String serieUID = toTrimmedString(extra.get("SeriesInstanceUID"), false);
+        String BodyPartThickness = (String) extra.get("BodyPartThickness");
+        //System.out.println("serieUID"+serieUID);
+        String serieNumber = toTrimmedString(extra.get("SeriesNumber"), true);
+        String serieDescription = toTrimmedString(extra.get("SeriesDescription"), false);
+        String modality = toTrimmedString(extra.get("Modality"), false);
+        String patientID = toTrimmedString(extra.get("PatientID"), false);
 
-                /** Get data from Study */
-                String studyUID = toTrimmedString(extra.get("StudyInstanceUID"),false);
-                String studyID = toTrimmedString(extra.get("StudyID"), false);
-                String studyDate = toTrimmedString( extra.get("StudyDate"), false);
-                String studyTime = toTrimmedString( extra.get("StudyTime"), true);
-                String AccessionNumber = toTrimmedString( extra.get("AccessionNumber"), false);
-                String StudyDescription = toTrimmedString( extra.get("StudyDescription"), false);
-                String InstitutionName = toTrimmedString( extra.get("InstitutionName"), false);
-                String operatorsName = toTrimmedString (extra.get("OperatorsName"), false);
-                String RequestingPhysician = toTrimmedString (extra.get("RequestingPhysician"), false);
-        
-                
-                /**
-                 * Get data to Series
-                 */
-                String serieUID =  toTrimmedString( extra.get("SeriesInstanceUID"), false);
-                String BodyPartThickness = (String) extra.get("BodyPartThickness");
-                //System.out.println("serieUID"+serieUID);
-                String serieNumber = toTrimmedString(extra.get("SeriesNumber"), true);
-                String serieDescription = toTrimmedString(  extra.get("SeriesDescription"), false);
-                String modality = toTrimmedString( extra.get("Modality"), false);
-                String patientID =  toTrimmedString( extra.get("PatientID"), false);
-                
+        String ViewPosition = toTrimmedString(extra.get("ViewPosition"), false);
+        String ImageLaterality = toTrimmedString(extra.get("ImageLaterality"), false);
+        String AcquisitionDeviceProcessingDescription = toTrimmedString(extra.get("AcquisitionDeviceProcessingDescription"), false);
 
-                String ViewPosition = toTrimmedString( extra.get("ViewPosition"), false);
-                String ImageLaterality = toTrimmedString( extra.get("ImageLaterality"), false);
-                String AcquisitionDeviceProcessingDescription = toTrimmedString( extra.get("AcquisitionDeviceProcessingDescription"), false);
-
-
-                String ViewCodeSequence_CodeValue =  toTrimmedString( extra.get("ViewCodeSequence_CodeValue"), false);
-                String ViewCodeSequence_CodingSchemeDesignator =  toTrimmedString( extra.get("ViewCodeSequence_CodingSchemeDesignator"), false);
-                String ViewCodeSequence_CodingSchemeVersion =  toTrimmedString( extra.get("ViewCodeSequence_CodingSchemeVersion"), false);
-                String ViewCodeSequence_CodeMeaning =  toTrimmedString( extra.get("ViewCodeSequence_CodeMeaning"), false);
-
-
-                /* Get Patient Data */
-
-                String patientSex = toTrimmedString(  extra.get("PatientSex"), false);
-                String patientBirthDate = toTrimmedString(  extra.get("PatientBirthDate"), false);
-                
-                String patientName =  toTrimmedString(extra.get("PatientName"), false);
-
-                String SeriesDate =  toTrimmedString(extra.get("SeriesDate"), false);
-                String ProtocolName =  toTrimmedString(extra.get("ProtocolName"), false);
-
-                /**
-                 * Get data to Image
-                 */
-                //TODO:Error checking here... but according to standard, all images
-                //must have one of these...
-                String sopInstUID =  toTrimmedString(extra.get("SOPInstanceUID"), true);
-                         
-                if(sopInstUID == null)
-                    sopInstUID ="no uid";
-
-                logger.debug("StudyDescription: " + StudyDescription);
-                
-                // This is a quick fix for changing the parameters for the query.
-                if ((StudyDescription==null||StudyDescription.equals("")||StudyDescription.toLowerCase().contains("fuji"))
-                        &&
-                        this.tags!=null)
-                {
-                    logger.debug("Checking if the Rule applies." + studyUID);
-                    String description = "";
-
-                    if (descriptions.containsKey(studyUID))
-                    {
-                        description = descriptions.get(studyUID);
-                    }
-
-                    for (ConcatTags.Rule rule : this.tags.getRules())
-                    {
-                        logger.debug("Checking if the Rule applies." + modality);
-
-                        if (modality.equals(rule.getModality()))
-                        {
+        String ViewCodeSequence_CodeValue = toTrimmedString(extra.get("ViewCodeSequence_CodeValue"), false);
+        String ViewCodeSequence_CodingSchemeDesignator = toTrimmedString(extra.get("ViewCodeSequence_CodingSchemeDesignator"), false);
+        String ViewCodeSequence_CodingSchemeVersion = toTrimmedString(extra.get("ViewCodeSequence_CodingSchemeVersion"), false);
+        String ViewCodeSequence_CodeMeaning = toTrimmedString(extra.get("ViewCodeSequence_CodeMeaning"), false);
 
 
-                            String valueTagToReplace = (String) extra.get(rule.getTagToReplace());
-                            logger.debug("Checking if the Rule value." + valueTagToReplace);
-                            logger.debug("Checking if the Rule value." + rule.getTagToReplace());
+        /* Get Patient Data */
+        String patientSex = toTrimmedString(extra.get("PatientSex"), false);
+        String patientBirthDate = toTrimmedString(extra.get("PatientBirthDate"), false);
 
+        String patientName = toTrimmedString(extra.get("PatientName"), false);
 
-                            if (valueTagToReplace!=null)
-                            {
-                                // Required to production enviroment. I'm not changing to toTrimmedString until get a stable release.
-                                // complete ported.
-                                valueTagToReplace = valueTagToReplace.trim().replaceAll("[^a-zA-Z0-9\\. ÉéàÀÃ;,]+","");
-                                description = description + valueTagToReplace + "; ";
+        String SeriesDate = toTrimmedString(extra.get("SeriesDate"), false);
+        String ProtocolName = toTrimmedString(extra.get("ProtocolName"), false);
 
-                            }
+        /**
+         * Get data to Image
+         */
+        //TODO:Error checking here... but according to standard, all images
+        //must have one of these...
+        String sopInstUID = toTrimmedString(extra.get("SOPInstanceUID"), true);
 
+        if (sopInstUID == null) {
+            sopInstUID = "no uid";
+        }
 
-                        }
+        logger.debug("StudyDescription: " + StudyDescription);
 
-                    }
-                    StudyDescription = description;
-                    descriptions.put(studyUID, StudyDescription);
+        // This is a quick fix for changing the parameters for the query.
+        if ((StudyDescription == null || StudyDescription.equals("") || StudyDescription.toLowerCase().contains("fuji"))
+                && this.tags != null) {
+            logger.debug("Checking if the Rule applies." + studyUID);
+            String description = "";
 
-
-                }
-
-                String patientIdentifier = "";
-                if (patientID.equals(""))
-                {
-                    patientIdentifier = patientName;
-                }
-                else
-                {
-                    patientIdentifier = patientID;
-                }
-                
-
-                /** Verify if Patient already exists */
-
-                if (this.patientsHash.containsKey(patientIdentifier))
-                {
-                    /**
-                     * Patient Already exists, let's check studys
-                     */
-		            // Real data does not have Patient Id - sometimes.
-                    Patient p = this.patientsHash.get(patientIdentifier);
-
-
-                    /**
-                     * Add Study
-                     * It also verify if it exists
-                     * In the last case Object will be discarded and the
-                     * data will be added for the Study that already exists
-                     */
-
-                    Study s = new Study(p,studyUID,studyDate);
-
-                    s.setInstitutuionName(InstitutionName);
-                    s.setAccessionNumber(AccessionNumber);
-                    s.setStudyTime(studyTime);
-                    s.setStudyID(studyID);
-                    s.setStudyDescription(StudyDescription);
-
-                    s.setPatientName(patientName);
-
-                    s.setOperatorsName(operatorsName);
-                    s.setRequestingPhysician(RequestingPhysician);
-
-
-                    Serie serie = new Serie(s, serieUID, modality);
-                    try
-                    {
-                        if (serieNumber!=null)
-                            serie.setSerieNumber((int)Float.parseFloat(serieNumber));
-                    }
-                    catch (Exception ex)
-                    {
-                        // nothing to do anyway
-                    }
-                    serie.setSeriesDescription(serieDescription);
-                    serie.setSeriesDescription(serieDescription);
-                    serie.setProtocolName(ProtocolName);
-                    serie.setSeriesDate(SeriesDate);
-                    serie.setBodyPartThickness(BodyPartThickness);
-                    serie.setViewPosition(ViewPosition);
-                    serie.setImageLaterality(ImageLaterality);
-                    serie.setAcquisitionDeviceProcessingDescription(AcquisitionDeviceProcessingDescription);
-                    serie.setViewCodeSequence_CodeMeaning(ViewCodeSequence_CodeMeaning);
-                    serie.setViewCodeSequence_CodeValue(ViewCodeSequence_CodeValue);
-                    serie.setViewCodeSequence_CodingSchemeDesignator(ViewCodeSequence_CodingSchemeDesignator);
-                    serie.setViewCodeSequence_CodingSchemeVersion(ViewCodeSequence_CodingSchemeVersion);
-
-                    serie.addImage(r.getURI(),sopInstUID);
-                    s.addSerie(serie);
-                    p.addStudy(s);
-                    
-                    
-                }
-                else {
-                    /**
-                     * Patient does not exist
-                     */
-                     Patient p = new Patient(patientID, patientName);
-                     p.setPatientSex(patientSex);
-                     p.setPatientBirthDate(patientBirthDate);
-
-                     /**
-                      * Create Study
-                      */
-                     Study s = new Study(p, studyUID,studyDate) ;
-                    s.setAccessionNumber(AccessionNumber);
-                    s.setStudyTime(studyTime);
-                    s.setStudyDescription(StudyDescription);
-                    s.setStudyID(studyID);
-                    s.setInstitutuionName(InstitutionName);
-                    s.setPatientName(patientName);
-
-                    s.setOperatorsName(operatorsName);
-                    s.setRequestingPhysician(RequestingPhysician);
-
-
-                    p.addStudy(s);
-
-                    /**
-                    * Create Series
-                    */
-                    Serie serie = new Serie(s,serieUID, modality);
-                    if (serieNumber!=null && !serieNumber.equals(""))
-                       serie.setSerieNumber((int)Float.parseFloat(serieNumber));
-                    serie.setSeriesDescription(serieDescription);
-                    serie.setProtocolName(ProtocolName);
-
-                    serie.setSeriesDate(SeriesDate);
-                    serie.setViewPosition(ViewPosition);
-                    serie.setImageLaterality(ImageLaterality);
-                    serie.setAcquisitionDeviceProcessingDescription(AcquisitionDeviceProcessingDescription);
-                    serie.setViewCodeSequence_CodeMeaning(ViewCodeSequence_CodeMeaning);
-                    serie.setViewCodeSequence_CodeValue(ViewCodeSequence_CodeValue);
-                    serie.setViewCodeSequence_CodingSchemeDesignator(ViewCodeSequence_CodingSchemeDesignator);
-                    serie.setViewCodeSequence_CodingSchemeVersion(ViewCodeSequence_CodingSchemeVersion);
-
-
-
-                    serie.addImage(r.getURI(),sopInstUID);
-                    s.addSerie(serie);
-                    this.patients.add(p);
-                    this.patientsHash.put(patientIdentifier, p);
-                }
+            if (descriptions.containsKey(studyUID)) {
+                description = descriptions.get(studyUID);
             }
 
+            for (ConcatTags.Rule rule : this.tags.getRules()) {
+                logger.debug("Checking if the Rule applies." + modality);
+
+                if (modality.equals(rule.getModality())) {
+
+                    String valueTagToReplace = (String) extra.get(rule.getTagToReplace());
+                    logger.debug("Checking if the Rule value." + valueTagToReplace);
+                    logger.debug("Checking if the Rule value." + rule.getTagToReplace());
+
+                    if (valueTagToReplace != null) {
+                        // Required to production enviroment. I'm not changing to toTrimmedString until get a stable release.
+                        // complete ported.
+                        valueTagToReplace = valueTagToReplace.trim().replaceAll("[^a-zA-Z0-9\\. ÉéàÀÃ;,]+", "");
+                        description = description + valueTagToReplace + "; ";
+
+                    }
+
+                }
+
+            }
+            StudyDescription = description;
+            descriptions.put(studyUID, StudyDescription);
+
+        }
+
+        String patientIdentifier = "";
+        if (patientID.equals("")) {
+            patientIdentifier = patientName;
+        } else {
+            patientIdentifier = patientID;
+        }
+
+        /**
+         * Verify if Patient already exists
+         */
+        if (this.patientsHash.containsKey(patientIdentifier)) {
+            /**
+             * Patient Already exists, let's check studys
+             */
+            // Real data does not have Patient Id - sometimes.
+            Patient p = this.patientsHash.get(patientIdentifier);
+
+            /**
+             * Add Study It also verify if it exists In the last case Object
+             * will be discarded and the data will be added for the Study that
+             * already exists
+             */
+            Study s = new Study(p, studyUID, studyDate);
+
+            s.setInstitutuionName(InstitutionName);
+            s.setAccessionNumber(AccessionNumber);
+            s.setStudyTime(studyTime);
+            s.setStudyID(studyID);
+            s.setStudyDescription(StudyDescription);
+
+            s.setPatientName(patientName);
+
+            s.setOperatorsName(operatorsName);
+            s.setRequestingPhysician(RequestingPhysician);
+
+            Serie serie = new Serie(s, serieUID, modality);
+            try {
+                if (serieNumber != null) {
+                    serie.setSerieNumber((int) Float.parseFloat(serieNumber));
+                }
+            } catch (Exception ex) {
+                // nothing to do anyway
+            }
+            serie.setSeriesDescription(serieDescription);
+            serie.setSeriesDescription(serieDescription);
+            serie.setProtocolName(ProtocolName);
+            serie.setSeriesDate(SeriesDate);
+            serie.setBodyPartThickness(BodyPartThickness);
+            serie.setViewPosition(ViewPosition);
+            serie.setImageLaterality(ImageLaterality);
+            serie.setAcquisitionDeviceProcessingDescription(AcquisitionDeviceProcessingDescription);
+            serie.setViewCodeSequence_CodeMeaning(ViewCodeSequence_CodeMeaning);
+            serie.setViewCodeSequence_CodeValue(ViewCodeSequence_CodeValue);
+            serie.setViewCodeSequence_CodingSchemeDesignator(ViewCodeSequence_CodingSchemeDesignator);
+            serie.setViewCodeSequence_CodingSchemeVersion(ViewCodeSequence_CodingSchemeVersion);
+
+            serie.addImage(uri, sopInstUID);
+            s.addSerie(serie);
+            p.addStudy(s);
+
+        } else {
+            /**
+             * Patient does not exist
+             */
+            Patient p = new Patient(patientID, patientName);
+            p.setPatientSex(patientSex);
+            p.setPatientBirthDate(patientBirthDate);
+
+            /**
+             * Create Study
+             */
+            Study s = new Study(p, studyUID, studyDate);
+            s.setAccessionNumber(AccessionNumber);
+            s.setStudyTime(studyTime);
+            s.setStudyDescription(StudyDescription);
+            s.setStudyID(studyID);
+            s.setInstitutuionName(InstitutionName);
+            s.setPatientName(patientName);
+
+            s.setOperatorsName(operatorsName);
+            s.setRequestingPhysician(RequestingPhysician);
+
+            p.addStudy(s);
+
+            /**
+             * Create Series
+             */
+            Serie serie = new Serie(s, serieUID, modality);
+            if (serieNumber != null && !serieNumber.equals("")) {
+                serie.setSerieNumber((int) Float.parseFloat(serieNumber));
+            }
+            serie.setSeriesDescription(serieDescription);
+            serie.setProtocolName(ProtocolName);
+
+            serie.setSeriesDate(SeriesDate);
+            serie.setViewPosition(ViewPosition);
+            serie.setImageLaterality(ImageLaterality);
+            serie.setAcquisitionDeviceProcessingDescription(AcquisitionDeviceProcessingDescription);
+            serie.setViewCodeSequence_CodeMeaning(ViewCodeSequence_CodeMeaning);
+            serie.setViewCodeSequence_CodeValue(ViewCodeSequence_CodeValue);
+            serie.setViewCodeSequence_CodingSchemeDesignator(ViewCodeSequence_CodingSchemeDesignator);
+            serie.setViewCodeSequence_CodingSchemeVersion(ViewCodeSequence_CodingSchemeVersion);
+
+            serie.addImage(uri, sopInstUID);
+            s.addSerie(serie);
+            this.patients.add(p);
+            this.patientsHash.put(patientIdentifier, p);
+        }
     }
 
-    public String getJSON(){
-    	JSONObject result = new JSONObject();
-    	result.put("numResults", this.patients.size());
-    	JSONArray patients = new JSONArray();
-    	
-    	for (Patient p : this.patients){
-    		JSONObject patient = new JSONObject();
-    		patient.put("id", p.getPatientID());
-    		patient.put("name", p.getPatientName());
-    		patient.put("gender", p.getPatientSex());
-    		patient.put("nStudies", p.getStudies().size());
-    		patient.put("birthdate", p.getPatientBirthDate());
-    		
-    		JSONArray studies = new JSONArray();
-    		for(Study s: p.getStudies())
-    		{
-    			JSONObject study = new JSONObject();
-    			study.put("studyDate", s.getStudyData());
-    			study.put("studyDescription", s.getStudyDescription());
-    			study.put("institutionName", s.getInstitutuionName());
-    			
-    			JSONArray modalities = new JSONArray();
-    			JSONArray series = new JSONArray();
-    			
-    			Set<String> modalitiesSet = new HashSet<>();
-    			for(Serie serie : s.getSeries())
-    			{
-    				modalitiesSet.add(serie.getModality());
-    				modalities.add(serie.getModality());
-    				
-    				JSONObject _serie = new JSONObject();
-    				_serie.put("serieNumber", serie.getSerieNumber());
-    				_serie.put("serieInstanceUID", serie.getSerieInstanceUID());
-    				_serie.put("serieDescription", serie.getSeriesDescription());
-    				_serie.put("serieModality", serie.getModality());
-    				
-    				JSONArray _sopInstanceUID = new JSONArray();
-    				for(int i=0; i<serie.getSOPInstanceUIDList().size();i++){
-    					JSONObject image = new JSONObject();
-    					image.put("sopInstanceUID", serie.getSOPInstanceUIDList().get(i));
-    					String rawPath = serie.getImageList().get(i).getRawPath();
-    					image.put("rawPath", rawPath);    					
-    					image.put("uri", serie.getImageList().get(i).toString());
-                        image.put("filename", rawPath.substring(rawPath.lastIndexOf("/")+1, rawPath.length()));
-    					
-    					_sopInstanceUID.add(image);
-    				}
-    				_serie.put("images", _sopInstanceUID);
-    
-    				series.add(_serie);
-    			}
-    			study.put("modalities", StringUtils.join(modalitiesSet,","));
-    			study.put("series", series);
-    			
-    			
-    			
-    			
-    			studies.add(study);
-    			
-    		}
-    		patient.put("studies", studies);
-    		
-    		
-    		patients.add(patient);
-    	}
-    	
-    	result.put("results", patients);
-    	
-    	return result.toString();
+    public String getJSON() {
+        JSONObject result = new JSONObject();
+        result.put("numResults", this.patients.size());
+        JSONArray patients = new JSONArray();
+
+        for (Patient p : this.patients) {
+            JSONObject patient = new JSONObject();
+            patient.put("id", p.getPatientID());
+            patient.put("name", p.getPatientName());
+            patient.put("gender", p.getPatientSex());
+            patient.put("nStudies", p.getStudies().size());
+            patient.put("birthdate", p.getPatientBirthDate());
+
+            JSONArray studies = new JSONArray();
+            for (Study s : p.getStudies()) {
+                JSONObject study = new JSONObject();
+                study.put("studyDate", s.getStudyData());
+                study.put("studyDescription", s.getStudyDescription());
+                study.put("institutionName", s.getInstitutuionName());
+
+                JSONArray modalities = new JSONArray();
+                JSONArray series = new JSONArray();
+
+                Set<String> modalitiesSet = new HashSet<>();
+                for (Serie serie : s.getSeries()) {
+                    modalitiesSet.add(serie.getModality());
+                    modalities.add(serie.getModality());
+
+                    JSONObject _serie = new JSONObject();
+                    _serie.put("serieNumber", serie.getSerieNumber());
+                    _serie.put("serieInstanceUID", serie.getSerieInstanceUID());
+                    _serie.put("serieDescription", serie.getSeriesDescription());
+                    _serie.put("serieModality", serie.getModality());
+
+                    JSONArray _sopInstanceUID = new JSONArray();
+                    for (int i = 0; i < serie.getSOPInstanceUIDList().size(); i++) {
+                        JSONObject image = new JSONObject();
+                        image.put("sopInstanceUID", serie.getSOPInstanceUIDList().get(i));
+                        String rawPath = serie.getImageList().get(i).getRawPath();
+                        image.put("rawPath", rawPath);
+                        image.put("uri", serie.getImageList().get(i).toString());
+                        image.put("filename", rawPath.substring(rawPath.lastIndexOf("/") + 1, rawPath.length()));
+
+                        _sopInstanceUID.add(image);
+                    }
+                    _serie.put("images", _sopInstanceUID);
+
+                    series.add(_serie);
+                }
+                study.put("modalities", StringUtils.join(modalitiesSet, ","));
+                study.put("series", series);
+
+                studies.add(study);
+
+            }
+            patient.put("studies", studies);
+
+            patients.add(patient);
+        }
+
+        result.put("results", patients);
+
+        return result.toString();
     }
-    
-    public String getXML()
-    {
+
+    public String getXML() {
 
         StringWriter writer = new StringWriter();
-
 
         StreamResult streamResult = new StreamResult(writer);
         SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
@@ -436,23 +429,20 @@ public class DIMGeneric
             AttributesImpl atts = new AttributesImpl();
             hd.startElement("", "", "DIM", atts);
 
-            for (Patient p : this.patients)
-            {
+            for (Patient p : this.patients) {
                 atts.clear();
-                atts.addAttribute("", "", "name", "",p.getPatientName().trim());
-                atts.addAttribute("", "", "id", "",p.getPatientID().trim());
+                atts.addAttribute("", "", "name", "", p.getPatientName().trim());
+                atts.addAttribute("", "", "id", "", p.getPatientID().trim());
                 hd.startElement("", "", "Patient", atts);
 
-
-                for (Study s: p.getStudies())
-                {
+                for (Study s : p.getStudies()) {
                     atts.clear();
-                    atts.addAttribute("", "", "date", "",s.getStudyData().trim());
+                    atts.addAttribute("", "", "date", "", s.getStudyData().trim());
                     atts.addAttribute("", "", "id", "", s.getStudyInstanceUID().trim());
 
                     hd.startElement("", "", "Study", atts);
 
-                    for (Serie serie : s.getSeries()){
+                    for (Serie serie : s.getSeries()) {
                         atts.clear();
                         atts.addAttribute("", "", "modality", "", serie.getModality().trim());
                         atts.addAttribute("", "", "id", "", serie.getSerieInstanceUID().trim());
@@ -462,7 +452,7 @@ public class DIMGeneric
                         ArrayList<URI> img = serie.getImageList();
                         ArrayList<String> uid = serie.getSOPInstanceUIDList();
                         int size = img.size();
-                        for (int i=0;i<size;i++){
+                        for (int i = 0; i < size; i++) {
                             atts.clear();
                             atts.addAttribute("", "", "path", "", img.get(i).toString().trim());
                             atts.addAttribute("", "", "uid", "", uid.get(i).trim());
@@ -482,7 +472,7 @@ public class DIMGeneric
             LoggerFactory.getLogger(DIMGeneric.class.getName()).error(ex.getMessage(), ex);
         }
 
-        return writer.toString() ;
+        return writer.toString();
     }
 
     /**
