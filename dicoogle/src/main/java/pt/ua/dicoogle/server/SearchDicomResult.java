@@ -281,7 +281,7 @@ public class SearchDicomResult implements Iterator<DicomObject>
                 //System.out.println("Serie : "+ serieTmp);
                 result.putString(Tag.InstitutionName, VR.CS,(String)sR.get("InstitutionName"));
 
-                result.putString(Tag.StudyInstanceUID, VR.UI, (String)sR.get("InstitutionName"));
+                result.putString(Tag.StudyInstanceUID, VR.UI, (String)sR.get("StudyInstanceUID"));
                 result.putString(Tag.SeriesInstanceUID, VR.UI, (String)sR.get("SeriesInstanceUID"));
                 result.putString(Tag.SOPInstanceUID, VR.UI, (String)sR.get("SOPInstanceUID"));
                 result.putString(Tag.SeriesDescription, VR.LO, (String)sR.get("SeriesDescription"));
