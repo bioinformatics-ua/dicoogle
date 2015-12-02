@@ -11,8 +11,10 @@
   ],
   "description": "Dicoogle Web Core for UI plugins",
   "files": [
-    "lib"
+    "src/*.js",
+    "lib/*.js"
   ],
+  "esnext:main": "src/dicoogle-webcore.js",
   "main": "lib/dicoogle-webcore.js",
   "keywords": [
     "dicoogle"
@@ -20,7 +22,7 @@
   "scripts": {
     "check": "eslint src",
     "build": "eslint src && babel src --out-dir lib",
-    "prepublish": "eslint src && babel src --out-dir lib"
+    "prepublish": "npm run build"
   },
   "license": "GPL-3.0+",
   "devDependencies": {
