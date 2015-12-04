@@ -329,7 +329,7 @@ public class PluginController{
      * @param location
      * @return 
      */
-    public Iterable<StorageInputStream> resolveURI(URI location)
+    public Iterable<StorageInputStream> resolveURI(URI location, Object ...args)
     {
         Collection<StorageInterface> storages = getStoragePlugins(true);
         

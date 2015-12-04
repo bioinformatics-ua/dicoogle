@@ -58,15 +58,17 @@ public interface StorageInterface extends DicooglePlugin {
      * }</pre>
      * 
      * @param location the location to read
+     * @param parameters a variable list of extra parameters for the retrieve
      * @return an iterable of storage input streams
      * @see StorageInputStream
      */
-    public Iterable<StorageInputStream> at(URI location);
+    public Iterable<StorageInputStream> at(URI location, Object ... parameters);
     
     /**
      * Stores a DICOM object into the storage.
      *
      * @param dicomObject Object to be Stored
+     * @param parameters a variable list of extra parameters for the retrieve
      * @return The URI of the previously stored Object.
      */
     public URI store(DicomObject dicomObject, Object ... parameters);
@@ -75,6 +77,7 @@ public interface StorageInterface extends DicooglePlugin {
      * Stores a new element into the storage.
      *
      * @param inputStream an input stream with the contents to be stored
+     * @param parameters a variable list of extra parameters for the retrieve
      * @return the URI of the stored data
      * @throws IOException if an I/O error occurs
      */
