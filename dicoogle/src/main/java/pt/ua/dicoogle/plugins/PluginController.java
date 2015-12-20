@@ -329,16 +329,15 @@ public class PluginController{
      * @param location
      * @return 
      */
-    public Iterable<StorageInputStream> resolveURI(URI location)
+    public Iterable<StorageInputStream> resolveURI(URI location, Object ...args)
     {
         Collection<StorageInterface> storages = getStoragePlugins(true);
         
         for (StorageInterface store : storages) {
-            
             if (store.handles(location)) 
             {
             	logger.info("Resolving URI: "+location.toString()+" Storage: "+store.getName() );
-                return store.at(location);
+                return store.at(location, args);
             }
         }
 
