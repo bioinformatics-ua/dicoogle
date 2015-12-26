@@ -18,6 +18,7 @@
  */
 package pt.ua.dicoogle.server.web;
 
+import org.eclipse.jetty.servlets.gzip.GzipHandler;
 import pt.ua.dicoogle.server.web.rest.VersionResource;
 import pt.ua.dicoogle.server.web.servlets.RestletHttpServlet;
 import pt.ua.dicoogle.server.web.servlets.ExportToCSVServlet;
@@ -211,8 +212,11 @@ public class DicoogleWeb {
         // register the handlers on the server
         this.contextHandlers = new ContextHandlerCollection();
         this.contextHandlers.setHandlers(handlers);
-        server.setHandler(this.contextHandlers);
-        
+        //GzipHandler gzip = new GzipHandler();
+        server.setHandler(contextHandlers);
+        //gzip.setHandler(this.contextHandlers);
+
+
         // and then start the server
         server.start();
     }
@@ -229,7 +233,7 @@ public class DicoogleWeb {
     }
     
     private void addCORSFilter(ServletContextHandler handler) {
-        String origins = ServerSettings.getInstance().getWeb().getAllowedOrigins();
+       String origins = ServerSettings.getInstance().getWeb().getAllowedOrigins();
         if (origins != null) {
             handler.setDisplayName("cross-origin");
             FilterHolder corsHolder = new FilterHolder(CORSFilter.class);
