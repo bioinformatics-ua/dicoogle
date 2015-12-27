@@ -232,87 +232,27 @@ public class RSIStorage extends StorageService
     {  
         try
         {
-            /*
-            String cuid = rq.getString(Tag.AffectedSOPClassUID);
-            String iuid = rq.getString(Tag.AffectedSOPInstanceUID);
-            
-            DicomObject d = dataStream.readDataset();
-            
-            System.out.println(d.get(Tag.TransferSyntaxUID));
-                       
-            String extraPath= getDirectory(d);
-            new File(extraPath).mkdirs(); 
-            long time = System.currentTimeMillis();
-            String fileStr = getFullPathCache(extraPath, d);
-            if (gzip)
-            {
-                fileStr += ".gz";
-            }
-            
-            //first we write the file to a temporary location
-            BasicDicomObject fmi = new BasicDicomObject();
-            fmi.initFileMetaInformation(cuid, iuid, tsuid);  
-            
-            File file = new File(fileStr);
-            FileOutputStream fos = new FileOutputStream(file);
-            BufferedOutputStream bos = new BufferedOutputStream(fos,fileBufferSize);
-            DicomOutputStream dos = null;
-            if (gzip)
-            {
-                dos = new DicomOutputStream(new GZIPOutputStream(bos));
-            }
-            else
-            {
-                dos = new DicomOutputStream(bos);
-            }
-            
-            //dos.writeFileMetaInformation(fmi);  
-            
-            d.initFileMetaInformation(cuid, iuid, tsuid);  
-            dos.writeDicomFile(d);
-            //dataStream.copyTo(dos);
-            
-            
-            dos.close();
-            
-            System.out.println(file.getAbsolutePath());
 
-            
-            //core.indexQueue(file.getAbsolutePath(), true);
-            queue.add(file.getAbsolutePath());
-            
-            */
             String cuid = rq.getString(Tag.AffectedSOPClassUID);
             String iuid = rq.getString(Tag.AffectedSOPInstanceUID);
-            
+
             DicomObject d = dataStream.readDataset();
             
             d.initFileMetaInformation(cuid, iuid, tsuid);
             
             Iterable <StorageInterface> plugins = PluginController.getInstance().getStoragePlugins(true);
-            if(plugins == null){
-                //System.out.println("There is no default plugin...");
-            
-                //System.out.println("Number of StoragePlugins: "+PluginController.getInstance().getStorageInterfaces().size());
-                
-                //System.out.println(PluginController.getInstance().getIndexingPlugins().size());
-            }
+
             URI uri = null;
             for (StorageInterface storage : plugins)
             {
                 uri = storage.store(d);
-                if(uri != null)
+                if(uri != null) {
+                    // queue to index
                     queue.add(uri);
+                }
             }
-            
-            //System.out.println("Another successfull stored object xD");
-            //System.out.println("URI: "+uri);
-            
-            //InputStream retrievedFile = plugin.retrieve(uri);
-            //byte[] byteArr = ByteStreams.toByteArray(retrievedFile);
-                       
+
         } catch (IOException e) {
-           //System.out.println(e.toString());
            throw new DicomServiceException(rq, Status.ProcessingFailure, e.getMessage());          
          }
     }
