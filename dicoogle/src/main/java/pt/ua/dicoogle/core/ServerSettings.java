@@ -20,11 +20,7 @@ package pt.ua.dicoogle.core;
 
 import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import org.dcm4che2.data.UID;
 import org.slf4j.LoggerFactory;
@@ -170,6 +166,8 @@ public class ServerSettings implements ServerSettingsReader
     HashMap<String, String> modalityFind = new HashMap<>();
 
     ArrayList<MoveDestination> dest = new ArrayList<>();
+
+    private Set<String> priorityAETitles = new HashSet<>();
 
     private boolean indexAnonymous = false;
 
@@ -890,6 +888,21 @@ public class ServerSettings implements ServerSettingsReader
     {
         return this.dest ;
     }
+
+    @Override
+    public Set<String> getPriorityAETitles() {
+        return priorityAETitles;
+    }
+
+    public void addPriorityAETitle(String aet)
+    {
+        this.priorityAETitles.add(aet);
+    }
+    public void removePriorityAETitle(String aet)
+    {
+        this.priorityAETitles.remove(aet);
+    }
+
     public void setMoves(ArrayList<MoveDestination> moves)
     {
         if(moves != null)
@@ -950,8 +963,8 @@ public class ServerSettings implements ServerSettingsReader
     	// remove the previous setting, if there is one
     	autoStartPlugin.remove(name);
 
-	// insert the new setting
-	autoStartPlugin.put(name, value);
+        // insert the new setting
+        autoStartPlugin.put(name, value);
     }
 
     /**
@@ -967,9 +980,9 @@ public class ServerSettings implements ServerSettingsReader
     {
     	Boolean result = autoStartPlugin.get(name);
 
-	// if there is not such setting return the default value
-	if (result == null) return true; // by default start the plugin
-	return result.booleanValue();
+        // if there is not such setting return the default value
+        if (result == null) return true; // by default start the plugin
+        return result.booleanValue();
     }
 
 	/**

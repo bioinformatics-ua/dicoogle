@@ -20,10 +20,11 @@ package pt.ua.dicoogle.server;
 
 import pt.ua.dicoogle.core.ServerSettings;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Collection;
+import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -83,10 +84,11 @@ public class RSIStorage extends StorageService
     private ExecutorService pool = Executors.newFixedThreadPool(threadPoolSize);
     
     private boolean gzip = ServerSettings.getInstance().isGzipStorage();;
-   
 
-    
-    private BlockingQueue<URI> queue = new LinkedBlockingQueue<URI>();
+    private Set<String> priorityAETs = new HashSet<>();
+
+    // Changed to support priority queue.
+    private BlockingQueue<ImageElement> queue = new PriorityBlockingQueue<ImageElement>();
     
     
     /**
@@ -109,6 +111,10 @@ public class RSIStorage extends StorageService
             if (path == null) {
                 path = "/dev/null";
             }
+
+
+            this.priorityAETs = settings.getPriorityAETitles();
+            LoggerFactory.getLogger(RSIStorage.class).error("Priority C-STORE: " + this.priorityAETs);
 
             device.setNetworkApplicationEntity(nae);
             device.setNetworkConnection(nc);
@@ -248,7 +254,10 @@ public class RSIStorage extends StorageService
                 uri = storage.store(d);
                 if(uri != null) {
                     // queue to index
-                    queue.add(uri);
+                    ImageElement element = new ImageElement();
+                    element.setCallingAET(as.getCallingAET());
+                    element.setUri(uri);
+                    queue.add(element);
                 }
             }
 
@@ -256,7 +265,46 @@ public class RSIStorage extends StorageService
            throw new DicomServiceException(rq, Status.ProcessingFailure, e.getMessage());          
          }
     }
-    
+
+    /**
+     * ImageElement is a entry of a C-STORE. For Each C-STORE RQ
+     * an ImageElement is created and are put in the queue to index.
+     *
+     * This only happens after the store in Storage Plugins.
+     *
+     * @param <E>
+     */
+    class ImageElement<E extends Comparable<? super E>>
+            implements Comparable<ImageElement<E>>{
+        private URI uri;
+        private String callingAET;
+
+        public URI getUri() {
+            return uri;
+        }
+
+        public void setUri(URI uri) {
+            this.uri = uri;
+        }
+
+        public String getCallingAET() {
+            return callingAET;
+        }
+
+        public void setCallingAET(String callingAET) {
+            this.callingAET = callingAET;
+        }
+
+        @Override
+        public int compareTo(ImageElement<E> o1) {
+            if (o1.getCallingAET().equals(this.getCallingAET()))
+                return 0 ;
+            else if (settings.getPriorityAETitles().contains(this.getCallingAET()))
+                return -1;
+            else return 1;
+        }
+    }
+
     
     class Indexer extends Thread
     {
@@ -268,8 +316,9 @@ public class RSIStorage extends StorageService
             {
                 try 
                 {
-                    URI exam = queue.take();
-                    
+                    // Fetch an element by the queue taking into account the priorities. 
+                    ImageElement element = queue.take();
+                    URI exam = element.getUri();
                     if(exam != null)
                     {
                         List <Report> reports = PluginController.getInstance().indexBlocking(exam);
