@@ -114,7 +114,7 @@ public class RSIStorage extends StorageService
 
 
             this.priorityAETs = settings.getPriorityAETitles();
-            LoggerFactory.getLogger(RSIStorage.class).error("Priority C-STORE: " + this.priorityAETs);
+            LoggerFactory.getLogger(RSIStorage.class).debug("Priority C-STORE: " + this.priorityAETs);
 
             device.setNetworkApplicationEntity(nae);
             device.setNetworkConnection(nc);
@@ -316,7 +316,7 @@ public class RSIStorage extends StorageService
             {
                 try 
                 {
-                    // Fetch an element by the queue taking into account the priorities. 
+                    // Fetch an element by the queue taking into account the priorities.
                     ImageElement element = queue.take();
                     URI exam = element.getUri();
                     if(exam != null)
