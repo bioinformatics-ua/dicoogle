@@ -28,6 +28,7 @@ package pt.ua.dicoogle.core;
 
 
 import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
+import pt.ua.dicoogle.sdk.settings.types.ServerDirectoryPath;
 import pt.ua.dicoogle.server.*;
 
 import java.io.*;
@@ -129,6 +130,8 @@ public class XMLSupport extends DefaultHandler
     private String IP = null ;
     private String description;
     private String isPublic;
+
+    private boolean priorityAET = false;
 
 
     private String currentService;
@@ -366,6 +369,18 @@ public class XMLSupport extends DefaultHandler
                     this.port, this.isPublic.contains("true"), this.description);
             s.add(tmp);
         }
+
+        else if(localName.equals("CSTOREPriorities"))
+        {
+            this.priorityAET = true ;
+        }
+        else if (priorityAET && localName.equals("aetitle"))
+        {
+            String aet = this.resolveAttrib("aetitle", attribs, localName);
+            //ServerSettings.getInstance().addPriorityAETitle(aet);
+        }
+
+
         else if (localName.equals("web"))
         {
             this.isWeb = true ; 
@@ -615,6 +630,13 @@ public class XMLSupport extends DefaultHandler
             this.destinations = false ;
         }
 
+        else if (this.options && localName.equals("CSTOREPriorities"))
+        {
+            this.priorityAET = false ;
+        }
+
+
+
         else if (isWeb && localName.equals("web"))
         {
             this.isWeb = false ;
@@ -632,25 +654,23 @@ public class XMLSupport extends DefaultHandler
      }
      
     @Override
-    public void characters( char[] data, int start, int length )
-    {
-         if(isIndexEffort){
-             String sEffort = new String(data, start, length);
-             s.setIndexerEffort(Integer.parseInt(sEffort));
-             return;
-         }
-         if(isPort && !isQRConfigs)
-         { 
-             String sPort = new String(data, start, length);
-             s.setStoragePort(Integer.parseInt(sPort));
-             return;
-         }
-         if(isPort && isQRConfigs){
-             String sPort = new String(data, start, length);
-             s.setWlsPort(Integer.parseInt(sPort));
-             return;
-         }
-         if(isEncrypt){
+    public void characters( char[] data, int start, int length ) {
+        if (isIndexEffort) {
+            String sEffort = new String(data, start, length);
+            s.setIndexerEffort(Integer.parseInt(sEffort));
+            return;
+        }
+        if (isPort && !isQRConfigs) {
+            String sPort = new String(data, start, length);
+            s.setStoragePort(Integer.parseInt(sPort));
+            return;
+        }
+        if (isPort && isQRConfigs) {
+            String sPort = new String(data, start, length);
+            s.setWlsPort(Integer.parseInt(sPort));
+            return;
+        }
+        if (isEncrypt) {
             String sView = new String(data, start, length);
             boolean result = false;
 
@@ -659,89 +679,84 @@ public class XMLSupport extends DefaultHandler
 
             s.setEncryptUsersFile(result);
             return;
-         }
+        }
 
-         
-         if (isZIPFile)
-         {
-             String sView = new String(data, start, length);
-             boolean result = false;
-             if (sView.compareToIgnoreCase("true") == 0)
-                result = true;
-             s.setIndexZIPFiles(result);
-             return;
-         } 
-         
-         if (isGZIPStorage)
-         {
-              String sView = new String(data, start, length);
-             boolean result = false;
-             if (sView.compareToIgnoreCase("true") == 0)
-                result = true;
-             s.setGzipStorage(result);
-             return;
-         
-         }
-         
-        if (isIndexAnonymous)
-         {
-             String sView = new String(data, start, length);
-             boolean result = false;
-             if (sView.compareToIgnoreCase("true") == 0)
-                result = true;
-             s.setIndexAnonymous(result);
-             return;
-         }
-         
-         if (isMonitorWatcher)
-         {
-             String sView = new String(data, start, length);
-             boolean result = false;
-             if (sView.compareToIgnoreCase("true") == 0)
-                result = true;
-             s.setMonitorWatcher(result);
-             return;
-         }
-         if(isP2P)
-         {
 
-             if (autoConnect)
-             {
-                 String sView = new String(data, start, length);
-                 boolean result = false;
-                 if (sView.compareToIgnoreCase("true") == 0)
+        if (isZIPFile) {
+            String sView = new String(data, start, length);
+            boolean result = false;
+            if (sView.compareToIgnoreCase("true") == 0)
+                result = true;
+            s.setIndexZIPFiles(result);
+            return;
+        }
+
+        if (isGZIPStorage) {
+            String sView = new String(data, start, length);
+            boolean result = false;
+            if (sView.compareToIgnoreCase("true") == 0)
+                result = true;
+            s.setGzipStorage(result);
+            return;
+
+        }
+
+        if (isIndexAnonymous) {
+            String sView = new String(data, start, length);
+            boolean result = false;
+            if (sView.compareToIgnoreCase("true") == 0)
+                result = true;
+            s.setIndexAnonymous(result);
+            return;
+        }
+
+        if (isMonitorWatcher) {
+            String sView = new String(data, start, length);
+            boolean result = false;
+            if (sView.compareToIgnoreCase("true") == 0)
+                result = true;
+            s.setMonitorWatcher(result);
+            return;
+        }
+        if (isP2P) {
+
+            if (autoConnect) {
+                String sView = new String(data, start, length);
+                boolean result = false;
+                if (sView.compareToIgnoreCase("true") == 0)
                     result = true;
 //                 s.setP2P(result);
-                 return;
+                return;
 
-             }
-             else if (maxmsg)
-             {
-                 String max = new String(data, start, length);
+            } else if (maxmsg) {
+                String max = new String(data, start, length);
 
 
-                 int maxMsg = Integer.valueOf(max);
-                 s.setMaxMessages(maxMsg);
-                 return;
+                int maxMsg = Integer.valueOf(max);
+                s.setMaxMessages(maxMsg);
+                return;
 
-             }
-             else if (isNode && isNodeName)
-             {
-                 String nodeName = new String(data, start, length);
-                 s.setNodeName(nodeName);
-             }
-             else if (isNode && isDefined)
-             {
-                 String tmp = new String(data, start, length);
-                 boolean result = false;
-                 if (tmp.compareToIgnoreCase("true") == 0)
+            } else if (isNode && isNodeName) {
+                String nodeName = new String(data, start, length);
+                s.setNodeName(nodeName);
+            } else if (isNode && isDefined) {
+                String tmp = new String(data, start, length);
+                boolean result = false;
+                if (tmp.compareToIgnoreCase("true") == 0)
                     result = true;
-                 s.setNodeNameDefined(result);
-                 return;
-             }
+                s.setNodeNameDefined(result);
+                return;
+            }
+        }
 
+        if (priorityAET)
+        {
+            String aetitle = new String(data, start, length);
+            s.addPriorityAETitle(aetitle);
+            return;
 
-         }
+        }
+
          if(isStorage)
          {
              String sView = new String(data, start, length);
@@ -1567,6 +1582,23 @@ public class XMLSupport extends DefaultHandler
 
 
             hd.endElement("", "", "destinations");
+
+
+            // CSTOREPriorities
+
+            hd.startElement("", "", "CSTOREPriorities", atts);
+
+            for (String aet : ServerSettings.getInstance().getPriorityAETitles())
+            {
+                atts.clear();
+                hd.startElement("", "", "aetitle", atts);
+                hd.characters(aet.toCharArray(), 0, aet.length());
+                hd.endElement("", "", "aetitle");
+            }
+
+            hd.endElement("", "", "CSTOREPriorities");
+
+
 
 
             hd.endElement("", "", "options");

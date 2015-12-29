@@ -20,10 +20,11 @@ package pt.ua.dicoogle.server;
 
 import pt.ua.dicoogle.core.ServerSettings;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Collection;
+import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -83,10 +84,11 @@ public class RSIStorage extends StorageService
     private ExecutorService pool = Executors.newFixedThreadPool(threadPoolSize);
     
     private boolean gzip = ServerSettings.getInstance().isGzipStorage();;
-   
 
-    
-    private BlockingQueue<URI> queue = new LinkedBlockingQueue<URI>();
+    private Set<String> priorityAETs = new HashSet<>();
+
+    // Changed to support priority queue.
+    private BlockingQueue<ImageElement> queue = new PriorityBlockingQueue<ImageElement>();
     
     
     /**
@@ -109,6 +111,10 @@ public class RSIStorage extends StorageService
             if (path == null) {
                 path = "/dev/null";
             }
+
+
+            this.priorityAETs = settings.getPriorityAETitles();
+            LoggerFactory.getLogger(RSIStorage.class).debug("Priority C-STORE: " + this.priorityAETs);
 
             device.setNetworkApplicationEntity(nae);
             device.setNetworkConnection(nc);
@@ -232,91 +238,73 @@ public class RSIStorage extends StorageService
     {  
         try
         {
-            /*
-            String cuid = rq.getString(Tag.AffectedSOPClassUID);
-            String iuid = rq.getString(Tag.AffectedSOPInstanceUID);
-            
-            DicomObject d = dataStream.readDataset();
-            
-            System.out.println(d.get(Tag.TransferSyntaxUID));
-                       
-            String extraPath= getDirectory(d);
-            new File(extraPath).mkdirs(); 
-            long time = System.currentTimeMillis();
-            String fileStr = getFullPathCache(extraPath, d);
-            if (gzip)
-            {
-                fileStr += ".gz";
-            }
-            
-            //first we write the file to a temporary location
-            BasicDicomObject fmi = new BasicDicomObject();
-            fmi.initFileMetaInformation(cuid, iuid, tsuid);  
-            
-            File file = new File(fileStr);
-            FileOutputStream fos = new FileOutputStream(file);
-            BufferedOutputStream bos = new BufferedOutputStream(fos,fileBufferSize);
-            DicomOutputStream dos = null;
-            if (gzip)
-            {
-                dos = new DicomOutputStream(new GZIPOutputStream(bos));
-            }
-            else
-            {
-                dos = new DicomOutputStream(bos);
-            }
-            
-            //dos.writeFileMetaInformation(fmi);  
-            
-            d.initFileMetaInformation(cuid, iuid, tsuid);  
-            dos.writeDicomFile(d);
-            //dataStream.copyTo(dos);
-            
-            
-            dos.close();
-            
-            System.out.println(file.getAbsolutePath());
 
-            
-            //core.indexQueue(file.getAbsolutePath(), true);
-            queue.add(file.getAbsolutePath());
-            
-            */
             String cuid = rq.getString(Tag.AffectedSOPClassUID);
             String iuid = rq.getString(Tag.AffectedSOPInstanceUID);
-            
+
             DicomObject d = dataStream.readDataset();
             
             d.initFileMetaInformation(cuid, iuid, tsuid);
             
             Iterable <StorageInterface> plugins = PluginController.getInstance().getStoragePlugins(true);
-            if(plugins == null){
-                //System.out.println("There is no default plugin...");
-            
-                //System.out.println("Number of StoragePlugins: "+PluginController.getInstance().getStorageInterfaces().size());
-                
-                //System.out.println(PluginController.getInstance().getIndexingPlugins().size());
-            }
+
             URI uri = null;
             for (StorageInterface storage : plugins)
             {
                 uri = storage.store(d);
-                if(uri != null)
-                    queue.add(uri);
+                if(uri != null) {
+                    // queue to index
+                    ImageElement element = new ImageElement();
+                    element.setCallingAET(as.getCallingAET());
+                    element.setUri(uri);
+                    queue.add(element);
+                }
             }
-            
-            //System.out.println("Another successfull stored object xD");
-            //System.out.println("URI: "+uri);
-            
-            //InputStream retrievedFile = plugin.retrieve(uri);
-            //byte[] byteArr = ByteStreams.toByteArray(retrievedFile);
-                       
+
         } catch (IOException e) {
-           //System.out.println(e.toString());
            throw new DicomServiceException(rq, Status.ProcessingFailure, e.getMessage());          
          }
     }
-    
+
+    /**
+     * ImageElement is a entry of a C-STORE. For Each C-STORE RQ
+     * an ImageElement is created and are put in the queue to index.
+     *
+     * This only happens after the store in Storage Plugins.
+     *
+     * @param <E>
+     */
+    class ImageElement<E extends Comparable<? super E>>
+            implements Comparable<ImageElement<E>>{
+        private URI uri;
+        private String callingAET;
+
+        public URI getUri() {
+            return uri;
+        }
+
+        public void setUri(URI uri) {
+            this.uri = uri;
+        }
+
+        public String getCallingAET() {
+            return callingAET;
+        }
+
+        public void setCallingAET(String callingAET) {
+            this.callingAET = callingAET;
+        }
+
+        @Override
+        public int compareTo(ImageElement<E> o1) {
+            if (o1.getCallingAET().equals(this.getCallingAET()))
+                return 0 ;
+            else if (settings.getPriorityAETitles().contains(this.getCallingAET()))
+                return -1;
+            else return 1;
+        }
+    }
+
     
     class Indexer extends Thread
     {
@@ -328,8 +316,9 @@ public class RSIStorage extends StorageService
             {
                 try 
                 {
-                    URI exam = queue.take();
-                    
+                    // Fetch an element by the queue taking into account the priorities.
+                    ImageElement element = queue.take();
+                    URI exam = element.getUri();
                     if(exam != null)
                     {
                         List <Report> reports = PluginController.getInstance().indexBlocking(exam);
