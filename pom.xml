@@ -49,20 +49,74 @@
         </plugins>
     </build>
 
+    <profiles>
+
+
+
+            <profile>
+                <id>prod-repository</id>
+                <activation>
+                    <property>
+                        <name>!useBmdRepo</name>
+
+                    </property>
+                </activation>
+                <properties>
+
+                </properties>
+                <distributionManagement>
+                    <!-- Versioned releases are published to the releases repository -->
+                    <repository>
+                        <id>mi</id>
+                        <url>http://bioinformatics.ua.pt/maven/content/repositories/mi</url>
+                    </repository>
+
+
+                    <!-- Snapshot releases are published to the snapshots repository -->
+                    <snapshotRepository>
+                        <id>mi</id>
+                        <url>http://bioinformatics.ua.pt/maven/content/repositories/mi-snapshots</url>
+                    </snapshotRepository>
+                </distributionManagement>
+
+            </profile>
+        <profile>
+            <id>bmd-repository</id>
+            <activation>
+                <property>
+                    <name>useBmdRepo</name>
+                    <value>true</value>
+                </property>
+            </activation>
+
+
+            <properties>
+
+            </properties>
+            <distributionManagement>
+            <!-- Versioned releases are published to the releases repository -->
+            <repository>
+                <id>bmdsoftware-releases</id>
+                <name>BMD Software Nexus (Internal Releases)</name>
+                <url>https://dev.bmd-software.com/nexus/content/repositories/releases</url>
+            </repository>
+            <!-- Snapshot releases are published to the snapshots repository -->
+            <snapshotRepository>
+                <id>bmdsoftware-snapshots</id>
+                <name>BMD Software Nexus (Internal Snapshots)</name>
+                <url>https://dev.bmd-software.com/nexus/content/repositories/snapshots</url>
+            </snapshotRepository>
+            </distributionManagement>
+
+        </profile>
+    </profiles>
+
     <distributionManagement>
 
-        <!-- Versioned releases are published to the releases repository -->
-        <repository>
-            <id>mi</id>
-            <url>http://bioinformatics.ua.pt/maven/content/repositories/mi</url>
-        </repository>
 
 
-        <!-- Snapshot releases are published to the snapshots repository -->
-        <snapshotRepository>
-            <id>mi</id>
-            <url>http://bioinformatics.ua.pt/maven/content/repositories/mi-snapshots</url>
-        </snapshotRepository>
+
+
     </distributionManagement>
 
     <modules>
