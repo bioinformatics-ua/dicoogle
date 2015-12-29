@@ -113,16 +113,19 @@ public class WebUIServlet extends HttpServlet {
         StringBuilder writer = new StringBuilder();
         if (process) {
             writer.append("(function(root,factory){\n");
-            writer.append("var m={exports:{}};");
             writer.append("var w=root.DicoogleWebcore||require(\"dicoogle-webcore\");");
-            writer.append("factory(w,m,m.exports);");
+            writer.append("if (w.__esModule)w=w.default;");
+            writer.append("var c=(root.Dicoogle||require(\"dicoogle-client\"))();");
+            writer.append("var m={exports:{}};");
+            writer.append("factory(c,m,m.exports);");
+            writer.append("var o=m.exports.__esModule?m.exports.default:m.exports;");
             writer.append("w.constructors[\"");
               writer.append(name);
-              writer.append("\"]=m.exports;");
-            writer.append("w.onRegister(new m.exports(),\"");
+              writer.append("\"]=o;");
+            writer.append("w.onRegister(new o(),\"");
               writer.append(name);
               writer.append("\");");
-            writer.append("})(this,function(DicoogleWeb,module,exports){\n");
+            writer.append("})(this,function(Dicoogle,module,exports){\n");
         }
         writer.append(module);
         if (process) {

@@ -91,9 +91,10 @@ public interface DicooglePlatformInterface {
     /** Quickly obtains all storage elements at the given location.
      * 
      * @param location the location to retrieve
+     * @param args a variable list of extra parameters for the retrieve
      * @return an iterable of storage input streams
      */
-    public Iterable<StorageInputStream> resolveURI(URI location);
+    public Iterable<StorageInputStream> resolveURI(URI location, Object ...args);
     
     /** Obtains all installed storage plugins.
      * 

@@ -13,7 +13,7 @@ module.exports = function() {
    
   function onClick() {
      if (!interv) {
-       DicoogleWeb.request('providers', function(error, result) {
+       Dicoogle.getQueryProviders(function(error, result) {
          if (error) {
            console.error('An error occurred: ', error);
            return;
