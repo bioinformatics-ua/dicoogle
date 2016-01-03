@@ -630,7 +630,7 @@ public class XMLSupport extends DefaultHandler
             this.destinations = false ;
         }
 
-        else if (this.options && localName.equals("CSTOREPriorities"))
+        else if (this.priorityAET && localName.equals("CSTOREPriorities"))
         {
             this.priorityAET = false ;
         }
