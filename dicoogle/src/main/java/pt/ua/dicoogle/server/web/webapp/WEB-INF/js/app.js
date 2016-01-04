@@ -51,7 +51,7 @@ class App extends React.Component {
 				});
 			}
 		});
-    }
+  }
 
 	onMenuPlugin(plugin) {
 		let {pluginMenuItems} = this.state;

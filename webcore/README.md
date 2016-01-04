@@ -42,6 +42,13 @@ A descriptor takes the form of a "package.json", an `npm` package descriptor, co
       - `slot-id` : the unique ID of the slot where this plugin is meant to be attached
       - `module-file` _(optional, defaults to "module.js")_ : the name of the file containing the JavaScript module
 
+
+In addition, these attributes are recommended:
+
+  - `author` : the author of the plugin
+  - `tags` : the tags "dicoogle" and "dicoogle-plugin" are recommended
+  - `` : 
+
 An example of a valid "package.json":
 
 ```json
@@ -49,8 +56,8 @@ An example of a valid "package.json":
   "name" : "dicoogle-cbir-query",
   "version" : "0.0.1",
   "description" : "CBIR Query-By-Example plugin",
-  "author": "John Doe",
-  "tags": ["dicoogle", "dicoogle-webui"],
+  "author": "John Doe <jdoe@somewhere.net>",
+  "tags": ["dicoogle", "dicoogle-plugin"],
   "dicoogle" : {
     "caption" : "Query by Example",
     "slot-id" : "query",
@@ -63,12 +70,34 @@ An example of a valid "package.json":
 
 In addition, a JavaScript module must be implemented, containing the entire logic and rendering of the plugin.
 The final module script must be exported in CommonJS format (similar to the Node.js module standard), or using
-the ECMAScript Harmony import/export notation (as in ES2015).
+the ECMAScript Harmony import/export notation (as in ES2015) when transpiled with Babel.
 The developer may also choose to create the module under the UMD format, although this is not required. The developer
 can make multiple node-flavored CommonJS modules and use tools like browserify to bundle them and embed dependencies.
-The exported module must be a single constructor function, in which instances must have a `render(parent)` function,
-which will attach the contents of the plugin to the `parent` DOM element. Furthermore, the `onResult(results)` method
-must be implemented if the plugin is for a "result" slot.
+Some of those however, can be required without embedding: "react" and "dicoogle-client" can be retrieved via `require`
+and must be marked as external dependencies.
+
+The exported module must be a single constructor function (or class), in which instances must have a `render(parent)` method:
+
+```javascript
+/** Attach the contents of the plugin to the given DOM element.
+ * @param {DOMElement} parent the parent element of the plugin component
+ * @return Alternatively, return a React element while leaving `parent` intact.
+ */
+function render(parent) {
+    // ...
+}
+```
+
+Furthermore, the `onResult` method must be implemented if the plugin is for a "result" slot:
+
+```javascript
+/** Handle result retrieval here by rendering them.
+ * @param {object} results an object containing the results retrieved from Dicoogle's search service 
+ */
+function onResult(results) {
+    // ...
+}
+```
 
 All modules will have access to the `Dicoogle` plugin-local alias for interfacing with Dicoogle.
 Query plugins can invoke `issueQuery(...)` to perform a query and expose the results on the page (via result plugins).
@@ -87,7 +116,6 @@ module.exports = function() {
 
   // ...
 
-  // parent is an ordinary DOMElement
   this.render = function(parent) {
     var e = document.create('span');
     e.innerHTML = 'Hello Dicoogle!';

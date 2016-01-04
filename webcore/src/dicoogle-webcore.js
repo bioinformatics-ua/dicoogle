@@ -256,7 +256,10 @@ const DicoogleWebcore = (function () {
       let pluginDOM = document.createElement('div');
       pluginDOM.className = this.dom.className + '_' + this.attachments.length;
       this.dom.appendChild(pluginDOM);
-      plugin.render(pluginDOM);
+      const e = plugin.render(pluginDOM);
+      if (typeof e === 'object' && isFunction(this.dom.onLoaded)) {
+        this.dom.onLoaded(e);
+      }
       this.attachments.push(plugin);
       plugin.TabIndex = this.attachments.length - 1;
       plugin.Slot = this; // provide slot object
@@ -410,6 +413,11 @@ const DicoogleWebcore = (function () {
         pluginName: {
           get () {
             return this.attributes['data-plugin-name'] ? this.attributes['data-plugin-name'].value : null;
+          }
+        },
+        onLoaded: {
+          get () {
+            return this.attributes['data-on-loaded'] ? this.attributes['data-on-loaded'].value : null;
           }
         },
         webUi: {
