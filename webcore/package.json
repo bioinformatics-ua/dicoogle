@@ -19,7 +19,7 @@
   ],
   "scripts": {
     "check": "eslint src",
-    "build": "eslint src && babel src --out-dir lib",
+    "build": "babel src --out-dir lib",
     "prepublish": "eslint src && babel src --out-dir lib"
   },
   "license": "GPL-3.0+",
