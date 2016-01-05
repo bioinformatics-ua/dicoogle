@@ -5,14 +5,24 @@ The essence of this architecture is that Dicoogle web pages will contain stub sl
 
 ## Building and Using
 
-These details are only relevant to developers of Dicoogle and its web app. To learn how to develop web UI plugins, please skip this section.
-No building is required for this project. Simply install `dicoogle-webcore` as a dependency and `import` (or `require`) the package module
-directly to Dicoogle. Then:
+> Note: These details are only relevant to developers of Dicoogle and its web app. To learn how to develop web UI plugins, please skip this section.
+
+The project can be built by calling `npm install`. On Dicoogle, simply install `dicoogle-webcore` as a dependency and `import` (or `require`) the package module. Then:
 
  - Place `<dicoogle-slot>` elements in the page. They must contain a unique slot id attribute `data-slot-id`.
  - Invoke the module's `init()` to initialize the module. It will automatically detect slots, as well as fetch and attach plugins. This method
    should only be called once. New slots attached dynamically will be automatically filled.
  - In order to know what menu plugins are available, invoke `fetchPlugins('menu'[, callback])`.
+
+The optional web component attribute `data-plugin-name` can be passed to the `<dicoogle-slot>` in order to retrieve a specific plugin (rather than all compatible plugins for that slot).
+
+Furthermore, slot elements will emit a `plugin-load` custom event each time a specific plugin is created and rendered. The event can be listened by adding a typical DOM event listener:
+
+```javascript
+slotElement.addEventListener('plugin-load', fnHandleEvent);
+```
+
+The `detail` property of the event will contain the object returned by the render method. In Dicoogle, this can be used for attaching React elements without rendering directly to the DOM.
 
 Plugin web components will be attached to a div in the `<dicoogle-slot>` with its class defined as
 `"dicoogle-webcore-<slotid>_<plugin-index>"` (e.g. `"dicoogle-webcore-query_0"`). The div of these parents
@@ -76,14 +86,15 @@ can make multiple node-flavored CommonJS modules and use tools like browserify t
 Some of those however, can be required without embedding: "react" and "dicoogle-client" can be retrieved via `require`
 and must be marked as external dependencies.
 
-The exported module must be a single constructor function (or class), in which instances must have a `render(parent)` method:
+The exported module must be a single constructor function (or class), in which instances must have a `render(parent, slot)` method:
 
 ```javascript
-/** Attach the contents of the plugin to the given DOM element.
+/** Render and attach the contents of a new plugin instance to the given DOM element.
  * @param {DOMElement} parent the parent element of the plugin component
+ * @param {DOMElement} slot the DOM element of the Dicoogle slot
  * @return Alternatively, return a React element while leaving `parent` intact.
  */
-function render(parent) {
+function render(parent, slot) {
     // ...
 }
 ```

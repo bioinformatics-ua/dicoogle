@@ -9,9 +9,9 @@ const DicoogleWebcore = (function () {
   
   // hidden properties
   
-  var slots = {};
-  var plugins = {};
-  var packages = {};
+  var slots = {}; // [slotId:string]: WebUiSlot
+  var plugins = {}; // [name:string]:Constructor
+  var packages = {}; // [name:string]:JSONPackage
   var base_url = null;
   var Dicoogle = null;
 
@@ -31,8 +31,8 @@ const DicoogleWebcore = (function () {
   m.addEventListener = function(eventName, fn) {
     let arrL = eventListeners[eventName];
     if (!arrL) {
-      console.error('Illegal DicoogleWeb event ', eventName);
-      return;
+      arrL = [];
+      eventListeners[eventName] = arrL;
     }
     arrL.push(fn);
   };
@@ -45,15 +45,15 @@ const DicoogleWebcore = (function () {
   
   /** @param {function(result, requestTime, options)} fn */
   m.addResultListener = function (fn) {
-    eventListeners.result.push(fn);
+    m.addEventListener('result', fn);
   };
   /** @param {function(PluginDesc)} fn */
   m.addPluginLoadListener = function (fn) {
-    eventListeners.load.push(fn);
+    m.addEventListener('load', fn);
   };
   /** @param {function(PluginDesc)} fn */
   m.addMenuPluginListener = function (fn) {
-    eventListeners.menu.push(fn);
+    m.addEventListener('menu', fn);
   };
   
   /** Initialize Dicoogle Webcore. This should be called once and at the beginning
@@ -87,7 +87,7 @@ const DicoogleWebcore = (function () {
     Dicoogle.addResultListener = m.addResultListener;
   };
   
-  m.updateSlots = function() {    
+  m.updateSlots = function() {
     if (typeof document !== 'object') {
       throw "no DOM environment!";
     }
@@ -104,13 +104,13 @@ const DicoogleWebcore = (function () {
     
     // finally, fetch the needed plugins and load each one of them
     let slotIds = Object.keys(slots);
-    if (Object.keys(plugins).length !== slotIds.length) {
-      m.fetchPlugins(slotIds, function(packages) {
-        for (let i = 0; i < packages.length; i++) {
-          load_plugin(packages[i]);
-        }
-      });
-    }
+    //if (Object.keys(plugins).length !== slotIds.length) {
+    m.fetchPlugins(slotIds, function(packages) {
+      for (let i = 0; i < packages.length; i++) {
+        load_plugin(packages[i]);
+      }
+    });
+    //}
   };
 
   /** Update a given slot.
@@ -123,9 +123,14 @@ const DicoogleWebcore = (function () {
     }
     
     loadSlot(elem);
-    
-    // finally, fetch the needed plugin and load it
-    if (!plugins[elem.slotId]) {
+    const pluginsOfSlot = getPluginsOf(elem.slotId);
+    // check for plugins of this slotId
+    console.log(`Plugins of ${elem.slotId}:`, pluginsOfSlot);    
+    if (pluginsOfSlot.length > 0) {
+      // we already have the plugins, attach them
+      m.attachAllPlugins(elem);
+    } else {
+      // fetch the needed plugins and load them
       m.fetchPlugins(elem.slotId, function(packages) {
         for (let i = 0; i < packages.length; i++) {
           load_plugin(packages[i], callback);
@@ -198,6 +203,11 @@ const DicoogleWebcore = (function () {
    */
   m.onRegister = function(pluginInstance, name) {
     console.log('onRegister', pluginInstance);
+    if (plugins[name]) {
+        // already registered, ignore
+        return;
+    }
+    
     if (typeof pluginInstance !== 'object' || typeof pluginInstance.render !== 'function') {
       console.error('Dicoogle web UI plugin ', name, ' is corrupted or invalid: ', pluginInstance);
       return;
@@ -213,7 +223,11 @@ const DicoogleWebcore = (function () {
     pluginInstance.SlotId = slotId;
     pluginInstance.Caption = thisPackage.dicoogle.caption || name;
     plugins[name] = pluginInstance;
-    slots[slotId].attachPlugin(pluginInstance);
+    if (slots[slotId]) {
+      for (let slot of slots[slotId]) {
+        slot.attachPlugin(pluginInstance);
+      }
+    }
     for (let i = 0; i < eventListeners.load.length; i++) {
       eventListeners.load[i]({name, slotId, caption: pluginInstance.Caption});
     }
@@ -230,6 +244,15 @@ const DicoogleWebcore = (function () {
         eventListeners.loadMenu[i]({name, slotId, caption: pluginInstance.Caption});
       }
     }
+  };
+  
+  /**
+   * @param {HTMLDicoogleSlotElement} elem
+   */
+  m.attachAllPlugins = function(elem) {
+    getPluginsOf(elem.slotId).forEach(pluginInstance => {
+      elem.webUi.attachPlugin(pluginInstance);
+    });
   };
 
   // ----------------------------------------------------------------------------
@@ -256,10 +279,10 @@ const DicoogleWebcore = (function () {
       let pluginDOM = document.createElement('div');
       pluginDOM.className = this.dom.className + '_' + this.attachments.length;
       this.dom.appendChild(pluginDOM);
-      const e = plugin.render(pluginDOM);
-      if (typeof e === 'object' && isFunction(this.dom.onLoaded)) {
-        this.dom.onLoaded(e);
-      }
+      const e = plugin.render(pluginDOM, this.dom);
+      
+      this.dom.dispatchEvent(new CustomEvent('plugin-load', {detail: e}));
+      
       this.attachments.push(plugin);
       plugin.TabIndex = this.attachments.length - 1;
       plugin.Slot = this; // provide slot object
@@ -300,26 +323,45 @@ const DicoogleWebcore = (function () {
       return null;
     }
     let id = slotDOM.slotId;
-    slots[id] = new m.WebUISlot(id, slotDOM);
-    console.log('Loaded Dicoogle slot', id);
+    if (!slots[id]) {
+        slots[id] = [];
+    }
+    slots[id].push(new m.WebUISlot(id, slotDOM));
+    console.log('Created new Dicoogle ' + id + ' slot');
     return id;
   }
 
   function load_plugin(packageJSON, callback) {
     console.log('Loading plugin', packageJSON.name);
-    let slotId = slots[packageJSON.dicoogle['slot-id']];
-    if (!slotId) {
-      console.error('Unexistent slot ID ', packageJSON.dicoogle['slot-id'], '!');
+    let slotArray = slots[packageJSON.dicoogle['slot-id']];
+    if (!slotArray && slotArray.length === 0) {
+      console.error(`No slots for ID ${packageJSON.dicoogle['slot-id']}, ignoring`);
       return;
     }
-    getScript(packageJSON.name, function() {
-      const {name} = packageJSON;
-      console.log('Loaded module ', name);
-      if (!isFunction(m.constructors[name])) {
-        console.error('The loaded module', name, 'is not a function!');
+    const {name} = packageJSON;
+    if (plugins[name]) {
+        if (callback) callback(plugins[name]);
+    } else {
+        getScript(packageJSON.name, function() {
+          console.log('Loaded module ', name);
+          if (!isFunction(m.constructors[name])) {
+             console.error(`The loaded module ${name} is not a function!`);
+          }
+          if (callback) callback(plugins[name]);
+        });
+    }
+  }
+  
+  function getPluginsOf(slotId) {
+    const pluginsOfSlot = [];
+    if (plugins) {
+      for (let name in plugins) {
+        if (plugins[name].SlotId === slotId) {
+            pluginsOfSlot.push(plugins[name]);
+        }
       }
-      if (callback) callback(plugins[name]);
-    });
+    }
+    return pluginsOfSlot;      
   }
   
   function camelize(s) {
@@ -349,13 +391,15 @@ const DicoogleWebcore = (function () {
   }
   
   function dispatch_result(result, requestTime, options) {
-    var resultSlot = slots.result;
-    if (!resultSlot) {
+    var resultSlotArray = slots.result;
+    if (!resultSlotArray) {
       console.error('Cannot show results without a result slot.');
       return;
     }
-    for (let i = 0; i < resultSlot.attachments.length; i++) {
-      resultSlot.attachments[i].onResult(result, requestTime, options);
+    for (const resultSlot of resultSlotArray) {
+      for (let i = 0; i < resultSlot.attachments.length; i++) {
+        resultSlot.attachments[i].onResult(result, requestTime, options);
+      }
     }
     for (let i = 0; i < eventListeners.result.length; i++) {
       eventListeners.result[i](result, requestTime, options);
@@ -402,22 +446,16 @@ const DicoogleWebcore = (function () {
 
   // custom element definitions
   var HTMLDicoogleSlotElement = (function() {
-
     var elem = document.registerElement('dicoogle-slot', {
       prototype: Object.create(HTMLDivElement.prototype, {
         slotId: {
           get () {
-            return this.attributes['data-slot-id'] ? this.attributes['data-slot-id'].value : null;
+            return this.getAttribute('data-slot-id');
           }
         },
         pluginName: {
           get () {
-            return this.attributes['data-plugin-name'] ? this.attributes['data-plugin-name'].value : null;
-          }
-        },
-        onLoaded: {
-          get () {
-            return this.attributes['data-on-loaded'] ? this.attributes['data-on-loaded'].value : null;
+            return this.getAttribute('data-plugin-name');
           }
         },
         webUi: {
@@ -432,7 +470,8 @@ const DicoogleWebcore = (function () {
           //console.log('[CALLBACK] Dicoogle slot ', this.slotId,' created: ', this);
         }},
         attachedCallback: { value () {
-          let attSlotId = this.attributes['data-slot-id'];
+          const attSlotId = this.attributes['data-slot-id'];
+          const attOnLoaded = this.attributes['data-on-loaded'];
           if (!attSlotId || !attSlotId.value || attSlotId === '') {
             console.error('Dicoogle slot contains illegal data-slot-id!');
             return;
@@ -441,9 +480,12 @@ const DicoogleWebcore = (function () {
           const self = this;
           // add content if the webcore plugin is already available
           if (base_url !== null) {
-            m.updateSlot(this, function(pluginInstance){
+            m.updateSlot(this, pluginInstance => {
               //if (self.webUi && (!self.pluginName || pluginInstance.Name === self.pluginName)) {
               //  self.webUi.attachPlugin.call(self.webUi, pluginInstance);
+              //}
+              //if (plugins[this.slotId] && plugins[this.slotId].length > 0) {
+              //  this.webUi.refresh();
               //}
             });
           }
@@ -451,6 +493,13 @@ const DicoogleWebcore = (function () {
         }},
         detachedCallback: { value () {
           //console.log('[CALLBACK] Dicoogle slot detached: ', this);
+          const typedSlots = slots[this.slotId];
+          for (let i = 0; i < typedSlots.length; i++) {
+            if (typedSlots[i].slotDOM === this) {
+                typedSlots.splice(i, 1);
+                break;
+            }
+          }
         }},
         attributeChangedCallback: { value (attrName, oldVal, newVal) {
           // console.log('[CALLBACK] Dicoogle attribute changed');

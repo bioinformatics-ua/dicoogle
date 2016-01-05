@@ -4,6 +4,7 @@ import {ActionCreators} from '../../../actions/searchActions';
 import {SearchStore} from '../../../stores/searchStore';
 import {unindex} from '../../../handlers/requestHandler';
 import ConfirmModal from './confirmModal';
+import PluginView from '../../plugin/pluginView.jsx';
 
 /**
    * 2015-09-11.
@@ -60,8 +61,15 @@ var PatientView = React.createClass({
   formatOptions : function(cell, item){
       let self = this;
       if (this.props.enableAdvancedSearch)
-          return (<div><button title="Unindex (does not remove file physically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> </button>
-        <button title="Removes the file physically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> </button></div>
+          return (<div>
+            <button title="Unindex (does not remove file physically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser" />
+            <button title="Removes the file physically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o" />
+            {/* plugin-based result options */}
+            <PluginView slotId="result-options" data={{
+              'data-result-type': 'patient',
+              'data-result-patient': item.name
+            }} />
+        </div>
 
       );
       return (<div></div>);
