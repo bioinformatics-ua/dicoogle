@@ -6,9 +6,17 @@ class PluginView extends React.Component {
   static get propTypes() {
     return {
       // React router fills this with a plugin name
-      params: React.PropTypes.object.isRequired,
+      params: React.PropTypes.object,
       // the plugin name
-      plugin: React.PropTypes.string
+      plugin: React.PropTypes.string,
+      slotId: React.PropTypes.string,
+      data: React.PropTypes.object
+    };
+  }
+
+  static get defaultProps() {
+    return {
+      slotId: 'menu'
     };
   }
   
@@ -17,33 +25,50 @@ class PluginView extends React.Component {
     this.state = {
       element: null
     };
+    this.handleMounted = this.handleMounted.bind(this);
     this.handleLoaded = this.handleLoaded.bind(this);
   }
   
-  shouldComponentUpdate(nextProps, nextState) {
-    return nextProps.plugin !== this.props.plugin
-        || nextProps.params !== this.props.params
-        || nextState.element !== this.state.element;
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      element: null
+    });
+  }
+  
+  handleMounted(component) {
+    if (component) {
+      const node = component.getDOMNode();
+      node.addEventListener('plugin-load', ({detail}) => {
+        if (detail) {
+          this.handleLoaded(detail);
+        }
+      });
+    }
   }
   
   handleLoaded(element) {
+    console.log("handleLoaded!");
     if (React.isValidElement(element)) {
       this.setState({
         element
       });
     }
   }
+  
+  getPluginName() {
+    return this.props.plugin || (this.props.params && this.props.params.plugin);
+  }
 
   render() {
-    const plugin = this.props.plugin || this.props.params.plugin;
+    const plugin = this.getPluginName();
     return (
       <div className={this.props.className}>
         {this.state.element ?
         <div>{this.state.element}</div> :
-        <dicoogle-slot data-slot-id="menu" data-plugin-name={plugin} data-on-loaded={this.handleLoaded}>
-          <div className="loader-inner ball-pulse">
+        <dicoogle-slot {...this.props.data} ref={this.handleMounted} data-slot-id={this.props.slotId} data-plugin-name={plugin}>
+          {plugin && <div className="loader-inner ball-pulse">
             <div/><div/><div/>
-          </div>
+          </div>}
         </dicoogle-slot>}
       </div>
     );
