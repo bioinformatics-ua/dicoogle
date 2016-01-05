@@ -23,24 +23,30 @@ class PluginView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      element: null
+      elements: {}
     };
     this.handleMounted = this.handleMounted.bind(this);
     this.handleLoaded = this.handleLoaded.bind(this);
   }
   
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      element: null
-    });
+  }
+  
+  componentWillMount() {
+    this.setState({_mounted: true});
+  }
+ 
+  componentWillUnmount() {
+    this.setState({_mounted: false});
   }
   
   handleMounted(component) {
     if (component) {
       const node = component.getDOMNode();
-      node.addEventListener('plugin-load', ({detail}) => {
-        if (detail) {
-          this.handleLoaded(detail);
+      node.addEventListener('plugin-load', e => {
+        console.log('[plugin-load]', e);
+        if (e && e.detail) {
+          this.handleLoaded(e.detail);
         }
       });
     }
@@ -49,8 +55,13 @@ class PluginView extends React.Component {
   handleLoaded(element) {
     console.log("handleLoaded!");
     if (React.isValidElement(element)) {
+      const elements = {};
+      elements[this.getPluginName()] = element;
+      for (const name in this.state.elements) {
+        elements[name] = this.state.elements[name];
+      }
       this.setState({
-        element
+        elements
       });
     }
   }
@@ -63,8 +74,8 @@ class PluginView extends React.Component {
     const plugin = this.getPluginName();
     return (
       <div className={this.props.className}>
-        {this.state.element ?
-        <div>{this.state.element}</div> :
+        {this.state.elements[plugin] ?
+        <div>{this.state.elements[plugin]}</div> :
         <dicoogle-slot {...this.props.data} ref={this.handleMounted} data-slot-id={this.props.slotId} data-plugin-name={plugin}>
           {plugin && <div className="loader-inner ball-pulse">
             <div/><div/><div/>

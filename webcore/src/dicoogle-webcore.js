@@ -123,9 +123,9 @@ const DicoogleWebcore = (function () {
     }
     
     loadSlot(elem);
-    const pluginsOfSlot = getPluginsOf(elem.slotId);
+
     // check for plugins of this slotId
-    console.log(`Plugins of ${elem.slotId}:`, pluginsOfSlot);    
+    const pluginsOfSlot = getPluginsOf(elem.slotId);
     if (pluginsOfSlot.length > 0) {
       // we already have the plugins, attach them
       m.attachAllPlugins(elem);
@@ -467,9 +467,9 @@ const DicoogleWebcore = (function () {
           }
         },
         createdCallback: { value () {
-          //console.log('[CALLBACK] Dicoogle slot ', this.slotId,' created: ', this);
         }},
         attachedCallback: { value () {
+          console.log('[CALLBACK] Dicoogle slot attached: ', this);
           const attSlotId = this.attributes['data-slot-id'];
           const attOnLoaded = this.attributes['data-on-loaded'];
           if (!attSlotId || !attSlotId.value || attSlotId === '') {

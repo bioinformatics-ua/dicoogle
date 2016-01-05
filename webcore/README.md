@@ -92,7 +92,7 @@ The exported module must be a single constructor function (or class), in which i
 /** Render and attach the contents of a new plugin instance to the given DOM element.
  * @param {DOMElement} parent the parent element of the plugin component
  * @param {DOMElement} slot the DOM element of the Dicoogle slot
- * @return Alternatively, return a React element while leaving `parent` intact.
+ * @return Alternatively, return a React element while leaving `parent` intact. (Experimental, still unstable!)
  */
 function render(parent, slot) {
     // ...
