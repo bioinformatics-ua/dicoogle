@@ -145,9 +145,7 @@ const DicoogleWebcore = (function () {
    */
   m.fetchPlugins = function (slotIds, callback) {
     console.log('Fetching Dicoogle web UI plugin descriptors ...');
-    if (typeof slotIds === 'string') {
-      slotIds = [slotIds];
-    }
+    slotIds = [].concat(slotIds);
     let uri = 'webui';
     service_get(uri, {'slot-id': slotIds}, function(error, data) {
       if (error) {
@@ -169,6 +167,19 @@ const DicoogleWebcore = (function () {
         callback(packageArray);
       }
     });
+  };
+
+  /** Issue that the JavaScript modules are loaded, even if no slot has requested it.
+   * This function is asynchronous, but currently provides no callback.
+   * @param {PackageJSON|PackageJSON[]} packages the JSON package descriptors
+   */
+  m.fetchModules = function(packages) {
+    packages = [].concat(packages);
+    for (let i = 0; i < packages.length; i++) {
+      if (!(packages[i].name in plugins)) {
+        load_plugin(packages[i]);
+      }
+    }
   };
       
   // --------------------- Injected Plugin-accessible methods ----------------------------
@@ -333,11 +344,6 @@ const DicoogleWebcore = (function () {
 
   function load_plugin(packageJSON, callback) {
     console.log('Loading plugin', packageJSON.name);
-    let slotArray = slots[packageJSON.dicoogle['slot-id']];
-    if (!slotArray && slotArray.length === 0) {
-      console.error(`No slots for ID ${packageJSON.dicoogle['slot-id']}, ignoring`);
-      return;
-    }
     const {name} = packageJSON;
     if (plugins[name]) {
         if (callback) callback(plugins[name]);
@@ -374,20 +380,6 @@ const DicoogleWebcore = (function () {
         }
     }
     return t;
-  }
-  
-  /// @deprecated
-  function rename_element(node,name) {
-    var renamed = document.createElement(name); 
-    for (var i = 0; i < node.attributes.length; i++) {
-      let a = node.attributes[i];
-      renamed.setAttribute(a.nodeName, a.nodeValue);
-    }
-    while (node.firstChild) {
-      renamed.appendChild(node.firstChild);
-    }
-    node.parentNode.replaceChild(renamed, node);
-    return renamed;
   }
   
   function dispatch_result(result, requestTime, options) {

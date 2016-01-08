@@ -23,10 +23,6 @@ import $ from 'jquery';
 require('bootstrap');
 require('jquery-ui');
 
-// React.render(<div/>,
-//     document.getElementById('container')
-// );
-
 class App extends React.Component {
 	
 	constructor () {
@@ -41,26 +37,27 @@ class App extends React.Component {
 		Webcore.addPluginLoadListener(function(plugin) {
 		  console.log("Plugin loaded to Dicoogle:", plugin);
 		});
-		const self = this;
-		Webcore.fetchPlugins('menu', function(packages) {
-			for (let pkg of packages) {
-				self.onMenuPlugin({
-					name: pkg.name,
-					slotId: 'menu',
-					caption: pkg.dicoogle.caption
-				});
-			}
+		Webcore.fetchPlugins('menu', (packages) => {
+		  this.onMenuPlugin(packages);
+      Webcore.fetchModules(packages);
 		});
+    
+    // pre-fetch modules of other plugin types
+		Webcore.fetchPlugins(['search', 'result-options', 'query', 'result'], Webcore.fetchModules);
   }
 
-	onMenuPlugin(plugin) {
-		let {pluginMenuItems} = this.state;
+  /**
+   * @param {packageJSON|packageJSON[]} plugins
+   */
+	onMenuPlugin(packages) {
+		const {pluginMenuItems} = this.state;
+    
 		this.setState({
-			pluginMenuItems: pluginMenuItems.concat([{
-				value: plugin.name,
-				caption: plugin.caption,
+			pluginMenuItems: pluginMenuItems.concat(packages.map(pkg => ({
+				value: pkg.name,
+				caption: pkg.dicoogle.caption || pkg.name,
 				isPlugin: true
-			}])
+			})))
 		});
 	}
 
