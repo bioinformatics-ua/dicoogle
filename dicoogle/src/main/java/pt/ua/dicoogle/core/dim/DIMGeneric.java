@@ -358,7 +358,7 @@ public class DIMGeneric
     			JSONObject study = new JSONObject();
     			study.put("studyDate", s.getStudyData());
     			study.put("studyDescription", s.getStudyDescription());
-                study.put("studyInstanceUID", s.getStudyInstanceUID());
+    			study.put("studyInstanceUID", s.getStudyInstanceUID());
     			study.put("institutionName", s.getInstitutuionName());
     			
     			JSONArray modalities = new JSONArray();
