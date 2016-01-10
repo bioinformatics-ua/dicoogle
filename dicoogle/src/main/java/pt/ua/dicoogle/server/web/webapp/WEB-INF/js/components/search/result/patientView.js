@@ -67,7 +67,8 @@ var PatientView = React.createClass({
             {/* plugin-based result options */}
             <PluginView slotId="result-options" data={{
               'data-result-type': 'patient',
-              'data-result-patient': item.name
+              'data-result-patient': item.name,
+              'data-result-patientid': item.id
             }} />
         </div>
 
