@@ -288,7 +288,7 @@ const DicoogleWebcore = (function () {
         this.dom.innerHTML = '';
       }
       let pluginDOM = document.createElement('div');
-      pluginDOM.className = this.dom.className + '_' + this.attachments.length;
+      pluginDOM.className = this.dom.className + '-instance';
       this.dom.appendChild(pluginDOM);
       const e = plugin.render(pluginDOM, this.dom);
       
@@ -304,7 +304,7 @@ const DicoogleWebcore = (function () {
       slotDOM.innerHTML = '';
       for (let i = 0; i < this.attachments.length; i++) {
         let pluginDOM = document.createElement('div');
-        pluginDOM.className = slotDOM.className + '_' + i;
+        pluginDOM.className = slotDOM.className + '-instance';
         slotDOM.appendChild(pluginDOM);
         this.attachments[i].render(pluginDOM);
       }

@@ -25,9 +25,9 @@ slotElement.addEventListener('plugin-load', fnHandleEvent);
 The `detail` property of the event will contain the object returned by the render method. In Dicoogle, this can be used for attaching React elements without rendering directly to the DOM.
 
 Plugin web components will be attached to a div in the `<dicoogle-slot>` with its class defined as
-`"dicoogle-webcore-<slotid>_<plugin-index>"` (e.g. `"dicoogle-webcore-query_0"`). The div of these parents
+`"dicoogle-webcore-<slotid>-instance"` (e.g. `"dicoogle-webcore-query-instance"`). The div of these parents
 will have a class `"dicoogle-webcore-<slotid>"`. The Dicoogle web application may use these classes to style these
-additional UI elements (although usually this will not be necessary).
+additional UI elements.
 
 A few examples of web pages using the Dicoogle Web Core are available in "test/TC".
 
