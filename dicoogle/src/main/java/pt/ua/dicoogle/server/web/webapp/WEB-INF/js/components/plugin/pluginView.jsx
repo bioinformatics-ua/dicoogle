@@ -28,18 +28,7 @@ class PluginView extends React.Component {
     this.handleMounted = this.handleMounted.bind(this);
     this.handleLoaded = this.handleLoaded.bind(this);
   }
-  
-  componentWillReceiveProps(nextProps) {
-  }
-  
-  componentWillMount() {
-    this.setState({_mounted: true});
-  }
- 
-  componentWillUnmount() {
-    this.setState({_mounted: false});
-  }
-  
+
   handleMounted(component) {
     if (component) {
       const node = component.getDOMNode();
@@ -53,7 +42,6 @@ class PluginView extends React.Component {
   }
   
   handleLoaded(element) {
-    console.log("handleLoaded!");
     if (React.isValidElement(element)) {
       const elements = {};
       elements[this.getPluginName()] = element;
@@ -73,7 +61,7 @@ class PluginView extends React.Component {
   render() {
     const plugin = this.getPluginName();
     return (
-      <div className={this.props.className}>
+      <div className={this.props.className} style={this.props.style}>
         {this.state.elements[plugin] ?
         <div>{this.state.elements[plugin]}</div> :
         <dicoogle-slot {...this.props.data} ref={this.handleMounted} data-slot-id={this.props.slotId} data-plugin-name={plugin}>

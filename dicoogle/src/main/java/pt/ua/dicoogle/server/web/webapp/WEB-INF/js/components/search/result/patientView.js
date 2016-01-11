@@ -65,7 +65,7 @@ var PatientView = React.createClass({
             <button title="Unindex (does not remove file physically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser" />
             <button title="Removes the file physically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o" />
             {/* plugin-based result options */}
-            <PluginView slotId="result-options" data={{
+            <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
               'data-result-type': 'patient',
               'data-result-patient': item.name,
               'data-result-patientid': item.id

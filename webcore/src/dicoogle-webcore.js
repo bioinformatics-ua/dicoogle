@@ -58,7 +58,6 @@ const DicoogleWebcore = (function () {
   
   /** Initialize Dicoogle Webcore. This should be called once and at the beginning
    * of the web page's life time.
-   * 
    */
   m.init = function(baseURL) {
     if (typeof document !== 'object') {
@@ -85,6 +84,10 @@ const DicoogleWebcore = (function () {
     Dicoogle.addPluginLoadListener = m.addPluginLoadListener;
     Dicoogle.addEventListener = m.addEventListener;
     Dicoogle.addResultListener = m.addResultListener;
+    Dicoogle.emitSignal = function (slotDOM, name, data) {
+      slotDOM.dispatchEvent(new CustomEvent(name, {detail: data}));
+    };
+    
   };
   
   m.updateSlots = function() {

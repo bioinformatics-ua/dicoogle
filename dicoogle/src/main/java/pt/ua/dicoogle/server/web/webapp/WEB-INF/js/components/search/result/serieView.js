@@ -54,7 +54,7 @@ var SeriesView = React.createClass({
           return (<div><button title="Unindex (does not remove file physically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> </button>
         <button title="Removes the file physically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> </button>
         {/* plugin-based result options */}
-        <PluginView slotId="result-options" data={{
+        <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
           'data-result-type': 'series',
           'data-result-uid': item.seriesInstanceUID
          }} />
