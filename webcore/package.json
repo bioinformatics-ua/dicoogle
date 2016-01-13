@@ -29,6 +29,7 @@
     "eslint": "^1.9.0"
   },
   "dependencies": {
-    "dicoogle-client": "^2.2.0"
+    "dicoogle-client": "^2.4.1",
+    "events": "^1.1.0"
   }
 }

@@ -19,7 +19,8 @@ const XHR = (typeof XMLHttpRequest !== 'undefined') ?
  * @param {(string|string[])} uri the request URI in string or array form
  * @param {(string|object)} qs an object containing query string parameters (or a string without '?')
  * @param {any} [content] the data to be contained in the request body
- * @param {function(error,outcome)} callback
+ * @param {function(error,outcome)} callback the callback function
+ * @return {void}
  */
 function request(method, uri, qs, content, callback) {
 	method = method.toUpperCase();

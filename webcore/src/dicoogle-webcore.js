@@ -1,5 +1,7 @@
+import {EventEmitter} from 'events';
 import request from './request';
 import client from 'dicoogle-client';
+import {merge} from './util';
 
 /** Dicoogle web application core.
  * This module provides support to web interface plugins.
@@ -13,51 +15,31 @@ const DicoogleWebcore = (function () {
   var plugins = {}; // [name:string]:Constructor
   var packages = {}; // [name:string]:JSONPackage
   var base_url = null;
-  var Dicoogle = null;
+  var Dicoogle; // eslint-disable-line no-unused-vars
+  var event_hub = null;
 
-  var eventListeners = {
-    load: [],
-    menu: [],
-    loadMenu: [],
-    loadQuery: [],
-    loadResult: [],
-    result: []
-  };
+  const EVENT_NAMES = Object.freeze([ // eslint-disable-line no-unused-vars
+    'load',
+    'menu',
+    'loadMenu',
+    'loadQuery',
+    'loadResult',
+    'result'
+  ]);
   
-  /** 
-   * @param {string} eventName the name of the event (must be one of 'load','loadMenu','loadQuery','loadResult')
-   * @param {function} fn
-   */
-  m.addEventListener = function(eventName, fn) {
-    let arrL = eventListeners[eventName];
-    if (!arrL) {
-      arrL = [];
-      eventListeners[eventName] = arrL;
-    }
-    arrL.push(fn);
-  };
-  
-  /**@typedef {object} PluginDesc
-   * @property {string} name the unique name of the plugin
-   * @property {string} slotId the slot ID that must be attached to
-   * @property {?string} caption a caption for the plugin
-   */
-  
-  /** @param {function(result, requestTime, options)} fn */
-  m.addResultListener = function (fn) {
-    m.addEventListener('result', fn);
-  };
-  /** @param {function(PluginDesc)} fn */
-  m.addPluginLoadListener = function (fn) {
-    m.addEventListener('load', fn);
-  };
-  /** @param {function(PluginDesc)} fn */
-  m.addMenuPluginListener = function (fn) {
-    m.addEventListener('menu', fn);
-  };
-  
+  // development-time checker
+  function check_initialized() {
+      if (base_url === null) {
+          console.error('Dicoogle Webcore has not been initialized! Please call the init method.');
+          return false;
+      }
+      return true;
+  }
+
   /** Initialize Dicoogle Webcore. This should be called once and at the beginning
    * of the web page's life time.
+   * @param {string} baseURL the base URL to the Dicoogle services
+   * @return {void}
    */
   m.init = function(baseURL) {
     if (typeof document !== 'object') {
@@ -74,23 +56,101 @@ const DicoogleWebcore = (function () {
     slots = {};
     plugins = {};
     packages = {};
-    //m.updateSlots();
+    event_hub = new EventEmitter();
     
     // create dicoogle client access object
     // and inject webcore related methods
-    Dicoogle = client(base_url);
-    Dicoogle.issueQuery = issueQuery;
-    Dicoogle.addMenuPluginListener = m.addMenuPluginListener;
-    Dicoogle.addPluginLoadListener = m.addPluginLoadListener;
-    Dicoogle.addEventListener = m.addEventListener;
-    Dicoogle.addResultListener = m.addResultListener;
-    Dicoogle.emitSignal = function (slotDOM, name, data) {
-      slotDOM.dispatchEvent(new CustomEvent(name, {detail: data}));
-    };
+    Dicoogle = merge(client(base_url), {
+        issueQuery,
+        emitSignal,
+        emitSlotSignal,
+        addMenuPluginListener: m.addMenuPluginListener,
+        addPluginLoadListener: m.addPluginLoadListener,
+        addEventListener: m.addEventListener,
+        addResultListener: m.addResultListener
+    });
     
   };
   
+  /** Emit an event from the webcore's event emitter.
+   * @param {string} name the event name
+   * @param {...any} args the data to be transmitted as function arguments to the listeners
+   * @return {void}
+   */
+  function emitSignal(name, ...args) {
+    if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
+    event_hub.emit(name, ...args);
+  }
+
+  /** Emit a DOM custom event from the slot element.
+   * @param {HTMLDicoogleSlotElement} slotDOM the slot DOM element to emit the event from
+   * @param {string} name the event name
+   * @param {any} data the data to be transmitted as custom event detail
+   * @return {void}
+   */
+  function emitSlotSignal(slotDOM, name, data) {
+    if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
+    slotDOM.dispatchEvent(new CustomEvent(name, {detail: data}));
+  }
+  
+  /** Add an event listener to the webcore's event emitter.
+   * @param {string} eventName the name of the event (can be one of 'load','loadMenu','loadQuery','loadResult', or custom event names)
+   * @param {function(...any)} fn the listener function
+   * @return {DicoogleWebcore} the webcore module itself, used for chaining
+   */
+  m.addEventListener = function(eventName, fn) {
+    if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
+    event_hub.on(eventName, fn);
+    return m;
+  };
+
+  /** Remove an event listener from the webcore's event emitter.
+   * @param {string} eventName the name of the event
+   * @param {function(...any)} fn the listener function
+   * @return {DicoogleWebcore} the webcore module itself, used for chaining
+   */
+  m.removeEventListener = function(eventName, fn) {
+    if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
+    event_hub.removeListener(eventName, fn);
+    return m;
+  };
+  
+  /**@typedef {object} PluginDesc
+   * @property {string} name the unique name of the plugin
+   * @property {string} slotId the slot ID that must be attached to
+   * @property {?string} caption a caption for the plugin
+   */
+  
+  /** Add a listener to the 'result' event
+   * @param {function(result, requestTime, options)} fn the listener function
+   * @return {DicoogleWebcore} the webcore module itself, used for chaining
+   */
+  m.addResultListener = function (fn) {
+    if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
+    event_hub.on('result', fn);
+    return m;
+  };
+  
+  /** Add a listener to the 'load' event
+   * @param {function(PluginDesc)} fn the listener function
+   * @return {DicoogleWebcore} the webcore module itself, used for chaining
+   */
+  m.addPluginLoadListener = function (fn) {
+    if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
+    event_hub.on('load', fn);
+  };
+
+  /** Add a listener to the 'menu' event
+   * @param {function(PluginDesc)} fn the listener function
+   * @return {DicoogleWebcore} the webcore module itself, used for chaining
+   */
+  m.addMenuPluginListener = function (fn) {
+    if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
+    event_hub.on('menu', fn);
+  };
+    
   m.updateSlots = function() {
+    if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
     if (typeof document !== 'object') {
       throw "no DOM environment!";
     }
@@ -117,10 +177,12 @@ const DicoogleWebcore = (function () {
   };
 
   /** Update a given slot.
-   * @param {HTMLDicoogleSlotElement} elem
+   * @param {HTMLDicoogleSlotElement} elem the Dicoogle slot DOM element
    * @param {function()} callback called once per plugin
+   * @return {void}
    */
   m.updateSlot = function(elem, callback) {
+    if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
     if (typeof document !== 'object') {
       throw "no DOM environment!";
     }
@@ -144,9 +206,11 @@ const DicoogleWebcore = (function () {
     
   /** Fetch the plugin information from the server.
    * @param {string|string[]} slotIds a slot id name or an array of slot id's
-   * @param {function(object[])} [callback]
+   * @param {function(object[])} [callback] a callback function
+   * @return {void}
    */
   m.fetchPlugins = function (slotIds, callback) {
+    if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
     console.log('Fetching Dicoogle web UI plugin descriptors ...');
     slotIds = [].concat(slotIds);
     let uri = 'webui';
@@ -160,9 +224,7 @@ const DicoogleWebcore = (function () {
         if (!packages[packageArray[i].name]) {
           packages[packageArray[i].name] = packageArray[i];
           if (packageArray[i].dicoogle.slotId === 'menu') {
-            for (let k = 0; k < eventListeners.menu.length; k++) {
-              eventListeners.menu[k]({name: packageArray[i].name, slotId: 'menu', caption: packageArray[i].dicoogle.caption});
-            }
+            event_hub.emit('menu', {name: packageArray[i].name, slotId: 'menu', caption: packageArray[i].dicoogle.caption});
           }
         }
       }
@@ -175,8 +237,10 @@ const DicoogleWebcore = (function () {
   /** Issue that the JavaScript modules are loaded, even if no slot has requested it.
    * This function is asynchronous, but currently provides no callback.
    * @param {PackageJSON|PackageJSON[]} packages the JSON package descriptors
+   * @return {void}
    */
   m.fetchModules = function(packages) {
+    if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
     packages = [].concat(packages);
     for (let i = 0; i < packages.length; i++) {
       if (!(packages[i].name in plugins)) {
@@ -191,12 +255,14 @@ const DicoogleWebcore = (function () {
    * and will automatically issue back a result exposal. The query service requested will be "search" unless modified
    * with the overrideService option.
    * function(query, options, callback)
-   * @param query an object containing the query
+   * @param {any} query an object containing the query (usually a string)
    * @param {object} options an object containing additional options (such as query plugins to use, result limit, etc.)
    *      - overrideService [string] the name of the service to use instead of "search" 
    * @param {function(error, result)} callback an optional callback function
+   * @return {void}
    */
   function issueQuery(query, options, callback) {
+    if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
     options = options || {};
     options.query = query;
     let requestTime = new Date();
@@ -214,6 +280,7 @@ const DicoogleWebcore = (function () {
   /** Invoked by the webUI service for registering a new plugin implementation.
    * @param {{render:function}} pluginInstance a module describing a plugin
    * @param {string} name the name of the plugin
+   * @return {void}
    */
   m.onRegister = function(pluginInstance, name) {
     console.log('onRegister', pluginInstance);
@@ -242,28 +309,16 @@ const DicoogleWebcore = (function () {
         slot.attachPlugin(pluginInstance);
       }
     }
-    for (let i = 0; i < eventListeners.load.length; i++) {
-      eventListeners.load[i]({name, slotId, caption: pluginInstance.Caption});
-    }
-    if (slotId === 'query') {
-      for (let i = 0; i < eventListeners.loadQuery.length; i++) {
-        eventListeners.loadQuery[i]({name, slotId, caption: pluginInstance.Caption});
-      }
-    } else if (slotId === 'result') {
-      for (let i = 0; i < eventListeners.loadResult.length; i++) {
-        eventListeners.loadResult[i]({name, slotId, caption: pluginInstance.Caption});
-      }
-    } else if (slotId === 'menu') {
-      for (let i = 0; i < eventListeners.loadMenu.length; i++) {
-        eventListeners.loadMenu[i]({name, slotId, caption: pluginInstance.Caption});
-      }
-    }
+    const eventData = {name, slotId, caption: pluginInstance.Caption};
+    event_hub.emit('load', eventData);
   };
   
-  /**
-   * @param {HTMLDicoogleSlotElement} elem
+  /** Attach all discovered plugins to the given compatible slot if compatible.
+   * @param {HTMLDicoogleSlotElement} elem the slot element
+   * @return {void}
    */
   m.attachAllPlugins = function(elem) {
+    if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
     getPluginsOf(elem.slotId).forEach(pluginInstance => {
       elem.webUi.attachPlugin(pluginInstance);
     });
@@ -279,6 +334,7 @@ const DicoogleWebcore = (function () {
     this.dom.webUi = this;
     
     this.attachPlugin = function(plugin) {
+      if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
       if (plugin.SlotId !== this.id) {
         console.error('Attempt to attach plugin ', plugin.Name, ' to the wrong slot');
         return;
@@ -303,6 +359,7 @@ const DicoogleWebcore = (function () {
     };
 
     this.refresh = function() {
+      if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
       let slotDOM = this.dom;
       slotDOM.innerHTML = '';
       for (let i = 0; i < this.attachments.length; i++) {
@@ -325,8 +382,8 @@ const DicoogleWebcore = (function () {
   }
 
   /** Load a new Dicoogle slot into the core.
-   * @param slotDOM a DOM element in the document with the correct tag name
-   * @return the id of the slot
+   * @param {HTMLDicoogleSlotElement} slotDOM a DOM element in the document with the correct tag name
+   * @return {string} the id of the slot
    */
   function loadSlot (slotDOM) {
     if (base_url === null) {
@@ -362,6 +419,7 @@ const DicoogleWebcore = (function () {
   }
   
   function getPluginsOf(slotId) {
+    if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
     const pluginsOfSlot = [];
     if (plugins) {
       for (let name in plugins) {
@@ -370,21 +428,9 @@ const DicoogleWebcore = (function () {
         }
       }
     }
-    return pluginsOfSlot;      
+    return pluginsOfSlot;
   }
-  
-  function camelize(s) {
-    let words = s.split('-');
-    if (words.length === 0) return '';
-    let t = words[0];
-    for (let i = 1; i < words.length; i++) {
-        if (words[i].length !== 0) {
-            t += words[i][0].toUpperCase() + words[i].substring(1);
-        }
-    }
-    return t;
-  }
-  
+    
   function dispatch_result(result, requestTime, options) {
     var resultSlotArray = slots.result;
     if (!resultSlotArray) {
@@ -396,17 +442,16 @@ const DicoogleWebcore = (function () {
         resultSlot.attachments[i].onResult(result, requestTime, options);
       }
     }
-    for (let i = 0; i < eventListeners.result.length; i++) {
-      eventListeners.result[i](result, requestTime, options);
-    }
+    event_hub.emit('result', result, requestTime, options);
   }
   
   /**
-   * send a GET request to a Dicoogle service
+   * Send a GET request to a Dicoogle service.
    *
    * @param {string} uri the request URI in string or array form
    * @param {string} qs an object containing query string parameters (or a QS without '?')
-   * @param {function(error, outcome)} callback
+   * @param {function(error, outcome)} callback a callback function
+   * @return {void}
    */
   function service_get(uri, qs, callback) {
     // issue request
@@ -466,22 +511,13 @@ const DicoogleWebcore = (function () {
         attachedCallback: { value () {
           console.log('[CALLBACK] Dicoogle slot attached: ', this);
           const attSlotId = this.attributes['data-slot-id'];
-          const attOnLoaded = this.attributes['data-on-loaded'];
           if (!attSlotId || !attSlotId.value || attSlotId === '') {
             console.error('Dicoogle slot contains illegal data-slot-id!');
             return;
           }
-          const sId = attSlotId.value;
-          const self = this;
           // add content if the webcore plugin is already available
           if (base_url !== null) {
             m.updateSlot(this, pluginInstance => {
-              //if (self.webUi && (!self.pluginName || pluginInstance.Name === self.pluginName)) {
-              //  self.webUi.attachPlugin.call(self.webUi, pluginInstance);
-              //}
-              //if (plugins[this.slotId] && plugins[this.slotId].length > 0) {
-              //  this.webUi.refresh();
-              //}
             });
           }
           //console.log('[CALLBACK] Dicoogle slot attached: ', this);

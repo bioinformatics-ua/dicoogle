@@ -16,7 +16,7 @@ The project can be built by calling `npm install`. On Dicoogle, simply install `
 
 The optional web component attribute `data-plugin-name` can be passed to the `<dicoogle-slot>` in order to retrieve a specific plugin (rather than all compatible plugins for that slot).
 
-Furthermore, slot elements will emit a `plugin-load` custom event each time a specific plugin is created and rendered. The event can be listened by adding a typical DOM event listener:
+Furthermore, slot elements will emit a `plugin-load` custom event (not to be confused with the webcore's event emitter) each time a specific plugin is created and rendered. The event can be listened by adding a typical DOM event listener:
 
 ```javascript
 slotElement.addEventListener('plugin-load', fnHandleEvent);
@@ -57,7 +57,7 @@ In addition, these attributes are recommended:
 
   - `author` : the author of the plugin
   - `tags` : the tags "dicoogle" and "dicoogle-plugin" are recommended
-  - `` : 
+  - `private` : if you do not intend to publish the plugin into an npm repository, set this to `true`.
 
 An example of a valid "package.json":
 
@@ -127,7 +127,7 @@ module.exports = function() {
 
   // ...
 
-  this.render = function(parent) {
+  this.render = function(parent, slot) {
     var e = document.create('span');
     e.innerHTML = 'Hello Dicoogle!';
     parent.appendChild(e);
