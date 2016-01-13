@@ -60,7 +60,8 @@ const DicoogleWebcore = (function () {
     
     // create dicoogle client access object
     // and inject webcore related methods
-    Dicoogle = merge(client(base_url), {
+    Dicoogle = client(base_url);
+    Object.assign(Dicoogle, {
         issueQuery,
         emit,
         emitSlotSignal,
