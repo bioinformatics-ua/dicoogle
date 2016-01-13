@@ -67,7 +67,8 @@ const DicoogleWebcore = (function () {
         addMenuPluginListener: m.addMenuPluginListener,
         addPluginLoadListener: m.addPluginLoadListener,
         addEventListener: m.addEventListener,
-        addResultListener: m.addResultListener
+        addResultListener: m.addResultListener,
+        removeEventListener: m.removeEventListener
     });
     
   };
