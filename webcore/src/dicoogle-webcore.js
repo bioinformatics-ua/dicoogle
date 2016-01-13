@@ -62,7 +62,7 @@ const DicoogleWebcore = (function () {
     // and inject webcore related methods
     Dicoogle = merge(client(base_url), {
         issueQuery,
-        emitSignal,
+        emit,
         emitSlotSignal,
         addMenuPluginListener: m.addMenuPluginListener,
         addPluginLoadListener: m.addPluginLoadListener,
@@ -77,7 +77,7 @@ const DicoogleWebcore = (function () {
    * @param {...any} args the data to be transmitted as function arguments to the listeners
    * @return {void}
    */
-  function emitSignal(name, ...args) {
+  function emit(name, ...args) {
     if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
     event_hub.emit(name, ...args);
   }

@@ -178,7 +178,7 @@ This may be useful for a web page to react to retrievals by automatically adding
 
  - _fn_ : `function(Object{name, slotId, caption})`
 
-#### **emitSignal**: `function(eventName, ...args)`
+#### **emit**: `function(eventName, ...args)`
 
 Emit an event through the webcore's event emitter.
 
