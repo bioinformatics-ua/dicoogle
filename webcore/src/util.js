@@ -8,6 +8,7 @@ export function merge() {
     for (let i = 0; i < arguments.length; i++) {
         Object.assign(out, arguments[i]);
     }
+    return out;
 }
 
 /** Camelize a plugin name (only the first word is not capitalized).
