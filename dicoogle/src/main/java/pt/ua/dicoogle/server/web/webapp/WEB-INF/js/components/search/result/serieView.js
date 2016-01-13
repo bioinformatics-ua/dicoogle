@@ -56,7 +56,7 @@ var SeriesView = React.createClass({
         {/* plugin-based result options */}
         <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
           'data-result-type': 'series',
-          'data-result-uid': item.seriesInstanceUID
+          'data-result-uid': item.serieInstanceUID
          }} />
          </div>
       );
