@@ -351,7 +351,7 @@ const DicoogleWebcore = (function () {
       this.dom.appendChild(pluginDOM);
       const e = plugin.render(pluginDOM, this.dom);
       
-      this.dom.dispatchEvent(new CustomEvent('plugin-load', {detail: e}));
+      emitSlotSignal(dom, 'plugin-load', e);
       
       this.attachments.push(plugin);
       plugin.TabIndex = this.attachments.length - 1;

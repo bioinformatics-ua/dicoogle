@@ -156,7 +156,7 @@ page's result module. The query service requested will be "search" unless modifi
 
 Add an event listener to an event triggered by the web core.
 
- - _eventName_ : the name of the event (must be one of 'load','loadMenu','loadQuery','loadResult','menu')
+ - _eventName_ : the name of the event (can be one of 'load','menu' or a custom one)
  - _fn_ : a callback function (arguments vary) -- `function(...)`
 
 #### **addResultListener** : `function(fn)`
@@ -177,6 +177,28 @@ Add a listener to the 'menu' event, triggered when a menu plugin descriptor is r
 This may be useful for a web page to react to retrievals by automatically adding menu entries.
 
  - _fn_ : `function(Object{name, slotId, caption})`
+
+#### **emitSignal**: `function(eventName, ...args)`
+
+Emit an event through the webcore's event emitter.
+
+ - _eventName_ : the name of the event
+ - _args_ : variable list of arguments to be passed to the listeners
+
+#### **emitSlotSignal**: `function(slotDOM, eventName, data)`
+
+Emit a DOM custom event from the slot element.
+
+ - _slotDOM_ : the slot DOM element to emit the event from
+ - _name_ : the event name
+ - _data_ : the data to be transmitted as custom event detail
+
+### Webcore Events
+
+Full list of events that can be used by plugins and the webapp. _(Work in Progress)_
+
+ - "load" : Emitted when a plugin package is retrieved.
+ - "result" : Emitted when a list of search results is obtained from the search interface.
 
 ## Installing Plugins
 
