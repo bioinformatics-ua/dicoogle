@@ -34,6 +34,7 @@ class App extends React.Component {
 		this.state = {
 			pluginMenuItems: []
 		};
+		this.logout = this.logout.bind(this);
 	}
 
 	componentWillMount () {
@@ -54,7 +55,7 @@ class App extends React.Component {
     }
 
 	onMenuPlugin(plugin) {
-		let {pluginMenuItems} = this.state;
+		const {pluginMenuItems} = this.state;
 		this.setState({
 			pluginMenuItems: pluginMenuItems.concat([{
 				value: plugin.name,
@@ -65,15 +66,13 @@ class App extends React.Component {
 	}
 
 	logout() {
-		var self = this;
-		$.get(Endpoints.base + "/logout",
-		function(data, status){
+		$.get(Endpoints.base + "/logout", (data, status) => {
 			//Response
 			console.log("Data: " + data + "\nStatus: " + status);
 			
 			//self.transitionTo('login');
 			// Works with recent version of react + react-router
-			self.props.history.pushState(null, 'login');
+			this.props.history.pushState(null, 'login');
 		});
 	}
 
@@ -86,7 +85,7 @@ class App extends React.Component {
 			</div>
 			<div id="wrapper">
 				<div id="sidebar-wrapper">
-					<Sidebar pluginMenuItems={this.state.pluginMenuItems} onLogout={this.logout.bind(this)}/>
+					<Sidebar pluginMenuItems={this.state.pluginMenuItems} onLogout={this.logout}/>
 				</div>
 				<div id="container" style={{display:'block'}}>
 					{this.props.children}
