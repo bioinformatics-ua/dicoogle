@@ -71,9 +71,9 @@ class App extends React.Component {
 			//Response
 			console.log("Data: " + data + "\nStatus: " + status);
 			
-            //self.transitionTo('login');
-            // Works with recent version of react + react-router
-            self.props.history.pushState(null, 'login');
+			//self.transitionTo('login');
+			// Works with recent version of react + react-router
+			self.props.history.pushState(null, 'login');
 		});
 	}
 
