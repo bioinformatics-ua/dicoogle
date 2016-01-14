@@ -29,8 +29,8 @@ require('jquery-ui');
 
 class App extends React.Component {
 	
-	constructor () {
-		super();
+	constructor (props,) {
+		super(props);
 		this.state = {
 			pluginMenuItems: []
 		};
@@ -70,7 +70,10 @@ class App extends React.Component {
 		function(data, status){
 			//Response
 			console.log("Data: " + data + "\nStatus: " + status);
-			self.transitionTo('login');
+			
+			//self.transitionTo('login');
+			// Works with recent version of react + react-router
+			self.props.history.pushState(null, 'login');
 		});
 	}
 
@@ -83,7 +86,7 @@ class App extends React.Component {
 			</div>
 			<div id="wrapper">
 				<div id="sidebar-wrapper">
-					<Sidebar pluginMenuItems={this.state.pluginMenuItems} onLogout={this.logout}/>
+					<Sidebar pluginMenuItems={this.state.pluginMenuItems} onLogout={this.logout.bind(this)}/>
 				</div>
 				<div id="container" style={{display:'block'}}>
 					{this.props.children}
