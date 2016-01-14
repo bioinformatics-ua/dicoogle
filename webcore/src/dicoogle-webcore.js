@@ -1,4 +1,4 @@
-import request from './request';
+//import request from './request';
 import client from 'dicoogle-client';
 
 /** Dicoogle web application core.
@@ -58,14 +58,12 @@ const DicoogleWebcore = (function () {
   
   /** Initialize Dicoogle Webcore. This should be called once and at the beginning
    * of the web page's life time.
-   * 
    */
   m.init = function(baseURL) {
     if (typeof document !== 'object') {
       throw "no DOM environment!";
     }
     console.log('Initializing Dicoogle web core ...');
-    base_url = '';
     if (typeof baseURL === 'string') {
       base_url = baseURL;
       if (base_url[base_url.length-1] === '/') {
@@ -243,7 +241,7 @@ const DicoogleWebcore = (function () {
     
     this.attachPlugin = function(plugin) {
       if (plugin.SlotId !== this.id) {
-        console.error('Attempt to attach plugin ', plugin.Name, ' to the wrong slot');
+        console.error(`Attempt to attach plugin ${plugin.Name} to the wrong slot`);
         return;
       }
       if ((typeof this.pluginName === 'string') && this.pluginName !== plugin.Name) {
@@ -368,13 +366,9 @@ const DicoogleWebcore = (function () {
    */
   function service_get(uri, qs, callback) {
     // issue request
-    let full_uri;
-    if (isArray(uri)) {
-      full_uri = [base_url].concat(uri);
-    } else {
-      full_uri = [base_url, uri];
-    }
-    request('GET', full_uri, qs, callback);
+    //const full_uri = [base_url].concat(uri);
+    //request('GET', full_uri, qs, callback);
+    Dicoogle.request('GET', uri, qs, callback);
   }
   
   function getScript(moduleName, callback) {
@@ -391,7 +385,6 @@ const DicoogleWebcore = (function () {
             }
         }
     };
-
     script.onload = script.onreadystatechange = onLoadHandler;
     script.src = base_url+'/webui?module='+moduleName+'&process=true';
     prior.parentNode.insertBefore(script, prior);
@@ -429,8 +422,8 @@ const DicoogleWebcore = (function () {
             console.error('Dicoogle slot contains illegal data-slot-id!');
             return;
           }
-          const sId = attSlotId.value;
-          const self = this;
+          //const sId = attSlotId.value;
+          //const self = this;
           // add content if the webcore plugin is already available
           if (base_url !== null) {
             m.updateSlot(this, function(pluginInstance){
@@ -457,7 +450,7 @@ const DicoogleWebcore = (function () {
   })();
 
   m.HTMLDicoogleSlotElement = HTMLDicoogleSlotElement;
-    
+  
   return m;
 })();
 

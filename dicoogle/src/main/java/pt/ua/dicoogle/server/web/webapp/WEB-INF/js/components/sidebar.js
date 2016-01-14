@@ -2,7 +2,7 @@
 
 /*
  * @author Frederico Silva<fredericosilva@ua.pt>
- * @author Edaurdo Pinho <eduardopinho@ua.pt>
+ * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 
 import React from 'react';

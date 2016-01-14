@@ -44,7 +44,7 @@
     "babelify": "^6.3.0",
     "browserify": "~11.0.1",
     "browserify-shim": "~3.8.2",
-    "dicoogle-client": "^2.2.0",
+    "dicoogle-client": "^2.3.1",
     "dicoogle-webcore": "../../../../../../../../../../../webcore",
     "envify": "^3.0.0",
     "flux": "^2.0.1",

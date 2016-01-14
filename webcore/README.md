@@ -93,7 +93,21 @@ module.exports = function() {
     e.innerHTML = 'Hello Dicoogle!';
     parent.appendChild(e);
   };
-});
+};
+```
+
+Exporting a class in ECMAScript 6 also works (since classes are syntatic sugar for ES5 constructors).
+The code below can be converted to ES5 using Babel:
+
+```javascript
+export default class MyPluginModule() {
+
+  render(parent) {
+    let e = document.create('span');
+    e.innerHTML = 'Hello Dicoogle!';
+    parent.appendChild(e);
+  }
+};
 ```
 
 ### Dicoogle Web API
@@ -142,10 +156,10 @@ This may be useful for a web page to react to retrievals by automatically adding
 ## Installing Plugins
 
 Place all contents of a plugin in a directory and insert the directory (by copying or linking)
-into the "WebPlugins" folder at the base working directory. Plugins will then be retrieved the
+into the "WebPlugins" folder at the base working directory. Alternatively, package a "WebPlugins"
+directory with the same contents in a Dicoogle plugin jar. All plugins will then be retrieved the
 next time the Dicoogle server loads.
 
 ## Testing Plugins
 
-Testing Web UI plugins in a Dicoogle server is recommended, although it can also be done in separate pages.
-For the latter, please see the HTML pages in "test/TC/" for a few examples.
+Web UI plugins can be tested by deploying them into Dicoogle.

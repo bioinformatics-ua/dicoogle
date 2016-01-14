@@ -2,6 +2,7 @@ import React from 'react';
 import Sidebar from './components/sidebar';
 import {Endpoints} from './constants/endpoints';
 
+import DicoogleClient from 'dicoogle-client';
 import Webcore from 'dicoogle-webcore';
 
 import {default as Router, Route, IndexRoute, Routes} from 'react-router';
@@ -38,6 +39,7 @@ class App extends React.Component {
 	}
 
 	componentWillMount () {
+	  DicoogleClient(Endpoints.base);
 		Webcore.init(Endpoints.base);
 		Webcore.addPluginLoadListener(function(plugin) {
 		  console.log("Plugin loaded to Dicoogle:", plugin);
