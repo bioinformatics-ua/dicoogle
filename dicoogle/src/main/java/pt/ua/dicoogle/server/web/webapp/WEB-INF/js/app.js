@@ -30,11 +30,12 @@ require('jquery-ui');
 
 class App extends React.Component {
 	
-	constructor () {
-		super();
+	constructor (props,) {
+		super(props);
 		this.state = {
 			pluginMenuItems: []
 		};
+		this.logout = this.logout.bind(this);
 	}
 
 	componentWillMount () {
@@ -56,7 +57,7 @@ class App extends React.Component {
     }
 
 	onMenuPlugin(plugin) {
-		let {pluginMenuItems} = this.state;
+		const {pluginMenuItems} = this.state;
 		this.setState({
 			pluginMenuItems: pluginMenuItems.concat([{
 				value: plugin.name,
@@ -67,12 +68,13 @@ class App extends React.Component {
 	}
 
 	logout() {
-		var self = this;
-		$.get(Endpoints.base + "/logout",
-		function(data, status){
+		$.get(Endpoints.base + "/logout", (data, status) => {
 			//Response
 			console.log("Data: " + data + "\nStatus: " + status);
-			self.transitionTo('login');
+			
+			//self.transitionTo('login');
+			// Works with recent version of react + react-router
+			this.props.history.pushState(null, 'login');
 		});
 	}
 
