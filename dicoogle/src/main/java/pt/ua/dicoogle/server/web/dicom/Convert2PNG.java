@@ -51,8 +51,6 @@ public class Convert2PNG
     private static final Logger logger = LoggerFactory.getLogger(Convert2PNG.class);
     
     private synchronized static ImageReader createDICOMImageReader() {
-        ImageIO.scanForPlugins();
-        
         Iterator<ImageReader> it = ImageIO.getImageReadersByFormatName("DICOM"); // gets the first registered ImageReader that can read DICOM data
         
         ImageReader sReader = it.next();
@@ -60,8 +58,6 @@ public class Convert2PNG
     }
     
     private synchronized static ImageWriter createPNGImageWriter() {
-        ImageIO.scanForPlugins();
-        
         Iterator<ImageWriter> it = ImageIO.getImageWritersByFormatName("PNG"); // gets the first registered ImageWriter that can write PNG data
         
         ImageWriter sWriter = it.next();
@@ -242,10 +238,6 @@ public class Convert2PNG
         }
         
 		// setup the PNG writer
-		ImageWriter writer = createPNGImageWriter();
-
-		ImageWriteParam writeParams = writer.getDefaultWriteParam(); // and set the default params for it
-		writeParams.setProgressiveMode(ImageWriteParam.MODE_DEFAULT); // activate progressive mode (adam7), best for low bandwidth connections
         BufferedImage image = ImageLoader.loadImage(inStream);
         
         image = scaleImage(image, width, height);
@@ -255,6 +247,9 @@ public class Convert2PNG
 
         // write the specified frame to the resulting stream
         try (ImageOutputStream outStream = ImageIO.createImageOutputStream(result)) {
+            ImageWriter writer = createPNGImageWriter();
+            ImageWriteParam writeParams = writer.getDefaultWriteParam(); // and set the default params for it
+            writeParams.setProgressiveMode(ImageWriteParam.MODE_DEFAULT); // activate progressive mode (adam7), best for low bandwidth connections
             writer.setOutput(outStream);
             writer.write(image);
         }
@@ -274,20 +269,7 @@ public class Convert2PNG
      * @throws IOException if the I/O operations on the images fail
 	 */
 	public static ByteArrayOutputStream DICOM2ScaledPNGStream(StorageInputStream dcmStream, int frameIndex, int width, int height) throws IOException {
-        if (dcmStream == null) {
-            throw new NullPointerException("dcmStream");
-        }
-        if (frameIndex < 0) {
-            throw new IllegalArgumentException("bad frameIndex");
-        }
-        if (width <= 0) {
-            throw new IllegalArgumentException("bad width");
-        }
-        if (height <= 0) {
-            throw new IllegalArgumentException("bad height");
-        }
-        
-        return Convert2PNG.DICOM2PNGStream(dcmStream.getInputStream(), frameIndex);
+        return DICOM2ScaledPNGStream(dcmStream.getInputStream(), frameIndex, width, height);
 	}
     
 	/**

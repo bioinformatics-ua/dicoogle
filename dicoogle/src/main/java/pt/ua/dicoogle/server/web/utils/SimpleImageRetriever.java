@@ -21,21 +21,17 @@
 
 package pt.ua.dicoogle.server.web.utils;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.Iterator;
-import java.util.concurrent.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.StorageInputStream;
 import pt.ua.dicoogle.sdk.StorageInterface;
-import pt.ua.dicoogle.sdk.datastructs.SearchResult;
-import pt.ua.dicoogle.sdk.task.JointQueryTask;
-import pt.ua.dicoogle.sdk.task.Task;
 import pt.ua.dicoogle.server.web.dicom.Convert2PNG;
 
 /**
@@ -47,38 +43,12 @@ public class SimpleImageRetriever implements ImageRetriever {
     private static final Logger logger = LoggerFactory.getLogger(SimpleImageRetriever.class);
     
     @Override
-    public InputStream getByURI(String uri, int frame, boolean thumbnail) {
-        throw new UnsupportedOperationException("Not implemented yet."); // TODO
-    }
-
-    private static StorageInputStream fromUid(String sopInstanceUID) throws IOException {
-        // TODO use only DIM source
-        JointQueryTask qt = new JointQueryTask() {
-            @Override
-            public void onCompletion() {
-            }
-            @Override
-            public void onReceive(Task<Iterable<SearchResult>> e) {
-            }
-        };
-        try {
-            Iterator<SearchResult> it = PluginController.getInstance()
-                    .queryAll(qt, "SOPInstanceUID:" + sopInstanceUID).get().iterator();
-            if (!it.hasNext()) {
-                throw new IOException("No such image of SOPInstanceUID " + sopInstanceUID);
-            }
-            SearchResult res = it.next();
-            return fromURI(res.getURI());
-        } catch (InterruptedException | ExecutionException ex) {
-            throw new IOException(ex);
-        }
-        
+    public ByteArrayInputStream get(URI uri, int frame, boolean thumbnail) throws IOException {
+        return getPNGStream(fromURI(uri), frame, thumbnail);
     }
 
     private static StorageInputStream fromURI(URI uri) throws IOException {
-        // TODO use only DIM source
         StorageInterface storage = PluginController.getInstance().getStorageForSchema(uri);
-        StorageInputStream stream;
         Iterator<StorageInputStream> store = storage.at(uri).iterator();
         if (!store.hasNext()) {
             throw new IOException("No storage item found at the given URI");
@@ -86,7 +56,7 @@ public class SimpleImageRetriever implements ImageRetriever {
         return store.next();
     }
 
-    private ByteArrayOutputStream getPNGStream(StorageInputStream imgFile, int frame, boolean thumbnail) throws IOException {
+    private static ByteArrayInputStream getPNGStream(StorageInputStream imgFile, int frame, boolean thumbnail) throws IOException {
         ByteArrayOutputStream pngStream;
         if (thumbnail) {
             int thumbSize;
@@ -101,5 +71,5 @@ public class SimpleImageRetriever implements ImageRetriever {
         } else {
             pngStream = Convert2PNG.DICOM2PNGStream(imgFile, frame);
         }
-        return pngStream;
+        return new ByteArrayInputStream(pngStream.toByteArray());
     }}

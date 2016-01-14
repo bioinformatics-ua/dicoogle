@@ -22,17 +22,18 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Set;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.LoggerFactory;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import pt.ua.dicoogle.server.web.dicom.Convert2PNG;
 
 /**
@@ -45,22 +46,18 @@ import pt.ua.dicoogle.server.web.dicom.Convert2PNG;
 public class LocalImageCache extends Thread implements ImageRetriever
 {
 	/**
-	 * The name of the cache directory.
-	 */
-	private final String name;
-	/**
 	 * The number of milliseconds to wait between pool cache directory pooling.
 	 */
-	private int interval;
+	private volatile int interval;
 	/**
 	 * The number of milliseconds that a file can stay in the cache without being used/read.
 	 */
-	private int maxAge;
+	private volatile int maxAge;
 
-	private File cacheFolder;
-	private boolean running;
+	private final File cacheFolder;
+	private volatile boolean running;
 
-	private final Set<File> filesBeingWritten;
+	private final ConcurrentMap<String,File> filesBeingWritten;
     
     private final ImageRetriever under;
 
@@ -74,7 +71,8 @@ public class LocalImageCache extends Thread implements ImageRetriever
 	 */
 	public LocalImageCache(String name, int interval, int maxAge, ImageRetriever under)
 	{
-		this.name = name;
+        super("cache-" + name);
+        Objects.requireNonNull(under);
 
 		if (interval < 1) {
 			this.interval = 1;
@@ -84,17 +82,19 @@ public class LocalImageCache extends Thread implements ImageRetriever
 		this.interval *= 1000;
 
 		if (maxAge < 1) {
-			this.maxAge = 1;
-		} else {
-			this.maxAge = maxAge;
-		}
-		this.maxAge *= 1000;
+            throw new IllegalArgumentException("Illegal maxAge");
+        }
+        this.maxAge = maxAge * 1000;
 
-		filesBeingWritten = new HashSet<>();
+		filesBeingWritten = new ConcurrentSkipListMap<>();
 		running = false;
         
         this.setDaemon(true);
         this.under = under;
+        
+		// create the temporary directory
+		File sysTmpDir = new File(System.getProperty("java.io.tmpdir"));
+		cacheFolder = new File(sysTmpDir, name);
 	}
 
 	/**
@@ -125,15 +125,11 @@ public class LocalImageCache extends Thread implements ImageRetriever
 	@Override
 	public void start()
 	{
-		// create the temporary directory
-		File sysTmpDir = new File(System.getProperty("java.io.tmpdir"));
-		cacheFolder = new File(sysTmpDir, name);
-
 		// abort if we couldn't make the temp dir
 		if (cacheFolder == null)
 			return;
 		if (! cacheFolder.exists())
-			if (! cacheFolder.mkdir())
+			if (! cacheFolder.mkdirs())
 				return;
 		cacheFolder.deleteOnExit();
 
@@ -212,9 +208,7 @@ public class LocalImageCache extends Thread implements ImageRetriever
 
 	/**
 	 * @param interval the interval to set
-     * @deprecated this method is not thread-safe
 	 */
-    @Deprecated
 	public void setInterval(int interval)
 	{
 		if (interval < 1) {
@@ -235,20 +229,16 @@ public class LocalImageCache extends Thread implements ImageRetriever
 
 	/**
 	 * @param maxAge the maxAge to set
-     * @deprecated this method is not thread-safe
 	 */
-    @Deprecated
 	public void setMaxAge(int maxAge)
 	{
-		if (maxAge < 1) {
-			this.maxAge = 1;
-		} else {
+		if (maxAge > 1) {
 			this.maxAge = maxAge;
 		}
 	}
     
-    protected static String toFileName(String imageId, int frameNumber, boolean thumbnail) {
-        String filename = imageId + "_" + frameNumber;
+    protected static String toFileName(String imageUri, int frameNumber, boolean thumbnail) {
+        String filename = imageUri.replace('/', '_') + "_" + frameNumber;
         if (thumbnail) {
             filename += "__thumb";
         }
@@ -256,112 +246,54 @@ public class LocalImageCache extends Thread implements ImageRetriever
     }
     
     @Override
-    public synchronized InputStream getByURI(String uri, int frameNumber, boolean thumbnail) throws IOException {
-        File f = this.implGetFile(toFileName(uri, frameNumber, thumbnail));
-        if (!f.exists()) {
-            // TODO create new file and return the result
-            InputStream istream = this.under.getByURI(uri, frameNumber, thumbnail);
-            ByteArrayOutputStream result = Convert2PNG.DICOM2PNGStream(istream, frameNumber);
-            byte[] imageArray = result.toByteArray();
-
-            // write the specified frame to the resulting stream
-            try (   InputStream arrStream = new ByteArrayInputStream(imageArray) ;
-                    FileOutputStream fileO = new FileOutputStream(f)) {
-                IOUtils.copy(arrStream, fileO);
-            }
-            return new ByteArrayInputStream(result.toByteArray());
-        } else {
-            try {
+    public InputStream get(URI uri, final int frameNumber, final boolean thumbnail) throws IOException {
+        File f = this.implGetFile(toFileName(uri.toString(), frameNumber, thumbnail));
+        synchronized(f) {
+            if (f.exists()) {
                 return new FileInputStream(f);
-            } catch (FileNotFoundException ex) {
-
-                LoggerFactory.getLogger(LocalImageCache.class).error("Could not obtain image", ex);
-                return null;
             }
         }
+        this.implCreateFile(f);
+        byte[] imageArray;
+        synchronized (f) {
+            InputStream istream = this.under.get(uri, frameNumber, thumbnail);
+            ByteArrayOutputStream result = Convert2PNG.DICOM2PNGStream(istream, frameNumber);
+            imageArray = result.toByteArray();
+
+            // create new cache file with the converted image
+            try (FileOutputStream fout = new FileOutputStream(f)) {
+                fout.write(imageArray);
+            }
+            filesBeingWritten.remove(f.getAbsolutePath());
+        }
+        
+        // and return it
+        return new ByteArrayInputStream(imageArray);
     }
 
-    // delegating cache entry writing to the caller is bound to bring issues in the long run
-    @Deprecated
-    public synchronized File getFile(String name, int frameNumber, boolean thumbnail) throws IOException {
-        return this.implGetFile(toFileName(name, frameNumber, thumbnail));
-    }
-
-    // delegating cache entry writing to the caller is bound to bring issues in the long run
-    @Deprecated
-    public synchronized File getFile(String name, boolean thumbnail) throws IOException {
-        return getFile(name, 1, thumbnail);
-    }
-
-    // delegating cache entry writing to the caller is bound to bring issues in the long run
-    @Deprecated
-    public synchronized File getFile(String name, int frameNumber) throws IOException {
-        return getFile(name, frameNumber, false);
-    }
-
-    // delegating cache entry writing to the caller is bound to bring issues in the long run
-    @Deprecated
-    public synchronized File getFile(String name) throws IOException {
-        return getFile(name, 1, false);
-    }
-    
-    // delegating cache entry writing to the caller is bound to bring issues in the long run
-	@Deprecated
-    public synchronized File getFileFromName(String fileName) throws IOException {
-        return implGetFile(fileName);
-    }
-    
 	private File implGetFile(String fileName) throws IOException {
 		// check if the file is currently being written to
-        Path thatFilePath = Paths.get(fileName);
-		for (File f : filesBeingWritten)
-		{
-			// and if it is, return a common handle for it (common so outside code can synchronize on it, same object, to allow other threads to wait for the write to finish)
-			if (Files.isSameFile(f.toPath(), thatFilePath)) {
-				return f;
-            }
-		}
-
-		String absoluteFileName = cacheFolder + File.separator + fileName;
-		File f = new File(absoluteFileName);
-
-		// if the file already exists return a handle to it
-		if (f.exists())
-			return f;
-
-		// if it does not exist add it to the list of files being written (because new content is going to be written to it outside this class) and create the empty file
-		filesBeingWritten.add(f);
-        f.createNewFile();
+        String thatFilePath = new File(fileName).getAbsolutePath();
+        File f = this.filesBeingWritten.get(thatFilePath);
+        if (f == null) {
+            f = new File(cacheFolder, fileName);
+        }
+        return f;
+	}
+    
+    private File implCreateFile(File f) throws IOException {
+        //f.createNewFile();
         f.deleteOnExit();
-
+		// if it does not exist add it to the list of files being written (because new content is going to be written to it outside this class) and create the empty file
+		filesBeingWritten.put(f.getAbsolutePath(), f);
 		// return the common handle to the currently created and empty file
-		return f;
-	}
-
-	/**
-	 * To be used by a thread that has finished writting or reading to the file.
-	 *
-	 * @param file the same file handler (object) that was obtained by calling this.getFileFromName().
-     * @deprecated delegating cache entry writing to the caller is bound to bring issues in the long run
-	 */
-    @Deprecated
-	public synchronized void finishedUsingFile(File file)
-	{
-		if ((file == null))
-			return;
-
-		// tries to remove the file from the list of file being written to
-		filesBeingWritten.remove(file);
-
-		// touch the file so that we can keep track of how old the file is
-		if (file.exists())
-			file.setLastModified(System.currentTimeMillis());
-	}
+        return f;
+    }
 
 	/**
 	 * @return if the caching mechanism for checking and removing old/un-used cache files is still running
 	 */
-	public synchronized boolean isRunning()
+	public boolean isRunning()
 	{
 		return running;
 	}

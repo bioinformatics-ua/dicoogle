@@ -21,6 +21,7 @@ package pt.ua.dicoogle.server.web.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 
 /** Interface for retrieving the image content of an instance, in a format compatible with browsers.
  *
@@ -36,5 +37,5 @@ public interface ImageRetriever {
      * @return an input stream for retrieving the image's content
      * @throws IOException 
      */
-    public InputStream getByURI(String uri, int frame, boolean thumbnail) throws IOException;
+    public InputStream get(URI uri, int frame, boolean thumbnail) throws IOException;
 }

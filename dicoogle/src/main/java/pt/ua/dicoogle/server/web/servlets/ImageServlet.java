@@ -19,9 +19,6 @@
 package pt.ua.dicoogle.server.web.servlets;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
@@ -30,11 +27,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.servlet.ServletOutputStream;
 
@@ -46,6 +45,9 @@ import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.StorageInputStream;
 import pt.ua.dicoogle.sdk.StorageInterface;
+import pt.ua.dicoogle.sdk.datastructs.SearchResult;
+import pt.ua.dicoogle.sdk.task.JointQueryTask;
+import pt.ua.dicoogle.sdk.task.Task;
 import pt.ua.dicoogle.server.web.dicom.Convert2PNG;
 import pt.ua.dicoogle.server.web.dicom.Information;
 import pt.ua.dicoogle.server.web.utils.LocalImageCache;
@@ -60,20 +62,20 @@ import pt.ua.dicoogle.server.web.utils.LocalImageCache;
 public class ImageServlet extends HttpServlet
 {
     private static final Logger logger = LoggerFactory.getLogger(ImageServlet.class);
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public static final int BUFFER_SIZE = 1500; // byte size for read-write ring bufer, optimized for regular TCP connection windows
+    public static final int BUFFER_SIZE = 1500; // byte size for read-write ring bufer, optimized for regular TCP connection windows
 
-	private final LocalImageCache cache;
+    private final LocalImageCache cache;
 	
     /**
-	 * Creates an image servlet.
-	 *
-	 * @param cache the local image caching system, can be null and if so no caching mechanism will be used.
-	 */
-	public ImageServlet(LocalImageCache cache) {
+     * Creates an image servlet.
+     *
+     * @param cache the local image caching system, can be null and if so no caching mechanism will be used.
+     */
+    public ImageServlet(LocalImageCache cache) {
         this.cache = cache;
-	}
+    }
     
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
@@ -104,7 +106,7 @@ public class ImageServlet extends HttpServlet
         StorageInputStream imgFile;
         if (sopInstanceUID != null) {
             // get the image file for that SOP Instance UID
-            imgFile = Information.getFileFromSOPInstanceUID(sopInstanceUID, providers);
+            imgFile = getFileFromSOPInstanceUID(sopInstanceUID, providers);
             // if no .dcm file was found tell the client
             if (imgFile == null) {
                 response.sendError(404, "No image file for supplied SOP Instance UID!");
@@ -129,55 +131,24 @@ public class ImageServlet extends HttpServlet
             }
         }
 
-        // the temporary file containing the cache contents for this DICOM image
-		File cf;
 		// if there is a cache available then use it
-		if ((cache != null) && (cache.isRunning())) {
-            String instanceName = sopInstanceUID != null ? sopInstanceUID : uri.replace('/', '_');
-            synchronized (cache) {
-                cf = cache.getFile(instanceName, frame, thumbnail);
-        
-                // check if the file already has contents in it, and if it's empty, cache the converted image contents to it
-                if (!cf.exists() || cf.length() <= 0)
-                {
-                    try {
-                        // get the requested frame as a PNG stream
-                        ByteArrayOutputStream pngStream = getPNGStream(imgFile, frame, thumbnail);
-                        // write the stream to the file
-                        try (FileOutputStream fos = new FileOutputStream(cf)) {
-                            pngStream.writeTo(fos);
-                        }
-                        response.setContentType("image/png");
-                        response.setContentLength(pngStream.size());
-                        try(ServletOutputStream out = response.getOutputStream()) {
-                            pngStream.writeTo(out);
-                        }
-                    } catch (IOException ex) {
-                        logger.error("Could not load cached image", ex);
-                        response.setStatus(500);
-                    } finally {
-                        // finally tell the local cache manager that we are finished writing to the file,
-                        // so that other threads don't need to synchronize on it
-                        // (even if the synch occurred we would still be able to read the contents in
-                        // parallel across multiple threads, this is just an optimization for a cache
-                        // that is designed to run for a very long time, to keep the linked list of files
-                        // from being used empty for most of the time)
-                        cache.finishedUsingFile(cf);
-                    }
-                } else {
-                    // if we reach this point, then we are sure that there is a valid cache file and that its content is the cache of the requested image/frame, so read it and return it
+		if (cache != null && cache.isRunning()) {
 
-                    response.setContentType("image/png");
-                    // write the cache file contents to the response output
-                    try(FileInputStream in = new FileInputStream(cf); ServletOutputStream out = response.getOutputStream()) {
-                        IOUtils.copy(in,out);
-                    }
-
-                    // finally tell the local cache manager that we are finished reading the file
-                    cache.finishedUsingFile(cf);
+            try {
+                InputStream istream = cache.get(imgFile.getURI(), frame, thumbnail);
+                response.setContentType("image/png");
+                try(ServletOutputStream out = response.getOutputStream()) {
+                    IOUtils.copy(istream, out);
                 }
+            } catch (IOException ex) {
+                logger.warn("Could not convert the image", ex);
+                response.sendError(500);
+            } catch (RuntimeException ex) {
+                logger.error("Unexpected exception", ex);
+                response.sendError(500);
             }
-		} else {
+            
+ 		} else {
             // if the cache is invalid or not running convert the image and return it "on-the-fly"
             try {
                 ByteArrayOutputStream pngStream = getPNGStream(imgFile, frame, thumbnail);
@@ -215,7 +186,9 @@ public class ImageServlet extends HttpServlet
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-
+        // TODO this service does not make sense as a POST.
+        // either remove or relocate to another resource
+        
 		String sop = req.getParameter("SOPInstanceUID");
 		if(sop == null){
 			resp.sendError(500, "No SOPInstanceUID in Request");
@@ -227,7 +200,6 @@ public class ImageServlet extends HttpServlet
 			resp.sendError(500, "Cannot Locate the image File.");
 			return;
 		}
-			
 		
 		int nFrames = Information.getNumberOfFramesInFile(sop);
 		
@@ -236,12 +208,45 @@ public class ImageServlet extends HttpServlet
 		r.put("NumberOfFrames", nFrames);
 		r.put("FrameRate", frameRate);
 		
-		
 		resp.setContentType("application/json");
 		
 		PrintWriter wr = resp.getWriter();
 		wr.print(r.toString());	
 	}
 	
-	
+    private static StorageInputStream getFileFromSOPInstanceUID(String sopInstanceUID, List<String> providers) throws IOException {
+        // TODO use only DIM sources?
+        JointQueryTask qt = new JointQueryTask() {
+            @Override
+            public void onCompletion() {
+            }
+            @Override
+            public void onReceive(Task<Iterable<SearchResult>> e) {
+            }
+        };
+        try {
+            if (providers == null) {
+                providers = PluginController.getInstance().getQueryProvidersName(true);
+            }
+            Iterator<SearchResult> it = PluginController.getInstance()
+                    .query(qt, providers, "SOPInstanceUID:" + sopInstanceUID).get().iterator();
+            if (!it.hasNext()) {
+                throw new IOException("No such image of SOPInstanceUID " + sopInstanceUID);
+            }
+            SearchResult res = it.next();
+            StorageInterface storage = PluginController.getInstance().getStorageForSchema(res.getURI());
+            if (storage == null) {
+                throw new IOException("Unsupported file scheme");
+            }
+            Iterator<StorageInputStream> store = storage.at(res.getURI()).iterator();
+            if (!store.hasNext()) {
+                throw new IOException("No storage item found");
+            }
+            return store.next();
+        } catch (InterruptedException | ExecutionException ex) {
+            throw new IOException(ex);
+        }
+        
+    }
+    	
 }

@@ -76,6 +76,7 @@ import pt.ua.dicoogle.server.web.servlets.search.DumpServlet;
 import pt.ua.dicoogle.server.web.servlets.webui.WebUIServlet;
 import pt.ua.dicoogle.server.web.utils.LocalImageCache;
 import pt.ua.dicoogle.server.PluginRestletApplication;
+import pt.ua.dicoogle.server.web.utils.SimpleImageRetriever;
 
 /**
  * @author António Novo <antonio.novo@ua.pt>
@@ -124,8 +125,7 @@ public class DicoogleWeb {
         final String warUrlString = warUrl.toExternalForm();
 
         //setup the DICOM to PNG image servlet, with a local cache
-        // FIXME
-        cache = new LocalImageCache("dic2png", 300, 900, null); // pooling rate of 12/hr and max un-used cache age of 15 minutes
+        cache = new LocalImageCache("dic2png", 300, 900, new SimpleImageRetriever()); // pooling rate of 12/hr and max un-used cache age of 15 minutes
         final ServletContextHandler dic2png = createServletHandler(new ImageServlet(cache), "/dic2png");
         cache.start(); // start the caching system
 
