@@ -2,7 +2,7 @@
 
 /*
  * @author Frederico Silva<fredericosilva@ua.pt>
- * @author Edaurdo Pinho <eduardopinho@ua.pt>
+ * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 
 import React from 'react';
@@ -55,9 +55,8 @@ var Sidebar = React.createClass({
               </div>
               <div className="col-sm-2">
                 <div className="user-name vertical_center">
-                  <span onClick={this.props.onLogout} className="glyphicon glyphicon-log-out"></span>
+                  <span onClick={this.props.onLogout} className="glyphicon glyphicon-log-out" style={{cursor: 'pointer'}} />
                 </div>
-
               </div>
             </div>
           </div>

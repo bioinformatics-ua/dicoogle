@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.restlet.Restlet;
 import org.restlet.ext.servlet.ServletAdapter;
-import org.slf4j.LoggerFactory;
 
 /** A servlet holding a Restlet.
  *
@@ -42,7 +41,6 @@ public class RestletHttpServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        LoggerFactory.getLogger(RestletHttpServlet.class).info("Initializing restlet servlet");
         super.init();
         this.adapter = new ServletAdapter(getServletContext());
         this.restlet.setContext(this.adapter.getContext());
