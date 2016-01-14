@@ -127,6 +127,7 @@ public class TransfersStorage {
     {
         TS[0] = true;
         TS[1] = true;
+        TS[4] = true;
         TS[5] = true;
         TS[8] = true;
         accepted = true;
