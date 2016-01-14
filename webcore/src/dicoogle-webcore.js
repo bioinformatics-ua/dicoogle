@@ -1,5 +1,6 @@
 import {EventEmitter} from 'events';
 import request from './request';
+
 import client from 'dicoogle-client';
 import {merge} from './util';
 
@@ -46,7 +47,6 @@ const DicoogleWebcore = (function () {
       throw "no DOM environment!";
     }
     console.log('Initializing Dicoogle web core ...');
-    base_url = '';
     if (typeof baseURL === 'string') {
       base_url = baseURL;
       if (base_url[base_url.length-1] === '/') {
@@ -338,7 +338,7 @@ const DicoogleWebcore = (function () {
     this.attachPlugin = function(plugin) {
       if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
       if (plugin.SlotId !== this.id) {
-        console.error('Attempt to attach plugin ', plugin.Name, ' to the wrong slot');
+        console.error(`Attempt to attach plugin ${plugin.Name} to the wrong slot`);
         return;
       }
       if ((typeof this.pluginName === 'string') && this.pluginName !== plugin.Name) {
@@ -457,13 +457,9 @@ const DicoogleWebcore = (function () {
    */
   function service_get(uri, qs, callback) {
     // issue request
-    let full_uri;
-    if (isArray(uri)) {
-      full_uri = [base_url].concat(uri);
-    } else {
-      full_uri = [base_url, uri];
-    }
-    request('GET', full_uri, qs, callback);
+    //const full_uri = [base_url].concat(uri);
+    //request('GET', full_uri, qs, callback);
+    Dicoogle.request('GET', uri, qs, callback);
   }
   
   function getScript(moduleName, callback) {
@@ -480,7 +476,6 @@ const DicoogleWebcore = (function () {
             }
         }
     };
-
     script.onload = script.onreadystatechange = onLoadHandler;
     script.src = base_url+'/webui?module='+moduleName+'&process=true';
     prior.parentNode.insertBefore(script, prior);
@@ -517,6 +512,7 @@ const DicoogleWebcore = (function () {
             console.error('Dicoogle slot contains illegal data-slot-id!');
             return;
           }
+
           // add content if the webcore plugin is already available
           if (base_url !== null) {
             m.updateSlot(this, pluginInstance => {
@@ -547,7 +543,7 @@ const DicoogleWebcore = (function () {
   })();
 
   m.HTMLDicoogleSlotElement = HTMLDicoogleSlotElement;
-    
+  
   return m;
 })();
 

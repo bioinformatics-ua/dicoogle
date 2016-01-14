@@ -2,6 +2,7 @@ import React from 'react';
 import Sidebar from './components/sidebar';
 import {Endpoints} from './constants/endpoints';
 
+import DicoogleClient from 'dicoogle-client';
 import Webcore from 'dicoogle-webcore';
 
 import {default as Router, Route, IndexRoute, Routes} from 'react-router';
@@ -25,14 +26,16 @@ require('jquery-ui');
 
 class App extends React.Component {
 	
-	constructor () {
-		super();
+	constructor (props,) {
+		super(props);
 		this.state = {
 			pluginMenuItems: []
 		};
+		this.logout = this.logout.bind(this);
 	}
 
 	componentWillMount () {
+	  DicoogleClient(Endpoints.base);
 		Webcore.init(Endpoints.base);
 		Webcore.addPluginLoadListener(function(plugin) {
 		  console.log("Plugin loaded to Dicoogle:", plugin);
@@ -45,6 +48,7 @@ class App extends React.Component {
     // pre-fetch modules of other plugin types
 		Webcore.fetchPlugins(['search', 'result-options', 'query', 'result'], Webcore.fetchModules);
   }
+
 
   /**
    * @param {packageJSON|packageJSON[]} plugins
@@ -62,12 +66,13 @@ class App extends React.Component {
 	}
 
 	logout() {
-		var self = this;
-		$.get(Endpoints.base + "/logout",
-		function(data, status){
+		$.get(Endpoints.base + "/logout", (data, status) => {
 			//Response
 			console.log("Data: " + data + "\nStatus: " + status);
-			self.transitionTo('login');
+			
+			//self.transitionTo('login');
+			// Works with recent version of react + react-router
+			this.props.history.pushState(null, 'login');
 		});
 	}
 

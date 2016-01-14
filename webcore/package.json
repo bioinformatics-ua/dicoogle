@@ -11,8 +11,10 @@
   ],
   "description": "Dicoogle Web Core for UI plugins",
   "files": [
-    "lib"
+    "src/*.js",
+    "lib/*.js"
   ],
+  "esnext:main": "src/dicoogle-webcore.js",
   "main": "lib/dicoogle-webcore.js",
   "keywords": [
     "dicoogle"

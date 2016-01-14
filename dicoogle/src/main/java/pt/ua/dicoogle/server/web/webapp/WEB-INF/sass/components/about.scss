@@ -1,7 +1,10 @@
 .about{
-  width: 800px;
+  max-width: $app_content_max_width;
+  
+  padding: 30px;
+  justify-content: center;
+  
 }
-
 
 .gridAbout{
   margin-top:10px;
