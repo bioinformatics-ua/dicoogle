@@ -33,6 +33,9 @@
     "lib/",
     "index.html"
   ],
+  "engines": {
+    "npm": ">=2.0.0"
+  },
   "dependencies": {
     "bootstrap": "^3.3.2",
     "react-font-awesome": "https://github.com/tkurki/react-font-awesome/tarball/master"
