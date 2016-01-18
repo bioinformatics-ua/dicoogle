@@ -5,6 +5,7 @@ import {SearchStore} from '../../../stores/searchStore';
 import {unindex} from '../../../handlers/requestHandler';
 import ConfirmModal from './confirmModal';
 import PluginView from '../../plugin/pluginView.jsx';
+import {Input, ButtonInput} from 'react-bootstrap';
 
 /**
    * 2015-09-11.
@@ -75,6 +76,17 @@ var PatientView = React.createClass({
       );
       return (<div></div>);
   },
+  
+  
+  formatSelect : function (cell, item){
+      let self = this;
+      if (this.props.enableAdvancedSearch)
+          return (<div><Input className="" 
+                         type="checkbox" label=" " ref="chk_{item.name}"/></div>
+                    );
+      return (<div></div>);
+  },
+  
   onRowSelect: function(row, isSelected){
     this.props.onItemClick(row);
   },
@@ -88,6 +100,7 @@ var PatientView = React.createClass({
 
 		var resultArray = this.props.items.results;
     let sizeOptions = "20%"
+    let sizeSelect = "5%"
 
     var selectRowProp = {
       clickToSelect: true,
@@ -104,6 +117,7 @@ var PatientView = React.createClass({
           <TableHeaderColumn dataAlign="center" dataField="gender" dataFormat={this.formatGender} width="12%"  dataSort={true}>Gender</TableHeaderColumn>
           <TableHeaderColumn dataAlign="center" dataField="nStudies" width="13%" dataFormat={this.formatNumberOfStudies} dataSort={true}>#Studies</TableHeaderColumn>
           <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="" width={sizeOptions} isKey={false} dataSort={false} dataFormat={this.formatOptions}>Options</TableHeaderColumn>
+          <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="" width={sizeSelect} isKey={false} dataSort={false} dataFormat={this.formatSelect}></TableHeaderColumn>
           </BootstrapTable>
 
         <ConfirmModal show={this.state.unindexSelected !== null}
