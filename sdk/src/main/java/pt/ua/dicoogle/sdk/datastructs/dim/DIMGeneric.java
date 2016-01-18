@@ -98,8 +98,7 @@ public class DIMGeneric {
      * @param arr
      * @param uri
      */
-    public DIMGeneric(Map<String, Object> arr) throws Exception {
-        URI uri = new URI((String)arr.get("uri"));
+    public DIMGeneric(Map<String, Object> arr,URI uri) throws Exception {
         fillWithMap(arr, uri);
     }
 
