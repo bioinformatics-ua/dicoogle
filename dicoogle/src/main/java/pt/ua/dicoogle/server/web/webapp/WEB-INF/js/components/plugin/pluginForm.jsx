@@ -28,7 +28,7 @@ export default class PluginFormModal extends React.Component {
   
   handleMounted(component) {
     if (component) {
-      const node = component.getDOMNode();
+      const node = component;
       node.addEventListener('hide', this.handleHideSignal);
     }
   }
