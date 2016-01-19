@@ -42,15 +42,6 @@
 	color: black;
     font-style: bold;
 }
-.table {
-  table-layout:fixed;
-}
-
-.table td {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 .pagination {
     li.active {
@@ -72,5 +63,11 @@
                 background: $hover_color;
             }
         }
+    }
+}
+
+.advancedOptions {
+    .select {
+        padding: 2px !important;
     }
 }

@@ -21,10 +21,16 @@ import {Input, ButtonInput} from 'react-bootstrap';
    * WAT
    */
 var PatientView = React.createClass({
+    
   getInitialState() {
+      
+    // We need this because refs are not updated in BootstrapTable.   
+    this.refsClone = {};
+    
     return {
       unindexSelected: null,
-      removeSelected: null
+      removeSelected: null,
+      resultsSelected: []
     }
   },
 
@@ -61,7 +67,7 @@ var PatientView = React.createClass({
 
   formatOptions : function(cell, item){
       let self = this;
-      if (this.props.enableAdvancedSearch)
+      
           return (<div>
             <button title="Unindex (does not remove file physically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser" />
             <button title="Removes the file physically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o" />
@@ -74,18 +80,38 @@ var PatientView = React.createClass({
         </div>
 
       );
-      return (<div></div>);
+      
   },
-  
-  
+  handleSelect(item){
+      let id = item.id ; 
+      id = id.replace(".", "");
+      
+      
+      let value = this.refsClone[id].getValue();
+      this.state.resultsSelected.push(value);
+      this.setState(this.state);
+      console.log("Handle Select " + id); 
+    },
+  handleRefs: function (id, input){
+      this.refsClone[id] = input;
+  },
   formatSelect : function (cell, item){
       let self = this;
-      if (this.props.enableAdvancedSearch)
-          return (<div><Input className="" 
-                         type="checkbox" label=" " ref="chk_{item.name}"/></div>
-                    );
-      return (<div></div>);
+      let id = item.id ; 
+      id = id.replace(".", "");
+      
+            
+    return (<div><Input className="" 
+                    type="checkbox" label=" " 
+                    onChange={self.handleSelect.bind(self, item)}
+                    ref={self.handleRefs.bind(this, id)}/></div>
+            );
+
+      
+      
   },
+  
+  
   
   onRowSelect: function(row, isSelected){
     this.props.onItemClick(row);
@@ -94,41 +120,57 @@ var PatientView = React.createClass({
     this.props.onItemClick(item);
   },
 
-	render: function() {
+  sizePerPageListChange(sizePerPage){
+    //alert('sizePerPage: ' + sizePerPage);
+  },
 
+  onPageChange(page, sizePerPage) {
+    //alert('page: ' + page + ', sizePerPage: ' + sizePerPage);
+  },
+	render: function() {
+    this.options = {
+      onPageChange: this.onPageChange.bind(this),
+      onSizePerPageList: this.sizePerPageListChange.bind(this),
+         sortName: 'id',
+      sortOrder: 'desc'
+
+    };
 		let self = this;
 
-		var resultArray = this.props.items.results;
-    let sizeOptions = "20%"
-    let sizeSelect = "5%"
+        var resultArray = this.props.items.results;
+        let sizeOptions = "20"
+        let sizeSelect = "10"
+        let sizeName = "20"
+        
+        var selectRowProp = {
+        clickToSelect: true,
+        mode: "none",
+        bgColor: "rgb(163, 210, 216)",
+        onSelect: this.onRowSelect
+        };
+        
+    
+        return (
+                <div>
 
-    var selectRowProp = {
-      clickToSelect: true,
-      mode: "none",
-      bgColor: "rgb(163, 210, 216)",
-      onSelect: this.onRowSelect
-    };
-    return (
-			<div>
+            <BootstrapTable options={this.options} data={resultArray}  selectRow={selectRowProp} pagination={true} striped={true} hover={true}  width="100">
+            <TableHeaderColumn dataAlign="right" dataField="id" width="25" isKey={true} dataFormat={this.formatID} dataSort={true}>ID</TableHeaderColumn>
+            <TableHeaderColumn dataAlign="left" dataField="name" dataFormat={this.formatName} width={sizeName}  isKey={false} dataSort={true}>Name</TableHeaderColumn>
+            <TableHeaderColumn dataAlign="center" dataField="gender" dataFormat={this.formatGender} width="12"  dataSort={true}>Gender</TableHeaderColumn>
+            <TableHeaderColumn dataAlign="center" dataField="nStudies" width="13" dataFormat={this.formatNumberOfStudies} dataSort={true}>#Studies</TableHeaderColumn>
+            <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="" width={sizeOptions} dataSort={false} dataFormat={this.formatOptions}>Options</TableHeaderColumn>
+            <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="" width={sizeSelect} dataSort={false} dataFormat={this.formatSelect}>#S</TableHeaderColumn>
+            </BootstrapTable>
 
-        <BootstrapTable  data={resultArray}  selectRow={selectRowProp} pagination={true} striped={true} hover={true}  width="100%">
-          <TableHeaderColumn dataAlign="right" dataField="id" width="25%" isKey={true} dataFormat={this.formatID} dataSort={true}>ID</TableHeaderColumn>
-          <TableHeaderColumn dataAlign="left" dataField="name" dataFormat={this.formatName} width="50%"  isKey={false} dataSort={true}>Name</TableHeaderColumn>
-          <TableHeaderColumn dataAlign="center" dataField="gender" dataFormat={this.formatGender} width="12%"  dataSort={true}>Gender</TableHeaderColumn>
-          <TableHeaderColumn dataAlign="center" dataField="nStudies" width="13%" dataFormat={this.formatNumberOfStudies} dataSort={true}>#Studies</TableHeaderColumn>
-          <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="" width={sizeOptions} isKey={false} dataSort={false} dataFormat={this.formatOptions}>Options</TableHeaderColumn>
-          <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="" width={sizeSelect} isKey={false} dataSort={false} dataFormat={this.formatSelect}></TableHeaderColumn>
-          </BootstrapTable>
-
-        <ConfirmModal show={this.state.unindexSelected !== null}
-                      onHide={this.hideUnindex}
-                      onConfirm={this.onUnindexConfirm.bind(this, this.state.unindexSelected)}/>
-        <ConfirmModal show={this.state.removeSelected !== null}
-                      message="The following files will be unindexed and then deleted from their storage."
-                      onHide={this.hideRemove}
-                      onConfirm={this.onRemoveConfirm.bind(this, this.state.removeSelected)}/>
-      </div>
-		);
+            <ConfirmModal show={this.state.unindexSelected !== null}
+                        onHide={this.hideUnindex}
+                        onConfirm={this.onUnindexConfirm.bind(this, this.state.unindexSelected)}/>
+            <ConfirmModal show={this.state.removeSelected !== null}
+                        message="The following files will be unindexed and then deleted from their storage."
+                        onHide={this.hideRemove}
+                        onConfirm={this.onRemoveConfirm.bind(this, this.state.removeSelected)}/>
+            </div>
+            );
 	},
   extractURISFromData: function(item){
     var uris = [];

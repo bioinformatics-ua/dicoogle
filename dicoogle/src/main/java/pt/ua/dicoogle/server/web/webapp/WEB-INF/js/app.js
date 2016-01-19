@@ -19,6 +19,9 @@ import PluginView from './components/plugin/pluginView.jsx';
 import AboutView from './components/about/aboutView';
 import LoadingView from './components/login/loadingView';
 import LoginView from './components/login/loginView';
+import ReactDOM from 'react-dom';
+import { hashHistory } from 'react-router'
+
 
 import $ from 'jquery';
 require('bootstrap');
@@ -108,8 +111,8 @@ $("#menu-toggle").click(function (e) {
 	$("#wrapper").toggleClass("toggled");
 });
 
-React.render((
-  <Router>
+ReactDOM.render((
+  <Router  history={hashHistory}>
     <Route path="/" component={App}>
 	  <IndexRoute component={LoadingView} />
 	  <Route path="search" component={Search} />

@@ -9,5 +9,6 @@ var ResultSelectActions = exports;
 ResultSelectActions.select = Reflux.createAction();
 ResultSelectActions.clear = Reflux.createAction();
 ResultSelectActions.get = Reflux.createAction();
+ResultSelectActions.level = Reflux.createAction();
 
 export { ResultSelectActions };
