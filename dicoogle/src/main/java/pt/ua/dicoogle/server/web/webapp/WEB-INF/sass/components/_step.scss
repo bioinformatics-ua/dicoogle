@@ -14,9 +14,9 @@
 	border-style: solid;
     border-width: 4px;
 
-		-webkit-box-shadow: 5px 5px 5px 0px rgba(50, 50, 50, 0.75);
-		-moz-box-shadow:    5px 5px 5px 0px rgba(50, 50, 50, 0.75);
-		box-shadow:         5px 5px 5px 0px rgba(50, 50, 50, 0.75);
+    -webkit-box-shadow: 5px 5px 5px 0px rgba(50, 50, 50, 0.75);
+    -moz-box-shadow:    5px 5px 5px 0px rgba(50, 50, 50, 0.75);
+    box-shadow:         5px 5px 5px 0px rgba(50, 50, 50, 0.75);
 
 }
 .step.disabled{
@@ -25,7 +25,7 @@
     display: none;
 }
 .stepa{
-	padding: 10px;
+	padding: 5px;
 }
 
 .resultRow{
@@ -35,13 +35,20 @@
 }
 .table tbody tr:hover td, .table tbody tr:hover th {
     background-color: $blue6;
+    height:5px; 
+    max-height:5px; 
+    overflow:hidden;
 }
+
+
 
 .table thead th {
     background-color: #EEEEEE;
 	color: black;
     font-style: bold;
+    
 }
+
 
 .pagination {
     li.active {
@@ -65,9 +72,42 @@
         }
     }
 }
-
+/** Advanced Options SASS */
 .advancedOptions {
+    // For select, default padding margins
     .select {
         padding: 2px !important;
+        margin-top: 0px;
+        margin-bottom: 0px;
     }
+    // Define radio values (bootstrap default are not good for this one)
+    .radio {
+        margin-left: 0px;
+    }
+    // Define radio values (bootstrap default are not good for this one)
+    // + checkbox type
+    .form-group{
+        border: none;
+        margin-bottom: 0px;
+        
+        text-align: center; 
+        padding: 0;
+        white-space: nowrap;
+        
+        min-height: 10px; 
+        vertical-align: top;
+        
+       .radio input[type="radio"], 
+       .radio-inline input[type="radio"], 
+       .checkbox input[type="checkbox"], 
+       .checkbox-inline input[type="checkbox"] 
+        {
+            margin-left: -5px;
+            margin-top: 0px;
+            margin-bottom: 0px; 
+        }        
+        
+    }
+    
+
 }

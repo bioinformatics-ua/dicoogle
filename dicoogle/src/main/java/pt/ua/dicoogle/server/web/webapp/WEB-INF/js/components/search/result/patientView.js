@@ -99,16 +99,15 @@ var PatientView = React.createClass({
       let self = this;
       let id = item.id ; 
       id = id.replace(".", "");
-      
-            
-    return (<div><Input className="" 
-                    type="checkbox" label=" " 
+    let classNameForIt = "advancedOptions " + id;
+    return (<div key={id} className={classNameForIt}><Input 
+                    type="checkbox"  
+                    label=""  
+                    key={id}
                     onChange={self.handleSelect.bind(self, item)}
                     ref={self.handleRefs.bind(this, id)}/></div>
             );
 
-      
-      
   },
   
   
@@ -125,23 +124,43 @@ var PatientView = React.createClass({
   },
 
   onPageChange(page, sizePerPage) {
-    //alert('page: ' + page + ', sizePerPage: ' + sizePerPage);
+      this.forceUpdate();
+      let self = this;
+      setTimeout(function(){
+          self.forceUpdate();
+      }, 300);
+      //alert('page: ' + page + ', sizePerPage: ' + sizePerPage);
   },
 	render: function() {
     this.options = {
-      onPageChange: this.onPageChange.bind(this),
-      onSizePerPageList: this.sizePerPageListChange.bind(this),
-         sortName: 'id',
-      sortOrder: 'desc'
+      sortName: 'id',
+      sortOrder: 'desc',
+      onPageChange: this.onPageChange
+      
 
     };
 		let self = this;
 
         var resultArray = this.props.items.results;
-        let sizeOptions = "20"
-        let sizeSelect = "10"
-        let sizeName = "20"
+        let sizeID = "0"
+        let sizeName = "0"
+        let sizeGender = "0"
+        let sizeStudies = "0"
         
+        let sizeOptions = "0"
+        let sizeSelect = "0"
+        
+        
+        
+        if (this.props.enableAdvancedSearch)
+        {
+            sizeID = "0"
+            sizeName = "0"
+            sizeGender = "0"
+            sizeStudies = "0"
+            sizeOptions = "40%"
+            sizeSelect = "40%"
+        }
         var selectRowProp = {
         clickToSelect: true,
         mode: "none",
@@ -153,13 +172,13 @@ var PatientView = React.createClass({
         return (
                 <div>
 
-            <BootstrapTable options={this.options} data={resultArray}  selectRow={selectRowProp} pagination={true} striped={true} hover={true}  width="100">
-            <TableHeaderColumn dataAlign="right" dataField="id" width="25" isKey={true} dataFormat={this.formatID} dataSort={true}>ID</TableHeaderColumn>
-            <TableHeaderColumn dataAlign="left" dataField="name" dataFormat={this.formatName} width={sizeName}  isKey={false} dataSort={true}>Name</TableHeaderColumn>
-            <TableHeaderColumn dataAlign="center" dataField="gender" dataFormat={this.formatGender} width="12"  dataSort={true}>Gender</TableHeaderColumn>
-            <TableHeaderColumn dataAlign="center" dataField="nStudies" width="13" dataFormat={this.formatNumberOfStudies} dataSort={true}>#Studies</TableHeaderColumn>
-            <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="" width={sizeOptions} dataSort={false} dataFormat={this.formatOptions}>Options</TableHeaderColumn>
-            <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="" width={sizeSelect} dataSort={false} dataFormat={this.formatSelect}>#S</TableHeaderColumn>
+            <BootstrapTable options={this.options} data={resultArray}  selectRow={selectRowProp} pagination={true} striped={true} hover={true}  width="100" >
+            <TableHeaderColumn dataAlign="right" dataField="id" isKey={true} dataFormat={this.formatID} dataSort={true}>ID</TableHeaderColumn>
+            <TableHeaderColumn dataAlign="left" dataField="name" dataFormat={this.formatName} isKey={false} dataSort={true}>Name</TableHeaderColumn>
+            <TableHeaderColumn dataAlign="center" dataField="gender" dataFormat={this.formatGender} dataSort={true}>Gender</TableHeaderColumn>
+            <TableHeaderColumn dataAlign="center" dataField="nStudies"  dataFormat={this.formatNumberOfStudies} dataSort={true}>#Studies</TableHeaderColumn>
+            <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="Opts"  dataSort={false} dataFormat={this.formatOptions}>Options</TableHeaderColumn>
+            <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="Select"  dataSort={true} dataFormat={this.formatSelect}>#S</TableHeaderColumn>
             </BootstrapTable>
 
             <ConfirmModal show={this.state.unindexSelected !== null}
