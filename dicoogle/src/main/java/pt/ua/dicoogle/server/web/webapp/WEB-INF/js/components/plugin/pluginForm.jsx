@@ -2,6 +2,13 @@ import React, {PropTypes} from 'react';
 import {Modal} from 'react-bootstrap';
 import PluginView from './pluginView.jsx';
 
+import {ResultsSelected} from '../../stores/resultSelected';
+
+
+import dicoogleClient from 'dicoogle-client';
+const Dicoogle = dicoogleClient();
+
+
 export default class PluginFormModal extends React.Component {
   
   static get propTypes() {
@@ -25,11 +32,12 @@ export default class PluginFormModal extends React.Component {
   onConfirm() {
     this.props.onHide();
   }
-  
+
   handleMounted(component) {
     if (component) {
       const node = component;
       node.addEventListener('hide', this.handleHideSignal);
+      Dicoogle.emitSlotSignal(node, 'result-selection-ready', ResultsSelected.get());
     }
   }
   

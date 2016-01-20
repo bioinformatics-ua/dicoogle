@@ -43,7 +43,7 @@ var ResultSearch = React.createClass({
   },
 
 	initSearch: function(props){
-    console.log("PARAM: ", props);
+
     ActionCreators.search(props);
 	},
   
@@ -122,9 +122,7 @@ var ResultSearch = React.createClass({
 	},
 
   _onChange : function(data){
-    console.log("onchange");
-    console.log(data.success);
-    console.log(data.status);
+    
     if (this.isMounted())
     {
       this.setState({data:data.data,
@@ -165,7 +163,7 @@ var ResultSearch = React.createClass({
   },
 
   onStepClicked:function(stepComponent){
-    console.log(stepComponent);
+    
     this.setState({current: stepComponent});
   },
 

@@ -6,6 +6,8 @@ import {unindex} from '../../../handlers/requestHandler';
 import ConfirmModal from './confirmModal';
 import PluginView from '../../plugin/pluginView.jsx';
 import {Input, ButtonInput} from 'react-bootstrap';
+import {ResultSelectActions} from '../../../actions/resultSelectAction';
+
 
 /**
    * 2015-09-11.
@@ -83,34 +85,34 @@ var PatientView = React.createClass({
       
   },
   handleSelect(item){
-      let id = item.id ; 
-      id = id.replace(".", "");
-      
+
+      let id = item.id ;
+      ResultSelectActions.select(item); 
       
       let value = this.refsClone[id].getValue();
+      
       this.state.resultsSelected.push(value);
-      this.setState(this.state);
-      console.log("Handle Select " + id); 
+      this.setState(this.state); 
+      
     },
   handleRefs: function (id, input){
       this.refsClone[id] = input;
   },
   formatSelect : function (cell, item){
-      let self = this;
-      let id = item.id ; 
-      id = id.replace(".", "");
+    
+    let self = this;
+    let id = item.id ; 
+
+    
     let classNameForIt = "advancedOptions " + id;
-    return (<div key={id} className={classNameForIt}><Input 
+    return (<div className={classNameForIt}><Input 
                     type="checkbox"  
                     label=""  
-                    key={id}
                     onChange={self.handleSelect.bind(self, item)}
                     ref={self.handleRefs.bind(this, id)}/></div>
             );
 
   },
-  
-  
   
   onRowSelect: function(row, isSelected){
     this.props.onItemClick(row);
@@ -120,16 +122,11 @@ var PatientView = React.createClass({
   },
 
   sizePerPageListChange(sizePerPage){
-    //alert('sizePerPage: ' + sizePerPage);
+    
   },
 
   onPageChange(page, sizePerPage) {
-      this.forceUpdate();
-      let self = this;
-      setTimeout(function(){
-          self.forceUpdate();
-      }, 300);
-      //alert('page: ' + page + ', sizePerPage: ' + sizePerPage);
+      
   },
 	render: function() {
     this.options = {
@@ -151,7 +148,7 @@ var PatientView = React.createClass({
         let sizeSelect = "0"
         
         
-        
+        // Redefine the strategies of size
         if (this.props.enableAdvancedSearch)
         {
             sizeID = "0"
@@ -168,7 +165,9 @@ var PatientView = React.createClass({
         onSelect: this.onRowSelect
         };
         
-    
+        
+        // Set level 
+        ResultSelectActions.level("patient");
         return (
                 <div>
 
@@ -217,8 +216,7 @@ var PatientView = React.createClass({
         });
       },
       showUnindex (index) {
-          console.log("Change the state");
-            console.log(index);
+          
             this.setState({
                 unindexSelected: index
             });

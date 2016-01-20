@@ -31,11 +31,9 @@ class PluginView extends React.Component {
 
   handleMounted(component) {
     if (component) {
-        console.log("component");
-        console.log(component);
       const node = component;
       node.addEventListener('plugin-load', e => {
-        console.log('[plugin-load]', e);
+        //console.log('[plugin-load]', e);
         if (e && e.detail) {
           this.handleLoaded(e.detail);
         }
