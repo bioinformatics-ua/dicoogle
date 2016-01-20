@@ -32,7 +32,7 @@ const AboutView = React.createClass({
 
           <Row className="show-grid">
           <Col className="gridAbout" xs={2} md={2}><b>dcm4che2</b><br/>License: GPL</Col>
-          <Col className="gridAbout" xs={2} md={2}><b>react.js+flux</b><br/>License: GPL</Col>
+          <Col className="gridAbout" xs={2} md={2}><b>react.js+reflux</b><br/>License: BSD</Col>
           <Col className="gridAbout" xs={2} md={2}><b>Jetty</b><br/>License: GPL</Col>
           </Row>
 

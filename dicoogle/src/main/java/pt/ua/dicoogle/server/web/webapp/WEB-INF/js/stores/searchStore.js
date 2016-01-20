@@ -11,7 +11,6 @@ import {remove} from '../handlers/requestHandler';
 var SearchStore = Reflux.createStore({
     listenables: ActionCreators,
     init: function () {
-        console.log("sadasd");
         this._contents = {advancedOptions: false};
         //this.listenTo(ActionCreators, "request");
 

@@ -4,6 +4,7 @@ import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 
 import {ActionCreators} from '../../../actions/searchActions';
 import ConfirmModal from './confirmModal';
+import PluginView from '../../plugin/pluginView.jsx';
 
 var StudyView = React.createClass({
     getInitialState: function() {
@@ -49,10 +50,15 @@ var StudyView = React.createClass({
   formatOptions: function(cell, item){
       let self = this;
       if (this.props.enableAdvancedSearch)
-          return (<div><button title="Unindex (does not remove file physically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> </button>
-        <button title="Removes the file physically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> </button></div>
-
-      );
+          return (<div>
+            <button title="Unindex (does not remove file physically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> </button>
+            <button title="Removes the file physically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> </button>
+            {/* plugin-based result options */}
+            <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
+              'data-result-type': 'study',
+              'data-result-uid': item.studyInstanceUID
+            }} />
+        </div>);
       return (<div></div>);
   },
 

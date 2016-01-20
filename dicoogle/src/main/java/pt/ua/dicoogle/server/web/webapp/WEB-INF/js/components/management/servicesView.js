@@ -3,6 +3,8 @@ var React = require('react');
 import ServiceAction from '../../actions/servicesAction';
 import ServicesStore from '../../stores/servicesStore';
 import QueryAdvancedOptionsModal from './queryadvoptions';
+import Webcore from 'dicoogle-webcore';
+import PluginView from '../plugin/pluginView.jsx';
 
 var ServicesView = React.createClass({
 
@@ -17,12 +19,20 @@ var ServicesView = React.createClass({
           status: "loading",
           storageLoading: true,
           queryLoading: true,
-          showingAdvanced: false
+          showingAdvanced: false,
+          plugins: []
         };
     },
 
     componentWillMount () {
       ServicesStore.listen(this._onChange);
+      Webcore.fetchPlugins('settings', (packages) => {
+        Webcore.fetchModules(packages);
+        this.setState({plugins: packages.map(pkg => ({
+          name: pkg.name,
+          caption: pkg.dicoogle.caption || pkg.name
+        }))});
+      });
     },
 
     componentDidMount () {
@@ -52,14 +62,28 @@ var ServicesView = React.createClass({
         console.log("Service data update: ", data);
       }
     },
+
     render () {
-      var self = this;
-      //return(<div>Services</div>);
+      const self = this;
       if(this.state.status === "loading"){
         return (<div className="loader-inner ball-pulse">
           <div/><div/><div/>
           </div>);
       }
+      const pluginElements = this.state.plugins.map(p =>(
+        <li className="list-group-item list-group-item-management">
+          <div>
+            <div className="row">
+              <div className="col-xs-4">
+                <p>{p.caption}</p>
+              </div>
+              <div className="col-xs-8">
+                <PluginView plugin={p.name} slotId="settings" />
+              </div>
+            </div>
+          </div>
+        </li>
+      ));
       return (
       <div className="panel panel-primary topMargin">
         <div className="panel-heading">
@@ -142,6 +166,7 @@ var ServicesView = React.createClass({
                 </div>
               </div>
             </li>
+            {pluginElements}
           </ul>
           <QueryAdvancedOptionsModal show={this.state.showingAdvanced} onHide={this.onHideAdvanced} />
         </div>

@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import Sidebar from './components/sidebar';
 import {Endpoints} from './constants/endpoints';
 import DicoogleClient from 'dicoogle-client';
@@ -18,6 +19,7 @@ import PluginView from './components/plugin/pluginView.jsx';
 import AboutView from './components/about/aboutView';
 import LoadingView from './components/login/loadingView';
 import LoginView from './components/login/loginView';
+import { hashHistory } from 'react-router'
 
 import 'document-register-element';
 require('core-js/shim');
@@ -43,26 +45,27 @@ class App extends React.Component {
 		Webcore.addPluginLoadListener(function(plugin) {
       console.log("Plugin loaded to Dicoogle:", plugin);
 		});
-		const self = this;
-		Webcore.fetchPlugins('menu', function(packages) {
-			for (let pkg of packages) {
-				self.onMenuPlugin({
-					name: pkg.name,
-					slotId: 'menu',
-					caption: pkg.dicoogle.caption
-				});
-			}
+		Webcore.fetchPlugins('menu', (packages) => {
+      this.onMenuPlugin(packages);
+      Webcore.fetchModules(packages);
 		});
+
+    // pre-fetch modules of other plugin types
+		Webcore.fetchPlugins(['search', 'result-options', 'query', 'result'], Webcore.fetchModules);
   }
 
-	onMenuPlugin(plugin) {
+  /**
+   * @param {packageJSON|packageJSON[]} plugins
+   */
+	onMenuPlugin(packages) {
 		const {pluginMenuItems} = this.state;
+
 		this.setState({
-			pluginMenuItems: pluginMenuItems.concat([{
-				value: plugin.name,
-				caption: plugin.caption,
+			pluginMenuItems: pluginMenuItems.concat(packages.map(pkg => ({
+				value: pkg.name,
+				caption: pkg.dicoogle.caption || pkg.name,
 				isPlugin: true
-			}])
+			})))
 		});
 	}
 
@@ -108,8 +111,8 @@ $("#menu-toggle").click(function (e) {
 	$("#wrapper").toggleClass("toggled");
 });
 
-React.render((
-  <Router>
+ReactDOM.render((
+  <Router history={hashHistory}>
     <Route path="/" component={App}>
       <IndexRoute component={LoadingView} />
       <Route path="search" component={Search} />
@@ -126,4 +129,3 @@ React.render((
     </Route>
   </Router>
 ), document.getElementById('react-container'));
-

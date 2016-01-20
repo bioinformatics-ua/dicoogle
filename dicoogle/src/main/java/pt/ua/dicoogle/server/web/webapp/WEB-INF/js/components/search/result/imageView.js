@@ -6,7 +6,7 @@ import ConfirmModal from './confirmModal';
 import {Endpoints} from '../../../constants/endpoints';
 import {DumpStore} from '../../../stores/dumpStore';
 import ImageLoader from 'react-imageloader';
-
+import PluginView from '../../plugin/pluginView.jsx';
 import {DumpActions} from '../../../actions/dumpActions';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 
@@ -75,7 +75,14 @@ var ImageView = React.createClass({
       let self = this;
       if (this.props.enableAdvancedSearch)
           return (<div><button title="Unindex (does not remove file physically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> </button>
-        <button title="Removes the file physically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> </button></div>
+        <button title="Removes the file physically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> </button>
+        {/* plugin-based result options*/}
+        <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
+          'data-result-type': 'image',
+          'data-result-uri': item.uri,
+          'data-result-uid': item.sopInstanceUID
+         }} />
+        </div>
 
       );
       return (<div></div>);

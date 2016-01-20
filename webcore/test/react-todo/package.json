@@ -1,6 +1,7 @@
 {
   "name": "react-todo",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "private": true,
   "description": "A TODO list for Dicoogle",
   "scripts": {
     "build": "babel todo.jsx > module.js",

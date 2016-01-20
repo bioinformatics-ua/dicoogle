@@ -8,16 +8,23 @@ import {StudyView} from './result/studyView';
 import {SeriesView} from './result/serieView';
 import {ImageView} from './result/imageView';
 import {ExportView} from './exportView';
+import Webcore from 'dicoogle-webcore';
+import PluginForm from '../plugin/pluginForm.jsx';
 
 var ResultSearch = React.createClass({
 
   getInitialState: function() {
-    return {data: [],
-    status: "loading",
-    showExport: false,
-    showDangerousOptions: false,
-    current: 0};
+    return {
+      data: [],
+      status: "loading",
+      showExport: false,
+      showDangerousOptions: false,
+      current: 0,
+      batchPlugins: [],
+      currentPlugin: null
+    };
   },
+
   componentDidMount: function() {
     this.initSearch(this.props.items);
   },
@@ -25,19 +32,33 @@ var ResultSearch = React.createClass({
   componentWillMount: function() {
     // Subscribe to the store.
     SearchStore.listen(this._onChange);
+    Webcore.fetchPlugins('result-batch', (packages) => {
+      Webcore.fetchModules(packages);
+      this.setState({batchPlugins: packages.map(pkg => ({
+        name: pkg.name,
+        caption: pkg.dicoogle.caption || pkg.name
+      }))});
+    });
   },
 
 	initSearch: function(props){
-    console.log("PARAM: ", props);
     ActionCreators.search(props);
 	},
 
-  onClickExport() {
-    this.setState({showExport: true});
+  handleClickExport() {
+    this.setState({showExport: true, currentPlugin: null});
   },
 
-  onHideExport() {
+  handleClickBatchPluginButton(plugin) {
+    this.setState({currentPlugin: plugin, showExport: false});
+  },
+
+  handleHideExport() {
     this.setState({showExport: false});
+  },
+
+  handleHideBatchForm() {
+    this.setState({currentPlugin: null});
   },
 
   render: function() {
@@ -67,22 +88,30 @@ var ResultSearch = React.createClass({
         );
     }
 
+    const pluginButtons = this.state.batchPlugins.map(plugin =>(
+              <button key={plugin.name} className="btn btn_dicoogle fa dicoogle-webcore-result-batch-button"
+                      onClick={this.handleClickBatchPluginButton.bind(this, plugin)}>
+                {plugin.caption}
+              </button>)
+    );
+
     let toggleModalClassNames = this.state.showDangerousOptions ? "btn btn_dicoogle fa fa-toggle-on" : "btn btn_dicoogle fa fa-toggle-off";
     return (<div>
         <Step current={this.state.current} onClick={this.onStepClicked}/>
         <div id="step-container">
           {this.getCurrentView()}
         </div>
-        <button className="btn btn_dicoogle fa fa-download" onClick={this.onClickExport}>Export</button>
-        <ExportView show={this.state.showExport} onHide={this.onHideExport} query={this.props.items}/>
+        <button className="btn btn_dicoogle fa fa-download" onClick={this.handleClickExport}>Export</button>
         <button className={toggleModalClassNames} onClick={this.toggleAdvOpt}> Advanced Options </button>
+        {pluginButtons}
+        <ExportView show={this.state.showExport} onHide={this.handleHideExport} query={this.props.items}/>
+        <PluginForm show={!!this.state.currentPlugin} slotId="result-batch"
+                    plugin={this.state.currentPlugin} onHide={this.handleHideBatchForm}
+                    data={{results: this.state.data.results}} />
       </div>);
 	},
 
   _onChange: function(data) {
-    console.log("onchange");
-    console.log(data.success);
-    console.log(data.status);
     if (this.isMounted())
     {
       this.setState({data: data.data,
@@ -123,10 +152,8 @@ var ResultSearch = React.createClass({
   },
 
   onStepClicked: function(stepComponent){
-    console.log(stepComponent);
     this.setState({current: stepComponent});
   },
-
   onPatientClicked: function(patient){
     this.setState({current: 1, patient});
   },

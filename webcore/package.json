@@ -1,6 +1,6 @@
 {
   "name": "dicoogle-webcore",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "private": true,
   "author": "Universidade de Aveiro, DETI/IEETA, Bioinformatics Group (http://bioinformatics.ua.pt/)",
   "maintainers": [
@@ -21,8 +21,8 @@
   ],
   "scripts": {
     "check": "eslint src",
-    "build": "eslint src && babel src --out-dir lib",
-    "prepublish": "npm run build"
+    "build": "babel src --out-dir lib",
+    "prepublish": "eslint src && babel src --out-dir lib"
   },
   "license": "GPL-3.0+",
   "devDependencies": {
@@ -31,6 +31,7 @@
     "eslint": "^1.9.0"
   },
   "dependencies": {
-    "dicoogle-client": "^2.4.0"
+    "dicoogle-client": "^2.4.1",
+    "events": "^1.1.0"
   }
 }
