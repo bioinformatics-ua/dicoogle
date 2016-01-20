@@ -1,4 +1,3 @@
-/*jshint esnext: true*/
 
 /*
  * @author Frederico Silva<fredericosilva@ua.pt>
@@ -6,19 +5,10 @@
  */
 
 import React from 'react';
-import Bootstrap from 'bootstrap';
-import {Nav, Button, NavItemLink, ButtonLink, Navbar, NavItem, DropdownButton, MenuItem} from 'react-bootstrap';
-
-import Webcore from 'dicoogle-webcore';
 import {Link} from 'react-router';
-
-import {SearchStore} from '../stores/searchStore';
 import {UserStore} from '../stores/userStore';
-import {ActionCreators} from '../actions/searchActions';
-import {UserMixin} from './mixins/userMixin';
-import {Endpoints} from '../constants/endpoints';
 
-var Sidebar = React.createClass({
+const Sidebar = React.createClass({
 
   propTypes: {
     pluginMenuItems: React.PropTypes.array.isRequired,
@@ -27,20 +17,19 @@ var Sidebar = React.createClass({
 
   render() {
       console.log("APP RENDER");
-      let self = this;
       let menuItems = [
         {value: "search", caption: "Search"},
         {value: "management", caption: "Management"},
         {value: "indexer", caption: "Indexer"},
         {value: "about", caption: "About"}
       ].concat(this.props.pluginMenuItems);
-      
-      let sidebarInstance  = (
+
+      let sidebarInstance = (
         <div>
           <ul className="sidebar-nav">
             {
               menuItems.map(function(e, i) {
-                const to = (e.isPlugin ?'/ext/':'/') + e.value;
+                const to = (e.isPlugin ? '/ext/' : '/') + e.value;
                 return (<li key={i}>
                   <Link activeClassName="active" to={to}>{e.caption}</Link>
                 </li>);

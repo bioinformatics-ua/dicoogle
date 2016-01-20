@@ -5,8 +5,6 @@ var Reflux = require('reflux');
 
 import {VersionActions} from '../actions/versionAction';
 import {getVersion} from '../handlers/requestHandler';
-import {Endpoints} from '../constants/endpoints';
-
 
 var VersionStore = Reflux.createStore({
     listenables: VersionActions,
@@ -14,25 +12,23 @@ var VersionStore = Reflux.createStore({
        this._contents = {};
     },
 
-
-    onGet : function(){
-      var self = this;
-        getVersion(
+    onGet: function(){
+      const self = this;
+      getVersion(
         function(data){
           //SUCCESS
           console.log("success", data);
           self._contents = data;
 
-
           self.trigger({
-            data:self._contents,
+            data: self._contents,
             success: true
           });
         },
         function(xhr){
           //FAILURE
           self.trigger({
-              success:false,
+              success: false,
               status: xhr.status
             });
         }

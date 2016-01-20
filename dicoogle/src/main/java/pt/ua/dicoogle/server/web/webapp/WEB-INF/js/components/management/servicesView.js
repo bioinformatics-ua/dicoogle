@@ -4,9 +4,6 @@ import ServiceAction from '../../actions/servicesAction';
 import ServicesStore from '../../stores/servicesStore';
 import QueryAdvancedOptionsModal from './queryadvoptions';
 
-var ReactBootstrap = require('react-bootstrap');
-var Button = ReactBootstrap.Button;
-
 var ServicesView = React.createClass({
 
     getInitialState () {
@@ -23,47 +20,47 @@ var ServicesView = React.createClass({
           showingAdvanced: false
         };
     },
-      
-      componentWillMount () {
-        ServicesStore.listen(this._onChange);
-      },
-      
-      componentDidMount () {
-        ServiceAction.getStorage();
-        ServiceAction.getQuery();
-      },
-      
-      componentDidUpdate () {
-        this.drawCanvas();
-      },
-      
-      _onChange (data) {
-        console.log(data);
-        if(this.isMounted()) {
-          this.setState({
-          storageRunning: data.storageRunning,
-          storagePort: data.storagePort,
-          storageAutostart: data.storageAutostart,
-          queryRunning: data.queryRunning,
-          queryPort: data.queryPort,
-          queryAutostart: data.queryAutostart,
-          status: "done",
-          storageLoading: false,
-          queryLoading: false
-          });
 
-          console.log("Service data update: ", data);
-        }
-      },
-      render () {
-        var self = this;
-        //return(<div>Services</div>);
-        if(this.state.status === "loading"){
-          return (<div className="loader-inner ball-pulse">
-            <div/><div/><div/>
-           </div>);
-        }
-        return (
+    componentWillMount () {
+      ServicesStore.listen(this._onChange);
+    },
+
+    componentDidMount () {
+      ServiceAction.getStorage();
+      ServiceAction.getQuery();
+    },
+
+    componentDidUpdate () {
+      this.drawCanvas();
+    },
+
+    _onChange (data) {
+      console.log(data);
+      if(this.isMounted()) {
+        this.setState({
+        storageRunning: data.storageRunning,
+        storagePort: data.storagePort,
+        storageAutostart: data.storageAutostart,
+        queryRunning: data.queryRunning,
+        queryPort: data.queryPort,
+        queryAutostart: data.queryAutostart,
+        status: "done",
+        storageLoading: false,
+        queryLoading: false
+        });
+
+        console.log("Service data update: ", data);
+      }
+    },
+    render () {
+      var self = this;
+      //return(<div>Services</div>);
+      if(this.state.status === "loading"){
+        return (<div className="loader-inner ball-pulse">
+          <div/><div/><div/>
+          </div>);
+      }
+      return (
       <div className="panel panel-primary topMargin">
         <div className="panel-heading">
           <h3 className="panel-title">Services</h3>
@@ -98,8 +95,8 @@ var ServicesView = React.createClass({
                   <div id="GlobalTransferStorage" className="data-table">
                     <div className="inline_block">
                       {this.state.storageRunning ?
-                        (  <button type="button" className="btn btn-danger" style={{marginTop: 20}} onClick={this.stopStorage}>Stop</button>) :
-                        (  <button type="button" className="btn btn-success" style={{marginTop: 20}} onClick={this.startStorage}>Start</button>)
+                        ( <button type="button" className="btn btn-danger" style={{marginTop: 20}} onClick={this.stopStorage}>Stop</button>) :
+                        ( <button type="button" className="btn btn-success" style={{marginTop: 20}} onClick={this.startStorage}>Start</button>)
                       }
                     </div>
                   </div>
@@ -134,8 +131,8 @@ var ServicesView = React.createClass({
                   <div id="GlobalTransferStorage" className="data-table">
                     <div className="inline_block">
                       {this.state.queryRunning ?
-                        (  <button type="button" className="btn btn-danger" style={{marginTop: 20}}onClick={this.stopQuery}>Stop</button>) :
-                        (  <button type="button" className="btn btn-success" style={{marginTop: 20}} onClick={this.startQuery}>Start</button>)
+                        ( <button type="button" className="btn btn-danger" style={{marginTop: 20}}onClick={this.stopQuery}>Stop</button>) :
+                        ( <button type="button" className="btn btn-success" style={{marginTop: 20}} onClick={this.startQuery}>Start</button>)
                       }
                     </div>
                     <button type="button" className="btn btn-default" style={{marginTop: 20, float: 'right'}} onClick={this.showAdvanced}>
@@ -149,69 +146,66 @@ var ServicesView = React.createClass({
           <QueryAdvancedOptionsModal show={this.state.showingAdvanced} onHide={this.onHideAdvanced} />
         </div>
       </div>
-        );
-      },
-      showAdvanced() {
-        this.setState({showingAdvanced: true});
-        ServiceAction.getQuerySettings();
-      },
-      onHideAdvanced() {
-        this.setState({showingAdvanced: false});
-      },
-      handleQueryPortChange (event) {
-        this.setState({queryPort: event.target.value});
-      },
-      handleStoragePortChange (event) {
-        this.setState({storagePort: event.target.value});
-      },
-      startStorage () {
-        console.log("start storage");
-        ServiceAction.setStorage(true);
-      },
-      stopStorage () {
-        ServiceAction.setStorage(false);
-      },
-      toggleStorageAutostart () {
-        const newAutostart = !this.state.storageAutostart;
-        this.setState({storageAutostart: newAutostart, storageLoading: true});
-        ServiceAction.setStorageAutostart(newAutostart);
-      },
-      toggleQueryAutostart () {
-        const newAutostart = !this.state.queryAutostart;
-        this.setState({queryAutostart: newAutostart, queryLoading: true});
-        ServiceAction.setQueryAutostart(newAutostart);
-      },
-      startQuery () {
-        ServiceAction.setQuery(true);
-      },
-      stopQuery () {
-        ServiceAction.setQuery(false);
-      },
-      
-      drawCanvas () {
-        var canvas1 = document.getElementById("myCanvas");
-        var canvas2 = document.getElementById("myCanvas2");
-        draw(canvas1,(this.state.storageRunning));
-        draw(canvas2,(this.state.queryRunning));
-        function draw(e, status){
-          var canvas = e;
-          var context = canvas.getContext('2d');
-          var centerX = canvas.width / 2;
-          var centerY = canvas.height / 2;
-          var radius = 13;
+      );
+    },
+    showAdvanced() {
+      this.setState({showingAdvanced: true});
+      ServiceAction.getQuerySettings();
+    },
+    onHideAdvanced() {
+      this.setState({showingAdvanced: false});
+    },
+    handleQueryPortChange (event) {
+      this.setState({queryPort: event.target.value});
+    },
+    handleStoragePortChange (event) {
+      this.setState({storagePort: event.target.value});
+    },
+    startStorage () {
+      console.log("start storage");
+      ServiceAction.setStorage(true);
+    },
+    stopStorage () {
+      ServiceAction.setStorage(false);
+    },
+    toggleStorageAutostart () {
+      const newAutostart = !this.state.storageAutostart;
+      this.setState({storageAutostart: newAutostart, storageLoading: true});
+      ServiceAction.setStorageAutostart(newAutostart);
+    },
+    toggleQueryAutostart () {
+      const newAutostart = !this.state.queryAutostart;
+      this.setState({queryAutostart: newAutostart, queryLoading: true});
+      ServiceAction.setQueryAutostart(newAutostart);
+    },
+    startQuery () {
+      ServiceAction.setQuery(true);
+    },
+    stopQuery () {
+      ServiceAction.setQuery(false);
+    },
 
-          context.beginPath();
-          context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-          if(status)
-            context.fillStyle = 'green';
-          else
-            context.fillStyle = 'red';
-          context.fill();
-          context.lineWidth = 1;
-          context.strokeStyle = '#003300';
-          context.stroke();
-        }
+    drawCanvas () {
+      var canvas1 = document.getElementById("myCanvas");
+      var canvas2 = document.getElementById("myCanvas2");
+      draw(canvas1, this.state.storageRunning);
+      draw(canvas2, this.state.queryRunning);
+      function draw(e, status){
+        var canvas = e;
+        var context = canvas.getContext('2d');
+        var centerX = canvas.width / 2;
+        var centerY = canvas.height / 2;
+        var radius = 13;
+
+        context.beginPath();
+        context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+        context.fillStyle = status ? 'green' : 'red';
+        context.fill();
+        context.lineWidth = 1;
+        context.strokeStyle = '#003300';
+        context.stroke();
       }
+    }
 });
 
 export {ServicesView};

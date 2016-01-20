@@ -6,7 +6,6 @@ var Reflux = require('reflux');
 import $ from 'jquery';
 import {UserActions} from '../actions/userActions';
 import {Endpoints} from '../constants/endpoints';
-import {request} from '../handlers/requestHandler';
 
 var UserStore = Reflux.createStore({
     listenables: UserActions,
@@ -18,17 +17,16 @@ var UserStore = Reflux.createStore({
        this._isAdmin = false;
     },
 
-
-    onLogin : function(user,pass){
+    onLogin: function(user, pass){
       console.log("onLogin");
       var self = this;
 
-      var formData = {username: user,password:pass}; //Array
+      var formData = {username: user, password: pass}; //Array
       $.ajax({
-          url : Endpoints.base + "/login",
+          url: Endpoints.base + "/login",
           type: "POST",
           dataType: 'json',
-          data : formData,
+          data: formData,
           success: function(data, textStatus, jqXHR)
           {
             console.log(data);
@@ -37,7 +35,7 @@ var UserStore = Reflux.createStore({
             self._isLoggedIn = true;
 
             self.trigger({
-              isLoggedIn:self._isLoggedIn,
+              isLoggedIn: self._isLoggedIn,
               success: true
             });
           },
@@ -50,85 +48,50 @@ var UserStore = Reflux.createStore({
             });
           }
       });
-
-
-
     },
 
-    onIsLoggedIn : function(){
-      var self = this;
+    onIsLoggedIn: function(){
       if(this._isLoggedIn == false)
       {
-        var li;
         $.ajax({
         type: "GET",
         url: Endpoints.base + "/login",
         dataType: 'json',
         async: true,
-        success: function (result) {
+        success: (result) => {
             /* if result is a JSon object */
-            self._username = result.user;
-            self._isAdmin = result.admin;
-            self._isLoggedIn = true;
+            this._username = result.user;
+            this._isAdmin = result.admin;
+            this._isLoggedIn = true;
 
-            console.log("SIM",result);
-            li = true;
-            setTimeout(function(){
-              self.trigger({
-                isLoggedIn:self._isLoggedIn,
+            setTimeout(() => {
+              this.trigger({
+                isLoggedIn: this._isLoggedIn,
                 success: true
               });
             }, 500)
 
         },
-        error: function(){
-          console.log("NAO");
-          li=false;
-          self.trigger({
-            isLoggedIn:self._isLoggedIn,
+        error: () => {
+          this.trigger({
+            isLoggedIn: this._isLoggedIn,
             success: true
           });
         }
-      });
-      //return li;
-      }
-      else
-      {
+        });
+      } else {
         //return this._isLoggedIn;
-        self.trigger({
-          isLoggedIn:self._isLoggedIn,
+        this.trigger({
+          isLoggedIn: self._isLoggedIn,
           success: true
         });
-    }
-      /*if(this._isLoggedIn == true){
-        this._isLoggedIn = true;
-        return true;
       }
-      else
-      {
-        $.ajax({
-
-          url: "http://localhost:8080/login",
-          dataType: 'json',
-          success: function(data) {
-            console.log(data);
-
-            return true;
-          },
-          error: function(xhr, status, err) {
-            console.log("not loggedin");
-            return false;
-
-          }
-        });
-      }*/
     },
 
-    getUsername : function(){
+    getUsername: function(){
       return this._username;
     },
-    getLogginState : function(){
-      console.log("ATAO: ", this._isLoggedIn);
+    getLogginState: function(){
       return this._isLoggedIn;
     }
 });
