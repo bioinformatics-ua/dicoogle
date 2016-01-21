@@ -348,7 +348,6 @@ public class SearchDicomResult implements Iterator<DicomObject>
             {
                 // Serie
 
-                
                 Serie serieTmp = (Serie)next;
                 BasicDicomObject result = new BasicDicomObject();
                 //System.out.println("Serie : "+ serieTmp);
@@ -357,8 +356,7 @@ public class SearchDicomResult implements Iterator<DicomObject>
                 result.putString(Tag.StudyInstanceUID, VR.UI, serieTmp.getParent().getStudyInstanceUID());
                 result.putString(Tag.SeriesInstanceUID, VR.UI, serieTmp.getSerieInstanceUID());
                 result.putString(Tag.SeriesDescription, VR.LO, serieTmp.getSeriesDescription());
-                result.putString(Tag.SeriesDate, VR.TM, "");
-                result.putString(Tag.SeriesTime, VR.TM, "");
+                result.putString(Tag.SeriesDate, VR.TM, serieTmp.getSeriesDate());
                 result.putString(Tag.QueryRetrieveLevel, VR.LO, "SERIES");
                 String modality = serieTmp.getModality(); // Point of Failure, fix me
                 result.putString(Tag.Modality, VR.CS,modality);
