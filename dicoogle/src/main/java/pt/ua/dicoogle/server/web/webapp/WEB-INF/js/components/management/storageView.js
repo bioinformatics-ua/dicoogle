@@ -6,7 +6,7 @@ import {Button, Modal} from 'react-bootstrap';
 
 const AddStorageModal = React.createClass({
   render: function() {
-    return(<Modal  {...this.props} bsStyle='primary' title='Add storage server' animation={true}>
+    return(<Modal {...this.props} bsStyle='primary' title='Add storage server' animation={true}>
 
       <div className='modal-body'>
         <div>
@@ -52,18 +52,17 @@ const StorageView = React.createClass({
       StorageStore.listen(this._onChange);
     },
     _onChange: function(data){
-      if (this.isMounted())
-      this.setState({data:data.data});
+      if (this.isMounted()) {
+        this.setState({data: data.data});
+      }
     },
-    
-    render: function() {
-      var moves = this.state.data.map(function(item,index){
 
-          var cmoveItem = item.AETitle +"@" + item.ipAddrs + ":"+ item.port;
-        if(index === 0)
-          return (<option key={index} selected value={index}>{cmoveItem}</option>);
-        else
-          return (<option key={index} value={index}>{cmoveItem}</option>);
+    render: function() {
+      const moves = this.state.data.map((item, index) => {
+          return (
+            <option key={index} value={index}>
+              {item.AETitle + "@" + item.ipAddrs + ":" + item.port}
+            </option>);
       });
 
       return (
@@ -73,12 +72,12 @@ const StorageView = React.createClass({
             Storage Servers
           </div>
           <div className="panel-body">
-            <select className="form-control" id="moves" size={6} style={{width: '100%'}}>
+            <select defaultValue={0} className="form-control" id="moves" size={6} style={{width: '100%'}}>
               {moves}
             </select>
             <div style={{textAlign: 'left'}}>
               <button className="btn btn_dicoogle" onClick={this.onAdd}>Add new</button>
-              <button className="btn btn_dicoogle"onClick={this.onRemove}>Remove</button>
+              <button className="btn btn_dicoogle" onClick={this.onRemove}>Remove</button>
             </div>
           </div>
           <AddStorageModal show={this.state.showAdd} onHide={this.onHideAdd} />

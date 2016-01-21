@@ -1,15 +1,11 @@
 /* todo.jsx - To-do list for Dicoogle
  */
-var React = require('react');
-
-if (!React) {
-  console.error("React is not supported in this page!");
-}
+import React from 'react';
 
 const TodoItems = React.createClass({
   render() {
-    let createItem = function(itemText) {
-      return <li>{itemText}</li>;
+    const createItem = (itemText, i) => {
+      return <li key={i}>{itemText}</li>;
     };
     return <ul>{this.props.items.map(createItem)}</ul>;
   }
@@ -43,11 +39,9 @@ const TodoApp = React.createClass({
 });
 
 export default class Todo {
-  constructor() {
-    this.r = <TodoApp />;
-  }
-  
+
   render(parent) {
-    React.render(this.r, parent);
+    //React.render(this.r, parent);
+    return <TodoApp />;
   }
 }

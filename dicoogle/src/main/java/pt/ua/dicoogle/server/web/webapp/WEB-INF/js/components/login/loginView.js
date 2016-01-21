@@ -6,7 +6,7 @@ import {UserStore} from "../../stores/userStore";
 import $ from 'jquery';
 
 var LoginView = React.createClass({
-  mixins : [Router.History],
+  mixins: [Router.History],
   getInitialState: function() {
     return {data: {},
     status: "loading",
@@ -16,7 +16,7 @@ var LoginView = React.createClass({
     //LoggerActions.get();
     this.enableEnterKey();
   },
-  componentDidUpdate:function(){
+  componentDidUpdate: function(){
     this.enableEnterKey();
   },
   componentWillMount: function() {
@@ -50,7 +50,7 @@ var LoginView = React.createClass({
 
   render: function() {
     return (
-      <div id="loginwrapper" style={{position:'absolute', top:0, left:0, width:'100%', height:'100%', zIndex:10000}}>
+      <div id="loginwrapper" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 10000}}>
         <div className="loginbody">
 
           <section className="container row-fluid loginbox logincontainer">
@@ -83,13 +83,13 @@ var LoginView = React.createClass({
           <footer id="footer">
             <div style={{width: '100%', textAlign: 'center'}} className="footercontainer">
               <div style={{display: 'inline-block', width: '100%'}}>
-                <a href="http://bioinformatics.ua.pt"><img src="assets/logos/logobio.png" style={{height: 40, margin:5}} /></a>
-                <a href="http://bmd-software.com/"><img src="assets/logos/logo.png" style={{height: 40, padding: 5, margin:5}} /></a>
-                <a href="http://www.ieeta.pt/"><img src="assets/logos/logo-ieeta.png" style={{height: 60, margin:5}} /></a>
-                <a href="http://www.ua.pt/"><img src="assets/logos/logo-ua.png" style={{height: 60, margin:5}} /></a>
+                <a href="http://bioinformatics.ua.pt"><img src="assets/logos/logobio.png" style={{height: 40, margin: 5}} /></a>
+                <a href="http://bmd-software.com/"><img src="assets/logos/logo.png" style={{height: 40, padding: 5, margin: 5}} /></a>
+                <a href="http://www.ieeta.pt/"><img src="assets/logos/logo-ieeta.png" style={{height: 60, margin: 5}} /></a>
+                <a href="http://www.ua.pt/"><img src="assets/logos/logo-ua.png" style={{height: 60, margin: 5}} /></a>
               </div>
               <div style={{display: 'inline-block'}}>
-                <a><img src="assets/logos/logoFCT.png" style={{height: 30, margin:5}} /></a>
+                <a><img src="assets/logos/logoFCT.png" style={{height: 30, margin: 5}} /></a>
               </div>
 
             </div>
@@ -98,14 +98,13 @@ var LoginView = React.createClass({
         </div>
       </div>
     );
-
   },
 
-  onLoginClick : function(){
+  onLoginClick: function(){
     var user = document.getElementById("username").value;
     var pass = document.getElementById("password").value;
     //console.log("login clicked", user ,pass );
-    UserActions.login(user,pass);
+    UserActions.login(user, pass);
   }
 
 });

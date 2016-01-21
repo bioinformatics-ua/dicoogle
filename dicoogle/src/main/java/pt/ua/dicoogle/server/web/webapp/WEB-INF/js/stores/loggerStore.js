@@ -1,31 +1,28 @@
-/*jshint esnext: true*/
 'use strict';
 
-var Reflux = require('reflux');
+import Reflux from 'reflux';
 import $ from 'jquery';
 import {LoggerActions} from '../actions/loggerActions';
 import {Endpoints} from '../constants/endpoints';
-import {request} from '../handlers/requestHandler';
 
-var LoggerStore = Reflux.createStore({
+const LoggerStore = Reflux.createStore({
     listenables: LoggerActions,
     init: function () {
        this._contents = {};
     },
 
-
-    onGet : function(data){
+    onGet: function(data){
       var self = this;
 
       $.ajax({
 
-        url: Endpoints.base+"/logger",
+        url: Endpoints.base + "/logger",
         dataType: 'text',
         success: function(data) {
           self._contents = data;
 
           self.trigger({
-            data:self._contents,
+            data: self._contents,
             success: true
           });
 
@@ -33,14 +30,11 @@ var LoggerStore = Reflux.createStore({
         error: function(xhr, status, err) {
           //FAILURE
           self.trigger({
-              success:false,
+              success: false,
               status: xhr.status
             });
         }
       });
-
-
-
 
     }
 });
