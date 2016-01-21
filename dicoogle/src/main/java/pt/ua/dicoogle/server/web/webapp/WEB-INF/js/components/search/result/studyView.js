@@ -5,9 +5,13 @@ import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import {ActionCreators} from '../../../actions/searchActions';
 import ConfirmModal from './confirmModal';
 import PluginView from '../../plugin/pluginView.jsx';
+import {Input} from 'react-bootstrap';
+import ResultSelectActions from '../../../actions/resultSelectAction';
 
 var StudyView = React.createClass({
     getInitialState: function() {
+      // We need this because refs are not updated in BootstrapTable.
+      this.refsClone = {};
       return {
         data: [],
         status: "loading",
@@ -61,6 +65,36 @@ var StudyView = React.createClass({
         </div>);
       return (<div></div>);
   },
+  
+   handleSelect(item){
+      let {id} = item;
+      ResultSelectActions.select(item);
+      let value = this.refsClone[id].getValue();
+      this.setState({
+        resultsSelected: this.state.resultsSelected.concat(value)
+      });
+  },
+  handleRefs: function (id, input){
+      this.refsClone[id] = input;
+  },
+  formatSelect: function (cell, item){
+    let {id} = item;
+    let classNameForIt = "advancedOptions " + id;
+    return (<div className={classNameForIt}>
+              <Input type="checkbox" label=""
+                    onChange={this.handleSelect.bind(this, item)}
+                    ref={this.handleRefs.bind(this, id)}/>
+            </div>
+    );
+  },
+  
+   sizePerPageListChange(sizePerPage){
+
+  },
+
+  onPageChange(page, sizePerPage) {
+
+  },
 
 	render: function() {
 		var self = this;
@@ -78,11 +112,12 @@ var StudyView = React.createClass({
     return (
         <div>
             <BootstrapTable data={resultArray} selectRow={selectRowProp} pagination striped hover width="100%">
-            <TableHeaderColumn dataAlign="right" dataField="studyDate" width="18%" isKey dataFormat={this.formatStudyDate} dataSort>Date</TableHeaderColumn>
-            <TableHeaderColumn dataAlign="left" dataField="studyDescription" dataFormat={this.formatStudyDescription} width="40%" isKey={false} dataSort>Description</TableHeaderColumn>
-            <TableHeaderColumn dataAlign="center" dataField="institutionName" dataFormat={this.formatInstitutionName} width="30%" dataSort>Institution</TableHeaderColumn>
-            <TableHeaderColumn dataAlign="center" dataField="modalities" width="14%" dataFormat={this.formatModalities} dataSort={true}>Modality</TableHeaderColumn>
-            <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="" width={sizeOptions} isKey={false} dataSort={false} dataFormat={this.formatOptions}>Options</TableHeaderColumn>
+            <TableHeaderColumn dataAlign="right" dataField="studyInstanceUID" isKey dataFormat={this.formatStudyDate} dataSort>Date</TableHeaderColumn>
+            <TableHeaderColumn dataAlign="left" dataField="studyDescription" dataFormat={this.formatStudyDescription}  isKey={false} dataSort>Description</TableHeaderColumn>
+            <TableHeaderColumn dataAlign="center" dataField="institutionName" dataFormat={this.formatInstitutionName}dataSort>Institution</TableHeaderColumn>
+            <TableHeaderColumn dataAlign="center" dataField="modalities" dataFormat={this.formatModalities} dataSort={true}>Modality</TableHeaderColumn>
+            <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="Opts"  isKey={false} dataSort={false} dataFormat={this.formatOptions}>Options</TableHeaderColumn>
+            <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="Select" dataSort dataFormat={this.formatSelect}>#S</TableHeaderColumn>
             </BootstrapTable>
           <ConfirmModal show={self.state.unindexSelected !== null}
                         onHide={self.hideUnindex}

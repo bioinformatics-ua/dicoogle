@@ -4,9 +4,13 @@ import {SearchStore} from '../../../stores/searchStore';
 import {ActionCreators} from '../../../actions/searchActions';
 import ConfirmModal from './confirmModal';
 import PluginView from '../../plugin/pluginView.jsx';
+import {Input} from 'react-bootstrap';
+import ResultSelectActions from '../../../actions/resultSelectAction';
 
 var SeriesView = React.createClass({
   getInitialState: function() {
+    // We need this because refs are not updated in BootstrapTable.
+    this.refsClone = {};
     return {
       data: [],
       status: "loading",
@@ -33,18 +37,23 @@ var SeriesView = React.createClass({
     return (<div onClick={self.onSeriesClick.bind(this, item)} className="" style={{"cursor": "pointer"}}>&nbsp; {text}
     </div>)
   },
-
+  _wrapResult : function(result){
+    if (result===undefined)
+        result = "";
+    return result;
+  },
   formatNumber: function(cell, item){
-    return this.formatGlobal(item.serieNumber, item);
+    return this._wrapResult(this.formatGlobal(item.serieNumber, item));
+    
   },
   formatModality: function(cell, item){
-    return this.formatGlobal(item.serieModality, item);
+    return this._wrapResult(this.formatGlobal(item.serieModality, item));
   },
   formatDescription: function(cell, item){
-    return this.formatGlobal(item.serieDescription, item);
+    return this._wrapResult(this.formatGlobal(item.serieDescription, item));
   },
   formaImages: function(cell, item){
-    return this.formatGlobal(item.images.length, item);
+    return this._wrapResult(this.formatGlobal(item.images.length, item));
   },
 
   formatOptions: function(cell, item){
@@ -61,6 +70,36 @@ var SeriesView = React.createClass({
       );
       return (<div></div>);
   },
+  
+   handleSelect(item){
+      let {id} = item;
+      ResultSelectActions.select(item);
+      let value = this.refsClone[id].getValue();
+      this.setState({
+        resultsSelected: this.state.resultsSelected.concat(value)
+      });
+  },
+  handleRefs: function (id, input){
+      this.refsClone[id] = input;
+  },
+  formatSelect: function (cell, item){
+    let {id} = item;
+    let classNameForIt = "advancedOptions " + id;
+    return (<div className={classNameForIt}>
+              <Input type="checkbox" label=""
+                    onChange={this.handleSelect.bind(this, item)}
+                    ref={this.handleRefs.bind(this, id)}/>
+            </div>
+    );
+  },
+   sizePerPageListChange(sizePerPage){
+
+  },
+
+  onPageChange(page, sizePerPage) {
+
+  },
+  
   onRowSelect: function(row){
     this.props.onItemClick(row);
   },
@@ -70,7 +109,7 @@ var SeriesView = React.createClass({
 	render: function() {
 		const self = this;
 
-		var resultArray = this.props.study.series;
+    var resultArray = this.props.study.series;
     let sizeOptions = "20%"
 
     var selectRowProp = {
@@ -79,15 +118,16 @@ var SeriesView = React.createClass({
       bgColor: "rgb(163, 210, 216)",
       onSelect: this.onRowSelect
     };
-
-    return ( // FIXME bad labels and bad values in table
+    
+    return ( 
 			<div>
         <BootstrapTable data={resultArray} selectRow={selectRowProp} pagination striped hover width="100%">
-          <TableHeaderColumn dataAlign="right" dataField="id" width="20%" isKey dataFormat={this.formatNumber} dataSort>Number</TableHeaderColumn>
-          <TableHeaderColumn dataAlign="left" dataField="name" dataFormat={this.formatModality} width="20%" isKey={false} dataSort>Modality</TableHeaderColumn>
-          <TableHeaderColumn dataAlign="center" dataField="gender" dataFormat={this.formatDescription} width="40%" dataSort>Description</TableHeaderColumn>
-          <TableHeaderColumn dataAlign="center" dataField="nStudies" width="20%" dataFormat={this.formaImages} dataSort>#Images</TableHeaderColumn>
-          <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="" width={sizeOptions} isKey={false} dataSort={false} dataFormat={this.formatOptions}>Options</TableHeaderColumn>
+          <TableHeaderColumn dataAlign="right" dataField="serieInstanceUID"  isKey dataFormat={this.formatNumber} dataSort>Number</TableHeaderColumn>
+          <TableHeaderColumn dataAlign="left" dataField="serieModality" dataFormat={this.formatModality}  isKey={false} dataSort>Modality</TableHeaderColumn>
+          <TableHeaderColumn dataAlign="center" dataField="serieDescription" dataFormat={this.formatDescription}  dataSort>Description</TableHeaderColumn>
+          <TableHeaderColumn dataAlign="center" dataField="serieInstanceUID"  dataFormat={this.formaImages} dataSort>#Images</TableHeaderColumn>
+          <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="serieInstanceUID"  isKey={false} dataSort={false} dataFormat={this.formatOptions}>Options</TableHeaderColumn>
+          <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="serieInstanceUID" dataSort dataFormat={this.formatSelect}>#S</TableHeaderColumn>
           </BootstrapTable>
         <ConfirmModal show={self.state.unindexSelected !== null}
                       onHide={self.hideUnindex}

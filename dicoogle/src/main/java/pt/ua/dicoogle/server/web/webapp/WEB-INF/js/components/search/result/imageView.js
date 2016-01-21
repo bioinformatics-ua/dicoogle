@@ -9,10 +9,14 @@ import ImageLoader from 'react-imageloader';
 import PluginView from '../../plugin/pluginView.jsx';
 import {DumpActions} from '../../../actions/dumpActions';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
+import {Input} from 'react-bootstrap';
+import ResultSelectActions from '../../../actions/resultSelectAction';
 
 
 var ImageView = React.createClass({
     getInitialState: function() {
+      // We need this because refs are not updated in BootstrapTable.
+      this.refsClone = {};
       return {data: [],
         image: null,
         dump: null,
@@ -87,7 +91,37 @@ var ImageView = React.createClass({
       );
       return (<div></div>);
   },
+  
+   handleSelect(item){
+      let {id} = item;
+      ResultSelectActions.select(item);
+      let value = this.refsClone[id].getValue();
+      this.setState({
+        resultsSelected: this.state.resultsSelected.concat(value)
+      });
+  },
+  handleRefs: function (id, input){
+      this.refsClone[id] = input;
+  },
+  formatSelect: function (cell, item){
+    let {id} = item;
+    let classNameForIt = "advancedOptions " + id;
+    return (<div className={classNameForIt}>
+              <Input type="checkbox" label=""
+                    onChange={this.handleSelect.bind(this, item)}
+                    ref={this.handleRefs.bind(this, id)}/>
+            </div>
+    );
+  },
+  
+    sizePerPageListChange(sizePerPage){
 
+    },
+
+    onPageChange(page, sizePerPage) {
+
+    },
+    
   onRowSelect: function(row) {
     this.props.onItemClick(row);
   },
@@ -104,32 +138,37 @@ var ImageView = React.createClass({
       bgColor: "rgb(163, 210, 216)",
       onSelect: this.onRowSelect
     };
+    console.log("IMAGE LEVEL");
     return (
         <div>
             <BootstrapTable data={resultArray} selectRow={selectRowProp}
                   pagination striped hover width="100%">
-              <TableHeaderColumn dataAlign="left" dataField="filename" width="20%"
-                isKey={false} dataFormat={this.formatFileName} dataSort>
+              <TableHeaderColumn dataAlign="left" dataField="filename" 
+                isKey={true} dataFormat={this.formatFileName} dataSort>
                   File Name
               </TableHeaderColumn>
               <TableHeaderColumn dataAlign="left" dataField="sopInstanceUID"
-                dataFormat={this.formatSOPInstanceUID} width="60%" isKey dataSort>
+                dataFormat={this.formatSOPInstanceUID} dataSort>
                   SOPInstanceUID
               </TableHeaderColumn>
 
               <TableHeaderColumn dataAlign="center"
-                 width="15%"
-                dataFormat={this.formatViewOptions}
-                dataSort>
+                dataFormat={this.formatViewOptions}  dataField="sopInstanceUID"
+                dataSort>View
               </TableHeaderColumn>
-              <TableHeaderColumn dataAlign="center"
-                dataFormat={this.formatThumbUrl} width="20%"
+              <TableHeaderColumn dataAlign="center" dataField="sopInstanceUID"
+                dataFormat={this.formatThumbUrl} 
                 dataSort>
+                Thumbnail
               </TableHeaderColumn>
 
               <TableHeaderColumn hidden={!this.props.enableAdvancedSearch}
-                dataAlign="center" dataField="" width={sizeOptions} isKey={false}
-                dataSort={false} dataFormat={this.formatOptions}>Options
+                dataAlign="center" dataField="sopInstanceUID"
+                dataSort={false} dataFormat={this.formatOptions}>
+                Options
+              </TableHeaderColumn>
+              <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="sopInstanceUID" dataSort dataFormat={this.formatSelect}>
+              #S
               </TableHeaderColumn>
             </BootstrapTable>
 
@@ -273,6 +312,7 @@ var PopOverView = React.createClass({
               <TableHeaderColumn dataAlign="left"
                 dataField="field"
                 width="40%" isKey={false} dataSort>Field</TableHeaderColumn>
+                
               </BootstrapTable>
             </div>
             <div className='modal-footer'>
