@@ -27,6 +27,7 @@ import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import javax.crypto.Cipher;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -34,10 +35,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.Iterator;
 
 /**
@@ -106,8 +104,18 @@ public class RolesXML extends DefaultHandler
         
         try
         {
-            UserFileHandle file = new UserFileHandle();
-            byte[] xml = file.getFileContent();
+
+            FileInputStream fin = new FileInputStream("roles.xml");
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            byte[] data = new byte[1024];
+            int bytesRead;
+
+            while ((bytesRead = fin.read(data)) != -1) {
+                out.write(data, 0, bytesRead);
+                out.flush();
+            }
+
+            byte[] xml = out.toByteArray();
             
             if (xml == null)
             {
