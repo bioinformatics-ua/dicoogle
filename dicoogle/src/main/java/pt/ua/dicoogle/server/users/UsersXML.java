@@ -23,6 +23,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.transform.OutputKeys;
@@ -54,12 +56,14 @@ public class UsersXML extends DefaultHandler
     private String username;
     private String Hash;
     private boolean admin;
+    private String roles;
 
 
     public UsersXML()
     {
         username = "";
         Hash = "";
+        roles = "";
         admin = false;
     }
 
@@ -85,6 +89,8 @@ public class UsersXML extends DefaultHandler
                 this.admin = true;
             else
                 this.admin = false;
+            this.roles = this.resolveAttrib("roles", attribs, "xp");
+
         }
         
     }
@@ -100,7 +106,19 @@ public class UsersXML extends DefaultHandler
         }
         else if( localName.equals( "user" ) )
         {
-            users.addUser(new User(username, Hash, admin));
+
+            User u = new User(username, Hash, admin);
+            users.addUser(u);
+            if (roles!=null)
+            {
+                String [] rolesTmp = roles.split(",");
+                for (int i = 0; i<rolesTmp.length; i++)
+                {
+                    Role role = RolesStruct.getInstance().getRole(rolesTmp[i]);
+                    u.addRole(role);
+                }
+
+            }
         }
         
     }
@@ -198,6 +216,18 @@ public class UsersXML extends DefaultHandler
                 String temp = "false";
                 if(user.isAdmin())
                     temp = "true";
+                if (user.getRoles()!=null&&user.getRoles().size()>0)
+                {
+                    String roles = "";
+                    for (Role r : user.getRoles())
+                    {
+                        roles+=r.getName()+",";
+                    }
+                    StringUtils.removeEnd(roles, ",");
+
+
+                    atts.addAttribute("", "", "roles", "", roles ) ;
+                }
 
                 atts.addAttribute("", "", "admin", "", temp) ;
 

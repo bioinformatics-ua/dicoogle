@@ -205,9 +205,9 @@ public class RolesXML extends DefaultHandler
         finally {
             try {
                 out.close();
-                
-                UserFileHandle file = new UserFileHandle();
-                file.printFile(out.toByteArray());
+
+                printFile(out.toByteArray());
+
             } catch (Exception ex) {
                   LoggerFactory.getLogger(RolesXML.class).error(ex.getMessage(), ex);
             }
@@ -215,4 +215,29 @@ public class RolesXML extends DefaultHandler
 
 
     }
+    /**
+     * Print one byte array in File
+     * Encrypt that file with the key
+     * @param bytes
+     */
+    public void printFile(byte[] bytes) throws Exception {
+        InputStream in;
+
+
+        in = new ByteArrayInputStream(bytes);
+
+        FileOutputStream out = new FileOutputStream("roles.xml");
+
+
+        byte[] input = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = in.read(input)) != -1) {
+            out.write(input, 0, bytesRead);
+            out.flush();
+        }
+
+        out.close();
+        in.close();
+    }
+
 }

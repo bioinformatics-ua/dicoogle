@@ -18,10 +18,7 @@
  */
 package pt.ua.dicoogle.server.web.auth;
 
-import pt.ua.dicoogle.server.users.User;
-import pt.ua.dicoogle.server.users.UsersStruct;
-import pt.ua.dicoogle.server.users.HashService;
-import pt.ua.dicoogle.server.users.UsersXML;
+import pt.ua.dicoogle.server.users.*;
 
 /**
  * Provides login routines for users.
@@ -35,6 +32,8 @@ public class Authentication
 
 	private Authentication()
 	{
+		RolesXML rolesXML = new RolesXML();
+		RolesStruct rolesStruct = rolesXML.getXML();
 		// init the user list, if it wasn't done yet
 		UsersXML usersXML = new UsersXML();
 		usersXML.getXML();
