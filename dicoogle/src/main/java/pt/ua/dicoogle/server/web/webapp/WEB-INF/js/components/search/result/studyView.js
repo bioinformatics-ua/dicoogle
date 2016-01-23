@@ -108,7 +108,8 @@ var StudyView = React.createClass({
       bgColor: "rgb(163, 210, 216)",
       onSelect: this.onRowSelect
     };
-
+     // TODO trigger this action elsewhere
+    ResultSelectActions.level("study");
     return (
         <div>
             <BootstrapTable data={resultArray} selectRow={selectRowProp} pagination striped hover width="100%">

@@ -118,6 +118,8 @@ var SeriesView = React.createClass({
       bgColor: "rgb(163, 210, 216)",
       onSelect: this.onRowSelect
     };
+     // TODO trigger this action elsewhere
+    ResultSelectActions.level("series");
     
     return ( 
 			<div>
