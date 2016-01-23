@@ -21,4 +21,27 @@ public class TestRoles {
         RolesStruct rolesStruct = rolesXML.getXML();
         System.out.println(rolesStruct.getRoles());
     }
+
+    @Test
+    public void testUserRoles() {
+
+        RolesXML rolesXML = new RolesXML();
+        RolesStruct rolesStruct = rolesXML.getXML();
+
+        UsersStruct users = UsersStruct.getInstance();
+        UsersXML usersXML = new UsersXML();
+        users = usersXML.getXML();
+        System.out.println(rolesStruct.getRoles());
+        for (User u : users.getUsers())
+        {
+            System.out.println(u.getUsername());
+            for (Role  r : u.getRoles())
+            {
+                System.out.println(r);
+            }
+        }
+
+
+
+    }
 }
