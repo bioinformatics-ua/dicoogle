@@ -47,19 +47,16 @@ import java.util.Iterator;
  */
 public class RolesXML extends DefaultHandler
 {
-    private UsersStruct users = UsersStruct.getInstance();
-    private boolean isUsers = false ;
+    private RolesStruct roles = RolesStruct.getInstance();
+    private boolean isRoles = false ;
 
-    private String username;
-    private String Hash;
-    private boolean admin;
+    private String rolename;
+
 
 
     public RolesXML()
     {
-        username = "";
-        Hash = "";
-        admin = false;
+        rolename = "";
     }
 
 
@@ -70,20 +67,13 @@ public class RolesXML extends DefaultHandler
 
 
 
-        if (localName.equals("Users"))
+        if (localName.equals("Roles"))
         {
-            isUsers = true ;
+            isRoles = true ;
         }
-        else if (this.isUsers && localName.equals("user"))
+        else if (this.isRoles && localName.equals("role"))
         {
-            this.username = this.resolveAttrib("username", attribs, "xp");
-            this.Hash = this.resolveAttrib("hash", attribs, "xp");
-
-            String temp = this.resolveAttrib("admin", attribs, "xp");
-            if(temp.equals("true"))
-                this.admin = true;
-            else
-                this.admin = false;
+            this.rolename = this.resolveAttrib("name", attribs, "xp");
         }
         
     }
@@ -95,11 +85,11 @@ public class RolesXML extends DefaultHandler
 
         if (localName.equals("Users"))
         {
-            isUsers = false ;
+            isRoles = false ;
         }
-        else if( localName.equals( "user" ) )
+        else if( localName.equals( "role" ) )
         {
-            users.addUser(new User(username, Hash, admin));
+            roles.addRole(new Role(rolename));
         }
         
     }
@@ -110,9 +100,9 @@ public class RolesXML extends DefaultHandler
      }
 
 
-    public UsersStruct getXML()
+    public RolesStruct getXML()
     {
-        users.reset();
+        roles.reset();
         
         try
         {
@@ -121,10 +111,9 @@ public class RolesXML extends DefaultHandler
             
             if (xml == null)
             {
-                //DebugManager.getInstance().debug("Setting users default, writing a file with the default information!");
-                users.setDefaults();
+
                 printXML();
-                return users;
+                return roles;
             }
 
 
@@ -133,7 +122,7 @@ public class RolesXML extends DefaultHandler
             XMLReader r = XMLReaderFactory.createXMLReader();
             r.setContentHandler(this);
             r.parse(src);
-            return users;
+            return roles;
         }
         catch (SAXException | IOException ex)
         {
@@ -143,7 +132,7 @@ public class RolesXML extends DefaultHandler
     }
 
     /**
-     * Print the users information to the XML file
+     * Print the roles information to the XML file
      */
     public void printXML()
     {
@@ -154,7 +143,7 @@ public class RolesXML extends DefaultHandler
         PrintWriter pw = new PrintWriter(out);
         StreamResult streamResult = new StreamResult(pw);
         SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
-        //      SAX2.0 ContentHandler.
+
         TransformerHandler hd = null;
         try
         {
@@ -182,29 +171,22 @@ public class RolesXML extends DefaultHandler
         try
         {
             //root element
-            hd.startElement("", "", "Users", atts);
+            hd.startElement("", "", "Roles", atts);
 
-            Iterator<User> us = UsersStruct.getInstance().getUsers().iterator();
+            Iterator<Role> us = RolesStruct.getInstance().getRoles().iterator();
 
             atts.clear();
             while (us.hasNext())
             {
-                User user = us.next();
+                Role role = us.next();
                 
-                atts.addAttribute("", "", "username", "", user.getUsername());
-                atts.addAttribute("", "", "hash", "", user.getPasswordHash()) ;
+                atts.addAttribute("", "", "name", "", role.getName());
 
-                String temp = "false";
-                if(user.isAdmin())
-                    temp = "true";
-
-                atts.addAttribute("", "", "admin", "", temp) ;
-
-                hd.startElement("", "", "user", atts);
+                hd.startElement("", "", "role", atts);
                 atts.clear();
-                hd.endElement("", "", "user");
+                hd.endElement("", "", "role");
             }
-            hd.endElement("", "", "Users");
+            hd.endElement("", "", "Roles");
 
 
             hd.endDocument();
