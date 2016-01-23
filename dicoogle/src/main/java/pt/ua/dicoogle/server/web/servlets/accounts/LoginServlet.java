@@ -41,7 +41,9 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     	//resp.addHeader("Access-Control-Allow-Origin", "*");
         //Try login
-        LoggedIn mLoggedIn = Session.webappLogin(req, resp, true).getLogin();//servletLogin(req, resp, true);//auth.login(user, pass);
+        // Does not require admini rights.
+        LoggedIn mLoggedIn = Session.webappLogin(req, resp, false).getLogin();
+        //servletLogin(req, resp, true);//auth.login(user, pass);
 
         if (mLoggedIn == null) {
             resp.sendError(401, "Login failed");
