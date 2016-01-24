@@ -91,6 +91,9 @@ var UserStore = Reflux.createStore({
     getUsername: function(){
       return this._username;
     },
+    isAdmin: function(){
+        return this._isAdmin;
+    },
     getLogginState: function(){
       return this._isLoggedIn;
     }

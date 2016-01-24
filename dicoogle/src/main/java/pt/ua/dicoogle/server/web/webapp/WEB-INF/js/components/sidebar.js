@@ -18,21 +18,26 @@ const Sidebar = React.createClass({
   render() {
       console.log("APP RENDER");
       let menuItems = [
-        {value: "search", caption: "Search"},
-        {value: "management", caption: "Management"},
-        {value: "indexer", caption: "Indexer"},
-        {value: "about", caption: "About"}
+        {value: "search", caption: "Search", admin: false},
+        {value: "management", caption: "Management", admin: true},
+        {value: "indexer", caption: "Indexer", admin: true},
+        {value: "about", caption: "About", admin: false}
       ].concat(this.props.pluginMenuItems);
+      let isAdmin = UserStore.isAdmin();
+      console.log("Is admin: " + isAdmin)
+
 
       let sidebarInstance = (
         <div>
           <ul className="sidebar-nav">
             {
+
               menuItems.map(function(e, i) {
                 const to = (e.isPlugin ? '/ext/' : '/') + e.value;
-                return (<li key={i}>
-                  <Link activeClassName="active" to={to}>{e.caption}</Link>
-                </li>);
+                if ((e.admin && isAdmin)||e.admin==undefined)
+                    return (<li key={i}>
+                      <Link activeClassName="active" to={to}>{e.caption}</Link>
+                    </li>);
               })
             }
           </ul>
