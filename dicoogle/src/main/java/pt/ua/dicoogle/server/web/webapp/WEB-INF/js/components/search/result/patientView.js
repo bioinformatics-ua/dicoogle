@@ -6,6 +6,8 @@ import ConfirmModal from './confirmModal';
 import PluginView from '../../plugin/pluginView.jsx';
 import {Input} from 'react-bootstrap';
 import ResultSelectActions from '../../../actions/resultSelectAction';
+import {UserStore} from '../../../stores/userStore';
+
 
   /**
    * 2015-09-11.
@@ -63,17 +65,34 @@ const PatientView = React.createClass({
   },
 
   formatOptions: function(cell, item){
-          return (<div>
-            <button title="Unindex (does not remove file physically)" onClick={this.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser" />
-            <button title="Removes the file physically" onClick={this.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o" />
-            {/* plugin-based result options */}
-            <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
-              'data-result-type': 'patient',
-              'data-result-patient': item.name,
-              'data-result-patientid': item.id
-            }} />
-        </div>
-      );
+
+          let isAdmin = UserStore.isAdmin();
+          let unindex = null;
+          let removeFiles = null;
+          if (this.props.enableAdvancedSearch)
+          {
+              if (isAdmin) {
+                  unindex = (
+                      <button title="Unindex (does not remove file physically)" onClick={this.showUnindex.bind(null, item)}
+                              className="btn btn_dicoogle btn-xs fa fa-eraser"/>);
+
+                  removeFiles = (<button title="Removes the file physically" onClick={this.showRemove.bind(null, item)}
+                                         className="btn btn_dicoogle btn-xs fa fa-trash-o"/>);
+              }
+          }
+          if (this.props.enableAdvancedSearch)
+              return (<div>
+                    {unindex}
+                    {removeFiles}
+                {/* plugin-based result options */}
+                <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
+                  'data-result-type': 'patient',
+                  'data-result-patient': item.name,
+                  'data-result-patientid': item.id
+                }} />
+            </div>);
+          return (<div></div>);
+
   },
   handleSelect(item){
       let {id} = item;

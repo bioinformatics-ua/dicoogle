@@ -18,7 +18,7 @@ const Sidebar = React.createClass({
   render() {
       console.log("APP RENDER");
       let menuItems = [
-        {value: "search", caption: "Search", admin: false},
+        {value: "search", caption: "Search", admin: true},
         {value: "management", caption: "Management", admin: true},
         {value: "indexer", caption: "Indexer", admin: true},
         {value: "about", caption: "About", admin: false}
@@ -34,7 +34,7 @@ const Sidebar = React.createClass({
 
               menuItems.map(function(e, i) {
                 const to = (e.isPlugin ? '/ext/' : '/') + e.value;
-                if ((e.admin && isAdmin)||e.admin==undefined)
+                if ((e.admin && isAdmin)||e.admin==false)
                     return (<li key={i}>
                       <Link activeClassName="active" to={to}>{e.caption}</Link>
                     </li>);

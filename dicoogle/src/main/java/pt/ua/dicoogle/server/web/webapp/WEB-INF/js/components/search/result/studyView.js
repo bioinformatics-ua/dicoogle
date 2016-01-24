@@ -8,6 +8,9 @@ import PluginView from '../../plugin/pluginView.jsx';
 import {Input} from 'react-bootstrap';
 import ResultSelectActions from '../../../actions/resultSelectAction';
 
+import {UserStore} from '../../../stores/userStore';
+
+
 var StudyView = React.createClass({
     getInitialState: function() {
       // We need this because refs are not updated in BootstrapTable.
@@ -53,16 +56,30 @@ var StudyView = React.createClass({
 
   formatOptions: function(cell, item){
       let self = this;
-      if (this.props.enableAdvancedSearch)
-          return (<div>
-            <button title="Unindex (does not remove file physically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> </button>
-            <button title="Removes the file physically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> </button>
-            {/* plugin-based result options */}
-            <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
-              'data-result-type': 'study',
-              'data-result-uid': item.studyInstanceUID
-            }} />
-        </div>);
+      let isAdmin = UserStore.isAdmin();
+      let unindex = null;
+      let removeFiles = null;
+      if (this.props.enableAdvancedSearch) {
+
+          if (isAdmin) {
+              unindex = (
+                  <button title="Unindex (does not remove file physically)" onClick={self.showUnindex.bind(null, item)}
+                          className="btn btn_dicoogle btn-xs fa fa-eraser"></button>);
+
+              removeFiles = (<button title="Removes the file physically" onClick={self.showRemove.bind(null, item)}
+                                     className="btn btn_dicoogle btn-xs fa fa-trash-o"></button>);
+
+              return (<div>
+                  {unindex}
+                  {removeFiles}
+                  {/* plugin-based result options */}
+                  <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
+                      'data-result-type': 'study',
+                      'data-result-uid': item.studyInstanceUID
+                    }}/>
+              </div>);
+          }
+      }
       return (<div></div>);
   },
   
