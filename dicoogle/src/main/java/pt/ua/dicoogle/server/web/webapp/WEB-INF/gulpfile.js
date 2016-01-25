@@ -13,7 +13,6 @@ var source = require('vinyl-source-stream');
 var sourcemaps = require('gulp-sourcemaps');
 var uglify = require('gulp-uglify');
 var watchify = require('watchify');
-var util = require('util');
 
 require('core-js/fn/object/assign');
 
