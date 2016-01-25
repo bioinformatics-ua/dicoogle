@@ -27,7 +27,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import pt.ua.dicoogle.server.users.Role;
+import pt.ua.dicoogle.server.users.User;
+import pt.ua.dicoogle.server.users.UsersStruct;
 import pt.ua.dicoogle.server.web.auth.LoggedIn;
 import pt.ua.dicoogle.server.web.auth.Session;
 
@@ -53,7 +57,14 @@ public class LoginServlet extends HttpServlet {
         JSONObject json_resp = new JSONObject();
         json_resp.put("user", mLoggedIn.getUserName());
         json_resp.put("admin", mLoggedIn.isAdmin());
+        User u = UsersStruct.getInstance().getUser(mLoggedIn.getUserName());
+        JSONArray rolesObj = new JSONArray();
+        for (Role r : u.getRoles())
+        {
+            rolesObj.add(r.getName());
+        }
 
+        json_resp.put("roles", rolesObj);
 
         //Set response content type
         resp.setContentType("application/json");
@@ -77,7 +88,14 @@ public class LoginServlet extends HttpServlet {
 		JSONObject json_resp = new JSONObject();
         json_resp.put("user", mLoggedIn.getUserName());
         json_resp.put("admin", mLoggedIn.isAdmin());
-        
+        User u = UsersStruct.getInstance().getUser(mLoggedIn.getUserName());
+        JSONArray rolesObj = new JSONArray();
+        for (Role r : u.getRoles())
+        {
+            rolesObj.add(r.getName());
+        }
+
+        json_resp.put("roles", rolesObj);
 
         //Set response content type
         resp.setContentType("application/json");
