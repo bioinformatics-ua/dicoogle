@@ -25,7 +25,7 @@ var LoginView = React.createClass({
   },
   _onChange: function(data){
     console.log(data);
-    if(data.failed == true)
+    if(data.failed === true)
     {
       this.setState({failed: true});
       return;

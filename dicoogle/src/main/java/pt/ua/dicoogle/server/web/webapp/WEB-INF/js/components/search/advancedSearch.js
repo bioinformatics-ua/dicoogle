@@ -177,7 +177,7 @@ var AdvancedSearch = React.createClass({
        }
 
        //DATE
-       if(document.getElementById("datepicker").value != "")
+       if(document.getElementById("datepicker").value !== "")
        {
          var date = $('#datepicker').datepicker('getDate').getFullYear() + this.fix2($('#datepicker').datepicker('getDate').getMonth()) + this.fix2($('#datepicker').datepicker('getDate').getDate());
 
@@ -187,7 +187,7 @@ var AdvancedSearch = React.createClass({
        var providerEl = document.getElementById("providersList");
        var selectedId = providerEl.selectedIndex;
        var provider = "";
-       if(selectedId == 0){
+       if(selectedId === 0){
          provider = "all"
        }
        else {

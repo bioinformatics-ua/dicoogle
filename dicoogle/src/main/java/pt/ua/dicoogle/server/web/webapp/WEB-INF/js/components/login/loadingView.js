@@ -26,7 +26,7 @@ var LoadingView = React.createClass({
     {
       this.history.replaceState(null, '/search');
     }
-    else if(data.isLoggedIn == false){
+    else if(data.isLoggedIn === false){
       this.history.replaceState(null, '/login');
     }
   },

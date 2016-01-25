@@ -21,6 +21,7 @@
     "camelcase": 0,
     "curly": 0,
     "new-cap": 0,
+    "eqeqeq": 1,
     "no-alert": 1,
     "key-spacing": 1,
     "no-unused-vars": [1, {"vars": "all", "args": "none"}],
