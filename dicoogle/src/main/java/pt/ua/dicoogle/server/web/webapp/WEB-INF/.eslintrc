@@ -16,13 +16,13 @@
     "react"
   ],
   "rules": {
-    "no-alert": 1,
     "no-console": 0,
     "quotes": 0,
     "camelcase": 0,
     "curly": 0,
-    "key-spacing": 1,
     "new-cap": 0,
+    "no-alert": 1,
+    "key-spacing": 1,
     "no-unused-vars": [1, {"vars": "all", "args": "none"}],
     "comma-spacing": 1,
     "space-infix-ops": 1,
