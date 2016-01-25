@@ -39,14 +39,15 @@ var SeriesView = React.createClass({
     return (<div onClick={self.onSeriesClick.bind(this, item)} className="" style={{"cursor": "pointer"}}>&nbsp; {text}
     </div>)
   },
-  _wrapResult : function(result){
-    if (result===undefined)
-        result = "";
+
+  _wrapResult: function(result){
+    if (result === undefined)
+      result = "";
     return result;
   },
   formatNumber: function(cell, item){
     return this._wrapResult(this.formatGlobal(item.serieNumber, item));
-    
+
   },
   formatModality: function(cell, item){
     return this._wrapResult(this.formatGlobal(item.serieModality, item));
@@ -90,17 +91,17 @@ var SeriesView = React.createClass({
 
       return (<div></div>);
   },
-  
-   handleSelect(item){
-      let {id} = item;
-      ResultSelectActions.select(item);
-      let value = this.refsClone[id].getValue();
-      this.setState({
-        resultsSelected: this.state.resultsSelected.concat(value)
-      });
+
+  handleSelect(item){
+    let {id} = item;
+    ResultSelectActions.select(item);
+    let value = this.refsClone[id].getValue();
+    this.setState({
+      resultsSelected: this.state.resultsSelected.concat(value)
+    });
   },
   handleRefs: function (id, input){
-      this.refsClone[id] = input;
+    this.refsClone[id] = input;
   },
   formatSelect: function (cell, item){
     let {id} = item;
@@ -112,14 +113,14 @@ var SeriesView = React.createClass({
             </div>
     );
   },
-   sizePerPageListChange(sizePerPage){
+  sizePerPageListChange(sizePerPage){
 
   },
 
   onPageChange(page, sizePerPage) {
 
   },
-  
+
   onRowSelect: function(row){
     this.props.onItemClick(row);
   },
@@ -130,7 +131,6 @@ var SeriesView = React.createClass({
 		const self = this;
 
     var resultArray = this.props.study.series;
-    let sizeOptions = "20%"
 
     var selectRowProp = {
       clickToSelect: true,
@@ -138,15 +138,15 @@ var SeriesView = React.createClass({
       bgColor: "rgb(163, 210, 216)",
       onSelect: this.onRowSelect
     };
-    
-    return ( 
+
+    return (
 			<div>
         <BootstrapTable data={resultArray} selectRow={selectRowProp} pagination striped hover width="100%">
-          <TableHeaderColumn dataAlign="right" dataField="serieInstanceUID"  isKey dataFormat={this.formatNumber} dataSort>Number</TableHeaderColumn>
-          <TableHeaderColumn dataAlign="left" dataField="serieModality" dataFormat={this.formatModality}  isKey={false} dataSort>Modality</TableHeaderColumn>
-          <TableHeaderColumn dataAlign="center" dataField="serieDescription" dataFormat={this.formatDescription}  dataSort>Description</TableHeaderColumn>
-          <TableHeaderColumn dataAlign="center" dataField="serieInstanceUID"  dataFormat={this.formaImages} dataSort>#Images</TableHeaderColumn>
-          <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="serieInstanceUID"  isKey={false} dataSort={false} dataFormat={this.formatOptions}>Options</TableHeaderColumn>
+          <TableHeaderColumn dataAlign="right" dataField="serieInstanceUID" isKey dataFormat={this.formatNumber} dataSort>Number</TableHeaderColumn>
+          <TableHeaderColumn dataAlign="left" dataField="serieModality" dataFormat={this.formatModality} isKey={false} dataSort>Modality</TableHeaderColumn>
+          <TableHeaderColumn dataAlign="center" dataField="serieDescription" dataFormat={this.formatDescription} dataSort>Description</TableHeaderColumn>
+          <TableHeaderColumn dataAlign="center" dataField="serieInstanceUID" dataFormat={this.formaImages} dataSort>#Images</TableHeaderColumn>
+          <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="serieInstanceUID" isKey={false} dataSort={false} dataFormat={this.formatOptions}>Options</TableHeaderColumn>
           <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="serieInstanceUID" dataSort dataFormat={this.formatSelect}>#S</TableHeaderColumn>
           </BootstrapTable>
         <ConfirmModal show={self.state.unindexSelected !== null}
@@ -160,41 +160,39 @@ var SeriesView = React.createClass({
 		);
 	},
   hideUnindex () {
-      if (this.isMounted())
-    this.setState({
-      unindexSelected: null
-    });
+    if (this.isMounted())
+      this.setState({
+        unindexSelected: null
+      });
   },
   showUnindex (item) {
-      if (this.isMounted())
-    this.setState({
-      unindexSelected: item
-    });
+    if (this.isMounted())
+      this.setState({
+        unindexSelected: item
+      });
   },
   hideRemove () {
-      if (this.isMounted())
-    this.setState({
-      removeSelected: null
-    });
+    if (this.isMounted())
+      this.setState({
+        removeSelected: null
+      });
   },
   showRemove (item) {
-      if (this.isMounted())
-    this.setState({
-      removeSelected: item
-    });
+    if (this.isMounted())
+      this.setState({
+        removeSelected: item
+      });
   },
 	extractURISFromData: function(item){
-		var uris = [];
+		let uris = [];
 		for(let i in item.images)
 			uris.push(item.images[i].uri);
 		return uris;
 	},
 	onUnindexConfirm: function(item){
 		console.log(item)
-		var uris = this.extractURISFromData(item);
-
+		let uris = this.extractURISFromData(item);
 		let p = this.props.provider;
-
 		ActionCreators.unindex(uris, p);
 	},
 	onRemoveConfirm: function(item){

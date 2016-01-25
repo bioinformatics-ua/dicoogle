@@ -12,7 +12,7 @@ function getPatients(freetext, isKeyword, provider, callbackSucccess, callbackEr
         }
 
         var url = Endpoints.base + '/searchDIM?query=' + freetext + '&keyword=' + isKeyword;
-        if(provider != "all")
+        if(provider !== "all")
         {
           url = url + "&provider=" + provider;
         }
@@ -38,7 +38,7 @@ function unindex(uri, provider, callbackSuccess, callbackError){
 
     var url = Endpoints.base + '/management/tasks/unindex';
     var data = {'uri': uri}
-    if(provider != 'all')
+    if(provider !== 'all')
       data['provider'] = provider;
 
     $.ajax({

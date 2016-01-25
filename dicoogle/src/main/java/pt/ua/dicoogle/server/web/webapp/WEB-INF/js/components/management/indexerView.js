@@ -60,7 +60,7 @@ const IndexerView = React.createClass({
         this.setState({currentWatch: !this.state.currentWatch});
       },
       render: function() {
-        if(this.state.status == "loading"){
+        if(this.state.status === "loading"){
           return (<div className="loader-inner ball-pulse">
             <div/><div/><div/>
            </div>);

@@ -112,7 +112,7 @@ var ImageView = React.createClass({
       }
       return (<div></div>);
   },
-  
+
    handleSelect(item){
       let {id} = item;
       ResultSelectActions.select(item);
@@ -134,15 +134,15 @@ var ImageView = React.createClass({
             </div>
     );
   },
-  
-    sizePerPageListChange(sizePerPage){
 
-    },
+  sizePerPageListChange(sizePerPage){
 
-    onPageChange(page, sizePerPage) {
+  },
 
-    },
-    
+  onPageChange(page, sizePerPage) {
+
+  },
+
   onRowSelect: function(row) {
     this.props.onItemClick(row);
   },
@@ -150,8 +150,6 @@ var ImageView = React.createClass({
 	render: function() {
 		let self = this;
 		var resultArray = this.props.serie.images;
-
-    let sizeOptions = "20%"
 
     var selectRowProp = {
       clickToSelect: true,
@@ -164,7 +162,7 @@ var ImageView = React.createClass({
         <div>
             <BootstrapTable data={resultArray} selectRow={selectRowProp}
                   pagination striped hover width="100%">
-              <TableHeaderColumn dataAlign="left" dataField="filename" 
+              <TableHeaderColumn dataAlign="left" dataField="filename"
                 isKey={true} dataFormat={this.formatFileName} dataSort>
                   File Name
               </TableHeaderColumn>
@@ -174,11 +172,11 @@ var ImageView = React.createClass({
               </TableHeaderColumn>
 
               <TableHeaderColumn dataAlign="center"
-                dataFormat={this.formatViewOptions}  dataField="sopInstanceUID"
+                dataFormat={this.formatViewOptions} dataField="sopInstanceUID"
                 dataSort>View
               </TableHeaderColumn>
               <TableHeaderColumn dataAlign="center" dataField="sopInstanceUID"
-                dataFormat={this.formatThumbUrl} 
+                dataFormat={this.formatThumbUrl}
                 dataSort>
                 Thumbnail
               </TableHeaderColumn>
@@ -333,7 +331,7 @@ var PopOverView = React.createClass({
               <TableHeaderColumn dataAlign="left"
                 dataField="field"
                 width="40%" isKey={false} dataSort>Field</TableHeaderColumn>
-                
+
               </BootstrapTable>
             </div>
             <div className='modal-footer'>

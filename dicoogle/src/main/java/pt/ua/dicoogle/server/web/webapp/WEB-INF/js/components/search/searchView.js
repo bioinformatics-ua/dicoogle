@@ -108,7 +108,7 @@ var Search = React.createClass({
         let providerEl = document.getElementById("providersList");
         let selectedId = providerEl.selectedIndex;
         let provider = "";
-        if(selectedId == 0){
+        if(selectedId === 0){
           provider = "all"
         } else {
           provider = providerEl.options[selectedId].text;
@@ -193,7 +193,7 @@ var Search = React.createClass({
         //
         var count = 0;
         $("#free_text").keypress((e) => {
-        if (e.keyCode == 13) {
+        if (e.keyCode === 13) {
             if (++count >= 1) {
                 this.onSearchClicked();
                 count = 0;

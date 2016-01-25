@@ -36,7 +36,7 @@ const DirectDumpView = React.createClass({
   },
 
 	render() {
-		if(this.state.status == "loading") {
+		if(this.state.status === "loading") {
       return (<div className="loader-inner ball-pulse"/>);
     }
     var obj = this.state.data.data.results.fields;

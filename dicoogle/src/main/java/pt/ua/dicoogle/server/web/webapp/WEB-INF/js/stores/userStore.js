@@ -1,7 +1,6 @@
-/*jshint esnext: true*/
 'use strict';
 
-var Reflux = require('reflux');
+import Reflux from 'reflux';
 
 import $ from 'jquery';
 import {UserActions} from '../actions/userActions';
@@ -51,7 +50,7 @@ var UserStore = Reflux.createStore({
     },
 
     onIsLoggedIn: function(){
-      if(this._isLoggedIn == false)
+      if(this._isLoggedIn === false)
       {
         $.ajax({
         type: "GET",

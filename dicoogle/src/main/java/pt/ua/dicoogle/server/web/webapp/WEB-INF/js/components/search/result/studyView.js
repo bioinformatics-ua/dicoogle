@@ -82,8 +82,8 @@ var StudyView = React.createClass({
       }
       return (<div></div>);
   },
-  
-   handleSelect(item){
+
+  handleSelect(item){
       let {id} = item;
       ResultSelectActions.select(item);
       let value = this.refsClone[id].getValue();
@@ -104,8 +104,8 @@ var StudyView = React.createClass({
             </div>
     );
   },
-  
-   sizePerPageListChange(sizePerPage){
+
+  sizePerPageListChange(sizePerPage){
 
   },
 
@@ -116,8 +116,6 @@ var StudyView = React.createClass({
 	render: function() {
 		var self = this;
 		var resultArray = this.props.patient.studies;
-
-    let sizeOptions = "20%"
 
     var selectRowProp = {
       clickToSelect: true,
@@ -130,10 +128,10 @@ var StudyView = React.createClass({
         <div>
             <BootstrapTable data={resultArray} selectRow={selectRowProp} pagination striped hover width="100%">
             <TableHeaderColumn dataAlign="right" dataField="studyInstanceUID" isKey dataFormat={this.formatStudyDate} dataSort>Date</TableHeaderColumn>
-            <TableHeaderColumn dataAlign="left" dataField="studyDescription" dataFormat={this.formatStudyDescription}  isKey={false} dataSort>Description</TableHeaderColumn>
+            <TableHeaderColumn dataAlign="left" dataField="studyDescription" dataFormat={this.formatStudyDescription} isKey dataSort>Description</TableHeaderColumn>
             <TableHeaderColumn dataAlign="center" dataField="institutionName" dataFormat={this.formatInstitutionName}dataSort>Institution</TableHeaderColumn>
-            <TableHeaderColumn dataAlign="center" dataField="modalities" dataFormat={this.formatModalities} dataSort={true}>Modality</TableHeaderColumn>
-            <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="Opts"  isKey={false} dataSort={false} dataFormat={this.formatOptions}>Options</TableHeaderColumn>
+            <TableHeaderColumn dataAlign="center" dataField="modalities" dataFormat={this.formatModalities} dataSort>Modality</TableHeaderColumn>
+            <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="Opts" isKey={false} dataSort={false} dataFormat={this.formatOptions}>Options</TableHeaderColumn>
             <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="Select" dataSort dataFormat={this.formatSelect}>#S</TableHeaderColumn>
             </BootstrapTable>
           <ConfirmModal show={self.state.unindexSelected !== null}

@@ -200,7 +200,7 @@ var Step = React.createClass({
     var state2 = "step done";
     var state3 = "step disabled";
 
-    if(step == current)
+    if(step === current)
       return state1;
     else if(step > current)
       return state3;
