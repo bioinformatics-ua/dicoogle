@@ -82,27 +82,34 @@ var ImageView = React.createClass({
       let isAdmin = UserStore.isAdmin();
       let unindex = null;
       let removeFiles = null;
-      if (this.props.enableAdvancedSearch)
+      if (this.props.enableAdvancedSearch) {
           if (isAdmin) {
               unindex = (
-                  <button title="Unindex (does not remove file physically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> </button>);
+                  <button title="Unindex (does not remove file physically)"
+                          onClick={self.showUnindex.bind(null, item)}
+                          className="btn btn_dicoogle btn-xs fa fa-eraser">
+                  </button>);
 
-              removeFiles = (<button title="Removes the file physically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> </button>);
+              removeFiles = (<button title="Removes the file physically"
+                                     onClick={self.showRemove.bind(null, item)}
+                                     className="btn btn_dicoogle btn-xs fa fa-trash-o">
+              </button>);
           }
           return (<div>
                   {unindex}
                   {removeFiles}
 
 
-                {/* plugin-based result options*/}
-                <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
+                  {/* plugin-based result options*/}
+                  <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
                   'data-result-type': 'image',
                   'data-result-uri': item.uri,
                   'data-result-uid': item.sopInstanceUID
-                 }} />
-                </div>
+                 }}/>
+              </div>
 
-      );
+          );
+      }
       return (<div></div>);
   },
   

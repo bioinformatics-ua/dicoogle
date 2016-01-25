@@ -71,7 +71,7 @@ var SeriesView = React.createClass({
         if (isAdmin) {
           unindex = (
               <button title="Unindex (does not remove file physically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> </button>);
-              removeFiles = <button title="Removes the file physically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> </button>);
+          removeFiles = (<button title="Removes the file physically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> </button>);
         }
         return (<div>
 
