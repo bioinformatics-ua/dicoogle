@@ -33,6 +33,9 @@
     "lib/",
     "index.html"
   ],
+  "engines": {
+    "npm": ">=2.0.0"
+  },
   "dependencies": {
     "bootstrap": "^3.3.2",
     "core-js": "^2.0.3",
