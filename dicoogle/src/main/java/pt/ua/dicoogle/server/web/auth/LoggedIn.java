@@ -27,6 +27,7 @@ public class LoggedIn
 {
 	private String userName;
 	private boolean admin;
+	private String token;
 
 	public LoggedIn(String userName, boolean isAdmin)
 	{
@@ -48,5 +49,13 @@ public class LoggedIn
 	public boolean isAdmin()
 	{
 		return admin;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 }

@@ -20,6 +20,10 @@ package pt.ua.dicoogle.server.web.auth;
 
 import pt.ua.dicoogle.server.users.*;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 /**
  * Provides login routines for users.
  *
@@ -29,6 +33,9 @@ public class Authentication
 {
 	private static Authentication instance = null;
 	private static UsersStruct users;
+
+	private static Map<String, String> usersToken = new HashMap<String, String>();
+
 
 	private Authentication()
 	{
@@ -77,8 +84,14 @@ public class Authentication
 		String passwordHash = HashService.getSHA1Hash(password);
 		if (! user.verifyPassword(passwordHash))
 			return null;
-
+		LoggedIn in = new LoggedIn(username, user.isAdmin());
+		if (usersToken.containsKey(username))
+			in.setToken(usersToken.get(username));
+		else {
+			usersToken.put(username, UUID.randomUUID().toString());
+			in.setToken(usersToken.get(username));
+		}
 		// return a successfull login object
-		return new LoggedIn(username, user.isAdmin());
+		return in;
 	}
 }
