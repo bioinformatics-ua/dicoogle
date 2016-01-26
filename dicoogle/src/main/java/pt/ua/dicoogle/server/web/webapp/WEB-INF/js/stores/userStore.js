@@ -34,16 +34,18 @@ var UserStore = Reflux.createStore({
 
     },
     loadLocalStore: function(){
-        console.log("loadLocalStoreloadLocalStore");
         if (localStorage.token!=null)
         {
             let user =  JSON.parse(localStorage.getItem("user"));
-            console.log(user);
             this._isAdmin = user._isAdmin ;
             this._username = user.username;
             this._roles = user.roles;
             this._token = user.token ;
             this._isLoggedIn = true;
+            this.trigger({
+                isLoggedIn: this._isLoggedIn,
+                success: true
+            });
         }
 
     },
@@ -53,8 +55,14 @@ var UserStore = Reflux.createStore({
 
       var formData = {username: user, password: pass}; //Array
       let dicoogleClient = DicoogleClient(Endpoints.base);
+      let errorCallBack = function()
+        {
+            self.trigger({
+                failed: true
+            });
 
-      dicoogleClient.login(user, pass, function(data){
+        };
+      dicoogleClient.login(user, pass, function(errorCallBack, data){
           if (data.token===undefined || data.token==null)
           {
               self.trigger({

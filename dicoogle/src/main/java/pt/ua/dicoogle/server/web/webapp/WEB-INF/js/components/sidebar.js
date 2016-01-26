@@ -18,14 +18,13 @@ const Sidebar = React.createClass({
   render() {
       console.log("APP RENDER");
       let menuItems = [
-        {value: "search", caption: "Search", admin: true},
+        {value: "search", caption: "Search", admin: false},
         {value: "management", caption: "Management", admin: true},
         {value: "indexer", caption: "Indexer", admin: true},
         {value: "about", caption: "About", admin: false}
       ].concat(this.props.pluginMenuItems);
       let isAdmin = UserStore.isAdmin();
       console.log("Is admin: " + isAdmin)
-
 
       let sidebarInstance = (
         <div>
@@ -34,7 +33,7 @@ const Sidebar = React.createClass({
 
               menuItems.map(function(e, i) {
                 const to = (e.isPlugin ? '/ext/' : '/') + e.value;
-                if ((e.admin && isAdmin)||e.admin==false)
+                 if (!e.admin || isAdmin)
                     return (<li key={i}>
                       <Link activeClassName="active" to={to}>{e.caption}</Link>
                     </li>);
