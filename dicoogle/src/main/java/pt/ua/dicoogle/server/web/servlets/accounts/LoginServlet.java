@@ -60,12 +60,14 @@ public class LoginServlet extends HttpServlet {
         json_resp.put("admin", mLoggedIn.isAdmin());
         User u = UsersStruct.getInstance().getUser(mLoggedIn.getUserName());
         JSONArray rolesObj = new JSONArray();
-        for (Role r : u.getRoles())
-        {
-            rolesObj.add(r.getName());
-        }
+        if (u!=null&&u.getRoles()!=null) {
+            for (Role r : u.getRoles()) {
+                if (r!=null)
+                    rolesObj.add(r.getName());
+            }
 
-        json_resp.put("roles", rolesObj);
+            json_resp.put("roles", rolesObj);
+        }
         json_resp.put("token", mLoggedIn.getToken());
 
         //Set response content type
