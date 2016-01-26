@@ -21,6 +21,8 @@ import LoadingView from './components/login/loadingView';
 import LoginView from './components/login/loginView';
 import { hashHistory, browserHistory } from 'react-router'
 import {UserActions} from './actions/userActions';
+import {UserStore} from './stores/userStore';
+
 
 import 'document-register-element';
 require('core-js/shim');
@@ -34,50 +36,73 @@ class App extends React.Component {
 
 	constructor(props) {
 		super(props);
+		this.pluginsFetched = false;
 		this.state = {
 			pluginMenuItems: []
 		};
 		this.logout = this.logout.bind(this);
 	}
 
-	componentWillMount() {
-    DicoogleClient(Endpoints.base);
-		Webcore.init(Endpoints.base);
-		Webcore.addPluginLoadListener(function(plugin) {
-      console.log("Plugin loaded to Dicoogle:", plugin);
-		});
-		Webcore.fetchPlugins('menu', (packages) => {
-      this.onMenuPlugin(packages);
-      Webcore.fetchModules(packages);
-		});
-
-    // pre-fetch modules of other plugin types
-		Webcore.fetchPlugins(['search', 'result-options', 'query', 'result'], Webcore.fetchModules);
-  }
-
-  /**
-   * @param {packageJSON|packageJSON[]} plugins
-   */
+	/**
+	 * @param {packageJSON|packageJSON[]} plugins
+	 */
 	onMenuPlugin(packages) {
 		const {pluginMenuItems} = this.state;
 
 		this.setState({
 			pluginMenuItems: pluginMenuItems.concat(packages.map(pkg => ({
-				value: pkg.name,
-				caption: pkg.dicoogle.caption || pkg.name,
-				isPlugin: true
-			})))
-		});
+					value: pkg.name,
+					caption: pkg.dicoogle.caption || pkg.name,
+					isPlugin: true
+				})))
+	});
 	}
 
+
+	componentWillMount()
+	{
+		UserStore.listen(this.fetchPlugins.bind(this));
+		let dicoogleClient = DicoogleClient(Endpoints.base);
+		if (localStorage.token!=null)
+		{
+			dicoogleClient.setToken(localStorage.token);
+		}
+		Webcore.init(Endpoints.base);
+	}
+	fetchPlugins(data) {
+		if (this.pluginsFetched)
+			return;
+		let self = this;
+		if (!data.success)
+			return ;
+			this.setState(data);
+
+		Webcore.addPluginLoadListener(function(plugin) {
+      console.log("Plugin loaded to Dicoogle:", plugin);
+		});
+		Webcore.fetchPlugins('menu', (packages) => {
+			self.onMenuPlugin(packages);
+     	 	Webcore.fetchModules(packages);
+		});
+
+
+    // pre-fetch modules of other plugin types
+		Webcore.fetchPlugins(['search', 'result-options', 'query', 'result'], Webcore.fetchModules)
+		this.pluginsFetched = true;
+  }
+
 	logout() {
+		let self = this;
 		$.get(Endpoints.base + "/logout", (data, status) => {
 			//Response
 			console.log("Data: " + data + "\nStatus: " + status);
 
 			//self.transitionTo('login');
 			// Works with recent version of react + react-router
+			self.setState({pluginMenuItems: []});
+			self.pluginsFetched = false;
 			UserActions.logout()
+
 			this.props.history.pushState(null, 'login');
 		});
 	}
@@ -91,7 +116,7 @@ class App extends React.Component {
 			</div>
 			<div id="wrapper">
 				<div id="sidebar-wrapper">
-					<Sidebar pluginMenuItems={this.state.pluginMenuItems} onLogout={this.logout}/>
+					<Sidebar pluginMenuItems={this.state.pluginMenuItems} onLogout={this.logout.bind(this)}/>
 				</div>
 				<div id="container" style={{display: 'block'}}>
 					{this.props.children}

@@ -62,7 +62,7 @@ public class CORSFilter implements Filter {
             allowedMethods = "GET,POST,HEAD";
         }
         if (allowedHeaders == null) {
-            allowedHeaders = "X-Requested-With,Content-Type,Accept,Origin,Authorization";
+            allowedHeaders = "X-Requested-With,Content-Type,Accept,Origin,Authorization,Content-Length";
         }
 
     }
