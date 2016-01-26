@@ -32,6 +32,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
+import pt.ua.dicoogle.server.users.Role;
+import pt.ua.dicoogle.server.users.RolesStruct;
+import pt.ua.dicoogle.server.users.User;
+import pt.ua.dicoogle.server.web.auth.Authentication;
 
 /**
  * Retrieval of web UI plugins and respective packages/modules.
@@ -50,6 +54,7 @@ public class WebUIServlet extends HttpServlet {
         String module = req.getParameter("module");
         String process = req.getParameter("process");
 
+
         if (name != null) {
             resp.setContentType("application/json");
             resp.getWriter().append(this.getPlugin(resp, name));
@@ -59,17 +64,33 @@ public class WebUIServlet extends HttpServlet {
             resp.getWriter().append(this.getModule(resp, module, doProcess));
         } else {
             resp.setContentType("application/json");
-            resp.getWriter().append(this.getPluginsBySlot(resp, slotIdArr));
+            resp.getWriter().append(this.getPluginsBySlot(req, resp, slotIdArr));
         }
     }
 
     /** Retrieve plugins. */
-    private String getPluginsBySlot(HttpServletResponse resp, String... slotIds) throws IOException {
+    private String getPluginsBySlot(HttpServletRequest req,
+                                    HttpServletResponse resp, String... slotIds) throws IOException {
+        String token = req.getHeader("Authorization");
+        User user = Authentication.getInstance().getUsername(token);
+
         Collection<WebUIPlugin> plugins = PluginController.getInstance().getWebUIPlugins(slotIds);
         List<String> pkgList = new ArrayList<>(plugins.size());
         for (WebUIPlugin plugin : plugins) {
+
+
             String pkg = PluginController.getInstance().getWebUIPackageJSON(plugin.getName());
-            if (pkg != null) {
+            boolean hasUserAllowPlugin= false;
+            for (String r:plugin.getRoles())
+            {
+                Role rr = RolesStruct.getInstance().getRole(r);
+                hasUserAllowPlugin = RolesStruct.getInstance().hasRole(user, rr);
+                if (hasUserAllowPlugin)
+                    break;
+            }
+
+
+            if (pkg != null&&hasUserAllowPlugin) {
                 pkgList.add(pkg);
             }
         }

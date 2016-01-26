@@ -35,6 +35,7 @@ public class Authentication
 	private static UsersStruct users;
 
 	private static Map<String, String> usersToken = new HashMap<String, String>();
+	private static Map<String, String> tokenUsers = new HashMap<String, String>(); // to have performance.
 
 
 	private Authentication()
@@ -62,6 +63,16 @@ public class Authentication
 		return instance;
 	}
 
+
+	public User getUsername(String token)
+	{
+		String user = tokenUsers.get(token);
+		if (user==null)
+			return null;
+		return UsersStruct.getInstance().getUser(user);
+
+	}
+
 	/**
 	 * Attemps to login on the plataform.
 	 *
@@ -87,8 +98,11 @@ public class Authentication
 		LoggedIn in = new LoggedIn(username, user.isAdmin());
 		if (usersToken.containsKey(username))
 			in.setToken(usersToken.get(username));
+
 		else {
-			usersToken.put(username, UUID.randomUUID().toString());
+			String token  =UUID.randomUUID().toString();
+			usersToken.put(username, token);
+			tokenUsers.put(token, username);
 			in.setToken(usersToken.get(username));
 		}
 		// return a successfull login object

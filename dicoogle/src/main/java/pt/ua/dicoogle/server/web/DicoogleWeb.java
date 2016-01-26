@@ -235,7 +235,7 @@ public class DicoogleWeb {
             FilterHolder corsHolder = new FilterHolder(CORSFilter.class);
             corsHolder.setInitParameter(CORSFilter.ALLOWED_ORIGINS_PARAM, origins);
             corsHolder.setInitParameter(CORSFilter.ALLOWED_METHODS_PARAM, "GET,POST,HEAD,PUT,DELETE");
-            corsHolder.setInitParameter(CORSFilter.ALLOWED_HEADERS_PARAM, "X-Requested-With,Content-Type,Accept,Origin");
+            corsHolder.setInitParameter(CORSFilter.ALLOWED_HEADERS_PARAM, "X-Requested-With,Content-Type,Accept,Origin,Authorization");
             handler.addFilter(corsHolder, "/*", EnumSet.of(DispatcherType.REQUEST));
         }
     }
