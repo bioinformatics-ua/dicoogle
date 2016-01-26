@@ -113,7 +113,23 @@ class App extends React.Component {
 			<div className="topbar">
 				<img className="btn_drawer" src="assets/drawer_menu.png" id="menu-toggle" />
 				<a>Dicoogle</a>
-			</div>
+                <div className="pull-right" bsStyle="padding:15px">
+                    
+                
+                    <span className="user-name usernameLogin" bsStyle="padding-right:10px">
+                        {UserStore.getUsername()}
+                    </span>
+                
+                
+                    <span className="user-name buttonLogin">
+                    
+                        <span onClick={this.logout.bind(this)} className="glyphicon glyphicon-log-out" style={{cursor: 'pointer'}} />
+                    </span>
+                    
+         
+                </div>
+            </div>
+			
 			<div id="wrapper">
 				<div id="sidebar-wrapper">
 					<Sidebar pluginMenuItems={this.state.pluginMenuItems} onLogout={this.logout.bind(this)}/>

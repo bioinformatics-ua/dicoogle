@@ -31,28 +31,21 @@ const Sidebar = React.createClass({
           <ul className="sidebar-nav">
             {
 
+
+
               menuItems.map(function(e, i) {
                 const to = (e.isPlugin ? '/ext/' : '/') + e.value;
-                 if (!e.admin || isAdmin)
-                    return (<li key={i}>
+
+                  let myKey = i + Math.floor((Math.random() * 100) + 1);
+                  if (!e.admin || isAdmin)
+                    return (<li key={myKey}>
                       <Link activeClassName="active" to={to}>{e.caption}</Link>
                     </li>);
               })
             }
           </ul>
-            <div className="user-wrapper">
-              <div className="col-sm-10">
-                <div className="user-name vertical_center">
-                  {UserStore.getUsername()}
-                </div>
-              </div>
-              <div className="col-sm-2">
-                <div className="user-name vertical_center">
-                  <span onClick={this.props.onLogout} className="glyphicon glyphicon-log-out" style={{cursor: 'pointer'}} />
-                </div>
-              </div>
-            </div>
           </div>
+            
         );
         return sidebarInstance;
       }

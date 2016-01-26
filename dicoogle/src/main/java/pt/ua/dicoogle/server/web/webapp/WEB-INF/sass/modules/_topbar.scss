@@ -4,6 +4,7 @@
     background: $blue1;
     position:fixed;
     z-index: 1001;
+    line-height: 50px;
 }
 .btn_drawer {
     width: 50px;
@@ -25,3 +26,13 @@
         vertical-align: middle;
     }
 }
+
+.usernameLogin {
+    padding-right: 5px;
+}
+
+
+.buttonLogin {
+    padding-right: 10px;
+}
+
