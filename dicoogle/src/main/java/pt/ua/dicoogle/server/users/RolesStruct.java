@@ -47,6 +47,8 @@ public class RolesStruct implements RoleManager{
 
     @Override
     public boolean hasRole(User user, Role r) {
+        if (user==null||r==null)
+            return false;
         return UsersStruct.getInstance().getUser(user.getUsername()).hasRole(r);
     }
 

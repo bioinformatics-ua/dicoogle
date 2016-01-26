@@ -19,7 +19,8 @@ import PluginView from './components/plugin/pluginView.jsx';
 import AboutView from './components/about/aboutView';
 import LoadingView from './components/login/loadingView';
 import LoginView from './components/login/loginView';
-import { hashHistory } from 'react-router'
+import { hashHistory, browserHistory } from 'react-router'
+import {UserActions} from './actions/userActions';
 
 import 'document-register-element';
 require('core-js/shim');
@@ -73,8 +74,10 @@ class App extends React.Component {
 		$.get(Endpoints.base + "/logout", (data, status) => {
 			//Response
 			console.log("Data: " + data + "\nStatus: " + status);
+
 			//self.transitionTo('login');
 			// Works with recent version of react + react-router
+			UserActions.logout()
 			this.props.history.pushState(null, 'login');
 		});
 	}

@@ -6,6 +6,10 @@ import $ from 'jquery';
 import {UserActions} from '../actions/userActions';
 import {Endpoints} from '../constants/endpoints';
 
+
+import DicoogleClient from 'dicoogle-client';
+
+
 var UserStore = Reflux.createStore({
     listenables: UserActions,
     init: function () {
@@ -48,7 +52,34 @@ var UserStore = Reflux.createStore({
       var self = this;
 
       var formData = {username: user, password: pass}; //Array
-      $.ajax({
+      let dicoogleClient = DicoogleClient(Endpoints.base);
+
+      dicoogleClient.login(user, pass, function(data){
+          if (data.token===undefined || data.token==null)
+          {
+              self.trigger({
+                failed: true
+              });
+              return ;
+          }
+          self._username = data.user;
+          self._isAdmin = data.admin;
+          self._token = data.token;
+          self._roles = data.roles;
+          self._isLoggedIn = true;
+          localStorage.token = self._token;
+          self.saveLocalStore();
+
+          console.log("Localstorage token: " + localStorage.token);
+          self.trigger({
+              isLoggedIn: self._isLoggedIn,
+              success: true
+          });
+
+      });
+
+
+      /*$.ajax({
           url: Endpoints.base + "/login",
           type: "POST",
           dataType: 'json',
@@ -78,19 +109,15 @@ var UserStore = Reflux.createStore({
               failed: true
             });
           }
-      });
+      });*/
     },
 
     onIsLoggedIn: function(){
-      console.log("Verify onIsLoggedIn");
-        console.log(this._isLoggedIn);
+
       if(this._isLoggedIn === false)
       {
-        console.log("Verify onIsLoggedIn1");
-          console.log(this._isLoggedIn);
-          console.log(localStorage.token);
+
         if (localStorage.token !=null) {
-            console.log("Verify loadLocalStore");
             this.loadLocalStore();
             this.trigger({
                 isLoggedIn: self._isLoggedIn,
@@ -98,6 +125,8 @@ var UserStore = Reflux.createStore({
             });
         }else{
             console.log("Verify ajax");
+
+
             $.ajax({
                 type: "GET",
                 url: Endpoints.base + "/login",
