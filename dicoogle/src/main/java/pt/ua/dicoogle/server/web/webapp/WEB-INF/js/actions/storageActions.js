@@ -1,5 +1,4 @@
 
-
 var Reflux = require('reflux');
 var StorageActions = exports;
 StorageActions.get = Reflux.createAction();

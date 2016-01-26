@@ -58,9 +58,14 @@ gulp.task('lint', function () {
     .pipe(eslint.failAfterError());
 });
 
+function handleBundlingError(e) {
+  gutil.log('' + e);
+}
+
 gulp.task('js', ['lint'], function () {
   return createBrowserify(false, false)
     .bundle()
+    .on('error', handleBundlingError)
     .pipe(source('bundle.min.js'))
     .pipe(buffer())
     .pipe(uglify({compress: {
@@ -74,7 +79,7 @@ gulp.task('js', ['lint'], function () {
 gulp.task('js-debug', ['lint'], function () {
   return createBrowserify(true, false)
     .bundle()
-    .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+    .on('error', handleBundlingError)
     .pipe(source('bundle.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
@@ -87,10 +92,10 @@ gulp.task('js:watch', function () {
   var b = createBrowserify(true, true);
   b.on('update', bundle); // on any dep update, runs the bundler
   b.on('log', gutil.log); // output build logs to terminal
-  b.on('error', gutil.log.bind(gutil, 'Browserify Error'))
 
   function bundle() {
     return b.bundle()
+      .on('error', handleBundlingError)
       .pipe(source('bundle.js'))
       .pipe(buffer())
       .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file

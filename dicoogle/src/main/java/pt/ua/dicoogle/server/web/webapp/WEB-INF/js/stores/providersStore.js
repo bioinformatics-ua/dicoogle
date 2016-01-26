@@ -13,7 +13,7 @@ var ProvidersStore = Reflux.createStore({
 
     onGet: function(data){
       var self = this;
-      if(this._providers.length != 0)
+      if(this._providers.length !== 0)
       {
         self.trigger({
           data: self._providers,
