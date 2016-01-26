@@ -73,9 +73,15 @@ public class TestUsers {
         }
 
         Authentication auth = Authentication.getInstance();
-        LoggedIn loggedIn = auth.login("nat", "123");
-        System.out.println(loggedIn.getUserName());
-        System.out.println(loggedIn.isAdmin());
+        try {
+            LoggedIn loggedIn = auth.login("nat", "123");
+            System.out.println(loggedIn.getUserName());
+            System.out.println(loggedIn.isAdmin());
+        }
+        catch(Exception e)
+        {
+            System.out.println("Error in the test");
+        }
 
     }
 
