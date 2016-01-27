@@ -157,7 +157,8 @@ var ImageView = React.createClass({
       bgColor: "rgb(163, 210, 216)",
       onSelect: this.onRowSelect
     };
-    console.log("IMAGE LEVEL");
+     // TODO trigger this action elsewhere
+    ResultSelectActions.level("image");
     return (
         <div>
             <BootstrapTable data={resultArray} selectRow={selectRowProp}
