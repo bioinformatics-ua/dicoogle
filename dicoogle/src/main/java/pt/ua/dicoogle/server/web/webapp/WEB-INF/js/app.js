@@ -74,6 +74,8 @@ class App extends React.Component {
 	}
 	componentDidMount(){
 		UserStore.loadLocalStore();
+		if (localStorage.token===undefined)
+			this.props.history.pushState(null, 'login');
 		//setTimeout(function(){}, 300);
 	}
 	fetchPlugins(data) {
