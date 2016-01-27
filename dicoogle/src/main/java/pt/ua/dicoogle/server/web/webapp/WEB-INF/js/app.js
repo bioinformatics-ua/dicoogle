@@ -41,6 +41,7 @@ class App extends React.Component {
 			pluginMenuItems: []
 		};
 		this.logout = this.logout.bind(this);
+
 	}
 
 	/**
@@ -62,12 +63,18 @@ class App extends React.Component {
 	componentWillMount()
 	{
 		UserStore.listen(this.fetchPlugins.bind(this));
+
 		let dicoogleClient = DicoogleClient(Endpoints.base);
 		if (localStorage.token!=null)
 		{
 			dicoogleClient.setToken(localStorage.token);
 		}
+
 		Webcore.init(Endpoints.base);
+	}
+	componentDidMount(){
+		UserStore.loadLocalStore();
+		//setTimeout(function(){}, 300);
 	}
 	fetchPlugins(data) {
 		if (this.pluginsFetched)

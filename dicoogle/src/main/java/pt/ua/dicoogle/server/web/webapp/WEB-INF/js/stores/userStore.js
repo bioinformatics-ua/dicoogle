@@ -20,12 +20,12 @@ var UserStore = Reflux.createStore({
        this._isAdmin = false;
        this._roles = [];
        this._token = '';
-       this.loadLocalStore()
+
     },
 
     saveLocalStore: function(){
         localStorage.setItem("user",  JSON.stringify({
-            isAdmin: this.isAdmin,
+            isAdmin: this._isAdmin,
             'username': this._username,
             'roles': this._roles,
             'token': this._token
@@ -36,8 +36,9 @@ var UserStore = Reflux.createStore({
     loadLocalStore: function(){
         if (localStorage.token!=null)
         {
+            console.log("loadLocalStore");
             let user =  JSON.parse(localStorage.getItem("user"));
-            this._isAdmin = user._isAdmin ;
+            this._isAdmin = user.isAdmin ;
             this._username = user.username;
             this._roles = user.roles;
             this._token = user.token ;
@@ -87,37 +88,7 @@ var UserStore = Reflux.createStore({
       });
 
 
-      /*$.ajax({
-          url: Endpoints.base + "/login",
-          type: "POST",
-          dataType: 'json',
-          data: formData,
-          success: function(data, textStatus, jqXHR)
-          {
-            console.log(data);
-            self._username = data.user;
-            self._isAdmin = data.admin;
-            self._token = data.token;
-            self._roles = data.roles;
-            self._isLoggedIn = true;
-            localStorage.token = self._token;
-            self.saveLocalStore();
 
-            console.log("Localstorage token: " + localStorage.token);
-            self.trigger({
-              isLoggedIn: self._isLoggedIn,
-              success: true
-            });
-          },
-          error: function (jqXHR, textStatus, errorThrown)
-          {
-            //TODO: HANDLE LOGIN FAILED
-            console.log("Login Failed");
-            self.trigger({
-              failed: true
-            });
-          }
-      });*/
     },
 
     onIsLoggedIn: function(){
@@ -184,6 +155,7 @@ var UserStore = Reflux.createStore({
 
     onLogout: function() {
         delete localStorage.token;
+        delete localStorage.user;
     },
 
     getUsername: function(){
