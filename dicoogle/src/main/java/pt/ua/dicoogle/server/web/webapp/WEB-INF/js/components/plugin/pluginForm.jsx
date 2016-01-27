@@ -50,7 +50,7 @@ export default class PluginFormModal extends React.Component {
   render() {
     const {plugin, slotId, data} = this.props;
     return (plugin &&
-      <Modal animation={false} {...this.props}>
+      <Modal bsSize='lg' animation={false} {...this.props}>
         <Modal.Header>
           <Modal.Title>{this.props.plugin.caption}</Modal.Title>
         </Modal.Header>
