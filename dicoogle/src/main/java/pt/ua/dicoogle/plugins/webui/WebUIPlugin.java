@@ -82,16 +82,18 @@ public class WebUIPlugin implements Cloneable {
             plugin.slotId = objDicoogle.getString("slot-id");
             plugin.moduleFile = objDicoogle.optString("module-file", "module.js");
             plugin.caption = objDicoogle.optString("caption", null);
-            JSONArray rolesArr = objDicoogle.getJSONArray("roles");
-            System.out.println(rolesArr);
-            Set<String> roles = new HashSet<>();
-            if (rolesArr!=null)
-                for (Object role :rolesArr)
-                {
-                    System.out.println(role);
-                    roles.add((String)role);
-                }
-            plugin.roles = roles;
+            if (objDicoogle.containsKey("roles"))
+            {
+                JSONArray rolesArr = objDicoogle.getJSONArray("roles");
+
+                Set<String> roles = new HashSet<>();
+                if (rolesArr != null)
+                    for (Object role : rolesArr) {
+
+                        roles.add((String) role);
+                    }
+                plugin.roles = roles;
+            }
 
             return plugin;
         } catch(JSONException ex) {

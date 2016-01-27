@@ -26,6 +26,7 @@ var StudyView = React.createClass({
   componentWillMount: function() {
     // Subscribe to the store.
     SearchStore.listen(this._onChange);
+    ResultSelectActions.clear();
   },
 
   /**

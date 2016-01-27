@@ -36,7 +36,7 @@ const Sidebar = React.createClass({
               menuItems.map(function(e, i) {
                 const to = (e.isPlugin ? '/ext/' : '/') + e.value;
 
-                  let myKey = i + Math.floor((Math.random() * 100) + 1);
+                  let myKey = i ;//+ Math.floor((Math.random() * 100) + 1);
                   if (!e.admin || isAdmin)
                     return (<li key={myKey}>
                       <Link activeClassName="active" to={to}>{e.caption}</Link>

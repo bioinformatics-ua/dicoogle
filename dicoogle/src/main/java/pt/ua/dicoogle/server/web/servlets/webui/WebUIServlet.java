@@ -74,23 +74,26 @@ public class WebUIServlet extends HttpServlet {
         String token = req.getHeader("Authorization");
         User user = Authentication.getInstance().getUsername(token);
 
+        System.out.println(slotIds);
         Collection<WebUIPlugin> plugins = PluginController.getInstance().getWebUIPlugins(slotIds);
         List<String> pkgList = new ArrayList<>(plugins.size());
         for (WebUIPlugin plugin : plugins) {
 
 
+            
             String pkg = PluginController.getInstance().getWebUIPackageJSON(plugin.getName());
             boolean hasUserAllowPlugin= false;
             for (String r:plugin.getRoles())
             {
                 Role rr = RolesStruct.getInstance().getRole(r);
+
                 hasUserAllowPlugin = RolesStruct.getInstance().hasRole(user, rr);
                 if (hasUserAllowPlugin)
                     break;
             }
 
 
-            if (pkg != null&&hasUserAllowPlugin) {
+            if (pkg != null&&(hasUserAllowPlugin||user.isAdmin())) {
                 pkgList.add(pkg);
             }
         }
