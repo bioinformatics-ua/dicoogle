@@ -80,7 +80,7 @@ public class WebUIServlet extends HttpServlet {
         for (WebUIPlugin plugin : plugins) {
 
 
-            
+
             String pkg = PluginController.getInstance().getWebUIPackageJSON(plugin.getName());
             boolean hasUserAllowPlugin= false;
             for (String r:plugin.getRoles())
@@ -93,7 +93,7 @@ public class WebUIServlet extends HttpServlet {
             }
 
 
-            if (pkg != null&&(hasUserAllowPlugin||user.isAdmin())) {
+            if (pkg != null&&(hasUserAllowPlugin||(user!=null&&user.isAdmin()))) {
                 pkgList.add(pkg);
             }
         }
