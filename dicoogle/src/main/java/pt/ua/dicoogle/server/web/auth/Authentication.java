@@ -18,10 +18,11 @@
  */
 package pt.ua.dicoogle.server.web.auth;
 
-import pt.ua.dicoogle.server.users.User;
-import pt.ua.dicoogle.server.users.UsersStruct;
-import pt.ua.dicoogle.server.users.HashService;
-import pt.ua.dicoogle.server.users.UsersXML;
+import pt.ua.dicoogle.server.users.*;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Provides login routines for users.
@@ -33,8 +34,14 @@ public class Authentication
 	private static Authentication instance = null;
 	private static UsersStruct users;
 
+	private static Map<String, String> usersToken = new HashMap<String, String>();
+	private static Map<String, String> tokenUsers = new HashMap<String, String>(); // to have performance.
+
+
 	private Authentication()
 	{
+		RolesXML rolesXML = new RolesXML();
+		RolesStruct rolesStruct = rolesXML.getXML();
 		// init the user list, if it wasn't done yet
 		UsersXML usersXML = new UsersXML();
 		usersXML.getXML();
@@ -54,6 +61,24 @@ public class Authentication
 			instance = new Authentication();
 
 		return instance;
+	}
+
+
+	public User getUsername(String token)
+	{
+		String user = tokenUsers.get(token);
+		if (user==null)
+			return null;
+		return UsersStruct.getInstance().getUser(user);
+
+	}
+
+	public void logout(String username){
+		String token = usersToken.get(username);
+		String user = tokenUsers.get(token);
+		tokenUsers.remove(token);
+		usersToken.remove(username);
+
 	}
 
 	/**
@@ -78,8 +103,17 @@ public class Authentication
 		String passwordHash = HashService.getSHA1Hash(password);
 		if (! user.verifyPassword(passwordHash))
 			return null;
+		LoggedIn in = new LoggedIn(username, user.isAdmin());
+		if (usersToken.containsKey(username))
+			in.setToken(usersToken.get(username));
 
+		else {
+			String token  =UUID.randomUUID().toString();
+			usersToken.put(username, token);
+			tokenUsers.put(token, username);
+			in.setToken(usersToken.get(username));
+		}
 		// return a successfull login object
-		return new LoggedIn(username, user.isAdmin());
+		return in;
 	}
 }

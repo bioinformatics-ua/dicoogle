@@ -8,6 +8,9 @@ import PluginView from '../../plugin/pluginView.jsx';
 import {Input} from 'react-bootstrap';
 import ResultSelectActions from '../../../actions/resultSelectAction';
 
+import {UserStore} from '../../../stores/userStore';
+
+
 var StudyView = React.createClass({
     getInitialState: function() {
       // We need this because refs are not updated in BootstrapTable.
@@ -23,6 +26,7 @@ var StudyView = React.createClass({
   componentWillMount: function() {
     // Subscribe to the store.
     SearchStore.listen(this._onChange);
+    ResultSelectActions.clear();
   },
 
   /**
@@ -53,16 +57,30 @@ var StudyView = React.createClass({
 
   formatOptions: function(cell, item){
       let self = this;
-      if (this.props.enableAdvancedSearch)
+      let isAdmin = UserStore.isAdmin();
+      let unindex = null;
+      let removeFiles = null;
+      if (this.props.enableAdvancedSearch) {
+
+          if (isAdmin) {
+              unindex = (
+                  <button title="Unindex (does not remove file physically)" onClick={self.showUnindex.bind(null, item)}
+                          className="btn btn_dicoogle btn-xs fa fa-eraser"></button>);
+
+              removeFiles = (<button title="Removes the file physically" onClick={self.showRemove.bind(null, item)}
+                                     className="btn btn_dicoogle btn-xs fa fa-trash-o"></button>);
+          }
           return (<div>
-            <button title="Unindex (does not remove file physically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> </button>
-            <button title="Removes the file physically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> </button>
-            {/* plugin-based result options */}
-            <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
-              'data-result-type': 'study',
-              'data-result-uid': item.studyInstanceUID
-            }} />
-        </div>);
+              {unindex}
+              {removeFiles}
+              {/* plugin-based result options */}
+              <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
+                  'data-result-type': 'study',
+                  'data-result-uid': item.studyInstanceUID
+                }}/>
+          </div>);
+
+      }
       return (<div></div>);
   },
 
@@ -106,12 +124,13 @@ var StudyView = React.createClass({
       bgColor: "rgb(163, 210, 216)",
       onSelect: this.onRowSelect
     };
-
+     // TODO trigger this action elsewhere
+    ResultSelectActions.level("study");
     return (
         <div>
             <BootstrapTable data={resultArray} selectRow={selectRowProp} pagination striped hover width="100%">
             <TableHeaderColumn dataAlign="right" dataField="studyInstanceUID" isKey dataFormat={this.formatStudyDate} dataSort>Date</TableHeaderColumn>
-            <TableHeaderColumn dataAlign="left" dataField="studyDescription" dataFormat={this.formatStudyDescription} isKey dataSort>Description</TableHeaderColumn>
+            <TableHeaderColumn dataAlign="left" dataField="studyDescription" dataFormat={this.formatStudyDescription}  dataSort>Description</TableHeaderColumn>
             <TableHeaderColumn dataAlign="center" dataField="institutionName" dataFormat={this.formatInstitutionName}dataSort>Institution</TableHeaderColumn>
             <TableHeaderColumn dataAlign="center" dataField="modalities" dataFormat={this.formatModalities} dataSort>Modality</TableHeaderColumn>
             <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="Opts" isKey={false} dataSort={false} dataFormat={this.formatOptions}>Options</TableHeaderColumn>

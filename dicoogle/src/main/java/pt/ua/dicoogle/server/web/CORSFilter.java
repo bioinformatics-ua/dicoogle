@@ -39,26 +39,32 @@ public class CORSFilter implements Filter {
     public static String ACCESS_CONTROL_ALLOW_ORIGIN_HEADER = "Access-Control-Allow-Origin";
     public static String ACCESS_CONTROL_ALLOW_HEADERS_HEADER = "Access-Control-Allow-Headers";
     public static String ACCESS_CONTROL_ALLOW_METHODS_HEADER = "Access-Control-Allow-Methods";
+    public static String ACCESS_CONTROL_ALLOW_AUTHORIZATION_HEADER = "Authorization";
 
     public static String ALLOWED_ORIGINS_PARAM = "allowedOrigins";
     public static String ALLOWED_HEADERS_PARAM = "allowedHeaders";
     public static String ALLOWED_METHODS_PARAM = "allowedMethods";
+    public static String ALLOWED_AUTHORIZATION_PARAM = "allowedAuthorization";
 
     private String allowedOrigins;
     private String allowedHeaders;
     private String allowedMethods;
+    private String allowedAuthorization;
 
     @Override
     public void init(FilterConfig fc) throws ServletException {
         allowedOrigins = fc.getInitParameter(ALLOWED_ORIGINS_PARAM);
         allowedHeaders = fc.getInitParameter(ALLOWED_HEADERS_PARAM);
         allowedMethods = fc.getInitParameter(ALLOWED_METHODS_PARAM);
+        allowedMethods = fc.getInitParameter(ALLOWED_METHODS_PARAM);
+        allowedAuthorization = fc.getInitParameter(ALLOWED_AUTHORIZATION_PARAM);
         if (allowedMethods == null) {
             allowedMethods = "GET,POST,HEAD";
         }
         if (allowedHeaders == null) {
-            allowedHeaders = "X-Requested-With,Content-Type,Accept,Origin";
+            allowedHeaders = "X-Requested-With,Content-Type,Accept,Origin,Authorization,Content-Length";
         }
+
     }
 
     @Override
@@ -71,6 +77,8 @@ public class CORSFilter implements Filter {
             if (allowedHeaders!= null) {
                 resp.addHeader(ACCESS_CONTROL_ALLOW_HEADERS_HEADER, allowedHeaders);
             }
+            if (allowedAuthorization!=null)
+                resp.addHeader(ACCESS_CONTROL_ALLOW_AUTHORIZATION_HEADER, allowedAuthorization);
             resp.addHeader(ACCESS_CONTROL_ALLOW_METHODS_HEADER, allowedMethods);
         }
         fc.doFilter(sreq, sresp);

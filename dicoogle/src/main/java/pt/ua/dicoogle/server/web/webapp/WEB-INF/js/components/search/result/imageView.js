@@ -11,6 +11,8 @@ import {DumpActions} from '../../../actions/dumpActions';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import {Input} from 'react-bootstrap';
 import ResultSelectActions from '../../../actions/resultSelectAction';
+import {UserStore} from '../../../stores/userStore';
+
 
 
 var ImageView = React.createClass({
@@ -29,6 +31,7 @@ var ImageView = React.createClass({
     componentWillMount: function() {
       // Subscribe to the store.
       SearchStore.listen(this._onChange);
+      ResultSelectActions.clear();
     },
 
 
@@ -77,18 +80,37 @@ var ImageView = React.createClass({
 
   formatOptions: function(cell, item){
       let self = this;
-      if (this.props.enableAdvancedSearch)
-          return (<div><button title="Unindex (does not remove file physically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> </button>
-        <button title="Removes the file physically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> </button>
-        {/* plugin-based result options*/}
-        <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
-          'data-result-type': 'image',
-          'data-result-uri': item.uri,
-          'data-result-uid': item.sopInstanceUID
-         }} />
-        </div>
+      let isAdmin = UserStore.isAdmin();
+      let unindex = null;
+      let removeFiles = null;
+      if (this.props.enableAdvancedSearch) {
+          if (isAdmin) {
+              unindex = (
+                  <button title="Unindex (does not remove file physically)"
+                          onClick={self.showUnindex.bind(null, item)}
+                          className="btn btn_dicoogle btn-xs fa fa-eraser">
+                  </button>);
 
-      );
+              removeFiles = (<button title="Removes the file physically"
+                                     onClick={self.showRemove.bind(null, item)}
+                                     className="btn btn_dicoogle btn-xs fa fa-trash-o">
+              </button>);
+          }
+          return (<div>
+                  {unindex}
+                  {removeFiles}
+
+
+                  {/* plugin-based result options*/}
+                  <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
+                  'data-result-type': 'image',
+                  'data-result-uri': item.uri,
+                  'data-result-uid': item.sopInstanceUID
+                 }}/>
+              </div>
+
+          );
+      }
       return (<div></div>);
   },
 
@@ -136,7 +158,8 @@ var ImageView = React.createClass({
       bgColor: "rgb(163, 210, 216)",
       onSelect: this.onRowSelect
     };
-    console.log("IMAGE LEVEL");
+     // TODO trigger this action elsewhere
+    ResultSelectActions.level("image");
     return (
         <div>
             <BootstrapTable data={resultArray} selectRow={selectRowProp}

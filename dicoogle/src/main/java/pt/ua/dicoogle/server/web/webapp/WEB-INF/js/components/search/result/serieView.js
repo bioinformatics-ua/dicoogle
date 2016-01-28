@@ -6,6 +6,8 @@ import ConfirmModal from './confirmModal';
 import PluginView from '../../plugin/pluginView.jsx';
 import {Input} from 'react-bootstrap';
 import ResultSelectActions from '../../../actions/resultSelectAction';
+import {UserStore} from '../../../stores/userStore';
+
 
 var SeriesView = React.createClass({
   getInitialState: function() {
@@ -22,6 +24,7 @@ var SeriesView = React.createClass({
   componentWillMount: function() {
     // Subscribe to the store.
     SearchStore.listen(this._onChange);
+    ResultSelectActions.clear();
   },
 
   /**
@@ -59,16 +62,34 @@ var SeriesView = React.createClass({
 
   formatOptions: function(cell, item){
       let self = this;
-      if (this.props.enableAdvancedSearch)
-          return (<div><button title="Unindex (does not remove file physically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> </button>
-        <button title="Removes the file physically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> </button>
-        {/* plugin-based result options */}
-        <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
+      let isAdmin = UserStore.isAdmin();
+      let unindex = null;
+      let removeFiles = null;
+
+
+
+    if (this.props.enableAdvancedSearch)
+      {
+        if (isAdmin) {
+          unindex = (
+              <button title="Unindex (does not remove file physically)" onClick={self.showUnindex.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-eraser"> </button>);
+          removeFiles = (<button title="Removes the file physically" onClick={self.showRemove.bind(null, item)} className="btn btn_dicoogle btn-xs fa fa-trash-o"> </button>);
+        }
+        return (<div>
+
+              {unindex}
+              {removeFiles}
+
+              {/* plugin-based result options */}
+              <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
           'data-result-type': 'series',
           'data-result-uid': item.serieInstanceUID
          }} />
-         </div>
-      );
+            </div>
+        );
+
+      }
+
       return (<div></div>);
   },
 
@@ -118,8 +139,13 @@ var SeriesView = React.createClass({
       bgColor: "rgb(163, 210, 216)",
       onSelect: this.onRowSelect
     };
-
-    return (
+    
+    
+    // TODO trigger this action elsewhere
+    ResultSelectActions.level("series");
+    
+    
+    return ( 
 			<div>
         <BootstrapTable data={resultArray} selectRow={selectRowProp} pagination striped hover width="100%">
           <TableHeaderColumn dataAlign="right" dataField="serieInstanceUID" isKey dataFormat={this.formatNumber} dataSort>Number</TableHeaderColumn>

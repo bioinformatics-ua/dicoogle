@@ -16,46 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.server.web.auth;
+package pt.ua.dicoogle.server.users;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
- * Maintains information about a users login.
- *
- * @author António Novo <antonio.novo@ua.pt>
+ * Created by bastiao on 23/01/16.
  */
-public class LoggedIn
-{
-	private String userName;
-	private boolean admin;
-	private String token;
+public interface RoleManager {
 
-	public LoggedIn(String userName, boolean isAdmin)
-	{
-		this.userName = userName;
-		this.admin = isAdmin;
-	}
+    public boolean hasRole(User user, Role r);
+    public Collection<Role> getRoles();
+    public void addRole(Role r);
+    public Role getRole(String name);
 
-	/**
-	 * @return the user name
-	 */
-	public String getUserName()
-	{
-		return userName;
-	}
-
-	/**
-	 * @return if this user is admin
-	 */
-	public boolean isAdmin()
-	{
-		return admin;
-	}
-
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
-	}
 }
