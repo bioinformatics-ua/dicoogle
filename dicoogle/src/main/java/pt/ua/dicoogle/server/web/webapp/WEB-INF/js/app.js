@@ -102,7 +102,7 @@ class App extends React.Component {
 
 	logout() {
 		let self = this;
-		$.get(Endpoints.base + "/logout", (data, status) => {
+		$.get(Endpoints.base + "/logout?username="+UserStore.getUsername(), (data, status) => {
 			//Response
 			console.log("Data: " + data + "\nStatus: " + status);
 

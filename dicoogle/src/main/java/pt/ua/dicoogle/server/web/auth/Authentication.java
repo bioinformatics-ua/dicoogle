@@ -73,6 +73,14 @@ public class Authentication
 
 	}
 
+	public void logout(String username){
+		String token = usersToken.get(username);
+		String user = tokenUsers.get(token);
+		tokenUsers.remove(token);
+		usersToken.remove(username);
+
+	}
+
 	/**
 	 * Attemps to login on the plataform.
 	 *
