@@ -69,17 +69,17 @@ var StudyView = React.createClass({
 
               removeFiles = (<button title="Removes the file physically" onClick={self.showRemove.bind(null, item)}
                                      className="btn btn_dicoogle btn-xs fa fa-trash-o"></button>);
-
-              return (<div>
-                  {unindex}
-                  {removeFiles}
-                  {/* plugin-based result options */}
-                  <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
-                      'data-result-type': 'study',
-                      'data-result-uid': item.studyInstanceUID
-                    }}/>
-              </div>);
           }
+          return (<div>
+              {unindex}
+              {removeFiles}
+              {/* plugin-based result options */}
+              <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
+                  'data-result-type': 'study',
+                  'data-result-uid': item.studyInstanceUID
+                }}/>
+          </div>);
+
       }
       return (<div></div>);
   },
