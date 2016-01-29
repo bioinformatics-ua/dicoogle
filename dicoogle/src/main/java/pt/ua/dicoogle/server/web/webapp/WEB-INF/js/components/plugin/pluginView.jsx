@@ -1,5 +1,4 @@
 import React from 'react';
-import DicoogleWebcore from 'dicoogle-webcore';
 
 class PluginView extends React.Component {
 
@@ -19,7 +18,7 @@ class PluginView extends React.Component {
       slotId: 'menu'
     };
   }
-  
+
   constructor(props) {
     super(props);
     this.state = {
@@ -40,7 +39,7 @@ class PluginView extends React.Component {
       });
     }
   }
-  
+
   handleLoaded(element) {
     if (React.isValidElement(element)) {
       const elements = {};
@@ -53,7 +52,7 @@ class PluginView extends React.Component {
       });
     }
   }
-  
+
   getPluginName() {
     return this.props.plugin || (this.props.params && this.props.params.plugin);
   }

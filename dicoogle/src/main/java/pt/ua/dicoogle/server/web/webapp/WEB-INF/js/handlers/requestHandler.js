@@ -3,6 +3,7 @@ import $ from 'jquery';
 
 function getPatients(freetext, isKeyword, provider, callbackSucccess, callbackError){
         console.log("store param: ", freetext);
+        // ??? use dicoogle client?
 
         //'http://localhost:8080/search?query=wrix&keyword=false&provicer=lucene'
         if(freetext.length === 0)
@@ -41,6 +42,7 @@ function unindex(uri, provider, callbackSuccess, callbackError){
     if(provider !== 'all')
       data['provider'] = provider;
 
+    // TODO use dicoogle client
     $.ajax({
       url: url,
       data: data,
@@ -59,6 +61,7 @@ function remove(uri, callbackSucccess, callbackError){
     var url = Endpoints.base + '/management/tasks/remove';
     var data = {'uri': uri}
 
+    // TODO use dicoogle client
     $.ajax({
       url: url,
       data: data,
@@ -78,16 +81,14 @@ function getImageInfo(uid, callbackSucccess, callbackError){
 
         //'http://localhost:8080/search?query=wrix&keyword=false&provicer=lucene'
         var url = Endpoints.base + '/dump?uid=' + uid;
-        //console.log("store url;",url);
 
+        // TODO use dicoogle client
         $.ajax({
-
           url: url,
+          method: 'get',
           dataType: 'json',
           success: function(data) {
-
-          callbackSucccess(data);
-
+            callbackSucccess(data);
           },
           error: function(xhr, status, err) {
             callbackError(xhr);
@@ -95,15 +96,13 @@ function getImageInfo(uid, callbackSucccess, callbackError){
         });
 }
 
-
 function getVersion(callbackSucccess, callbackError){
 
-
     var url = Endpoints.base + '/ext/version';
-
+    // TODO use dicoogle client
     $.ajax({
-
         url: url,
+        method: 'get',
         dataType: 'json',
         success: function(data) {
 
@@ -193,6 +192,7 @@ function saveIndexOptions(path, watcher, zip, saveThumbnail, effort, thumbnailSi
 
 function forceIndex(uri){
   //console.log(state);
+  // TODO use dicoogle client
   $.post(Endpoints.base + "/management/tasks/index",
   {
     uri: uri

@@ -7,7 +7,6 @@ import DicoogleClient from 'dicoogle-client';
 import Webcore from 'dicoogle-webcore';
 
 import {default as Router, Route, IndexRoute} from 'react-router';
-//import createBrowserHistory from 'history/lib/createBrowserHistory';
 
 import {Search} from './components/search/searchView';
 import {ResultSearch} from './components/search/searchResultView';
@@ -19,7 +18,7 @@ import PluginView from './components/plugin/pluginView.jsx';
 import AboutView from './components/about/aboutView';
 import LoadingView from './components/login/loadingView';
 import LoginView from './components/login/loginView';
-import { hashHistory, browserHistory } from 'react-router'
+import { hashHistory /*, browserHistory*/ } from 'react-router'
 import {UserActions} from './actions/userActions';
 import {UserStore} from './stores/userStore';
 
@@ -65,8 +64,7 @@ class App extends React.Component {
 		UserStore.listen(this.fetchPlugins.bind(this));
 
 		let dicoogleClient = DicoogleClient(Endpoints.base);
-		if (localStorage.token!=null)
-		{
+		if (localStorage.token) {
 			dicoogleClient.setToken(localStorage.token);
 		}
 
@@ -74,7 +72,7 @@ class App extends React.Component {
 	}
 	componentDidMount(){
 		UserStore.loadLocalStore();
-		if (localStorage.token===undefined)
+		if (localStorage.token === undefined)
 			this.props.history.pushState(null, 'login');
 		//setTimeout(function(){}, 300);
 	}
@@ -83,15 +81,15 @@ class App extends React.Component {
 			return;
 		let self = this;
 		if (!data.success)
-			return ;
-			this.setState(data);
+			return;
+    this.setState(data);
 
 		Webcore.addPluginLoadListener(function(plugin) {
       console.log("Plugin loaded to Dicoogle:", plugin);
 		});
 		Webcore.fetchPlugins('menu', (packages) => {
 			self.onMenuPlugin(packages);
-     	 	Webcore.fetchModules(packages);
+        Webcore.fetchModules(packages);
 		});
 
 
@@ -102,7 +100,7 @@ class App extends React.Component {
 
 	logout() {
 		let self = this;
-		$.get(Endpoints.base + "/logout?username="+UserStore.getUsername(), (data, status) => {
+		$.get(Endpoints.base + "/logout?username=" + UserStore.getUsername(), (data, status) => {
 			//Response
 			console.log("Data: " + data + "\nStatus: " + status);
 
@@ -123,22 +121,19 @@ class App extends React.Component {
 				<img className="btn_drawer" src="assets/drawer_menu.png" id="menu-toggle" />
 				<a>Dicoogle</a>
                 <div className="pull-right" bsStyle="padding:15px">
-                    
-                
+
                     <span className="user-name usernameLogin" bsStyle="padding-right:10px">
                         {UserStore.getUsername()}
                     </span>
-                
-                
+
                     <span className="user-name buttonLogin">
-                    
+
                         <span onClick={this.logout.bind(this)} className="glyphicon glyphicon-log-out" style={{cursor: 'pointer'}} />
                     </span>
-                    
-         
+
                 </div>
             </div>
-			
+
 			<div id="wrapper">
 				<div id="sidebar-wrapper">
 					<Sidebar pluginMenuItems={this.state.pluginMenuItems} onLogout={this.logout.bind(this)}/>

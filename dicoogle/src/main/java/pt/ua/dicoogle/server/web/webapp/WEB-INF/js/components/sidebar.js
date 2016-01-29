@@ -30,22 +30,16 @@ const Sidebar = React.createClass({
         <div>
           <ul className="sidebar-nav">
             {
-
-
-
               menuItems.map(function(e, i) {
                 const to = (e.isPlugin ? '/ext/' : '/') + e.value;
-
-                  let myKey = i ;//+ Math.floor((Math.random() * 100) + 1);
                   if (!e.admin || isAdmin)
-                    return (<li key={myKey}>
+                    return (<li key={e.value}>
                       <Link activeClassName="active" to={to}>{e.caption}</Link>
                     </li>);
               })
             }
           </ul>
-          </div>
-            
+        </div>
         );
         return sidebarInstance;
       }
