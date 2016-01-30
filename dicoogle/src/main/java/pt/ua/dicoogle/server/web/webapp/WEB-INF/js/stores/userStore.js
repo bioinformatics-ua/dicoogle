@@ -6,11 +6,9 @@ import $ from 'jquery';
 import {UserActions} from '../actions/userActions';
 import {Endpoints} from '../constants/endpoints';
 
+import dicoogleClient from 'dicoogle-client';
 
-import DicoogleClient from 'dicoogle-client';
-
-
-var UserStore = Reflux.createStore({
+const UserStore = Reflux.createStore({
     listenables: UserActions,
     init: function () {
        this._contents = {};
@@ -24,52 +22,42 @@ var UserStore = Reflux.createStore({
     },
 
     saveLocalStore: function(){
-        localStorage.setItem("user",  JSON.stringify({
+        localStorage.setItem("user", JSON.stringify({
             isAdmin: this._isAdmin,
             'username': this._username,
             'roles': this._roles,
             'token': this._token
         }));
 
-
     },
     loadLocalStore: function(){
-        if (localStorage.token!=null)
-        {
+        if (localStorage.token) {
             console.log("loadLocalStore");
-            let user =  JSON.parse(localStorage.getItem("user"));
-            this._isAdmin = user.isAdmin ;
+            let user = JSON.parse(localStorage.getItem("user"));
+            this._isAdmin = user.isAdmin;
             this._username = user.username;
             this._roles = user.roles;
-            this._token = user.token ;
+            this._token = user.token;
             this._isLoggedIn = true;
             this.trigger({
                 isLoggedIn: this._isLoggedIn,
                 success: true
             });
         }
-
     },
     onLogin: function(user, pass){
       console.log("onLogin");
-      var self = this;
+      const self = this;
 
-      var formData = {username: user, password: pass}; //Array
-      let dicoogleClient = DicoogleClient(Endpoints.base);
-      let errorCallBack = function()
-        {
-            self.trigger({
-                failed: true
-            });
+      let Dicoogle = dicoogleClient(Endpoints.base);
 
-        };
-      dicoogleClient.login(user, pass, function(errorCallBack, data){
-          if (data.token===undefined || data.token==null)
+      Dicoogle.login(user, pass, function(errorCallBack, data){
+          if (!data.token)
           {
               self.trigger({
                 failed: true
               });
-              return ;
+              return;
           }
           self._username = data.user;
           self._isAdmin = data.admin;
@@ -84,10 +72,7 @@ var UserStore = Reflux.createStore({
               isLoggedIn: self._isLoggedIn,
               success: true
           });
-
       });
-
-
 
     },
 
@@ -96,15 +81,14 @@ var UserStore = Reflux.createStore({
       if(this._isLoggedIn === false)
       {
 
-        if (localStorage.token !=null) {
+        if (localStorage.token) {
             this.loadLocalStore();
             this.trigger({
                 isLoggedIn: self._isLoggedIn,
                 success: true
             });
-        }else{
+        } else {
             console.log("Verify ajax");
-
 
             $.ajax({
                 type: "GET",
@@ -135,11 +119,9 @@ var UserStore = Reflux.createStore({
         });
         }
 
-
-
       } else {
         //return this._isLoggedIn;
-          if (localStorage.token !==undefined) {
+          if (localStorage.token !== undefined) {
               this.loadLocalStore();
               this.trigger({
                   isLoggedIn: self._isLoggedIn,

@@ -28,6 +28,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Since CrossOriginFilter doesn't work, this is a custom implementation of the same thing.
@@ -80,6 +81,12 @@ public class CORSFilter implements Filter {
             if (allowedAuthorization!=null)
                 resp.addHeader(ACCESS_CONTROL_ALLOW_AUTHORIZATION_HEADER, allowedAuthorization);
             resp.addHeader(ACCESS_CONTROL_ALLOW_METHODS_HEADER, allowedMethods);
+        }
+        if (sreq instanceof HttpServletRequest) {
+            HttpServletRequest req = (HttpServletRequest)sreq;
+            if (req.getMethod().equalsIgnoreCase("OPTIONS")) {
+                return;
+            }
         }
         fc.doFilter(sreq, sresp);
     }

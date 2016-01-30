@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,12 +76,9 @@ public class WebUIServlet extends HttpServlet {
         String token = req.getHeader("Authorization");
         User user = Authentication.getInstance().getUsername(token);
 
-        System.out.println(slotIds);
         Collection<WebUIPlugin> plugins = PluginController.getInstance().getWebUIPlugins(slotIds);
         List<String> pkgList = new ArrayList<>(plugins.size());
         for (WebUIPlugin plugin : plugins) {
-
-
 
             String pkg = PluginController.getInstance().getWebUIPackageJSON(plugin.getName());
             boolean hasUserAllowPlugin= false;
@@ -97,7 +96,13 @@ public class WebUIServlet extends HttpServlet {
                 pkgList.add(pkg);
             }
         }
-        return "{\"plugins\":[" + StringUtils.join(pkgList, ',') + "]}";
+        JSONObject o = new JSONObject();
+        JSONArray pkgArr = new JSONArray();
+        for (String n : pkgList) {
+            pkgArr.add(n);
+        }
+        o.element("plugins", pkgArr);
+        return o.toString();
     }
 
     private String getPlugin(HttpServletResponse resp, String name) throws IOException {
