@@ -18,7 +18,7 @@ require('core-js/fn/object/assign');
 
 var EXTERNAL_REQUIRES = [
     'react', 'react-router', 'reflux', 'dicoogle-webcore', 'dicoogle-client',
-    'react-bootstrap', 'react-router-bootstrap', 'react-bootstrap-table', 'react-imageloader'];
+    'react-bootstrap', 'react-router-bootstrap', 'react-bootstrap-table', 'react-imageloader', "react-dom"];
 
 function createBrowserify(debug, watch) {
   // set up the browserify instance on a task basis
