@@ -1,6 +1,6 @@
 {
   "name": "dicoogle-webapp",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "private": true,
   "description": "Dicoogle web application",
   "author": "Universidade de Aveiro, DETI/IEETA, Bioinformatics Group (http://bioinformatics.ua.pt/)",
@@ -39,7 +39,7 @@
   "dependencies": {
     "bootstrap": "^3.3.2",
     "core-js": "^2.0.3",
-    "dicoogle-client": "^3.0.0-rc0",
+    "dicoogle-client": "^3.0.2",
     "dicoogle-webcore": "../../../../../../../../../../../webcore",
     "document-register-element": "^0.5.4",
     "history": "^1.13.0",
