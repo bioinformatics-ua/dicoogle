@@ -49,21 +49,15 @@ export default class PluginFormModal extends React.Component {
   render() {
     const {plugin} = this.props;
     return (plugin &&
-      <Modal bsSize='lg' animation={false} {...this.props}>
-        <Modal.Header>
-          <Modal.Title>{this.props.plugin.caption}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+      <div {...this.props}>
+
           <dicoogle-slot {...this.props.data} ref={this.handleMounted} data-slot-id={this.props.slotId} data-plugin-name={plugin.name}>
             {plugin.name && <div className="loader-inner ball-pulse">
               <div/><div/><div/>
             </div>}
           </dicoogle-slot>
-        </Modal.Body>
-        <Modal.Footer>
-            <button className="btn btn_dicoogle" onClick={this.props.onHide}>Close</button>
-        </Modal.Footer>
-      </Modal>
+
+      </div>
     );
   }
 }
