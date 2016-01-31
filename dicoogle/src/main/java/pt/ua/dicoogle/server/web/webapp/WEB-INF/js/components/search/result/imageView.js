@@ -115,9 +115,9 @@ var ImageView = React.createClass({
   },
 
    handleSelect(item){
-      let {id} = item;
+      let {sopInstanceUID} = item;
       ResultSelectActions.select(item);
-      let value = this.refsClone[id].getValue();
+      let value = this.refsClone[sopInstanceUID].getValue();
       this.setState({
         resultsSelected: this.state.resultsSelected.concat(value)
       });
@@ -126,12 +126,12 @@ var ImageView = React.createClass({
       this.refsClone[id] = input;
   },
   formatSelect: function (cell, item){
-    let {id} = item;
-    let classNameForIt = "advancedOptions " + id;
+    let {sopInstanceUID} = item;
+    let classNameForIt = "advancedOptions " + sopInstanceUID;
     return (<div className={classNameForIt}>
               <Input type="checkbox" label=""
                     onChange={this.handleSelect.bind(this, item)}
-                    ref={this.handleRefs.bind(this, id)}/>
+                    ref={this.handleRefs.bind(this, sopInstanceUID)}/>
             </div>
     );
   },
