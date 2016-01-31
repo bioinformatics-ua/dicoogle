@@ -114,14 +114,17 @@ var ImageView = React.createClass({
       return (<div></div>);
   },
 
-   handleSelect(item){
-      let {sopInstanceUID} = item;
-      ResultSelectActions.select(item);
-      let value = this.refsClone[sopInstanceUID].getValue();
-      this.setState({
-        resultsSelected: this.state.resultsSelected.concat(value)
-      });
-  },
+    handleSelect(item){
+        let {sopInstanceUID} = item;
+        // ResultSelectActions.select(item);
+        let value = this.refsClone[sopInstanceUID].getChecked();
+        if (value)
+            ResultSelectActions.select(item, sopInstanceUID);
+        else
+            ResultSelectActions.unSelect(item, sopInstanceUID);
+
+
+    },
   handleRefs: function (id, input){
       this.refsClone[id] = input;
   },

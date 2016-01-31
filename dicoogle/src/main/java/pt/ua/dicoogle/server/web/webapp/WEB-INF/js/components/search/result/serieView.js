@@ -94,12 +94,15 @@ var SeriesView = React.createClass({
   },
 
   handleSelect(item){
+
     let {serieInstanceUID} = item;
-    ResultSelectActions.select(item);
-    let value = this.refsClone[serieInstanceUID].getValue();
-    this.setState({
-      resultsSelected: this.state.resultsSelected.concat(value)
-    });
+    // ResultSelectActions.select(item);
+    let value = this.refsClone[serieInstanceUID].getChecked();
+    if (value)
+      ResultSelectActions.select(item, serieInstanceUID);
+    else
+      ResultSelectActions.unSelect(item, serieInstanceUID);
+
   },
   handleRefs: function (id, input){
     this.refsClone[id] = input;
