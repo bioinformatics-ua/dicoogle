@@ -71,10 +71,18 @@ class App extends React.Component {
 		Webcore.init(Endpoints.base);
 	}
 	componentDidMount(){
-		UserStore.loadLocalStore();
+		// check for old browsers
+    let ie = document.getElementsByTagName("html")[0].getAttribute("class");
+    if (ie && ie.value) {
+      ie = ie.value;
+      if (ie.value.indexOf("ie") !== -1) {
+        this.setState({ ie });
+      }
+    }
+
+    UserStore.loadLocalStore();
 		if (localStorage.token === undefined)
 			this.props.history.pushState(null, 'login');
-		//setTimeout(function(){}, 300);
 	}
 	fetchPlugins(data) {
 		if (this.pluginsFetched)
@@ -115,24 +123,38 @@ class App extends React.Component {
 	}
 
 	render() {
+    let ieWarning = null;
+
+    if (this.state.ie) {
+      const ieWStyle = {
+        marginLeft: '100px',
+        color: '#EECD0C',
+        fontSize: 'large'
+      };
+      ieWarning = (
+        <span className="text-center" style={ieWStyle}>
+          <b>Warning: Your Internet browser is not supported by Dicoogle! Please update your browser.</b>
+        </span>);
+    }
+
 		return (
 		<div>
 			<div className="topbar">
 				<img className="btn_drawer" src="assets/drawer_menu.png" id="menu-toggle" />
 				<a>Dicoogle</a>
-                <div className="pull-right" bsStyle="padding:15px">
+        {ieWarning}
+        <div className="pull-right" bsStyle="padding:15px">
 
-                    <span className="user-name usernameLogin" bsStyle="padding-right:10px">
-                        {UserStore.getUsername()}
-                    </span>
+          <span className="user-name usernameLogin" bsStyle="padding-right:10px">
+              {UserStore.getUsername()}
+          </span>
 
-                    <span className="user-name buttonLogin">
+          <span className="user-name buttonLogin">
+              <span onClick={this.logout.bind(this)} className="glyphicon glyphicon-log-out" style={{cursor: 'pointer'}} />
+          </span>
 
-                        <span onClick={this.logout.bind(this)} className="glyphicon glyphicon-log-out" style={{cursor: 'pointer'}} />
-                    </span>
-
-                </div>
-            </div>
+        </div>
+      </div>
 
 			<div id="wrapper">
 				<div id="sidebar-wrapper">
@@ -154,9 +176,11 @@ class NotFoundView extends React.Component {
 	}
 }
 
+
+
 $("#menu-toggle").click(function (e) {
-	e.preventDefault();
-	$("#wrapper").toggleClass("toggled");
+  e.preventDefault();
+  $("#wrapper").toggleClass("toggled");
 });
 
 ReactDOM.render((
