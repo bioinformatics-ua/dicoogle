@@ -3,7 +3,10 @@
 import Reflux from 'reflux';
 import {ProvidersActions} from '../actions/providersActions';
 import {Endpoints} from '../constants/endpoints';
-import {request} from '../handlers/requestHandler';
+import dicoogleClient from 'dicoogle-client';
+//import {request} from '../handlers/requestHandler';
+
+const Dicoogle = dicoogleClient(Endpoints.base);
 
 const ProvidersStore = Reflux.createStore({
     listenables: ProvidersActions,
@@ -11,35 +14,35 @@ const ProvidersStore = Reflux.createStore({
        this._providers = [];
     },
 
-    onGet: function(data){
-      var self = this;
-      if(this._providers.length !== 0)
-      {
-        self.trigger({
-          data: self._providers,
+    onGet: function() {
+      if(this._providers.length !== 0) {
+        this.trigger({
+          data: this._providers,
           success: true
         });
         return;
       }
 
-      request(Endpoints.base + "/providers",
-        function(data){
-          //SUCCESS
-          console.log("success", data);
-          self._providers = data;
-          self.trigger({
-            data: self._providers,
-            success: true
-          });
-        },
-        function(xhr){
+      Dicoogle.getQueryProviders((error, providers) => {
+        if (error) {
           //FAILURE
-          self.trigger({
+          this.trigger({
               success: false,
-              status: xhr.status
+              status: error.status,
+              error
             });
+          return;
         }
-      );
+        //SUCCESS
+        console.log("success", providers);
+        this._providers = providers;
+        this._providers.splice(0, 0, "All providers");
+
+        this.trigger({
+          data: this._providers,
+          success: true
+        });
+      });
     }
 });
 

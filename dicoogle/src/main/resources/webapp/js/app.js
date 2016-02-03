@@ -110,15 +110,15 @@ class App extends React.Component {
         Webcore.fetchModules(packages);
 		});
 
-
     // pre-fetch modules of other plugin types
 		Webcore.fetchPlugins(['search', 'result-options', 'query', 'result'], Webcore.fetchModules)
 		this.pluginsFetched = true;
   }
 
+  // TODO put this elsewhere
 	logout() {
 		const Dicoogle = dicoogleClient();
-		Dicoogle.request('POST', 'logout', {}, (error) => {
+		Dicoogle.logout((error) => {
       if (error) {
         console.error(error);
       }
