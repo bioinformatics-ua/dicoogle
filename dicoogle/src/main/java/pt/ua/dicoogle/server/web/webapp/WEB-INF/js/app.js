@@ -22,8 +22,6 @@ import { hashHistory /*, browserHistory*/ } from 'react-router'
 import {UserActions} from './actions/userActions';
 import {UserStore} from './stores/userStore';
 
-
-import 'document-register-element';
 require('core-js/shim');
 
 require('jquery-ui');
@@ -71,10 +69,15 @@ class App extends React.Component {
 		Webcore.init(Endpoints.base);
 	}
 	componentDidMount(){
-		UserStore.loadLocalStore();
-		if (localStorage.token === undefined)
+    UserStore.loadLocalStore();
+		if (localStorage.token === undefined) {
 			this.props.history.pushState(null, 'login');
-		//setTimeout(function(){}, 300);
+    }
+
+    $("#menu-toggle").click(function (e) {
+      e.preventDefault();
+      $("#wrapper").toggleClass("toggled");
+    });
 	}
 	fetchPlugins(data) {
 		if (this.pluginsFetched)
@@ -115,24 +118,24 @@ class App extends React.Component {
 	}
 
 	render() {
+
 		return (
 		<div>
 			<div className="topbar">
 				<img className="btn_drawer" src="assets/drawer_menu.png" id="menu-toggle" />
 				<a>Dicoogle</a>
-                <div className="pull-right" bsStyle="padding:15px">
+        <div className="pull-right" bsStyle="padding:15px">
 
-                    <span className="user-name usernameLogin" bsStyle="padding-right:10px">
-                        {UserStore.getUsername()}
-                    </span>
+          <span className="user-name usernameLogin" bsStyle="padding-right:10px">
+              {UserStore.getUsername()}
+          </span>
 
-                    <span className="user-name buttonLogin">
+          <span className="user-name buttonLogin">
+              <span onClick={this.logout.bind(this)} className="glyphicon glyphicon-log-out" style={{cursor: 'pointer'}} />
+          </span>
 
-                        <span onClick={this.logout.bind(this)} className="glyphicon glyphicon-log-out" style={{cursor: 'pointer'}} />
-                    </span>
-
-                </div>
-            </div>
+        </div>
+      </div>
 
 			<div id="wrapper">
 				<div id="sidebar-wrapper">
@@ -153,11 +156,6 @@ class NotFoundView extends React.Component {
 		</div>;
 	}
 }
-
-$("#menu-toggle").click(function (e) {
-	e.preventDefault();
-	$("#wrapper").toggleClass("toggled");
-});
 
 ReactDOM.render((
   <Router history={hashHistory}>
