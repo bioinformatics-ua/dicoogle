@@ -34,7 +34,7 @@ var Search = React.createClass({
       ProvidersActions.get();
     },
     componentWillUpdate: function() {
-        console.log("Just a update");
+
         if (getUrlVars()['_k']!=this.keyHash)
         {
             this.keyHash = getUrlVars()['_k'];
@@ -43,7 +43,7 @@ var Search = React.createClass({
             });
         }
         this.keyHash = getUrlVars()['_k'];
-        console.log(this.keyHash);
+        
 
     },
     componentDidUpdate: function(){
@@ -54,8 +54,7 @@ var Search = React.createClass({
       ProvidersStore.listen(this._onChange);
     },
     render: function() {
-      console.log("Just a refresh");
-      console.log(this.keyHash);
+
       var self = this;
       var providersList = (
         self.state.providers.map(function(item, index){
