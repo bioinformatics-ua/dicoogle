@@ -22,14 +22,56 @@ import { hashHistory /*, browserHistory*/ } from 'react-router'
 import {UserActions} from './actions/userActions';
 import {UserStore} from './stores/userStore';
 
-
-import 'document-register-element';
 require('core-js/shim');
 
 require('jquery-ui');
 
 window.jQuery = $; // Bootstrap won't work without this hack. browserify-shim didn't help either
 require('bootstrap');
+
+window.addEventListener('load', function (){
+  // check for old browsers
+  let goOn = true;
+  let ie = document.getElementsByTagName("html")[0].getAttribute("class");
+  if (ie && ie.value) {
+    ie = ie.value;
+    if (ie.value.indexOf("ie") !== -1) {
+      goOn = false;
+      let warningHtml = document.createElement('div');
+      warningHtml.innerHTML = `
+      <div class="topbar">
+        <div class="text-center" style="color:#EECD0C;font-size:large;">
+          <b>Your Internet browser is not supported by Dicoogle! Please update your browser.</b>
+        </div>
+      </div>` +
+     `<div style="display:flex;">
+        <img src="assets/logo.png" style="width:320px;margin:auto"></img>
+      </div>`;
+      document.body.appendChild(warningHtml);
+    }
+  }
+
+  if (goOn) {
+    ReactDOM.render((
+      <Router history={hashHistory}>
+        <Route path="/" component={App}>
+          <IndexRoute component={LoadingView} />
+          <Route path="search" component={Search} />
+          <Route path="management" component={ManagementView} />
+          <Route path="results" component={ResultSearch} />
+          <Route path="indexer" component={IndexStatusView} />
+          <Route path="about" component={AboutView} />
+          <Route path="login" component={LoginView} />
+          <Route path="loading" component={LoadingView} />
+          <Route path="image/:uid" component={DirectImageView} />
+          <Route path="dump/:uid" component={DirectDumpView} />
+          <Route path="ext/:plugin" component={PluginView} />
+          <Route path="*" component={NotFoundView} />
+        </Route>
+      </Router>
+    ), document.getElementById('react-container'));
+  }
+});
 
 class App extends React.Component {
 
@@ -71,18 +113,15 @@ class App extends React.Component {
 		Webcore.init(Endpoints.base);
 	}
 	componentDidMount(){
-		// check for old browsers
-    let ie = document.getElementsByTagName("html")[0].getAttribute("class");
-    if (ie && ie.value) {
-      ie = ie.value;
-      if (ie.value.indexOf("ie") !== -1) {
-        this.setState({ ie });
-      }
+    UserStore.loadLocalStore();
+		if (localStorage.token === undefined) {
+			this.props.history.pushState(null, 'login');
     }
 
-    UserStore.loadLocalStore();
-		if (localStorage.token === undefined)
-			this.props.history.pushState(null, 'login');
+    $("#menu-toggle").click(function (e) {
+      e.preventDefault();
+      $("#wrapper").toggleClass("toggled");
+    });
 	}
 	fetchPlugins(data) {
 		if (this.pluginsFetched)
@@ -123,26 +162,12 @@ class App extends React.Component {
 	}
 
 	render() {
-    let ieWarning = null;
-
-    if (this.state.ie) {
-      const ieWStyle = {
-        marginLeft: '100px',
-        color: '#EECD0C',
-        fontSize: 'large'
-      };
-      ieWarning = (
-        <span className="text-center" style={ieWStyle}>
-          <b>Warning: Your Internet browser is not supported by Dicoogle! Please update your browser.</b>
-        </span>);
-    }
 
 		return (
 		<div>
 			<div className="topbar">
 				<img className="btn_drawer" src="assets/drawer_menu.png" id="menu-toggle" />
 				<a>Dicoogle</a>
-        {ieWarning}
         <div className="pull-right" bsStyle="padding:15px">
 
           <span className="user-name usernameLogin" bsStyle="padding-right:10px">
@@ -175,29 +200,3 @@ class NotFoundView extends React.Component {
 		</div>;
 	}
 }
-
-
-
-$("#menu-toggle").click(function (e) {
-  e.preventDefault();
-  $("#wrapper").toggleClass("toggled");
-});
-
-ReactDOM.render((
-  <Router history={hashHistory}>
-    <Route path="/" component={App}>
-      <IndexRoute component={LoadingView} />
-      <Route path="search" component={Search} />
-      <Route path="management" component={ManagementView} />
-      <Route path="results" component={ResultSearch} />
-      <Route path="indexer" component={IndexStatusView} />
-      <Route path="about" component={AboutView} />
-      <Route path="login" component={LoginView} />
-      <Route path="loading" component={LoadingView} />
-      <Route path="image/:uid" component={DirectImageView} />
-      <Route path="dump/:uid" component={DirectDumpView} />
-      <Route path="ext/:plugin" component={PluginView} />
-      <Route path="*" component={NotFoundView} />
-    </Route>
-  </Router>
-), document.getElementById('react-container'));

@@ -1,6 +1,6 @@
 {
   "name": "dicoogle-webcore",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "private": true,
   "author": "Universidade de Aveiro, DETI/IEETA, Bioinformatics Group (http://bioinformatics.ua.pt/)",
   "maintainers": [
@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "dicoogle-client": "^3.0.2",
+    "document-register-element": "^0.5.4",
     "events": "^1.1.0"
   }
 }

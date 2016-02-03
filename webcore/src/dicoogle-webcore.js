@@ -1,3 +1,4 @@
+import 'document-register-element';
 import {EventEmitter} from 'events';
 import request from './request';
 
