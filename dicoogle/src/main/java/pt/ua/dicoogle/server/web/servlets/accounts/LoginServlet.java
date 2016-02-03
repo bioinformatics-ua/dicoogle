@@ -20,7 +20,6 @@
 package pt.ua.dicoogle.server.web.servlets.accounts;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

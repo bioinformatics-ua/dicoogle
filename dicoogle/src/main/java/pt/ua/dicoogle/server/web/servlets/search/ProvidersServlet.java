@@ -21,7 +21,6 @@ package pt.ua.dicoogle.server.web.servlets.search;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -32,8 +31,6 @@ import net.sf.json.JSONArray;
 
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.DicooglePlugin;
-import pt.ua.dicoogle.sdk.IndexerInterface;
-import pt.ua.dicoogle.sdk.StorageInterface;
 
 /**
  * Retrieve active providers
