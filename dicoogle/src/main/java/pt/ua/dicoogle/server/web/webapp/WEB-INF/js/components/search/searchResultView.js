@@ -10,6 +10,7 @@ import {ImageView} from './result/imageView';
 import {ExportView} from './exportView';
 import Webcore from 'dicoogle-webcore';
 import PluginForm from '../plugin/pluginForm.jsx';
+import {DefaultOptions} from '../../constants/defaultOptions';
 
 var ResultSearch = React.createClass({
 
@@ -18,7 +19,7 @@ var ResultSearch = React.createClass({
       data: [],
       status: "loading",
       showExport: false,
-      showDangerousOptions: false,
+      showDangerousOptions: DefaultOptions.showSearchOptions,
       current: 0,
       batchPlugins: [],
       currentPlugin: null

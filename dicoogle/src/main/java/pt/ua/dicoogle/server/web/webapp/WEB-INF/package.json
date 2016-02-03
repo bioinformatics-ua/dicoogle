@@ -46,7 +46,7 @@
     "jquery-ui": "^1.10.5",
     "react": "^0.14.6",
     "react-bootstrap": "^0.28.1",
-    "react-bootstrap-table": "git://github.com/bastiao/react-bootstrap-table.git#new/prod2",
+    "react-bootstrap-table": "^1.4.6",
     "react-dom": "^0.14.6",
     "react-font-awesome": "https://github.com/tkurki/react-font-awesome/tarball/master",
     "react-imageloader": "~2.0.0",
