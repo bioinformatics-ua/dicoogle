@@ -23,6 +23,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.Semaphore;
+
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.json.JSONArray;
@@ -40,6 +42,7 @@ public class SOPList {
 
     private static SOPList instance = null;
     private static Semaphore sem = new Semaphore(1, true);
+    private static Logger logger = LoggerFactory.getLogger(SOPList.class);
 
     private Hashtable<String, TransfersStorage> table;    
     
@@ -230,6 +233,8 @@ public class SOPList {
      * @return -1 if something went wrong, 1 otherwise
      */
     public synchronized int updateTSField(String UID, String name, boolean value) {
+        logger.debug("UID: " + UID + ", name: " + name + ", value" + value);
+
         TransfersStorage TS;
         TS = table.get(UID);
         
@@ -247,6 +252,7 @@ public class SOPList {
         		return -1;
         	}
         }
+        logger.debug("UID: " + UID + ", name: " + name + ", value" + value);
       
         return 0;    
     }   

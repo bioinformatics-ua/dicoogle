@@ -141,7 +141,7 @@ public class ControlServices implements IServices
             ServerSettings settings = ServerSettings.getInstance();
 
             SOPList list = SOPList.getInstance();
-            list.setDefaultSettings();
+            //list.setDefaultSettings();
 
             int i;
 
