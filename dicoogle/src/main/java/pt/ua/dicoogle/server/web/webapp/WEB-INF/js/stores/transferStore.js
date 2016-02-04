@@ -77,8 +77,7 @@ const TransferStore = Reflux.createStore({
 
     },
     request(uid, id, value) {
-
-        console.log("Selected uid:", uid);
+        
         $.post(Endpoints.base + "/management/settings/transfer", {
             uid: uid,
             option: id,
@@ -91,7 +90,7 @@ const TransferStore = Reflux.createStore({
 
 
     onSet: function(index, indexOption, value){
-      
+
 
       this._contents[index].options[indexOption].value = value;
       this.trigger({

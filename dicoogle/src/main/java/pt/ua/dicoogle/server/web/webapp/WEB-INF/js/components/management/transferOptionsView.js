@@ -57,7 +57,7 @@ const TransferOptionsView = React.createClass({
 
         var sopclasses = (
           array.data.map((item, index) => {
-            console.log(item);
+
             return (<option key={index}>{item.sop_name} -- {item.uid}</option>);
           })
         );
