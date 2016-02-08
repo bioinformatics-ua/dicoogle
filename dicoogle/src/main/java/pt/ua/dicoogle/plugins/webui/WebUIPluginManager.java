@@ -140,7 +140,7 @@ public class WebUIPluginManager {
     public void loadAllFromZip(ZipFile pluginZip) throws IOException {
         assert pluginZip != null;
         logger.trace("Discovering web UI plugins in {} ...", pluginZip.getName());
-        Pattern pckDescrMatcher = Pattern.compile("WebPlugins" + File.separatorChar + "(\\p{Alnum}|\\-|\\_)+" + File.separatorChar + "package.json");
+        Pattern pckDescrMatcher = Pattern.compile("WebPlugins\\" + File.separatorChar + "(\\p{Alnum}|\\-|\\_)+\\" + File.separatorChar + "package.json");
         Enumeration<? extends ZipEntry> entries = pluginZip.entries();
         final int DIRNAME_TAIL = "/package.json".length();
         while (entries.hasMoreElements()) {
