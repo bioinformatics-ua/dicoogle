@@ -34,6 +34,7 @@ import pt.ua.dicoogle.server.users.Role;
 import pt.ua.dicoogle.server.users.User;
 import pt.ua.dicoogle.server.users.UsersStruct;
 import pt.ua.dicoogle.server.web.auth.LoggedIn;
+import pt.ua.dicoogle.server.web.auth.LoggedInStatus;
 import pt.ua.dicoogle.server.web.auth.Session;
 
 /**
@@ -44,11 +45,10 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    	//resp.addHeader("Access-Control-Allow-Origin", "*");
         //Try login
-        // Does not require admini rights.
-        LoggedIn mLoggedIn = Session.webappLogin(req, resp, false).getLogin();
-        //servletLogin(req, resp, true);//auth.login(user, pass);
+        // Does not require admin rights.
+        LoggedInStatus loginStatus = Session.webappLogin(req, resp, false);
+        LoggedIn mLoggedIn = loginStatus.getLogin();
 
         if (mLoggedIn == null) {
             resp.sendError(401, "Login failed");
