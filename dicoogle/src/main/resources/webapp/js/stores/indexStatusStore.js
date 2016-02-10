@@ -2,9 +2,7 @@
 
 import Reflux from 'reflux';
 import {IndexStatusActions} from '../actions/indexStatusAction';
-import {Endpoints} from '../constants/endpoints';
 import {forceIndex} from '../handlers/requestHandler';
-import $ from 'jquery';
 import dicoogleClient from 'dicoogle-client';
 
 const Dicoogle = dicoogleClient();
@@ -49,43 +47,26 @@ const IndexStatusStore = Reflux.createStore({
       console.log(this._contents);
     },
 
-    onClose: function(uid){
-
-      // TODO use Dicoogle client
-      $.post(Endpoints.base + "/index/task",
-      {
-        uid: uid,
-        action: "delete",
-        type: "close"
-      },
-        function(data, status){
-          //Response
-          console.log("Data: ", data, " ; Status: ", status);
-        });
-
-      for (let i = 0; i < this._contents.tasks.length; i++)
-      {
-        if (this._contents.tasks[i].taskUid === uid) {
-          this._contents.tasks.splice(i, 1);
-          break;
+    onClose: function(uid) {
+      Dicoogle.closeTask(uid, (error) => {
+        console.log("closeTask: ", error || 'ok');
+        for (let i = 0; i < this._contents.tasks.length; i++)
+        {
+          if (this._contents.tasks[i].taskUid === uid) {
+            this._contents.tasks.splice(i, 1);
+            break;
+          }
         }
-      }
-      this.trigger({
-        data: this._contents,
-        success: true
+        this.trigger({
+          data: this._contents,
+          success: true
+        });
       });
     },
     onStop: function(uid){
       console.log("Stop: ", uid);
-      // TODO use Dicoogle client
-      $.post(Endpoints.base + "/index/task",
-      {
-        uid: uid,
-        action: "delete",
-        type: "stop"
-      }, function(data, status) {
-        //Response
-        console.log("Data: ", data, " ; Status: ", status);
+      Dicoogle.stopTask(uid, (error) => {
+        console.log("stopTask: ", error || 'ok');
       });
     }
 

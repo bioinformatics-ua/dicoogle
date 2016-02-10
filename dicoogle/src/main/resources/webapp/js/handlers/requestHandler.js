@@ -17,35 +17,26 @@ export function request(url, callbackSuccess, callbackError){
     });
 }
 
-export function getPatients(freetext, isKeyword, provider, callbackSucccess, callbackError){
-    console.log("store param: ", freetext);
-    // ??? use dicoogle client?
-
-    //'http://localhost:8080/search?query=wrix&keyword=false&provicer=lucene'
+export function getPatients(freetext, isKeyword, provider, callbackSuccess, callbackError){
+    console.log("getPatients: ", freetext);
     if(freetext.length === 0)
     {
       freetext = "*:*";
       isKeyword = true;
     }
-
-    var url = Endpoints.base + '/searchDIM?query=' + freetext + '&keyword=' + isKeyword;
-    if(provider !== "all")
-    {
-      url = url + "&provider=" + provider;
+    if (provider === 'all') { // FIXME function should not accept 'all' in the first place
+      provider = undefined;
     }
-    console.log("store url;", url);
-
-    $.ajax({
-
-      url: url,
-      dataType: 'json',
-      success: function(data) {
-
-        callbackSucccess(data);
-
-      },
-      error: function(xhr, status, err) {
-        callbackError(xhr);
+    const searchOpt = {
+      dim: true,
+      keyword: isKeyword,
+      provider
+    };
+    Dicoogle.search(freetext, searchOpt, (error, outcome) => {
+      if (error) {
+        callbackError(error);
+      } else {
+        callbackSuccess(outcome);
       }
     });
 }
@@ -66,37 +57,37 @@ export function unindex(uri, provider, callbackSuccess, callbackError){
     });
 }
 
-export function remove(uri, callbackSucccess, callbackError){
+export function remove(uri, callbackSuccess, callbackError){
     console.log("Unindex param: ", uri);
 
     Dicoogle.remove(uri, function(error) {
       if (error) {
         callbackError(error);
       } else {
-        callbackSucccess();
+        callbackSuccess();
       }
     });
 }
 
-export function getImageInfo(uid, callbackSucccess, callbackError){
+export function getImageInfo(uid, callbackSuccess, callbackError){
   console.log("getImageInfo: ", uid);
 
   Dicoogle.dump(uid, function(error, data){
     if (error) {
       callbackError(error);
     } else {
-      callbackSucccess(data);
+      callbackSuccess(data);
     }
   });
 }
 
-export function getVersion(callbackSucccess, callbackError){
+export function getVersion(callbackSuccess, callbackError){
 
   Dicoogle.getVersion(function(error, data) {
     if (error) {
       callbackError(error);
     } else {
-      callbackSucccess(data);
+      callbackSuccess(data);
     }
   });
 }
