@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONObject;
+import pt.ua.dicoogle.server.web.auth.Authentication;
 import pt.ua.dicoogle.server.web.auth.Session;
 import pt.ua.dicoogle.server.web.utils.ResponseUtil;
 
@@ -38,12 +39,12 @@ public class LogoutServlet extends HttpServlet{
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     	//resp.addHeader("Access-Control-Allow-Origin", "*");
         boolean logout = Session.logout(req);
-        
+        String username = req.getParameter("username");
+        if (username!=null&&!username.equals(""))
+            Authentication.getInstance().logout(username);
+
         ResponseUtil.simpleResponse(resp,"success", logout);
-              
-        
-        
-        
+
     }
     
 }

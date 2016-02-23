@@ -29,6 +29,7 @@ import net.contentobjects.jnotify.JNotifyException;
 import net.contentobjects.jnotify.JNotifyListener;
 import org.slf4j.Logger;
 import pt.ua.dicoogle.plugins.PluginController;
+import pt.ua.dicoogle.sdk.Utils.Platform;
 
 /**
  *
@@ -81,8 +82,9 @@ class Listener implements JNotifyListener {
     public void fileDeleted(int wd, String rootPath, String name) {
         logger.debug("deleted {} : {}", rootPath, name);
         try {
-            PluginController.getInstance().unindex(new URI(rootPath + File.separatorChar + name));
-        } catch (URISyntaxException ex) {
+            URI uri = new File(rootPath + File.separator + name).toURI();
+            PluginController.getInstance().unindex(uri);
+        } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         }
     }
@@ -91,8 +93,9 @@ class Listener implements JNotifyListener {
     public void fileCreated(int wd, String rootPath, String name) {
         try {
             logger.debug("created {} : {}", rootPath, name);
-            PluginController.getInstance().index(new URI(rootPath + File.separatorChar + name));
-        } catch (URISyntaxException ex) {
+            URI uri = new File(rootPath + File.separator + name).toURI();
+            PluginController.getInstance().index(uri);
+        } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         }
     }

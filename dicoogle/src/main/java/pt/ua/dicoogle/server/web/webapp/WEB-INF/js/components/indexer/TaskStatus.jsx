@@ -6,10 +6,10 @@ class TaskStatus extends React.Component {
     super(props);
     this.state = {};
   }
-  
+
   static get propTypes() {
     return {
-      item : PropTypes.shape({
+      item: PropTypes.shape({
           taskUid: PropTypes.string.isRequired,
           complete: PropTypes.bool,
           taskProgress: PropTypes.number,
@@ -20,7 +20,7 @@ class TaskStatus extends React.Component {
       onCloseStopClicked: PropTypes.func.isRequired
     };
   }
-	
+
   render() {
     const {item, onCloseStopClicked} = this.props;
     const {complete} = item;

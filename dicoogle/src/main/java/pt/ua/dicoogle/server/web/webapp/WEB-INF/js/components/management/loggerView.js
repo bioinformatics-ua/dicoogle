@@ -13,7 +13,7 @@ var LoggerView = React.createClass({
     LoggerActions.get();
     //$("#consolediv").scrollTop($("#consolediv")[0].scrollHeight);
    },
-   componentDidUpdate:function(){
+   componentDidUpdate: function(){
      console.log("logger update");
      $("#consolediv").scrollTop($("#consolediv")[0].scrollHeight);
      //$("#consolediv").scrollTop(1000000);
@@ -29,7 +29,7 @@ var LoggerView = React.createClass({
   _onChange: function(data){
     if (this.isMounted()){
 
-      this.setState({data:data.data,status: "done"});
+      this.setState({data: data.data, status: "done"});
     }
   },
       render: function() {

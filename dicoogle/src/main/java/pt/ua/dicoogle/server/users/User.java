@@ -19,18 +19,23 @@
 
 package pt.ua.dicoogle.server.users;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
  * Class that saves information about one user
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
+ * @author Luís Bastião Silva <bastiao@bmd-software.com>
  */
-public class User {
+public class User implements UserRoleManager{
 
     private final String username;
     private String hash;        //stores the Hash of this user (username + admin + passwordHash)
     private final boolean admin;
+
+    private List<Role> roles = new ArrayList<>();
 
     public User(String username, String Hash, boolean admin){
         this.username = username;
@@ -50,6 +55,16 @@ public class User {
         String tempHash = HashService.getSHA1Hash(username + admin + passwordHash);
 
         return this.hash.equals(tempHash);
+    }
+
+    public void addRole(Role r)
+    {
+        this.roles.add(r);
+    }
+
+    public boolean hasRole(Role r)
+    {
+        return this.roles.contains(r);
     }
 
     public boolean changePassword(String oldPassHash, String newPassHash){
@@ -112,5 +127,9 @@ public class User {
     @Override
     public String toString() {
         return "User{" + username + (admin ? ", admin" : "") + '}';
+    }
+
+    public List<Role> getRoles() {
+        return roles;
     }
 }

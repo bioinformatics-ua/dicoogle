@@ -192,13 +192,13 @@ public class SearchServlet extends HttpServlet {
         JSONObject resp = new JSONObject();
         for (SearchResult r : results) {
             JSONObject rj = new JSONObject();
-            rj.put("uri", r.getURI().toString());
+            rj.put("uri", String.valueOf(r.getURI()));
 
             JSONObject fields = new JSONObject();
 
             for (Entry<String,Object> f : r.getExtraData().entrySet()) {
                 // remove padding from string representations before accumulating
-                fields.accumulate(f.getKey(), f.getValue().toString().trim());
+                fields.accumulate(f.getKey(), String.valueOf(f.getValue()).trim());
             }
             
             rj.put("fields", fields);

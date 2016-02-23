@@ -5,7 +5,7 @@ import {IndexStatusStore} from "../../stores/indexStatusStore";
 import TaskStatus from "./TaskStatus.jsx";
 
 var refreshIntervalId;
-var IndexStatusView = React.createClass({
+const IndexStatusView = React.createClass({
       getInitialState: function() {
         return {data: {},
         status: "loading"};
@@ -17,7 +17,7 @@ var IndexStatusView = React.createClass({
         refreshIntervalId = setInterval(this.update, 3000);
         //$("#consolediv").scrollTop($("#consolediv")[0].scrollHeight);
        },
-       componentDidUpdate:function(){
+       componentDidUpdate: function(){
          console.log("indexstatus update");
          //if(this.state.data.count !=0)
          //{
@@ -41,7 +41,7 @@ var IndexStatusView = React.createClass({
       _onChange: function(data){
         if (this.isMounted()){
 
-          this.setState({data:data.data,status: "done"});
+          this.setState({data: data.data, status: "done"});
         }
       },
       render: function() {
@@ -80,7 +80,7 @@ var IndexStatusView = React.createClass({
             <div className="panel panel-primary topMargin">
               <div className="panel-heading">
                   <h3 className="panel-title">{this.state.data.count === 0 ? "No tasks currently running" :
-                    ("Indexing Status ("+this.state.data.count+" running)")}</h3>
+                    ("Indexing Status (" + this.state.data.count + " running)")}</h3>
               </div>
               <div className="panel-body">
                   {items}
@@ -89,10 +89,10 @@ var IndexStatusView = React.createClass({
           </div>
         );
       },
-      onStartClicked : function(){
+      onStartClicked: function(){
         IndexStatusActions.start(document.getElementById("path").value);
       },
-      onCloseStopClicked : function(uid, type){
+      onCloseStopClicked: function(uid, type){
         if(type){
           IndexStatusActions.close(uid);
         }

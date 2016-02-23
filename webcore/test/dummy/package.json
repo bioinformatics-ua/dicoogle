@@ -1,6 +1,6 @@
 {
   "name": "dummy",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Dummy Web UI plugin",
   "scripts": {
     "build": "uglifyjs dummy.js --compress keep_fargs=true --mangle -r require,module,exports -o module.js",

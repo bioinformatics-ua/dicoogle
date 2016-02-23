@@ -1,25 +1,28 @@
 {
   "name": "dicoogle-webcore",
-  "version": "0.10.0",
+  "version": "0.12.0",
   "private": true,
   "author": "Universidade de Aveiro, DETI/IEETA, Bioinformatics Group (http://bioinformatics.ua.pt/)",
   "maintainers": [
     "Eduardo Pinho <eduardopinho@ua.pt>"
   ],
   "contributors": [
-    "Eduardo Pinho <eduardopinho@ua.pt>"
+    "Eduardo Pinho <eduardopinho@ua.pt>",
+    "Luís Bastião Silva <bastiao@bmd-software.com>"
   ],
   "description": "Dicoogle Web Core for UI plugins",
   "files": [
-    "lib"
+    "src/*.js",
+    "lib/*.js"
   ],
+  "esnext:main": "src/dicoogle-webcore.js",
   "main": "lib/dicoogle-webcore.js",
   "keywords": [
     "dicoogle"
   ],
   "scripts": {
     "check": "eslint src",
-    "build": "eslint src && babel src --out-dir lib",
+    "build": "babel src --out-dir lib",
     "prepublish": "eslint src && babel src --out-dir lib"
   },
   "license": "GPL-3.0+",
@@ -29,6 +32,8 @@
     "eslint": "^1.9.0"
   },
   "dependencies": {
-    "dicoogle-client": "^2.2.0"
+    "dicoogle-client": "^3.0.2",
+    "document-register-element": "^0.5.4",
+    "events": "^1.1.0"
   }
 }

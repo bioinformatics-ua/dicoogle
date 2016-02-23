@@ -37,7 +37,7 @@ var QueryAdvancedOptionsModal = React.createClass({
     }
    },
   render: function() {
-    return (<Modal  {...this.props} bsStyle='primary' title='Query Retrieve - Advanced Settings' animation={true}>
+    return (<Modal {...this.props} bsStyle='primary' title='Query Retrieve - Advanced Settings' animation={true}>
       <div className='modal-body'>
         <div className="container-fluid">
           <div className="row">
@@ -102,25 +102,25 @@ var QueryAdvancedOptionsModal = React.createClass({
       </div>
     </Modal>);
   },
-  handleResponseTimeoutChange : function(event){
+  handleResponseTimeoutChange: function(event){
     this.setState({responseTimeout: event.target.value});
   },
-  handleConnectionTimeoutChange : function(event){
+  handleConnectionTimeoutChange: function(event){
     this.setState({connectionTimeout: event.target.value});
   },
-  handleIdleTimeoutChange : function(event){
+  handleIdleTimeoutChange: function(event){
     this.setState({idleTimeout: event.target.value});
   },
-  handleAcceptTimeoutChange : function(event){
+  handleAcceptTimeoutChange: function(event){
     this.setState({acceptTimeout: event.target.value});
   },
-  handleMaxPduSendTimeoutChange : function(event){
+  handleMaxPduSendTimeoutChange: function(event){
     this.setState({maxPduSend: event.target.value});
   },
-  handleMaxPduReceiveTimeoutChange : function(event){
+  handleMaxPduReceiveTimeoutChange: function(event){
     this.setState({maxPduReceive: event.target.value});
   },
-  handleMaxAssociationsTimeoutChange : function(event){
+  handleMaxAssociationsTimeoutChange: function(event){
     this.setState({maxAssociations: event.target.value});
   },
   onSave: function(){
