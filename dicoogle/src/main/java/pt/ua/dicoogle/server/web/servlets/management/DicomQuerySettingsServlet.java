@@ -54,6 +54,7 @@ public class DicomQuerySettingsServlet extends HttpServlet {
 				responseTimeout, connectionTimeout, idleTimeout, acceptTimeout,
 				maxPduSend, maxPduReceive, maxAssociations);
 
+        resp.setContentType("application/json");
 		resp.getWriter().write(JSONSerializer.toJSON(queryRetrieveSettings).toString());
 	}
 
