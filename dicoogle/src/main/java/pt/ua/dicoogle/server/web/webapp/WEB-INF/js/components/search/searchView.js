@@ -43,7 +43,7 @@ var Search = React.createClass({
             });
         }
         this.keyHash = getUrlVars()['_k'];
-        
+
 
     },
     componentDidUpdate: function(){
@@ -186,9 +186,9 @@ var Search = React.createClass({
           console.log(terms.length);
           var termtrick = ((terms.length >= 1) ? " AND " : "") + ui.item.value;
           terms.push(termtrick);
-          // add placeholder to get the comma-and-space at the end
+          // add placeholder to get the comma at the end
           terms.push( "" );
-          this.value = (terms.join( "" ) + ": ");
+          this.value = (terms.join( "" ) + ":");
 
           return false;
         }

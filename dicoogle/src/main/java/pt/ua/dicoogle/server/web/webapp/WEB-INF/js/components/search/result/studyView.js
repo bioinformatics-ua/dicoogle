@@ -76,12 +76,15 @@ var StudyView = React.createClass({
               {/* plugin-based result options */}
               <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
                   'data-result-type': 'study',
-                  'data-result-uid': item.studyInstanceUID
+                  'data-result-uid': item.studyInstanceUID,
+                  'data-result-modality': [].concat(item.modalities).join(','),
+                  'data-result-nseries': item.series.length,
+                  'data-result-nimages': item.series.reduce((acc, s) => acc + s.images.length, 0)
                 }}/>
           </div>);
 
       }
-      return (<div></div>);
+      return <div/>;
   },
     handleSelect(item){
         let {studyInstanceUID} = item;
@@ -98,8 +101,8 @@ var StudyView = React.createClass({
       this.refsClone[id] = input;
   },
   formatSelect: function (cell, item){
-    let {studyInstanceUID} = item;
-    let classNameForIt = "advancedOptions " + studyInstanceUID;
+    const {studyInstanceUID} = item;
+    const classNameForIt = "advancedOptions " + studyInstanceUID;
     return (<div className={classNameForIt}>
               <Input type="checkbox" label=""
                     onChange={this.handleSelect.bind(this, item)}
@@ -117,10 +120,10 @@ var StudyView = React.createClass({
   },
 
 	render: function() {
-		var self = this;
-		var resultArray = this.props.patient.studies;
+		const self = this;
+		const resultArray = this.props.patient.studies;
 
-    var selectRowProp = {
+    const selectRowProp = {
       clickToSelect: true,
       mode: "none",
       bgColor: "rgb(163, 210, 216)",
@@ -162,20 +165,20 @@ var StudyView = React.createClass({
     });
   },
   hideRemove () {
-      if (this.isMounted())
+    if (this.isMounted())
     this.setState({
       removeSelected: null
     });
   },
   showRemove (item) {
-      if (this.isMounted())
+    if (this.isMounted())
     this.setState({
       removeSelected: item,
       unindexSelected: null
     });
   },
 	extractURISFromData: function(item){
-		var uris = [];
+		let uris = [];
 		for(let ss in item.series)
 			for(let i in item.series[ss].images)
 				uris.push(item.series[ss].images[i].uri);
@@ -183,7 +186,7 @@ var StudyView = React.createClass({
 	},
 	onUnindexConfirm: function(item){
 		console.log(item)
-		var uris = this.extractURISFromData(item);
+		let uris = this.extractURISFromData(item);
 		let p = this.props.provider;
 
 		ActionCreators.unindex(uris, p);

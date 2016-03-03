@@ -1,4 +1,4 @@
-import React from 'react';
+import {PropTypes, default as React} from 'react';
 import {Button, Modal} from 'react-bootstrap';
 import {SearchStore} from '../../../stores/searchStore';
 import {ActionCreators} from '../../../actions/searchActions';
@@ -16,10 +16,19 @@ import {UserStore} from '../../../stores/userStore';
 
 
 var ImageView = React.createClass({
+
+    propTypes: {
+      serie: PropTypes.object.isRequired,
+      uid: PropTypes.string.isRequired,
+      enableAdvancedSearch: PropTypes.func,
+      onItemClick: PropTypes.func.isRequired
+    },
+
     getInitialState: function() {
       // We need this because refs are not updated in BootstrapTable.
       this.refsClone = {};
-      return {data: [],
+      return {
+        data: [],
         image: null,
         dump: null,
         status: "loading",
@@ -58,11 +67,11 @@ var ImageView = React.createClass({
 
   },
   formatThumbUrl: function(cell, item){
-    let self = this;
     let uid = item.sopInstanceUID;
     let thumbUrl = Endpoints.base + "/dic2png?thumbnail=true&SOPInstanceUID=" + uid;
 
-    return (<div onClick={self.showImage.bind(self, uid)}><ImageLoader
+    return (
+        <div onClick={this.showImage.bind(this, uid)}><ImageLoader
                 src={thumbUrl}
                 style={{"width": "64px", "cursor": "pointer"}}
                 wrapper={React.DOM.div}>
@@ -72,10 +81,11 @@ var ImageView = React.createClass({
   formatViewOptions: function(cell, item){
     let self = this;
     let uid = item.sopInstanceUID;
-    return (<div>
-            <button title="Dump Image" type="button" onClick={self.showDump.bind(self, uid)} className="btn btn_dicoogle btn-xs fa fa-table"> </button>
-            <button title="Show Image" type="button" onClick={self.showImage.bind(self, uid)} className="btn btn_dicoogle btn-xs fa fa-eye"> </button>
-          </div>);
+    return (
+      <div>
+        <button title="Dump Image" type="button" onClick={self.showDump.bind(self, uid)} className="btn btn_dicoogle btn-xs fa fa-table"> </button>
+        <button title="Show Image" type="button" onClick={self.showImage.bind(self, uid)} className="btn btn_dicoogle btn-xs fa fa-eye"> </button>
+      </div>);
   },
 
   formatOptions: function(cell, item){
@@ -104,9 +114,10 @@ var ImageView = React.createClass({
                   {/* plugin-based result options*/}
                   <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
                   'data-result-type': 'image',
+                  'data-result-modality': this.props.serie.serieModality,
                   'data-result-uri': item.uri,
                   'data-result-uid': item.sopInstanceUID
-                 }}/>
+                  }}/>
               </div>
 
           );
@@ -152,10 +163,9 @@ var ImageView = React.createClass({
   },
 
 	render: function() {
-		let self = this;
-		var resultArray = this.props.serie.images;
+		const resultArray = this.props.serie.images;
 
-    var selectRowProp = {
+    const selectRowProp = {
       clickToSelect: true,
       mode: "none",
       bgColor: "rgb(163, 210, 216)",
@@ -196,13 +206,13 @@ var ImageView = React.createClass({
               </TableHeaderColumn>
             </BootstrapTable>
 
-          <ConfirmModal show={self.state.unindexSelected !== null}
-                        onHide={self.hideUnindex}
-                        onConfirm={self.onUnindexConfirm.bind(self, self.state.unindexSelected)}/>
-          <ConfirmModal show={self.state.removeSelected !== null}
+          <ConfirmModal show={this.state.unindexSelected !== null}
+                        onHide={this.hideUnindex}
+                        onConfirm={this.onUnindexConfirm.bind(this, this.state.unindexSelected)}/>
+          <ConfirmModal show={this.state.removeSelected !== null}
                         message="The following files will be unindexed and then deleted from their storage."
-                        onHide={self.hideRemove}
-                        onConfirm={self.onRemoveConfirm.bind(self, self.state.removeSelected)}/>
+                        onHide={this.hideRemove}
+                        onConfirm={this.onRemoveConfirm.bind(this, this.state.removeSelected)}/>
           <PopOverView uid={this.state.dump} onHide={this.onHideDump} />
           <PopOverImageViewer uid={this.state.image} onHide={this.onHideImage}/>
         </div>
@@ -272,6 +282,8 @@ var ImageView = React.createClass({
       }
     }
 });
+
+// -----------------------------------
 
 var PopOverView = React.createClass({
 	getInitialState: function() {

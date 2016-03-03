@@ -1,4 +1,4 @@
-import React from 'react';
+import {PropTypes, default as React} from 'react';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import {SearchStore} from '../../../stores/searchStore';
 import {ActionCreators} from '../../../actions/searchActions';
@@ -10,6 +10,14 @@ import {UserStore} from '../../../stores/userStore';
 
 
 var SeriesView = React.createClass({
+  propTypes: {
+    study: PropTypes.object.isRequired,
+    uid: PropTypes.string.isRequired,
+    provider: PropTypes.string,
+    enableAdvancedSearch: PropTypes.func,
+    onItemClick: PropTypes.func.isRequired
+  },
+
   getInitialState: function() {
     // We need this because refs are not updated in BootstrapTable.
     this.refsClone = {};
@@ -66,8 +74,6 @@ var SeriesView = React.createClass({
       let unindex = null;
       let removeFiles = null;
 
-
-
     if (this.props.enableAdvancedSearch)
       {
         if (isAdmin) {
@@ -83,7 +89,10 @@ var SeriesView = React.createClass({
               {/* plugin-based result options */}
               <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
           'data-result-type': 'series',
-          'data-result-uid': item.serieInstanceUID
+          'data-result-modality': item.serieModality,
+          'data-result-uid': item.serieInstanceUID,
+          'data-result-uris': item.images.map((image) => image.uri).join('|'), // FIXME Temporary hack
+          'data-result-nimages': item.images.length // FIXME Temporary hack
          }} />
             </div>
         );
@@ -142,13 +151,13 @@ var SeriesView = React.createClass({
       bgColor: "rgb(163, 210, 216)",
       onSelect: this.onRowSelect
     };
-    
-    
+
+
     // TODO trigger this action elsewhere
     ResultSelectActions.level("series");
-    
-    
-    return ( 
+
+
+    return (
 			<div>
         <BootstrapTable data={resultArray} selectRow={selectRowProp} pagination striped hover width="100%">
           <TableHeaderColumn dataAlign="right" dataField="serieInstanceUID" isKey dataFormat={this.formatNumber} dataSort>Number</TableHeaderColumn>

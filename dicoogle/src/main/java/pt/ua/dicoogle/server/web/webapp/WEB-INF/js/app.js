@@ -6,7 +6,7 @@ import {Endpoints} from './constants/endpoints';
 import DicoogleClient from 'dicoogle-client';
 import Webcore from 'dicoogle-webcore';
 
-import {default as Router, Route, IndexRoute} from 'react-router';
+import {Router, Route, IndexRoute} from 'react-router';
 
 import {Search} from './components/search/searchView';
 import {ResultSearch} from './components/search/searchResultView';
@@ -47,13 +47,13 @@ class App extends React.Component {
 	onMenuPlugin(packages) {
 		const {pluginMenuItems} = this.state;
 
-		this.setState({
-			pluginMenuItems: pluginMenuItems.concat(packages.map(pkg => ({
-					value: pkg.name,
-					caption: pkg.dicoogle.caption || pkg.name,
-					isPlugin: true
-				})))
-	});
+    this.setState({
+      pluginMenuItems: pluginMenuItems.concat(packages.map(pkg => ({
+        value: pkg.name,
+        caption: pkg.dicoogle.caption || pkg.name,
+        isPlugin: true
+      })))
+    });
 	}
 
 

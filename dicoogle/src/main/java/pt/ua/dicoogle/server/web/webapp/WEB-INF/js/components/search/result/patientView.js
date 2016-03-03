@@ -77,11 +77,12 @@ const PatientView = React.createClass({
                       <button title="Unindex (does not remove file physically)" onClick={this.showUnindex.bind(null, item)}
                               className="btn btn_dicoogle btn-xs fa fa-eraser"/>);
 
-                  removeFiles = (<button title="Removes the file physically" onClick={this.showRemove.bind(null, item)}
-                                         className="btn btn_dicoogle btn-xs fa fa-trash-o"/>);
+                  removeFiles = (
+                      <button title="Removes the file physically" onClick={this.showRemove.bind(null, item)}
+                              className="btn btn_dicoogle btn-xs fa fa-trash-o"/>);
               }
           }
-          if (this.props.enableAdvancedSearch)
+          if (this.props.enableAdvancedSearch) {
               return (<div>
                     {unindex}
                     {removeFiles}
@@ -89,22 +90,25 @@ const PatientView = React.createClass({
                 <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
                   'data-result-type': 'patient',
                   'data-result-patient': item.name,
-                  'data-result-patientid': item.id
+                  'data-result-patientid': item.id,
+                  'data-result-modality': Array.from(new Set(Array.prototype.concat.apply([], item.studies.map(s => s.modalities)))).join(','), // FIXME temporary hack
+                  'data-result-nstudies': item.nStudies, // FIXME temporary hack
+                  'data-result-nseries': item.studies.reduce((acc, st) => acc + st.series.length, 0), // FIXME temporary hack
+                  'data-result-nimages': item.studies.reduce((acc, st) => acc + st.series.reduce((acc, s) => acc + s.images.length, 0), 0) // FIXME temporary hack
                 }} />
             </div>);
+          }
           return (<div></div>);
 
   },
   handleSelect(item){
       let {id} = item;
-     // ResultSelectActions.select(item);
+      // ResultSelectActions.select(item);
       let value = this.refsClone[id].getChecked();
       if (value)
         ResultSelectActions.select(item, id);
       else
         ResultSelectActions.unSelect(item, id);
-
-
   },
   handleRefs: function (id, input){
       this.refsClone[id] = input;
