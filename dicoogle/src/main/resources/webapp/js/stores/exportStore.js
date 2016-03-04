@@ -3,7 +3,7 @@ import $ from 'jquery';
 
 import {ExportActions} from '../actions/exportActions';
 import {Endpoints} from '../constants/endpoints';
-import {request} from '../handlers/requestHandler';
+import {getDICOMFieldList} from '../handlers/requestHandler';
 
 const ExportStore = Reflux.createStore({
     listenables: ExportActions,
@@ -12,28 +12,26 @@ const ExportStore = Reflux.createStore({
     },
 
     onGetFieldList: function(data){
-      var self = this;
-      var url = Endpoints.base + "/export/list";
-      request(url,
-        function(data){
-          //SUCCESS
-          //console.log("success", data);
-          self._contents = data;
-
-
-          self.trigger({
-            data: self._contents,
-            success: true
-          });
-        },
-        function(xhr){
+      const self = this;
+      getDICOMFieldList((error, data) => {
+        if (error) {
           //FAILURE
           self.trigger({
               success: false,
-              status: xhr.status
+              status: error.status
             });
+          return;
         }
-      );
+
+        //SUCCESS
+        //console.log("success", data);
+        self._contents = data;
+
+        self.trigger({
+          data: self._contents,
+          success: true
+        });
+      });
     },
 
     onExportCSV: function(data, fields){

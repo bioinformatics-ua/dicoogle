@@ -2,8 +2,7 @@
 
 import Reflux from 'reflux';
 import {IndexerActions} from '../actions/indexerActions';
-import {Endpoints} from '../constants/endpoints';
-import {request} from '../handlers/requestHandler';
+import {getIndexerSettings} from '../handlers/requestHandler';
 
 const IndexerStore = Reflux.createStore({
     listenables: IndexerActions,
@@ -13,28 +12,24 @@ const IndexerStore = Reflux.createStore({
 
     onGet: function(){
       console.log("onGet");
-      var self = this;
-      var url = Endpoints.base + "/management/settings/index";
-      request(url,
-        function(data){
+      getIndexerSettings((error, data) => {
+          if (error) {
+            //FAILURE
+            this.trigger({
+                success: false,
+                status: error.status
+              });
+            return;
+          }
           //SUCCESS
           console.log("success", data);
-          self._contents = data;
+          this._contents = data;
 
-          self.trigger({
-            data: self._contents,
+          this.trigger({
+            data: this._contents,
             success: true
           });
-        },
-        function(xhr){
-          //FAILURE
-          self.trigger({
-              success: false,
-              status: xhr.status
-            });
-        }
-      );
-
+      });
     }
 });
 

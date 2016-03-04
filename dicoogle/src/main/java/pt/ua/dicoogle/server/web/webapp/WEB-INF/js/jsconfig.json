@@ -1,0 +1,11 @@
+{
+	"compilerOptions": {
+		"target": "ES5",
+		"module": "commonjs",
+    "sourceType": "module"
+	},
+	"files": [
+		"**/*.{jsx,js}",
+		"app.js"
+	]
+}

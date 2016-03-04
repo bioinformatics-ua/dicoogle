@@ -1,3 +1,5 @@
+'use strict';
+
 import Reflux from 'reflux';
 import ResultSelectActions from '../actions/resultSelectAction';
 

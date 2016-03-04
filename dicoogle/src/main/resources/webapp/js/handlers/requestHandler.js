@@ -4,17 +4,16 @@ import dicoogleClient from 'dicoogle-client';
 
 const Dicoogle = dicoogleClient(); // already configured, retrieve object
 
-/** @deprecated Please use Dicoogle#request instead. */
-function request(url, callbackSuccess, callbackError){
-    console.log("request: " + url);
-    $.ajax({
-      url: url,
-      dataType: 'json',
-      success: callbackSuccess,
-      error: function(xhr, status, err) {
-        callbackError(xhr);
-      }
-    });
+export function getDICOMFieldList(callback) {
+    Dicoogle.request('GET', 'export/list', callback);
+}
+
+export function getTransferSettings(callback) {
+  Dicoogle.request('GET', 'management/settings/transfer', callback);
+}
+
+export function getIndexerSettings(callback) {
+  Dicoogle.getIndexerSettings(callback);
 }
 
 export function getPatients(freetext, isKeyword, provider, callbackSuccess, callbackError){
