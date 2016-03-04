@@ -5,7 +5,7 @@ import dicoogleClient from 'dicoogle-client';
 const Dicoogle = dicoogleClient(); // already configured, retrieve object
 
 /** @deprecated Please use Dicoogle#request instead. */
-export function request(url, callbackSuccess, callbackError){
+function request(url, callbackSuccess, callbackError){
     console.log("request: " + url);
     $.ajax({
       url: url,
@@ -95,44 +95,22 @@ export function getVersion(callbackSuccess, callbackError){
 /*
 INDEXER
 */
-export function setWatcher(state){
-  console.log(state);
-  $.post(Endpoints.base + "/management/settings/index/watcher",
-  {
-    watcher: state
-  },
-    function(data, status){
-      //Response
-      console.log("Data: " + data + "\nStatus: " + status);
-    });
-
+export function setWatcher(state, callback) {
+  const cb = callback ? callback : () => {};
+  Dicoogle.setIndexerSettings(Dicoogle.IndexerSettings.WATCHER, state, cb);
 }
-export function setZip(state){
-  console.log(state);
-  $.post(Endpoints.base + "/management/settings/index/zip",
-  {
-    zip: state
-  },
-    function(data, status){
-      //Response
-      console.log("Data: " + data + "\nStatus: " + status);
-    });
+export function setZip(state, callback) {
+  const cb = callback ? callback : () => {};
+  Dicoogle.setIndexerSettings(Dicoogle.IndexerSettings.ZIP, state, cb);
 }
 
-export function setSaveT(state){
-  console.log(state);
-  $.post(Endpoints.base + "/management/settings/index/thumbnail",
-  {
-    thumbnail: state
-  },
-    function(data, status){
-      //Response
-      console.log("Data: " + data + "\nStatus: " + status);
-    });
+export function setSaveT(state) {
+  const cb = callback ? callback : () => {};
+  Dicoogle.setIndexerSettings(Dicoogle.IndexerSettings.INDEX_THUMBNAIL, state, cb);
 }
 
 export function saveIndexOptions(path, watcher, zip, saveThumbnail, effort, thumbnailSize){
-  //console.log(state);
+  // TODO use Dicoogle in the future
   $.post(Endpoints.base + "/management/settings/index",
   {
     path: path,
