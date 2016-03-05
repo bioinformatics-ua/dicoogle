@@ -6,7 +6,7 @@ import {Endpoints} from './constants/endpoints';
 import DicoogleClient from 'dicoogle-client';
 import Webcore from 'dicoogle-webcore';
 
-import {default as Router, Route, IndexRoute} from 'react-router';
+import {Router, Route, IndexRoute} from 'react-router';
 
 import {Search} from './components/search/searchView';
 import {ResultSearch} from './components/search/searchResultView';
