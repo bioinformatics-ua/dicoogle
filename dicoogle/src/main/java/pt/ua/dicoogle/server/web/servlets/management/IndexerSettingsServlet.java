@@ -43,7 +43,7 @@ public class IndexerSettingsServlet extends HttpServlet {
 
         all,path, zip, effort, thumbnail,thumbnailSize, watcher;
     }
-    private SettingsType type;
+    private final SettingsType type;
 
     public IndexerSettingsServlet(SettingsType type) {
         this.type = type;
@@ -73,8 +73,6 @@ public class IndexerSettingsServlet extends HttpServlet {
     		ieffort = Integer.parseInt(req.getParameter("effort"));
     		tumbnailSize = req.getParameter("thumbnailSize");
     	}
-    	
-    	
 
         switch (type) {
             case path:
@@ -111,9 +109,7 @@ public class IndexerSettingsServlet extends HttpServlet {
             	 ServerSettings.getInstance().setSaveThumbnails(saveT);
             	 ServerSettings.getInstance().setThumbnailsMatrix(tumbnailSize);
             	 ServerSettings.getInstance().setMonitorWatcher(watcher);
-            	 
             	break;
-            	
             	
         }
         new XMLSupport().printXML();
@@ -122,6 +118,7 @@ public class IndexerSettingsServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String result = "";
+        resp.setContentType("application/json");
         switch (type) {
             case path:
                 result = ServerSettings.getInstance().getDicoogleDir();

@@ -34,13 +34,14 @@ import net.sf.json.JSONObject;
 public class ResponseUtil {
 
     public static void simpleResponse(HttpServletResponse resp, String name ,boolean state) throws IOException {
+        resp.setContentType("application/json");
         JSONObject object = new JSONObject();
         object.put(name, state);
-
         object.write(resp.getWriter());
     }
     
     public static void objectResponse(HttpServletResponse resp, List<Pair> pairs) throws IOException {
+        resp.setContentType("application/json");
     	JSONObject object = new JSONObject();
     	
     	for(Pair entry: pairs){

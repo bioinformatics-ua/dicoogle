@@ -69,7 +69,8 @@ public class UserServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         Set<String> users = UsersStruct.getInstance().getUsernames();
-
+        resp.setContentType("application/json");
+        
         JSONObject jsonObject = new JSONObject();
         JSONArray usersArray = new JSONArray();
         for (String user : users) {
@@ -79,9 +80,7 @@ public class UserServlet extends HttpServlet {
         }
 
         jsonObject.put("users", usersArray);
-
         jsonObject.write(resp.getWriter());
-
     }
 
 }

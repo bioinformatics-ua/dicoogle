@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Sidebar from './components/sidebar';
 import {Endpoints} from './constants/endpoints';
-import DicoogleClient from 'dicoogle-client';
+import dicoogleClient from 'dicoogle-client';
 import Webcore from 'dicoogle-webcore';
 
 import {Router, Route, IndexRoute} from 'react-router';
@@ -61,9 +61,9 @@ class App extends React.Component {
 	{
 		UserStore.listen(this.fetchPlugins.bind(this));
 
-		let dicoogleClient = DicoogleClient(Endpoints.base);
+		const Dicoogle = dicoogleClient(Endpoints.base);
 		if (localStorage.token) {
-			dicoogleClient.setToken(localStorage.token);
+			Dicoogle.setToken(localStorage.token);
 		}
 
 		Webcore.init(Endpoints.base);
@@ -102,17 +102,17 @@ class App extends React.Component {
   }
 
 	logout() {
-		let self = this;
-		$.get(Endpoints.base + "/logout?username=" + UserStore.getUsername(), (data, status) => {
-			//Response
-			console.log("Data: " + data + "\nStatus: " + status);
+		const Dicoogle = dicoogleClient();
+		Dicoogle.request('POST', 'logout', {}, (error) => {
+      if (error) {
+		    console.error(error);
+      }
 
-			//self.transitionTo('login');
-			// Works with recent version of react + react-router
-			self.setState({pluginMenuItems: []});
-			self.pluginsFetched = false;
-			UserActions.logout()
+      this.setState({pluginMenuItems: []});
+      this.pluginsFetched = false;
+      UserActions.logout()
 
+      // Works with recent version of react + react-router
 			this.props.history.pushState(null, 'login');
 		});
 	}
