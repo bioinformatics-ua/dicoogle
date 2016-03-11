@@ -4,10 +4,12 @@ import {TransferStore} from '../../stores/transferStore';
 import {TransferActions} from '../../actions/transferActions';
 import {Endpoints} from '../../constants/endpoints';
 import $ from 'jquery';
+import {Button} from 'react-bootstrap';
 
 const TransferOptionsView = React.createClass({
 
       getInitialState () {
+        this.selectAllOn = true;
         return {
           data: [],
           status: "loading",
@@ -55,7 +57,7 @@ const TransferOptionsView = React.createClass({
 
         var sopclasses = (
           array.data.map((item, index) => {
-            console.log(item);
+
             return (<option key={index}>{item.sop_name} -- {item.uid}</option>);
           })
         );
@@ -86,6 +88,10 @@ const TransferOptionsView = React.createClass({
                                 </div>
                             </li>
                         </ul>
+                        <div>
+                            <Button bsStyle="primary" onClick={this.handleSelectAll}>{this.selectAllOn ? 'Select all' : 'Unselect all'}</Button>
+
+                        </div>
                     </div>
                 </div>
             </div>
@@ -94,15 +100,24 @@ const TransferOptionsView = React.createClass({
 
       },
 
+      handleSelectAll()
+      {
+          if (this.selectAllOn)
+              TransferActions.selectAll();
+          else
+              TransferActions.unSelectAll();
+
+          this.selectAllOn = !this.selectAllOn;
+
+      },
       handleChange(id, index) {
-        console.log("Index ", index);
         TransferActions.set(this.state.selectedIndex, index, document.getElementById(id).checked);
         this.request(id, document.getElementById(id).checked);
       },
 
       onSopSelected() {
         var selectedId = document.getElementById("sop_select").selectedIndex;
-        console.log("selected", selectedId );
+
         this.setState({selectedIndex: selectedId});
       },
 
