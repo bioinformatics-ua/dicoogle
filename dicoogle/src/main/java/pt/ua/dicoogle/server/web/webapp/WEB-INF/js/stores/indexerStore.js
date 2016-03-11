@@ -13,33 +13,29 @@ var IndexerStore = Reflux.createStore({
        this._contents = {};
     },
 
-    onGet : function(bilo){
-      
+    onGet: function(){
       console.log("onGet");
       var self = this;
       var url = Endpoints.base + "/management/settings/index";
-      request(url ,
+      request(url,
         function(data){
           //SUCCESS
           console.log("success", data);
           self._contents = data;
 
-
           self.trigger({
-            data:self._contents,
+            data: self._contents,
             success: true
           });
         },
         function(xhr){
           //FAILURE
           self.trigger({
-              success:false,
+              success: false,
               status: xhr.status
             });
         }
       );
-
-
 
     }
 });

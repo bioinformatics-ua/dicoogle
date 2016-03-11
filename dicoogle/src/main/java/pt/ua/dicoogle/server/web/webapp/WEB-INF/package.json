@@ -1,6 +1,6 @@
 {
   "name": "dicoogle-webapp",
-  "version": "1.1.0",
+  "version": "1.3.0",
   "private": true,
   "description": "Dicoogle web application",
   "author": "Universidade de Aveiro, DETI/IEETA, Bioinformatics Group (http://bioinformatics.ua.pt/)",
@@ -33,72 +33,64 @@
     "lib/",
     "index.html"
   ],
+  "engines": {
+    "npm": ">=2.0.0"
+  },
   "dependencies": {
     "bootstrap": "^3.3.2",
-    "react-font-awesome": "https://github.com/tkurki/react-font-awesome/tarball/master"
+    "core-js": "^2.0.3",
+    "dicoogle-client": "^3.0.2",
+    "dicoogle-webcore": "../../../../../../../../../../../webcore",
+    "history": "^1.13.0",
+    "jquery": "^1.10.2",
+    "jquery-ui": "^1.10.5",
+    "react": "^0.14.6",
+    "react-bootstrap": "^0.28.1",
+    "react-bootstrap-table": "^1.4.6",
+    "react-dom": "^0.14.6",
+    "react-font-awesome": "https://github.com/tkurki/react-font-awesome/tarball/master",
+    "react-imageloader": "~2.0.0",
+    "react-router": "^2.0.0-rc5",
+    "react-router-bootstrap": "^0.20.1",
+    "reflux": "^0.3.0"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
+    "babelify": "^7.2.0",
+    "browserify": "^13.0.0",
+    "browserify-shim": "^3.8.2",
+    "envify": "^3.0.0",
+    "eslint-plugin-react": "^3.15.0",
+    "gulp": "^3.9.0",
+    "gulp-babel": "^6.1.1",
+    "gulp-eslint": "^1.1.1",
+    "gulp-processhtml": "^1.1.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-rm": "^1.0.0",
+    "gulp-sass": "^2.1.1",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^1.5.1",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.7.0"
+  },
+  "scripts": {
+    "prepublish": "gulp production",
+    "build": "gulp production",
+    "js": "gulp js",
+    "css": "gulp css",
+    "css-debug": "gulp css-debug",
+    "html": "gulp html",
+    "debug": "gulp development",
+    "js-debug": "gulp js-debug",
+    "html-debug": "gulp html-debug",
+    "css:watch": "gulp css:watch",
+    "js:watch": "gulp js:watch",
+    "clean": "gulp clean"
   },
   "browser": {
     "bootstrap": "./node_modules/bootstrap/dist/js/bootstrap.js"
-  },
-  "devDependencies": {
-    "babelify": "^6.3.0",
-    "browserify": "~11.0.1",
-    "browserify-shim": "~3.8.2",
-    "dicoogle-client": "^2.2.0",
-    "dicoogle-webcore": "../../../../../../../../../../../webcore",
-    "envify": "^3.0.0",
-    "flux": "^2.0.1",
-    "history": "^1.13.0",
-    "htmlprocessor": "^0.1.10",
-    "jquery": "^1.10.2",
-    "jquery-ui": "^1.10.5",
-    "keymirror": "~0.1.0",
-    "node-sass": "^3.4.1",
-    "object-assign": "^4.0.1",
-    "parallelshell": "^2.0.0",
-    "promise": "*",
-    "react": "^0.13.3",
-    "react-bootstrap": "^0.25.2",
-    "react-bootstrap-table": "^0.9.17",
-    "react-imageloader": "~2.0.0",
-    "react-router": "^1.0.0-rc4",
-    "react-router-bootstrap": "^0.19.3",
-    "reflux": "^0.2.12",
-    "rimraf": "latest",
-    "uglify-js": "^2.4.24",
-    "watchify": "^3.5.0"
-  },
-  "optionalDependencies": {
-    "jest-cli": "~0.5.8",
-    "watchify": "^3.4.0"
-  },
-  "scripts": {
-    "prepublish": "rimraf js/bundle.js && npm run build",
-    "build": "parallelshell \"npm run html\" \"npm run js\" \"npm run css\"",
-    "js": "NODE_ENV=production browserify -r react -r dicoogle-webcore -r dicoogle-client . | uglifyjs -c dead_code,drop_console,warnings=false -m > js/bundle.min.js",
-    "css": "node-sass sass/dicoogle.scss -o css",
-    "css-debug": "node-sass sass/dicoogle.scss -o css --source-map css/dicoogle.css.map",
-    "html": "htmlprocessor index-template.html -o index.html -e dist -s",
-    "debug": "parallelshell \"npm run js-debug\" \"npm run html-debug\"",
-    "js-debug": "NODE_ENV=development browserify -d -r react -r dicoogle-webcore -r dicoogle-client . > js/bundle.js",
-    "html-debug": "htmlprocessor index-template.html -o index.html -e dev -s",
-    "css:watch": "sass --watch sass/dicoogle.scss:css/dicoogle.css",
-    "js:watch": "NODE_ENV=development watchify -o js/bundle.js -v -d -r react -r dicoogle-webcore -r dicoogle-client .",
-    "test": "jest",
-    "clean": "rimraf js/bundle.js js/bundle.min.js css/dicoogle.css css/dicoogle.css.map index.html"
-  },
-  "browserify": {
-    "transform": [
-      "babelify",
-      "browserify-shim",
-      [
-        "envify",
-        {
-          "_": "purge",
-          "global": true
-        }
-      ]
-    ]
   },
   "browserify-shim": {
     "bootstrap": {
@@ -106,8 +98,5 @@
         "jquery:jQuery"
       ]
     }
-  },
-  "jest": {
-    "rootDir": "./js"
   }
 }

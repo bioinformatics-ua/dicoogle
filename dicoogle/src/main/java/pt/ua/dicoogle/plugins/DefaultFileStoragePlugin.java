@@ -102,7 +102,7 @@ public class DefaultFileStoragePlugin extends PluginBase implements StorageInter
 	}
 
 	@Override
-	public Iterable<StorageInputStream> at(URI location) {		
+	public Iterable<StorageInputStream> at(URI location, Object ... args) {
 		return new MyIterable(location);		
 	}
 

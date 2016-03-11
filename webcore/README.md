@@ -5,19 +5,29 @@ The essence of this architecture is that Dicoogle web pages will contain stub sl
 
 ## Building and Using
 
-These details are only relevant to developers of Dicoogle and its web app. To learn how to develop web UI plugins, please skip this section.
-No building is required for this project. Simply install `dicoogle-webcore` as a dependency and `import` (or `require`) the package module
-directly to Dicoogle. Then:
+> Note: These details are only relevant to developers of Dicoogle and its web app. To learn how to develop web UI plugins, please skip this section.
+
+The project can be built by calling `npm install`. On Dicoogle, simply install `dicoogle-webcore` as a dependency and `import` (or `require`) the package module. Then:
 
  - Place `<dicoogle-slot>` elements in the page. They must contain a unique slot id attribute `data-slot-id`.
  - Invoke the module's `init()` to initialize the module. It will automatically detect slots, as well as fetch and attach plugins. This method
    should only be called once. New slots attached dynamically will be automatically filled.
  - In order to know what menu plugins are available, invoke `fetchPlugins('menu'[, callback])`.
 
+The optional web component attribute `data-plugin-name` can be passed to the `<dicoogle-slot>` in order to retrieve a specific plugin (rather than all compatible plugins for that slot).
+
+Furthermore, slot elements will emit a `plugin-load` custom event (not to be confused with the webcore's event emitter) each time a specific plugin is created and rendered. The event can be listened by adding a typical DOM event listener:
+
+```javascript
+slotElement.addEventListener('plugin-load', fnHandleEvent);
+```
+
+The `detail` property of the event will contain the object returned by the render method. In Dicoogle, this can be used for attaching React elements without rendering directly to the DOM.
+
 Plugin web components will be attached to a div in the `<dicoogle-slot>` with its class defined as
-`"dicoogle-webcore-<slotid>_<plugin-index>"` (e.g. `"dicoogle-webcore-query_0"`). The div of these parents
+`"dicoogle-webcore-<slotid>-instance"` (e.g. `"dicoogle-webcore-query-instance"`). The div of these parents
 will have a class `"dicoogle-webcore-<slotid>"`. The Dicoogle web application may use these classes to style these
-additional UI elements (although usually this will not be necessary).
+additional UI elements.
 
 A few examples of web pages using the Dicoogle Web Core are available in "test/TC".
 
@@ -42,6 +52,13 @@ A descriptor takes the form of a "package.json", an `npm` package descriptor, co
       - `slot-id` : the unique ID of the slot where this plugin is meant to be attached
       - `module-file` _(optional, defaults to "module.js")_ : the name of the file containing the JavaScript module
 
+
+In addition, these attributes are recommended:
+
+  - `author` : the author of the plugin
+  - `tags` : the tags "dicoogle" and "dicoogle-plugin" are recommended
+  - `private` : if you do not intend to publish the plugin into an npm repository, set this to `true`.
+
 An example of a valid "package.json":
 
 ```json
@@ -49,8 +66,8 @@ An example of a valid "package.json":
   "name" : "dicoogle-cbir-query",
   "version" : "0.0.1",
   "description" : "CBIR Query-By-Example plugin",
-  "author": "John Doe",
-  "tags": ["dicoogle", "dicoogle-webui"],
+  "author": "John Doe <jdoe@somewhere.net>",
+  "tags": ["dicoogle", "dicoogle-plugin"],
   "dicoogle" : {
     "caption" : "Query by Example",
     "slot-id" : "query",
@@ -63,12 +80,35 @@ An example of a valid "package.json":
 
 In addition, a JavaScript module must be implemented, containing the entire logic and rendering of the plugin.
 The final module script must be exported in CommonJS format (similar to the Node.js module standard), or using
-the ECMAScript Harmony import/export notation (as in ES2015).
+the ECMAScript Harmony import/export notation (as in ES2015) when transpiled with Babel.
 The developer may also choose to create the module under the UMD format, although this is not required. The developer
 can make multiple node-flavored CommonJS modules and use tools like browserify to bundle them and embed dependencies.
-The exported module must be a single constructor function, in which instances must have a `render(parent)` function,
-which will attach the contents of the plugin to the `parent` DOM element. Furthermore, the `onResult(results)` method
-must be implemented if the plugin is for a "result" slot.
+Some of those however, can be required without embedding: "react" and "dicoogle-client" can be retrieved via `require`
+and must be marked as external dependencies.
+
+The exported module must be a single constructor function (or class), in which instances must have a `render(parent, slot)` method:
+
+```javascript
+/** Render and attach the contents of a new plugin instance to the given DOM element.
+ * @param {DOMElement} parent the parent element of the plugin component
+ * @param {DOMElement} slot the DOM element of the Dicoogle slot
+ * @return Alternatively, return a React element while leaving `parent` intact. (Experimental, still unstable!)
+ */
+function render(parent, slot) {
+    // ...
+}
+```
+
+Furthermore, the `onResult` method must be implemented if the plugin is for a "result" slot:
+
+```javascript
+/** Handle result retrieval here by rendering them.
+ * @param {object} results an object containing the results retrieved from Dicoogle's search service 
+ */
+function onResult(results) {
+    // ...
+}
+```
 
 All modules will have access to the `Dicoogle` plugin-local alias for interfacing with Dicoogle.
 Query plugins can invoke `issueQuery(...)` to perform a query and expose the results on the page (via result plugins).
@@ -87,13 +127,26 @@ module.exports = function() {
 
   // ...
 
-  // parent is an ordinary DOMElement
-  this.render = function(parent) {
+  this.render = function(parent, slot) {
     var e = document.create('span');
     e.innerHTML = 'Hello Dicoogle!';
     parent.appendChild(e);
   };
-});
+};
+```
+
+Exporting a class in ECMAScript 6 also works (since classes are syntatic sugar for ES5 constructors).
+The code below can be converted to ES5 using Babel:
+
+```javascript
+export default class MyPluginModule() {
+
+  render(parent) {
+    let e = document.create('span');
+    e.innerHTML = 'Hello Dicoogle!';
+    parent.appendChild(e);
+  }
+};
 ```
 
 ### Dicoogle Web API
@@ -117,7 +170,7 @@ page's result module. The query service requested will be "search" unless modifi
 
 Add an event listener to an event triggered by the web core.
 
- - _eventName_ : the name of the event (must be one of 'load','loadMenu','loadQuery','loadResult','menu')
+ - _eventName_ : the name of the event (can be one of 'load','menu' or a custom one)
  - _fn_ : a callback function (arguments vary) -- `function(...)`
 
 #### **addResultListener** : `function(fn)`
@@ -139,13 +192,35 @@ This may be useful for a web page to react to retrievals by automatically adding
 
  - _fn_ : `function(Object{name, slotId, caption})`
 
+#### **emit**: `function(eventName, ...args)`
+
+Emit an event through the webcore's event emitter.
+
+ - _eventName_ : the name of the event
+ - _args_ : variable list of arguments to be passed to the listeners
+
+#### **emitSlotSignal**: `function(slotDOM, eventName, data)`
+
+Emit a DOM custom event from the slot element.
+
+ - _slotDOM_ : the slot DOM element to emit the event from
+ - _name_ : the event name
+ - _data_ : the data to be transmitted as custom event detail
+
+### Webcore Events
+
+Full list of events that can be used by plugins and the webapp. _(Work in Progress)_
+
+ - "load" : Emitted when a plugin package is retrieved.
+ - "result" : Emitted when a list of search results is obtained from the search interface.
+
 ## Installing Plugins
 
 Place all contents of a plugin in a directory and insert the directory (by copying or linking)
-into the "WebPlugins" folder at the base working directory. Plugins will then be retrieved the
+into the "WebPlugins" folder at the base working directory. Alternatively, package a "WebPlugins"
+directory with the same contents in a Dicoogle plugin jar. All plugins will then be retrieved the
 next time the Dicoogle server loads.
 
 ## Testing Plugins
 
-Testing Web UI plugins in a Dicoogle server is recommended, although it can also be done in separate pages.
-For the latter, please see the HTML pages in "test/TC/" for a few examples.
+Web UI plugins can be tested by deploying them into Dicoogle.

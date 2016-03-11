@@ -32,18 +32,19 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.zip.ZipFile;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.restlet.resource.ServerResource;
 
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.server.ControlServices;
-import pt.ua.dicoogle.plugins.webui.PluginFormatException;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
 import pt.ua.dicoogle.sdk.GraphicalInterface;
 import pt.ua.dicoogle.sdk.IndexerInterface;
@@ -116,7 +117,18 @@ public class PluginController{
         pluginSets = PluginFactory.getPlugins(pathToPluginDirectory);
         //load web UI plugins (they are not Java, so the process is delegated to another entity)
         this.webUI = new WebUIPluginManager();
-        this.webUI.loadAll();
+        // loadByPluginName all at "WebPlugins"
+        this.webUI.loadAll(new File("WebPlugins"));
+        
+        // go through each jar'd plugin and fetch their WebPlugins
+        for (File j : FileUtils.listFiles(pluginFolder, new String[]{"jar", "zip"}, false)) {
+            try {
+                this.webUI.loadAllFromZip(new ZipFile(j));
+            } catch (IOException ex) {
+                // ignore
+                logger.warn("Failed to load web UI plugins from {}: {}", j.getName(), ex.getMessage());
+            }
+        }
         
         logger.info("Loaded Local Plugins");
 
@@ -319,22 +331,22 @@ public class PluginController{
     /**
      * Resolve a URI to a DicomInputStream
      * @param location
+     * @param args
      * @return 
      */
-    public Iterable<StorageInputStream> resolveURI(URI location)
+    public Iterable<StorageInputStream> resolveURI(URI location, Object ...args)
     {
         Collection<StorageInterface> storages = getStoragePlugins(true);
         
         for (StorageInterface store : storages) {
-            
             if (store.handles(location)) 
             {
-            	logger.info("Resolving URI: "+location.toString()+" Storage: "+store.getName() );
-                return store.at(location);
+            	logger.debug("Resolving URI: {} Storage: {}", location, store.getName());
+                return store.at(location, args);
             }
         }
 
-    	logger.error("Could not resolve uri: "+location.toString());
+    	logger.error("Could not resolve uri: {}", location);
         return Collections.emptyList();    
     }
     
@@ -359,7 +371,7 @@ public class PluginController{
         
         for (StorageInterface store : storages) {
             if (store.handles(location)) {
-            	logger.debug("Retrieved Storage For scheme: {}", location);
+            	logger.debug("Retrieved storage for scheme: {}", location);
                 return store;
             }
         }
@@ -609,13 +621,13 @@ public class PluginController{
     }
     
     public void doRemove(URI uri, StorageInterface si) {
-      if(si.handles(uri)){
-        si.remove(uri); 
-      }else
-        logger.error("Storage Plugin does not handle URI: {},{}", uri, si);
-    
-      logger.info("Finished removing {}", uri);
-  }    
+        if(si.handles(uri)){
+            si.remove(uri); 
+        } else {
+            logger.warn("Storage Plugin does not handle URI: {},{}", uri, si);
+        }
+        logger.info("Finished removing {}", uri);
+    }
     /*
      * Convinience method that calls index(URI) and runs the returned
      * tasks on the executing thread 
@@ -718,7 +730,7 @@ public class PluginController{
      * @return a collection of web UI plugins.
      */
     public Collection<WebUIPlugin> getWebUIPlugins(String... ids) {
-        logger.info("getWebUIPlugins(slot ids: {})", ids != null ? Arrays.asList(ids) : "<any>");
+        logger.debug("getWebUIPlugins(slot ids: {})", ids != null ? Arrays.asList(ids) : "<any>");
         List<WebUIPlugin> plugins = new ArrayList<>();
         Set<String> idSet = Collections.EMPTY_SET;
         if (ids != null) {
@@ -741,7 +753,7 @@ public class PluginController{
      * @return a web UI plugin descriptor object, or null if no such plugin exists or is inactive
      */
     public WebUIPlugin getWebUIPlugin(String name) {
-        logger.info("getWebUIPlugin(name: {})", name);
+        logger.debug("getWebUIPlugin(name: {})", name);
         WebUIPlugin plugin = webUI.get(name);
         return plugin == null ? null
                 : plugin.isEnabled() ? plugin : null;
@@ -753,7 +765,7 @@ public class PluginController{
      * @return the full contents of the package.json, null if the plugin is not available
      */
     public String getWebUIPackageJSON(String name) {
-        logger.info("getWebUIPackageJSON(name: {})", name);
+        logger.debug("getWebUIPackageJSON(name: {})", name);
         try {
             Object o = webUI.retrieveJSON(name);
             return (o != null)
@@ -771,28 +783,13 @@ public class PluginController{
      * @return the full contents of the module file, null if the plugin is not available
      */
     public String getWebUIModuleJS(String name) {
-        logger.info("getWebUIModuleJS(name: {})", name);
+        logger.debug("getWebUIModuleJS(name: {})", name);
         try {
             return webUI.retrieveModuleJS(name);
         } catch (IOException ex) {
             logger.error("Failed to retrieve module", ex);
             return null;
         }
-    }
-
-    /** Load (or reload) a web UI plugin.
-     * @param name the name of the plugin
-     * @return whether the plugin exists and was successfully loaded
-     */
-    public boolean loadWebUIPlugin(String name) {
-        logger.info("loadWebUIPlugin(name: {})", name);
-        try {
-            this.webUI.load(name);
-        } catch (IOException | PluginFormatException ex) {
-            logger.error("could not load web UI plugin", ex);
-            return false;
-        }
-        return true;
     }
 
     //METHODS FOR SERVICE:JAVA

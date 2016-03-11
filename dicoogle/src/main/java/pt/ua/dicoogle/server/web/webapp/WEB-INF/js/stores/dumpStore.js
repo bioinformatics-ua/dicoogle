@@ -1,12 +1,7 @@
-/*jshint esnext: true*/
 'use strict';
 
-var Reflux = require('reflux');
-
+import Reflux from 'reflux';
 import {DumpActions} from '../actions/dumpActions';
-
-import {Endpoints} from '../constants/endpoints';
-
 import {getImageInfo} from '../handlers/requestHandler';
 
 var DumpStore = Reflux.createStore({
@@ -15,10 +10,9 @@ var DumpStore = Reflux.createStore({
        this._contents = {};
     },
 
-
-    onGet : function(data){
+    onGet: function(data){
       var self = this;
-      getImageInfo(data ,
+      getImageInfo(data,
         function(data){
           //SUCCESS
           console.log("success", data);
@@ -26,14 +20,14 @@ var DumpStore = Reflux.createStore({
 
 
           self.trigger({
-            data:self._contents,
+            data: self._contents,
             success: true
           });
         },
         function(xhr){
           //FAILURE
           self.trigger({
-              success:false,
+              success: false,
               status: xhr.status
             });
         }

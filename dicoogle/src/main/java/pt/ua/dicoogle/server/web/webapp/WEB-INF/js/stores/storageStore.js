@@ -1,93 +1,79 @@
-/*jshint esnext: true*/
 'use strict';
 
-var Reflux = require('reflux');
+import Reflux from 'reflux';
 import $ from 'jquery';
 
 import {StorageActions} from '../actions/storageActions';
 import {Endpoints} from '../constants/endpoints';
-import {request} from '../handlers/requestHandler';
 
-var StorageStore = Reflux.createStore({
+const StorageStore = Reflux.createStore({
     listenables: StorageActions,
-    init: function () {
+    init() {
        this._contents = [];
     },
 
-
-    onGet : function(data){
-      var self = this;
+    onGet(data){
 
       $.ajax({
-
-        url: Endpoints.base+"/management/settings/storage/dicom",
+        url: Endpoints.base + "/management/settings/storage/dicom",
         dataType: 'json',
-        success: function(data) {
-          self._contents = data;
-
-          self.trigger({
-            data:self._contents,
+        success: (data) => {
+          this._contents = data;
+          this.trigger({
+            data: this._contents,
             success: true
           });
-
         },
-        error: function(xhr, status, err) {
+        error: (xhr, status, err) => {
           //FAILURE
-          self.trigger({
-              success:false,
+          this.trigger({
+              success: false,
               status: xhr.status
             });
         }
       });
 
-
-
-
     },
-    onAdd: function(ae, ip, port){
+    onAdd(aetitle, ip, port) {
       console.log("Onadd clicked 2");
-      this._contents.push({AETitle: ae, ipAddrs: ip, port:port});
+      this._contents.push({AETitle: aetitle, ipAddrs: ip, port});
 
-      var self = this;
       $.post(Endpoints.base + "/management/settings/storage/dicom",
       {
         type: "add",
-        aetitle: ae,
-        ip: ip,
-        port: port
+        aetitle,
+        ip,
+        port
       },
-        function(data, status){
-          //Response
-          console.log("Data: " + data + "\nStatus: " + status);
-          self.trigger({
-            data:self._contents,
-            success: true
-          });
+      (data, status) => {
+        //Response
+        console.log("Data: " + data + "\nStatus: " + status);
+        this.trigger({
+          data: this._contents,
+          success: true
         });
-
+      });
     },
-    onRemove: function(index){
-      var ae = this._contents[index].AETitle;
-      var ip = this._contents[index].ipAddrs;
-      var port = this._contents[index].port;
-      var self = this;
+    onRemove(index) {
+      const aetitle = this._contents[index].AETitle;
+      const ip = this._contents[index].ipAddrs;
+      const port = this._contents[index].port;
       $.post(Endpoints.base + "/management/settings/storage/dicom",
       {
         type: "remove",
-        aetitle: ae,
-        ip: ip,
-        port: port
+        aetitle,
+        ip,
+        port
       },
-        function(data, status){
+      (data, status) => {
           //Response
           console.log("Data: " + data + "\nStatus: " + status);
-          self._contents.splice(index,1);
-          self.trigger({
-            data:self._contents,
+          this._contents.splice(index, 1);
+          this.trigger({
+            data: this._contents,
             success: true
           });
         });
-
 
     }
 

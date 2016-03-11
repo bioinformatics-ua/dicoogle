@@ -132,5 +132,8 @@ public interface ServerSettingsReader {
     public Map<String, String> getModalityFind();
 
     public List<MoveDestination> getMoves();
+
+    public Set<String> getPriorityAETitles();
+
 }
 

@@ -1,3 +1,4 @@
+/* eslint comma-spacing:0 */
 var DimFields = [
 "ModalitiesInStudy"
 ,"PerformingPhysicianName"

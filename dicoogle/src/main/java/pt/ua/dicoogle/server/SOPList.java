@@ -52,7 +52,7 @@ public class SOPList {
         UID.DigitalXRayImageStorageForPresentation,
         UID.DigitalXRayImageStorageForProcessing,
         UID.DigitalMammographyXRayImageStorageForPresentation,
-        UID.DigitalMammographyXRayImageStorageForProcessing,
+        //UID.DigitalMammographyXRayImageStorageForProcessing,
         UID.DigitalIntraOralXRayImageStorageForPresentation,
         UID.DigitalIntraOralXRayImageStorageForProcessing,
         UID.StandaloneModalityLUTStorageRetired,

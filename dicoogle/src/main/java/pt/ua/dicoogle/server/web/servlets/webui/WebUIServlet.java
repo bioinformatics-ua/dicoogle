@@ -27,16 +27,22 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
+import pt.ua.dicoogle.server.users.Role;
+import pt.ua.dicoogle.server.users.RolesStruct;
+import pt.ua.dicoogle.server.users.User;
+import pt.ua.dicoogle.server.web.auth.Authentication;
 
 /**
  * Retrieval of web UI plugins and respective packages/modules.
  * 
- * <b>This API is unstable. It is currently only compatible with dicoogle-webcore 0.7.x</b>
+ * <b>This API is unstable. It is currently only compatible with dicoogle-webcore 0.10.x</b>
  *
  * @author Eduardo Pinho
  */
@@ -50,6 +56,7 @@ public class WebUIServlet extends HttpServlet {
         String module = req.getParameter("module");
         String process = req.getParameter("process");
 
+
         if (name != null) {
             resp.setContentType("application/json");
             resp.getWriter().append(this.getPlugin(resp, name));
@@ -59,21 +66,43 @@ public class WebUIServlet extends HttpServlet {
             resp.getWriter().append(this.getModule(resp, module, doProcess));
         } else {
             resp.setContentType("application/json");
-            resp.getWriter().append(this.getPluginsBySlot(resp, slotIdArr));
+            resp.getWriter().append(this.getPluginsBySlot(req, resp, slotIdArr));
         }
     }
 
     /** Retrieve plugins. */
-    private String getPluginsBySlot(HttpServletResponse resp, String... slotIds) throws IOException {
+    private String getPluginsBySlot(HttpServletRequest req,
+                                    HttpServletResponse resp, String... slotIds) throws IOException {
+        String token = req.getHeader("Authorization");
+        User user = Authentication.getInstance().getUsername(token);
+
         Collection<WebUIPlugin> plugins = PluginController.getInstance().getWebUIPlugins(slotIds);
         List<String> pkgList = new ArrayList<>(plugins.size());
         for (WebUIPlugin plugin : plugins) {
+
             String pkg = PluginController.getInstance().getWebUIPackageJSON(plugin.getName());
-            if (pkg != null) {
+            boolean hasUserAllowPlugin= false;
+            for (String r:plugin.getRoles())
+            {
+                Role rr = RolesStruct.getInstance().getRole(r);
+
+                hasUserAllowPlugin = RolesStruct.getInstance().hasRole(user, rr);
+                if (hasUserAllowPlugin)
+                    break;
+            }
+
+
+            if (pkg != null&&(hasUserAllowPlugin||(user!=null&&user.isAdmin()))) {
                 pkgList.add(pkg);
             }
         }
-        return "{\"plugins\":[" + StringUtils.join(pkgList, ',') + "]}";
+        JSONObject o = new JSONObject();
+        JSONArray pkgArr = new JSONArray();
+        for (String n : pkgList) {
+            pkgArr.add(n);
+        }
+        o.element("plugins", pkgArr);
+        return o.toString();
     }
 
     private String getPlugin(HttpServletResponse resp, String name) throws IOException {

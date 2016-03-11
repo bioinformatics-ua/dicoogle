@@ -1,57 +1,38 @@
 import React from 'react';
 
-require('bootstrap');
 import {VersionStore} from '../../stores/versionStore';
 import {VersionActions} from '../../actions/versionAction';
+import {Panel, Grid, Row, Col} from 'react-bootstrap';
 
-var ReactBootstrap = require('react-bootstrap');
-
-const {Nav, NavItemLink, ButtonLink} = ReactBootstrap;
-const {Grid, Row, Col} = ReactBootstrap;
-
-var Panel = ReactBootstrap.Panel;
-var Navbar = ReactBootstrap.Navbar;
-var NavItem = ReactBootstrap.NavItem;
-var DropdownButton = ReactBootstrap.DropdownButton;
-var MenuItem = ReactBootstrap.MenuItem;
-var ButtonToolbar = ReactBootstrap.ButtonToolbar;
-var Button= ReactBootstrap.Button;
-var ProgressBar= ReactBootstrap.ProgressBar;
-var Table= ReactBootstrap.Table;
-
-var AboutView = React.createClass({
+const AboutView = React.createClass({
 
     getInitialState: function() {
         return {version: ""};
     },
     componentWillMount: function() {
-        // Subscribe to the store.
-        VersionStore.listen(this._onChange);
-        VersionActions.get();
     },
     componentDidMount: function() {
-        
+        // Subscribe to the store.
+        this.unsubscribe = VersionStore.listen(this.handleGetVersion);
+        VersionActions.get();
     },
-    _onChange : function(data){
-        if (this.isMounted) {
-            this.setState({version: data.data.version});
-        }
+    handleGetVersion: function(data) {
+        this.setState({version: data.data.version});
     },
-      render: function() {
-          
-          let versionNumber =  this.state.version;
+    componentWillUnmount() {
+        this.unsubscribe();
+    },
+    render: function() {
+          let versionNumber = this.state.version;
           var title = (
               <h3>Dicoogle PACS, version: {versionNumber}</h3>
           );
-          var divStyle = {
-              width: '200px'
-          };
           var licenses = (
               <Grid className="">
 
           <Row className="show-grid">
           <Col className="gridAbout" xs={2} md={2}><b>dcm4che2</b><br/>License: GPL</Col>
-          <Col className="gridAbout" xs={2} md={2}><b>react.js+flux</b><br/>License: GPL</Col>
+          <Col className="gridAbout" xs={2} md={2}><b>react.js+reflux</b><br/>License: BSD</Col>
           <Col className="gridAbout" xs={2} md={2}><b>Jetty</b><br/>License: GPL</Col>
           </Row>
 
@@ -63,7 +44,7 @@ var AboutView = React.createClass({
           var panelsInstance = (
               <div className="about">
           <Panel header={title} bsStyle="primary">
-          Dicoogle is an open source medical imaging repository with an extensible indexing system and distributed mechanisms. 
+          Dicoogle is an open source medical imaging repository with an extensible indexing system and distributed mechanisms.
           Our solution can be used as a PACS archive, or as a client for reading your PACS archive file system, thus
           allowing you to do PACS mining. Moreover, it can be easily extended with your own pluggable components.
 
@@ -75,9 +56,9 @@ var AboutView = React.createClass({
           </Panel>
 
           <Panel header="Main third party components" bsStyle="primary">
-              
+
           {licenses}
-              
+
            Note: Although these are not the only components used, these are considered the main ones.
           </Panel>
 
@@ -93,23 +74,23 @@ var AboutView = React.createClass({
           </Panel>
           <Panel header="Developers" bsStyle="primary">
           As an open source software, Dicoogle can accept contributions from developers around the world.
-          Dicoogle OSS is led and supported by Bioinformatics UA and BMD Software. Please check <a target="_new" href="http://www.dicoogle.com">the Dicoogle website</a> for more information.
-       
+          Dicoogle OSS is led and supported by Bioinformatics UA and BMD Software. Please check <a target="_new" href="http://www.dicoogle.com">the Dicoogle website</a> or our <a target="_new" href="http://www.github.com/bioinformatics-ua/dicoogle">GitHub repository</a> for more information.
+
           <div style={{display: 'inline-block', width: '100%'}}>
-            <a href="http://bioinformatics.ua.pt"><img src="assets/logos/logobio.png" style={{height: 40, margin:5}} /></a>
-            <a href="http://bmd-software.com/"><img src="assets/logos/logo.png" style={{height: 40, padding: 5, margin:5}} /></a>
-            <a href="http://www.ieeta.pt/"><img src="assets/logos/logo-ieeta.png" style={{height: 60, margin:5}} /></a>
-            <a href="http://www.ua.pt/"><img src="assets/logos/logo-ua.png" style={{height: 60, margin:5}} /></a>
+            <a href="http://bioinformatics.ua.pt"><img src="assets/logos/logobio.png" style={{height: 40, margin: 5}} /></a>
+            <a href="http://bmd-software.com/"><img src="assets/logos/logo.png" style={{height: 40, padding: 5, margin: 5}} /></a>
+            <a href="http://www.ieeta.pt/"><img src="assets/logos/logo-ieeta.png" style={{height: 60, margin: 5}} /></a>
+            <a href="http://www.ua.pt/"><img src="assets/logos/logo-ua.png" style={{height: 60, margin: 5}} /></a>
         </div>
         <div style={{display: 'inline-block'}}>
-            <a><img src="assets/logos/logoFCT.png" style={{height: 30, margin:5}} /></a>
+            <a><img src="assets/logos/logoFCT.png" style={{height: 30, margin: 5}} /></a>
         </div>
           </Panel>
 
           </div>
           );
           return panelsInstance;
-          
+
         }
       });
 

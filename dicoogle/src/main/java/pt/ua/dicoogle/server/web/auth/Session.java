@@ -116,6 +116,16 @@ public class Session
 	public static boolean logout(HttpServletRequest request)
 	{
 		HttpSession session = request.getSession(false);
+		try
+		{
+			session.invalidate();
+		}
+		catch (Exception e )
+		{
+			System.err.println("Tracking session");
+		}
+
+
 
 		// if the sessio is invalid
 		if (session == null)
@@ -216,9 +226,9 @@ public class Session
 	public static LoggedInStatus webappLogin(HttpServletRequest request, HttpServletResponse response, boolean requiresAdminRights) throws IOException
 	{
 		// check if there a session and a login information attached to it
-		HttpSession session = request.getSession(false);
+		HttpSession session = request.getSession(true);
 		LoggedIn login = getUserLoggedIn(session);
-		if (login != null)
+		/*if (login != null)
 		{
 			// check if this request needs admin rights and the user has them
 			if (requiresAdminRights && (! login.isAdmin()))
@@ -228,7 +238,7 @@ public class Session
 			}
 
 			return new LoggedInStatus(login, LoggedInStatus.S_ALREADYLOGGEDIN);
-		}
+		}*/
 
 		// since the above failed, check if there is valid login information on the request parameters
 		String username = request.getParameter("username");

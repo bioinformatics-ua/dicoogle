@@ -1,7 +1,8 @@
-/* module.js - Dummy module file
+/* dummy.js - Dummy module file
  */
 console.log("Hello, I'm dummy!");
-module.exports = function() {
+
+module.exports = function DummyModule() {
   // derp
   var index = null;
   var providers = [];
@@ -48,8 +49,8 @@ module.exports = function() {
        + ' develop Dicoogle Web UI\'s.<br>\n'
        + 'Since it\'s best to show something useful and interactive,'
        + ' try pushing the button below. It will request all query providers and sequentially'
-       + ' cycle between their names. This is as rudimentary as it can get, but modules can'
-       + ' embed some web interface technology, like React, to make them more interesting.</p>';
+       + ' cycle between their names. This is as rudimentary as it can get, but modules are'
+       + ' free to use the vast range of web components to make them more interesting.</p>';
      
      d.appendChild(button);
      var labelProviders = document.createElement('span');
