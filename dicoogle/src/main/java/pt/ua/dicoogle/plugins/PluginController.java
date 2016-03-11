@@ -21,7 +21,6 @@ package pt.ua.dicoogle.plugins;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -457,15 +456,15 @@ public class PluginController{
         if(holder == null)
         	return null;
     	
-    	List<Task<Iterable<SearchResult>>> tasks = new ArrayList<>();
+    	List<Task<Iterable<SearchResult>>> tasklist = new ArrayList<>();
         for(String p : querySources){
         	Task<Iterable<SearchResult>> task = getTaskForQuery(p, query, parameters);
-        	tasks.add(task);
+        	tasklist.add(task);
         	holder.addTask(task);
         }
 
         //and executes said task asynchronously
-        for(Task<?> t : tasks)
+        for(Task<?> t : tasklist)
         	taskManager.dispatch(t);
 
         //logger.info("Fired Query Tasks: "+Arrays.toString(querySources.toArray()) +" QueryString:"+query);
