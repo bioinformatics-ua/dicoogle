@@ -12,6 +12,7 @@ import {getUrlVars} from '../../utils/url';
 
 var Search = React.createClass({
     getInitialState: function (){
+        this.keyHash = getUrlVars()['_k'];
         return {
           label: 'login',
           searchState: "simple",
@@ -20,6 +21,7 @@ var Search = React.createClass({
         };
     },
     componentDidMount: function(){
+
       this.enableAutocomplete();
       this.enableEnterKey();
 
@@ -31,6 +33,19 @@ var Search = React.createClass({
 
       ProvidersActions.get();
     },
+    componentWillUpdate: function() {
+
+        if (getUrlVars()['_k']!=this.keyHash)
+        {
+            this.keyHash = getUrlVars()['_k'];
+            this.setState({
+                requestedQuery: null
+            });
+        }
+        this.keyHash = getUrlVars()['_k'];
+        
+
+    },
     componentDidUpdate: function(){
       this.enableAutocomplete();
       this.enableEnterKey();
@@ -39,6 +54,7 @@ var Search = React.createClass({
       ProvidersStore.listen(this._onChange);
     },
     render: function() {
+
       var self = this;
       var providersList = (
         self.state.providers.map(function(item, index){

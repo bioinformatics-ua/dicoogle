@@ -27,7 +27,26 @@ var ResultsSelected = Reflux.createStore({
       console.log("Item: " );
       console.log(data);
       console.log(this._contents);
+
       this._contents.push(data);
+    },
+    onUnSelect:function(data) {
+
+
+
+        let i = 0;
+        for (var c of this._contents)
+        {
+            if (JSON.stringify(c) === JSON.stringify(data))
+            {
+                this._contents.splice(i,1);
+                break;
+
+            }
+            i = i+1;
+
+        }
+
     },
     // Send the batch of selected results to somewhere.
     onGet: function(data){

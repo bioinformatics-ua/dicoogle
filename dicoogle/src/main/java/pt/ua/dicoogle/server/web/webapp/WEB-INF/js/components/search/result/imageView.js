@@ -114,24 +114,27 @@ var ImageView = React.createClass({
       return (<div></div>);
   },
 
-   handleSelect(item){
-      let {id} = item;
-      ResultSelectActions.select(item);
-      let value = this.refsClone[id].getValue();
-      this.setState({
-        resultsSelected: this.state.resultsSelected.concat(value)
-      });
-  },
+    handleSelect(item){
+        let {sopInstanceUID} = item;
+        // ResultSelectActions.select(item);
+        let value = this.refsClone[sopInstanceUID].getChecked();
+        if (value)
+            ResultSelectActions.select(item, sopInstanceUID);
+        else
+            ResultSelectActions.unSelect(item, sopInstanceUID);
+
+
+    },
   handleRefs: function (id, input){
       this.refsClone[id] = input;
   },
   formatSelect: function (cell, item){
-    let {id} = item;
-    let classNameForIt = "advancedOptions " + id;
+    let {sopInstanceUID} = item;
+    let classNameForIt = "advancedOptions " + sopInstanceUID;
     return (<div className={classNameForIt}>
               <Input type="checkbox" label=""
                     onChange={this.handleSelect.bind(this, item)}
-                    ref={this.handleRefs.bind(this, id)}/>
+                    ref={this.handleRefs.bind(this, sopInstanceUID)}/>
             </div>
     );
   },
