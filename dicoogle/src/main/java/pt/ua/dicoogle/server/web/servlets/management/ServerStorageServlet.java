@@ -40,6 +40,7 @@ public class ServerStorageServlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+        resp.setContentType("application/json");
 		resp.getWriter().write(JSONSerializer.toJSON(ServerSettings.getInstance().getMoves()).toString());
 	}
 

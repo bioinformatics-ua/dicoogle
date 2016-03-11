@@ -24,7 +24,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import net.sf.json.JSONObject;
 import pt.ua.dicoogle.server.web.auth.Authentication;
 import pt.ua.dicoogle.server.web.auth.Session;
 import pt.ua.dicoogle.server.web.utils.ResponseUtil;
@@ -34,17 +33,23 @@ import pt.ua.dicoogle.server.web.utils.ResponseUtil;
  * @author Frederico Silva <fredericosilva@ua.pt>
  */
 public class LogoutServlet extends HttpServlet{
+    
+    private static final String TOKEN_HEADERNAME = "Authorization";
 
+    @Deprecated
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    	//resp.addHeader("Access-Control-Allow-Origin", "*");
+        this.doPost(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         boolean logout = Session.logout(req);
-        String username = req.getParameter("username");
-        if (username!=null&&!username.equals(""))
-            Authentication.getInstance().logout(username);
-
+        String token = req.getHeader(TOKEN_HEADERNAME);
+        if (token != null && !token.equals("")) {
+            Authentication.getInstance().logout(token);
+        }
         ResponseUtil.simpleResponse(resp,"success", logout);
-
     }
     
 }

@@ -32,11 +32,10 @@ import java.util.UUID;
 public class Authentication
 {
 	private static Authentication instance = null;
-	private static UsersStruct users;
+	private final UsersStruct users;
 
-	private static Map<String, String> usersToken = new HashMap<String, String>();
-	private static Map<String, String> tokenUsers = new HashMap<String, String>(); // to have performance.
-
+	private final Map<String, String> usersToken = new HashMap<>();
+	private final Map<String, String> tokenUsers = new HashMap<>();
 
 	private Authentication()
 	{
@@ -73,16 +72,16 @@ public class Authentication
 
 	}
 
-	public void logout(String username){
-		String token = usersToken.get(username);
+	public void logout(String token){
 		String user = tokenUsers.get(token);
-		tokenUsers.remove(token);
-		usersToken.remove(username);
+		String ntoken = usersToken.get(user);
+		tokenUsers.remove(ntoken);
+		usersToken.remove(user);
 
 	}
 
 	/**
-	 * Attemps to login on the plataform.
+	 * Attempts to login on the platform.
 	 *
 	 * @param username the user name of the user to login.
 	 * @param password the clear text password of the user.
