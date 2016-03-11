@@ -26,6 +26,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import org.dcm4che2.imageio.plugins.dcm.DicomImageReadParam;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.sdk.StorageInputStream;
 
@@ -35,8 +36,12 @@ import pt.ua.dicoogle.sdk.StorageInputStream;
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 public class ImageLoader {
-
+    
     private ImageLoader() {
+    }
+    
+    static {
+        ImageIO.scanForPlugins();
     }
     
     /**
@@ -58,11 +63,10 @@ public class ImageLoader {
             }
             ImageReader reader = readers.next();
             reader.setInput(imageInputStream, false);
-            if (reader.getFormatName().equals("DICOM")) {
+            if (reader.getFormatName().equalsIgnoreCase("DICOM")) {
                 DicomImageReadParam param = (DicomImageReadParam) reader.getDefaultReadParam();
                 image = reader.read(0, param);
-            }
-            else {
+            } else {
                 image = reader.read(0);
             }
         } catch (org.dcm4che2.data.ConfigurationError | IOException ex) {

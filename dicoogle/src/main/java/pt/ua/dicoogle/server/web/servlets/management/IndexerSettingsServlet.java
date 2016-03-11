@@ -151,6 +151,7 @@ public class IndexerSettingsServlet extends HttpServlet {
             	break;
         }
 
+        resp.setContentType("application/json");
         resp.getWriter().append(result);
     }
 
