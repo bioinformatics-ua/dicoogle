@@ -33,6 +33,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,17 +51,13 @@ public class Convert2PNG
     private static final Logger logger = LoggerFactory.getLogger(Convert2PNG.class);
     
     private synchronized static ImageReader createDICOMImageReader() {
-        ImageIO.scanForPlugins();
-        
         Iterator<ImageReader> it = ImageIO.getImageReadersByFormatName("DICOM"); // gets the first registered ImageReader that can read DICOM data
         
         ImageReader sReader = it.next();
         return sReader;
     }
     
-    private synchronized static ImageWriter createImageWriter() {
-        ImageIO.scanForPlugins();
-        
+    private synchronized static ImageWriter createPNGImageWriter() {
         Iterator<ImageWriter> it = ImageIO.getImageWritersByFormatName("PNG"); // gets the first registered ImageWriter that can write PNG data
         
         ImageWriter sWriter = it.next();
@@ -111,7 +108,7 @@ public class Convert2PNG
 		DicomImageReadParam readParams = (DicomImageReadParam) reader.getDefaultReadParam(); // and set the default params for it (height, weight, alpha) // FIXME is this even needed?
 		
 		// setup the PNG writer
-		ImageWriter writer = createImageWriter(); // gets the first registered ImageWriter that can save PNG data
+		ImageWriter writer = createPNGImageWriter(); // gets the first registered ImageWriter that can save PNG data
 		if (writer == null) // if no valid writer was found abort
 			return null;
 
@@ -183,19 +180,76 @@ public class Convert2PNG
      * @throws IOException if the I/O operations on the images fail
 	 */
 	public static ByteArrayOutputStream DICOM2PNGStream(StorageInputStream dcmStream, int frameIndex) throws IOException {
+        return DICOM2PNGStream(dcmStream.getInputStream(), frameIndex);
+	}
+
+    /**
+	 * Reads an input DICOM file and returns the desired frame as a PNG-encoded memory stream.
+	 *
+	 * @param iStream an input stream for the DICOM File.
+	 * @param frameIndex the index of the frame wanted (starting with #0).
+	 * @return the frame encoded in a PNG memory stream.
+     * @throws IOException if the I/O operations on the images fail
+	 */
+	public static ByteArrayOutputStream DICOM2PNGStream(InputStream iStream, int frameIndex) throws IOException {
 		// setup the PNG writer
-		ImageWriter writer = createImageWriter();
+		ImageWriter writer = createPNGImageWriter();
 
 		ImageWriteParam writeParams = writer.getDefaultWriteParam(); // and set the default params for it (height, weight, alpha)
 		writeParams.setProgressiveMode(ImageWriteParam.MODE_DEFAULT); // activate progressive mode (adam7), best for low bandwidth connections
 		
-        BufferedImage image = ImageLoader.loadImage(dcmStream);
+        BufferedImage image = ImageLoader.loadImage(iStream);
 
         // mount the resulting memory stream
         ByteArrayOutputStream result = new ByteArrayOutputStream();
 
         // write the specified frame to the resulting stream
         try (ImageOutputStream outStream = ImageIO.createImageOutputStream(result)) {
+            writer.setOutput(outStream);
+            writer.write(image);
+        }
+
+        return result;
+	}
+
+	/**
+	 * Reads an input DICOM file, scales it to fit in the given dimensions and returns the
+     * desired frame as a PNG-encoded memory stream.
+	 *
+	 * @param inStream The Dicoogle storage input Stream for the DICOM File.
+	 * @param frameIndex the index of the frame wanted (starting with #0).
+     * @param width the maximum width of the resulting image
+     * @param height the maximum height of the resulting image
+	 * @return the frame encoded in a PNG memory stream.
+     * @throws IOException if the I/O operations on the images fail
+	 */
+	public static ByteArrayOutputStream DICOM2ScaledPNGStream(InputStream inStream, int frameIndex, int width, int height) throws IOException {
+        if (inStream == null) {
+            throw new NullPointerException("dcmStream");
+        }
+        if (frameIndex < 0) {
+            throw new IllegalArgumentException("bad frameIndex");
+        }
+        if (width <= 0) {
+            throw new IllegalArgumentException("bad width");
+        }
+        if (height <= 0) {
+            throw new IllegalArgumentException("bad height");
+        }
+        
+		// setup the PNG writer
+        BufferedImage image = ImageLoader.loadImage(inStream);
+        
+        image = scaleImage(image, width, height);
+
+        // mount the resulting memory stream
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+
+        // write the specified frame to the resulting stream
+        try (ImageOutputStream outStream = ImageIO.createImageOutputStream(result)) {
+            ImageWriter writer = createPNGImageWriter();
+            ImageWriteParam writeParams = writer.getDefaultWriteParam(); // and set the default params for it
+            writeParams.setProgressiveMode(ImageWriteParam.MODE_DEFAULT); // activate progressive mode (adam7), best for low bandwidth connections
             writer.setOutput(outStream);
             writer.write(image);
         }
@@ -215,40 +269,9 @@ public class Convert2PNG
      * @throws IOException if the I/O operations on the images fail
 	 */
 	public static ByteArrayOutputStream DICOM2ScaledPNGStream(StorageInputStream dcmStream, int frameIndex, int width, int height) throws IOException {
-        if (dcmStream == null) {
-            throw new NullPointerException("dcmStream");
-        }
-        if (frameIndex < 0) {
-            throw new IllegalArgumentException("bad frameIndex");
-        }
-        if (width <= 0) {
-            throw new IllegalArgumentException("bad width");
-        }
-        if (height <= 0) {
-            throw new IllegalArgumentException("bad height");
-        }
-        
-		// setup the PNG writer
-		ImageWriter writer = createImageWriter();
-
-		ImageWriteParam writeParams = writer.getDefaultWriteParam(); // and set the default params for it
-		writeParams.setProgressiveMode(ImageWriteParam.MODE_DEFAULT); // activate progressive mode (adam7), best for low bandwidth connections
-        BufferedImage image = ImageLoader.loadImage(dcmStream);
-        
-        image = scaleImage(image, width, height);
-
-        // mount the resulting memory stream
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-
-        // write the specified frame to the resulting stream
-        try (ImageOutputStream outStream = ImageIO.createImageOutputStream(result)) {
-            writer.setOutput(outStream);
-            writer.write(image);
-        }
-
-        return result;
+        return DICOM2ScaledPNGStream(dcmStream.getInputStream(), frameIndex, width, height);
 	}
-
+    
 	/**
 	 * Retrieve the number of frames from an input DICOM file.
 	 *
