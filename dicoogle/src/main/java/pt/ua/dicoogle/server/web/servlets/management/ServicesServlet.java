@@ -30,7 +30,10 @@ import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.server.ControlServices;
 import pt.ua.dicoogle.server.web.management.Services;
 
-/**
+/** Servlet for reading and writing DIOM service configurations.
+ * Modifying the "running" setting will trigger a start or a stop on the actual service.
+ *
+ * At the moment, applying settings to PLUGIN-type services is not implemented, resulting in a no-op.
  * 
  * @author Frederico Silva <fredericosilva@ua.pt>
  */
@@ -42,18 +45,19 @@ public class ServicesServlet extends HttpServlet {
 	
 	private final int mType;
 	public ServicesServlet(int type) {
+		if (type < 0 || type > 2) {
+			throw new IllegalArgumentException("Bad service type, must be 0, 1 or 2");
+		}
 		mType = type;
-		
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		ControlServices controlServices = ControlServices.getInstance();
-		ServerSettings serverSettings = ServerSettings.getInstance();
-		
-		
+		final ControlServices controlServices = ControlServices.getInstance();
+		final ServerSettings serverSettings = ServerSettings.getInstance();
+
 		boolean isRunning = false; 
 		int port = -1;
         boolean autostart = false;
@@ -63,11 +67,6 @@ public class ServicesServlet extends HttpServlet {
 			port = serverSettings.getStoragePort();
 			autostart = serverSettings.isStorage();
 			break;
-		case PLUGIN:
-			//TODO: RETRIEVE STATE OF PLUGIN
-			
-			break;
-			
 		case QUERY:
 			isRunning = controlServices.queryRetrieveIsRunning();
 			port = serverSettings.getWlsPort();
@@ -91,68 +90,102 @@ public class ServicesServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		ControlServices controlServices = ControlServices.getInstance();
-
         JSONObject obj = new JSONObject();
-                
+
+		// gather settings to update
+		boolean updateAutostart = false, updatePort = false, updateRunning = false;
+		boolean autostart = false, running = false;
+		int port = 0;
+
+		String paramPort = req.getParameter("port");
+		if (paramPort != null) {
+			try {
+				port = Integer.parseInt(paramPort);
+				if (port < 1024 || port > 65535) {
+					throw new NumberFormatException();
+				}
+				updatePort = true;
+			} catch (NumberFormatException ex) {
+				obj.element("success", false);
+				obj.element("error", "Bad service port: must be a valid port number");
+				reply(resp, 400, obj);
+				return;
+			}
+		}
+
         String paramAutostart = req.getParameter("autostart");
         if (paramAutostart != null) {
-            boolean autostart = Boolean.parseBoolean(paramAutostart);
-            switch (mType) {
-                case STORAGE:
-                    ServerSettings.getInstance().setStorage(autostart);
-                    obj.element("success", true);
-                    obj.element("autostart", autostart);
-                    break;
-                case QUERY:
-                    ServerSettings.getInstance().setQueryRetrive(autostart);
-                    obj.element("success", true);
-                    obj.element("autostart", autostart);
-                    break;
-                default:
-                    obj.element("unsupported", true);
-            }
-            Services.getInstance().saveSettings();
+            autostart = Boolean.parseBoolean(paramAutostart);
+			updateAutostart = true;
         }
         
         String paramRunning = req.getParameter("running");
-        if (paramRunning == null) {
-            resp.getWriter().print(obj.toString());
-            return;
+        if (paramRunning != null) {
+			running = Boolean.parseBoolean(paramRunning);
+			updateRunning = true;
         }
-        
-		boolean running = Boolean.parseBoolean(paramRunning); 
-		switch (mType) {
-		case STORAGE:
-			boolean success = true;
-            int result = 0;
-			if(running) {
-                result = controlServices.startStorage();
-                success = (result == 0);
-            }
-			else
-				controlServices.stopStorage();
-			
-            obj.element("success", success);
-			break;
-		case PLUGIN:
-			//TODO: START AND STOP PLUGINS
-			break;
-			
-		case QUERY:
-			if(running)
-				controlServices.startQueryRetrieve();
-			else
-				controlServices.stopQueryRetrieve();
-			
-            obj.element("success", true);
-			break;
 
-		default:
-			break;
+		final ControlServices controlServices = ControlServices.getInstance();
+		final ServerSettings serverSettings = ServerSettings.getInstance();
+
+		// update auto-start
+		if (updateAutostart) {
+			switch (mType) {
+				case STORAGE:
+					serverSettings.setStorage(autostart);
+					obj.element("autostart", autostart);
+					break;
+				case QUERY:
+					serverSettings.setQueryRetrive(autostart);
+					obj.element("autostart", autostart);
+					break;
+			}
 		}
-        resp.setContentType("application/json");
-        resp.getWriter().print(obj.toString());
+
+		// update port
+		if (updatePort) {
+			switch (mType) {
+				case STORAGE:
+					serverSettings.setStoragePort(port);
+					obj.element("port", port);
+					break;
+				case QUERY:
+					serverSettings.setWlsPort(port);
+					obj.element("port", port);
+					break;
+			}
+		}
+
+		// update running
+		if (updateRunning) {
+			switch (mType) {
+				case STORAGE:
+					if (running) {
+						controlServices.startStorage();
+					} else
+						controlServices.stopStorage();
+					break;
+
+				case QUERY:
+					if (running)
+						controlServices.startQueryRetrieve();
+					else
+						controlServices.stopQueryRetrieve();
+					break;
+
+				default:
+					break;
+			}
+		}
+		Services.getInstance().saveSettings();
+		obj.element("success", true);
+		reply(resp, 200, obj);
+	}
+
+	private static void reply(HttpServletResponse resp, int code, JSONObject object) throws IOException {
+		resp.setContentType("application/json");
+		resp.setStatus(code);
+		resp.getWriter().print(object.toString());
 	}
 
 }
