@@ -30,7 +30,7 @@ import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.server.ControlServices;
 import pt.ua.dicoogle.server.web.management.Services;
 
-/** Servlet for reading and writing DIOM service configurations.
+/** Servlet for reading and writing DICOM service configurations.
  * Modifying the "running" setting will trigger a start or a stop on the actual service.
  *
  * At the moment, applying settings to PLUGIN-type services is not implemented, resulting in a no-op.
@@ -162,15 +162,21 @@ public class ServicesServlet extends HttpServlet {
 				case STORAGE:
 					if (running) {
 						controlServices.startStorage();
-					} else
+						obj.element("running", true);
+					} else {
 						controlServices.stopStorage();
+						obj.element("running", false);
+					}
 					break;
 
 				case QUERY:
 					if (running)
 						controlServices.startQueryRetrieve();
-					else
+						obj.element("running", true);
+					else {
 						controlServices.stopQueryRetrieve();
+						obj.element("running", false);
+					}
 					break;
 
 				default:
