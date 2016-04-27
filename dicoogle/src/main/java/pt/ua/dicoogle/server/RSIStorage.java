@@ -181,8 +181,9 @@ public class RSIStorage extends StorageService
                 {
                     nae2.setPreferredCallingAETitle(settings.getCAET());
                 }
-                k++;
                 naeArr[k] = nae2;
+                k++;
+                
             }
 
             // Just set the Network Application Entity array - which accepts a set of AEs.
