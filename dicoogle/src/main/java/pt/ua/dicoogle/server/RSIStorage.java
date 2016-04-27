@@ -173,7 +173,7 @@ public class RSIStorage extends StorageService
                 nae2.register(new VerificationService());
                 //and the StorageServiceSOP
                 nae2.register(this);
-                nae2.setAETitle("LPCCPACS");
+                nae2.setAETitle(alternativeAET);
                 ServerSettings settings = ServerSettings.getInstance();
                 String[] array = settings.getCAET();
 
