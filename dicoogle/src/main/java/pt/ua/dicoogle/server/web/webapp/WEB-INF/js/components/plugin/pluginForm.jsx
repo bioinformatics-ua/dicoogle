@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
 import {Modal} from 'react-bootstrap';
-import PluginView from './pluginView.jsx';
+import PluginView from './pluginView';
 
 import {ResultsSelected} from '../../stores/resultSelected';
 
@@ -10,7 +10,7 @@ const Dicoogle = dicoogleClient();
 
 
 export default class PluginFormModal extends React.Component {
-  
+
   static get propTypes() {
     return {
       slotId: PropTypes.string.isRequired,
@@ -22,13 +22,13 @@ export default class PluginFormModal extends React.Component {
       onHide: PropTypes.func.isRequired
     };
   }
-  
+
   constructor(props) {
     super(props);
     this.handleMounted = this.handleMounted.bind(this);
     this.handleHideSignal = this.handleHideSignal.bind(this);
   }
-  
+
   onConfirm() {
     this.props.onHide();
   }
@@ -40,13 +40,13 @@ export default class PluginFormModal extends React.Component {
       Dicoogle.emitSlotSignal(node, 'result-selection-ready', ResultsSelected.get());
     }
   }
-  
+
   handleHideSignal({target}) {
       console.log('Plugin requested to hide');
       target.removeEventListener('hide', this.handleHideSignal);
       this.props.onHide();
   }
-  
+
   render() {
     const {plugin, slotId, data} = this.props;
     return (plugin &&
