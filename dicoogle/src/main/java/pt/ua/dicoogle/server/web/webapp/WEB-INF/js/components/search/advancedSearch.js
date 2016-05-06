@@ -5,7 +5,7 @@ import React from 'react';
 import {SearchStore} from '../../stores/searchStore';
 import {ActionCreators} from '../../actions/searchActions';
 
-import {ResultSearch} from '../search/searchResultView';
+import {SearchResultView} from '../search/searchResultView';
 
 var AdvancedSearch = React.createClass({
     getInitialState: function (){
@@ -197,7 +197,7 @@ var AdvancedSearch = React.createClass({
        ///////
        var params = {text: query, keyword: true, other: true, provider};
 
-       React.render(<ResultSearch items={params}/>, document.getElementById("container"));
+       React.render(<SearchResultView items={params}/>, document.getElementById("container"));
   },
    checkEmpty: function(text){
      if(text.length === 0 )
