@@ -21,6 +21,7 @@ package pt.ua.dicoogle.server.web;
 import org.apache.commons.codec.digest.Md5Crypt;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
+import pt.ua.dicoogle.sdk.utils.TagsStruct;
 import pt.ua.dicoogle.server.web.rest.VersionResource;
 import pt.ua.dicoogle.server.web.servlets.RestletHttpServlet;
 import pt.ua.dicoogle.server.web.servlets.ExportToCSVServlet;
@@ -31,6 +32,7 @@ import pt.ua.dicoogle.server.web.servlets.SearchHolderServlet;
 import pt.ua.dicoogle.server.web.servlets.IndexerServlet;
 import pt.ua.dicoogle.server.web.servlets.ImageServlet;
 import pt.ua.dicoogle.server.web.servlets.plugins.PluginsServlet;
+import pt.ua.dicoogle.server.web.servlets.management.*;
 import pt.ua.dicoogle.server.web.servlets.search.ExportServlet;
 import pt.ua.dicoogle.server.web.servlets.search.ExportServlet.ExportType;
 import pt.ua.dicoogle.server.web.servlets.search.ProvidersServlet;
@@ -40,16 +42,6 @@ import pt.ua.dicoogle.server.web.servlets.search.WadoServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.LoginServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.UserServlet;
 import pt.ua.dicoogle.core.ServerSettings;
-import pt.ua.dicoogle.server.web.servlets.management.AETitleServlet;
-import pt.ua.dicoogle.server.web.servlets.management.DicomQuerySettingsServlet;
-import pt.ua.dicoogle.server.web.servlets.management.ForceIndexing;
-import pt.ua.dicoogle.server.web.servlets.management.IndexerSettingsServlet;
-import pt.ua.dicoogle.server.web.servlets.management.LoggerServlet;
-import pt.ua.dicoogle.server.web.servlets.management.RemoveServlet;
-import pt.ua.dicoogle.server.web.servlets.management.RunningTasksServlet;
-import pt.ua.dicoogle.server.web.servlets.management.ServerStorageServlet;
-import pt.ua.dicoogle.server.web.servlets.management.ServicesServlet;
-import pt.ua.dicoogle.server.web.servlets.management.TransferOptionsServlet;
 
 import java.io.File;
 import java.net.URL;
@@ -77,7 +69,6 @@ import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.server.LegacyRestletApplication;
 import pt.ua.dicoogle.server.web.servlets.accounts.LogoutServlet;
-import pt.ua.dicoogle.server.web.servlets.management.UnindexServlet;
 import pt.ua.dicoogle.server.web.servlets.search.DumpServlet;
 import pt.ua.dicoogle.server.web.servlets.webui.WebUIModuleServlet;
 import pt.ua.dicoogle.server.web.servlets.webui.WebUIServlet;
@@ -199,6 +190,7 @@ public class DicoogleWeb {
             createServletHandler(new WadoServlet(), "/wado"),
             createServletHandler(new ProvidersServlet(), "/providers"),
             createServletHandler(new DicomQuerySettingsServlet(), "/management/settings/dicom/query"),
+            createServletHandler(new DimTagsServlet(TagsStruct.getInstance()), "/management/settings/dicom/tags"),
             createServletHandler(new ForceIndexing(), "/management/tasks/index"),
             createServletHandler(new UnindexServlet(), "/management/tasks/unindex"),
             createServletHandler(new RemoveServlet(), "/management/tasks/remove"),
