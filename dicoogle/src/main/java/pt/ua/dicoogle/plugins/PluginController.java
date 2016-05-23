@@ -18,41 +18,15 @@
  */
 package pt.ua.dicoogle.plugins;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.zip.ZipFile;
-
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FileUtils;
+import org.restlet.resource.ServerResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.restlet.resource.ServerResource;
-
 import pt.ua.dicoogle.core.ServerSettings;
-import pt.ua.dicoogle.server.ControlServices;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
-import pt.ua.dicoogle.sdk.GraphicalInterface;
-import pt.ua.dicoogle.sdk.IndexerInterface;
-import pt.ua.dicoogle.sdk.JettyPluginInterface;
-import pt.ua.dicoogle.sdk.PluginSet;
-import pt.ua.dicoogle.sdk.QueryInterface;
-import pt.ua.dicoogle.sdk.StorageInputStream;
-import pt.ua.dicoogle.sdk.StorageInterface;
+import pt.ua.dicoogle.plugins.webui.WebUIPluginManager;
+import pt.ua.dicoogle.sdk.*;
 import pt.ua.dicoogle.sdk.Utils.TaskQueue;
 import pt.ua.dicoogle.sdk.Utils.TaskRequest;
 import pt.ua.dicoogle.sdk.core.PlatformCommunicatorInterface;
@@ -61,12 +35,20 @@ import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.settings.ConfigurationHolder;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
+import pt.ua.dicoogle.server.ControlServices;
+import pt.ua.dicoogle.server.PluginRestletApplication;
 import pt.ua.dicoogle.server.web.DicoogleWeb;
-import pt.ua.dicoogle.plugins.webui.WebUIPluginManager;
-import pt.ua.dicoogle.sdk.DicooglePlugin;
 import pt.ua.dicoogle.taskManager.RunningIndexTasks;
 import pt.ua.dicoogle.taskManager.TaskManager;
-import pt.ua.dicoogle.server.PluginRestletApplication;
+
+import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.zip.ZipFile;
 
 /**
  *
@@ -139,13 +121,13 @@ public class PluginController{
             settingsFolder.mkdir();
         }
 
-        for (PluginSet plugin : pluginSets) {
+        for (Iterator<PluginSet> it = pluginSets.iterator(); it.hasNext();) {
+            PluginSet plugin = it.next();
             logger.info("Loading plugin: " + plugin.getName());
-                        
-            File pluginSettingsFile = new File(settingsFolder + "/" + plugin.getName() + ".xml");       
+            File pluginSettingsFile = new File(settingsFolder + "/" + plugin.getName().replace('/', '-') + ".xml");
             try {
                 ConfigurationHolder holder = new ConfigurationHolder(pluginSettingsFile);
-                if(plugin.getName().equals("RemotePluginSet")){
+                if(plugin.getName().equals("RemotePluginSet")) {
                 	this.remoteQueryPlugins = plugin;
                 	holder.getConfiguration().setProperty("NodeName", ServerSettings.getInstance().getNodeName());
     	        	holder.getConfiguration().setProperty("TemporaryPath", ServerSettings.getInstance().getPath());
@@ -157,9 +139,9 @@ public class PluginController{
             catch (ConfigurationException e){
                 logger.error("Failed to create configuration holder", e);
 			}
-            catch (UnsupportedOperationException e){
-                // TODO log this properly, remove plugin from plugin list
-                logger.error(e.getMessage(),e);
+            catch (RuntimeException e) {
+                logger.error("Unexpected error while loading plugin set {}. Plugin disabled.", plugin.getName(), e);
+                it.remove();
             }
         }
         logger.info("Settings pushed to plugins");
@@ -209,7 +191,6 @@ public class PluginController{
     }
     
     private void applySettings(PluginSet set, ConfigurationHolder holder) {
-
         // provide platform to each plugin interface
         final Collection<Collection<? extends DicooglePlugin>> all = Arrays.asList(
                 set.getStoragePlugins(),
@@ -223,9 +204,8 @@ public class PluginController{
                 p.setSettings(holder);
             }
         }
-        
         set.setSettings(holder);
-        
+
     }
     
     /**
@@ -610,10 +590,10 @@ public class PluginController{
     /** Issue an unindexation procedure to the given indexers.
      * 
      * @param path the URI of the directory or file to unindex
-     * @param indexProviders a collection of providers
+     * @param indexers a collection of providers
      */
     private void doUnindex(URI path, Collection<IndexerInterface> indexers) {
-        for (IndexerInterface indexer : indexers) {            
+        for (IndexerInterface indexer : indexers) {
         	indexer.unindex(path);
         }
         logger.info("Finished unindexing {}", path);
