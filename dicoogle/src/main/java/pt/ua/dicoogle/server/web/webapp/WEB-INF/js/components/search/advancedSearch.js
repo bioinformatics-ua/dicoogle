@@ -1,13 +1,17 @@
 
 import $ from 'jquery';
 import React from 'react';
-
+import ReactDOM from 'react-dom';
 import {SearchStore} from '../../stores/searchStore';
 import {ActionCreators} from '../../actions/searchActions';
 
 import {ResultSearch} from '../search/searchResultView';
 
-var AdvancedSearch = React.createClass({
+// TODO this component needs to be refactored:
+// - it should not perform React renders
+// - it should delegate the actual search to the parent component
+
+const AdvancedSearch = React.createClass({
     getInitialState: function (){
         return { label: 'login' };
     },
@@ -57,44 +61,44 @@ var AdvancedSearch = React.createClass({
                         <div className="col-xs-12 col-sm-4">
                             <div className="subject_text space_up">Modality</div>
                             <div className="modalities">
-                                <label for="modCR">CR</label>
+                                <label htmlFor="modCR">CR</label>
                                 <input id="modCR" type="checkbox" name="CR" />
 
-                                <label for="modMG">MG</label>
+                                <label htmlFor="modMG">MG</label>
                                 <input id="modMG" type="checkbox" name="MG" />
 
-                                <label for="modPT">PT</label>
+                                <label htmlFor="modPT">PT</label>
                                 <input id="modPT" type="checkbox" name="PT" />
 
-                                <label for="modXA">XA</label>
+                                <label htmlFor="modXA">XA</label>
                                 <input id="modXA" type="checkbox" name="XA" />
 
-                                <label for="modES">ES</label>
+                                <label htmlFor="modES">ES</label>
                                 <input id="modES" type="checkbox" name="ES" />
 
 
-                                <label for="modCT">CT</label>
+                                <label htmlFor="modCT">CT</label>
                                 <input id="modCT" type="checkbox" name="CT" />
 
-                                <label for="modMR">MR</label>
+                                <label htmlFor="modMR">MR</label>
                                 <input id="modMR" type="checkbox" name="MR" />
 
-                                <label for="modRF">RF</label>
+                                <label htmlFor="modRF">RF</label>
                                 <input id="modRF" type="checkbox" name="RF" />
 
-                                <label for="modUS">US</label>
+                                <label htmlFor="modUS">US</label>
                                 <input id="modUS" type="checkbox" name="US" />
 
-                                <label for="modDX">DX</label>
+                                <label htmlFor="modDX">DX</label>
                                 <input id="modDX" type="checkbox" name="DX" />
 
-                                <label for="modNM">NM</label>
+                                <label htmlFor="modNM">NM</label>
                                 <input id="modNM" type="checkbox" name="NM" />
 
-                                <label for="modSC">SC</label>
+                                <label htmlFor="modSC">SC</label>
                                 <input id="modSC" type="checkbox" name="SC" />
 
-                                <label for="modOT">OT</label>
+                                <label htmlFor="modOT">OT</label>
                                 <input id="modOT" type="checkbox" name="OT" />
 
                             </div>
@@ -197,7 +201,7 @@ var AdvancedSearch = React.createClass({
        ///////
        var params = {text: query, keyword: true, other: true, provider};
 
-       React.render(<ResultSearch items={params}/>, document.getElementById("container"));
+       ReactDOM.render(<ResultSearch items={params}/>, document.getElementById("container"));
   },
    checkEmpty: function(text){
      if(text.length === 0 )

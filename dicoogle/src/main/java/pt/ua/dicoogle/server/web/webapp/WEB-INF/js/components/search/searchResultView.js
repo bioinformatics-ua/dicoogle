@@ -12,7 +12,7 @@ import Webcore from 'dicoogle-webcore';
 import PluginForm from '../plugin/pluginForm.jsx';
 import {DefaultOptions} from '../../constants/defaultOptions';
 
-var ResultSearch = React.createClass({
+const ResultSearch = React.createClass({
 
   getInitialState: function() {
     return {

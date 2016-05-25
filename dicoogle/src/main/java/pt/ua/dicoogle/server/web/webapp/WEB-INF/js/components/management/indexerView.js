@@ -1,4 +1,4 @@
-var React = require('react');
+import React from 'react';
 import $ from 'jquery';
 
 import {IndexerStore} from '../../stores/indexerStore';

@@ -1,11 +1,10 @@
-var React = require('react');
-var Router = require('react-router');
-
+import React from 'react';
+import {Router} from 'react-router';
 import {UserActions} from "../../actions/userActions";
 import {UserStore} from "../../stores/userStore";
 import $ from 'jquery';
 
-var LoginView = React.createClass({
+const LoginView = React.createClass({
   mixins: [Router.History],
   getInitialState: function() {
     return {data: {},

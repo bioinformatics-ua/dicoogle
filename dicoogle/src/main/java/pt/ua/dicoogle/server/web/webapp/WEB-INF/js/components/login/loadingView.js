@@ -1,10 +1,9 @@
-var React = require('react');
-var Router = require('react-router');
-
+import React from 'react';
+import {Router} from 'react-router';
 import {UserActions} from "../../actions/userActions";
 import {UserStore} from "../../stores/userStore";
 
-var LoadingView = React.createClass({
+const LoadingView = React.createClass({
   mixins: [ Router.History ],
   getInitialState: function() {
     return {data: {},

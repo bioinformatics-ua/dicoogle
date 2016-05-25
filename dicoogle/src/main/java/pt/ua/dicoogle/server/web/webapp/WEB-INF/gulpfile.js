@@ -50,10 +50,8 @@ function createBrowserify(debug, watch) {
 }
 
 gulp.task('lint', function () {
-  return gulp.src('js/**/*.js')
-    .pipe(eslint({
-      configFile: ".eslintrc"
-    }))
+  return gulp.src(['js/**/*.js', 'js/**/*.jsx'])
+    .pipe(eslint())
     .pipe(eslint.format())
     .pipe(eslint.failAfterError());
 });

@@ -1,5 +1,4 @@
-var Reflux = require('reflux');
-var DumpActions = exports;
-DumpActions.get = Reflux.createAction();
-
-export { DumpActions };
+import Reflux from 'reflux';
+export const DumpActions = {
+  get: Reflux.createAction()
+}

@@ -13,9 +13,7 @@ import {Input} from 'react-bootstrap';
 import ResultSelectActions from '../../../actions/resultSelectAction';
 import {UserStore} from '../../../stores/userStore';
 
-
-
-var ImageView = React.createClass({
+const ImageView = React.createClass({
     getInitialState: function() {
       // We need this because refs are not updated in BootstrapTable.
       this.refsClone = {};
@@ -168,7 +166,7 @@ var ImageView = React.createClass({
             <BootstrapTable data={resultArray} selectRow={selectRowProp}
                   pagination striped hover width="100%">
               <TableHeaderColumn dataAlign="left" dataField="filename"
-                isKey={true} dataFormat={this.formatFileName} dataSort>
+                isKey dataFormat={this.formatFileName} dataSort>
                   File Name
               </TableHeaderColumn>
               <TableHeaderColumn dataAlign="left" dataField="sopInstanceUID"
@@ -299,7 +297,7 @@ var PopOverView = React.createClass({
 	render: function() {
 		if(this.state.data === null) {
 			return (
-				<Modal {...this.props} show={this.props.uid !== null} bsStyle='primary' title='Image Dump' animation={true}>
+				<Modal {...this.props} show={this.props.uid !== null} bsStyle='primary' title='Image Dump' animation>
           <div className="loader-inner ball-pulse">
             <div/>
             <div/>
@@ -324,15 +322,15 @@ var PopOverView = React.createClass({
       onSelect: this.onRowSelect
     };
 		return (
-			<Modal onHide={this.props.onHide} show={this.props.uid !== null} bsClass='modal' bsStyle='primary' dialogClassName='table-dump'animation={true}>
+			<Modal onHide={this.props.onHide} show={this.props.uid !== null} bsClass='modal' bsStyle='primary' dialogClassName='table-dump'animation>
           <Modal.Header>
             <Modal.Title>Dump DICOM metadata</Modal.Title>
           </Modal.Header>
             <div className='modal-body'>
-              <BootstrapTable search columnFilter data={fields} selectRow={selectRowProp} pagination striped hover className="table-test table table-striped table-bordered responsive" cellspacing="0" width="100%">
+              <BootstrapTable search columnFilter data={fields} selectRow={selectRowProp} pagination striped hover
+                              className="table-test table table-striped table-bordered responsive" cellspacing="0" width="100%">
               <TableHeaderColumn dataAlign="right"
-                dataField="att" width="20%" isKey
-                dataSort={true}>Attribute</TableHeaderColumn>
+                dataField="att" width="20%" isKey dataSort>Attribute</TableHeaderColumn>
               <TableHeaderColumn dataAlign="left"
                 dataField="field"
                 width="40%" isKey={false} dataSort>Field</TableHeaderColumn>

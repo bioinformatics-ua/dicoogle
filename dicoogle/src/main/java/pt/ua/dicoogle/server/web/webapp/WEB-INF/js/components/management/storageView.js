@@ -6,7 +6,7 @@ import {Button, Modal} from 'react-bootstrap';
 
 const AddStorageModal = React.createClass({
   render: function() {
-    return(<Modal {...this.props} bsStyle='primary' title='Add storage server' animation={true}>
+    return(<Modal {...this.props} bsStyle='primary' title='Add storage server' animation>
 
       <div className='modal-body'>
         <div>

@@ -3,7 +3,7 @@ import $ from 'jquery';
 import {LoggerActions} from "../../actions/loggerActions";
 import {LoggerStore} from "../../stores/loggerStore";
 
-var LoggerView = React.createClass({
+const LoggerView = React.createClass({
   getInitialState: function() {
     return {data: {},
     status: "loading"};

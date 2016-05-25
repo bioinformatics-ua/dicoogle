@@ -155,7 +155,7 @@ const PatientView = React.createClass({
             <TableHeaderColumn dataAlign="right" dataField="id" isKey dataFormat={this.formatID} dataSort>ID</TableHeaderColumn>
             <TableHeaderColumn dataAlign="left" dataField="name" dataFormat={this.formatName} isKey={false} dataSort>Name</TableHeaderColumn>
             <TableHeaderColumn dataAlign="center" dataField="gender" dataFormat={this.formatGender} dataSort>Gender</TableHeaderColumn>
-            <TableHeaderColumn dataAlign="center" dataField="nStudies" dataFormat={this.formatNumberOfStudies} dataSort={true}>#Studies</TableHeaderColumn>
+            <TableHeaderColumn dataAlign="center" dataField="nStudies" dataFormat={this.formatNumberOfStudies} dataSort>#Studies</TableHeaderColumn>
             <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="Opts" dataSort={false} dataFormat={this.formatOptions}>Options</TableHeaderColumn>
             <TableHeaderColumn hidden={!this.props.enableAdvancedSearch} dataAlign="center" dataField="Select" dataSort dataFormat={this.formatSelect}>#S</TableHeaderColumn>
           </BootstrapTable>

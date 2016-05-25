@@ -105,7 +105,7 @@ class App extends React.Component {
 		const Dicoogle = dicoogleClient();
 		Dicoogle.request('POST', 'logout', {}, (error) => {
       if (error) {
-		    console.error(error);
+        console.error(error);
       }
 
       this.setState({pluginMenuItems: []});

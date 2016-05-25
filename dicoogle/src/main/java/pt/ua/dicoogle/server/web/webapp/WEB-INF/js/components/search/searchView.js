@@ -10,7 +10,7 @@ import {ResultSearch} from '../search/searchResultView';
 import {DimFields} from '../../constants/dimFields';
 import {getUrlVars} from '../../utils/url';
 
-var Search = React.createClass({
+const Search = React.createClass({
     getInitialState: function (){
         this.keyHash = getUrlVars()['_k'];
         return {
@@ -35,7 +35,7 @@ var Search = React.createClass({
     },
     componentWillUpdate: function() {
 
-        if (getUrlVars()['_k']!=this.keyHash)
+        if (getUrlVars()['_k'] !== this.keyHash)
         {
             this.keyHash = getUrlVars()['_k'];
             this.setState({
@@ -43,7 +43,7 @@ var Search = React.createClass({
             });
         }
         this.keyHash = getUrlVars()['_k'];
-        
+
 
     },
     componentDidUpdate: function(){

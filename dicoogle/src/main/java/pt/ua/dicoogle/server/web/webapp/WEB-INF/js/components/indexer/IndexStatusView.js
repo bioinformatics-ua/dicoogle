@@ -1,5 +1,4 @@
 import React from 'react';
-
 import {IndexStatusActions} from "../../actions/indexStatusAction";
 import {IndexStatusStore} from "../../stores/indexStatusStore";
 import TaskStatus from "./TaskStatus.jsx";

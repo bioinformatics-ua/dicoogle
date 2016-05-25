@@ -1,7 +1,4 @@
-
-
-var Reflux = require('reflux');
-var LoggerActions = exports;
-LoggerActions.get = Reflux.createAction();
-
-export { LoggerActions };
+import Reflux from 'reflux';
+export const LoggerActions = {
+  get: Reflux.createAction()
+}

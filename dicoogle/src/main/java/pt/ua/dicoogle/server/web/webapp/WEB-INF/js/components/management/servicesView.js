@@ -1,4 +1,4 @@
-var React = require('react');
+const React = require('react');
 
 import ServiceAction from '../../actions/servicesAction';
 import ServicesStore from '../../stores/servicesStore';
@@ -6,7 +6,7 @@ import QueryAdvancedOptionsModal from './queryadvoptions';
 import Webcore from 'dicoogle-webcore';
 import PluginView from '../plugin/pluginView.jsx';
 
-var ServicesView = React.createClass({
+const ServicesView = React.createClass({
 
     getInitialState () {
         return {
