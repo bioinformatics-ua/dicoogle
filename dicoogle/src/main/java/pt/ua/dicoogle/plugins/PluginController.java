@@ -269,17 +269,10 @@ public class PluginController{
     }
 
     /**
-     * Stops the plugins and saves the settings
+     * Shut down all plugins.
      */
-    public void shutdown() throws IOException {
+    public void shutdown() {
         for (PluginSet plugin : pluginSets) {
-            //TODO: I Think it is better to enable auto-save settings
-            /*Settings settings = plugin.getSettings();
-            if (settings != null) {
-                settings.save();
-            }
-	*/
-            //lets the plugin know we are shutting down
             plugin.shutdown();
         }
     }
@@ -475,15 +468,15 @@ public class PluginController{
         if(holder == null)
         	return null;
     	
-    	List<Task<Iterable<SearchResult>>> tasks = new ArrayList<>();
+    	List<Task<Iterable<SearchResult>>> tasklist = new ArrayList<>();
         for(String p : querySources){
         	Task<Iterable<SearchResult>> task = getTaskForQuery(p, query, parameters);
-        	tasks.add(task);
+        	tasklist.add(task);
         	holder.addTask(task);
         }
 
         //and executes said task asynchronously
-        for(Task<?> t : tasks)
+        for(Task<?> t : tasklist)
         	taskManager.dispatch(t);
 
         //logger.info("Fired Query Tasks: "+Arrays.toString(querySources.toArray()) +" QueryString:"+query);
@@ -515,7 +508,7 @@ public class PluginController{
     	logger.info("Starting Indexing procedure for {}", path.toString());
         StorageInterface store = getStorageForSchema(path);
 
-        if(store==null){ 
+        if(store==null) {
             logger.error("No storage plugin detected");
             return Collections.emptyList(); 
         }

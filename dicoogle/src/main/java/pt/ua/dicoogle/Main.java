@@ -26,7 +26,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -42,7 +41,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import pt.ieeta.anonymouspatientdata.core.Anonymous;
 
 import pt.ua.dicoogle.core.AsyncIndex;
 import pt.ua.dicoogle.core.ClientSettings;
@@ -53,7 +51,6 @@ import pt.ua.dicoogle.DicomLog.LogXML;
 import pt.ua.dicoogle.core.TagsXML;
 import pt.ua.dicoogle.core.XMLClientSupport;
 import pt.ua.dicoogle.plugins.PluginController;
-import pt.ua.dicoogle.rGUI.server.GUIServer;
 import pt.ua.dicoogle.rGUI.client.windows.ConnectWindow;
 import pt.ua.dicoogle.sdk.Utils.Platform;
 import pt.ua.dicoogle.sdk.utils.TagsStruct;
@@ -122,15 +119,7 @@ public class Main
             if (args[0].equals("-s"))
             {
                 LaunchDicoogle();
-            } else if (args[0].equals("-g") || args[0].equals("--gui"))
-            {
-                LaunchDicoogle();
-                LaunchGUIClient();
-            } else if (args[0].equals("-c"))
-            {
-                LaunchGUIClient();
-            }
-            else if (args[0].equals("-w") || args[0].equals("--web") || args[0].equals("--webapp")) {
+            } else if (args[0].equals("-w") || args[0].equals("--web") || args[0].equals("--webapp")) {
                 // open browser
                 LaunchDicoogle();
                 LaunchWebApplication();
@@ -138,10 +127,8 @@ public class Main
             else if (args[0].equals("-h") || args[0].equals("--h") || args[0].equals("-help") || args[0].equals("--help"))
             {
                 System.out.println("Dicoogle PACS: help");
-                System.out.println("-s : Start the server");
+                System.out.println("-s : Start the server only");
                 System.out.println("-w : Start the server and load web application in default browser (default)");
-                System.out.println("-g : [deprecated] Start the server and run the desktop client application");
-                System.out.println("-c : [deprecated] Run the desktop client application");
             }
             else
             {
@@ -150,12 +137,24 @@ public class Main
         }
         /** Register System Exceptions Hook */
         ExceptionHandler.registerExceptionHandler();
+        
+        /** Register shutdown hook */
+        Runtime.getRuntime().addShutdownHook(new Thread("shutdown-plugins-hook") {
+        
+            @Override
+            public void run() {
+                PluginController.getInstance().shutdown();
+                System.out.flush();
+                System.err.flush();
+            }
+        });
+        logger.debug("Shutdown hook registered.");
 
         optimizeMemoryUsage();
     }
 
     /**
-     * This function creates a TimerTask to periodically run Garbage Colector
+     * This function creates a TimerTask to periodically run Garbage Collector
      *
      */
     private static void optimizeMemoryUsage()
@@ -226,7 +225,7 @@ public class Main
             Configuration.getInstance().setProps(new Properties());
         } catch (FileNotFoundException ex) {
             //DebugManager.getInstance().log("Missing crash report configuration (sender)\n");
-            logger.info("No configuration file");
+            logger.info("No crash report configuration file");
         }
 
         /* Load all Server Settings from XML */
@@ -293,7 +292,7 @@ public class Main
             AsyncIndex asyncIndex = new AsyncIndex();
         }
         //Signals that this application is GUI Server
-        isGUIServer = true;
+        isGUIServer = false;
 
         //GUIServer GUIserv = new GUIServer();
     }
