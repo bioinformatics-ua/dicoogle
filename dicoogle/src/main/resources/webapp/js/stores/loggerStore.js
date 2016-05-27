@@ -1,5 +1,3 @@
-'use strict';
-
 import Reflux from 'reflux';
 import $ from 'jquery';
 import {LoggerActions} from '../actions/loggerActions';

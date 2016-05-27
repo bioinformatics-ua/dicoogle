@@ -1,5 +1,3 @@
-'use strict';
-
 import Reflux from 'reflux';
 import {ProvidersActions} from '../actions/providersActions';
 import {Endpoints} from '../constants/endpoints';

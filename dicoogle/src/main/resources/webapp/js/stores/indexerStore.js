@@ -1,5 +1,3 @@
-'use strict';
-
 import Reflux from 'reflux';
 import {IndexerActions} from '../actions/indexerActions';
 import {getIndexerSettings} from '../handlers/requestHandler';
