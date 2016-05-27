@@ -128,7 +128,8 @@ public class SOPList {
         UID.BasicVoiceAudioWaveformStorage,
         UID.HangingProtocolStorage,
         UID.SiemensCSANonImageStorage,
-        UID.VLWholeSlideMicroscopyImageStorage
+        UID.VLWholeSlideMicroscopyImageStorage,
+        UID.BreastTomosynthesisImageStorage
         };
 
     public static synchronized SOPList getInstance()
