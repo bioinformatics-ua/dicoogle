@@ -107,15 +107,25 @@ public class SearchServlet extends HttpServlet {
             sendError(response, 400, "Invalid parameter offset: must be a non-negative integer");
             return;
         }
-        try {
-            depth = getReqParameter(request, "depth", -1);
-            if (depth < -1 || depth > 4) throw new NumberFormatException();
-            if (this.searchType != SearchType.PATIENT && depth != -1) {
+        String paramDepth = request.getParameter("depth");
+        if (paramDepth != null) {
+            if (this.searchType != SearchType.PATIENT) {
                 sendError(response, 400, "Parameter depth is only applicable to /searchDIM endpoint");
+                return;
             }
-        } catch (NumberFormatException e) {
-            sendError(response, 400, "Invalid parameter depth: must be an integer between 0 and 4");
-            return;
+            switch (paramDepth.toLowerCase()) {
+                case "none": depth = 0; break;
+                case "patient": depth = 1; break;
+                case "study": depth = 2; break;
+                case "series": depth = 3; break;
+                case "images": depth = 4; break;
+                default:
+                sendError(response, 400, "Invalid parameter depth: must be a valid level: "
+                        + "'none', 'patient', 'study', 'series' or 'images'");
+                return;
+            }
+        } else {
+            depth = 4;
         }
 
         // retrieve desired fields
