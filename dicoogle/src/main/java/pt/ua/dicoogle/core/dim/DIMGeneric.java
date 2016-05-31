@@ -19,10 +19,14 @@
 package pt.ua.dicoogle.core.dim;
 
 
+import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.net.URI;
 import java.util.*;
 
+import org.json.JSONException;
+import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +78,7 @@ public class DIMGeneric
 
     private static final Logger logger = LoggerFactory.getLogger(DIMGeneric.class);
 
-    public DIMGeneric(ConcatTags tags,Collection<SearchResult> arr) throws Exception
+    public DIMGeneric(ConcatTags tags, Iterable<SearchResult> arr) throws Exception
     {
         this.tags = tags;
         fill(arr);
@@ -85,7 +89,7 @@ public class DIMGeneric
      * it is allow to handle a ArrayList of Strings or SearchResults
      * @param arr
      */
-    public DIMGeneric(Collection<SearchResult> arr) throws Exception{
+    public DIMGeneric(Iterable<SearchResult> arr) throws Exception{
         fill(arr);
 
     }
@@ -95,7 +99,7 @@ public class DIMGeneric
      * it is allow to handle a ArrayList of Strings or SearchResults
      * @param arr
      */
-    private void fill(Collection<SearchResult> arr) {
+    private void fill(Iterable<SearchResult> arr) {
             //DebugManager.getInstance().debug("Looking search results: " + arr.size() );
 
             Map<String, String> descriptions = new HashMap<String, String>();
@@ -337,6 +341,94 @@ public class DIMGeneric
                 }
             }
 
+    }
+    public void writeJSON(Writer destinationWriter) throws IOException {
+        this.writeJSON(destinationWriter, 4);
+    }
+
+    public void writeJSON(Writer destinationWriter, int depth) throws IOException {
+        JSONWriter writer = new JSONWriter(destinationWriter);
+        try {
+            writer.object()
+                    .key("numResults").value(this.patients.size());
+            if (depth > 0) {
+                writer.key("results").array();
+
+                for (Patient p : this.patients) {
+                    writer.object()
+                            .key("id").value(p.getPatientID())
+                            .key("name").value(p.getPatientName())
+                            .key("gender").value(p.getPatientSex())
+                            .key("birthdate").value(p.getPatientBirthDate())
+                            .key("nStudies").value(p.getStudies().size());
+
+                    if (depth > 1) {
+                        writer.key("studies").array(); // begin studies
+
+                        for (Study study : p.getStudies()) {
+                            writer.object()    // begin study
+                                    .key("studyInstanceUID").value(study.getStudyInstanceUID())
+                                    .key("studyDescription").value(study.getStudyDescription())
+                                    .key("studyDate").value(study.getStudyData())
+                                    .key("institutionName").value(study.getInstitutuionName())
+                                    //.key("nSeries").value(study.getSeries().size())
+                            ;
+                            Set<String> modalities = new HashSet<>();
+
+                            if (depth > 2) {
+                                writer.key("series").array(); // begin series (array)
+                                // TODO
+                                for (Serie series : study.getSeries()) {
+                                    String modality = series.getModality();
+                                    int nimages = series.getSOPInstanceUIDList().size();
+                                    writer.object() // begin series
+                                            .key("serieNumber").value(series.getSerieNumber())
+                                            .key("serieInstanceUID").value(series.getSerieInstanceUID())
+                                            .key("serieDescription").value(series.getSeriesDescription())
+                                            .key("serieModality").value(modality)
+                                            //.key("nImages").value(nimages)
+                                    ;
+                                    if (depth > 3) {
+                                        writer.key("images").array(); // begin images
+                                        for (int i = 0; i < nimages; i++) {
+                                            String rawPath = series.getImageList().get(i).getRawPath();
+                                            writer.object() // begin image
+                                                    .key("sopInstanceUID").value(series.getSOPInstanceUIDList().get(i))
+                                                    .key("rawPath").value(rawPath)
+                                                    .key("uri").value(series.getImageList().get(i).toString())
+                                                    .key("filename").value(rawPath.substring(rawPath.lastIndexOf("/")+1, rawPath.length()))
+                                                    .endObject(); // end image
+                                        }
+                                        writer.endArray(); // end images
+                                    }
+
+                                    modalities.add(modality);
+                                    writer.endObject(); // end series
+                                }
+                                writer.endArray(); // end series (array)
+                                writer.key("modalities");
+                                if (modalities.size() == 1) {
+                                    writer.value(modalities.iterator().next());
+                                } else {
+                                    writer.array(); // begin modalities in study
+                                    for (String m : modalities) {
+                                        writer.value(m);
+                                    }
+                                    writer.endArray(); // end modalities in study
+                                }
+                            }
+                            writer.endObject(); // end study
+                        }
+                        writer.endArray(); // end studies
+                    }
+                    writer.endObject(); // end patient
+                }
+                writer.endArray(); // end patients
+            }
+            writer.endObject(); // end output
+        } catch (JSONException e) {
+            throw new IOException("JSON serialization error", e);
+        }
     }
 
     public String getJSON(){
