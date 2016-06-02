@@ -40,26 +40,25 @@ var ExportStore = Reflux.createStore({
 
     onExportCSV: function(data, fields){
 
-      var freetext = data.text;
-      var isKeyword = data.keyword;
-      if(data.text.length === 0)
+      let {text, keyword, provider} = data;
+      if(text.length === 0)
       {
-        freetext = "*:*";
-        isKeyword = true;
+        text = "*:*";
+        keyword = true;
       }
 
-      console.log(fields);
       $.post(Endpoints.base + "/exportFile",
       {
-        query: freetext,
-        keyword: isKeyword,
-        fields: JSON.stringify(fields)
+        query: text,
+        keyword,
+        fields: JSON.stringify(fields),
+        providers: provider
       },
         function(data, status){
           //Response
-          var response = JSON.parse(data);
+          const response = JSON.parse(data);
           console.log("\NUID: " + response.uid);
-          var link = document.createElement("a");
+          const link = document.createElement("a");
           link.download = "file";
           link.href = Endpoints.base + "/exportFile?UID=" + response.uid;
           link.click();

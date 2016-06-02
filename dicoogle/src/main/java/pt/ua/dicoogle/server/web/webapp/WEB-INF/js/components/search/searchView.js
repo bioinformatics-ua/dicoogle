@@ -113,6 +113,9 @@ var Search = React.createClass({
     },
     onSearchByUrl: function(){
       let params = {text: getUrlVars()['query'], keyword: getUrlVars()['keyword'], provider: getUrlVars()['provider']};
+      if (params.provider === 'all') {
+        params.provider = undefined;
+      }
       this.setState({
         requestedQuery: params
       });

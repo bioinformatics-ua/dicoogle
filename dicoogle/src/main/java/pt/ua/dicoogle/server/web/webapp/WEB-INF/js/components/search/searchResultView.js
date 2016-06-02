@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 
 import {SearchStore} from '../../stores/searchStore';
 import {ActionCreators} from '../../actions/searchActions';
@@ -12,7 +12,17 @@ import Webcore from 'dicoogle-webcore';
 import PluginForm from '../plugin/pluginForm.jsx';
 import {DefaultOptions} from '../../constants/defaultOptions';
 
-var ResultSearch = React.createClass({
+const ResultSearch = React.createClass({
+  propTypes: {
+    items: PropTypes.shape({
+      text: PropTypes.string.isRequired,
+      keyword: PropTypes.bool.isRequired,
+      provider: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.arrayOf(PropTypes.string)
+        ])
+    }).isRequired
+  },
 
   getInitialState: function() {
     return {
