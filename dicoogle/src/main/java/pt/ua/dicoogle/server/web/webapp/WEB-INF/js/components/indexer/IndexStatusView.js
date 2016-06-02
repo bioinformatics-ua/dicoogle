@@ -55,7 +55,7 @@ const IndexStatusView = React.createClass({
           items = (<div>No tasks</div>);
         } else {
           items = this.state.data.results.map(item => (
-            <TaskStatus index={item.taskUid} item={item} onCloseStopClicked={this.onCloseStopClicked.bind(this, item.taskUid, item.complete)} />
+            <TaskStatus key={item.taskUid} index={item.taskUid} item={item} onCloseStopClicked={this.onCloseStopClicked.bind(this, item.taskUid, item.complete)} />
           ));
         }
         return (

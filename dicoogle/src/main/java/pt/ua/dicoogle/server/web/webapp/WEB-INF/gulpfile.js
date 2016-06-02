@@ -22,9 +22,9 @@ var EXTERNAL_REQUIRES = [
 
 function createBrowserify(debug, watch) {
   // set up the browserify instance on a task basis
-  var opt = {};
-  if (watch) Object.assign(opt, {cache: {}, packageCache: {}});
-  Object.assign(opt, {
+  var opt = {
+    cache: {},
+    packageCache: {},
     entries: './js/app.js',
     debug: debug,
     transform: [
@@ -41,7 +41,7 @@ function createBrowserify(debug, watch) {
         }
       ]
     ]
-  })
+  };
   var b = browserify(opt);
   if (watch) {
     b.plugin(watchify);

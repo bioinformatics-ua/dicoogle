@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import React from 'react';
+import React, {PropTypes} from 'react';
 import ReactDOM from 'react-dom';
 import Sidebar from './components/sidebar';
 import {Endpoints} from './constants/endpoints';
@@ -30,6 +30,11 @@ window.jQuery = $; // Bootstrap won't work without this hack. browserify-shim di
 require('bootstrap');
 
 class App extends React.Component {
+  static get contextTypes () {
+    return {
+			router: PropTypes.object.isRequired
+		};
+  }
 
 	constructor(props) {
 		super(props);
@@ -112,8 +117,7 @@ class App extends React.Component {
       this.pluginsFetched = false;
       UserActions.logout()
 
-      // Works with recent version of react + react-router
-			this.props.history.pushState(null, 'login');
+			this.context.router.push('login');
 		});
 	}
 
