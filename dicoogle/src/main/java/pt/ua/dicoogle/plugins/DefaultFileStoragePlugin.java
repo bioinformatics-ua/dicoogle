@@ -102,17 +102,17 @@ public class DefaultFileStoragePlugin extends PluginBase implements StorageInter
 	}
 
 	@Override
-	public Iterable<StorageInputStream> at(URI location) {		
+	public Iterable<StorageInputStream> at(URI location, Object ... args) {
 		return new MyIterable(location);		
 	}
 
 	@Override
-	public URI store(DicomObject dicomObject) {
+	public URI store(DicomObject dicomObject, Object ... args) {
 		return null;
 	}
 
 	@Override
-	public URI store(DicomInputStream inputStream) throws IOException {
+	public URI store(DicomInputStream inputStream, Object ... args) throws IOException {
 		return null;
 	}
 

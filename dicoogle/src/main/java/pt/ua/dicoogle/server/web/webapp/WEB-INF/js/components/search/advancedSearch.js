@@ -1,8 +1,6 @@
-/*jshint esnext: true*/
 
-var React = require('react');
-var ReactBootstrap = require('react-bootstrap');
-var Button = ReactBootstrap.Button;
+import $ from 'jquery';
+import React from 'react';
 
 import {SearchStore} from '../../stores/searchStore';
 import {ActionCreators} from '../../actions/searchActions';
@@ -11,7 +9,7 @@ import {ResultSearch} from '../search/searchResultView';
 
 var AdvancedSearch = React.createClass({
     getInitialState: function (){
-        return { label:'login' };
+        return { label: 'login' };
     },
     componentDidMount: function() {
       $("#datepicker").datepicker();
@@ -99,12 +97,9 @@ var AdvancedSearch = React.createClass({
                                 <label for="modOT">OT</label>
                                 <input id="modOT" type="checkbox" name="OT" />
 
-
                             </div>
                             <div className="subject_text space_up">Date</div>
                             <input type="text" id="datepicker"></input>
-
-
 
                         </div>
 
@@ -121,16 +116,16 @@ var AdvancedSearch = React.createClass({
 
     },
 
-    _onChange : function(data){
+    _onChange: function(data){
         console.log(data);
      //    if (this.isMounted())
      // this.setState({label:data});
    },
-   onSearchClicked : function(){
+   onSearchClicked: function(){
      console.log("SEARCH CLICKED");
        //NAME
        var patientName = document.getElementById("patient_name").value;
-       var query = "PatientName: "+this.checkEmpty(patientName); //TODO FINISH
+       var query = "PatientName: " + this.checkEmpty(patientName); //TODO FINISH
 
        //GENDER
        var gender;
@@ -177,23 +172,22 @@ var AdvancedSearch = React.createClass({
 
        if(modalities !== "")
        {
-         modalities = " AND Modality: ("+modalities+")";
+         modalities = " AND Modality: (" + modalities + ")";
          query = query + modalities;
        }
 
        //DATE
-       if(document.getElementById("datepicker").value != "")
+       if(document.getElementById("datepicker").value !== "")
        {
-         var day
          var date = $('#datepicker').datepicker('getDate').getFullYear() + this.fix2($('#datepicker').datepicker('getDate').getMonth()) + this.fix2($('#datepicker').datepicker('getDate').getDate());
 
-         query = query + " AND StudyDate:["+date +" TO "+date+"]";
+         query = query + " AND StudyDate:[" + date + " TO " + date + "]";
        }
 
        var providerEl = document.getElementById("providersList");
-       var selectedId= providerEl.selectedIndex;
+       var selectedId = providerEl.selectedIndex;
        var provider = "";
-       if(selectedId == 0){
+       if(selectedId === 0){
          provider = "all"
        }
        else {
@@ -201,17 +195,17 @@ var AdvancedSearch = React.createClass({
        }
 
        ///////
-       var params = {text: query, keyword: true, other:true, provider:provider};
+       var params = {text: query, keyword: true, other: true, provider};
 
        React.render(<ResultSearch items={params}/>, document.getElementById("container"));
   },
    checkEmpty: function(text){
-     if(text.length ==0 )
+     if(text.length === 0 )
       return "*";
      else
       return text;
    },
-   fix2:function(n) {
+   fix2: function(n) {
         return (n < 10) ? '0' + n : n;
     }
 });

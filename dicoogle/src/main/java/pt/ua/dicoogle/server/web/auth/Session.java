@@ -116,6 +116,16 @@ public class Session
 	public static boolean logout(HttpServletRequest request)
 	{
 		HttpSession session = request.getSession(false);
+		try
+		{
+			session.invalidate();
+		}
+		catch (Exception e )
+		{
+			System.err.println("Tracking session");
+		}
+
+
 
 		// if the sessio is invalid
 		if (session == null)
@@ -216,9 +226,9 @@ public class Session
 	public static LoggedInStatus webappLogin(HttpServletRequest request, HttpServletResponse response, boolean requiresAdminRights) throws IOException
 	{
 		// check if there a session and a login information attached to it
-		HttpSession session = request.getSession(false);
-		LoggedIn login = getUserLoggedIn(session);
-		if (login != null)
+		//HttpSession session = request.getSession(true);
+		//LoggedIn login = getUserLoggedIn(session);
+		/*if (login != null)
 		{
 			// check if this request needs admin rights and the user has them
 			if (requiresAdminRights && (! login.isAdmin()))
@@ -228,12 +238,12 @@ public class Session
 			}
 
 			return new LoggedInStatus(login, LoggedInStatus.S_ALREADYLOGGEDIN);
-		}
+		}*/
 
 		// since the above failed, check if there is valid login information on the request parameters
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
-		login = getSuccessfulLogin(username, password);
+		LoggedIn login = getSuccessfulLogin(username, password);
 		if (login != null)
 		{
 			// check if this request needs admin rights and the user has them
@@ -244,14 +254,12 @@ public class Session
 			}
 
 			// add the login information to the session
-			session = request.getSession(true); // force the creation of a new session if there is none
+			HttpSession session = request.getSession(true); // force the creation of a new session if there is none
 			session.setAttribute("login", login);
 			return new LoggedInStatus(login, LoggedInStatus.S_VALIDLOGIN);
 		}
 
 		// both situations failed
-		if (! request.getRequestURI().equalsIgnoreCase("/login.jsp"))
-			response.sendRedirect("/login.jsp");
 		if ((username == null) && (password == null))
 			return new LoggedInStatus(null, LoggedInStatus.S_NOINFORMATION);
 		else

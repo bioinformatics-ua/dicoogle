@@ -1,7 +1,6 @@
-/*jshint esnext: true*/
 'use strict';
 
-var Reflux = require('reflux');
+import Reflux from 'reflux';
 var ActionCreators = exports;
 ActionCreators.search = Reflux.createAction();
 ActionCreators.unindex = Reflux.createAction();

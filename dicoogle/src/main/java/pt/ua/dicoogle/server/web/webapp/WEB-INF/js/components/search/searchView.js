@@ -1,45 +1,50 @@
 /*jshint esnext: true*/
 
-var React = require('react');
-var ReactBootstrap = require('react-bootstrap');
-var Button = ReactBootstrap.Button;
-
-import {SearchStore} from '../../stores/searchStore';
+import React from 'react';
+import $ from 'jquery';
 import {ActionCreators} from '../../actions/searchActions';
-
 import {ProvidersStore} from '../../stores/providersStore';
 import {ProvidersActions} from '../../actions/providersActions';
-
 import {AdvancedSearch} from '../search/advancedSearch';
 import {ResultSearch} from '../search/searchResultView';
-
 import {DimFields} from '../../constants/dimFields';
-
-var Router = require('react-router');
-var Route = Router.Route;
-var Link = Router.Link;
-var RouteHandler = Router.RouteHandler
-
-import {UserMixin} from '../mixins/userMixin';
 import {getUrlVars} from '../../utils/url';
 
 var Search = React.createClass({
-    //mixins : [UserMixin],
     getInitialState: function (){
-        document.getElementById('container').style.display = 'block';
-        return { label:'login', searchState: "simple" , providers:["All providers"]};
+        this.keyHash = getUrlVars()['_k'];
+        return {
+          label: 'login',
+          searchState: "simple",
+          providers: ["All providers"],
+          requestedQuery: null
+        };
     },
     componentDidMount: function(){
+
       this.enableAutocomplete();
       this.enableEnterKey();
 
-      if(getUrlVars()['query'])
-      {
+      if(getUrlVars()['query']) {
         this.onSearchByUrl();
       }
 
+      //document.getElementById('container').style.display = 'block';
 
       ProvidersActions.get();
+    },
+    componentWillUpdate: function() {
+
+        if (getUrlVars()['_k']!=this.keyHash)
+        {
+            this.keyHash = getUrlVars()['_k'];
+            this.setState({
+                requestedQuery: null
+            });
+        }
+        this.keyHash = getUrlVars()['_k'];
+        
+
     },
     componentDidUpdate: function(){
       this.enableAutocomplete();
@@ -49,26 +54,26 @@ var Search = React.createClass({
       ProvidersStore.listen(this._onChange);
     },
     render: function() {
+
       var self = this;
       var providersList = (
-        self.state.providers.map(function(item){
-          return (<option> {item} </option>);
+        self.state.providers.map(function(item, index){
+          return (<option key={index}> {item} </option>);
         })
       );
 
-        var selectionButtons = (
-            <div>
-            <button type="button" className="btn btn_dicoogle" onClick={this.renderFilter} data-trigger="advance-search" id="btn-advance">
-              {this.state.searchState === "simple" ? "Advanced" : "Basic"}
-            </button>
-                <div className="btn-group">
-                    <select id="providersList" className="btn btn_dicoogle form-control">
-                      {providersList}
-
-                    </select>
-                </div>
-                </div>
-            );
+      var selectionButtons = (
+          <div>
+          <button type="button" className="btn btn_dicoogle" onClick={this.renderFilter} data-trigger="advance-search" id="btn-advance">
+            {this.state.searchState === "simple" ? "Advanced" : "Basic"}
+          </button>
+              <div className="btn-group">
+                  <select id="providersList" className="btn btn_dicoogle form-control">
+                    {providersList}
+                  </select>
+              </div>
+              </div>
+        );
 
         var simpleSearchInstance = (
             <div className="row space_up" id="main-search">
@@ -78,11 +83,12 @@ var Search = React.createClass({
                     <div className="col-xs-4 col-sm-2">
                         <button type="button" className="btn btn_dicoogle" id="search-btn" onClick={this.onSearchClicked}>Search</button>
                     </div>
-                    <RouteHandler/>
                 </div>
             );
 
-       if(this.state.searchState === "simple"){
+       if (this.state.requestedQuery !== null) {
+         return <ResultSearch items={this.state.requestedQuery}/>;
+       } else if(this.state.searchState === "simple"){
             return (<div> {selectionButtons} {simpleSearchInstance} </div>);
        }
        else if(this.state.searchState === "advanced")
@@ -90,70 +96,60 @@ var Search = React.createClass({
             return (<div> {selectionButtons} <AdvancedSearch/> </div>);
        }
     },
-    _onChange : function(data){
+    _onChange: function(data) {
         if (this.isMounted())
-        this.setState({providers:data.data});
+        this.setState({providers: data.data});
     },
-    renderFilter : function(){
+    renderFilter: function(){
       //React.render(<AdvancedSearch/>, this.getDOMNode());
       var switchState;
       if(this.state.searchState === "simple"){
         switchState = "advanced";
-    }
+      }
       else{
         switchState = "simple";
       }
-    this.setState({searchState: switchState})
-
+      this.setState({searchState: switchState})
     },
-    onSearchByUrl : function(){
-      var params = {text: getUrlVars()['query'], keyword: getUrlVars()['keyword'], provider: getUrlVars()['provider']};
+    onSearchByUrl: function(){
+      let params = {text: getUrlVars()['query'], keyword: getUrlVars()['keyword'], provider: getUrlVars()['provider']};
+      this.setState({
+        requestedQuery: params
+      });
+    },
+    onSearchClicked: function(){
+        // TODO don't do this, use state instead
+        let text = document.getElementById("free_text").value;
 
-      React.render(<ResultSearch items={params}/>, document.getElementById("container"));
-    }
-    ,
-    onSearchClicked : function(){
-        // console.log(React.getInitialState(<ResultSearch/>) );
-        var text = document.getElementById("free_text").value;
-
-        var providerEl = document.getElementById("providersList");
-        var selectedId= providerEl.selectedIndex;
-        var provider = "";
-        if(selectedId == 0){
+        let providerEl = document.getElementById("providersList");
+        let selectedId = providerEl.selectedIndex;
+        let provider = "";
+        if(selectedId === 0){
           provider = "all"
-        }
-        else {
+        } else {
           provider = providerEl.options[selectedId].text;
         }
 
-        var params = {text: text, keyword: this.isKeyword(text), other:true, provider: provider};
-
-        React.render(<ResultSearch items={params}/>, document.getElementById("container"));
-        //console.log("asadfgh");
+        let params = {text, keyword: this.isKeyword(text), other: true, provider};
+        this.setState({
+          requestedQuery: params
+        })
     },
-    isKeyword: function(freetext){
-    for(var i=0; i<DimFields.length;i++)
-      {
-        if((freetext.indexOf(DimFields[i])) != -1)
-        {
-          return true;
-        }
-      }
-
+    isKeyword: function(freetext) {
+      return !!freetext.match(/[^\s\\]:\S/);
     },
-  isAutocompletOpened:function(){
-    if($('.ui-autocomplete').css('display')==='none'){return false;}
+  isAutocompletOpened: function(){
+    if($('.ui-autocomplete').css('display') === 'none'){return false;}
     return true;
-},
+  },
 
-    enableAutocomplete : function(){
-      var self =this;
+    enableAutocomplete: function(){
       function split( val ) {
-      return val.split( /\sAND\s/ );
-    }
-    function extractLast( term ) {
-      return split( term ).pop();
-    }
+        return val.split( /\sAND\s/ );
+      }
+      function extractLast( term ) {
+        return split( term ).pop();
+      }
 
     $( "#free_text" )
       // don't navigate away from the field on tab when selecting an item
@@ -162,7 +158,7 @@ var Search = React.createClass({
             $( this ).autocomplete( "instance" ).menu.active ) {
           event.preventDefault();
         }*/
-        if(event.keyCode==13){
+        if(event.keyCode === 13){
           //event.preventDefault();
           event.stopPropagation();
         }
@@ -188,7 +184,7 @@ var Search = React.createClass({
           //terms.join(" AND ");
           // add the selected item
           console.log(terms.length);
-          var termtrick =  ((terms.length >= 1) ? " AND " : "")+ui.item.value;
+          var termtrick = ((terms.length >= 1) ? " AND " : "") + ui.item.value;
           terms.push(termtrick);
           // add placeholder to get the comma-and-space at the end
           terms.push( "" );
@@ -199,8 +195,7 @@ var Search = React.createClass({
       });
     },
 
-    enableEnterKey:function(){
-      var self = this;
+    enableEnterKey: function(){
       /*$('#free_text').keyup(function(e){
         if(e.keyCode == 13)
           {
@@ -213,10 +208,10 @@ var Search = React.createClass({
         //Trick to not search when press enter on autocomplete
         //
         var count = 0;
-        jQuery("#free_text").keypress(function(e) {
-        if (e.keyCode == 13) {
+        $("#free_text").keypress((e) => {
+        if (e.keyCode === 13) {
             if (++count >= 1) {
-                self.onSearchClicked();
+                this.onSearchClicked();
                 count = 0;
             }
         }

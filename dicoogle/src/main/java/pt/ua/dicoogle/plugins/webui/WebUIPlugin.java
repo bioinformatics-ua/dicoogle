@@ -18,9 +18,15 @@
  */
 package pt.ua.dicoogle.plugins.webui;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.slf4j.LoggerFactory;
+import pt.ua.dicoogle.server.users.Role;
+import pt.ua.dicoogle.server.users.RolesStruct;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /** A POJO data type containing the full description of a Web UI plugin.
  *
@@ -35,6 +41,7 @@ public class WebUIPlugin implements Cloneable {
     private String moduleFile;
     private JSONObject settings;
     private boolean enabled = true;
+    private Set<String> roles = new HashSet();
 
     public WebUIPlugin() {}
 
@@ -75,6 +82,18 @@ public class WebUIPlugin implements Cloneable {
             plugin.slotId = objDicoogle.getString("slot-id");
             plugin.moduleFile = objDicoogle.optString("module-file", "module.js");
             plugin.caption = objDicoogle.optString("caption", null);
+            if (objDicoogle.containsKey("roles"))
+            {
+                JSONArray rolesArr = objDicoogle.getJSONArray("roles");
+
+                Set<String> roles = new HashSet<>();
+                if (rolesArr != null)
+                    for (Object role : rolesArr) {
+
+                        roles.add((String) role);
+                    }
+                plugin.roles = roles;
+            }
 
             return plugin;
         } catch(JSONException ex) {
@@ -156,5 +175,8 @@ public class WebUIPlugin implements Cloneable {
     public void setCaption(String caption) {
         this.caption = caption;
     }
-    
+
+    public Set<String> getRoles() {
+        return roles;
+    }
 }

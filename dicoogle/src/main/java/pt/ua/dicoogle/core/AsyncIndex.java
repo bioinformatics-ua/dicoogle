@@ -19,96 +19,83 @@
 package pt.ua.dicoogle.core;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
+
+import org.apache.commons.io.monitor.FileAlterationListener;
+import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
+import org.apache.commons.io.monitor.FileAlterationMonitor;
+import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.slf4j.LoggerFactory;
 
 
-import net.contentobjects.jnotify.JNotify;
-import net.contentobjects.jnotify.JNotifyException;
-import net.contentobjects.jnotify.JNotifyListener;
+import org.slf4j.Logger;
 import pt.ua.dicoogle.plugins.PluginController;
+
 
 /**
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class AsyncIndex {
+    private static final Logger logger = LoggerFactory.getLogger(AsyncIndex.class);
+    private final long pollingInterval = 30 * 1000;
 
     public AsyncIndex() {
 
         // path to watch
         String path = ServerSettings.getInstance().getDicoogleDir();
 
-        // watch mask, specify events you care about,
-        // or JNotify.FILE_ANY for all events.
-        int mask = JNotify.FILE_CREATED
-                | JNotify.FILE_DELETED
-                | JNotify.FILE_MODIFIED
-                | JNotify.FILE_RENAMED;
 
-        // watch subtree?
-        boolean watchSubtree = true;
+        FileAlterationObserver observer = new FileAlterationObserver(path);
+        FileAlterationMonitor monitor =
+                new FileAlterationMonitor(pollingInterval);
+        FileAlterationListener listener = new FileAlterationListenerAdaptor() {
+            // Is triggered when a file is created in the monitored folder
+            @Override
+            public void onFileCreate(File file) {
 
-        // add actual watch
-        if (ServerSettings.getInstance().isMonitorWatcher())
-        {
-            int watchID = 0;
-            try {
-                watchID = JNotify.addWatch(path, mask, watchSubtree, new Listener());
-            } catch (JNotifyException ex) {
-                LoggerFactory.getLogger(AsyncIndex.class).error(ex.getMessage(), ex);
+
+                try {
+                    logger.debug("created {} : {}", file.toPath(), file.toURI());
+                    URI uri = file.toURI();
+                    PluginController.getInstance().index(uri);
+                } catch (Exception ex) {
+                    logger.error(ex.getMessage(), ex);
+                }
+
+
             }
+            // Is triggered when a file is deleted from the monitored folder
+            @Override
+            public void onFileDelete(File file) {
+                try {
+                    // "file" is the reference to the removed file
+                    System.out.println("File removed: "
+                            + file.getCanonicalPath());
+                    // "file" does not exists anymore in the location
+                    System.out.println("File still exists in location: "
+                            + file.exists());
+
+                    logger.debug("deleted {} : {}", file.toPath(), file.toURI());
+                    try {
+                        URI uri = file.toURI();
+                        PluginController.getInstance().unindex(uri);
+                    } catch (Exception ex) {
+                        logger.error(ex.getMessage(), ex);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace(System.err);
+                }
+            }
+        };
+        observer.addListener(listener);
+        monitor.addObserver(observer);
+        try {
+            monitor.start();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        // to remove watch the watch
-//        boolean res = false;
-//        try {
-//            res = JNotify.removeWatch(watchID);
-//        } catch (JNotifyException ex) {
-//            LoggerFactory.getLogger(AsyncIndex.class).error(ex.getMessage(), ex);
-//        }
-//        if (!res) {
-//            // invalid watch ID specified.
-//        }
-
-
-
     }
 }
 
-class Listener implements JNotifyListener {
-
-    public void fileRenamed(int wd, String rootPath, String oldName,
-            String newName) {
-        print("renamed " + rootPath + " : " + oldName + " -> " + newName);
-    }
-
-    public void fileModified(int wd, String rootPath, String name) {
-        print("modified " + rootPath + " : " + name);
-    }
-
-    public void fileDeleted(int wd, String rootPath, String name) {
-        print("deleted " + rootPath + " : " + name);
-        try {
-            PluginController.getInstance().unindex(new URI(rootPath + File.pathSeparator+ name));
-        } catch (URISyntaxException ex) {
-            LoggerFactory.getLogger(Listener.class.getName()).error(ex.getMessage(), ex);
-        }
-        
-        
-    }
-
-    public void fileCreated(int wd, String rootPath, String name) {
-        try {
-            print("created " + rootPath + " : " + name);
-            PluginController.getInstance().index(new URI(rootPath + File.pathSeparator+ name));
-        } catch (URISyntaxException ex) {
-            LoggerFactory.getLogger(Listener.class).error(ex.getMessage(), ex);
-        }
-    }
-
-    void print(String msg) {
-        System.err.println(msg);
-    }
-}

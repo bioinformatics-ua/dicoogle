@@ -1,3 +1,4 @@
+/* eslint comma-spacing:0 */
 var DimFields = [
 "ModalitiesInStudy"
 ,"PerformingPhysicianName"
@@ -27,6 +28,7 @@ var DimFields = [
 ,"StudyDate"
 ,"PatientTelephoneNumbers"
 ,"SOPInstanceUID"
-,"PatientName"];
+,"PatientName"
+,"SliceLocation"];
 
 export {DimFields};

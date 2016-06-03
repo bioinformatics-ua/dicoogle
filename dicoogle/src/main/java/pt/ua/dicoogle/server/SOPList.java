@@ -23,6 +23,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.Semaphore;
+
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.json.JSONArray;
@@ -40,6 +42,7 @@ public class SOPList {
 
     private static SOPList instance = null;
     private static Semaphore sem = new Semaphore(1, true);
+    private static Logger logger = LoggerFactory.getLogger(SOPList.class);
 
     private Hashtable<String, TransfersStorage> table;    
     
@@ -52,7 +55,7 @@ public class SOPList {
         UID.DigitalXRayImageStorageForPresentation,
         UID.DigitalXRayImageStorageForProcessing,
         UID.DigitalMammographyXRayImageStorageForPresentation,
-        UID.DigitalMammographyXRayImageStorageForProcessing,
+        //UID.DigitalMammographyXRayImageStorageForProcessing,
         UID.DigitalIntraOralXRayImageStorageForPresentation,
         UID.DigitalIntraOralXRayImageStorageForProcessing,
         UID.StandaloneModalityLUTStorageRetired,
@@ -124,7 +127,9 @@ public class SOPList {
         UID.CardiacElectrophysiologyWaveformStorage,
         UID.BasicVoiceAudioWaveformStorage,
         UID.HangingProtocolStorage,
-        UID.SiemensCSANonImageStorage
+        UID.SiemensCSANonImageStorage,
+        UID.VLWholeSlideMicroscopyImageStorage,
+        UID.BreastTomosynthesisImageStorage
         };
 
     public static synchronized SOPList getInstance()
@@ -230,6 +235,8 @@ public class SOPList {
      * @return -1 if something went wrong, 1 otherwise
      */
     public synchronized int updateTSField(String UID, String name, boolean value) {
+        logger.debug("UID: {}, name: {}, value: {}", UID, name, value);
+
         TransfersStorage TS;
         TS = table.get(UID);
         
@@ -247,6 +254,7 @@ public class SOPList {
         		return -1;
         	}
         }
+        logger.debug("UID: {}, name: {}, value: {}", UID, name, value);
       
         return 0;    
     }   

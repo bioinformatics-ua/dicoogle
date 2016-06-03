@@ -1,19 +1,42 @@
 var React = require('react');
+import $ from 'jquery';
 
 import {IndexerStore} from '../../stores/indexerStore';
 import {IndexerActions} from '../../actions/indexerActions';
+import {saveIndexOptions} from '../../handlers/requestHandler';
 
-import {setWatcher,setSaveT,setZip,saveIndexOptions} from '../../handlers/requestHandler';
+const ConfigurationEntry = React.createClass({
+  render() {
+    return <li className="list-group-item list-group-item-management">
+        <div className="row">
+            <div className="col-xs-6 col-sm-4">
+                {this.props.description}
+            </div>
+            <div className="col-xs-6 col-sm-8">
+                {this.props.children}
+            </div>
+        </div>
+    </li>
+  }
+});
 
-var IndexerView = React.createClass({
+const IndexerView = React.createClass({
 
       getInitialState: function() {
-        return {data: {path:"",zip:false,effort:0,thumbnail:false,thumbnailSize:0,watcher:false},
-        status: "loading",
-        currentWatch: false
+        return {
+          data: {
+            path: "",
+            zip: false,
+            effort: 0,
+            thumbnail: false,
+            thumbnailSize: 0,
+            watcher: false
+          },
+          status: "loading",
+          currentWatch: false
         };
       },
-      componentDidMount: function(){
+      componentDidMount: function() {
         console.log("componentdidmount: get");
 
         IndexerActions.get();
@@ -26,7 +49,7 @@ var IndexerView = React.createClass({
       _onChange: function(data){
         if (this.isMounted()){
           console.log(data);
-          var nState = {data:data.data,status: "done"};
+          var nState = {data: data.data, status: "done"};
           if (data.data.watcher) {
             nState.currentWatch = data.data.watcher;
           }
@@ -37,8 +60,7 @@ var IndexerView = React.createClass({
         this.setState({currentWatch: !this.state.currentWatch});
       },
       render: function() {
-        var self = this;
-        if(this.state.status == "loading"){
+        if(this.state.status === "loading"){
           return (<div className="loader-inner ball-pulse">
             <div/><div/><div/>
            </div>);
@@ -53,92 +75,48 @@ var IndexerView = React.createClass({
                               <div className="panel-body">
 
                                   <ul className="list-group">
-                                      <li className="list-group-item list-group-item-management">
-                                          <div className="row">
-                                              <div className="col-xs-6 col-sm-4">
-                                                  Enable Dicoogle Directory Watcher
-                                              </div>
-                                              <div className="col-xs-6 col-sm-8">
-                                                  <input id="watcher" type="checkbox" aria-label="..." checked={this.state.currentWatch} onChange={this.onToggleWatcher} />
-                                              </div>
-                                            </div>
-                                      </li>
-                                      <li className="list-group-item list-group-item-management">
-                                          <div className="row">
-                                              <div className="col-xs-6 col-sm-4">
-                                                  Dicoogle Watcher Directory
-                                              </div>
-                                              <div className="col-xs-6 col-sm-8">
-                                                  <input id="mon_path" type="text" className="form-control" disabled={!this.state.currentWatch} defaultValue={this.state.data.path} placeholder="/path/to/directory"/>
-                                              </div>
-                                          </div>
-                                      </li>
-
-                                      <li className="list-group-item list-group-item-management">
-                                          <div className="row">
-                                              <div className="col-xs-6 col-sm-4">
-                                                  Index Zip Files
-                                              </div>
-                                              <div className="col-xs-6 col-sm-8">
-                                                  <input id="zip" type="checkbox" aria-label="..." defaultChecked={this.state.data.zip} onChange={self.onZipClicked.bind(this,"zip")}/>
-                                              </div>
-                                          </div>
-                                      </li>
-                                      <li className="list-group-item list-group-item-management">
-                                          <div className="row">
-                                              <div className="col-xs-6 col-sm-4">
-                                                  Indexing effort(0-100)
-                                              </div>
-                                              <div className="col-xs-6 col-sm-8">
-                                                  <input  className="bar" type="range" id="effort_range" defaultValue={this.state.data.effort} onChange={self.onEffortChanged.bind(this,"effort_range")} />
-                                              </div>
-                                          </div>
-                                      </li>
-
-                                      <li className="list-group-item list-group-item-management">
-                                          <div className="row">
-                                              <div className="col-xs-6 col-sm-4">
-                                                  Save Thumbnail
-                                              </div>
-                                              <div className="col-xs-6 col-sm-8">
-                                                  <input id="save" type="checkbox" aria-label="..." defaultChecked={this.state.data.thumbnail} onChange={self.onSaveTClicked.bind(this,"save")}/>
-                                              </div>
-                                          </div>
-                                      </li>
-
-                                      <li className="list-group-item list-group-item-management">
-                                          <div className="row">
-                                              <div className="col-xs-6 col-sm-4">
-                                                  Thumbnails Size
-                                              </div>
-                                              <div className="col-xs-6 col-sm-8">
-                                                  <input id="tsize" type="text" className="form-control" placeholder="Insert thumbnail size in pixels" defaultValue={this.state.data.thumbnailSize}/>
-                                              </div>
-                                          </div>
-                                      </li>
-
+                                      <ConfigurationEntry description="Enable Dicoogle Directory Watcher">
+                                        <input id="watcher" type="checkbox" aria-label="..." checked={this.state.currentWatch} onChange={this.onToggleWatcher} />
+                                      </ConfigurationEntry>
+                                      <ConfigurationEntry description="Dicoogle Watcher Directory">
+                                        <input id="mon_path" type="text" className="form-control" disabled={!this.state.currentWatch} defaultValue={this.state.data.path} placeholder="/path/to/directory"/>
+                                      </ConfigurationEntry>
+                                      <ConfigurationEntry description="Index Zip Files">
+                                        <input id="zip" type="checkbox" aria-label="..." defaultChecked={this.state.data.zip} onChange={this.onZipClicked}/>
+                                      </ConfigurationEntry>
+                                      <ConfigurationEntry description="Indexation Effort">
+                                        <input className="bar" type="range" id="effort_range" defaultValue={this.state.data.effort} onChange={this.onEffortChanged} />
+                                      </ConfigurationEntry>
+                                      <ConfigurationEntry description="Save Thumbnail">
+                                        <input id="save" type="checkbox" aria-label="..." defaultChecked={this.state.data.thumbnail} onChange={this.onSaveTClicked}/>
+                                      </ConfigurationEntry>
+                                      <ConfigurationEntry description="Thumbnail Size">
+                                        <input id="tsize" type="text" className="form-control" placeholder="Insert thumbnail size in pixels" defaultValue={this.state.data.thumbnailSize}/>
+                                      </ConfigurationEntry>
                                   </ul>
-                                  <button className="btn btn_dicoogle" onClick={self.onSaveClicked}>Save</button>
-                                    <div className="toast">Saved</div>
-                                  </div>
+                                  <button className="btn btn_dicoogle" onClick={this.onSaveClicked}>
+                                    Save
+                                  </button>
+                                  <div className="toast">Saved</div>
+                                </div>
                               </div>
                           </div>
         );
       },
 
-      onWatcherClicked:function(id){
+      onWatcherClicked(e) {
         //setWatcher(document.getElementById(id).checked);
       },
-      onZipClicked:function(id){
+      onZipClicked(e) {
         //setZip(document.getElementById(id).checked);
       },
-      onSaveTClicked:function(id){
+      onSaveTClicked(e) {
         //setSaveT(document.getElementById(id).checked);
       },
-      onEffortChanged:function(id){
+      onEffortChanged(e) {
         //console.log(document.getElementById(id).value);
       },
-      onSaveClicked:function(){
+      onSaveClicked() {
         $('.toast').stop().fadeIn(400).delay(3000).fadeOut(400); //fade out after 3 seconds
         console.log("onSaveClicked");
         saveIndexOptions(
@@ -151,6 +129,8 @@ var IndexerView = React.createClass({
         );
       }
     });
+
+//<input className="bar" type="range" id="effort_range" defaultValue={this.props.value} onChange={this.props.onChange} />
 
 export {
   IndexerView

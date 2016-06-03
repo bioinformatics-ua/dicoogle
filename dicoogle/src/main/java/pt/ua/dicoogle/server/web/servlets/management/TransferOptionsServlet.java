@@ -45,6 +45,7 @@ public class TransferOptionsServlet extends HttpServlet {
 			throws ServletException, IOException {
 		String uid = req.getParameter("uid");
 		
+        resp.setContentType("application/json");
 		String soplist = SOPList.getInstance().getSOPList();
 		resp.getWriter().write(soplist);
 	}

@@ -1,72 +1,102 @@
-/*jshint esnext: true*/
 'use strict';
 
-var Reflux = require('reflux');
-
+import Reflux from 'reflux';
 import {TransferActions} from '../actions/transferActions';
-
 import {Endpoints} from '../constants/endpoints';
-
 import {request} from '../handlers/requestHandler';
+import $ from 'jquery';
 
-var TransferStore = Reflux.createStore({
+const TransferStore = Reflux.createStore({
     listenables: TransferActions,
     init: function () {
        this._contents = {};
     },
-
-    onGet : function(bilo){
+    getSizeOptions: function() {
+        return Object.keys(this._contents).length;
+    },
+    onGet: function() {
       console.log("onGet");
-      var self = this;
-
-      //Check if store is a
-      if(Object.keys(self._contents).length != 0)
-      {
-        self.trigger({
-          data:self._contents,
+      //Check if store is a non-empty object
+      if(Object.keys(this._contents).length !== 0) {
+        this.trigger({
+          data: this._contents,
           success: true
         });
         return;
       }
-
-
-      var url = Endpoints.base + "/management/settings/transfer";
-      request(url ,
-        function(data){
+      let url = Endpoints.base + "/management/settings/transfer";
+      request(url, (data) => {
           //SUCCESS
           console.log("success", data);
-          self._contents = data;
+          this._contents = data;
 
-
-          self.trigger({
-            data:self._contents,
+          this.trigger({
+            data: this._contents,
             success: true
           });
-        },
-        function(xhr){
+        }, (xhr) => {
           //FAILURE
-          self.trigger({
-              success:false,
+          this.trigger({
+              success: false,
               status: xhr.status
             });
-        }
-      );
+        });
+    },
 
+    onSelectAll :  function(){
 
+        this.select(true);
+
+    },
+    onUnSelectAll :  function(){
+        this.select(false);
 
     },
 
-    onSet:function(index, indexOption, value){
-      console.log(this._contents);
-      console.log("sdf: ", index);
+    select :  function(value){
+
+
+        for (let index of this._contents)
+        {
+
+            for (let indexOptions of index.options)
+            {
+
+
+                indexOptions.value = value;
+                this.request(index.uid, indexOptions.name, indexOptions.value);
+            }
+
+
+        }
+        this.trigger({
+            data: this._contents,
+            success: true
+        });
+
+
+    },
+    request(uid, id, value) {
+        
+        $.post(Endpoints.base + "/management/settings/transfer", {
+            uid: uid,
+            option: id,
+            value: value
+        }, (data, status) => {
+            //Response
+            console.log("Data: " + data + "\nStatus: " + status);
+        });
+    },
+
+
+    onSet: function(index, indexOption, value){
 
 
       this._contents[index].options[indexOption].value = value;
       this.trigger({
-        data:this._contents,
+        data: this._contents,
         success: true
       });
-
     }
 });
 

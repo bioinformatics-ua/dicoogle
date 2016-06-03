@@ -88,8 +88,8 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
     }
 
     @Override
-    public Iterable<StorageInputStream> resolveURI(URI location) {
-        return pluginController.resolveURI(location);
+    public Iterable<StorageInputStream> resolveURI(URI location, Object ...args) {
+        return pluginController.resolveURI(location, args);
     }
 
     @Override

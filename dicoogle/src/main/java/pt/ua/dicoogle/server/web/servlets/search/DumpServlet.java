@@ -20,12 +20,11 @@
 package pt.ua.dicoogle.server.web.servlets.search;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import org.slf4j.LoggerFactory;
 import javax.servlet.ServletException;
@@ -35,11 +34,15 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
+
+import pt.ua.dicoogle.core.TagsXML;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
 import pt.ua.dicoogle.sdk.utils.DictionaryAccess;
+import pt.ua.dicoogle.sdk.utils.TagValue;
+import pt.ua.dicoogle.sdk.utils.TagsStruct;
 
 /**
  * Dump of DICOM metadata
@@ -62,14 +65,16 @@ public class DumpServlet extends HttpServlet {
                 : Arrays.asList(providerArr);
         
         String query = "SOPInstanceUID:" + uid;
-
-        DictionaryAccess da = DictionaryAccess.getInstance();
-
+        
+        Set<TagValue> tags = TagsStruct.getInstance().getAllFields(); 
+        //TODO: PERHAPS REMOVE DICTIONARY ACCESS SINGLETON
+        
         HashMap<String, String> extraFields = new HashMap<>();
-        for (String s : da.getTagList().keySet()) {
-            extraFields.put(s, s);
+        for (TagValue s : tags) {
+        	if(!s.getVR().equalsIgnoreCase("SQ"))
+        		extraFields.put(s.getAlias(), s.getAlias());
         }
-
+        
         JointQueryTask queryTaskHolder = new JointQueryTask() {
             @Override
             public void onCompletion() {

@@ -141,22 +141,9 @@ public class ControlServices implements IServices
             ServerSettings settings = ServerSettings.getInstance();
 
             SOPList list = SOPList.getInstance();
-            list.setDefaultSettings();
+            //list.setDefaultSettings();
 
             int i;
-
-
-            //System.out.println(settings.getPath());
-            File f = new File(settings.getPath());
-
-            // Storage path must be defined before running the program
-            // Prompting the user if it isn't
-            if (!f.exists() || f.isFile())
-            {
-                //DebugManager.getInstance().debug("DICOM Storage not started. The server's storage path is not defined.");
-
-                return -1;
-            }
 
             List l = list.getKeys();
             String[] keys = new String[l.size()];

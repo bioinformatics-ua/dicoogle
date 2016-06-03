@@ -1,13 +1,10 @@
-/*jshint esnext: true*/
 'use strict';
 
-var Reflux = require('reflux');
-
+import Reflux from 'reflux';
 import {IndexStatusActions} from '../actions/indexStatusAction';
-
 import {Endpoints} from '../constants/endpoints';
-
-import {request, forceIndex} from '../handlers/requestHandler';
+import {forceIndex} from '../handlers/requestHandler';
+import $ from 'jquery';
 
 var IndexStatusStore = Reflux.createStore({
     listenables: IndexStatusActions,
@@ -15,18 +12,17 @@ var IndexStatusStore = Reflux.createStore({
        this._contents = {};
     },
 
-    onGet : function(data){
+    onGet: function(data){
       var self = this;
 
       $.ajax({
-
-        url: Endpoints.base+"/index/task",
+        url: Endpoints.base + "/index/task",
         dataType: 'json',
         success: function(data) {
           self._contents = data;
 
           self.trigger({
-            data:self._contents,
+            data: self._contents,
             success: true
           });
 
@@ -34,7 +30,7 @@ var IndexStatusStore = Reflux.createStore({
         error: function(xhr, status, err) {
           //FAILURE
           self.trigger({
-              success:false,
+              success: false,
               status: xhr.status
             });
         }
@@ -42,21 +38,21 @@ var IndexStatusStore = Reflux.createStore({
 
     },
 
-    onStart : function(uri){
+    onStart: function(uri){
       var self = this;
       forceIndex(uri);
 
       self._contents.results.push({taskUid: "...", taskName: uri, taskProgress: -1})
-      self._contents.count = self._contents.count +1;
+      self._contents.count = self._contents.count + 1;
       self.trigger({
-        data:self._contents,
+        data: self._contents,
         success: true
       });
 
       console.log(this._contents);
     },
 
-    onClose : function(uid){
+    onClose: function(uid){
 
       $.post(Endpoints.base + "/index/task",
       {
@@ -66,22 +62,22 @@ var IndexStatusStore = Reflux.createStore({
       },
         function(data, status){
           //Response
-          console.log("Data: ",  data, " ; Status: ", status);
+          console.log("Data: ", data, " ; Status: ", status);
         });
 
       for (var i = 0; i < this._contents.results.length; i++)
       {
         if (this._contents.results[i].taskUid === uid) {
-          this._contents.results.splice(i,1);
+          this._contents.results.splice(i, 1);
           break;
         }
       }
       this.trigger({
-        data:this._contents,
+        data: this._contents,
         success: true
       });
     },
-    onStop : function(uid){
+    onStop: function(uid){
       console.log("Stop: ", uid);
       $.post(Endpoints.base + "/index/task",
       {
@@ -91,7 +87,7 @@ var IndexStatusStore = Reflux.createStore({
       },
         function(data, status){
           //Response
-          console.log("Data: ",  data, " ; Status: ", status);
+          console.log("Data: ", data, " ; Status: ", status);
         });
     }
 

@@ -1,13 +1,14 @@
-/*jshint esnext: true*/
 'use strict';
 
-var Reflux = require('reflux');
+import Reflux from 'reflux';
 
+import $ from 'jquery';
 import {UserActions} from '../actions/userActions';
 import {Endpoints} from '../constants/endpoints';
-import {request} from '../handlers/requestHandler';
 
-var UserStore = Reflux.createStore({
+import dicoogleClient from 'dicoogle-client';
+
+const UserStore = Reflux.createStore({
     listenables: UserActions,
     init: function () {
        this._contents = {};
@@ -15,119 +16,137 @@ var UserStore = Reflux.createStore({
        this._isLoggedIn = false;
        this._username = "";
        this._isAdmin = false;
+       this._roles = [];
+       this._token = '';
+
     },
 
+    saveLocalStore: function(){
+        localStorage.setItem("user", JSON.stringify({
+            isAdmin: this._isAdmin,
+            'username': this._username,
+            'roles': this._roles,
+            'token': this._token
+        }));
 
-    onLogin : function(user,pass){
+    },
+    loadLocalStore: function(){
+        if (localStorage.token) {
+            console.log("loadLocalStore");
+            let user = JSON.parse(localStorage.getItem("user"));
+            this._isAdmin = user.isAdmin;
+            this._username = user.username;
+            this._roles = user.roles;
+            this._token = user.token;
+            this._isLoggedIn = true;
+            this.trigger({
+                isLoggedIn: this._isLoggedIn,
+                success: true
+            });
+        }
+    },
+    onLogin: function(user, pass){
       console.log("onLogin");
-      var self = this;
+      const self = this;
 
-      var formData = {username: user,password:pass}; //Array
-      $.ajax({
-          url : Endpoints.base + "/login",
-          type: "POST",
-          dataType: 'json',
-          data : formData,
-          success: function(data, textStatus, jqXHR)
-          {
-            console.log(data);
-            self._username = data.user;
-            self._isAdmin = data.admin;
-            self._isLoggedIn = true;
+      let Dicoogle = dicoogleClient(Endpoints.base);
 
-            self.trigger({
-              isLoggedIn:self._isLoggedIn,
-              success: true
-            });
-          },
-          error: function (jqXHR, textStatus, errorThrown)
+      Dicoogle.login(user, pass, function(errorCallBack, data){
+          if (!data.token)
           {
-            //TODO: HANDLE LOGIN FAILED
-            console.log("Login Failed");
-            self.trigger({
-              failed: true
-            });
+              self.trigger({
+                failed: true
+              });
+              return;
           }
+          self._username = data.user;
+          self._isAdmin = data.admin;
+          self._token = data.token;
+          self._roles = data.roles;
+          self._isLoggedIn = true;
+          localStorage.token = self._token;
+          self.saveLocalStore();
+
+          console.log("Localstorage token: " + localStorage.token);
+          self.trigger({
+              isLoggedIn: self._isLoggedIn,
+              success: true
+          });
       });
 
-
-
     },
 
-    onIsLoggedIn : function(){
-      var self = this;
-      if(this._isLoggedIn == false)
-      {
-        var li;
-        $.ajax({
-        type: "GET",
-        url: Endpoints.base + "/login",
-        dataType: 'json',
-        async: true,
-        success: function (result) {
-            /* if result is a JSon object */
-            self._username = result.user;
-            self._isAdmin = result.admin;
-            self._isLoggedIn = true;
+    onIsLoggedIn: function(){
 
-            console.log("SIM",result);
-            li = true;
-            setTimeout(function(){
-              self.trigger({
-                isLoggedIn:self._isLoggedIn,
+      if(this._isLoggedIn === false)
+      {
+
+        if (localStorage.token) {
+            this.loadLocalStore();
+            this.trigger({
+                isLoggedIn: self._isLoggedIn,
                 success: true
-              });
-            }, 500)
+            });
+        } else {
+            console.log("Verify ajax");
+
+            $.ajax({
+                type: "GET",
+                url: Endpoints.base + "/login",
+                dataType: 'json',
+                async: true,
+                success: (result) => {
+                /* if result is a JSon object */
+                this._username = result.user;
+                this._isAdmin = result.admin;
+                this._isLoggedIn = true;
+
+                this.saveLocalStore();
+            setTimeout(() => {
+                this.trigger({
+                isLoggedIn: this._isLoggedIn,
+                success: true
+            });
+        }, 500)
 
         },
-        error: function(){
-          console.log("NAO");
-          li=false;
-          self.trigger({
-            isLoggedIn:self._isLoggedIn,
-            success: true
-          });
+            error: () => {
+                this.trigger({
+                    isLoggedIn: this._isLoggedIn,
+                    success: false
+                });
+            }
+        });
         }
-      });
-      //return li;
-      }
-      else
-      {
+
+      } else {
         //return this._isLoggedIn;
-        self.trigger({
-          isLoggedIn:self._isLoggedIn,
+          if (localStorage.token !== undefined) {
+              this.loadLocalStore();
+              this.trigger({
+                  isLoggedIn: self._isLoggedIn,
+                  success: true
+              });
+          }
+        this.trigger({
+          isLoggedIn: self._isLoggedIn,
           success: true
         });
-    }
-      /*if(this._isLoggedIn == true){
-        this._isLoggedIn = true;
-        return true;
       }
-      else
-      {
-        $.ajax({
-
-          url: "http://localhost:8080/login",
-          dataType: 'json',
-          success: function(data) {
-            console.log(data);
-
-            return true;
-          },
-          error: function(xhr, status, err) {
-            console.log("not loggedin");
-            return false;
-
-          }
-        });
-      }*/
     },
 
-    getUsername : function(){
+    onLogout: function() {
+        delete localStorage.token;
+        delete localStorage.user;
+    },
+
+    getUsername: function(){
       return this._username;
     },
-    getLogginState : function(){
-      console.log("ATAO: ", this._isLoggedIn);
+    isAdmin: function(){
+        return this._isAdmin;
+    },
+    getLogginState: function(){
       return this._isLoggedIn;
     }
 });

@@ -3,14 +3,14 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>pt.ua.ieeta</groupId>
   <artifactId>dicoogle-all</artifactId>
-  <version>2.0.1-SNAPSHOT</version>
+    <version>2.3.1</version>
   <packaging>pom</packaging>
   <name>dicoogle-all</name>
   
     <properties>
         <jetty.version>9.0.3.v20130506</jetty.version>
         <restlet.version>2.1.2</restlet.version>
-        <dcm4che.version>2.0.27</dcm4che.version>
+        <dcm4che.version>2.0.29</dcm4che.version>
         <slf4j.version>1.7.12</slf4j.version>
     </properties>
     <build>
@@ -49,20 +49,74 @@
         </plugins>
     </build>
 
+    <profiles>
+
+
+
+            <profile>
+                <id>prod-repository</id>
+                <activation>
+                    <property>
+                        <name>!useBmdRepo</name>
+
+                    </property>
+                </activation>
+                <properties>
+
+                </properties>
+                <distributionManagement>
+                    <!-- Versioned releases are published to the releases repository -->
+                    <repository>
+                        <id>mi</id>
+                        <url>http://bioinformatics.ua.pt/maven/content/repositories/mi</url>
+                    </repository>
+
+
+                    <!-- Snapshot releases are published to the snapshots repository -->
+                    <snapshotRepository>
+                        <id>mi</id>
+                        <url>http://bioinformatics.ua.pt/maven/content/repositories/mi-snapshots</url>
+                    </snapshotRepository>
+                </distributionManagement>
+
+            </profile>
+        <profile>
+            <id>bmd-repository</id>
+            <activation>
+                <property>
+                    <name>useBmdRepo</name>
+                    <value>true</value>
+                </property>
+            </activation>
+
+
+            <properties>
+
+            </properties>
+            <distributionManagement>
+            <!-- Versioned releases are published to the releases repository -->
+            <repository>
+                <id>bmdsoftware-releases</id>
+                <name>BMD Software Nexus (Internal Releases)</name>
+                <url>https://dev.bmd-software.com/nexus/content/repositories/releases</url>
+            </repository>
+            <!-- Snapshot releases are published to the snapshots repository -->
+            <snapshotRepository>
+                <id>bmdsoftware-snapshots</id>
+                <name>BMD Software Nexus (Internal Snapshots)</name>
+                <url>https://dev.bmd-software.com/nexus/content/repositories/snapshots</url>
+            </snapshotRepository>
+            </distributionManagement>
+
+        </profile>
+    </profiles>
+
     <distributionManagement>
 
-        <!-- Versioned releases are published to the releases repository -->
-        <repository>
-            <id>mi</id>
-            <url>http://bioinformatics.ua.pt/maven/content/repositories/mi</url>
-        </repository>
 
 
-        <!-- Snapshot releases are published to the snapshots repository -->
-        <snapshotRepository>
-            <id>mi</id>
-            <url>http://bioinformatics.ua.pt/maven/content/repositories/mi-snapshots</url>
-        </snapshotRepository>
+
+
     </distributionManagement>
 
     <modules>

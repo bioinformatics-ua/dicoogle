@@ -6,6 +6,7 @@ var Reflux = require('reflux');
 import ServiceAction from '../actions/servicesAction';
 import {Endpoints} from '../constants/endpoints';
 import {request} from '../handlers/requestHandler';
+import $ from 'jquery';
 
 var ServicesStore = Reflux.createStore({
     listenables: ServiceAction,
@@ -24,7 +25,7 @@ var ServicesStore = Reflux.createStore({
         maxAssociations: "...",
         maxPduReceive: "...",
         maxPduSend: "...",
-        responseTimeout: "...",
+        responseTimeout: "..."
       };
 
       this._contents = {
@@ -38,7 +39,7 @@ var ServicesStore = Reflux.createStore({
        };
     },
 
-    onGetStorage :function(){
+    onGetStorage: function(){
       var self = this;
       request(
         Endpoints.base + "/management/dicom/storage",
@@ -53,7 +54,7 @@ var ServicesStore = Reflux.createStore({
           }
       );
     },
-    onGetQuery :function(){
+    onGetQuery: function(){
       var self = this;
       request(
         Endpoints.base + "/management/dicom/query",
@@ -70,7 +71,7 @@ var ServicesStore = Reflux.createStore({
 
       );
     },
-    onSetStorage :function(state){
+    onSetStorage: function(state){
       var self = this;
       console.log(state);
       $.post(Endpoints.base + "/management/dicom/storage",
@@ -98,7 +99,7 @@ var ServicesStore = Reflux.createStore({
           self.trigger(self._contents);
         });
     },
-    onSetQuery :function(state){
+    onSetQuery: function(state){
       var self = this;
       console.log(state);
       $.post(Endpoints.base + "/management/dicom/query",
@@ -126,7 +127,7 @@ var ServicesStore = Reflux.createStore({
         });
     },
 
-    onGetQuerySettings : function(){
+    onGetQuerySettings: function(){
       var self = this;
       request(
         Endpoints.base + "/management/settings/dicom/query",
@@ -141,24 +142,22 @@ var ServicesStore = Reflux.createStore({
 
       );
     },
-  onSaveQuerySettings : function(connectionTimeout, acceptTimeout, idleTimeout,maxAssociations, maxPduReceive, maxPduSend, responseTimeout  ){
-    $.post(  Endpoints.base +"/management/settings/dicom/query",
+  onSaveQuerySettings: function(connectionTimeout, acceptTimeout, idleTimeout, maxAssociations, maxPduReceive, maxPduSend, responseTimeout) {
+    $.post(Endpoints.base + "/management/settings/dicom/query",
     {
-      connectionTimeout:connectionTimeout,
-      acceptTimeout:acceptTimeout,
-      idleTimeout:idleTimeout,
-      maxAssociations:maxAssociations,
-      maxPduReceive: maxPduReceive,
-      maxPduSend: maxPduSend,
-      responseTimeout: responseTimeout
+      connectionTimeout,
+      acceptTimeout,
+      idleTimeout,
+      maxAssociations,
+      maxPduReceive,
+      maxPduSend,
+      responseTimeout
     },
       function(data, status){
         //Response
         console.log("Data: " + data + "\nStatus: " + status);
-
       });
   }
-
 
 });
 
