@@ -26,6 +26,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,11 +104,16 @@ public class ExportToCSVQueryTask extends JointQueryTask {
 		StringBuilder builder = new StringBuilder();
 		
 		HashMap<String, Object> extraFields = result.getExtraData();
-
+		
 		for (String tag : tagsOrder) {
 			Object temp1 = extraFields.get(tag);
-
-			String s = (temp1 != null) ? StringUtils.trimToEmpty(temp1.toString()) : "";
+			String temp1String = temp1.toString();
+			
+			if(NumberUtils.isNumber(temp1String)){
+				temp1String = NumberUtils.createBigDecimal(temp1String).toPlainString();	
+			}
+			
+			String s = (temp1 != null) ? StringUtils.trimToEmpty(temp1String) : "";
 			
 			if (s.length() > 0) {
 				String temp = StringUtils.replaceEach(s, searchChars, replaceChars);
