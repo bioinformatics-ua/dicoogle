@@ -1,11 +1,11 @@
-var React = require('react');
-var Router = require('react-router');
-
+import React, {PropTypes} from 'react';
 import {UserActions} from "../../actions/userActions";
 import {UserStore} from "../../stores/userStore";
 
-var LoadingView = React.createClass({
-  mixins: [ Router.History ],
+const LoadingView = React.createClass({
+  contextTypes: {
+    router: PropTypes.object.isRequired
+  },
   getInitialState: function() {
     return {data: {},
     status: "loading"};
@@ -21,13 +21,14 @@ var LoadingView = React.createClass({
 
   },
   _onChange: function(data){
+    const {router} = this.context;
     console.log(data);
     if(data.isLoggedIn && this.isMounted())
     {
-      this.history.replaceState(null, '/search');
+      router.replace('/search');
     }
     else if(data.isLoggedIn === false){
-      this.history.replaceState(null, '/login');
+      router.replace('/login');
     }
   },
   render: function() {

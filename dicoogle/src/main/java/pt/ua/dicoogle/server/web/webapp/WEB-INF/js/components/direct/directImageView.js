@@ -2,7 +2,7 @@ import React from 'react';
 import {getUrlVars} from '../../utils/url';
 import {Endpoints} from '../../constants/endpoints';
 
-var DirectImageView = React.createClass({
+export const DirectImageView = React.createClass({
   propTypes: {
     params: React.PropTypes.object.isRequired
   },
@@ -26,7 +26,3 @@ var DirectImageView = React.createClass({
     this.setState({error: true});
   }
 });
-
-
-
-export {DirectImageView};

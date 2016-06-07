@@ -1,13 +1,11 @@
-'use strict';
-
-var Reflux = require('reflux');
+import Reflux from 'reflux';
 import $ from 'jquery';
 
 import {ExportActions} from '../actions/exportActions';
 import {Endpoints} from '../constants/endpoints';
 import {request} from '../handlers/requestHandler';
 
-var ExportStore = Reflux.createStore({
+const ExportStore = Reflux.createStore({
     listenables: ExportActions,
     init: function () {
        this._contents = {};

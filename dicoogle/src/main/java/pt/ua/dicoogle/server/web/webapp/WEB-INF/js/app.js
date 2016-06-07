@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import React from 'react';
+import React, {PropTypes} from 'react';
 import ReactDOM from 'react-dom';
 import Sidebar from './components/sidebar';
 import {Endpoints} from './constants/endpoints';
@@ -9,12 +9,12 @@ import Webcore from 'dicoogle-webcore';
 import {Router, Route, IndexRoute} from 'react-router';
 
 import {Search} from './components/search/searchView';
-import {ResultSearch} from './components/search/searchResultView';
+import {SearchResultView} from './components/search/searchResultView';
 import {IndexStatusView} from './components/indexer/IndexStatusView';
 import {ManagementView} from './components/management/managementView';
 import {DirectImageView} from './components/direct/directImageView';
 import {DirectDumpView} from './components/direct/directDumpView';
-import PluginView from './components/plugin/pluginView.jsx';
+import PluginView from './components/plugin/pluginView';
 import AboutView from './components/about/aboutView';
 import LoadingView from './components/login/loadingView';
 import LoginView from './components/login/loginView';
@@ -30,6 +30,11 @@ window.jQuery = $; // Bootstrap won't work without this hack. browserify-shim di
 require('bootstrap');
 
 class App extends React.Component {
+  static get contextTypes () {
+    return {
+			router: PropTypes.object.isRequired
+		};
+  }
 
 	constructor(props) {
 		super(props);
@@ -38,7 +43,6 @@ class App extends React.Component {
 			pluginMenuItems: []
 		};
 		this.logout = this.logout.bind(this);
-
 	}
 
 	/**
@@ -53,7 +57,7 @@ class App extends React.Component {
 					caption: pkg.dicoogle.caption || pkg.name,
 					isPlugin: true
 				})))
-	});
+		});
 	}
 
 
@@ -105,15 +109,14 @@ class App extends React.Component {
 		const Dicoogle = dicoogleClient();
 		Dicoogle.request('POST', 'logout', {}, (error) => {
       if (error) {
-		    console.error(error);
+        console.error(error);
       }
 
       this.setState({pluginMenuItems: []});
       this.pluginsFetched = false;
       UserActions.logout()
 
-      // Works with recent version of react + react-router
-			this.props.history.pushState(null, 'login');
+			this.context.router.push('login');
 		});
 	}
 
@@ -149,12 +152,10 @@ class App extends React.Component {
 	}
 }
 
-class NotFoundView extends React.Component {
-	render() {
-		return <div>
-      <h1>Not Found</h1>
-		</div>;
-	}
+function NotFoundView() {
+	return (<div>
+    <h1>Not Found</h1>
+	</div>);
 }
 
 ReactDOM.render((
@@ -163,7 +164,7 @@ ReactDOM.render((
       <IndexRoute component={LoadingView} />
       <Route path="search" component={Search} />
       <Route path="management" component={ManagementView} />
-      <Route path="results" component={ResultSearch} />
+      <Route path="results" component={SearchResultView} />
       <Route path="indexer" component={IndexStatusView} />
       <Route path="about" component={AboutView} />
       <Route path="login" component={LoginView} />

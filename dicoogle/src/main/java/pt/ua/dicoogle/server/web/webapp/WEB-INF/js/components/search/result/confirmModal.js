@@ -2,7 +2,7 @@
 import React from 'react';
 import {Modal} from 'react-bootstrap';
 
-var ConfirmModal = React.createClass({
+const ConfirmModal = React.createClass({
     onConfirm: function() {
         this.props.onConfirm();
         this.props.onHide();

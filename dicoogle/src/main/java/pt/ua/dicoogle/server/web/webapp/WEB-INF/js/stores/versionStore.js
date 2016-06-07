@@ -1,12 +1,8 @@
-/*jshint esnext: true*/
-'use strict';
-
-var Reflux = require('reflux');
-
+import Reflux from 'reflux';
 import {VersionActions} from '../actions/versionAction';
 import {getVersion} from '../handlers/requestHandler';
 
-var VersionStore = Reflux.createStore({
+const VersionStore = Reflux.createStore({
     listenables: VersionActions,
     init: function () {
        this._contents = {};

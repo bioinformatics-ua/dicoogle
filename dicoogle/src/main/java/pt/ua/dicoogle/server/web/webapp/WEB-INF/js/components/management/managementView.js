@@ -1,12 +1,11 @@
-var React = require('react');
-
+import React from 'react';
 import {TransferOptionsView} from '../management/transferOptionsView';
 import {ServicesView} from '../management/servicesView';
 import {LoggerView} from '../management/loggerView';
 import {IndexerView} from '../management/indexerView';
 import {StorageView} from '../management/storageView';
 
-var ManagementView = React.createClass({
+const ManagementView = React.createClass({
     getInitialState: function() {
       return {selectedtab: 0};
     },

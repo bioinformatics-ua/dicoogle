@@ -1,7 +1,7 @@
-var Router = require('react-router');
+import {Router} from 'react-router';
 import {UserStore} from '../../stores/userStore';
 
-var UserMixin = {
+const UserMixin = {
   mixins: [Router.Navigation],
   componentWillMount: function() {
     if(UserStore.getLogginState() === false)

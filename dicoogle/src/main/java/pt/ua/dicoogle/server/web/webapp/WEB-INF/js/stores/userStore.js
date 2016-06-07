@@ -1,7 +1,4 @@
-'use strict';
-
 import Reflux from 'reflux';
-
 import $ from 'jquery';
 import {UserActions} from '../actions/userActions';
 import {Endpoints} from '../constants/endpoints';
