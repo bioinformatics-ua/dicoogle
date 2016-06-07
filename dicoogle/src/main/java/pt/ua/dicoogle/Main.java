@@ -289,9 +289,9 @@ public class Main
         // Lauch Async Index 
         // It monitors a folder, and when a file is touched an event
         // triggers and index is updated.
-
-        AsyncIndex asyncIndex = new AsyncIndex();
-
+        if (ServerSettings.getInstance().isMonitorWatcher()) {
+            AsyncIndex asyncIndex = new AsyncIndex();
+        }
         //Signals that this application is GUI Server
         isGUIServer = true;
 
