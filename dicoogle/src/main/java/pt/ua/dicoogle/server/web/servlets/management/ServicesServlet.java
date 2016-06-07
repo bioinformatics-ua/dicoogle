@@ -170,10 +170,10 @@ public class ServicesServlet extends HttpServlet {
 					break;
 
 				case QUERY:
-					if (running)
+					if (running) {
 						controlServices.startQueryRetrieve();
 						obj.element("running", true);
-					else {
+					} else {
 						controlServices.stopQueryRetrieve();
 						obj.element("running", false);
 					}
