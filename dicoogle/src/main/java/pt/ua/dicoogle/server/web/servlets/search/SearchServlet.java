@@ -118,10 +118,10 @@ public class SearchServlet extends HttpServlet {
                 case "patient": depth = 1; break;
                 case "study": depth = 2; break;
                 case "series": depth = 3; break;
-                case "images": depth = 4; break;
+                case "image": depth = 4; break;
                 default:
                 sendError(response, 400, "Invalid parameter depth: must be a valid level: "
-                        + "'none', 'patient', 'study', 'series' or 'images'");
+                        + "'none', 'patient', 'study', 'series' or 'image'");
                 return;
             }
         } else {
@@ -200,15 +200,21 @@ public class SearchServlet extends HttpServlet {
             } else {
                 results = PluginController.getInstance().query(queryTaskHolder, knownProviders, query, extraFields).get();
             }
-            elapsedTime = System.currentTimeMillis() - elapsedTime;
 
             if (this.searchType == SearchType.PATIENT) {
-                this.writeResponseDIM(response, results, elapsedTime, offset, psize, depth);
+                try {
+                    DIMGeneric dimModel = new DIMGeneric(results, depth);
+                    elapsedTime = System.currentTimeMillis() - elapsedTime;
+                    dimModel.writeJSON(response.getWriter(), elapsedTime, depth, offset, psize);
+                } catch (Exception e) {
+                    logger.warn("Failed to get DIM", e);
+                }
             } else {
+                elapsedTime = System.currentTimeMillis() - elapsedTime;
                 this.writeResponse(response, results, elapsedTime, offset, psize);
             }
 
-        } catch (InterruptedException | ExecutionException ex) {
+        } catch (InterruptedException | ExecutionException | RuntimeException ex) {
             logger.error("Failed to retrieve results", ex);
             sendError(response, 500, "Could not generate results");
             return;
@@ -240,30 +246,6 @@ public class SearchServlet extends HttpServlet {
                 .key("elapsedTime").value(elapsedTime)
                 .key("numResults").value(count);
         writer.endObject(); // end output
-    }
-
-    private void writeResponseDIM(HttpServletResponse resp, Iterable<SearchResult> results, long elapsedTime, int offset, int psize, int depth) throws IOException {
-        try {
-            DIMGeneric dimModel = new DIMGeneric(collectPage(results, offset, psize));
-            if (depth == -1) {
-                resp.getWriter().append(dimModel.getJSON());
-            } else {
-                dimModel.writeJSON(resp.getWriter(), depth);
-            }
-        } catch (Exception e) {
-            logger.warn("Failed to get DIM", e);
-        }
-    }
-
-    private <T> List<T> collectPage(Iterable<T> iterable, int offset, int psize) {
-        int count = 0;
-        List<T> o = new ArrayList<>(psize > 128 ? 128 : psize);
-        for (Iterator<T> it = iterable.iterator(); it.hasNext() && count < offset + psize; ++count) {
-            T e = it.next();
-            if (count < offset) continue;
-            o.add(e);
-        }
-        return o;
     }
 
     private int getReqParameter(HttpServletRequest req, String name, int defaultValue) throws NumberFormatException {
