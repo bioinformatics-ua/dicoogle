@@ -127,7 +127,9 @@ public class SOPList {
         UID.CardiacElectrophysiologyWaveformStorage,
         UID.BasicVoiceAudioWaveformStorage,
         UID.HangingProtocolStorage,
-        UID.SiemensCSANonImageStorage
+        UID.SiemensCSANonImageStorage,
+        UID.VLWholeSlideMicroscopyImageStorage,
+        UID.BreastTomosynthesisImageStorage
         };
 
     public static synchronized SOPList getInstance()
@@ -233,7 +235,7 @@ public class SOPList {
      * @return -1 if something went wrong, 1 otherwise
      */
     public synchronized int updateTSField(String UID, String name, boolean value) {
-        logger.debug("UID: " + UID + ", name: " + name + ", value" + value);
+        logger.debug("UID: {}, name: {}, value: {}", UID, name, value);
 
         TransfersStorage TS;
         TS = table.get(UID);
@@ -252,7 +254,7 @@ public class SOPList {
         		return -1;
         	}
         }
-        logger.debug("UID: " + UID + ", name: " + name + ", value" + value);
+        logger.debug("UID: {}, name: {}, value: {}", UID, name, value);
       
         return 0;    
     }   
