@@ -173,7 +173,8 @@ public class ServicesServlet extends HttpServlet {
 					if (running) {
 						controlServices.startQueryRetrieve();
 						obj.element("running", true);
-					}else {
+
+					} else {
 						controlServices.stopQueryRetrieve();
 						obj.element("running", false);
 					}
