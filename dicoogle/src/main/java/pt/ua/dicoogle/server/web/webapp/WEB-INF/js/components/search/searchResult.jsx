@@ -1,6 +1,4 @@
 import React, {PropTypes} from 'react';
-import {SearchStore} from '../../stores/searchStore';
-import {ActionCreators} from '../../actions/searchActions';
 
 import {PatientView} from './result/patientView';
 import {StudyView} from './result/studyView';

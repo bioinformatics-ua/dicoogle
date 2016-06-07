@@ -15,7 +15,10 @@ function getPatients(freetext, isKeyword, provider, callbackSucccess, callbackEr
         var url = Endpoints.base + '/searchDIM?query=' + freetext + '&keyword=' + isKeyword;
         if(provider !== "all")
         {
-          url = url + "&provider=" + provider;
+          provider = Array.prototype.concat.apply([], provider);
+          for (const p of provider) {
+            url += "&provider=" + p;
+          }
         }
         console.log("store url;", url);
 
