@@ -22,10 +22,10 @@ var EXTERNAL_REQUIRES = [
 
 function createBrowserify(debug, watch) {
   // set up the browserify instance on a task basis
-  var opt = {
+  var b = browserify('./js/app.js', {
     cache: {},
     packageCache: {},
-    entries: './js/app.js',
+    extensions: ['.jsx'],
     debug: debug,
     transform: [
       [
@@ -41,8 +41,7 @@ function createBrowserify(debug, watch) {
         }
       ]
     ]
-  };
-  var b = browserify(opt);
+  });
   if (watch) {
     b.plugin(watchify);
   }
@@ -51,7 +50,9 @@ function createBrowserify(debug, watch) {
 
 gulp.task('lint', function () {
   return gulp.src(['js/**/*.js', 'js/**/*.jsx'])
-    .pipe(eslint())
+    .pipe(eslint({
+      configFile: ".eslintrc"
+    }))
     .pipe(eslint.format())
     .pipe(eslint.failAfterError());
 });
@@ -146,7 +147,7 @@ gulp.task('css:watch', function () {
 });
 
 gulp.task('production', ['js', 'html', 'css']);
-gulp.task('development', ['js-debug', 'html-debug', 'css']);
+gulp.task('development', ['js-debug', 'html-debug', 'css-debug']);
 
 gulp.task( 'clean', function() {
   return gulp.src(['lib/bundle.*', 'css/dicoogle.css*', 'index.html'], { read: false })

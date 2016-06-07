@@ -6,7 +6,7 @@ import ConfirmModal from './confirmModal';
 import {Endpoints} from '../../../constants/endpoints';
 import {DumpStore} from '../../../stores/dumpStore';
 import ImageLoader from 'react-imageloader';
-import PluginView from '../../plugin/pluginView.jsx';
+import PluginView from '../../plugin/pluginView';
 import {DumpActions} from '../../../actions/dumpActions';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import {Input} from 'react-bootstrap';

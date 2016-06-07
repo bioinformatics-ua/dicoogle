@@ -4,8 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {SearchStore} from '../../stores/searchStore';
 import {ActionCreators} from '../../actions/searchActions';
-
-import {ResultSearch} from '../search/searchResultView';
+import {SearchResult} from './searchResult';
 
 // TODO this component needs to be refactored:
 // - it should not perform React renders
@@ -201,7 +200,7 @@ const AdvancedSearch = React.createClass({
        ///////
        var params = {text: query, keyword: true, other: true, provider};
 
-       ReactDOM.render(<ResultSearch items={params}/>, document.getElementById("container"));
+       ReactDOM.render(<SearchResult items={params}/>, document.getElementById("container"));
   },
    checkEmpty: function(text){
      if(text.length === 0 )
