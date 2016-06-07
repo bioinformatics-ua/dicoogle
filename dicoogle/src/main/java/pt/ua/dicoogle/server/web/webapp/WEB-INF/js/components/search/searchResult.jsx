@@ -103,8 +103,8 @@ const SearchResult = React.createClass({
 		}
 
     const btnBack = (this.props.onReturn &&
-      <button className="btn btn_dicoogle fa fa-level-up" onClick={this.handleClickBack}>
-        &nbsp; Back to Query
+      <button className="btn btn_dicoogle" onClick={this.handleClickBack}>
+       <i className="fa fa-level-up"/> &nbsp; Back to Query
       </button>);
 
     //Check if search failed
@@ -133,16 +133,16 @@ const SearchResult = React.createClass({
                 {plugin.caption}
               </button>)
     );
-
-    let toggleModalClassNames = this.state.showDangerousOptions ? "btn btn_dicoogle fa fa-toggle-on" : "btn btn_dicoogle fa fa-toggle-off";
+    
+    let toggleModalClassNames = this.state.showDangerousOptions ? "fa fa-toggle-on" : "fa fa-toggle-off";
     return (<div>
         {btnBack}
         <Step current={this.state.current} onClick={this.onStepClicked}/>
         <div id="step-container">
           {this.getCurrentView()}
         </div>
-        <button className="btn btn_dicoogle fa fa-download" onClick={this.handleClickExport}>Export</button>
-        <button className={toggleModalClassNames} onClick={this.toggleAdvOpt}> Advanced Options </button>
+        <button className="btn btn_dicoogle" onClick={this.handleClickExport}><i className="fa fa-download"/>Export</button>
+        <button className="btn btn_dicoogle" onClick={this.toggleAdvOpt}><i className={toggleModalClassNames}/> Advanced Options </button>
         {pluginButtons}
         <ExportView show={this.state.showExport} onHide={this.handleHideExport} query={this.props.requestedQuery}/>
         <PluginForm show={!!this.state.currentPlugin} slotId="result-batch"
