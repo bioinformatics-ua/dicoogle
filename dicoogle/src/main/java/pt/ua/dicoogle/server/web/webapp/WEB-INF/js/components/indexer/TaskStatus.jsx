@@ -47,7 +47,7 @@ class TaskStatus extends React.Component {
        <div className="row">
       <div className="col-sm-10">
         <div className="progress indexstatusprogress">
-          <div style={{width : percentage}} className={barstate} role="progressbar"  aria-valuemin="0" aria-valuemax="100">
+          <div style={{width: percentage}} className={barstate} role="progressbar"  aria-valuemin="0" aria-valuemax="100">
             {!unknownPercentage && percentage}
           </div>
         </div>

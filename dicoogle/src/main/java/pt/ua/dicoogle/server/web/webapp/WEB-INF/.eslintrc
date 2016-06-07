@@ -34,6 +34,7 @@
     "comma-dangle": 1,
     "no-extra-semi": 1,
     "eol-last": 1,
+    "no-empty": 1,
     "consistent-this": [2, "self"],
     "no-dupe-args": 2,
     "no-dupe-keys": 2,

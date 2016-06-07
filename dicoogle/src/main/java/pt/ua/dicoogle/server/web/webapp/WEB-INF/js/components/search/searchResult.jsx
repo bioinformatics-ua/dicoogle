@@ -1,7 +1,4 @@
-import React from 'react';
-
-import {SearchStore} from '../../stores/searchStore';
-import {ActionCreators} from '../../actions/searchActions';
+import React, {PropTypes} from 'react';
 
 import {PatientView} from './result/patientView';
 import {StudyView} from './result/studyView';
@@ -9,15 +6,36 @@ import {SeriesView} from './result/serieView';
 import {ImageView} from './result/imageView';
 import {ExportView} from './exportView';
 import Webcore from 'dicoogle-webcore';
-import PluginForm from '../plugin/pluginForm.jsx';
+import PluginForm from '../plugin/pluginForm';
 import {DefaultOptions} from '../../constants/defaultOptions';
 
-var ResultSearch = React.createClass({
+const SearchResult = React.createClass({
+
+  propTypes: {
+    requestedQuery: PropTypes.shape({
+      text: PropTypes.string,
+      keyword: PropTypes.bool,
+      other: PropTypes.bool,
+      provider: PropTypes.string
+    }).isRequired, // requested query
+    searchOutcome: PropTypes.shape({
+      data: PropTypes.shape({
+        numResults: PropTypes.number,
+        results: PropTypes.array
+      }),
+      error: PropTypes.any
+    }).isRequired,
+    onReturn: PropTypes.func
+  },
+
+  getDefaultProps() {
+    return {
+      onReturn: null
+    }
+  },
 
   getInitialState: function() {
     return {
-      data: [],
-      status: "loading",
       showExport: false,
       showDangerousOptions: DefaultOptions.showSearchOptions,
       current: 0,
@@ -26,13 +44,7 @@ var ResultSearch = React.createClass({
     };
   },
 
-  componentDidMount: function() {
-    this.initSearch(this.props.items);
-  },
-
   componentWillMount: function() {
-    // Subscribe to the store.
-    SearchStore.listen(this._onChange);
     Webcore.fetchPlugins('result-batch', (packages) => {
       Webcore.fetchModules(packages);
       this.setState({batchPlugins: packages.map(pkg => ({
@@ -42,9 +54,13 @@ var ResultSearch = React.createClass({
     });
   },
 
-	initSearch: function(props){
-    ActionCreators.search(props);
-	},
+  componentWillUpdate(nextProps) {
+    if (this.props.requestedQuery.queryText !== nextProps.requestedQuery.queryText) {
+      //init StepView
+      if(!this.state.current)
+        this.onStepClicked(0);
+    }
+  },
 
   handleClickExport() {
     this.setState({showExport: true, currentPlugin: null});
@@ -62,9 +78,22 @@ var ResultSearch = React.createClass({
     this.setState({currentPlugin: null});
   },
 
-  render: function() {
+  handleClickBack() {
+    this.props.onReturn();
+  },
 
-		if (this.state.status === "loading"){
+  isLoading() {
+    return !this.props.searchOutcome;
+  },
+
+  getError() {
+    return this.props.searchOutcome.error;
+  },
+
+  render: function() {
+    const {searchOutcome} = this.props;
+
+		if (this.isLoading()){
       //loading animation
       return (<div className="loader-inner ball-pulse">
         <div/>
@@ -73,19 +102,28 @@ var ResultSearch = React.createClass({
       </div>);
 		}
 
-    //Check if search fails
-    if(this.state.success === false)
-    {
-      return (<div>Search error</div>);
+    const btnBack = (this.props.onReturn &&
+      <button className="btn btn_dicoogle" onClick={this.handleClickBack}>
+       <i className="fa fa-level-up"/> &nbsp; Back to Query
+      </button>);
+
+    //Check if search failed
+    if(this.getError()) {
+      return (
+        <div>
+          {btnBack}
+          <p>{this.getError()}</p>
+        </div>
+        );
     }
     //Check if search return no results
-    if(this.state.data.numResults === 0)
+    if(searchOutcome.data && searchOutcome.data.numResults === 0)
     {
       return (
         <div>
-        No results for that query
+          {btnBack}
+          <p>No results for that query</p>
         </div>
-
         );
     }
 
@@ -95,42 +133,30 @@ var ResultSearch = React.createClass({
                 {plugin.caption}
               </button>)
     );
-
-    let toggleModalClassNames = this.state.showDangerousOptions ? "btn btn_dicoogle fa fa-toggle-on" : "btn btn_dicoogle fa fa-toggle-off";
+    
+    let toggleModalClassNames = this.state.showDangerousOptions ? "fa fa-toggle-on" : "fa fa-toggle-off";
     return (<div>
+        {btnBack}
         <Step current={this.state.current} onClick={this.onStepClicked}/>
         <div id="step-container">
           {this.getCurrentView()}
         </div>
-        <button className="btn btn_dicoogle fa fa-download" onClick={this.handleClickExport}>Export</button>
-        <button className={toggleModalClassNames} onClick={this.toggleAdvOpt}> Advanced Options </button>
+        <button className="btn btn_dicoogle" onClick={this.handleClickExport}><i className="fa fa-download"/>Export</button>
+        <button className="btn btn_dicoogle" onClick={this.toggleAdvOpt}><i className={toggleModalClassNames}/> Advanced Options </button>
         {pluginButtons}
-        <ExportView show={this.state.showExport} onHide={this.handleHideExport} query={this.props.items}/>
+        <ExportView show={this.state.showExport} onHide={this.handleHideExport} query={this.props.requestedQuery}/>
         <PluginForm show={!!this.state.currentPlugin} slotId="result-batch"
                     plugin={this.state.currentPlugin} onHide={this.handleHideBatchForm}
-                    data={{results: this.state.data.results}} />
+                    data={{results: this.props.searchOutcome.data.results}} />
       </div>);
 	},
-
-  _onChange: function(data) {
-    if (this.isMounted())
-    {
-      this.setState({data: data.data,
-      status: "stopped",
-      success: data.success});
-
-      //init StepView
-      if(!this.state.current)
-        this.onStepClicked(0);
-    }
-  },
 
   getCurrentView() {
     let view;
     switch (this.state.current) {
       case 0:
-        view = ( <PatientView items={this.state.data}
-                              provider={this.props.items.provider}
+        view = ( <PatientView items={this.props.searchOutcome.data}
+                              provider={this.props.requestedQuery.provider}
                               enableAdvancedSearch={this.state.showDangerousOptions}
                               onItemClick={this.onPatientClicked}/>);
         break;
@@ -169,7 +195,7 @@ var ResultSearch = React.createClass({
   }
 });
 
-var Step = React.createClass({
+const Step = React.createClass({
   getInitialState: function() {
     return {current: this.props.current};
   },
@@ -218,4 +244,4 @@ var Step = React.createClass({
 
 });
 
-export {ResultSearch};
+export {SearchResult};
