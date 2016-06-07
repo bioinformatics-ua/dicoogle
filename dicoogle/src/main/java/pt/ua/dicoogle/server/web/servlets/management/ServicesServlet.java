@@ -101,7 +101,7 @@ public class ServicesServlet extends HttpServlet {
 		if (paramPort != null) {
 			try {
 				port = Integer.parseInt(paramPort);
-				if (port < 1024 || port > 65535) {
+				if (port <= 0 || port > 65535) {
 					throw new NumberFormatException();
 				}
 				updatePort = true;
