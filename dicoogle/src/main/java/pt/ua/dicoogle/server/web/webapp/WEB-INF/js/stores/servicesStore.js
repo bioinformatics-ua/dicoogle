@@ -62,7 +62,7 @@ const ServicesStore = Reflux.createStore({
 
         },
         function(error){
-          console.log("omnGetStoreage: failure");
+          console.log("onGetStoreage: failure");
         }
 
       );
@@ -95,6 +95,17 @@ const ServicesStore = Reflux.createStore({
           self.trigger(self._contents);
         });
     },
+
+    onSetStoragePort(port) {
+      $.post(Endpoints.base + "/management/dicom/storage", {
+        port
+      }, (data, status) => {
+          console.log("Data: " + data + "\nStatus: " + status);
+          this._contents.storagePort = port;
+          this.trigger(this._contents);
+        });
+    },
+
     onSetQuery: function(state){
       var self = this;
       console.log(state);
@@ -120,6 +131,16 @@ const ServicesStore = Reflux.createStore({
           console.log("Data: " + data + "\nStatus: " + status);
           self._contents.queryAutostart = enabled;
           self.trigger(self._contents);
+        });
+    },
+
+    onSetQueryPort(port) {
+      $.post(Endpoints.base + "/management/dicom/query", {
+        port
+      }, (data, status) => {
+          console.log("Data: " + data + "\nStatus: " + status);
+          this._contents.queryPort = port;
+          this.trigger(self._contents);
         });
     },
 
