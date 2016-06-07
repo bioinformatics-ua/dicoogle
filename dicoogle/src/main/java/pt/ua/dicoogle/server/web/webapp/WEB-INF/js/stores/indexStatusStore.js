@@ -6,7 +6,7 @@ import {Endpoints} from '../constants/endpoints';
 import {forceIndex} from '../handlers/requestHandler';
 import $ from 'jquery';
 
-var IndexStatusStore = Reflux.createStore({
+const IndexStatusStore = Reflux.createStore({
     listenables: IndexStatusActions,
     init: function () {
        this._contents = {};

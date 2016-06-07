@@ -1,13 +1,7 @@
 import React, {PropTypes} from 'react';
-import {Modal} from 'react-bootstrap';
-import PluginView from './pluginView';
-
 import {ResultsSelected} from '../../stores/resultSelected';
-
-
 import dicoogleClient from 'dicoogle-client';
 const Dicoogle = dicoogleClient();
-
 
 export default class PluginFormModal extends React.Component {
 
@@ -48,7 +42,7 @@ export default class PluginFormModal extends React.Component {
   }
 
   render() {
-    const {plugin, slotId, data} = this.props;
+    const {plugin} = this.props;
     return (plugin &&
       <div>
 

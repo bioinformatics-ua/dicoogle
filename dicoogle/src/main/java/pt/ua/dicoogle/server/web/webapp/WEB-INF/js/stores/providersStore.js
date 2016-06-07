@@ -5,7 +5,7 @@ import {ProvidersActions} from '../actions/providersActions';
 import {Endpoints} from '../constants/endpoints';
 import {request} from '../handlers/requestHandler';
 
-var ProvidersStore = Reflux.createStore({
+const ProvidersStore = Reflux.createStore({
     listenables: ProvidersActions,
     init: function () {
        this._providers = [];

@@ -1,14 +1,10 @@
-/*jshint esnext: true*/
-'use strict';
-
-var Reflux = require('reflux');
-
+import Reflux from 'reflux';
 import ServiceAction from '../actions/servicesAction';
 import {Endpoints} from '../constants/endpoints';
 import {request} from '../handlers/requestHandler';
 import $ from 'jquery';
 
-var ServicesStore = Reflux.createStore({
+const ServicesStore = Reflux.createStore({
     listenables: ServiceAction,
     init: function () {
        this._storageRunning = false;

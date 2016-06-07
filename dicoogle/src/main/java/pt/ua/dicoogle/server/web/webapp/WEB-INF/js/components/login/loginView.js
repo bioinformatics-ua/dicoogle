@@ -1,12 +1,12 @@
-var React = require('react');
-var Router = require('react-router');
-
+import React from 'react';
 import {UserActions} from "../../actions/userActions";
 import {UserStore} from "../../stores/userStore";
 import $ from 'jquery';
 
-var LoginView = React.createClass({
-  mixins: [Router.History],
+const LoginView = React.createClass({
+  contextTypes: {
+    router: React.PropTypes.object.isRequired
+  },
   getInitialState: function() {
     return {data: {},
     status: "loading",
@@ -25,6 +25,7 @@ var LoginView = React.createClass({
   },
   _onChange: function(data){
     console.log(data);
+    const {router} = this.context;
     if(data.failed === true)
     {
       this.setState({failed: true});
@@ -33,8 +34,8 @@ var LoginView = React.createClass({
 
     if(data.isLoggedIn && this.isMounted())
     {
+      router.replace('/search');
       //React.unmountComponentAtNode(document.getElementById('login_container'));
-      this.history.replaceState(null, '/search');
     }
   },
   enableEnterKey() {
@@ -101,8 +102,8 @@ var LoginView = React.createClass({
   },
 
   onLoginClick: function(){
-    var user = document.getElementById("username").value;
-    var pass = document.getElementById("password").value;
+    const user = document.getElementById("username").value;
+    const pass = document.getElementById("password").value;
     //console.log("login clicked", user ,pass );
     UserActions.login(user, pass);
   }

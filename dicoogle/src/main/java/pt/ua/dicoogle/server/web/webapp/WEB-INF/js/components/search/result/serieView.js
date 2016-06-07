@@ -9,7 +9,7 @@ import ResultSelectActions from '../../../actions/resultSelectAction';
 import {UserStore} from '../../../stores/userStore';
 
 
-var SeriesView = React.createClass({
+const SeriesView = React.createClass({
   getInitialState: function() {
     // We need this because refs are not updated in BootstrapTable.
     this.refsClone = {};
@@ -142,13 +142,13 @@ var SeriesView = React.createClass({
       bgColor: "rgb(163, 210, 216)",
       onSelect: this.onRowSelect
     };
-    
-    
+
+
     // TODO trigger this action elsewhere
     ResultSelectActions.level("series");
-    
-    
-    return ( 
+
+
+    return (
 			<div>
         <BootstrapTable data={resultArray} selectRow={selectRowProp} pagination striped hover width="100%">
           <TableHeaderColumn dataAlign="right" dataField="serieInstanceUID" isKey dataFormat={this.formatNumber} dataSort>Number</TableHeaderColumn>

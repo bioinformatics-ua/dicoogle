@@ -6,7 +6,7 @@ import {SeriesView} from './result/serieView';
 import {ImageView} from './result/imageView';
 import {ExportView} from './exportView';
 import Webcore from 'dicoogle-webcore';
-import PluginForm from '../plugin/pluginForm';
+import PluginForm from '../plugin/pluginForm.jsx';
 import {DefaultOptions} from '../../constants/defaultOptions';
 
 const SearchResult = React.createClass({
@@ -133,7 +133,7 @@ const SearchResult = React.createClass({
                 {plugin.caption}
               </button>)
     );
-    
+
     let toggleModalClassNames = this.state.showDangerousOptions ? "fa fa-toggle-on" : "fa fa-toggle-off";
     return (<div>
         {btnBack}

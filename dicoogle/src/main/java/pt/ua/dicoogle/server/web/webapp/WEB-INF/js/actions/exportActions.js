@@ -1,5 +1,5 @@
-var Reflux = require('reflux');
-var ExportActions = exports;
+import Reflux from 'reflux';
+const ExportActions = exports;
 ExportActions.getFieldList = Reflux.createAction();
 ExportActions.exportCSV = Reflux.createAction();
 

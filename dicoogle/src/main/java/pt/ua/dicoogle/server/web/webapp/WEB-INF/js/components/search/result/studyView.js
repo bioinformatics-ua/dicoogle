@@ -10,8 +10,7 @@ import ResultSelectActions from '../../../actions/resultSelectAction';
 
 import {UserStore} from '../../../stores/userStore';
 
-
-var StudyView = React.createClass({
+const StudyView = React.createClass({
     getInitialState: function() {
       // We need this because refs are not updated in BootstrapTable.
       this.refsClone = {};

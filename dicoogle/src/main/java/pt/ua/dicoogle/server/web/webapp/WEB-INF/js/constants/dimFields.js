@@ -1,5 +1,5 @@
 /* eslint comma-spacing:0 */
-var DimFields = [
+const DimFields = [
 "ModalitiesInStudy"
 ,"PerformingPhysicianName"
 ,"StudyTime"

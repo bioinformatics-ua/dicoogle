@@ -10,7 +10,7 @@ import {DimFields} from '../../constants/dimFields';
 import {getUrlVars} from '../../utils/url';
 import {SearchStore} from '../../stores/searchStore';
 
-var Search = React.createClass({
+const Search = React.createClass({
     propTypes: {
       params: PropTypes.object.isRequired,
       location: PropTypes.object.isRequired
