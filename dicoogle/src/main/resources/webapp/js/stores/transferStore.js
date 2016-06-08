@@ -1,7 +1,6 @@
 import Reflux from 'reflux';
 import {TransferActions} from '../actions/transferActions';
 import {Endpoints} from '../constants/endpoints';
-import {request} from '../handlers/requestHandler';
 import $ from 'jquery';
 import {getTransferSettings} from '../handlers/requestHandler';
 

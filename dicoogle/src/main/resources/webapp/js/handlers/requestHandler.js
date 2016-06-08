@@ -1,5 +1,3 @@
-import {Endpoints} from '../constants/endpoints';
-import $ from 'jquery';
 import dicoogleClient from 'dicoogle-client';
 
 const Dicoogle = dicoogleClient(); // already configured, retrieve object
@@ -27,11 +25,10 @@ export function getPatients(freetext, isKeyword, provider, callbackSuccess, call
       provider = undefined;
     }
     const searchOpt = {
-      dim: true,
       keyword: isKeyword,
       provider
     };
-    Dicoogle.search(freetext, searchOpt, (error, outcome) => {
+    Dicoogle.searchDIM(freetext, searchOpt, (error, outcome) => {
       if (error) {
         callbackError(error);
       } else {
@@ -103,27 +100,19 @@ export function setZip(state, callback) {
   Dicoogle.setIndexerSettings(Dicoogle.IndexerSettings.ZIP, state, cb);
 }
 
-export function setSaveT(state) {
+export function setSaveT(state, callback) {
   const cb = callback ? callback : () => {};
   Dicoogle.setIndexerSettings(Dicoogle.IndexerSettings.INDEX_THUMBNAIL, state, cb);
 }
 
 export function saveIndexOptions(path, watcher, zip, saveThumbnail, effort, thumbnailSize){
-  // TODO use Dicoogle in the future
-  $.post(Endpoints.base + "/management/settings/index",
-  {
-    path: path,
-    watcher: watcher,
-    zip: zip,
-    saveThumbnail: saveThumbnail,
-    effort: effort,
-    thumbnailSize: thumbnailSize
-  },
-    function(data, status){
-      //Response
-      console.log("Data: " + data + "\nStatus: " + status);
-    });
-
+  Dicoogle.setIndexerSettings({
+    path, watcher, zip, saveThumbnail, effort, thumbnailSize
+  }, (error) => {
+    if (error) {
+      console.error('Dicoogle service failure', error);
+    }
+  });
 }
 
 export function forceIndex(uri, callback){
