@@ -163,7 +163,7 @@ const ImageView = React.createClass({
     ResultSelectActions.level("image");
     return (
         <div>
-            <BootstrapTable data={resultArray} selectRow={selectRowProp}
+            <BootstrapTable data={resultArray} selectRow={selectRowProp}  condensed={true}
                   pagination striped hover width="100%">
               <TableHeaderColumn dataAlign="left" dataField="filename"
                 isKey dataFormat={this.formatFileName} dataSort>
@@ -327,7 +327,7 @@ var PopOverView = React.createClass({
             <Modal.Title>Dump DICOM metadata</Modal.Title>
           </Modal.Header>
             <div className='modal-body'>
-              <BootstrapTable search columnFilter data={fields} selectRow={selectRowProp} pagination striped hover
+              <BootstrapTable search columnFilter data={fields} selectRow={selectRowProp} condensed={true} pagination striped hover
                               className="table-test table table-striped table-bordered responsive" cellspacing="0" width="100%">
               <TableHeaderColumn dataAlign="right"
                 dataField="att" width="20%" isKey dataSort>Attribute</TableHeaderColumn>
