@@ -136,6 +136,8 @@ const PatientView = React.createClass({
     this.options = {
       sortName: 'id',
       sortOrder: 'desc',
+      sizePerPageList: [ 5, 10, 20, 50, 100, 200 ],
+      sizePerPage: 50,
       onPageChange: this.onPageChange
     };
 
