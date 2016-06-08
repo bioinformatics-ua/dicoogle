@@ -21,7 +21,8 @@ const Search = React.createClass({
         return {
           label: 'login',
           searchState: "simple",
-          providers: ["All providers"],
+          providers: [],
+          selectedProviders: [],
           queryText: '',
           requestedQuery: null,
           error: null,
@@ -76,15 +77,21 @@ const Search = React.createClass({
     render: function() {
 
       let providersList = this.state.providers.map(
-          (item, index) => (<option key={index}> {item} </option>));
+          (item, index) => (<option key={item} value={item}>
+                              {item}
+                            </option>));
+      providersList.unshift(<option key="__all__" value="__all__">All Providers</option>);
 
+      const currProvider = this.state.selectedProviders[0];
       let selectionButtons = (
           <div>
           <button type="button" className="btn btn_dicoogle" onClick={this.renderFilter} data-trigger="advance-search" id="btn-advance">
             {this.state.searchState === "simple" ? "Advanced" : "Basic"}
           </button>
               <div className="btn-group">
-                  <select id="providersList" className="btn btn_dicoogle form-control">
+                  <select id="providersList" className="btn btn_dicoogle form-control"
+                          value={currProvider}
+                          onChange={this.handleProviderSelect}>
                     {providersList}
                   </select>
               </div>
@@ -150,14 +157,16 @@ const Search = React.createClass({
       var switchState;
       if(this.state.searchState === "simple"){
         switchState = "advanced";
-      }
-      else{
+      } else {
         switchState = "simple";
       }
       this.setState({searchState: switchState})
     },
     onSearchByUrl: function(){
       let params = {text: getUrlVars()['query'], keyword: getUrlVars()['keyword'], provider: getUrlVars()['provider']};
+      if (params.provider === 'all') {
+        params.provider = undefined;
+      }
       this.setState({
         requestedQuery: params
       });
@@ -165,20 +174,16 @@ const Search = React.createClass({
     handleQueryTextChanged(e) {
       this.setState({queryText: e.target.value});
     },
+    handleProviderSelect(e) {
+      const name = e.target.value;
+      this.setState({
+        selectedProviders: name === '__all__' ? [] : [name]
+      });
+    },
     onSearchClicked: function() {
-        let text = this.state.queryText;
-
-        // TODO support multi-select ; use state instead of fetching element from DOM
-        let providerEl = document.getElementById("providersList");
-        let selectedId = providerEl.selectedIndex;
-        let provider = "";
-        if(selectedId === 0){
-          provider = "all"
-        } else {
-          provider = providerEl.options[selectedId].text;
-        }
-
-        let params = {text, keyword: this.isKeyword(text), other: true, provider};
+        const text = this.state.queryText;
+        const provider = this.state.selectedProviders;
+        const params = {text, keyword: this.isKeyword(text), other: true, provider};
         this.triggerSearch(params);
     },
     triggerSearch: function(params){

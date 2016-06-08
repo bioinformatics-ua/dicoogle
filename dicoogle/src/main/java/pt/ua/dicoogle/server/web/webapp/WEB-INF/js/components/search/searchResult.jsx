@@ -16,7 +16,10 @@ const SearchResult = React.createClass({
       text: PropTypes.string,
       keyword: PropTypes.bool,
       other: PropTypes.bool,
-      provider: PropTypes.string
+      provider: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.arrayOf(PropTypes.string)
+      ])
     }).isRequired, // requested query
     searchOutcome: PropTypes.shape({
       data: PropTypes.shape({
