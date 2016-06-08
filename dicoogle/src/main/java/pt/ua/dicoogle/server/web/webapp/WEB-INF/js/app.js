@@ -55,7 +55,8 @@ class App extends React.Component {
 			pluginMenuItems: pluginMenuItems.concat(packages.map(pkg => ({
 					value: pkg.name,
 					caption: pkg.dicoogle.caption || pkg.name,
-					isPlugin: true
+					isPlugin: true,
+					icon: 'fa fa-plug'
 				})))
 		});
 	}
