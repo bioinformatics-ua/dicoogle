@@ -48,6 +48,10 @@ function createBrowserify(debug, watch) {
   return b.require(EXTERNAL_REQUIRES);
 }
 
+gulp.task('production-env', function() {
+    process.env.NODE_ENV = 'production';
+});
+
 gulp.task('lint', function () {
   return gulp.src(['js/**/*.js', 'js/**/*.jsx'])
     .pipe(eslint({
@@ -146,7 +150,7 @@ gulp.task('css:watch', function () {
   gulp.watch('sass/**/*.scss', ['css-debug']);
 });
 
-gulp.task('production', ['js', 'html', 'css']);
+gulp.task('production', ['production-env', 'js', 'html', 'css']);
 gulp.task('development', ['js-debug', 'html-debug', 'css-debug']);
 
 gulp.task( 'clean', function() {

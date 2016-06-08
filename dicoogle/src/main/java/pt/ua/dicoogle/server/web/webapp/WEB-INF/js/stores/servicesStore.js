@@ -36,14 +36,13 @@ const ServicesStore = Reflux.createStore({
     },
 
     onGetStorage: function(){
-      var self = this;
       request(
         Endpoints.base + "/management/dicom/storage",
-          function(data) {
-            self._contents.storageRunning = data.isRunning;
-            self._contents.storagePort = data.port;
-            self._contents.storageAutostart = data.autostart;
-            self.trigger(self._contents);
+          (data) => {
+            this._contents.storageRunning = data.isRunning;
+            this._contents.storagePort = data.port;
+            this._contents.storageAutostart = data.autostart;
+            this.trigger(this._contents);
           },
           function(error) {
             console.log("onGetStoreage: failure");
@@ -51,48 +50,40 @@ const ServicesStore = Reflux.createStore({
       );
     },
     onGetQuery: function(){
-      var self = this;
       request(
         Endpoints.base + "/management/dicom/query",
-        function(data){
-          self._contents.queryRunning = data.isRunning;
-          self._contents.queryPort = data.port;
-          self._contents.queryAutostart = data.autostart;
-          self.trigger(self._contents);
+        (data) => {
+          this._contents.queryRunning = data.isRunning;
+          this._contents.queryPort = data.port;
+          this._contents.queryAutostart = data.autostart;
+          this.trigger(this._contents);
 
-        },
-        function(error){
+        }, (error) => {
           console.log("onGetStoreage: failure");
         }
-
       );
     },
     onSetStorage: function(state){
-      var self = this;
-      console.log(state);
       $.post(Endpoints.base + "/management/dicom/storage",
       {
         running: state
-      },
-        function(data, status){
+      }, (data, status) => {
           //Response
           console.log("Data: " + data + "\nStatus: " + status);
-          self._contents.storageRunning = state;
-          self.trigger(self._contents);
-
+          this._contents.storageRunning = state;
+          this.trigger(this._contents);
         });
 
     },
     onSetStorageAutostart (enabled) {
-      let self = this;
       $.post(Endpoints.base + "/management/dicom/storage",
       {
         autostart: enabled
       },
-        function(data, status){
+        (data, status) => {
           console.log("Data: " + data + "\nStatus: " + status);
-          self._contents.storageAutostart = enabled;
-          self.trigger(self._contents);
+          this._contents.storageAutostart = enabled;
+          this.trigger(this._contents);
         });
     },
 
@@ -107,31 +98,27 @@ const ServicesStore = Reflux.createStore({
     },
 
     onSetQuery: function(state){
-      var self = this;
-      console.log(state);
       $.post(Endpoints.base + "/management/dicom/query",
       {
         running: state
       },
-        function(data, status) {
+        (data, status) => {
           //Response
           console.log("Data: " + data + "\nStatus: " + status);
-          self._contents.queryRunning = state;
-          self.trigger(self._contents);
+          this._contents.queryRunning = state;
+          this.trigger(this._contents);
 
         });
     },
     onSetQueryAutostart (enabled) {
-      let self = this;
       $.post(Endpoints.base + "/management/dicom/query",
       {
         autostart: enabled
-      },
-        function(data, status){
+      }, (data, status) => {
           console.log("Data: " + data + "\nStatus: " + status);
-          self._contents.queryAutostart = enabled;
-          self.trigger(self._contents);
-        });
+          this._contents.queryAutostart = enabled;
+          this.trigger(this._contents);
+      });
     },
 
     onSetQueryPort(port) {
@@ -140,20 +127,18 @@ const ServicesStore = Reflux.createStore({
       }, (data, status) => {
           console.log("Data: " + data + "\nStatus: " + status);
           this._contents.queryPort = port;
-          this.trigger(self._contents);
+          this.trigger(this._contents);
         });
     },
 
     onGetQuerySettings: function(){
-      var self = this;
       request(
         Endpoints.base + "/management/settings/dicom/query",
-        function(data){
-          self._querySettings = data;
-          self._contents.querySettings = self._querySettings;
-          self.trigger(self._contents);
-        },
-        function(error){
+        (data) => {
+          this._querySettings = data;
+          this._contents.querySettings = this._querySettings;
+          this.trigger(this._contents);
+        }, (error) => {
           console.log("onGetQuerySettigns: failure");
         }
 
@@ -170,7 +155,7 @@ const ServicesStore = Reflux.createStore({
       maxPduSend,
       responseTimeout
     },
-      function(data, status){
+      (data, status) => {
         //Response
         console.log("Data: " + data + "\nStatus: " + status);
       });

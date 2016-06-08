@@ -6,7 +6,7 @@ export default class ServiceForm extends React.Component {
   static get propTypes() {
     return {
       caption: PropTypes.string.isRequired,
-      running: PropTypes.bool,
+      running: PropTypes.bool.isRequired,
       dirtyPort: PropTypes.bool.isRequired, // port has unsaved changes
       onhold: PropTypes.bool,
       port: PropTypes.oneOfType([
