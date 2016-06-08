@@ -45,22 +45,25 @@ const ExportStore = Reflux.createStore({
         keyword = true;
       }
 
-      $.post(Endpoints.base + "/exportFile",
-      {
-        query: text,
-        keyword,
-        fields: JSON.stringify(fields),
-        providers: provider
-      },
-        function(data, status){
+      $.ajax({
+        method: "POST",
+        url: Endpoints.base + "/exportFile",
+        traditional: true,
+        data: {
+          query: text,
+          keyword,
+          fields: JSON.stringify(fields),
+          providers: provider
+        }
+      }).then((data, status) => {
           //Response
           const response = JSON.parse(data);
-          console.log("\NUID: " + response.uid);
+          console.log("UID:", response.uid);
           const link = document.createElement("a");
           link.download = "file";
           link.href = Endpoints.base + "/exportFile?UID=" + response.uid;
           link.click();
-        });
+      });
 
     }
 });
