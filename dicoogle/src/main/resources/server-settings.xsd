@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="Config">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Port" default="6666" type="xs:integer" />
+                <xs:element name="Dummy">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Recipient" type="xs:string" />
+                            <xs:element name="House" type="xs:string" />
+                            <xs:element name="Street" type="xs:string" />
+                            <xs:element name="Town" type="xs:string" />
+                            <xs:element name="County" type="xs:string" minOccurs="0" />
+                            <xs:element name="PostCode" type="xs:string" />
+                            <xs:element name="Country" minOccurs="0">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:enumeration value="IN" />
+                                        <xs:enumeration value="DE" />
+                                        <xs:enumeration value="ES" />
+                                        <xs:enumeration value="UK" />
+                                        <xs:enumeration value="US" />
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
