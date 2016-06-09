@@ -34,9 +34,8 @@ const Sidebar = React.createClass({
                 const to = (e.isPlugin ? '/ext/' : '/') + e.value;
                   if (!e.admin || isAdmin)
                     return (<li key={e.value}>
-
                       <Link activeClassName="active" to={to}>
-                       <i className={e.icon}/>  &nbsp;  {e.caption}
+                       <i className={e.icon}/> &nbsp; {e.caption}
                       </Link>
                     </li>);
               })

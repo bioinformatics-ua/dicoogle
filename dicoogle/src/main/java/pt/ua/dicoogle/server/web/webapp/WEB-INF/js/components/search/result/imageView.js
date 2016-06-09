@@ -163,7 +163,7 @@ const ImageView = React.createClass({
     ResultSelectActions.level("image");
     return (
         <div>
-            <BootstrapTable data={resultArray} selectRow={selectRowProp}  condensed
+            <BootstrapTable data={resultArray} selectRow={selectRowProp} condensed
                   pagination striped hover width="100%">
               <TableHeaderColumn dataAlign="left" dataField="filename"
                 isKey dataFormat={this.formatFileName} dataSort>
