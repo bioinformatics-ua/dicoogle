@@ -111,26 +111,26 @@ const Search = React.createClass({
                 </div>
             );
 
+       // if there are already results, we need to add a new component 
+       let resultComponent = false;
        if (this.state.requestedQuery !== null && !this.state.error) {
-         return  (<div>
-              {selectionButtons}
-              {simpleSearchInstance}
-              <SearchResult requestedQuery={this.state.requestedQuery}
+         resultComponent = (<SearchResult requestedQuery={this.state.requestedQuery}
                               searchOutcome={this.getSearchOutcome()}
-                              onReturn={this.onReturn} />
-              <div>{this.state.error}</div>
-            </div>);
-       } else if(this.state.searchState === "simple") {
+                              onReturn={this.onReturn} />);
+       }
+       if(this.state.searchState === "simple") {
             return (<div>
               {selectionButtons}
               {simpleSearchInstance}
-              <div>{this.state.error}</div>
+              {resultComponent}
+              <div className="result-error">{this.state.error}</div>
             </div>);
        } else if(this.state.searchState === "advanced") {
             return (<div>
               {selectionButtons}
               <AdvancedSearch/>
-              <div>{this.state.error}</div>
+              {resultComponent}
+              <div className="result-error">{this.state.error}</div>
             </div>);
        }
     },
