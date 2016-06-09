@@ -48,7 +48,7 @@ const TransferStore = Reflux.createStore({
         this.select(false);
     },
 
-    selec(value) {
+    select(value) {
         for (let index of this._contents)
         {
             for (let indexOptions of index.options)
