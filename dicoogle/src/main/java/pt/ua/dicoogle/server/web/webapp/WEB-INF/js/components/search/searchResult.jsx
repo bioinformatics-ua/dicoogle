@@ -81,10 +81,6 @@ const SearchResult = React.createClass({
     this.setState({currentPlugin: null});
   },
 
-  handleClickBack() {
-    this.props.onReturn();
-  },
-
   isLoading() {
     return !this.props.searchOutcome;
   },
@@ -105,16 +101,11 @@ const SearchResult = React.createClass({
       </div>);
 		}
 
-    const btnBack = (this.props.onReturn &&
-      <button className="btn btn_dicoogle" onClick={this.handleClickBack}>
-       <i className="fa fa-level-up"/> &nbsp; Back to Query
-      </button>);
 
     //Check if search failed
     if(this.getError()) {
       return (
         <div>
-          {btnBack}
           <p>{this.getError()}</p>
         </div>
         );
@@ -124,7 +115,6 @@ const SearchResult = React.createClass({
     {
       return (
         <div>
-          {btnBack}
           <p>No results for that query</p>
         </div>
         );
@@ -139,7 +129,6 @@ const SearchResult = React.createClass({
 
     let toggleModalClassNames = this.state.showDangerousOptions ? "fa fa-toggle-on" : "fa fa-toggle-off";
     return (<div>
-        {btnBack}
         <Step current={this.state.current} onClick={this.onStepClicked}/>
         <div id="step-container">
           {this.getCurrentView()}

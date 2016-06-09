@@ -7,6 +7,12 @@ import Webcore from 'dicoogle-webcore';
 import {DefaultOptions} from '../../constants/defaultOptions';
 import {SearchResult} from './searchResult';
 
+
+
+/**
+ * This class is not used anymore.
+ * Deprecated. 
+ */
 const SearchResultView = React.createClass({
 
   propTypes: {
