@@ -136,6 +136,8 @@ const PatientView = React.createClass({
     this.options = {
       sortName: 'id',
       sortOrder: 'desc',
+      sizePerPageList: [ 5, 10, 20, 50, 100, 200 ],
+      sizePerPage: 50,
       onPageChange: this.onPageChange
     };
 
@@ -151,7 +153,7 @@ const PatientView = React.createClass({
     ResultSelectActions.level("patient");
     return (
         <div>
-          <BootstrapTable options={this.options} data={resultArray} selectRow={selectRowProp} pagination striped hover width="100" >
+          <BootstrapTable options={this.options} data={resultArray} selectRow={selectRowProp} condensed pagination striped hover width="100" >
             <TableHeaderColumn dataAlign="right" dataField="id" isKey dataFormat={this.formatID} dataSort>ID</TableHeaderColumn>
             <TableHeaderColumn dataAlign="left" dataField="name" dataFormat={this.formatName} isKey={false} dataSort>Name</TableHeaderColumn>
             <TableHeaderColumn dataAlign="center" dataField="gender" dataFormat={this.formatGender} dataSort>Gender</TableHeaderColumn>

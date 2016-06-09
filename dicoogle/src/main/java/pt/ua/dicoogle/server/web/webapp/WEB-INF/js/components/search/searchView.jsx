@@ -106,7 +106,7 @@ const Search = React.createClass({
                     </div>
                     <div className="col-xs-4 col-sm-2">
                         <button type="button" className="btn btn_dicoogle" id="search-btn"
-                                onClick={this.onSearchClicked}>Search</button>
+                                onClick={this.onSearchClicked}> <i className="fa fa-search"/> &nbsp; Search</button>
                     </div>
                 </div>
             );

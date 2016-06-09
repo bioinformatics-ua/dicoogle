@@ -150,7 +150,7 @@ const SeriesView = React.createClass({
 
     return (
 			<div>
-        <BootstrapTable data={resultArray} selectRow={selectRowProp} pagination striped hover width="100%">
+        <BootstrapTable data={resultArray} selectRow={selectRowProp} condensed pagination striped hover width="100%">
           <TableHeaderColumn dataAlign="right" dataField="serieInstanceUID" isKey dataFormat={this.formatNumber} dataSort>Number</TableHeaderColumn>
           <TableHeaderColumn dataAlign="left" dataField="serieModality" dataFormat={this.formatModality} isKey={false} dataSort>Modality</TableHeaderColumn>
           <TableHeaderColumn dataAlign="center" dataField="serieDescription" dataFormat={this.formatDescription} dataSort>Description</TableHeaderColumn>

@@ -129,7 +129,7 @@ const StudyView = React.createClass({
     ResultSelectActions.level("study");
     return (
         <div>
-            <BootstrapTable data={resultArray} selectRow={selectRowProp} pagination striped hover width="100%">
+            <BootstrapTable data={resultArray} selectRow={selectRowProp} condensed pagination striped hover width="100%">
             <TableHeaderColumn dataAlign="right" dataField="studyInstanceUID" isKey dataFormat={this.formatStudyDate} dataSort>Date</TableHeaderColumn>
             <TableHeaderColumn dataAlign="left" dataField="studyDescription" dataFormat={this.formatStudyDescription} dataSort>Description</TableHeaderColumn>
             <TableHeaderColumn dataAlign="center" dataField="institutionName" dataFormat={this.formatInstitutionName}dataSort>Institution</TableHeaderColumn>

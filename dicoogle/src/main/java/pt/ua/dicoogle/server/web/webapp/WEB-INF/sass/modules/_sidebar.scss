@@ -3,6 +3,7 @@
 }
 .sidebar-nav {
     li {
+
         a {
             &:hover {
                 background: $blue5;
@@ -10,14 +11,15 @@
             color:$blue1;
             font-size:17px;
             font-weight:bold;
-            
+            text-indent: 5px;
+
         }
+        width: 100px;
     }
     margin-top:50px;
     .active{
         background: $blue5;
         color: #ffffff;
-     
+
     }
 }
-
