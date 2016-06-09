@@ -106,38 +106,40 @@
             margin-left: -5px;
             margin-top: 0px;
             margin-bottom: 0px; 
-        }        
-        
+        }
     }
-    
-
 }
 
 
 // Wizard 
 /*Theming options - change and everything updates*/
-$wizardSize: 24px;
+$wizardSize: 21px;
 
 $wizardColor: $blue1;
 $bodyColor: $main_bg;
 $hoverColor: lighten($wizardColor, 10%);
 $lightColor: lighten($wizardColor, 1%);
+$completedColor: lighten(gray, 10%);
+$currentColor: lighten($wizardColor, 0%);
 
-$disableLightColor: lighten(gray, 13%);
+$disableLightColor: lighten(gray, 20%);
 
 $paddingVert: .5em; /*don't use more decimals, as it makes browser round errors more likely, make heights unmatching
 -also watch using decimals at all at low wizardSize font sizes!*/
-$paddingSide: 3.4em;
+$paddingSide: 2em;
 $arrowLength: 1em;
 $itemMargin: 2px;
+$bottomMargin: 20px;
 
 $borderRadiusVal: .25em;
 
 .wizardbar {
   font-size: $wizardSize;
   line-height: 1;
-  display: inline-block;
+ // display: inline-block;
   margin: 20px 0;
+  width: 98%
+ 
   
 }
 /*base item styles*/
@@ -154,7 +156,8 @@ $borderRadiusVal: .25em;
     text-align: center;
     text-shadow: 1px 1px rgba(0,0,0,.2);
     position: relative;
-    margin-right: $itemMargin;
+    //margin-right: $itemMargin;
+    margin-bottom: $bottomMargin;
     cursor: pointer;
 }    
 /*arrow styles*/
@@ -166,7 +169,6 @@ $borderRadiusVal: .25em;
     border-width: (.5+$paddingVert) 0 (.5+$paddingVert) $arrowLength;
     border-style: solid;
     transition: all .15s;
-    
     position: absolute;
     left: 100%;
     top: 0;
@@ -178,34 +180,47 @@ $borderRadiusVal: .25em;
 }
 /*arrow pointing out from right side of items*/
 .wizardbar-item:after {
-    border-color: transparent transparent transparent $lightColor;  
+    border-color: transparent transparent transparent $wizardColor;  
     z-index: 1;
 }
 /*current item styles*/
 .current.wizardbar-item {
-    background-color: $wizardColor;
+    background-color: $currentColor;
     color: white;
     cursor: pointer;
 }
 .current.wizardbar-item:after {
-    border-color: transparent transparent transparent $wizardColor;  
+    border-color: transparent transparent transparent $currentColor;  
 }
-
 
 .disabled.wizardbar-item {
-background-color: $disableLightColor;
-color: white;
-cursor: default;
+    background-color: $disableLightColor;
+    color: white;
+    cursor: default;
+
 }
 .disabled.wizardbar-item:after {
-border-color: transparent transparent transparent $disableLightColor;
+    border-color: transparent transparent transparent $disableLightColor;
 }
+
+
+
+.completed.wizardbar-item {
+    background-color: $completedColor;
+    color: white;
+    cursor: default;
+
+}
+.completed.wizardbar-item:after {
+    border-color: transparent transparent transparent $completedColor;
+}
+
 
 
 
 /*hover styles*/
 .wizardbar-item:not(.current):hover {
-background-color: $hoverColor;
+    background-color: $hoverColor;
 }
 .wizardbar-item:not(.current):hover:after{
     border-color: transparent transparent transparent $hoverColor;
@@ -214,16 +229,25 @@ background-color: $hoverColor;
 .wizardbar-item:first-of-type:before,
 .wizardbar-item:last-of-type:after
 {
-border-color: transparent!important;
+    border-color: transparent!important;
 }
 /*no inset arrow for first item*/
 .wizardbar-item:first-of-type {
-border-radius: $borderRadiusVal 0 0 $borderRadiusVal;
-
-padding-left: $paddingSide + ($arrowLength/2)
+    border-radius: $borderRadiusVal 0 0 $borderRadiusVal;
+    padding-left: $paddingSide + ($arrowLength/2)
 }
 /*no protruding arrow for last item*/
 .wizardbar-item:last-of-type {
-border-radius: 0 $borderRadiusVal $borderRadiusVal 0;
-padding-right: $paddingSide + ($arrowLength/2);
+    border-radius: 0 $borderRadiusVal $borderRadiusVal 0;
+    padding-right: $paddingSide + ($arrowLength/2);
+}
+
+.label-border {
+    margin-bottom: 2px;
+      background-color: $hoverColor;
+
+}
+
+.label-as-badge {
+    border-radius: 1em;
 }

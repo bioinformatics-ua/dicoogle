@@ -129,7 +129,7 @@ const SearchResult = React.createClass({
 
     let toggleModalClassNames = this.state.showDangerousOptions ? "fa fa-toggle-on" : "fa fa-toggle-off";
     return (<div>
-        <Step current={this.state.current} onClick={this.onStepClicked}/>
+        <Step current={this.state.current} searchOutcome={this.props.searchOutcome} onClick={this.onStepClicked}/>
         <div id="step-container">
           {this.getCurrentView()}
         </div>
@@ -195,29 +195,36 @@ const Step = React.createClass({
     this.setState({current: nextProps.current});
   },
   render: function() {  
+    let numResults = 0;
+    if (this.props.searchOutcome.data!=null )
+      numResults = this.props.searchOutcome.data.numResults;
+
 
     return (
-        <div className="wizardbar ">
-          <div  className={this.getStep(this.state.current, 0)}>
-            <div onClick={this.onStepClicked.bind(this, 0)}>Patient</div>
+      <div className="row">
+        <div className="wizardbar">
+          <div className={this.getStep(this.state.current, 0)}>
+            <div onClick={this.onStepClicked.bind(this, 0)}>
+             <span className="label label-primary label-as-badge label-border">{numResults}</span> Patient</div>
           </div>
-          <div  className={this.getStep(this.state.current, 1)}>
+          <div className={this.getStep(this.state.current, 1)}>
             <div onClick={this.onStepClicked.bind(this, 1)}>Study</div>
           </div>
-          <div  className={this.getStep(this.state.current, 2)}>
-            <div  onClick={this.onStepClicked.bind(this, 2)}>Series</div>
+          <div className={this.getStep(this.state.current, 2)}>
+            <div onClick={this.onStepClicked.bind(this, 2)}>Series</div>
           </div>
           <div className={this.getStep(this.state.current, 3)}>
-            <div   onClick={this.onStepClicked.bind(this, 3)}>Image</div>
+            <div onClick={this.onStepClicked.bind(this, 3)}>Image</div>
           </div>
 
         </div>  
+      </div>  
       );
   },
   getStep: function(current, step) {
-    var state1 = "wizardbar-item current";
-    var state2 = "wizardbar-item completed";
-    var state3 = "wizardbar-item disabled";
+    var state1 = "col-xs-3 wizardbar-item current";
+    var state2 = "col-xs-3 wizardbar-item completed";
+    var state3 = "col-xs-3 wizardbar-item disabled";
 
     if(step === current)
       return state1;
