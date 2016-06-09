@@ -194,30 +194,30 @@ const Step = React.createClass({
   componentWillReceiveProps: function(nextProps){
     this.setState({current: nextProps.current});
   },
-  render: function() {
+  render: function() {  
 
     return (
-        <div className="row">
-          <div className="col-xs-3 stepa">
-            <div className={this.getStep(this.state.current, 0)} onClick={this.onStepClicked.bind(this, 0)}>Patient</div>
+        <div className="wizardbar ">
+          <div  className={this.getStep(this.state.current, 0)}>
+            <div onClick={this.onStepClicked.bind(this, 0)}>Patient</div>
           </div>
-          <div className="col-xs-3 stepa">
-            <div className={this.getStep(this.state.current, 1)} onClick={this.onStepClicked.bind(this, 1)}>Study</div>
+          <div  className={this.getStep(this.state.current, 1)}>
+            <div onClick={this.onStepClicked.bind(this, 1)}>Study</div>
           </div>
-          <div className="col-xs-3 stepa">
-            <div className={this.getStep(this.state.current, 2)} onClick={this.onStepClicked.bind(this, 2)}>Series</div>
+          <div  className={this.getStep(this.state.current, 2)}>
+            <div  onClick={this.onStepClicked.bind(this, 2)}>Series</div>
           </div>
-          <div className="col-xs-3 stepa">
-            <div className={this.getStep(this.state.current, 3)} onClick={this.onStepClicked.bind(this, 3)}>Image</div>
+          <div className={this.getStep(this.state.current, 3)}>
+            <div   onClick={this.onStepClicked.bind(this, 3)}>Image</div>
           </div>
 
-        </div>
+        </div>  
       );
   },
   getStep: function(current, step) {
-    var state1 = "step current";
-    var state2 = "step done";
-    var state3 = "step disabled";
+    var state1 = "wizardbar-item current";
+    var state2 = "wizardbar-item completed";
+    var state3 = "wizardbar-item disabled";
 
     if(step === current)
       return state1;
