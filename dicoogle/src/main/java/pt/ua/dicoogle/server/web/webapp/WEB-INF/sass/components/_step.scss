@@ -115,14 +115,15 @@
 /*Theming options - change and everything updates*/
 $wizardSize: 21px;
 
-$wizardColor: $blue1;
-$bodyColor: $main_bg;
-$hoverColor: lighten($wizardColor, 10%);
-$lightColor: lighten($wizardColor, 1%);
-$completedColor: lighten(gray, 10%);
-$currentColor: lighten($wizardColor, 0%);
+$bodyColor: white;
+$wizardBGColor: #eeeeee;
+$wizardBGHoverColor: #eeeeee;
+$currentBGColor: #eef7fb;
+$currentFontColor: #3a87ad;
+$disableBGColor: #eeeeee;
+$disableFontColor: #999999;
+$completedFontColor: #468847;
 
-$disableLightColor: lighten(gray, 20%);
 
 $paddingVert: .5em; /*don't use more decimals, as it makes browser round errors more likely, make heights unmatching
 -also watch using decimals at all at low wizardSize font sizes!*/
@@ -138,7 +139,8 @@ $borderRadiusVal: .25em;
   line-height: 1;
  // display: inline-block;
   margin: 20px 0;
-  width: 98%
+  width: 98%;
+  border-color: darkgray;
  
   
 }
@@ -151,14 +153,15 @@ $borderRadiusVal: .25em;
     transition: all .15s;
 
 /*default styles*/
-    background-color: $lightColor;
-    color: rgba(255,255,255, .8);
+    background-color: $wizardBGColor;
+    color: $currentFontColor;
     text-align: center;
-    text-shadow: 1px 1px rgba(0,0,0,.2);
+
     position: relative;
     //margin-right: $itemMargin;
     margin-bottom: $bottomMargin;
     cursor: pointer;
+    border-color: black;
 }    
 /*arrow styles*/
 .wizardbar-item:before,
@@ -175,44 +178,45 @@ $borderRadiusVal: .25em;
 }
 /*arrow overlapping left side of item*/
 .wizardbar-item:before {
-    border-color: transparent transparent transparent $bodyColor;
+    border-color: transparent transparent transparent black;
     left: 0;  
 }
 /*arrow pointing out from right side of items*/
 .wizardbar-item:after {
-    border-color: transparent transparent transparent $wizardColor;  
+    border-color: transparent transparent transparent white;  
     z-index: 1;
 }
 /*current item styles*/
 .current.wizardbar-item {
-    background-color: $currentColor;
-    color: white;
+    
+    background-color: $currentBGColor;
+    color: $currentFontColor;
     cursor: pointer;
 }
 .current.wizardbar-item:after {
-    border-color: transparent transparent transparent $currentColor;  
+    border-color: transparent transparent transparent $currentBGColor;  
 }
 
 .disabled.wizardbar-item {
-    background-color: $disableLightColor;
-    color: white;
-    cursor: default;
+    background-color: $wizardBGColor;
+    color: $disableFontColor;
+    cursor: not-allowed;
 
 }
 .disabled.wizardbar-item:after {
-    border-color: transparent transparent transparent $disableLightColor;
+    border-color: transparent transparent transparent $disableBGColor;
 }
 
 
 
 .completed.wizardbar-item {
-    background-color: $completedColor;
-    color: white;
-    cursor: default;
+    background-color: $wizardBGColor;
+    color: $completedFontColor;
+    cursor: pointer;
 
 }
 .completed.wizardbar-item:after {
-    border-color: transparent transparent transparent $completedColor;
+    border-color: transparent transparent transparent $wizardBGColor;
 }
 
 
@@ -220,10 +224,10 @@ $borderRadiusVal: .25em;
 
 /*hover styles*/
 .wizardbar-item:not(.current):hover {
-    background-color: $hoverColor;
+    background-color: $wizardBGHoverColor;
 }
 .wizardbar-item:not(.current):hover:after{
-    border-color: transparent transparent transparent $hoverColor;
+    border-color: transparent transparent transparent $wizardBGHoverColor;
 }
 /*remove arrows from beginning and end*/
 .wizardbar-item:first-of-type:before,
@@ -244,10 +248,11 @@ $borderRadiusVal: .25em;
 
 .label-border {
     margin-bottom: 2px;
-      background-color: $hoverColor;
+
 
 }
 
 .label-as-badge {
     border-radius: 1em;
+
 }
