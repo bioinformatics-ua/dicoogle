@@ -28,6 +28,10 @@
       "node": {
         "extensions": [".js", ".jsx"]
       }
+    },
+    "react": {
+      "pragma": "React",
+      "version": "0.14"
     }
   },
   "rules": {
@@ -50,7 +54,6 @@
     "no-extra-semi": 1,
     "eol-last": 1,
     "no-empty": 1,
-    "consistent-this": [2, "self"],
     "no-dupe-args": 2,
     "no-dupe-keys": 2,
     "no-undef": 2,
