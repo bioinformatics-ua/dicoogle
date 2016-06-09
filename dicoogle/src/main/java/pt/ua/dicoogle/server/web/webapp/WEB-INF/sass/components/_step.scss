@@ -119,11 +119,11 @@
 $wizardSize: 24px;
 
 $wizardColor: $blue1;
-$bodyColor: $blue6;
+$bodyColor: $main_bg;
 $hoverColor: lighten($wizardColor, 10%);
 $lightColor: lighten($wizardColor, 1%);
 
-$disableLightColor: lighten($wizardColor, 13%);
+$disableLightColor: lighten(gray, 13%);
 
 $paddingVert: .5em; /*don't use more decimals, as it makes browser round errors more likely, make heights unmatching
 -also watch using decimals at all at low wizardSize font sizes!*/
@@ -155,6 +155,7 @@ $borderRadiusVal: .25em;
     text-shadow: 1px 1px rgba(0,0,0,.2);
     position: relative;
     margin-right: $itemMargin;
+    cursor: pointer;
 }    
 /*arrow styles*/
 .wizardbar-item:before,
@@ -192,12 +193,12 @@ $borderRadiusVal: .25em;
 
 
 .disabled.wizardbar-item {
-background-color: gray;
+background-color: $disableLightColor;
 color: white;
-cursor: pointer;
+cursor: default;
 }
 .disabled.wizardbar-item:after {
-border-color: transparent transparent transparent gray;  
+border-color: transparent transparent transparent $disableLightColor;
 }
 
 
