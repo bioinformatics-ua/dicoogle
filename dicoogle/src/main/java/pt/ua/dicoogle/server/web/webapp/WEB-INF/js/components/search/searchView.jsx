@@ -112,9 +112,14 @@ const Search = React.createClass({
             );
 
        if (this.state.requestedQuery !== null && !this.state.error) {
-         return <SearchResult requestedQuery={this.state.requestedQuery}
+         return  (<div>
+              {selectionButtons}
+              {simpleSearchInstance}
+              <SearchResult requestedQuery={this.state.requestedQuery}
                               searchOutcome={this.getSearchOutcome()}
-                              onReturn={this.onReturn} />;
+                              onReturn={this.onReturn} />
+              <div>{this.state.error}</div>
+            </div>);
        } else if(this.state.searchState === "simple") {
             return (<div>
               {selectionButtons}
