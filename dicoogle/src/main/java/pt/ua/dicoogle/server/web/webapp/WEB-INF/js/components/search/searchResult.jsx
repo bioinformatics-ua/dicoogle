@@ -197,14 +197,17 @@ const Step = React.createClass({
   render: function() {  
     let numResults = 0;
     if (this.props.searchOutcome.data!=null )
+    {
+      
       numResults = this.props.searchOutcome.data.numResults;
+    }
 
     return (
       <div className="row">
         <div className="wizardbar">
           <div className={this.getStep(this.state.current, 0)}>
             <div onClick={this.onStepClicked.bind(this, 0)}>
-             <span className="label label-info label-as-badge label-border">{numResults}</span> Patient</div>
+             <span className="label label-pill label-primary label-as-badge label-border">{numResults}</span> Patient</div>
           </div>
           <div className={this.getStep(this.state.current, 1)}>
             <div onClick={this.onStepClicked.bind(this, 1)}>Study</div>
