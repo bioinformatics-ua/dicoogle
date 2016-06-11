@@ -30,7 +30,7 @@ const SearchStore = Reflux.createStore({
           self._contents = data;
 
           //DEBUG WAIT
-          setTimeout(self.triggerWithDelay, 700)
+          setTimeout(self.triggerWithDelay, 50)
         },
         function(xhr){
           //FAILURE
