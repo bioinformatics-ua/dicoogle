@@ -1,4 +1,5 @@
 import React, {PropTypes} from 'react';
+import {toHumanReadable} from '../../utils/time';
 
 class TaskStatus extends React.Component {
   constructor(props) {
@@ -62,7 +63,7 @@ class TaskStatus extends React.Component {
       <p><b>Name: </b> {item.taskName}</p>
       <div style={{visibility: item.complete ? '' : 'hidden'}}>
           {(typeof item.elapsedTime === 'number') && (
-            <p><b>Elapsed Time: </b> {item.elapsedTime} ms</p>)}
+            <p><b>Elapsed Time: </b> {toHumanReadable(item.elapsedTime)}</p>)}
           {(typeof item.nIndexed === 'number') && (
             <p><b>Indexed: </b> {item.nIndexed} </p>)}
           {(typeof item.nErrors === 'number') && (
