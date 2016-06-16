@@ -114,8 +114,9 @@ public class UsersXML extends DefaultHandler
                 String [] rolesTmp = roles.split(",");
                 for (int i = 0; i<rolesTmp.length; i++)
                 {
-                    Role role = RolesStruct.getInstance().getRole(rolesTmp[i]);
-                    u.addRole(role);
+                    if (RolesStruct.getInstance().isAvailable(rolesTmp[i])) {
+                        u.addRole(rolesTmp[i]);
+                    }
                 }
 
             }
@@ -127,6 +128,32 @@ public class UsersXML extends DefaultHandler
          String tmp = attribs.getValue(attr);
          return (tmp!=null)?(tmp):(defaultValue);
      }
+
+    public UsersStruct loadConfiguration(String filename) throws IOException {
+        UsersStruct users = new UsersStruct();
+        users.reset();
+
+        try
+        {
+            UserFileHandle file = new UserFileHandle(filename);
+            byte[] xml = file.getFileContent();
+
+            if (xml == null)
+            {
+                users.setDefaults();
+                return users;
+            }
+
+            InputSource src = new InputSource(new ByteArrayInputStream(xml));
+            XMLReader r = XMLReaderFactory.createXMLReader();
+            r.setContentHandler(this);
+            r.parse(src);
+            return users;
+        }
+        catch (SAXException ex) {
+            throw new IOException(ex);
+        }
+    }
 
 
     public UsersStruct getXML()
@@ -219,12 +246,11 @@ public class UsersXML extends DefaultHandler
                 if (user.getRoles()!=null&&user.getRoles().size()>0)
                 {
                     String roles = "";
-                    for (Role r : user.getRoles())
+                    for (Iterator<String> it = user.getRoles().iterator(); it.hasNext(); )
                     {
-                        roles+=r.getName()+",";
+                        String r = it.next();
+                        roles+= it.hasNext() ? r + "," : r;
                     }
-                    StringUtils.removeEnd(roles, ",");
-
 
                     atts.addAttribute("", "", "roles", "", roles ) ;
                 }

@@ -20,7 +20,9 @@ package pt.ua.dicoogle.server.users;
 
 /**
  * Created by bastiao on 23/01/16.
+ * @deprecated this object is merely a mutable wrapper around a name with no additional behaviour
  */
+@Deprecated
 public class Role {
 
 

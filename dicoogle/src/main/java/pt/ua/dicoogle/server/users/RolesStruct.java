@@ -25,10 +25,9 @@ import java.util.*;
  */
 public class RolesStruct implements RoleManager{
 
-    private static RolesStruct instance = null ;
+    private static RolesStruct instance = null;
 
-    private Set<Role> roles = new HashSet<>();
-    private Map<String, Role> rolesMap = new HashMap<String, Role>();
+    private Set<String> roles = new HashSet<>();
 
     public static synchronized RolesStruct getInstance() {
         if (instance == null) {
@@ -46,27 +45,24 @@ public class RolesStruct implements RoleManager{
     }
 
     @Override
-    public boolean hasRole(User user, Role r) {
-        if (user==null||r==null)
+    public boolean hasRole(User user, String rolename) {
+        if (user==null || rolename==null)
             return false;
-        return UsersStruct.getInstance().getUser(user.getUsername()).hasRole(r);
+        return UsersStruct.getInstance().getUser(user.getUsername()).hasRole(rolename);
     }
 
     @Override
-    public Set<Role> getRoles() {
+    public Set<String> getRoles() {
         return this.roles;
     }
 
     @Override
-    public void addRole(Role r) {
-        this.roles.add(r);
-        this.rolesMap.put(r.getName(), r);
-
+    public void addRole(String rolename) {
+        this.roles.add(rolename);
     }
 
     @Override
-    public Role getRole(String name) {
-
-        return this.rolesMap.get(name);
+    public boolean isAvailable(String name) {
+        return this.roles.contains(name);
     }
 }

@@ -19,9 +19,9 @@
 
 package pt.ua.dicoogle.server.users;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import pt.ua.dicoogle.sdk.settings.DicoogleUser;
+
+import java.util.*;
 
 /**
  * Class that saves information about one user
@@ -29,13 +29,13 @@ import java.util.Objects;
  * @author Samuel Campos <samuelcampos@ua.pt>
  * @author Luís Bastião Silva <bastiao@bmd-software.com>
  */
-public class User implements UserRoleManager{
+public class User implements UserRoleManager, DicoogleUser {
 
     private final String username;
     private String hash;        //stores the Hash of this user (username + admin + passwordHash)
     private final boolean admin;
 
-    private List<Role> roles = new ArrayList<>();
+    private Set<String> roles = new HashSet<>();
 
     public User(String username, String Hash, boolean admin){
         this.username = username;
@@ -57,14 +57,14 @@ public class User implements UserRoleManager{
         return this.hash.equals(tempHash);
     }
 
-    public void addRole(Role r)
+    public void addRole(String rolename)
     {
-        this.roles.add(r);
+        this.roles.add(rolename);
     }
 
-    public boolean hasRole(Role r)
+    public boolean hasRole(String rolename)
     {
-        return this.roles.contains(r);
+        return this.roles.contains(rolename);
     }
 
     public boolean changePassword(String oldPassHash, String newPassHash){
@@ -129,7 +129,13 @@ public class User implements UserRoleManager{
         return "User{" + username + (admin ? ", admin" : "") + '}';
     }
 
-    public List<Role> getRoles() {
-        return roles;
+    @Override
+    public Collection<String> getRoles() {
+        return new HashSet<>(this.roles);
+    }
+
+    @Override
+    public Map<String, Object> getUserContent() {
+        return Collections.EMPTY_MAP;
     }
 }

@@ -58,7 +58,11 @@ public class UserFileHandle {
     private boolean encrypt;
 
     public UserFileHandle() throws IOException {
-        filename = Platform.homePath() + "users.xml";
+        this(Platform.homePath() + "users.xml");
+    }
+
+    public UserFileHandle(String filename) throws IOException {
+        this.filename = filename;
         encrypt = ServerSettings.getInstance().isEncryptUsersFile();
         try {
 

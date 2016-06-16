@@ -27,9 +27,8 @@ import java.util.Set;
  */
 public interface RoleManager {
 
-    public boolean hasRole(User user, Role r);
-    public Collection<Role> getRoles();
-    public void addRole(Role r);
-    public Role getRole(String name);
-
+    public boolean hasRole(User user, String rolename);
+    public Collection<String> getRoles();
+    public void addRole(String r);
+    public boolean isAvailable(String name);
 }

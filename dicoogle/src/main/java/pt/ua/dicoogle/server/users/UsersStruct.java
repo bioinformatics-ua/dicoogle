@@ -18,9 +18,12 @@
  */
 package pt.ua.dicoogle.server.users;
 
+import pt.ua.dicoogle.sdk.settings.UserSettings;
+
 import java.util.Collection;
 import java.util.HashMap;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -44,13 +47,10 @@ public class UsersStruct {
         return instance;
     }
 
-
-
-    private UsersStruct(){
+    public UsersStruct() {
        reset();
     }
 
-    
     /**
      * Insert one default user
      * Username: "dicoogle"
@@ -59,8 +59,6 @@ public class UsersStruct {
      * This user is administrator
      */
     public void setDefaults(){
-        //DebugManager.getInstance().debug("Setting default user settings");
-
         String username = "dicoogle";
         boolean admin = true;
         String passPlainText = "dicoogle";
@@ -68,7 +66,7 @@ public class UsersStruct {
         String passHash = HashService.getSHA1Hash(passPlainText);             //password Hash
         String Hash = HashService.getSHA1Hash(username + admin + passHash);   //user Hash
 
-        users = new HashMap<String, User>();
+        users = new HashMap<>();
         users.put("dicoogle", new User(username, Hash, admin));
     }
 

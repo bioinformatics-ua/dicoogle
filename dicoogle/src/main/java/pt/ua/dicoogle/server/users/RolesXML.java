@@ -27,7 +27,6 @@ import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import javax.crypto.Cipher;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -87,7 +86,7 @@ public class RolesXML extends DefaultHandler
         }
         else if( localName.equals( "role" ) )
         {
-            roles.addRole(new Role(rolename));
+            roles.addRole(rolename);
         }
         
     }
@@ -181,14 +180,14 @@ public class RolesXML extends DefaultHandler
             //root element
             hd.startElement("", "", "Roles", atts);
 
-            Iterator<Role> us = RolesStruct.getInstance().getRoles().iterator();
+            Iterator<String> us = RolesStruct.getInstance().getRoles().iterator();
 
             atts.clear();
             while (us.hasNext())
             {
-                Role role = us.next();
+                String role = us.next();
                 
-                atts.addAttribute("", "", "name", "", role.getName());
+                atts.addAttribute("", "", "name", "", role);
 
                 hd.startElement("", "", "role", atts);
                 atts.clear();

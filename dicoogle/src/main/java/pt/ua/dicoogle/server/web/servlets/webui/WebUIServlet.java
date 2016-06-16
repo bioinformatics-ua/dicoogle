@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.plugins.PluginController;
@@ -84,9 +83,7 @@ public class WebUIServlet extends HttpServlet {
             boolean hasUserAllowPlugin= false;
             for (String r:plugin.getRoles())
             {
-                Role rr = RolesStruct.getInstance().getRole(r);
-
-                hasUserAllowPlugin = RolesStruct.getInstance().hasRole(user, rr);
+                hasUserAllowPlugin = RolesStruct.getInstance().hasRole(user, r);
                 if (hasUserAllowPlugin)
                     break;
             }

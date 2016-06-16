@@ -53,7 +53,7 @@ public class TestRoles {
         for (User u : users.getUsers())
         {
             System.out.println(u.getUsername());
-            for (Role  r : u.getRoles())
+            for (String r : u.getRoles())
             {
                 System.out.println(r);
             }
