@@ -42,7 +42,7 @@ public class Authentication
 		RolesXML rolesXML = new RolesXML();
 		RolesStruct rolesStruct = rolesXML.getXML();
 		// init the user list, if it wasn't done yet
-		UsersXML usersXML = new UsersXML();
+		UsersXML usersXML = UsersXML.createGlobal();
 		usersXML.getXML();
 
 		// gets the instance of the user list

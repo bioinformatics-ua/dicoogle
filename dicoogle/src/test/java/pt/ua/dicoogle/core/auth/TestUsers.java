@@ -19,43 +19,64 @@
 package pt.ua.dicoogle.core.auth;
 
 import org.junit.*;
-import pt.ua.dicoogle.server.users.HashService;
-import pt.ua.dicoogle.server.users.User;
-import pt.ua.dicoogle.server.users.UsersStruct;
-import pt.ua.dicoogle.server.users.UsersXML;
+import pt.ua.dicoogle.server.users.*;
 import pt.ua.dicoogle.server.web.auth.Authentication;
 import pt.ua.dicoogle.server.web.auth.LoggedIn;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+
 import static org.junit.Assert.assertEquals;
-import static pt.ua.dicoogle.server.web.servlets.webui.WebUIServlet.camelize;
 
 /**
  * Created by bastiao on 23/01/16.
  */
 public class TestUsers {
 
-    //@Test
-    public void testUsers() {
+    private String filename;
 
-        UsersStruct users = UsersStruct.getInstance();
+    @Before
+    public void init() throws IOException, URISyntaxException {
+        // copy test users.xml in resources into a temporary file
+        URI res = TestUsers.class.getResource("users.xml").toURI();
+        Path tmpUsers = Files.createTempFile("dicoogle-test-users", ".xml");
+        this.filename = tmpUsers.toString();
+        Files.copy(Paths.get(res), tmpUsers, StandardCopyOption.REPLACE_EXISTING);
+
+        // initialize global role registry with 2 possible roles
+        RolesStruct.getInstance().addRole("Pens");
+        RolesStruct.getInstance().addRole("Healthcare");
+    }
+
+    @Test
+    public void testUsers() throws IOException {
+
         UsersXML usersXML = new UsersXML();
-        users = usersXML.getXML();
+        UsersStruct users = usersXML.loadConfiguration(this.filename);
 
-        String username = "nat";
-        boolean admin = false;
-        String passPlainText = "123";
-        String passHash = HashService.getSHA1Hash(passPlainText);             //password Hash
-        String hash = HashService.getSHA1Hash(username + admin + passHash);
-        System.out.println(hash);
-        System.out.println(passHash);
-        User u = new User("nat",hash, admin);
-        users.addUser(u);
+        Assert.assertEquals(2, users.getUsers().size());
 
+        User user = users.getUser("nat");
+        Assert.assertNotNull(user);
+        Assert.assertEquals("nat", user.getUsername());
+        Assert.assertFalse(user.isAdmin());
+        Assert.assertTrue(user.verifyPassword(HashService.getSHA1Hash("123")));
+        Assert.assertEquals(new HashSet<>(Arrays.asList("Pens", "Healthcare")), user.getRoles());
 
-        for (String uu : users.getUsernames())
-        {
-            System.out.println(users.getUser(uu));
-        }
+        User user2 = users.getUser("dicoogle");
+        Assert.assertNotNull(user2);
+        Assert.assertEquals("dicoogle", user2.getUsername());
+        Assert.assertTrue(user2.isAdmin());
+        Assert.assertTrue(user2.verifyPassword(HashService.getSHA1Hash("dicoogle")));
+        Assert.assertEquals(Collections.singleton("Healthcare"), user2.getRoles());
+    }
+
+    public void misc() {
 
         Authentication auth = Authentication.getInstance();
         try {

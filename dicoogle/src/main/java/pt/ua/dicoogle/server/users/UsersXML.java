@@ -50,23 +50,31 @@ import org.xml.sax.helpers.XMLReaderFactory;
  */
 public class UsersXML extends DefaultHandler
 {
-    private UsersStruct users = UsersStruct.getInstance();
-    private boolean isUsers = false ;
+    private UsersStruct users;
 
+    private boolean isUsers;
     private String username;
     private String Hash;
     private boolean admin;
     private String roles;
 
-
-    public UsersXML()
+    private UsersXML(UsersStruct users)
     {
+        this.users = users;
+        isUsers = false ;
         username = "";
         Hash = "";
         roles = "";
         admin = false;
     }
 
+    public UsersXML() {
+        this(new UsersStruct());
+    }
+
+    public static UsersXML createGlobal() {
+        return new UsersXML(UsersStruct.getInstance());
+    }
 
     @Override
     public void startElement( String uri, String localName, String qName,
@@ -129,8 +137,13 @@ public class UsersXML extends DefaultHandler
          return (tmp!=null)?(tmp):(defaultValue);
      }
 
+    /** Load the user settings from the given file without writing a default.
+     *
+     * @param filename
+     * @return
+     * @throws IOException
+     */
     public UsersStruct loadConfiguration(String filename) throws IOException {
-        UsersStruct users = new UsersStruct();
         users.reset();
 
         try
@@ -156,6 +169,12 @@ public class UsersXML extends DefaultHandler
     }
 
 
+    /** Load the user settings from the default user settings file, writing a default
+     * if it is not available.
+     *
+     * @return
+     * @throws IOException
+     */
     public UsersStruct getXML()
     {
         users.reset();

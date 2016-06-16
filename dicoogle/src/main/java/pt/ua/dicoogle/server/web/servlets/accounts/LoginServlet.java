@@ -59,10 +59,9 @@ public class LoginServlet extends HttpServlet {
         json_resp.put("admin", mLoggedIn.isAdmin());
         User u = UsersStruct.getInstance().getUser(mLoggedIn.getUserName());
         JSONArray rolesObj = new JSONArray();
-        if (u!=null&&u.getRoles()!=null) {
-            for (Role r : u.getRoles()) {
-                if (r!=null)
-                    rolesObj.add(r.getName());
+        if (u != null) {
+            for (String r : u.getRoles()) {
+                rolesObj.add(r);
             }
 
             json_resp.put("roles", rolesObj);
@@ -93,9 +92,8 @@ public class LoginServlet extends HttpServlet {
         json_resp.put("admin", mLoggedIn.isAdmin());
         User u = UsersStruct.getInstance().getUser(mLoggedIn.getUserName());
         JSONArray rolesObj = new JSONArray();
-        for (Role r : u.getRoles())
-        {
-            rolesObj.add(r.getName());
+        for (String r : u.getRoles()) {
+            rolesObj.add(r);
         }
 
         json_resp.put("roles", rolesObj);

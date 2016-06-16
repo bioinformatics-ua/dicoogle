@@ -35,7 +35,7 @@ public class User implements UserRoleManager, DicoogleUser {
     private String hash;        //stores the Hash of this user (username + admin + passwordHash)
     private final boolean admin;
 
-    private Set<String> roles = new HashSet<>();
+    private final Set<String> roles = new HashSet<>();
 
     public User(String username, String Hash, boolean admin){
         this.username = username;
@@ -43,10 +43,12 @@ public class User implements UserRoleManager, DicoogleUser {
         this.hash = Hash;
     }
 
+    @Override
     public String getUsername(){
         return username;
     }
 
+    @Override
     public boolean isAdmin(){
         return admin;
     }
@@ -62,6 +64,7 @@ public class User implements UserRoleManager, DicoogleUser {
         this.roles.add(rolename);
     }
 
+    @Override
     public boolean hasRole(String rolename)
     {
         return this.roles.contains(rolename);
@@ -126,7 +129,9 @@ public class User implements UserRoleManager, DicoogleUser {
 
     @Override
     public String toString() {
-        return "User{" + username + (admin ? ", admin" : "") + '}';
+        return "User{" + username + (admin ? ", admin" : "")
+                + ", roles=" + roles
+                + '}';
     }
 
     @Override
@@ -136,6 +141,7 @@ public class User implements UserRoleManager, DicoogleUser {
 
     @Override
     public Map<String, Object> getUserContent() {
+        // TODO
         return Collections.EMPTY_MAP;
     }
 }

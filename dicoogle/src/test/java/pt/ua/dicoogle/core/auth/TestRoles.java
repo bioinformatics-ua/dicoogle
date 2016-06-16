@@ -18,10 +18,7 @@
  */
 package pt.ua.dicoogle.core.auth;
 
-import org.junit.Test;
 import pt.ua.dicoogle.server.users.*;
-import pt.ua.dicoogle.server.web.auth.Authentication;
-import pt.ua.dicoogle.server.web.auth.LoggedIn;
 
 /**
  * Created by bastiao on 23/01/16.
@@ -33,7 +30,7 @@ public class TestRoles {
     public void testRoles() {
 
         UsersStruct users = UsersStruct.getInstance();
-        UsersXML usersXML = new UsersXML();
+        UsersXML usersXML = UsersXML.createGlobal();
         users = usersXML.getXML();
         RolesXML rolesXML = new RolesXML();
         RolesStruct rolesStruct = rolesXML.getXML();
@@ -47,7 +44,7 @@ public class TestRoles {
         RolesStruct rolesStruct = rolesXML.getXML();
 
         UsersStruct users = UsersStruct.getInstance();
-        UsersXML usersXML = new UsersXML();
+        UsersXML usersXML = UsersXML.createGlobal();
         users = usersXML.getXML();
         System.out.println(rolesStruct.getRoles());
         for (User u : users.getUsers())

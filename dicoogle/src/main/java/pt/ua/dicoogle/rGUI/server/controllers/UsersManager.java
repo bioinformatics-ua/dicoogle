@@ -62,7 +62,7 @@ public class UsersManager implements IUsersManager {
     public void loadSettings(){
         unsavedSettings = false;
 
-        UsersXML xml = new UsersXML();
+        UsersXML xml = UsersXML.createGlobal();
         xml.getXML();
 
         encryptUsersFile = ServerSettings.getInstance().isEncryptUsersFile();
@@ -85,7 +85,7 @@ public class UsersManager implements IUsersManager {
     public void saveSettings(){
         ServerSettings.getInstance().setEncryptUsersFile(encryptUsersFile);
         
-        UsersXML xml = new UsersXML();
+        UsersXML xml = UsersXML.createGlobal();
         xml.printXML();
 
         unsavedSettings = false;

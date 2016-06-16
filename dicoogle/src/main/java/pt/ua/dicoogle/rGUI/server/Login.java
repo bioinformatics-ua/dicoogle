@@ -57,7 +57,7 @@ public class Login implements ILogin {
     }
 
     private Login() {
-        new UsersXML().getXML(); // read XML with users and set the UsersStruct object (singleton)
+        UsersXML.createGlobal().getXML(); // read XML with users and set the UsersStruct object (singleton)
 
         sessions = UserSessions.getInstance();
         users = UsersStruct.getInstance();

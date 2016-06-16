@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Users>
+  <user username="nat" hash="cAWCzWIkx2se2Qko2FrPN4FRd9c=" admin="false" roles="Pens,Healthcare">
+  </user>
+  <user username="dicoogle" hash="OMMaoO59K/SXpph3lNL/HsUyziw=" admin="true" roles="Healthcare">
+    <export-presets name="one">
+      SOPInstanceUID,PatientName,Modality,SeriesDate
+    </export-presets>
+    <export-presets name="two">
+      PatientID,PatientName,StudyInstanceUID,SeriesInstanceUID,
+      SOPInstanceUID,PatientName,StudyDate,SeriesDate
+    </export-presets>
+  </user>
+</Users>
