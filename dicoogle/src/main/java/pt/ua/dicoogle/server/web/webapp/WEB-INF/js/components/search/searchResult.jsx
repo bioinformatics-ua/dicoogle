@@ -205,18 +205,18 @@ const Step = React.createClass({
     return (
       <div className="row">
         <div className="wizardbar">
-          <div className={this.getStep(this.state.current, 0)}>
-            <div onClick={this.onStepClicked.bind(this, 0)}>
+          <div onClick={this.onStepClicked.bind(this, 0)} className={this.getStep(this.state.current, 0)}>
+            <div>
              <span className="label label-pill label-primary label-as-badge label-border">{numResults}</span> Patient</div>
           </div>
-          <div className={this.getStep(this.state.current, 1)}>
-            <div onClick={this.onStepClicked.bind(this, 1)}>Study</div>
+          <div onClick={this.onStepClicked.bind(this, 1)} className={this.getStep(this.state.current, 1)}>
+            <div>Study</div>
           </div>
-          <div className={this.getStep(this.state.current, 2)}>
-            <div onClick={this.onStepClicked.bind(this, 2)}>Series</div>
+          <div onClick={this.onStepClicked.bind(this, 2)} className={this.getStep(this.state.current, 2)}>
+            <div>Series</div>
           </div>
-          <div className={this.getStep(this.state.current, 3)}>
-            <div onClick={this.onStepClicked.bind(this, 3)}>Image</div>
+          <div onClick={this.onStepClicked.bind(this, 3)} className={this.getStep(this.state.current, 3)}>
+            <div>Image</div>
           </div>
 
         </div>  
