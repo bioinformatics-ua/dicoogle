@@ -19,10 +19,14 @@
 package pt.ua.dicoogle.core.dim;
 
 
+import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.net.URI;
 import java.util.*;
 
+import org.json.JSONException;
+import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,10 +78,10 @@ public class DIMGeneric
 
     private static final Logger logger = LoggerFactory.getLogger(DIMGeneric.class);
 
-    public DIMGeneric(ConcatTags tags,Collection<SearchResult> arr) throws Exception
+    public DIMGeneric(ConcatTags tags, Iterable<SearchResult> arr) throws Exception
     {
         this.tags = tags;
-        fill(arr);
+        fill(arr, 4);
 
     }
 
@@ -85,76 +89,38 @@ public class DIMGeneric
      * it is allow to handle a ArrayList of Strings or SearchResults
      * @param arr
      */
-    public DIMGeneric(Collection<SearchResult> arr) throws Exception{
-        fill(arr);
-
+    public DIMGeneric(Iterable<SearchResult> arr, int depth) throws Exception{
+        fill(arr, depth);
     }
-    
-    
+
+    public DIMGeneric(Iterable<SearchResult> arr) throws Exception{
+        this(arr, 4);
+    }
+
     /**
      * it is allow to handle a ArrayList of Strings or SearchResults
      * @param arr
      */
-    private void fill(Collection<SearchResult> arr) {
+    private void fill(Iterable<SearchResult> arr, int depth) {
             //DebugManager.getInstance().debug("Looking search results: " + arr.size() );
 
             Map<String, String> descriptions = new HashMap<String, String>();
 
-
             for(SearchResult r : arr){
 
-            
                 /**
-                 * Looking for SeachResults and put it in right side :) 
+                 * Looking for SearchResults and put it in right side :)
                  */
 
                 //SearchResult r = (SearchResult) arr.get(i);
-                HashMap<String, Object> extra = r.getExtraData();
+                final HashMap<String, Object> extra = r.getExtraData();
 
                 /** Get data from Study */
-                String studyUID = toTrimmedString(extra.get("StudyInstanceUID"),false);
-                String studyID = toTrimmedString(extra.get("StudyID"), false);
-                String studyDate = toTrimmedString( extra.get("StudyDate"), false);
-                String studyTime = toTrimmedString( extra.get("StudyTime"), true);
-                String AccessionNumber = toTrimmedString( extra.get("AccessionNumber"), false);
+                final String studyUID = toTrimmedString(extra.get("StudyInstanceUID"),false);
+                final String modality = toTrimmedString( extra.get("Modality"), false);
+                final String patientID =  toTrimmedString( extra.get("PatientID"), false);
+                final String patientName =  toTrimmedString(extra.get("PatientName"), false);
                 String StudyDescription = toTrimmedString( extra.get("StudyDescription"), false);
-                String InstitutionName = toTrimmedString( extra.get("InstitutionName"), false);
-                String operatorsName = toTrimmedString (extra.get("OperatorsName"), false);
-                String RequestingPhysician = toTrimmedString (extra.get("RequestingPhysician"), false);
-        
-                
-                /**
-                 * Get data to Series
-                 */
-                String serieUID =  toTrimmedString( extra.get("SeriesInstanceUID"), false);
-                String BodyPartThickness = (String) extra.get("BodyPartThickness");
-                //System.out.println("serieUID"+serieUID);
-                String serieNumber = toTrimmedString(extra.get("SeriesNumber"), true);
-                String serieDescription = toTrimmedString(  extra.get("SeriesDescription"), false);
-                String modality = toTrimmedString( extra.get("Modality"), false);
-                String patientID =  toTrimmedString( extra.get("PatientID"), false);
-                
-
-                String ViewPosition = toTrimmedString( extra.get("ViewPosition"), false);
-                String ImageLaterality = toTrimmedString( extra.get("ImageLaterality"), false);
-                String AcquisitionDeviceProcessingDescription = toTrimmedString( extra.get("AcquisitionDeviceProcessingDescription"), false);
-
-
-                String ViewCodeSequence_CodeValue =  toTrimmedString( extra.get("ViewCodeSequence_CodeValue"), false);
-                String ViewCodeSequence_CodingSchemeDesignator =  toTrimmedString( extra.get("ViewCodeSequence_CodingSchemeDesignator"), false);
-                String ViewCodeSequence_CodingSchemeVersion =  toTrimmedString( extra.get("ViewCodeSequence_CodingSchemeVersion"), false);
-                String ViewCodeSequence_CodeMeaning =  toTrimmedString( extra.get("ViewCodeSequence_CodeMeaning"), false);
-
-
-                /* Get Patient Data */
-
-                String patientSex = toTrimmedString(  extra.get("PatientSex"), false);
-                String patientBirthDate = toTrimmedString(  extra.get("PatientBirthDate"), false);
-                
-                String patientName =  toTrimmedString(extra.get("PatientName"), false);
-
-                String SeriesDate =  toTrimmedString(extra.get("SeriesDate"), false);
-                String ProtocolName =  toTrimmedString(extra.get("ProtocolName"), false);
 
                 /**
                  * Get data to Image
@@ -166,33 +132,27 @@ public class DIMGeneric
                 if(sopInstUID == null)
                     sopInstUID ="no uid";
 
-                logger.debug("StudyDescription: " + StudyDescription);
+                logger.debug("StudyDescription: {}", StudyDescription);
                 
                 // This is a quick fix for changing the parameters for the query.
                 if ((StudyDescription==null||StudyDescription.equals("")||StudyDescription.toLowerCase().contains("fuji"))
                         &&
-                        this.tags!=null)
-                {
-                    logger.debug("Checking if the Rule applies." + studyUID);
+                        this.tags!=null) {
+                    logger.debug("Checking if the Rule applies: {}", studyUID);
                     String description = "";
 
-                    if (descriptions.containsKey(studyUID))
-                    {
+                    if (descriptions.containsKey(studyUID)) {
                         description = descriptions.get(studyUID);
                     }
 
                     for (ConcatTags.Rule rule : this.tags.getRules())
                     {
-                        logger.debug("Checking if the Rule applies." + modality);
+                        logger.debug("Checking if the Rule applies: {}", modality);
 
-                        if (modality.equals(rule.getModality()))
-                        {
-
-
+                        if (modality.equals(rule.getModality())) {
                             String valueTagToReplace = (String) extra.get(rule.getTagToReplace());
-                            logger.debug("Checking if the Rule value." + valueTagToReplace);
-                            logger.debug("Checking if the Rule value." + rule.getTagToReplace());
-
+                            logger.debug("Checking if the Rule value. {}", valueTagToReplace);
+                            logger.debug("Checking if the Rule value. {}", rule.getTagToReplace());
 
                             if (valueTagToReplace!=null)
                             {
@@ -200,143 +160,243 @@ public class DIMGeneric
                                 // complete ported.
                                 valueTagToReplace = valueTagToReplace.trim().replaceAll("[^a-zA-Z0-9\\. ÉéàÀÃ;,]+","");
                                 description = description + valueTagToReplace + "; ";
-
                             }
-
-
                         }
 
                     }
                     StudyDescription = description;
                     descriptions.put(studyUID, StudyDescription);
 
-
                 }
 
-                String patientIdentifier = "";
-                if (patientID.equals(""))
-                {
+                String patientIdentifier = patientID;
+                if (patientID.equals("")) {
                     patientIdentifier = patientName;
                 }
-                else
-                {
-                    patientIdentifier = patientID;
-                }
-                
 
                 /** Verify if Patient already exists */
 
                 if (this.patientsHash.containsKey(patientIdentifier))
                 {
-                    /**
-                     * Patient Already exists, let's check studys
-                     */
-		            // Real data does not have Patient Id - sometimes.
-                    Patient p = this.patientsHash.get(patientIdentifier);
+                    if (depth >= 1) {
+                        /**
+                         * Patient Already exists, let's check studys
+                         */
+                        // Real data does not have Patient Id - sometimes.
+                        Patient p = this.patientsHash.get(patientIdentifier);
 
-
-                    /**
-                     * Add Study
-                     * It also verify if it exists
-                     * In the last case Object will be discarded and the
-                     * data will be added for the Study that already exists
-                     */
-
-                    Study s = new Study(p,studyUID,studyDate);
-
-                    s.setInstitutuionName(InstitutionName);
-                    s.setAccessionNumber(AccessionNumber);
-                    s.setStudyTime(studyTime);
-                    s.setStudyID(studyID);
-                    s.setStudyDescription(StudyDescription);
-
-                    s.setPatientName(patientName);
-
-                    s.setOperatorsName(operatorsName);
-                    s.setRequestingPhysician(RequestingPhysician);
-
-
-                    Serie serie = new Serie(s, serieUID, modality);
-                    try
-                    {
-                        if (serieNumber!=null)
-                            serie.setSerieNumber((int)Float.parseFloat(serieNumber));
+                        Study s = this.fillStudy(p, extra, StudyDescription);
+                        if (depth > 2) {
+                            Serie serie = this.fillSeries(s, extra);
+                            if (depth > 3) {
+                                serie.addImage(r.getURI(), sopInstUID);
+                            }
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        // nothing to do anyway
-                    }
-                    serie.setSeriesDescription(serieDescription);
-                    serie.setSeriesDescription(serieDescription);
-                    serie.setProtocolName(ProtocolName);
-                    serie.setSeriesDate(SeriesDate);
-                    serie.setBodyPartThickness(BodyPartThickness);
-                    serie.setViewPosition(ViewPosition);
-                    serie.setImageLaterality(ImageLaterality);
-                    serie.setAcquisitionDeviceProcessingDescription(AcquisitionDeviceProcessingDescription);
-                    serie.setViewCodeSequence_CodeMeaning(ViewCodeSequence_CodeMeaning);
-                    serie.setViewCodeSequence_CodeValue(ViewCodeSequence_CodeValue);
-                    serie.setViewCodeSequence_CodingSchemeDesignator(ViewCodeSequence_CodingSchemeDesignator);
-                    serie.setViewCodeSequence_CodingSchemeVersion(ViewCodeSequence_CodingSchemeVersion);
-
-                    serie.addImage(r.getURI(),sopInstUID);
-                    s.addSerie(serie);
-                    p.addStudy(s);
-                    
-                    
                 }
                 else {
                     /**
                      * Patient does not exist
                      */
-                     Patient p = new Patient(patientID, patientName);
-                     p.setPatientSex(patientSex);
-                     p.setPatientBirthDate(patientBirthDate);
+                    Patient p = new Patient(patientID, patientName);
 
-                     /**
-                      * Create Study
-                      */
-                     Study s = new Study(p, studyUID,studyDate) ;
-                    s.setAccessionNumber(AccessionNumber);
-                    s.setStudyTime(studyTime);
-                    s.setStudyDescription(StudyDescription);
-                    s.setStudyID(studyID);
-                    s.setInstitutuionName(InstitutionName);
-                    s.setPatientName(patientName);
+                    /* Get Patient Data */
+                    String patientSex = toTrimmedString(  extra.get("PatientSex"), false);
+                    p.setPatientSex(patientSex);
 
-                    s.setOperatorsName(operatorsName);
-                    s.setRequestingPhysician(RequestingPhysician);
+                    String patientBirthDate = toTrimmedString(  extra.get("PatientBirthDate"), false);
+                    p.setPatientBirthDate(patientBirthDate);
 
-
-                    p.addStudy(s);
-
-                    /**
-                    * Create Series
-                    */
-                    Serie serie = new Serie(s,serieUID, modality);
-                    if (serieNumber!=null && !serieNumber.equals(""))
-                       serie.setSerieNumber((int)Float.parseFloat(serieNumber));
-                    serie.setSeriesDescription(serieDescription);
-                    serie.setProtocolName(ProtocolName);
-
-                    serie.setSeriesDate(SeriesDate);
-                    serie.setViewPosition(ViewPosition);
-                    serie.setImageLaterality(ImageLaterality);
-                    serie.setAcquisitionDeviceProcessingDescription(AcquisitionDeviceProcessingDescription);
-                    serie.setViewCodeSequence_CodeMeaning(ViewCodeSequence_CodeMeaning);
-                    serie.setViewCodeSequence_CodeValue(ViewCodeSequence_CodeValue);
-                    serie.setViewCodeSequence_CodingSchemeDesignator(ViewCodeSequence_CodingSchemeDesignator);
-                    serie.setViewCodeSequence_CodingSchemeVersion(ViewCodeSequence_CodingSchemeVersion);
-
-
-
-                    serie.addImage(r.getURI(),sopInstUID);
-                    s.addSerie(serie);
+                    if (depth >= 1) {
+                        /**
+                         * Create Study
+                         */
+                        Study s = this.fillStudy(p, extra, StudyDescription);
+                        if (depth > 2) {
+                            Serie serie = this.fillSeries(s, extra);
+                            if (depth > 3) {
+                                serie.addImage(r.getURI(), sopInstUID);
+                            }
+                        }
+                    }
                     this.patients.add(p);
                     this.patientsHash.put(patientIdentifier, p);
                 }
             }
 
+    }
+
+    /**
+     * Add Study
+     * It also verify if it exists
+     * In the last case Object will be discarded and the
+     * data will be added for the Study that already exists
+     */
+    public Study fillStudy(Patient parent, Map<String, Object> extra, String StudyDescription) {
+        /** Get data from Study */
+        String studyUID = toTrimmedString(extra.get("StudyInstanceUID"),false);
+        String studyID = toTrimmedString(extra.get("StudyID"), false);
+        String studyDate = toTrimmedString( extra.get("StudyDate"), false);
+        String studyTime = toTrimmedString( extra.get("StudyTime"), true);
+        String AccessionNumber = toTrimmedString( extra.get("AccessionNumber"), false);
+        String InstitutionName = toTrimmedString( extra.get("InstitutionName"), false);
+        String operatorsName = toTrimmedString (extra.get("OperatorsName"), false);
+        String RequestingPhysician = toTrimmedString (extra.get("RequestingPhysician"), false);
+
+        Study s = parent.getStudy(studyUID);
+        if (s == null) {
+            s = new Study(parent, studyUID, studyDate);
+            parent.addStudy(s);
+        }
+        s.setInstitutuionName(InstitutionName);
+        s.setAccessionNumber(AccessionNumber);
+        s.setStudyTime(studyTime);
+        s.setStudyID(studyID);
+        s.setStudyDescription(StudyDescription);
+        s.setPatientName(parent.getPatientName());
+        s.setOperatorsName(operatorsName);
+        s.setRequestingPhysician(RequestingPhysician);
+        return s;
+    }
+
+    public Serie fillSeries(Study parent, Map<String, Object> extra) {
+        String seriesUID =  toTrimmedString( extra.get("SeriesInstanceUID"), false);
+        String modality = toTrimmedString( extra.get("Modality"), false);
+        Serie s = parent.getSeries(seriesUID);
+        if (s == null) {
+            s = new Serie(parent, seriesUID, modality);
+            parent.addSerie(s);
+        }
+
+        String serieNumber = toTrimmedString(extra.get("SeriesNumber"), true);
+        if (serieNumber != null && !serieNumber.equals("")) {
+            s.setSerieNumber((int) Float.parseFloat(serieNumber));
+        }
+
+        String serieDescription = toTrimmedString(  extra.get("SeriesDescription"), false);
+        s.setSeriesDescription(serieDescription);
+
+        String SeriesDate =  toTrimmedString(extra.get("SeriesDate"), false);
+        s.setSeriesDate(SeriesDate);
+
+        String ProtocolName =  toTrimmedString(extra.get("ProtocolName"), false);
+        s.setProtocolName(ProtocolName);
+
+        String ViewPosition = toTrimmedString( extra.get("ViewPosition"), false);
+        s.setViewPosition(ViewPosition);
+
+        String ImageLaterality = toTrimmedString( extra.get("ImageLaterality"), false);
+        s.setImageLaterality(ImageLaterality);
+
+        String ViewCodeSequence_CodeValue =  toTrimmedString( extra.get("ViewCodeSequence_CodeValue"), false);
+        s.setViewCodeSequence_CodeValue(ViewCodeSequence_CodeValue);
+
+        String ViewCodeSequence_CodingSchemeDesignator =  toTrimmedString( extra.get("ViewCodeSequence_CodingSchemeDesignator"), false);
+        s.setViewCodeSequence_CodingSchemeDesignator(ViewCodeSequence_CodingSchemeDesignator);
+
+        String ViewCodeSequence_CodingSchemeVersion =  toTrimmedString( extra.get("ViewCodeSequence_CodingSchemeVersion"), false);
+        s.setViewCodeSequence_CodingSchemeVersion(ViewCodeSequence_CodingSchemeVersion);
+
+        String ViewCodeSequence_CodeMeaning =  toTrimmedString( extra.get("ViewCodeSequence_CodeMeaning"), false);
+        s.setViewCodeSequence_CodeMeaning(ViewCodeSequence_CodeMeaning);
+
+        String AcquisitionDeviceProcessingDescription = toTrimmedString( extra.get("AcquisitionDeviceProcessingDescription"), false);
+        s.setAcquisitionDeviceProcessingDescription(AcquisitionDeviceProcessingDescription);
+
+        return s;
+    }
+
+    public void writeJSON(Writer destinationWriter, long elapsedTime) throws IOException {
+        this.writeJSON(destinationWriter, elapsedTime, 4, 0, Integer.MAX_VALUE);
+    }
+
+    public void writeJSON(Writer destinationWriter, long elapsedTime, int depth, int offset, int psize) throws IOException {
+        JSONWriter writer = new JSONWriter(destinationWriter);
+        try {
+            writer.object()
+                    .key("numResults").value(this.patients.size());
+            if (depth > 0) {
+                writer.key("results").array();
+
+                for (Patient p : this.patients) {
+                    if (offset-- > 0) continue;
+
+                    writer.object()
+                            .key("id").value(p.getPatientID())
+                            .key("name").value(p.getPatientName())
+                            .key("gender").value(p.getPatientSex())
+                            .key("birthdate").value(p.getPatientBirthDate())
+                            .key("nStudies").value(p.getStudies().size());
+
+                    if (depth > 1) {
+                        writer.key("studies").array(); // begin studies
+
+                        for (Study study : p.getStudies()) {
+                            writer.object()    // begin study
+                                    .key("studyInstanceUID").value(study.getStudyInstanceUID())
+                                    .key("studyDescription").value(study.getStudyDescription())
+                                    .key("studyDate").value(study.getStudyData())
+                                    .key("institutionName").value(study.getInstitutuionName())
+                                    //.key("nSeries").value(study.getSeries().size())
+                            ;
+                            Set<String> modalities = new HashSet<>();
+
+                            if (depth > 2) {
+                                writer.key("series").array(); // begin series (array)
+                                for (Serie series : study.getSeries()) {
+                                    String modality = series.getModality();
+                                    int nimages = series.getSOPInstanceUIDList().size();
+                                    writer.object() // begin series
+                                            .key("serieNumber").value(series.getSerieNumber())
+                                            .key("serieInstanceUID").value(series.getSerieInstanceUID())
+                                            .key("serieDescription").value(series.getSeriesDescription())
+                                            .key("serieModality").value(modality)
+                                            //.key("nImages").value(nimages)
+                                    ;
+                                    if (depth > 3) {
+                                        writer.key("images").array(); // begin images
+                                        for (int i = 0; i < nimages; i++) {
+                                            String rawPath = series.getImageList().get(i).getRawPath();
+                                            writer.object() // begin image
+                                                    .key("sopInstanceUID").value(series.getSOPInstanceUIDList().get(i))
+                                                    .key("rawPath").value(rawPath)
+                                                    .key("uri").value(series.getImageList().get(i).toString())
+                                                    .key("filename").value(rawPath.substring(rawPath.lastIndexOf("/")+1, rawPath.length()))
+                                                    .endObject(); // end image
+                                        }
+                                        writer.endArray(); // end images
+                                    }
+
+                                    modalities.add(modality);
+                                    writer.endObject(); // end series
+                                }
+                                writer.endArray(); // end series (array)
+                                writer.key("modalities");
+                                if (modalities.size() == 1) {
+                                    writer.value(modalities.iterator().next());
+                                } else {
+                                    writer.array(); // begin modalities in study
+                                    for (String m : modalities) {
+                                        writer.value(m);
+                                    }
+                                    writer.endArray(); // end modalities in study
+                                }
+                            }
+                            writer.endObject(); // end study
+                        }
+                        writer.endArray(); // end studies
+                    }
+                    writer.endObject(); // end patient
+                    if (--psize <= 0) break;
+                }
+                writer.endArray(); // end patients
+            }
+            writer
+                    .key("elapsedTime").value(elapsedTime)
+                    .endObject(); // end output
+        } catch (JSONException e) {
+            throw new IOException("JSON serialization error", e);
+        }
     }
 
     public String getJSON(){
