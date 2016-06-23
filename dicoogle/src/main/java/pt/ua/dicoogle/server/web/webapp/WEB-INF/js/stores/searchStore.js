@@ -29,8 +29,8 @@ const SearchStore = Reflux.createStore({
           data["advancedOptions"] = self._contents.advancedOptions;
           self._contents = data;
 
-          //DEBUG WAIT
-          setTimeout(self.triggerWithDelay, 700)
+          //Trigger search
+          self.triggerWithDelay()
         },
         function(xhr){
           //FAILURE

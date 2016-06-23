@@ -129,7 +129,7 @@ const SearchResult = React.createClass({
 
     let toggleModalClassNames = this.state.showDangerousOptions ? "fa fa-toggle-on" : "fa fa-toggle-off";
     return (<div>
-        <Step current={this.state.current} onClick={this.onStepClicked}/>
+        <Step current={this.state.current} searchOutcome={this.props.searchOutcome} onClick={this.onStepClicked}/>
         <div id="step-container">
           {this.getCurrentView()}
         </div>
@@ -194,30 +194,39 @@ const Step = React.createClass({
   componentWillReceiveProps: function(nextProps){
     this.setState({current: nextProps.current});
   },
-  render: function() {
+  render: function() {  
+    let numResults = 0;
+    if (this.props.searchOutcome.data!=null )
+    {
+      
+      numResults = this.props.searchOutcome.data.numResults;
+    }
 
     return (
-        <div className="row">
-          <div className="col-xs-3 stepa">
-            <div className={this.getStep(this.state.current, 0)} onClick={this.onStepClicked.bind(this, 0)}>Patient</div>
+      <div className="row">
+        <div className="wizardbar">
+          <div onClick={this.onStepClicked.bind(this, 0)} className={this.getStep(this.state.current, 0)}>
+            <div>
+             <span className="label label-pill label-primary label-as-badge label-border">{numResults}</span> Patient</div>
           </div>
-          <div className="col-xs-3 stepa">
-            <div className={this.getStep(this.state.current, 1)} onClick={this.onStepClicked.bind(this, 1)}>Study</div>
+          <div onClick={this.onStepClicked.bind(this, 1)} className={this.getStep(this.state.current, 1)}>
+            <div>Study</div>
           </div>
-          <div className="col-xs-3 stepa">
-            <div className={this.getStep(this.state.current, 2)} onClick={this.onStepClicked.bind(this, 2)}>Series</div>
+          <div onClick={this.onStepClicked.bind(this, 2)} className={this.getStep(this.state.current, 2)}>
+            <div>Series</div>
           </div>
-          <div className="col-xs-3 stepa">
-            <div className={this.getStep(this.state.current, 3)} onClick={this.onStepClicked.bind(this, 3)}>Image</div>
+          <div onClick={this.onStepClicked.bind(this, 3)} className={this.getStep(this.state.current, 3)}>
+            <div>Image</div>
           </div>
 
-        </div>
+        </div>  
+      </div>  
       );
   },
   getStep: function(current, step) {
-    var state1 = "step current";
-    var state2 = "step done";
-    var state3 = "step disabled";
+    var state1 = "col-xs-3 wizardbar-item current";
+    var state2 = "col-xs-3 wizardbar-item completed";
+    var state3 = "col-xs-3 wizardbar-item disabled";
 
     if(step === current)
       return state1;
