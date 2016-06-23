@@ -10,6 +10,8 @@ import {DimFields} from '../../constants/dimFields';
 import {getUrlVars} from '../../utils/url';
 import {SearchStore} from '../../stores/searchStore';
 
+// just a workaround
+var countGlobalEnter = 0;
 const Search = React.createClass({
     propTypes: {
       params: PropTypes.object.isRequired,
@@ -43,8 +45,10 @@ const Search = React.createClass({
       if(getUrlVars()['query']) {
         this.onSearchByUrl();
       }
-
       ProvidersActions.get();
+    },
+    componentWillUnmount: function(){
+      $( "#free_text" ).unbind();
     },
     componentWillUpdate: function() {
 
@@ -58,8 +62,7 @@ const Search = React.createClass({
         this.keyHash = getUrlVars()['_k'];
     },
     componentDidUpdate: function(){
-      this.enableAutocomplete();
-      this.enableEnterKey();
+      
     },
 
     onReturn(error) {
@@ -113,7 +116,9 @@ const Search = React.createClass({
 
        // if there are already results, we need to add a new component 
        let resultComponent = false;
+       
        if (this.state.requestedQuery !== null && !this.state.error) {
+
          resultComponent = (<SearchResult requestedQuery={this.state.requestedQuery}
                               searchOutcome={this.getSearchOutcome()}
                               onReturn={this.onReturn} />);
@@ -258,6 +263,7 @@ const Search = React.createClass({
         }
       });
     },
+    
 
     enableEnterKey: function(){
       /*$('#free_text').keyup(function(e){
@@ -271,12 +277,14 @@ const Search = React.createClass({
         //
         //Trick to not search when press enter on autocomplete
         //
-        var count = 0;
+        
         $("#free_text").keypress((e) => {
         if (e.keyCode === 13) {
-            if (++count >= 1) {
+            if (++countGlobalEnter >= 1) {
+                console.log("Count: " + countGlobalEnter);
                 this.onSearchClicked();
-                count = 0;
+                countGlobalEnter = 0;
+                 e.stopPropagation();
             }
         }
     });

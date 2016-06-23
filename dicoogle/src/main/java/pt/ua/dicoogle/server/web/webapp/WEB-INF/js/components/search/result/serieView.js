@@ -210,9 +210,7 @@ const SeriesView = React.createClass({
 	},
 
   _onChange: function(data){
-    console.log("onchange");
-    console.log(data.success);
-    console.log(data.status);
+
     if (this.isMounted())
     {
       this.setState({data: data.data,

@@ -260,7 +260,6 @@ const ImageView = React.createClass({
     ActionCreators.remove(uris);
   },
     _onChange: function(data){
-      console.log("onchange", data.success, data.status);
       if (this.isMounted())
       {
         this.setState({data: data.data,
