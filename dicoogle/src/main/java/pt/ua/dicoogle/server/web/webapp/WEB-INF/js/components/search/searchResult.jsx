@@ -8,6 +8,7 @@ import {ExportView} from './exportView';
 import Webcore from 'dicoogle-webcore';
 import PluginForm from '../plugin/pluginForm.jsx';
 import {DefaultOptions} from '../../constants/defaultOptions';
+import {SearchStore} from '../../stores/searchStore';
 
 const SearchResult = React.createClass({
 
@@ -55,16 +56,23 @@ const SearchResult = React.createClass({
         caption: pkg.dicoogle.caption || pkg.name
       }))});
     });
+    SearchStore.listen(this._onSearchResult);
   },
 
   componentWillUpdate(nextProps) {
+
     if (this.props.requestedQuery.queryText !== nextProps.requestedQuery.queryText) {
       //init StepView
       if(!this.state.current)
         this.onStepClicked(0);
     }
   },
-
+_onSearchResult: function(outcome) {
+      if (this.isMounted())
+      {
+        this.onStepClicked(0);
+      }
+  },
   handleClickExport() {
     this.setState({showExport: true, currentPlugin: null});
   },
@@ -239,7 +247,6 @@ const Step = React.createClass({
       if(this.state.current <= current)
         return;
       this.setState({current: current});
-      console.log("Step clicked");
       this.props.onClick(current);
   }
 

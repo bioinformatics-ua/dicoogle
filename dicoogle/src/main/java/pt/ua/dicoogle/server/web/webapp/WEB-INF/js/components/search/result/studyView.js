@@ -27,6 +27,9 @@ const StudyView = React.createClass({
     SearchStore.listen(this._onChange);
     ResultSelectActions.clear();
   },
+  componentWillUnmount: function() {
+    console.log("Study Component will umount. ");
+  },
 
   /**
    * 2015-09-11:
@@ -198,9 +201,7 @@ const StudyView = React.createClass({
     this.props.onItemClick(row);
   },
   _onChange: function(data){
-    console.log("onchange");
-    console.log(data.success);
-    console.log(data.status);
+
     if (this.isMounted())
     {
       this.setState({data: data.data,
