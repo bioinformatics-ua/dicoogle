@@ -1,5 +1,3 @@
-'use strict';
-
 import Reflux from 'reflux';
 import {TransferActions} from '../actions/transferActions';
 import {Endpoints} from '../constants/endpoints';
@@ -43,41 +41,30 @@ const TransferStore = Reflux.createStore({
         });
     },
 
-    onSelectAll :  function(){
-
+    onSelectAll() {
         this.select(true);
-
     },
-    onUnSelectAll :  function(){
+    onUnSelectAll() {
         this.select(false);
-
     },
 
-    select :  function(value){
-
-
+    select(value) {
         for (let index of this._contents)
         {
-
             for (let indexOptions of index.options)
             {
-
-
                 indexOptions.value = value;
                 this.request(index.uid, indexOptions.name, indexOptions.value);
             }
-
-
         }
         this.trigger({
             data: this._contents,
             success: true
         });
 
-
     },
     request(uid, id, value) {
-        
+
         $.post(Endpoints.base + "/management/settings/transfer", {
             uid: uid,
             option: id,
@@ -90,8 +77,6 @@ const TransferStore = Reflux.createStore({
 
 
     onSet: function(index, indexOption, value){
-
-
       this._contents[index].options[indexOption].value = value;
       this.trigger({
         data: this._contents,

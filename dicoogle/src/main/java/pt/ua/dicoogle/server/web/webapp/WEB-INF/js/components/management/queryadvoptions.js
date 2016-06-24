@@ -3,7 +3,7 @@ import {Button, Modal} from 'react-bootstrap';
 import ServiceAction from '../../actions/servicesAction';
 import ServicesStore from '../../stores/servicesStore';
 
-var QueryAdvancedOptionsModal = React.createClass({
+const QueryAdvancedOptionsModal = React.createClass({
   getInitialState: function() {
     return {
       acceptTimeout: "...",
@@ -37,7 +37,7 @@ var QueryAdvancedOptionsModal = React.createClass({
     }
    },
   render: function() {
-    return (<Modal {...this.props} bsStyle='primary' title='Query Retrieve - Advanced Settings' animation={true}>
+    return (<Modal {...this.props} bsStyle='primary' title='Query Retrieve - Advanced Settings' animation>
       <div className='modal-body'>
         <div className="container-fluid">
           <div className="row">

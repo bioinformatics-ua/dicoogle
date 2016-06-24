@@ -1,7 +1,6 @@
-var Reflux = require('reflux');
-var UserActions = exports;
-UserActions.login = Reflux.createAction();
-UserActions.logout = Reflux.createAction();
-UserActions.isLoggedIn = Reflux.createAction();
-
-export { UserActions };
+import Reflux from 'reflux';
+export const UserActions = {
+  login: Reflux.createAction(),
+  logout: Reflux.createAction(),
+  isLoggedIn: Reflux.createAction()
+};

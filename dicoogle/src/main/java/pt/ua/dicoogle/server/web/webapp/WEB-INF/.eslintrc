@@ -1,8 +1,15 @@
 {
-  "extends": "eslint:recommended",
-  "ecmaFeatures": {
-    "modules": true,
-    "jsx": true
+  "extends": [
+    "eslint:recommended"
+  ],
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "modules": true,
+      "jsx": true
+    }
   },
   "env": {
     "browser": true,
@@ -13,8 +20,20 @@
     "process": false
   },
   "plugins": [
-    "react"
+    "react",
+    "import"
   ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx"]
+      }
+    },
+    "react": {
+      "pragma": "React",
+      "version": "0.14"
+    }
+  },
   "rules": {
     "no-console": 0,
     "quotes": 0,
@@ -34,9 +53,29 @@
     "comma-dangle": 1,
     "no-extra-semi": 1,
     "eol-last": 1,
-    "consistent-this": [2, "self"],
+    "no-empty": 1,
     "no-dupe-args": 2,
     "no-dupe-keys": 2,
-    "no-undef": 2
+    "no-undef": 2,
+    "import/no-unresolved": [2, {"commonjs": true}],
+    "import/named": 2,
+    "import/namespace": 2,
+    "import/default": 2,
+    "import/export": 2,
+    "import/no-extraneous-dependencies": 1,
+    "import/no-mutable-exports": 1,
+    "react/jsx-no-duplicate-props": 2,
+    "react/jsx-no-undef": 2,
+    "react/jsx-uses-react": 2,
+    "react/jsx-uses-vars": 2,
+    "react/no-danger": 2,
+    "react/no-direct-mutation-state": 2,
+    "react/no-unknown-property": 2,
+    "react/react-in-jsx-scope": 2,
+    "react/no-deprecated": 1,
+    "react/no-did-mount-set-state": 1,
+    "react/no-did-update-set-state": 1,
+    "react/jsx-boolean-value": 1,
+    "react/no-is-mounted": 0
   }
 }

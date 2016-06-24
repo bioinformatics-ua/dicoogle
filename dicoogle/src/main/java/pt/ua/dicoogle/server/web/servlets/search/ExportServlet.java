@@ -19,11 +19,7 @@
 package pt.ua.dicoogle.server.web.servlets.search;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
@@ -32,12 +28,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.core.QueryExpressionBuilder;
 import pt.ua.dicoogle.core.query.ExportToCSVQueryTask;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.utils.DictionaryAccess;
 
 public class ExportServlet extends HttpServlet{
+	private static final Logger logger = LoggerFactory.getLogger(ExportServlet.class);
 
 	public enum ExportType{
 		LIST, EXPORT_CVS;
@@ -87,10 +86,9 @@ public class ExportServlet extends HttpServlet{
 		String[] providers = req.getParameterValues("providers");
 		boolean keyword = Boolean.parseBoolean(req.getParameter("keyword"));
 		
-		System.out.println("queryString: "+ queryString);
-		for(String field: fields)
-		System.out.println("field: "+ field);
-		System.out.println("keyword: "+ keyword);
+		logger.debug("queryString: {}", queryString);
+		logger.debug("fields: {}", Arrays.asList(fields));
+		logger.debug("keyword: {}", keyword);
 		
 		if(queryString == null)
 			resp.sendError(401, "Query Parameters not found");
@@ -104,10 +102,9 @@ public class ExportServlet extends HttpServlet{
         }
 
 						    	
-	    List<String> fieldList = new ArrayList<>(fields.length);
+	    List<String> fieldList = Arrays.asList(fields);
 	    Map<String, String> fieldsMap = new HashMap<>();
 	    for(String f : fields){
-	    	fieldList.add(f);
 	    	fieldsMap.put(f, f);
 	    }
 	    	    	    
@@ -117,10 +114,7 @@ public class ExportServlet extends HttpServlet{
     	if(providers == null || providers.length == 0) {
 			PluginController.getInstance().queryAll(task, queryString, fieldsMap);
 		} else {
-			List<String> providersList = new ArrayList<>();
-			for (String f : providers) {
-				providersList.add(f);
-			}
+			List<String> providersList = Arrays.asList(providers);
 			PluginController.getInstance().query(task, providersList, queryString,
 					fieldsMap);
 		}

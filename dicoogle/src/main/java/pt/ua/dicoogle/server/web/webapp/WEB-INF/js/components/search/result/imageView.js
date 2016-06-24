@@ -6,16 +6,14 @@ import ConfirmModal from './confirmModal';
 import {Endpoints} from '../../../constants/endpoints';
 import {DumpStore} from '../../../stores/dumpStore';
 import ImageLoader from 'react-imageloader';
-import PluginView from '../../plugin/pluginView.jsx';
+import PluginView from '../../plugin/pluginView';
 import {DumpActions} from '../../../actions/dumpActions';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import {Input} from 'react-bootstrap';
 import ResultSelectActions from '../../../actions/resultSelectAction';
 import {UserStore} from '../../../stores/userStore';
 
-
-
-var ImageView = React.createClass({
+const ImageView = React.createClass({
     getInitialState: function() {
       // We need this because refs are not updated in BootstrapTable.
       this.refsClone = {};
@@ -165,10 +163,10 @@ var ImageView = React.createClass({
     ResultSelectActions.level("image");
     return (
         <div>
-            <BootstrapTable data={resultArray} selectRow={selectRowProp}
+            <BootstrapTable data={resultArray} selectRow={selectRowProp} condensed
                   pagination striped hover width="100%">
               <TableHeaderColumn dataAlign="left" dataField="filename"
-                isKey={true} dataFormat={this.formatFileName} dataSort>
+                isKey dataFormat={this.formatFileName} dataSort>
                   File Name
               </TableHeaderColumn>
               <TableHeaderColumn dataAlign="left" dataField="sopInstanceUID"
@@ -262,7 +260,6 @@ var ImageView = React.createClass({
     ActionCreators.remove(uris);
   },
     _onChange: function(data){
-      console.log("onchange", data.success, data.status);
       if (this.isMounted())
       {
         this.setState({data: data.data,
@@ -299,7 +296,7 @@ var PopOverView = React.createClass({
 	render: function() {
 		if(this.state.data === null) {
 			return (
-				<Modal {...this.props} show={this.props.uid !== null} bsStyle='primary' title='Image Dump' animation={true}>
+				<Modal {...this.props} show={this.props.uid !== null} bsStyle='primary' title='Image Dump' animation>
           <div className="loader-inner ball-pulse">
             <div/>
             <div/>
@@ -324,15 +321,15 @@ var PopOverView = React.createClass({
       onSelect: this.onRowSelect
     };
 		return (
-			<Modal onHide={this.props.onHide} show={this.props.uid !== null} bsClass='modal' bsStyle='primary' dialogClassName='table-dump'animation={true}>
+			<Modal onHide={this.props.onHide} show={this.props.uid !== null} bsClass='modal' bsStyle='primary' dialogClassName='table-dump'animation>
           <Modal.Header>
             <Modal.Title>Dump DICOM metadata</Modal.Title>
           </Modal.Header>
             <div className='modal-body'>
-              <BootstrapTable search columnFilter data={fields} selectRow={selectRowProp} pagination striped hover className="table-test table table-striped table-bordered responsive" cellspacing="0" width="100%">
+              <BootstrapTable search columnFilter data={fields} selectRow={selectRowProp} condensed pagination striped hover
+                              className="table-test table table-striped table-bordered responsive" cellspacing="0" width="100%">
               <TableHeaderColumn dataAlign="right"
-                dataField="att" width="20%" isKey
-                dataSort={true}>Attribute</TableHeaderColumn>
+                dataField="att" width="20%" isKey dataSort>Attribute</TableHeaderColumn>
               <TableHeaderColumn dataAlign="left"
                 dataField="field"
                 width="40%" isKey={false} dataSort>Field</TableHeaderColumn>

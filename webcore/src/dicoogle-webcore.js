@@ -1,9 +1,25 @@
-import 'document-register-element';
-import {EventEmitter} from 'events';
-import request from './request';
+/*
+ * Copyright (C) 2015  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+ *
+ * This file is part of Dicoogle/dicoogle-webcore.
+ *
+ * Dicoogle/dicoogle-webcore is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Dicoogle/dicoogle-webcore is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
+import {EventEmitter} from 'events';
 import client from 'dicoogle-client';
-import {merge} from './util';
+require('document-register-element');
 
 /** Dicoogle web application core.
  * This module provides support to web interface plugins.

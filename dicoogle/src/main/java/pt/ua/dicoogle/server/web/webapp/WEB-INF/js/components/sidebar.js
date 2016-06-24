@@ -18,10 +18,10 @@ const Sidebar = React.createClass({
   render() {
       console.log("APP RENDER");
       let menuItems = [
-        {value: "search", caption: "Search", admin: false},
-        {value: "management", caption: "Management", admin: true},
-        {value: "indexer", caption: "Indexer", admin: true},
-        {value: "about", caption: "About", admin: false}
+        {value: "search", caption: "Search", admin: false, icon: 'fa fa-search'},
+        {value: "management", caption: "Management", admin: true, icon: 'fa fa-cogs'},
+        {value: "indexer", caption: "Indexer", admin: true, icon: 'fa fa-file-archive-o'},
+        {value: "about", caption: "About", admin: false, icon: 'fa fa-info'}
       ].concat(this.props.pluginMenuItems);
       let isAdmin = UserStore.isAdmin();
       console.log("Is admin: " + isAdmin)
@@ -34,7 +34,9 @@ const Sidebar = React.createClass({
                 const to = (e.isPlugin ? '/ext/' : '/') + e.value;
                   if (!e.admin || isAdmin)
                     return (<li key={e.value}>
-                      <Link activeClassName="active" to={to}>{e.caption}</Link>
+                      <Link activeClassName="active" to={to}>
+                       <i className={e.icon}/> &nbsp; {e.caption}
+                      </Link>
                     </li>);
               })
             }

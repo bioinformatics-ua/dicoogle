@@ -1,5 +1,3 @@
-'use strict';
-
 import Reflux from 'reflux';
 
 import {ActionCreators} from '../actions/searchActions';
@@ -8,7 +6,7 @@ import {getPatients} from '../handlers/requestHandler';
 import {unindex} from '../handlers/requestHandler';
 import {remove} from '../handlers/requestHandler';
 
-var SearchStore = Reflux.createStore({
+const SearchStore = Reflux.createStore({
     listenables: ActionCreators,
     init: function () {
         this._contents = {advancedOptions: false};
@@ -31,8 +29,8 @@ var SearchStore = Reflux.createStore({
           data["advancedOptions"] = self._contents.advancedOptions;
           self._contents = data;
 
-          //DEBUG WAIT
-          setTimeout(self.triggerWithDelay, 700)
+          //Trigger search
+          self.triggerWithDelay()
         },
         function(xhr){
           //FAILURE

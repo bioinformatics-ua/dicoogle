@@ -4,7 +4,7 @@ import Reflux from 'reflux';
 import {DumpActions} from '../actions/dumpActions';
 import {getImageInfo} from '../handlers/requestHandler';
 
-var DumpStore = Reflux.createStore({
+const DumpStore = Reflux.createStore({
     listenables: DumpActions,
     init: function () {
        this._contents = {};

@@ -4,7 +4,7 @@ import {Button, Modal} from 'react-bootstrap';
 import {ExportActions} from '../../actions/exportActions';
 import {ExportStore} from '../../stores/exportStore';
 
-var ExportView = React.createClass({
+const ExportView = React.createClass({
 	getInitialState: function() {
       return {data: [],
       status: "loading",

@@ -58,7 +58,7 @@ const DirectDumpView = React.createClass({
     });
 
 		return (
-      <table id="dumptable" className="table-test table table-striped table-bordered responsive" cellspacing="0" width="100%">
+      <table id="dumptable" className="table-test table table-striped table-bordered responsive" cellSpacing="0" width="100%">
         <thead>
           <tr>
             <th>Attribute</th>

@@ -1,5 +1,4 @@
-var Reflux = require('reflux');
-var ProvidersActions = exports;
-ProvidersActions.get = Reflux.createAction();
-
-export { ProvidersActions };
+import Reflux from 'reflux';
+export const ProvidersActions = {
+  get: Reflux.createAction()
+};

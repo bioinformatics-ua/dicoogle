@@ -10,8 +10,7 @@ import ResultSelectActions from '../../../actions/resultSelectAction';
 
 import {UserStore} from '../../../stores/userStore';
 
-
-var StudyView = React.createClass({
+const StudyView = React.createClass({
     getInitialState: function() {
       // We need this because refs are not updated in BootstrapTable.
       this.refsClone = {};
@@ -27,6 +26,9 @@ var StudyView = React.createClass({
     // Subscribe to the store.
     SearchStore.listen(this._onChange);
     ResultSelectActions.clear();
+  },
+  componentWillUnmount: function() {
+    console.log("Study Component will umount. ");
   },
 
   /**
@@ -130,7 +132,7 @@ var StudyView = React.createClass({
     ResultSelectActions.level("study");
     return (
         <div>
-            <BootstrapTable data={resultArray} selectRow={selectRowProp} pagination striped hover width="100%">
+            <BootstrapTable data={resultArray} selectRow={selectRowProp} condensed pagination striped hover width="100%">
             <TableHeaderColumn dataAlign="right" dataField="studyInstanceUID" isKey dataFormat={this.formatStudyDate} dataSort>Date</TableHeaderColumn>
             <TableHeaderColumn dataAlign="left" dataField="studyDescription" dataFormat={this.formatStudyDescription} dataSort>Description</TableHeaderColumn>
             <TableHeaderColumn dataAlign="center" dataField="institutionName" dataFormat={this.formatInstitutionName}dataSort>Institution</TableHeaderColumn>
@@ -199,9 +201,7 @@ var StudyView = React.createClass({
     this.props.onItemClick(row);
   },
   _onChange: function(data){
-    console.log("onchange");
-    console.log(data.success);
-    console.log(data.status);
+
     if (this.isMounted())
     {
       this.setState({data: data.data,

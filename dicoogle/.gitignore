@@ -19,3 +19,4 @@
 /log4j.properties
 /Server_Keystore
 /dependency-reduced-pom.xml
+*.log

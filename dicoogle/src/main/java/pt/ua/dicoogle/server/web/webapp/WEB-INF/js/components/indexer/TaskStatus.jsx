@@ -1,5 +1,5 @@
-import React from 'react';
-const {PropTypes} = React;
+import React, {PropTypes} from 'react';
+import {toHumanReadable} from '../../utils/time';
 
 class TaskStatus extends React.Component {
   constructor(props) {
@@ -31,7 +31,7 @@ class TaskStatus extends React.Component {
     let barstate = "indexprogress progress-bar progress-bar-striped";
     if (item.nErrors > 0 && item.nIndexed > 0) {
       barstate += " progress-bar-warning";
-    } else if((item.nErrors > 0) && (item.nIndexed == 0)) {
+    } else if((item.nErrors > 0) && (item.nIndexed === 0)) {
       barstate += " progress-bar-danger";
     } else if (unknownPercentage && !complete) {
       barstate += " progress-bar-info active";
@@ -47,7 +47,7 @@ class TaskStatus extends React.Component {
        <div className="row">
       <div className="col-sm-10">
         <div className="progress indexstatusprogress">
-          <div style={{width : percentage}} className={barstate} role="progressbar"  aria-valuemin="0" aria-valuemax="100">
+          <div style={{width: percentage}} className={barstate} role="progressbar" aria-valuemin="0" aria-valuemax="100">
             {!unknownPercentage && percentage}
           </div>
         </div>
@@ -61,14 +61,14 @@ class TaskStatus extends React.Component {
     <div>
       <p><b>Uid: </b> {item.taskUid}</p>
       <p><b>Name: </b> {item.taskName}</p>
-      <p style={{visibility : item.complete ? '' : 'hidden'}}>
+      <div style={{visibility: item.complete ? '' : 'hidden'}}>
           {(typeof item.elapsedTime === 'number') && (
-            <p><b>Elapsed Time: </b> {item.elapsedTime} ms</p>)}
+            <p><b>Elapsed Time: </b> {toHumanReadable(item.elapsedTime)}</p>)}
           {(typeof item.nIndexed === 'number') && (
             <p><b>Indexed: </b> {item.nIndexed} </p>)}
           {(typeof item.nErrors === 'number') && (
             <p><b>Errors: </b> {item.nErrors} </p>)}
-        </p>
+        </div>
       </div>
     </div>);
 	}

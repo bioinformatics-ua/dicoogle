@@ -1,7 +1,4 @@
-import React from 'react';
-
-import {SearchStore} from '../../stores/searchStore';
-import {ActionCreators} from '../../actions/searchActions';
+import React, {PropTypes} from 'react';
 
 import {PatientView} from './result/patientView';
 import {StudyView} from './result/studyView';
@@ -11,13 +8,38 @@ import {ExportView} from './exportView';
 import Webcore from 'dicoogle-webcore';
 import PluginForm from '../plugin/pluginForm.jsx';
 import {DefaultOptions} from '../../constants/defaultOptions';
+import {SearchStore} from '../../stores/searchStore';
 
-var ResultSearch = React.createClass({
+const SearchResult = React.createClass({
+
+  propTypes: {
+    requestedQuery: PropTypes.shape({
+      text: PropTypes.string,
+      keyword: PropTypes.bool,
+      other: PropTypes.bool,
+      provider: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.arrayOf(PropTypes.string)
+      ])
+    }).isRequired, // requested query
+    searchOutcome: PropTypes.shape({
+      data: PropTypes.shape({
+        numResults: PropTypes.number,
+        results: PropTypes.array
+      }),
+      error: PropTypes.any
+    }).isRequired,
+    onReturn: PropTypes.func
+  },
+
+  getDefaultProps() {
+    return {
+      onReturn: null
+    }
+  },
 
   getInitialState: function() {
     return {
-      data: [],
-      status: "loading",
       showExport: false,
       showDangerousOptions: DefaultOptions.showSearchOptions,
       current: 0,
@@ -26,13 +48,7 @@ var ResultSearch = React.createClass({
     };
   },
 
-  componentDidMount: function() {
-    this.initSearch(this.props.items);
-  },
-
   componentWillMount: function() {
-    // Subscribe to the store.
-    SearchStore.listen(this._onChange);
     Webcore.fetchPlugins('result-batch', (packages) => {
       Webcore.fetchModules(packages);
       this.setState({batchPlugins: packages.map(pkg => ({
@@ -40,12 +56,23 @@ var ResultSearch = React.createClass({
         caption: pkg.dicoogle.caption || pkg.name
       }))});
     });
+    SearchStore.listen(this._onSearchResult);
   },
 
-	initSearch: function(props){
-    ActionCreators.search(props);
-	},
+  componentWillUpdate(nextProps) {
 
+    if (this.props.requestedQuery.queryText !== nextProps.requestedQuery.queryText) {
+      //init StepView
+      if(!this.state.current)
+        this.onStepClicked(0);
+    }
+  },
+_onSearchResult: function(outcome) {
+      if (this.isMounted())
+      {
+        this.onStepClicked(0);
+      }
+  },
   handleClickExport() {
     this.setState({showExport: true, currentPlugin: null});
   },
@@ -62,9 +89,18 @@ var ResultSearch = React.createClass({
     this.setState({currentPlugin: null});
   },
 
-  render: function() {
+  isLoading() {
+    return !this.props.searchOutcome;
+  },
 
-		if (this.state.status === "loading"){
+  getError() {
+    return this.props.searchOutcome.error;
+  },
+
+  render: function() {
+    const {searchOutcome} = this.props;
+
+		if (this.isLoading()){
       //loading animation
       return (<div className="loader-inner ball-pulse">
         <div/>
@@ -73,19 +109,22 @@ var ResultSearch = React.createClass({
       </div>);
 		}
 
-    //Check if search fails
-    if(this.state.success === false)
-    {
-      return (<div>Search error</div>);
+
+    //Check if search failed
+    if(this.getError()) {
+      return (
+        <div>
+          <p>{this.getError()}</p>
+        </div>
+        );
     }
     //Check if search return no results
-    if(this.state.data.numResults === 0)
+    if(searchOutcome.data && searchOutcome.data.numResults === 0)
     {
       return (
         <div>
-        No results for that query
+          <p>No results for that query</p>
         </div>
-
         );
     }
 
@@ -96,41 +135,28 @@ var ResultSearch = React.createClass({
               </button>)
     );
 
-    let toggleModalClassNames = this.state.showDangerousOptions ? "btn btn_dicoogle fa fa-toggle-on" : "btn btn_dicoogle fa fa-toggle-off";
+    let toggleModalClassNames = this.state.showDangerousOptions ? "fa fa-toggle-on" : "fa fa-toggle-off";
     return (<div>
-        <Step current={this.state.current} onClick={this.onStepClicked}/>
+        <Step current={this.state.current} searchOutcome={this.props.searchOutcome} onClick={this.onStepClicked}/>
         <div id="step-container">
           {this.getCurrentView()}
         </div>
-        <button className="btn btn_dicoogle fa fa-download" onClick={this.handleClickExport}>Export</button>
-        <button className={toggleModalClassNames} onClick={this.toggleAdvOpt}> Advanced Options </button>
+        <button className="btn btn_dicoogle" onClick={this.handleClickExport}><i className="fa fa-download"/>Export</button>
+        <button className="btn btn_dicoogle" onClick={this.toggleAdvOpt}><i className={toggleModalClassNames}/> Advanced Options </button>
         {pluginButtons}
-        <ExportView show={this.state.showExport} onHide={this.handleHideExport} query={this.props.items}/>
+        <ExportView show={this.state.showExport} onHide={this.handleHideExport} query={this.props.requestedQuery}/>
         <PluginForm show={!!this.state.currentPlugin} slotId="result-batch"
                     plugin={this.state.currentPlugin} onHide={this.handleHideBatchForm}
-                    data={{results: this.state.data.results}} />
+                    data={{results: this.props.searchOutcome.data.results}} />
       </div>);
 	},
-
-  _onChange: function(data) {
-    if (this.isMounted())
-    {
-      this.setState({data: data.data,
-      status: "stopped",
-      success: data.success});
-
-      //init StepView
-      if(!this.state.current)
-        this.onStepClicked(0);
-    }
-  },
 
   getCurrentView() {
     let view;
     switch (this.state.current) {
       case 0:
-        view = ( <PatientView items={this.state.data}
-                              provider={this.props.items.provider}
+        view = ( <PatientView items={this.props.searchOutcome.data}
+                              provider={this.props.requestedQuery.provider}
                               enableAdvancedSearch={this.state.showDangerousOptions}
                               onItemClick={this.onPatientClicked}/>);
         break;
@@ -169,37 +195,46 @@ var ResultSearch = React.createClass({
   }
 });
 
-var Step = React.createClass({
+const Step = React.createClass({
   getInitialState: function() {
     return {current: this.props.current};
   },
   componentWillReceiveProps: function(nextProps){
     this.setState({current: nextProps.current});
   },
-  render: function() {
+  render: function() {  
+    let numResults = 0;
+    if (this.props.searchOutcome.data!=null )
+    {
+      
+      numResults = this.props.searchOutcome.data.numResults;
+    }
 
     return (
-        <div className="row">
-          <div className="col-xs-3 stepa">
-            <div className={this.getStep(this.state.current, 0)} onClick={this.onStepClicked.bind(this, 0)}>Patient</div>
+      <div className="row">
+        <div className="wizardbar">
+          <div onClick={this.onStepClicked.bind(this, 0)} className={this.getStep(this.state.current, 0)}>
+            <div>
+             <span className="label label-pill label-primary label-as-badge label-border">{numResults}</span> Patient</div>
           </div>
-          <div className="col-xs-3 stepa">
-            <div className={this.getStep(this.state.current, 1)} onClick={this.onStepClicked.bind(this, 1)}>Study</div>
+          <div onClick={this.onStepClicked.bind(this, 1)} className={this.getStep(this.state.current, 1)}>
+            <div>Study</div>
           </div>
-          <div className="col-xs-3 stepa">
-            <div className={this.getStep(this.state.current, 2)} onClick={this.onStepClicked.bind(this, 2)}>Series</div>
+          <div onClick={this.onStepClicked.bind(this, 2)} className={this.getStep(this.state.current, 2)}>
+            <div>Series</div>
           </div>
-          <div className="col-xs-3 stepa">
-            <div className={this.getStep(this.state.current, 3)} onClick={this.onStepClicked.bind(this, 3)}>Image</div>
+          <div onClick={this.onStepClicked.bind(this, 3)} className={this.getStep(this.state.current, 3)}>
+            <div>Image</div>
           </div>
 
-        </div>
+        </div>  
+      </div>  
       );
   },
   getStep: function(current, step) {
-    var state1 = "step current";
-    var state2 = "step done";
-    var state3 = "step disabled";
+    var state1 = "col-xs-3 wizardbar-item current";
+    var state2 = "col-xs-3 wizardbar-item completed";
+    var state3 = "col-xs-3 wizardbar-item disabled";
 
     if(step === current)
       return state1;
@@ -212,10 +247,9 @@ var Step = React.createClass({
       if(this.state.current <= current)
         return;
       this.setState({current: current});
-      console.log("Step clicked");
       this.props.onClick(current);
   }
 
 });
 
-export {ResultSearch};
+export {SearchResult};

@@ -7,7 +7,7 @@ import ResultSelectActions from '../actions/resultSelectAction';
  * This list contains the selected results in the UI.
  * When the user wants to apply an operation in a set of results.
  */
-var ResultsSelected = Reflux.createStore({
+const ResultsSelected = Reflux.createStore({
     listenables: ResultSelectActions,
     init: function () {
        this._contents = [];
@@ -30,23 +30,17 @@ var ResultsSelected = Reflux.createStore({
 
       this._contents.push(data);
     },
-    onUnSelect:function(data) {
-
-
-
+    onUnSelect (data) {
         let i = 0;
         for (var c of this._contents)
         {
             if (JSON.stringify(c) === JSON.stringify(data))
             {
-                this._contents.splice(i,1);
+                this._contents.splice(i, 1);
                 break;
-
             }
-            i = i+1;
-
+            i += 1;
         }
-
     },
     // Send the batch of selected results to somewhere.
     onGet: function(data){
