@@ -32,7 +32,7 @@ const ExportView = React.createClass({
         <div className='modal-body'>
             <textarea id="textFields" placeholder="Paste export fields here (one per line) ..." rows="10" className="exportlist form-control"></textarea>
         </div>
-        <div className='modal-footer'>
+        <div id="hacked-modal-footer" className='modal-footer'>
           <Button onClick={this.onExportClicked}>Export</Button>
         </div>
       </Modal>);
