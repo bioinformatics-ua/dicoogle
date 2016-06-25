@@ -32,7 +32,9 @@ require('bootstrap');
 class App extends React.Component {
   static get contextTypes () {
     return {
-			router: PropTypes.object.isRequired
+			router: PropTypes.object.isRequired,
+			location: React.PropTypes.object
+
 		};
   }
 
@@ -61,7 +63,6 @@ class App extends React.Component {
 		});
 	}
 
-
 	componentWillMount()
 	{
 		UserStore.listen(this.fetchPlugins.bind(this));
@@ -70,14 +71,23 @@ class App extends React.Component {
 		if (localStorage.token) {
 			Dicoogle.setToken(localStorage.token);
 		}
-
+		if (this.props.location.pathname=='/')
+		{
+			localStorage.token = null;
+			UserActions.logout();
+		}
 		Webcore.init(Endpoints.base);
 	}
+
 	componentDidMount(){
     UserStore.loadLocalStore();
 		if (localStorage.token === undefined) {
 			this.props.history.pushState(null, 'login');
     }
+		if (this.props.location.pathname=='/')
+		{
+			this.props.history.pushState(null, 'login');
+		}
 
     $("#menu-toggle").click(function (e) {
       e.preventDefault();
