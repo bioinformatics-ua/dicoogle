@@ -42,7 +42,7 @@ import pt.ua.dicoogle.server.web.auth.Authentication;
 /**
  * Retrieval of web UI plugins and respective packages/modules.
  * 
- * <b>This API is unstable. It is currently only compatible with dicoogle-webcore 0.10.x</b>
+ * <b>This API is unstable. It is currently only compatible with dicoogle-webcore 0.12.x and 0.13.x</b>
  *
  * @author Eduardo Pinho
  */
@@ -55,7 +55,6 @@ public class WebUIServlet extends HttpServlet {
         String[] slotIdArr = req.getParameterValues("slot-id");
         String module = req.getParameter("module");
         String process = req.getParameter("process");
-
 
         if (name != null) {
             resp.setContentType("application/json");
@@ -137,7 +136,11 @@ public class WebUIServlet extends HttpServlet {
         }
         return t;
     }
-    
+
+    /**
+     * @deprecated Use the endpoint associated to the {@link WebUIModuleServlet} instead
+     */
+    @Deprecated
     public static String processModule(String name, String module, boolean process) {
         StringBuilder writer = new StringBuilder();
         if (process) {

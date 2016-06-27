@@ -20,7 +20,6 @@
 
         <maven.build.timestamp.format>yyyyMMdd_HHmm</maven.build.timestamp.format>
         <buildNumber>${maven.build.timestamp}</buildNumber>
-
     </properties>
 
     <repositories>
