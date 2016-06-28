@@ -246,7 +246,13 @@ public class DicoogleWeb {
                     return '"' + Md5Crypt.md5Crypt(fingerprint.getBytes()) + '"';
                 } else {
                     // normal release, use weak ETag
-                    return "W/\"" + plugin.getName() + '@' + plugin.getVersion() + '"';
+                    String pProcess = req.getParameter("process");
+                    boolean process = pProcess == null || Boolean.parseBoolean(pProcess);
+                    if (process) {
+                        return "W/\"" + plugin.getName() + '@' + plugin.getVersion() + '"';
+                    } else {
+                        return "W/\"" + plugin.getName() + '@' + plugin.getVersion() + ";raw\"";
+                    }
                 }
             }
         });
