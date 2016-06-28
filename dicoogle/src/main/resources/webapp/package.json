@@ -39,7 +39,7 @@
   "dependencies": {
     "bootstrap": "^3.3.2",
     "core-js": "^2.0.3",
-    "dicoogle-client": "^3.6.0",
+    "dicoogle-client": "^3.7.0",
     "dicoogle-webcore": "file:../../../../../webcore",
     "history": "^3.0.0",
     "jquery": "^1.10.2",

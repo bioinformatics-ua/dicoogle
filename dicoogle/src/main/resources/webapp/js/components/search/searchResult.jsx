@@ -245,7 +245,7 @@ const Step = React.createClass({
               &nbsp; Image
             </div>
           </div>
-        </div>
+      </div>
       );
   },
   getStep: function(current, step) {

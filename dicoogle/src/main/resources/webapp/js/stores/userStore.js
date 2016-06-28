@@ -99,14 +99,13 @@ const UserStore = Reflux.createStore({
                 this._isLoggedIn = true;
 
                 this.saveLocalStore();
-            setTimeout(() => {
-                this.trigger({
-                isLoggedIn: this._isLoggedIn,
-                success: true
-            });
-        }, 500)
-
-        },
+                setTimeout(() => {
+                  this.trigger({
+                    isLoggedIn: this._isLoggedIn,
+                    success: true
+                  });
+                }, 500)
+            },
             error: () => {
                 this.trigger({
                     isLoggedIn: this._isLoggedIn,
