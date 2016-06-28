@@ -153,9 +153,15 @@ const ServicesStore = Reflux.createStore({
         this.trigger(this._contents);
       });
     },
+<<<<<<< HEAD
   onSaveQuerySettings: function(connectionTimeout, acceptTimeout, idleTimeout, maxAssociations, maxPduReceive, maxPduSend, responseTimeout) {
     $.post(Endpoints.base + "/management/settings/dicom/query",
     {
+=======
+
+  onSaveQuerySettings(connectionTimeout, acceptTimeout, idleTimeout, maxAssociations, maxPduReceive, maxPduSend, responseTimeout) {
+    Dicoogle.setDicomQuerySettings({
+>>>>>>> update webcore to use proper client method
       connectionTimeout,
       acceptTimeout,
       idleTimeout,
