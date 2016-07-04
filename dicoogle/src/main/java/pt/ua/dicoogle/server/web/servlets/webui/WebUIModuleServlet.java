@@ -36,7 +36,7 @@ import java.nio.ByteBuffer;
 /**
  * Retrieval of web UI plugins and respective packages/modules.
  * 
- * <b>This API is unstable. It is currently only compatible with dicoogle-webcore 0.13.x</b>
+ * <b>This API is unstable. It is currently only compatible with dicoogle-webcore 0.14.x</b>
  *
  * @author Eduardo Pinho
  */

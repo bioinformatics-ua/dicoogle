@@ -42,7 +42,7 @@ import pt.ua.dicoogle.server.web.auth.Authentication;
 /**
  * Retrieval of web UI plugins and respective packages/modules.
  * 
- * <b>This API is unstable. It is currently only compatible with dicoogle-webcore 0.12.x and 0.13.x</b>
+ * <b>This API is unstable. It is currently only compatible with dicoogle-webcore >= 0.12.x && <= 0.14.x</b>
  *
  * @author Eduardo Pinho
  */
