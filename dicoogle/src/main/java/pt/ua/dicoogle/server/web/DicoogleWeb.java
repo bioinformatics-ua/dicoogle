@@ -18,6 +18,9 @@
  */
 package pt.ua.dicoogle.server.web;
 
+import org.apache.commons.codec.digest.Md5Crypt;
+import pt.ua.dicoogle.plugins.PluginController;
+import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
 import pt.ua.dicoogle.server.web.rest.VersionResource;
 import pt.ua.dicoogle.server.web.servlets.RestletHttpServlet;
 import pt.ua.dicoogle.server.web.servlets.ExportToCSVServlet;
@@ -60,6 +63,8 @@ import org.eclipse.jetty.webapp.WebAppContext;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
@@ -73,6 +78,7 @@ import pt.ua.dicoogle.server.LegacyRestletApplication;
 import pt.ua.dicoogle.server.web.servlets.accounts.LogoutServlet;
 import pt.ua.dicoogle.server.web.servlets.management.UnindexServlet;
 import pt.ua.dicoogle.server.web.servlets.search.DumpServlet;
+import pt.ua.dicoogle.server.web.servlets.webui.WebUIModuleServlet;
 import pt.ua.dicoogle.server.web.servlets.webui.WebUIServlet;
 import pt.ua.dicoogle.server.web.utils.LocalImageCache;
 import pt.ua.dicoogle.server.PluginRestletApplication;
@@ -150,11 +156,12 @@ public class DicoogleWeb {
         final WebAppContext webpages = new WebAppContext(warUrlString, CONTEXTPATH);
         webpages.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false"); // disables directory listing
         webpages.setInitParameter("useFileMappedBuffer", "false");
-        webpages.setInitParameter("cacheControl", "max-age=0, public");
-
+        webpages.setInitParameter("cacheControl", "public, max-age=2592000"); // cache for 30 days
+        webpages.setInitParameter("etags", "true"); // generate and handle weak entity validation tags
+        webpages.setDisplayName("webapp");
         webpages.setWelcomeFiles(new String[]{"index.html"});
         webpages.addServlet(new ServletHolder(new SearchHolderServlet()), "/search/holders");
-        FilterHolder gzFilter = webpages.addFilter(GzipFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
+        webpages.addFilter(GzipFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
         
         this.pluginApp = new PluginRestletApplication();
         this.pluginHandler = createServletHandler(new RestletHttpServlet(this.pluginApp), "/ext/*");
@@ -199,6 +206,7 @@ public class DicoogleWeb {
             createServletHandler(new ServicesServlet(ServicesServlet.PLUGIN), "/management/plugins/"),
             createServletHandler(new AETitleServlet(), "/management/settings/dicom"),
             createServletHandler(new WebUIServlet(), "/webui"),
+            createWebUIModuleServletHandler(),
             createServletHandler(new LoggerServlet(), "/logger"),
             createServletHandler(new RunningTasksServlet(), "/index/task"),
             createServletHandler(new ExportServlet(ExportType.EXPORT_CVS), "/export/cvs"),
@@ -217,7 +225,43 @@ public class DicoogleWeb {
         // and then start the server
         server.start();
     }
-    
+
+    private ServletContextHandler createWebUIModuleServletHandler() {
+        ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
+        handler.setContextPath(CONTEXTPATH);
+
+        HttpServlet servletModule = new WebUIModuleServlet();
+        // CORS support
+        this.addCORSFilter(handler);
+        // Caching!
+        FilterHolder cacheHolder = new FilterHolder(new AbstractCacheFilter() {
+            @Override
+            protected String etag(HttpServletRequest req) {
+                String name = req.getRequestURI().substring("/webui/module/".length());
+                WebUIPlugin plugin = PluginController.getInstance().getWebUIPlugin(name);
+                if (plugin == null) return null;
+                if (WebUIModuleServlet.isPrerelease(plugin.getVersion())) {
+                    // pre-release, use hash (to facilitate development)
+                    String fingerprint = PluginController.getInstance().getWebUIModuleJS(name);
+                    return '"' + Md5Crypt.md5Crypt(fingerprint.getBytes()) + '"';
+                } else {
+                    // normal release, use weak ETag
+                    String pProcess = req.getParameter("process");
+                    boolean process = pProcess == null || Boolean.parseBoolean(pProcess);
+                    if (process) {
+                        return "W/\"" + plugin.getName() + '@' + plugin.getVersion() + '"';
+                    } else {
+                        return "W/\"" + plugin.getName() + '@' + plugin.getVersion() + ";raw\"";
+                    }
+                }
+            }
+        });
+        cacheHolder.setInitParameter(AbstractCacheFilter.CACHE_CONTROL_PARAM, "private, max-age=2592000"); // cache for 30 days
+        handler.addFilter(cacheHolder, "/*", EnumSet.of(DispatcherType.REQUEST));
+        handler.addServlet(new ServletHolder(servletModule), "/webui/module/*");
+        return handler;
+    }
+
     private ServletContextHandler createServletHandler(HttpServlet servlet, String path){
         ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
         handler.setContextPath(CONTEXTPATH);
@@ -228,7 +272,7 @@ public class DicoogleWeb {
         handler.addServlet(new ServletHolder(servlet), path);
         return handler;
     }
-    
+
     private void addCORSFilter(ServletContextHandler handler) {
         String origins = ServerSettings.getInstance().getWeb().getAllowedOrigins();
         if (origins != null) {

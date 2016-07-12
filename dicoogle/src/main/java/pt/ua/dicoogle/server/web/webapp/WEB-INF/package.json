@@ -11,12 +11,12 @@
     "webapp"
   ],
   "contributors": [
-    "Luís A. Bastião <bastiao@ua.pt>",
+    "Luís A. Bastião <bastiao@bmd-software.com>",
     "Frederico Silva <fredericosilva@ua.pt>",
     "Eduardo Pinho <eduardopinho@ua.pt>"
   ],
   "maintainers": [
-    "Luís A. Bastião <bastiao@ua.pt>",
+    "Luís A. Bastião <bastiao@bmd-software.com>",
     "Eduardo Pinho <eduardopinho@ua.pt>"
   ],
   "repository": {
@@ -39,7 +39,7 @@
   "dependencies": {
     "bootstrap": "^3.3.2",
     "core-js": "^2.0.3",
-    "dicoogle-client": "^3.0.2",
+    "dicoogle-client": "^3.6.0",
     "dicoogle-webcore": "../../../../../../../../../../../webcore",
     "history": "^3.0.0",
     "jquery": "^1.10.2",

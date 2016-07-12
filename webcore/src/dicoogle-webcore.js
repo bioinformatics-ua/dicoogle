@@ -494,7 +494,7 @@ const DicoogleWebcore = (function () {
         }
     };
     script.onload = script.onreadystatechange = onLoadHandler;
-    script.src = base_url+'/webui?module='+moduleName+'&process=true';
+    script.src = base_url+'/webui/module/'+moduleName;
     prior.parentNode.insertBefore(script, prior);
   }
 
