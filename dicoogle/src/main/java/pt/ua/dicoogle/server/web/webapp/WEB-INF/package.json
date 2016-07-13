@@ -43,7 +43,7 @@
     "dicoogle-webcore": "../../../../../../../../../../../webcore",
     "history": "^3.0.0",
     "jquery": "^1.10.2",
-    "jquery-ui": "^1.10.5",
+    "jquery-ui": "~1.10.5",
     "react": "^0.14.6",
     "react-addons-update": "^0.14.8",
     "react-bootstrap": "^0.29.4",
