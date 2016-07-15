@@ -12,6 +12,7 @@ class TaskStatus extends React.Component {
       item: PropTypes.shape({
           taskUid: PropTypes.string.isRequired,
           complete: PropTypes.bool,
+          canceled: PropTypes.bool,
           taskProgress: PropTypes.number,
           elapsedTime: PropTypes.number,
           nIndexed: PropTypes.number,
@@ -23,9 +24,9 @@ class TaskStatus extends React.Component {
 
   render() {
     const {item, onCloseStopClicked} = this.props;
-    const {complete} = item;
+    const {complete, canceled} = item;
     const unknownPercentage = (typeof item.taskProgress !== 'number' || item.taskProgress < 0);
-    const percentage = (complete || unknownPercentage) ? '100%'
+    const percentage = (complete || canceled || unknownPercentage) ? '100%'
       : (Math.round(item.taskProgress * 100) + '%');
 
     let barstate = "indexprogress progress-bar progress-bar-striped";
@@ -37,9 +38,15 @@ class TaskStatus extends React.Component {
       barstate += " progress-bar-info active";
     } else {
       barstate += " progress-bar-success";
-      if (!complete) {
+      if (!complete && !canceled) {
         barstate += " active";
       }
+    }
+    const barStyle = {
+      width: percentage
+    };
+    if (canceled) {
+      barStyle.backgroundColor = '#CCCCCC';
     }
 
   return (
@@ -47,14 +54,14 @@ class TaskStatus extends React.Component {
        <div className="row">
       <div className="col-sm-10">
         <div className="progress indexstatusprogress">
-          <div style={{width: percentage}} className={barstate} role="progressbar" aria-valuemin="0" aria-valuemax="100">
-            {!unknownPercentage && percentage}
+          <div style={barStyle} className={barstate} role="progressbar" aria-valuemin="0" aria-valuemax="100">
+            {canceled ? 'canceled' : (!unknownPercentage && percentage)}
           </div>
         </div>
       </div>
       <div className="col-sm-2">
         <button className="btn btn-danger" onClick={onCloseStopClicked}>
-          {complete ? "Close" : "Stop"}
+          {(complete || canceled) ? "Close" : "Stop"}
         </button>
       </div>
     </div>

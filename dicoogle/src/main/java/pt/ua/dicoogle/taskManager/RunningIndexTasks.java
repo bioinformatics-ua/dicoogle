@@ -65,17 +65,10 @@ public class RunningIndexTasks {
 
 	public boolean stopTask(String taskUid) {
 		Task<Report> task = taskRunningList.get(taskUid);
-		if (task != null)
-		{
-			boolean canceled = task.cancel(true);
-			if(canceled)
-			{
-				//removeTask(taskUid);
-				return true;
-			}
-		}
-        else {
-            logger.warn("Attempt to stop unexistent task {}, ignoring", taskUid);
+		if (task != null) {
+			return task.cancel(true);
+		} else {
+			logger.info("Attempt to stop unexistent task {}, ignoring", taskUid);
 		}
 
 		return false;
@@ -86,22 +79,20 @@ public class RunningIndexTasks {
 		return taskRunningList;
 	}
 
-	public String toJson() throws InterruptedException, ExecutionException {
-		JSONObject object = new JSONObject();
-		JSONArray array = new JSONArray();
+    public String toJson() {
+        JSONObject object = new JSONObject();
+        JSONArray array = new JSONArray();
 
-		Iterator<Map.Entry<String, Task<Report>>> it = taskRunningList.entrySet().iterator();
         int countComplete = 0;
         int countCancelled = 0;
-		while (it.hasNext()) {
-			Map.Entry<String, Task<Report>> pair = it.next();
-			Task<Report> task = pair.getValue();
+        for (Map.Entry<String, Task<Report>> pair : taskRunningList.entrySet()) {
+            Task<Report> task = pair.getValue();
             JSONObject entry = new JSONObject();
-			entry.put("taskUid", pair.getKey());
-			entry.put("taskName", task.getName());
-			entry.put("taskProgress", task.getProgress());
-            
-            if (task.isDone()) {
+            entry.put("taskUid", pair.getKey());
+            entry.put("taskName", task.getName());
+            entry.put("taskProgress", task.getProgress());
+
+            if (task.isDone() && !task.isCancelled()) {
                 entry.put("complete", true);
                 countComplete += 1;
                 try {
@@ -117,14 +108,13 @@ public class RunningIndexTasks {
             }
             if (task.isCancelled()) {
                 countCancelled += 1;
+                entry.put("canceled", true);
             }
-			array.add(entry);
-		}
+            array.add(entry);
+        }
 
         object.put("results", array);
-		object.put("count", array.size() - countComplete - countCancelled);
-		
-		return object.toString();
-
-	}
+        object.put("count", array.size() - countComplete - countCancelled);
+        return object.toString();
+    }
 }
