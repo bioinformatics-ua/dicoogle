@@ -56,16 +56,14 @@ const ExportStore = Reflux.createStore({
           providers: provider
         }
       }).then((data, status) => {
-          //Response
+          // create a download link and trigger it automatically
           const response = JSON.parse(data);
-          console.log("UID:", response.uid);
           const link = document.createElement("a");
           const hacked_footer = document.getElementById("hacked-modal-footer");
           link.style.visibility = "hidden";
           link.download = "file";
           link.href = Endpoints.base + "/exportFile?UID=" + response.uid;
           hacked_footer.appendChild(link);
-          console.log(link);
           link.click();
           hacked_footer.removeChild(link);
       });

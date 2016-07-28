@@ -110,7 +110,6 @@ public class ExportCSVToFILEServlet extends HttpServlet {
 			}
 
 			for (Object f : jsonObj) {
-				System.out.println(f.toString());
 				fields.put(f.toString(), f.toString());
 				orderedFields.add(f.toString());
 			}

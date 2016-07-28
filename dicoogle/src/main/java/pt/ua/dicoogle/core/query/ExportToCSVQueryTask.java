@@ -26,7 +26,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +58,7 @@ public class ExportToCSVQueryTask extends JointQueryTask {
 
 	@Override
 	public void onCompletion() {
-		// TODO Auto-generated method stub
+		log.debug("ExportToCSV task: completed");
 		writter.flush();
 		writter.close();
 		latch.countDown();
@@ -69,18 +68,15 @@ public class ExportToCSVQueryTask extends JointQueryTask {
 
 	@Override
 	public void onReceive(Task<Iterable<SearchResult>> e) {
-		// TODO Auto-generated method stub
-
+		log.debug("ExportToCSV task: Received results");
 		try {
 			Iterable<SearchResult> it = e.get();
 			for (SearchResult result : it) {
 				printLine(result);
 			}
 		} catch (InterruptedException | ExecutionException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
 
 	}
 
@@ -107,14 +103,10 @@ public class ExportToCSVQueryTask extends JointQueryTask {
 		
 		for (String tag : tagsOrder) {
 			Object temp1 = extraFields.get(tag);
-			String temp1String = temp1.toString();
-			
-			if(NumberUtils.isNumber(temp1String)){
-				temp1String = NumberUtils.createBigDecimal(temp1String).toPlainString();	
-			}
-			
-			String s = (temp1 != null) ? StringUtils.trimToEmpty(temp1String) : "";
-			
+
+			final String s = (temp1 != null) ?
+				temp1.toString().trim() : "";
+
 			if (s.length() > 0) {
 				String temp = StringUtils.replaceEach(s, searchChars, replaceChars);
 				builder.append('\"').append(temp).append("\";");
@@ -123,17 +115,15 @@ public class ExportToCSVQueryTask extends JointQueryTask {
 			}
 		}
 		
-		log.debug("Printing Line: ", builder.toString());
+		log.trace("Printing Line: ", builder.toString());
 		nLines++;
 		this.writter.println(builder.toString());
 	}
 
 	public void await() {
-		// TODO Auto-generated method stub
 		try {
 			latch.await();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
