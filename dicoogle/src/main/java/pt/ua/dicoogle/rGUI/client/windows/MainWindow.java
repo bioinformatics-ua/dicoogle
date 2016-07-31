@@ -24,7 +24,42 @@
  */
 package pt.ua.dicoogle.rGUI.client.windows;
 
+import org.apache.commons.codec.binary.Base64;
+import org.jvnet.substance.SubstanceLookAndFeel;
+import org.jvnet.substance.skin.*;
+import org.slf4j.LoggerFactory;
+import pt.ua.dicoogle.Main;
+import pt.ua.dicoogle.core.ClientSettings;
+import pt.ua.dicoogle.core.QueryHistorySupport;
+import pt.ua.dicoogle.plugins.NetworkMember;
+import pt.ua.dicoogle.plugins.PluginController;
+import pt.ua.dicoogle.rGUI.RFileBrowser.FileAction;
+import pt.ua.dicoogle.rGUI.RFileBrowser.RemoteFile;
+import pt.ua.dicoogle.rGUI.RFileBrowser.RemoteFileChooser;
+import pt.ua.dicoogle.rGUI.client.AdminRefs;
+import pt.ua.dicoogle.rGUI.client.ClientCore;
+import pt.ua.dicoogle.rGUI.client.UIHelper.DisplayJAI;
+import pt.ua.dicoogle.rGUI.client.UIHelper.OSXAdapter;
+import pt.ua.dicoogle.rGUI.client.UIHelper.Result2Tree;
+import pt.ua.dicoogle.rGUI.client.UIHelper.TrayIconCreator;
+import pt.ua.dicoogle.rGUI.client.UserRefs;
+import pt.ua.dicoogle.rGUI.fileTransfer.FileReceiver;
+import pt.ua.dicoogle.rGUI.fileTransfer.TransferStatus;
+import pt.ua.dicoogle.rGUI.server.controllers.PluginController4user;
+import pt.ua.dicoogle.sdk.datastructs.SearchResult;
+import pt.ua.dicoogle.sdk.task.JointQueryTask;
+import pt.ua.dicoogle.sdk.task.Task;
 import pt.ua.dicoogle.utils.Dicom2JPEG;
+
+import javax.imageio.ImageIO;
+import javax.swing.GroupLayout.Group;
+import javax.swing.GroupLayout.ParallelGroup;
+import javax.swing.GroupLayout.SequentialGroup;
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -40,40 +75,6 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
-
-import javax.imageio.ImageIO;
-import javax.swing.GroupLayout.Group;
-import javax.swing.GroupLayout.ParallelGroup;
-import javax.swing.GroupLayout.SequentialGroup;
-import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-
-import org.apache.commons.codec.binary.Base64;
-import org.jvnet.substance.SubstanceLookAndFeel;
-import org.jvnet.substance.skin.*;
-import org.slf4j.LoggerFactory;
-
-import pt.ua.dicoogle.Main;
-import pt.ua.dicoogle.core.ClientSettings;
-import pt.ua.dicoogle.core.QueryHistorySupport;
-import pt.ua.dicoogle.plugins.NetworkMember;
-import pt.ua.dicoogle.plugins.PluginController;
-import pt.ua.dicoogle.rGUI.RFileBrowser.FileAction;
-import pt.ua.dicoogle.rGUI.RFileBrowser.RemoteFile;
-import pt.ua.dicoogle.rGUI.RFileBrowser.RemoteFileChooser;
-import pt.ua.dicoogle.rGUI.client.AdminRefs;
-import pt.ua.dicoogle.rGUI.client.ClientCore;
-import pt.ua.dicoogle.rGUI.client.UIHelper.*;
-import pt.ua.dicoogle.rGUI.client.UserRefs;
-import pt.ua.dicoogle.rGUI.fileTransfer.FileReceiver;
-import pt.ua.dicoogle.rGUI.fileTransfer.TransferStatus;
-import pt.ua.dicoogle.rGUI.server.controllers.PluginController4user;
-import pt.ua.dicoogle.sdk.datastructs.SearchResult;
-import pt.ua.dicoogle.sdk.task.JointQueryTask;
-import pt.ua.dicoogle.sdk.task.Task;
 
 /**
  * Dicoogle GUI Main form
@@ -359,12 +360,6 @@ public class MainWindow extends javax.swing.JFrame {
      * Stops the window from minimizing to tray while in options screen
      */
     private void showOptions() {
-        ServerOptions t = ServerOptions.getInstance();
-        t.setReturnToMain(true);
-        t.setVisible(true);
-        //this.setVisible(false);
-        t.toFront();
-        //this.setEnabled(false);
     }
 
     private void cleanThumbnails() {
@@ -1719,9 +1714,6 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        About a = About.getInstance();
-        a.setVisible(true);
-        a.toFront();
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
 private void jMenuDirScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuDirScanActionPerformed
@@ -2010,8 +2002,6 @@ private void jMenuDirScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         if (Main.isFixedClient()) {
             clientCore.stopKeepAlives();
             this.dispose();
-
-            TrayIconCreator.getInstance().distroyTrayIcon();
         } else {
             System.exit(0);
         }
