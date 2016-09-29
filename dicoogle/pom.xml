@@ -66,13 +66,6 @@
             <url>http://maven.restlet.org</url>
         </repository>
 
-        <!--These are needed for Swing/Netbeans -->
-        <repository>
-            <id>maven2-repository.netbeans.maven2</id>
-            <name>Netbeans Maven Repository</name>
-            <url>http://bits.netbeans.org/maven2/</url>
-            <layout>default</layout>
-        </repository>
     </repositories>
 
     <build>
@@ -324,12 +317,6 @@
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>1.8</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.netbeans.external</groupId>
-            <artifactId>AbsoluteLayout</artifactId>
-            <version>RELEASE701</version>
         </dependency>
 
         <dependency>

@@ -64,7 +64,7 @@ public class ClientOptions extends javax.swing.JFrame {
         }
         catch (InterruptedException ex)
         {
-            LoggerFactory.getLogger(ServerOptions.class).error(ex.getMessage(), ex);
+            LoggerFactory.getLogger(ClientOptions.class).error(ex.getMessage(), ex);
         }
         return instance;
     }
