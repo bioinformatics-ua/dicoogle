@@ -29,7 +29,7 @@ import net.sf.json.JSONSerializer;
 
 import org.apache.commons.lang3.StringUtils;
 
-import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettings;
 
 /**
  *

@@ -28,6 +28,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import org.slf4j.LoggerFactory;
+import pt.ua.dicoogle.core.settings.ServerSettings;
+
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 

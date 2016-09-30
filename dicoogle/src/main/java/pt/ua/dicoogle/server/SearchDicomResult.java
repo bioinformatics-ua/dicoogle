@@ -25,12 +25,10 @@
 package pt.ua.dicoogle.server;
 
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import org.dcm4che2.data.*;
 import org.slf4j.Logger;
-import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettings;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -42,7 +42,7 @@ import pt.ua.dicoogle.DicomLog.LogLine;
 
 
 import pt.ua.dicoogle.DicomLog.LogXML;
-import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettings;
 import pt.ua.dicoogle.rGUI.server.controllers.Logs;
 
 

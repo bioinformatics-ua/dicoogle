@@ -24,13 +24,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import org.slf4j.Logger;
+
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocketFactory;
-import pt.ua.dicoogle.core.ClientSettings;
+import pt.ua.dicoogle.core.settings.ClientSettings;
 import pt.ua.dicoogle.rGUI.RFileBrowser.RemoteFile;
 
 /**

@@ -52,7 +52,8 @@ public interface ServerSettingsReader {
     public String getDeviceDescription();
     
     public String getDicoogleDir();
-    
+
+    @Deprecated
     public Set<String> getExtensionsAllowed();
     
     public boolean getFullContentIndex();
@@ -60,11 +61,14 @@ public interface ServerSettingsReader {
     public String getID();
     
     public int getIdleTimeout();
-    
+
+    @Deprecated
     public String getIndexer();
-    
+
+    @Deprecated
     public String getNodeName();
-    
+
+    @Deprecated
     public boolean isNodeNameDefined();
     
     public String getNetworkInterfaceName();
@@ -116,7 +120,8 @@ public interface ServerSettingsReader {
     public boolean isStorage();
     
     public boolean isQueryRetrive();
-    
+
+    @Deprecated
     public boolean isWANModeEnabled();
     
     public int getMaxMessages();

@@ -27,10 +27,8 @@ import java.util.ArrayList;
 import java.util.concurrent.Executor;
 
 import org.dcm4che2.data.Tag;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import javax.xml.transform.TransformerConfigurationException;
 import org.dcm4che2.data.DicomElement;
 import org.dcm4che2.data.DicomObject;
@@ -46,7 +44,7 @@ import pt.ua.dicoogle.DicomLog.LogXML;
 import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.server.DicomNetwork;
 import pt.ua.dicoogle.server.SearchDicomResult;
-import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettings;
 import pt.ua.dicoogle.rGUI.server.controllers.Logs;
 
 /**

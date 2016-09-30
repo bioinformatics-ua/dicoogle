@@ -18,9 +18,8 @@
  */
 package pt.ua.dicoogle.server;
 
-import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettings;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -37,10 +36,7 @@ import org.dcm4che2.net.Device;
 import org.dcm4che2.net.DicomServiceException;
 
 ///import org.dcm4che2.net.Executor;
-/** dcm4che doesn't support Executor anymore, so now import from java.util */ 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
+/** dcm4che doesn't support Executor anymore, so now import from java.util */
 import org.slf4j.LoggerFactory;
 
 import org.dcm4che2.net.NetworkApplicationEntity;

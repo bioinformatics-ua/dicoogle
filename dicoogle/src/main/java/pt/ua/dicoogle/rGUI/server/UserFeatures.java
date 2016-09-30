@@ -19,21 +19,18 @@
 package pt.ua.dicoogle.rGUI.server;
 
 import java.rmi.NoSuchObjectException;
-import java.rmi.NoSuchObjectException;
+
 import pt.ua.dicoogle.server.users.UserSessions;
 import java.util.Timer;
 import java.util.TimerTask;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
+
 import org.slf4j.LoggerFactory;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import javax.rmi.ssl.SslRMIServerSocketFactory;
 import pt.ua.dicoogle.Main;
-import pt.ua.dicoogle.core.ServerSettings;
-import pt.ua.dicoogle.plugins.PluginController;
+import pt.ua.dicoogle.core.settings.ServerSettings;
 import pt.ua.dicoogle.rGUI.MultihomeSslRMIClientSocketFactory;
 
 import pt.ua.dicoogle.rGUI.interfaces.IUser;

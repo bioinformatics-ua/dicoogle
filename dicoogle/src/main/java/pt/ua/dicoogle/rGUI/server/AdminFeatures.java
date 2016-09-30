@@ -21,18 +21,20 @@ package pt.ua.dicoogle.rGUI.server;
 import java.rmi.NoSuchObjectException;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import org.slf4j.LoggerFactory;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import javax.rmi.ssl.SslRMIServerSocketFactory;
+import pt.ieeta.anonymouspatientdata.core.Anonymous;
 
 import pt.ua.dicoogle.Main;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.INetworkInterfaces;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IPluginControllerAdmin;
 
 import pt.ua.dicoogle.server.ControlServices;
-import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettings;
 import pt.ua.dicoogle.core.XMLSupport;
 import pt.ua.dicoogle.rGUI.MultihomeSslRMIClientSocketFactory;
 
@@ -499,6 +501,8 @@ public class AdminFeatures implements IAdmin {
         //logout the users
         UserSessions.getInstance().adminLogoutAllUsers();
 
+        Anonymous.getInstance().stop();
+        
         //DebugManager.getInstance().debug("The Server is Shutting Down!");
         
         //close Dicoogle Server

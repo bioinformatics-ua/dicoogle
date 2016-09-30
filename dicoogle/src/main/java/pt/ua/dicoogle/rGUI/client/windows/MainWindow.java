@@ -29,7 +29,7 @@ import org.jvnet.substance.SubstanceLookAndFeel;
 import org.jvnet.substance.skin.*;
 import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.Main;
-import pt.ua.dicoogle.core.ClientSettings;
+import pt.ua.dicoogle.core.settings.ClientSettings;
 import pt.ua.dicoogle.core.QueryHistorySupport;
 import pt.ua.dicoogle.plugins.NetworkMember;
 import pt.ua.dicoogle.plugins.PluginController;

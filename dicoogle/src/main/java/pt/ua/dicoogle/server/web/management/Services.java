@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 import pt.ua.dicoogle.core.XMLSupport;
-import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettings;
 
 import java.io.IOException;
 

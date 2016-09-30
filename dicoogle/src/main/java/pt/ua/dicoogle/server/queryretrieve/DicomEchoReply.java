@@ -32,7 +32,6 @@ import java.util.concurrent.Executor;
 
 import org.dcm4che2.data.DicomObject;
 import org.dcm4che2.net.Association;
-import org.dcm4che2.net.ConfigurationException;
 import org.dcm4che2.data.UID;
 import org.dcm4che2.net.CommandUtils;
 import org.dcm4che2.net.Device;
@@ -42,7 +41,7 @@ import org.dcm4che2.net.NewThreadExecutor;
 import org.dcm4che2.net.TransferCapability;
 import org.dcm4che2.net.UserIdentity;
 import org.dcm4che2.net.service.VerificationService;
-import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettings;
 
 /**
  *

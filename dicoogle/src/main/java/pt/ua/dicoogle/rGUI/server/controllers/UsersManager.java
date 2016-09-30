@@ -21,7 +21,7 @@ package pt.ua.dicoogle.rGUI.server.controllers;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettings;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IUsersManager;
 import pt.ua.dicoogle.server.users.HashService;
 import pt.ua.dicoogle.server.users.User;

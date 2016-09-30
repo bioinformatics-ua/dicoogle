@@ -27,7 +27,7 @@ import aclmanager.exceptions.CannotParseFileException;
 import java.io.File;
 import java.util.concurrent.Executor;
 
-import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettings;
 
 import org.dcm4che2.data.UID;
 import org.dcm4che2.net.CommandUtils;

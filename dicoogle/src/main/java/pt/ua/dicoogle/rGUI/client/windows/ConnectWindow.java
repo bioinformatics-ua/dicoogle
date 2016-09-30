@@ -24,10 +24,9 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.net.URL;
 import java.util.concurrent.Semaphore;
-import org.slf4j.Logger;
+
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -38,7 +37,7 @@ import org.jvnet.substance.skin.BusinessBlackSteelSkin;
 import pt.ua.dicoogle.rGUI.client.ConnectServer;
 
 import pt.ua.dicoogle.Main;
-import pt.ua.dicoogle.core.ClientSettings;
+import pt.ua.dicoogle.core.settings.ClientSettings;
 import pt.ua.dicoogle.server.users.HashService;
 
 

@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 
 import org.slf4j.Logger;
+import pt.ua.dicoogle.core.settings.ServerSettings;
 import pt.ua.dicoogle.plugins.PluginController;
 
 

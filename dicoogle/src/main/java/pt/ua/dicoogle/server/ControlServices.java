@@ -18,14 +18,13 @@
  */
 package pt.ua.dicoogle.server;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import org.slf4j.Logger;
 import pt.ua.dicoogle.server.queryretrieve.QueryRetrieve;
 
 import org.slf4j.LoggerFactory;
-import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettings;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IServices;
 import pt.ua.dicoogle.rGUI.server.controllers.Logs;
 import pt.ua.dicoogle.server.web.DicoogleWeb;

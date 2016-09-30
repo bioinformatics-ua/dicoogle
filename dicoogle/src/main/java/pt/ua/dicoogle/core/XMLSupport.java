@@ -27,8 +27,8 @@ package pt.ua.dicoogle.core;
  */
 
 
+import pt.ua.dicoogle.core.settings.ServerSettings;
 import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
-import pt.ua.dicoogle.sdk.settings.types.ServerDirectoryPath;
 import pt.ua.dicoogle.server.*;
 
 import java.io.*;
@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.sdk.Utils.Platform;
 
+@Deprecated
 public class XMLSupport extends DefaultHandler
 {
     private static final Logger logger = LoggerFactory.getLogger(XMLSupport.class);

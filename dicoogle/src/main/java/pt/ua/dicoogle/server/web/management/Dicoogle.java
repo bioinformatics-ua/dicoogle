@@ -26,7 +26,7 @@ import java.util.Map;
 import org.dcm4che2.data.UID;
 import pt.ua.dicoogle.server.SOPList;
 import pt.ua.dicoogle.server.TransfersStorage;
-import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettings;
 import pt.ua.dicoogle.sdk.settings.InvalidSettingValueException;
 import pt.ua.dicoogle.sdk.settings.types.CheckboxWithHint;
 import pt.ua.dicoogle.sdk.settings.types.ComboBox;

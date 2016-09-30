@@ -21,9 +21,7 @@ package pt.ua.dicoogle.rGUI.server;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.ExportException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
+
 import org.slf4j.LoggerFactory;
 
 import java.rmi.server.UnicastRemoteObject;
@@ -31,7 +29,7 @@ import java.rmi.server.UnicastRemoteObject;
 import javax.rmi.ssl.SslRMIServerSocketFactory;
 import javax.swing.JOptionPane;
 import pt.ua.dicoogle.Main;
-import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettings;
 import pt.ua.dicoogle.rGUI.MultihomeSslRMIClientSocketFactory;
 
 import pt.ua.dicoogle.rGUI.interfaces.ILogin;

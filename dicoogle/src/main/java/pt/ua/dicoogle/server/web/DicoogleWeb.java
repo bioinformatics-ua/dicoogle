@@ -38,7 +38,7 @@ import pt.ua.dicoogle.server.web.servlets.search.SearchServlet.SearchType;
 import pt.ua.dicoogle.server.web.servlets.search.WadoServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.LoginServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.UserServlet;
-import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettings;
 import pt.ua.dicoogle.server.web.servlets.management.AETitleServlet;
 import pt.ua.dicoogle.server.web.servlets.management.DicomQuerySettingsServlet;
 import pt.ua.dicoogle.server.web.servlets.management.ForceIndexing;

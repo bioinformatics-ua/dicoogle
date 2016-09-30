@@ -21,7 +21,7 @@ package pt.ua.dicoogle.plugins;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
-import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettings;
 
 import pt.ua.dicoogle.sdk.IndexerInterface;
 import pt.ua.dicoogle.sdk.QueryInterface;
