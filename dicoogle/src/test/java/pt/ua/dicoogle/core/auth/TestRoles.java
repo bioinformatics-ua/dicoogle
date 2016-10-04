@@ -18,6 +18,7 @@
  */
 package pt.ua.dicoogle.core.auth;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import pt.ua.dicoogle.server.users.*;
 import pt.ua.dicoogle.server.web.auth.Authentication;
@@ -28,8 +29,8 @@ import pt.ua.dicoogle.server.web.auth.LoggedIn;
  */
 public class TestRoles {
 
-
-    //@Test
+    @Test
+    @Ignore // needs isolation
     public void testRoles() {
 
         UsersStruct users = UsersStruct.getInstance();
@@ -40,7 +41,8 @@ public class TestRoles {
         System.out.println(rolesStruct.getRoles());
     }
 
-    //@Test
+    @Test
+    @Ignore // needs isolation
     public void testUserRoles() {
 
         RolesXML rolesXML = new RolesXML();

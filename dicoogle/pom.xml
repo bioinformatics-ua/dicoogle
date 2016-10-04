@@ -76,9 +76,6 @@
                 <directory>src/main/java/pt/ua/dicoogle/config</directory>
             </resource>
             <resource>
-                <directory>src/main/java/pt/ua/dicoogle/gfx</directory>
-            </resource>
-            <resource>
                 <directory>src/main/resources</directory>
             </resource>
             <resource>
@@ -256,8 +253,6 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
-
-
         <dependency>
             <groupId>pt.ua.ieeta</groupId>
             <artifactId>dicoogle-sdk</artifactId>
@@ -276,11 +271,6 @@
             <version>5.3</version>
         </dependency>
 
-        <dependency>
-            <groupId>pt.ieeta</groupId>
-            <artifactId>AnonymousPatientData</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
