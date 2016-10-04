@@ -18,6 +18,9 @@
  */
 package pt.ua.dicoogle.sdk.datastructs;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -25,15 +28,21 @@ import java.util.Objects;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
+@XmlAccessorType(XmlAccessType.NONE)
 public class MoveDestination implements Serializable
 {
     static final long serialVersionUID = 2L;
 
+    @XmlAttribute(name = "ae", required = true)
     private final String AETitle;
+    @XmlAttribute(name = "ip", required = true)
     private final String ipAddrs;
+    @XmlAttribute(name = "port", required = true)
     private final int port;
 
+    @XmlAttribute(name = "description")
     private final String description;
+    @XmlAttribute(name = "public")
     private final boolean isPublic;
 
     public MoveDestination(String AETitle, String ipAddr, int port, boolean isPublic, String description) {
@@ -61,28 +70,12 @@ public class MoveDestination implements Serializable
     }
 
     /**
-     * @param AETitle the AETitle to set
-     */
-/*    public void setAETitle(String AETitle)
-    {
-        this.AETitle = AETitle;
-    }*/
-
-    /**
      * @return the ipAddrs
      */
     public String getIpAddrs()
     {
         return ipAddrs;
     }
-
-    /**
-     * @param ipAddrs the ipAddrs to set
-     */
-/*    public void setIpAddrs(String ipAddrs)
-    {
-        this.ipAddrs = ipAddrs;
-    } */
 
     /**
      * @return the port
@@ -115,31 +108,26 @@ public class MoveDestination implements Serializable
 
     /**
      * @return the isPublic
+     * @todo rename method name
      */
     public boolean isIsPublic() {
         return isPublic;
     }
 
     @Override
-    public boolean equals(Object obj){
-        if(obj == null || getClass() != obj.getClass())
-            return false;
-
-        if(obj == this)
-            return true;
-
-        MoveDestination move = (MoveDestination) obj;
-
-        // To the list of MoveDestinations may not be repeated AETitles
-        return move.AETitle.equals(AETitle) && move.ipAddrs.equals(ipAddrs) && move.port == port;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MoveDestination that = (MoveDestination) o;
+        return port == that.port &&
+                isPublic == that.isPublic &&
+                Objects.equals(AETitle, that.AETitle) &&
+                Objects.equals(ipAddrs, that.ipAddrs) &&
+                Objects.equals(description, that.description);
     }
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + Objects.hashCode(this.AETitle);
-        hash = 97 * hash + Objects.hashCode(this.ipAddrs);
-        hash = 97 * hash + this.port;
-        return hash;
+        return Objects.hash(AETitle, ipAddrs, port, description, isPublic);
     }
 }

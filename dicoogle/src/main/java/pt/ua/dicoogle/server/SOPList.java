@@ -231,7 +231,7 @@ public class SOPList {
      * Updates a given SOP Class accepted Tranfer Syntaxes
      * @param UID SOP Class
      * @param name
-     * @param vale
+     * @param value
      * @return -1 if something went wrong, 1 otherwise
      */
     public synchronized int updateTSField(String UID, String name, boolean value) {

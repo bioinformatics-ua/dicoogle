@@ -25,8 +25,7 @@ import pt.ua.dicoogle.sdk.core.WebSettingsReader;
 import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.server.web.utils.types.DataTable;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -41,9 +40,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author António Novo <antonio.novo@ua.pt>
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  *
- *
  */
 @XmlRootElement(name = "Config")
+@XmlAccessorType (XmlAccessType.NONE)
 public class ServerSettings implements ServerSettingsReader
 {
     @XmlElement(name = "AETitle")
@@ -56,7 +55,11 @@ public class ServerSettings implements ServerSettingsReader
 
     @XmlElement(name = "Path")
     private String Path;
+
+    @Deprecated
     private String ID;
+
+    @XmlElement(name = "Port")
     private int storagePort;
 
     @Deprecated
@@ -77,6 +80,8 @@ public class ServerSettings implements ServerSettingsReader
     /// auto-start storage service
     @XmlElement(name = "Storage")
     private boolean storage;
+
+    @XmlElement(name = "EncryptUsersFile")
     private boolean encryptUsersFile;
 
     public static class QueryRetrieveSettings {
@@ -91,21 +96,21 @@ public class ServerSettings implements ServerSettingsReader
         @XmlElement(name = "Port")
         private int wlsPort;
 
-        /* DEFAULT ("any"->null)Permited local interfaces to incomming connection
+        /* DEFAULT ("any"->null)Permitted local interfaces to incoming connection
          * ('null'->any interface; 'ethx'->only this interface |->separator */
         @XmlElement(name = "PermitedLocalInterfaces")
         private String permitedLocalInterfaces;
 
-        /* DEFAULT ("any"->null)Permited remote host name connections
+        /* DEFAULT ("any"->null)Permitted remote host name connections
          * ('null'->any can connect; 'www.x.com'->only this can connect |->separator */
         @XmlElement(name = "PermitedHostnames")
         private String permitedRemoteHostnames;
 
-        /* DEFAULT Response delay (in miliseconds) */
+        /* DEFAULT Response delay (in milliseconds) */
         @XmlElement(name = "RspDelay")
         private int rspDelay;
 
-        /* DEFAULT Dimse response timeout (in sec) */
+        /* DEFAULT DIM-SE response timeout (in sec) */
         @XmlElement(name = "DIMSERspTimeout")
         private int DIMSERspTimeout;
 
@@ -136,8 +141,6 @@ public class ServerSettings implements ServerSettingsReader
 
         @XmlElement(name = "MAX_PDU_LENGTH_SEND")
         private int maxPDULengthSend;
-
-
     }
 
     @XmlElement(name = "QueryRetrieve")
@@ -158,15 +161,54 @@ public class ServerSettings implements ServerSettingsReader
     @XmlElement(name = "LocalAETName")
     private String localAETName ;
 
-
-
     // Connection settings
     @Deprecated
     private int maxMessages = 2000;
 
-    HashMap<String, String> modalityFind = new HashMap<>();
+    public static class Options {
+        static class Modality {
+            static class CFind {
+                static class Find {
+                    @XmlAttribute(name = "sop")
+                    private String sop;
+                    @XmlValue
+                    private String description;
 
-    ArrayList<MoveDestination> dest = new ArrayList<>();
+                    public Find(String sop, String description) {
+                        this.sop = sop;
+                        this.description = description;
+                    }
+                }
+                @XmlElement(name = "find")
+                private List<Find> find = new ArrayList<>();
+            }
+            @XmlElement(name = "cfind")
+            private CFind cfind = new CFind();
+        }
+        @XmlElement(name = "modality")
+        private Modality modality = new Modality();
+
+        static class Destinations {
+
+            @XmlElement(name = "dest")
+            //@XmlJavaTypeAdapter(value = SettingsAdapters.MoveDestinationAdapter.class, type = SettingsAdapters.MoveDestinationPojo.class)
+            private List<MoveDestination> dest = new ArrayList<>();
+        }
+        @XmlElement(name = "destinations")
+        private Destinations destinations = new Destinations();
+
+        static class CStorePriorities {
+
+        }
+        @XmlElement(name = "CSTOREPriorities")
+        private CStorePriorities cStorePriorities = new CStorePriorities();
+    }
+    @XmlElement(name = "options", required = true)
+    private Options options = new Options();
+
+    //HashMap<String, String> modalityFind = new HashMap<>();
+
+    //ArrayList<MoveDestination> dest = new ArrayList<>();
 
     private Set<String> priorityAETitles = new HashSet<>();
 
@@ -287,6 +329,7 @@ public class ServerSettings implements ServerSettingsReader
      * @return the indexer
      */
     @Override
+    @Deprecated
     public String getIndexer() {
         return indexer;
     }
@@ -294,6 +337,7 @@ public class ServerSettings implements ServerSettingsReader
     /**
      * @param indexer the indexer to set
      */
+    @Deprecated
     public void setIndexer(String indexer) {
         this.indexer = indexer;
     }
@@ -302,6 +346,7 @@ public class ServerSettings implements ServerSettingsReader
      * @return the nodeName
      */
     @Override
+    @Deprecated
     public String getNodeName() {
         return nodeName;
     }
@@ -309,6 +354,7 @@ public class ServerSettings implements ServerSettingsReader
     /**
      * @param nodeName the nodeName to set
      */
+    @Deprecated
     public void setNodeName(String nodeName) {
         this.nodeName = nodeName;
     }
@@ -317,6 +363,7 @@ public class ServerSettings implements ServerSettingsReader
      * @return the nodeNameDefined
      */
     @Override
+    @Deprecated
     public boolean isNodeNameDefined() {
         return nodeNameDefined;
     }
@@ -324,6 +371,7 @@ public class ServerSettings implements ServerSettingsReader
     /**
      * @param nodeNameDefined the nodeNameDefined to set
      */
+    @Deprecated
     public void setNodeNameDefined(boolean nodeNameDefined) {
         this.nodeNameDefined = nodeNameDefined;
     }
@@ -344,6 +392,7 @@ public class ServerSettings implements ServerSettingsReader
      * @return the indexerEffort
      */
     @Override
+    @XmlTransient
     public int getIndexerEffort() {
         return indexerEffort;
     }
@@ -359,6 +408,7 @@ public class ServerSettings implements ServerSettingsReader
      * @return the encryptUsersFile
      */
     @Override
+    @XmlTransient
     public boolean isEncryptUsersFile() {
         return encryptUsersFile;
     }
@@ -454,67 +504,72 @@ public class ServerSettings implements ServerSettingsReader
     /**
      * Web (including web server, webservices, etc)
      */
-    public class Web implements WebSettingsReader
+    public static class Web implements WebSettingsReader
     {
-        private boolean webServer = true;
-        private int serverPort = 8080;
-        private String accessControlAllowOrigins = "*";
-
-        @Deprecated
-        private boolean webServices = false;
-        @Deprecated
-        private int servicePort = 6060;
-        
-
-
-        public Web()
-        {
+        static class Server {
+            @XmlAttribute(name = "enable")
+            private boolean enabled = true;
+            @XmlAttribute(name = "port")
+            private int port = 8080;
+            @XmlAttribute(name = "allowedOrigins")
+            private String accessControlAllowOrigins = "*";
         }
+        @XmlElement(name = "server")
+        private Server server = new Server();
+
+
+        @Deprecated
+        static class Services {
+            @Deprecated
+            @XmlAttribute(name = "enable")
+            private boolean enabled = false;
+            @Deprecated
+            @XmlAttribute(name = "port")
+            private int servicePort = 6060;
+        }
+        @XmlElement(name = "services")
+        Services services = new Services();
+
+        public Web() {}
 
         /**
-         * @return the webServer
+         * @return whether the web server is enabled
          */
         @Override
         public boolean isWebServer() {
-            return webServer;
+            return server.enabled;
         }
 
         /**
-         * @param webServer the webServer to set
+         * @param enabled the new server status
          */
-        public void setWebServer(boolean webServer) {
-            this.webServer = webServer;
+        public void setWebServer(boolean enabled) {
+            this.server.enabled = enabled;
         }
 
-        /**
-         * @return the webServices
-         */
         @Deprecated
         public boolean isWebServices() {
-            return webServices;
+            return services.enabled;
         }
 
-        /**
-         * @param webServices the webServices to set
-         */
         @Deprecated
-        public void setWebServices(boolean webServices) {
-            this.webServices = webServices;
+        public void setWebServices(boolean enabled) {
+            this.services.enabled = enabled;
         }
 
         /**
-         * @return the serverPort
+         * @return the port
          */
         @Override
         public int getServerPort() {
-            return serverPort;
+            return this.server.port;
         }
 
         /**
-         * @param serverPort the serverPort to set
+         * @param serverPort the port to set
          */
         public void setServerPort(int serverPort) {
-            this.serverPort = serverPort;
+            this.server.port = serverPort;
         }
 
         /**
@@ -522,7 +577,7 @@ public class ServerSettings implements ServerSettingsReader
          */
         @Deprecated
         public int getServicePort() {
-            return servicePort;
+            return this.services.servicePort;
         }
 
         /**
@@ -530,18 +585,17 @@ public class ServerSettings implements ServerSettingsReader
          */
         @Deprecated
         public void setServicePort(int servicePort) {
-            this.servicePort = servicePort;
+            this.services.servicePort = servicePort;
         }
 
         @Override
         public String getAllowedOrigins() {
-            return this.accessControlAllowOrigins;
+            return this.server.accessControlAllowOrigins;
         }
 
         public void setAllowedOrigins(String origins) {
-            this.accessControlAllowOrigins = origins;
+            this.server.accessControlAllowOrigins = origins;
         }
-
     }
 
     private static ServerSettings instance = null;
@@ -584,12 +638,12 @@ public class ServerSettings implements ServerSettingsReader
         this.queryRetrieve.rspDelay = 0 ;
         this.queryRetrieve.DIMSERspTimeout = 60 ;
         this.queryRetrieve.connectionTimeout = 60 ;
-        
+
         this.queryRetrieve.transfCAP = UID.ImplicitVRLittleEndian + "|" + UID.ExplicitVRBigEndian + "|" + UID.ExplicitVRLittleEndian;
 
         this.queryRetrieve.SOPClass = UID.StudyRootQueryRetrieveInformationModelFIND
         + "|" + UID.PatientRootQueryRetrieveInformationModelFIND;
-               
+
         fillModalityFindDefault();
         this.queryRetrieve.maxClientAssocs = 20 ;
         this.queryRetrieve.maxPDULengthReceive = 16364 ;
@@ -615,8 +669,7 @@ public class ServerSettings implements ServerSettingsReader
         saveThumbnails = false;
         thumbnailsMatrix = "64";
         autoStartPlugin.clear();
-
-        setEncryptUsersFile(false);
+        this.encryptUsersFile = false;
     }
 
     public void setAE(String AE)
@@ -636,6 +689,7 @@ public class ServerSettings implements ServerSettingsReader
     }
 
     @Override
+    @Deprecated
     public String getID()
     {
         return ID;
@@ -771,6 +825,7 @@ public class ServerSettings implements ServerSettingsReader
     {
         this.queryRetrieve.acceptTimeout = timeout ;
     }
+
     @Override
     public int getAcceptTimeout()
     {
@@ -781,6 +836,7 @@ public class ServerSettings implements ServerSettingsReader
     {
         this.queryRetrieve.connectionTimeout = timeout;
     }
+
     @Override
     public int getConnectionTimeout()
     {
@@ -811,6 +867,7 @@ public class ServerSettings implements ServerSettingsReader
     {
         this.queryRetrieve.DIMSERspTimeout = timeout ;
     }
+
     @Override
     public int getDIMSERspTimeout()
     {
@@ -842,7 +899,7 @@ public class ServerSettings implements ServerSettingsReader
     {
         this.queryRetrieve.maxClientAssocs = maxClients;
     }
-    
+
     @Override
     public int getMaxClientAssoc()
     {
@@ -863,6 +920,7 @@ public class ServerSettings implements ServerSettingsReader
     {
         this.queryRetrieve.maxPDULengthSend = len;
     }
+
     @Override
     public int getMaxPDULenghtSend() // FIXME typo
     {
@@ -873,6 +931,7 @@ public class ServerSettings implements ServerSettingsReader
     {
         this.localAETName = name; 
     }
+
     @Override
     public String getLocalAETName()
     {
@@ -911,6 +970,7 @@ public class ServerSettings implements ServerSettingsReader
     public boolean isStorage() {
         return storage;
     }
+
     @Override
     public boolean isQueryRetrive() {
         return queryRetrieve.enabled;
@@ -918,33 +978,32 @@ public class ServerSettings implements ServerSettingsReader
 
     public void add(MoveDestination m)
     {
-        this.dest.add(m);
+        this.options.destinations.dest.add(m);
     }
     public boolean remove(MoveDestination m)
     {
-        return this.dest.remove(m);
+        return this.options.destinations.dest.remove(m);
     }
     public boolean removeMoveDestination(String AETitle, String ipAddr, int port)
     {
-    	for(int i=0;i<dest.size(); i++)
-    	{
-    		MoveDestination mv = dest.get(i);
-    		if(mv.getAETitle().equals(AETitle) && mv.getIpAddrs().equals(ipAddr) && mv.getPort() == port)
-    		{
-    			dest.remove(i);
-    			return true;
-    		}
-    			
-    	}
+        Iterator<MoveDestination> it = this.options.destinations.dest.iterator();
+        while (it.hasNext()) {
+            MoveDestination mv = it.next();
+            if(mv.getAETitle().equals(AETitle) && mv.getIpAddrs().equals(ipAddr) && mv.getPort() == port) {
+                it.remove();
+                return true;
+            }
+        }
+
     	return false;
     }
     public boolean contains(MoveDestination m){
-        return this.dest.contains(m);
+        return this.options.destinations.dest.contains(m);
     }
     @Override
     public ArrayList<MoveDestination> getMoves()
     {
-        return this.dest ;
+        return new ArrayList<>(this.options.destinations.dest);
     }
 
     @Override
@@ -963,8 +1022,10 @@ public class ServerSettings implements ServerSettingsReader
 
     public void setMoves(ArrayList<MoveDestination> moves)
     {
-        if(moves != null)
-            this.dest = moves;
+        LoggerFactory.getLogger(ServerSettings.class).info("SET Move Destinations: {}");
+        if(moves != null) {
+            this.options.destinations.dest = moves;
+        }
     }
 
 
@@ -995,7 +1056,7 @@ public class ServerSettings implements ServerSettingsReader
      */
     public void addModalityFind(String sop, String description)
     {
-        this.modalityFind.put(sop, description);
+        this.options.modality.cfind.find.add(new Options.Modality.CFind.Find(sop, description));
     }
 
     /**
@@ -1005,7 +1066,11 @@ public class ServerSettings implements ServerSettingsReader
     @Override
     public HashMap<String, String> getModalityFind()
     {
-        return this.modalityFind;
+        HashMap<String, String> modalityFinds = new HashMap<>();
+        for (Options.Modality.CFind.Find f : this.options.modality.cfind.find) {
+            modalityFinds.put(f.sop, f.description);
+        }
+        return modalityFinds;
     }
 
 
@@ -1190,7 +1255,7 @@ public class ServerSettings implements ServerSettingsReader
 
 		//result.put(STORAGE_SETTING_PATH, new ServerDirectoryPath(getPath()));
 		// TODO move some of these new classes onto the SDK, so that plugins can also process option types/fields
-		int destCount = dest.size();
+		int destCount = this.options.destinations.dest.size();
 		DataTable storageServers = new DataTable(3, destCount);
 		storageServers.setColumnName(0, "AETitle");
 		storageServers.setColumnName(1, "IP");
@@ -1206,7 +1271,7 @@ public class ServerSettings implements ServerSettingsReader
 		else
 			for (int i = 0; i < destCount; i++)
 			{
-				MoveDestination aDest = dest.get(i);
+				MoveDestination aDest = this.options.destinations.dest.get(i);
 				storageServers.setCellData(i, 0, aDest.getAETitle());
 				storageServers.setCellData(i, 1, aDest.getIpAddrs());
 				storageServers.setCellData(i, 2, "" + aDest.getPort());

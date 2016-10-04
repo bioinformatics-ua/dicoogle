@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Config>
+  <Port>6666</Port>
+  <Path>/tmp</Path>
+  <IndexEffort>100</IndexEffort>
+  <IndexZipFiles>true</IndexZipFiles>
+  <GZipStorage>false</GZipStorage>
+  <IndexAnonymous>false</IndexAnonymous>
+  <MonitorWatcher>false</MonitorWatcher>
+  <EncryptUsersFile>true</EncryptUsersFile>
+  <WANModeEnabled>false</WANModeEnabled>
+  <Storage>false</Storage>
+  <DicoogleDir>/opt/dicoogle/repository</DicoogleDir>
+  <fullContentIndex>false</fullContentIndex>
+  <SaveThumbnails>true</SaveThumbnails>
+  <ThumbnailsMatrix>128</ThumbnailsMatrix>
+  <AETitle>TEST-STORAGE</AETitle>
+  <PermitAllAETitles>true</PermitAllAETitles>
+  <Service UID="1.2.840.10008.5.1.4.1.1.88.40">
+    <TS>1.2.840.10008.1.2</TS>
+    <TS>1.2.840.10008.1.2.1</TS>
+    <TS>1.2.840.10008.1.2.4.80</TS>
+    <TS>1.2.840.10008.1.2.4.50</TS>
+  </Service>
+  <Service UID="1.2.840.10008.5.1.4.1.1.77.1.1">
+    <TS>1.2.840.10008.1.2</TS>
+    <TS>1.2.840.10008.1.2.1</TS>
+    <TS>1.2.840.10008.1.2.4.80</TS>
+    <TS>1.2.840.10008.1.2.4.50</TS>
+  </Service>
+  <Service UID="1.2.840.10008.5.1.1.30">
+    <TS>1.2.840.10008.1.2</TS>
+    <TS>1.2.840.10008.1.2.1</TS>
+    <TS>1.2.840.10008.1.2.4.80</TS>
+    <TS>1.2.840.10008.1.2.4.50</TS>
+  </Service>
+  <LocalAETName>Dicoogle</LocalAETName>
+  <QueryRetrieve>
+    <DeviceDescription>Dicoogle - Server SCP</DeviceDescription>
+    <QREnable>false</QREnable>
+    <Port>106</Port>
+    <PermitedLocalInterfaces>any</PermitedLocalInterfaces>
+    <PermitedHostnames>any</PermitedHostnames>
+    <RspDelay>3</RspDelay>
+    <DIMSERspTimeout>50</DIMSERspTimeout>
+    <IdleTimeout>50</IdleTimeout>
+    <AcceptTimeout>50</AcceptTimeout>
+    <ConnectionTimeout>50</ConnectionTimeout>
+    <TRANSF_CAP>1.2.840.10008.1.2.2|1.2.840.10008.1.2.1</TRANSF_CAP>
+    <SOP_CLASS>1.2.840.10008.5.1.4.1.2.1.1</SOP_CLASS>
+    <MAX_CLIENT_ASSOCS>22</MAX_CLIENT_ASSOCS>
+    <MAX_PDU_LENGTH_RECEIVE>16360</MAX_PDU_LENGTH_RECEIVE>
+    <MAX_PDU_LENGTH_SEND>16360</MAX_PDU_LENGTH_SEND>
+    <!--
+    <Retrieve>
+      <SOPClass>1.2.840.10008.5.1.4.1.2.2.1|1.2.840.10008.5.1.4.1.2.1.1</SOPClass>
+    </Retrieve>
+    -->
+    <options>
+      <modality>
+        <cfind>
+          <find sop="find">Study Root Query/Retrieve Info Model</find>
+          <find sop="1.2.840.10008.5.1.4.1.2.1.1">Patient Root Query/Retrieve Info Model</find>
+          <find sop="1.2.840.10008.5.1.4.1.2.2.1">Study Root Query/Retrieve Info Model</find>
+        </cfind>
+      </modality>
+      <destinations>
+        <dest ae="ADESTINATION" ip="192.168.42.42"
+              description="Our test destination"
+              public="true" port="4444" />
+      </destinations>
+      <CSTOREPriorities/>
+    </options>
+  </QueryRetrieve>
+  <web>
+    <server enable="true" port="8484" allowedOrigins="test.dicoogle.com"/>
+  </web>
+</Config>

@@ -27,6 +27,7 @@ package pt.ua.dicoogle.core;
  */
 
 
+import org.apache.logging.log4j.core.jmx.Server;
 import pt.ua.dicoogle.core.settings.ServerSettings;
 import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.server.*;
@@ -140,24 +141,23 @@ public class XMLSupport extends DefaultHandler
     private SOPList list;
     private ServerSettings s;
     private TransfersStorage LocalTS;
-    public TransfersStorage getLocalTS() {
-		return LocalTS;
-	}
 
 	private DefaultListModel m;
     
     
     private boolean isIndexAnonymous = false;
 	private boolean isWANModeEnabled = false;
-    
-    
-    
-    public XMLSupport()
-    {        
-        list = SOPList.getInstance();
-        s = ServerSettings.getInstance();
+
+    public XMLSupport(ServerSettings settings, SOPList list) {
+        this.list = list;
+        this.s = settings;
         LocalTS = new TransfersStorage();
         m = new DefaultListModel();
+    }
+
+    public XMLSupport()
+    {
+        this(ServerSettings.getInstance(), SOPList.getInstance());
     }
     
     @Override
