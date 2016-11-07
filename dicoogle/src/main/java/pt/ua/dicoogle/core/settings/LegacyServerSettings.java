@@ -18,48 +18,36 @@
  */
 package pt.ua.dicoogle.core.settings;
 
+import pt.ua.dicoogle.core.XMLSupport;
+import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
+import java.net.*;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import org.dcm4che2.data.UID;
 import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.sdk.core.ServerSettingsReader;
 import pt.ua.dicoogle.sdk.core.WebSettingsReader;
-import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
+
 import pt.ua.dicoogle.server.web.utils.types.DataTable;
 
-import javax.xml.bind.annotation.*;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
-/** Data type representing the settings of a server.
+/** Singleton class of all server settings.
  *
  * @author Marco Pereira
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author António Novo <antonio.novo@ua.pt>
  * @author Eduardo Pinho <eduardopinho@ua.pt>
- *
+ * @see XMLSupport
  */
-@XmlRootElement(name = "Config")
-@XmlAccessorType (XmlAccessType.NONE)
 public class ServerSettings implements ServerSettingsReader
 {
-    @XmlElement(name = "AETitle")
     private String AETitle;
 
     //Access List Settings
     private String [] CAETitle;
-    @XmlElement(name = "PermitAllAETitles")
     private boolean permitAllAETitles;
 
-    @XmlElement(name = "Path")
     private String Path;
-
-    @Deprecated
     private String ID;
-
-    @XmlElement(name = "Port")
     private int storagePort;
 
     @Deprecated
@@ -68,180 +56,17 @@ public class ServerSettings implements ServerSettingsReader
     private String RGUIExternalIP;
 
     //Dicoogle Settings
-    @XmlElement(name = "DicoogleDir")
     private String dicoogleDir;
-    @XmlElement(name = "fullContentIndex")
     private boolean fullContentIndex;
-    @XmlElement(name = "SaveThumbnails")
     private boolean saveThumbnails;
-    @XmlElement(name = "ThumbnailsMatrix")
     private String thumbnailsMatrix;
+    //private boolean P2P;
 
-    /// auto-start storage service
-    @XmlElement(name = "Storage")
     private boolean storage;
-
-    @XmlElement(name = "EncryptUsersFile")
+    private boolean queryRetrieve;
     private boolean encryptUsersFile;
 
-    public static class QueryRetrieveSettings {
-        @XmlElement(name = "QREnable")
-        private boolean enabled;
-
-        /* DEFAULT Brief class description */
-        @XmlElement(name = "DeviceDescription")
-        private String deviceDescription;
-
-        /* DEFAULT Listening TCP port */
-        @XmlElement(name = "Port")
-        private int wlsPort;
-
-        /* DEFAULT ("any"->null)Permitted local interfaces to incoming connection
-         * ('null'->any interface; 'ethx'->only this interface |->separator */
-        @XmlElement(name = "PermitedLocalInterfaces")
-        private String permitedLocalInterfaces;
-
-        /* DEFAULT ("any"->null)Permitted remote host name connections
-         * ('null'->any can connect; 'www.x.com'->only this can connect |->separator */
-        @XmlElement(name = "PermitedHostnames")
-        private String permitedRemoteHostnames;
-
-        /* DEFAULT Response delay (in milliseconds) */
-        @XmlElement(name = "RspDelay")
-        private int rspDelay;
-
-        /* DEFAULT DIM-SE response timeout (in sec) */
-        @XmlElement(name = "DIMSERspTimeout")
-        private int DIMSERspTimeout;
-
-        /* DEFAULT Idle timeout (in sec) */
-        @XmlElement(name = "IdleTimeout")
-        private int idleTimeout;
-
-        /* DEFAULT Accept timeout (in sec) */
-        @XmlElement(name = "AcceptTimeout")
-        private int acceptTimeout;
-
-        /* DEFAULT Connection timeout (in sec) */
-        @XmlElement(name = "ConnectionTimeout")
-        private int connectionTimeout;
-
-        @XmlElement(name = "TRANSF_CAP")
-        private String transfCAP;
-
-        @XmlElement(name = "SOP_CLASS")
-        private String SOPClass;
-
-        @XmlElement(name = "MAX_CLIENT_ASSOCS")
-        /* DEFAULT Max Client Associations */
-        private int maxClientAssocs;
-
-        @XmlElement(name = "MAX_PDU_LENGTH_RECEIVE")
-        private int maxPDULengthReceive;
-
-        @XmlElement(name = "MAX_PDU_LENGTH_SEND")
-        private int maxPDULengthSend;
-    }
-
-    @XmlElement(name = "QueryRetrieve")
-    private QueryRetrieveSettings queryRetrieve = new QueryRetrieveSettings();
-
-    @XmlElement(name = "web")
-    private Web web = new Web();
-
-    @Deprecated
-    @XmlElement(name = "WANModeEnabled")
-    private boolean wanmode;
-
-    /**
-     * QueryRetrieve Server
-     */
-
-    /* DEFAULT Process Worklist Server AE Title */
-    @XmlElement(name = "LocalAETName")
-    private String localAETName ;
-
-    // Connection settings
-    @Deprecated
-    private int maxMessages = 2000;
-
-    public static class Options {
-        static class Modality {
-            static class CFind {
-                static class Find {
-                    @XmlAttribute(name = "sop")
-                    private String sop;
-                    @XmlValue
-                    private String description;
-
-                    public Find(String sop, String description) {
-                        this.sop = sop;
-                        this.description = description;
-                    }
-                }
-                @XmlElement(name = "find")
-                private List<Find> find = new ArrayList<>();
-            }
-            @XmlElement(name = "cfind")
-            private CFind cfind = new CFind();
-        }
-        @XmlElement(name = "modality")
-        private Modality modality = new Modality();
-
-        static class Destinations {
-
-            @XmlElement(name = "dest")
-            //@XmlJavaTypeAdapter(value = SettingsAdapters.MoveDestinationAdapter.class, type = SettingsAdapters.MoveDestinationPojo.class)
-            private List<MoveDestination> dest = new ArrayList<>();
-        }
-        @XmlElement(name = "destinations")
-        private Destinations destinations = new Destinations();
-
-        static class CStorePriorities {
-
-        }
-        @XmlElement(name = "CSTOREPriorities")
-        private CStorePriorities cStorePriorities = new CStorePriorities();
-    }
-    @XmlElement(name = "options", required = true)
-    private Options options = new Options();
-
-    //HashMap<String, String> modalityFind = new HashMap<>();
-
-    //ArrayList<MoveDestination> dest = new ArrayList<>();
-
-    private Set<String> priorityAETitles = new HashSet<>();
-
-    private boolean indexAnonymous = false;
-
-    @XmlElement(name = "IndexZipFiles")
-    private boolean indexZIPFiles = true;
-
-    @XmlElement(name = "MonitorWatcher")
-    private boolean monitorWatcher = false;
-
-
-    /**
-     * P2P
-     */
-
-    private String p2pLibrary = "JGroups";
-    private String nodeName = "Dicoogle";
-    private boolean nodeNameDefined = false ;
-
-    private String networkInterfaceName ="";
-
-    /** Indexer */
-    private String indexer = "lucene2.2";
-    @XmlElement(name = "IndexEffort")
-    private int indexerEffort = 0 ;
-    private HashSet<String> extensionsAllowed = new HashSet<>();
-
-    @XmlElement(name = "GZipStorage")
-    private boolean gzipStorage = false;
-    private final String aclxmlFileName = "aetitleFilter.xml";
-
-    /**
+    /** 
      * Indicates, for each plugin, if it is to start at server init or not.
      */
     private final ConcurrentHashMap<String, Boolean> autoStartPlugin; // NOTE the concurrent hash map is used to prevent having to synchronize the methods that use it
@@ -295,6 +120,81 @@ public class ServerSettings implements ServerSettingsReader
     public static final String RGUI_SETTING_EXTERNAL_IP_HELP = "If your Dicoogle GUI Server is running behind a router, you need to provide your external IP address to have access from outside of the router.\nBesides that, you need to configure your router to open the Remote GUI Port!";
 
     /**
+     * QueryRetrieve Server
+     */
+    
+    private boolean wlsOn = false ; 
+    
+    /* DEFAULT Brief class description */
+    private String deviceDescription ;
+    /* DEFAULT Process Worklist Server AE Title */
+    private String localAETName ;
+    
+    /* DEFAULT ("any"->null)Permited local interfaces to incomming connection
+     * ('null'->any interface; 'ethx'->only this interface |->separator */
+    private String permitedLocalInterfaces ;
+    
+    /* DEFAULT ("any"->null)Permited remote host name connections
+     * ('null'->any can connect; 'www.x.com'->only this can connect |->separator */
+    private String permitedRemoteHostnames ; 
+    
+    /* DEFAULT Dimse response timeout (in sec) */
+    private int DIMSERspTimeout ;
+    // Connection settings
+    
+    /* DEFAULT Listening TCP port */
+    private int wlsPort ;
+    /* DEFAULT Response delay (in miliseconds) */
+    private int rspDelay ;
+    /* DEFAULT Idle timeout (in sec) */
+    private int idleTimeout ;
+    /* DEFAULT Accept timeout (in sec) */
+    private int acceptTimeout ;
+    /* DEFAULT Connection timeout (in sec) */
+    private int connectionTimeout ;
+    
+    private int maxMessages = 2000;
+    private String SOPClass  ; 
+    private String transfCAP ; 
+    
+     /* DEFAULT Max Client Associations */
+    private int maxClientAssocs  ; 
+   
+    private int maxPDULengthReceive ;
+    private int maxPDULengthSend ;
+
+
+    HashMap<String, String> modalityFind = new HashMap<>();
+
+    ArrayList<MoveDestination> dest = new ArrayList<>();
+
+    private Set<String> priorityAETitles = new HashSet<>();
+
+    private boolean indexAnonymous = false;
+
+    private boolean indexZIPFiles = true;
+    
+    private boolean monitorWatcher = false;
+
+    /**
+     * P2P
+     */
+
+    private String p2pLibrary = "JGroups";
+    private String nodeName = "Dicoogle";
+    private boolean nodeNameDefined = false ;
+
+    private String networkInterfaceName ="";
+
+    /** Indexer */
+    private String indexer = "lucene2.2";
+    private int indexerEffort = 0 ;
+    private HashSet<String> extensionsAllowed = new HashSet<>();
+
+    private boolean gzipStorage = false;
+    private final String aclxmlFileName = "aetitleFilter.xml";
+
+    /**
      * @return the web
      */
     @Override
@@ -329,7 +229,6 @@ public class ServerSettings implements ServerSettingsReader
      * @return the indexer
      */
     @Override
-    @Deprecated
     public String getIndexer() {
         return indexer;
     }
@@ -337,7 +236,6 @@ public class ServerSettings implements ServerSettingsReader
     /**
      * @param indexer the indexer to set
      */
-    @Deprecated
     public void setIndexer(String indexer) {
         this.indexer = indexer;
     }
@@ -346,7 +244,6 @@ public class ServerSettings implements ServerSettingsReader
      * @return the nodeName
      */
     @Override
-    @Deprecated
     public String getNodeName() {
         return nodeName;
     }
@@ -354,7 +251,6 @@ public class ServerSettings implements ServerSettingsReader
     /**
      * @param nodeName the nodeName to set
      */
-    @Deprecated
     public void setNodeName(String nodeName) {
         this.nodeName = nodeName;
     }
@@ -363,7 +259,6 @@ public class ServerSettings implements ServerSettingsReader
      * @return the nodeNameDefined
      */
     @Override
-    @Deprecated
     public boolean isNodeNameDefined() {
         return nodeNameDefined;
     }
@@ -371,7 +266,6 @@ public class ServerSettings implements ServerSettingsReader
     /**
      * @param nodeNameDefined the nodeNameDefined to set
      */
-    @Deprecated
     public void setNodeNameDefined(boolean nodeNameDefined) {
         this.nodeNameDefined = nodeNameDefined;
     }
@@ -392,7 +286,6 @@ public class ServerSettings implements ServerSettingsReader
      * @return the indexerEffort
      */
     @Override
-    @XmlTransient
     public int getIndexerEffort() {
         return indexerEffort;
     }
@@ -408,7 +301,6 @@ public class ServerSettings implements ServerSettingsReader
      * @return the encryptUsersFile
      */
     @Override
-    @XmlTransient
     public boolean isEncryptUsersFile() {
         return encryptUsersFile;
     }
@@ -504,72 +396,67 @@ public class ServerSettings implements ServerSettingsReader
     /**
      * Web (including web server, webservices, etc)
      */
-    public static class Web implements WebSettingsReader
+    public class Web implements WebSettingsReader
     {
-        static class Server {
-            @XmlAttribute(name = "enable")
-            private boolean enabled = true;
-            @XmlAttribute(name = "port")
-            private int port = 8080;
-            @XmlAttribute(name = "allowedOrigins")
-            private String accessControlAllowOrigins = "*";
-        }
-        @XmlElement(name = "server")
-        private Server server = new Server();
-
+        private boolean webServer = true;
+        private int serverPort = 8080;
+        private String accessControlAllowOrigins = "*";
 
         @Deprecated
-        static class Services {
-            @Deprecated
-            @XmlAttribute(name = "enable")
-            private boolean enabled = false;
-            @Deprecated
-            @XmlAttribute(name = "port")
-            private int servicePort = 6060;
-        }
-        @XmlElement(name = "services")
-        Services services = new Services();
+        private boolean webServices = false;
+        @Deprecated
+        private int servicePort = 6060;
+        
 
-        public Web() {}
+
+        public Web()
+        {
+        }
 
         /**
-         * @return whether the web server is enabled
+         * @return the webServer
          */
         @Override
         public boolean isWebServer() {
-            return server.enabled;
+            return webServer;
         }
 
         /**
-         * @param enabled the new server status
+         * @param webServer the webServer to set
          */
-        public void setWebServer(boolean enabled) {
-            this.server.enabled = enabled;
+        public void setWebServer(boolean webServer) {
+            this.webServer = webServer;
         }
 
+        /**
+         * @return the webServices
+         */
         @Deprecated
         public boolean isWebServices() {
-            return services.enabled;
-        }
-
-        @Deprecated
-        public void setWebServices(boolean enabled) {
-            this.services.enabled = enabled;
+            return webServices;
         }
 
         /**
-         * @return the port
+         * @param webServices the webServices to set
+         */
+        @Deprecated
+        public void setWebServices(boolean webServices) {
+            this.webServices = webServices;
+        }
+
+        /**
+         * @return the serverPort
          */
         @Override
         public int getServerPort() {
-            return this.server.port;
+            return serverPort;
         }
 
         /**
-         * @param serverPort the port to set
+         * @param serverPort the serverPort to set
          */
         public void setServerPort(int serverPort) {
-            this.server.port = serverPort;
+            this.serverPort = serverPort;
         }
 
         /**
@@ -577,7 +464,7 @@ public class ServerSettings implements ServerSettingsReader
          */
         @Deprecated
         public int getServicePort() {
-            return this.services.servicePort;
+            return servicePort;
         }
 
         /**
@@ -585,18 +472,23 @@ public class ServerSettings implements ServerSettingsReader
          */
         @Deprecated
         public void setServicePort(int servicePort) {
-            this.services.servicePort = servicePort;
+            this.servicePort = servicePort;
         }
 
         @Override
         public String getAllowedOrigins() {
-            return this.server.accessControlAllowOrigins;
+            return this.accessControlAllowOrigins;
         }
 
         public void setAllowedOrigins(String origins) {
-            this.server.accessControlAllowOrigins = origins;
+            this.accessControlAllowOrigins = origins;
         }
+
     }
+
+    private Web web = new Web();
+
+	private boolean wanmode;
 
     private static ServerSettings instance = null;
     
@@ -623,33 +515,30 @@ public class ServerSettings implements ServerSettingsReader
 
         encryptUsersFile = false;
 
-        this.localAETName  = "Dicoogle";
         /**
          * Set default values of QueryRetrieve Server
          */
-        this.queryRetrieve = new QueryRetrieveSettings();
 
-        this.queryRetrieve.deviceDescription = "Dicoogle - Server SCP" ;
-        this.queryRetrieve.permitedLocalInterfaces = "any";
-        this.queryRetrieve.permitedRemoteHostnames = "any";
-        this.queryRetrieve.wlsPort = 1045 ;  // default: 104
-        this.queryRetrieve.idleTimeout = 60 ;
-        this.queryRetrieve.acceptTimeout = 60 ;
-        this.queryRetrieve.rspDelay = 0 ;
-        this.queryRetrieve.DIMSERspTimeout = 60 ;
-        this.queryRetrieve.connectionTimeout = 60 ;
+        this.deviceDescription = "Dicoogle - Server SCP" ;
+        this.localAETName  = "Dicoogle";
+        this.permitedLocalInterfaces = "any";
+        this.permitedRemoteHostnames = "any";
+        this.wlsPort = 1045 ;  // default: 104
+        this.idleTimeout = 60 ;
+        this.acceptTimeout = 60 ;
+        this.rspDelay = 0 ;        
+        this.DIMSERspTimeout = 60 ;
+        this.connectionTimeout = 60 ;
+        
+        this.transfCAP = UID.ImplicitVRLittleEndian + "|" + UID.ExplicitVRBigEndian + "|" + UID.ExplicitVRLittleEndian;     
 
-        this.queryRetrieve.transfCAP = UID.ImplicitVRLittleEndian + "|" + UID.ExplicitVRBigEndian + "|" + UID.ExplicitVRLittleEndian;
-
-        this.queryRetrieve.SOPClass = UID.StudyRootQueryRetrieveInformationModelFIND
+        this.SOPClass = UID.StudyRootQueryRetrieveInformationModelFIND 
         + "|" + UID.PatientRootQueryRetrieveInformationModelFIND;
-
+               
         fillModalityFindDefault();
-        this.queryRetrieve.maxClientAssocs = 20 ;
-        this.queryRetrieve.maxPDULengthReceive = 16364 ;
-        this.queryRetrieve.maxPDULengthSend = 16364 ;
-
-        // TODO get this out of here
+        this.maxClientAssocs = 20 ; 
+        this.maxPDULengthReceive = 16364 ; 
+        this.maxPDULengthSend = 16364 ;
         System.setProperty("java.net.preferIPv4Stack", "true");
 
         autoStartPlugin = new ConcurrentHashMap<>();
@@ -669,7 +558,8 @@ public class ServerSettings implements ServerSettingsReader
         saveThumbnails = false;
         thumbnailsMatrix = "64";
         autoStartPlugin.clear();
-        this.encryptUsersFile = false;
+
+        setEncryptUsersFile(false);
     }
 
     public void setAE(String AE)
@@ -689,7 +579,6 @@ public class ServerSettings implements ServerSettingsReader
     }
 
     @Override
-    @Deprecated
     public String getID()
     {
         return ID;
@@ -790,62 +679,60 @@ public class ServerSettings implements ServerSettingsReader
 
     public void setWlsPort(int port)
     {
-        this.queryRetrieve.wlsPort = port ;
+        this.wlsPort = port ;
     }
 
     @Override
     public int getWlsPort()
     {
-        return this.queryRetrieve.wlsPort ;
+        return this.wlsPort ;
     }
 
     public void setIdleTimeout(int timeout)
     {
-        this.queryRetrieve.idleTimeout = timeout ;
+        this.idleTimeout = timeout ;
     }
 
     @Override
     public int getIdleTimeout()
     {
-        return this.queryRetrieve.idleTimeout ;
+        return this.idleTimeout ;
     }
 
     public void setRspDelay(int delay)
     {
-        this.queryRetrieve.rspDelay = delay ;
+        this.rspDelay = delay ;
     }
 
     @Override
     public int getRspDelay()
     {
-        return this.queryRetrieve.rspDelay  ;
+        return this.rspDelay  ;
     }
 
     public void setAcceptTimeout(int timeout)
     {
-        this.queryRetrieve.acceptTimeout = timeout ;
+        this.acceptTimeout = timeout ;
     }
-
     @Override
     public int getAcceptTimeout()
     {
-        return this.queryRetrieve.acceptTimeout;
+        return this.acceptTimeout;
     }
 
     public void setConnectionTimeout(int timeout)
     {
-        this.queryRetrieve.connectionTimeout = timeout;
+        this.connectionTimeout = timeout; 
     }
-
     @Override
     public int getConnectionTimeout()
     {
-        return this.queryRetrieve.connectionTimeout ;
+        return this.connectionTimeout ;
     }
     
     public void setSOPClass(String SOPClass)
     {
-        this.queryRetrieve.SOPClass = SOPClass ;
+        this.SOPClass = SOPClass ;
     }
     
     @Override
@@ -861,77 +748,74 @@ public class ServerSettings implements ServerSettingsReader
     @Override
     public String getSOPClass()
     {
-        return this.queryRetrieve.SOPClass ;
+        return this.SOPClass ; 
     }
     public void setDIMSERspTimeout(int timeout)
     {
-        this.queryRetrieve.DIMSERspTimeout = timeout ;
+        this.DIMSERspTimeout = timeout ; 
     }
-
     @Override
     public int getDIMSERspTimeout()
     {
-        return this.queryRetrieve.DIMSERspTimeout ;
+        return this.DIMSERspTimeout ; 
     }
     public void setDeviceDescription(String desc)
     {
-        this.queryRetrieve.deviceDescription = desc ;
+        this.deviceDescription = desc ; 
     }
     
     @Override
     public String getDeviceDescription()
     {
-        return this.queryRetrieve.deviceDescription;
+        return this.deviceDescription;
     }
     
     public void setTransfCap(String transfCap)
     {
-        this.queryRetrieve.transfCAP = transfCap;
+        this.transfCAP = transfCap;
     }
         
     @Override
     public String getTransfCap()
     {
-        return this.queryRetrieve.transfCAP;
+        return this.transfCAP; 
     }
     
     public void setMaxClientAssoc(int maxClients)
     {
-        this.queryRetrieve.maxClientAssocs = maxClients;
+        this.maxClientAssocs = maxClients; 
     }
-
+    
     @Override
     public int getMaxClientAssoc()
     {
-        return this.queryRetrieve.maxClientAssocs;
+        return this.maxClientAssocs; 
     }
     
     public void setMaxPDULengthReceive(int len)
     {
-        this.queryRetrieve.maxPDULengthReceive = len;
+        this.maxPDULengthReceive = len;
     }
     
     @Override
     public int getMaxPDULengthReceive()
     {
-        return this.queryRetrieve.maxPDULengthReceive;
+        return this.maxPDULengthReceive; 
     }
     public void setMaxPDULengthSend(int len)
     {
-        this.queryRetrieve.maxPDULengthSend = len;
+        this.maxPDULengthSend = len;
     }
-
     @Override
     public int getMaxPDULenghtSend() // FIXME typo
     {
-        return this.queryRetrieve.maxPDULengthSend;
+        return this.maxPDULengthSend; 
     }
     
     public void setLocalAETName(String name)
     {
         this.localAETName = name; 
     }
-
     @Override
     public String getLocalAETName()
     {
@@ -940,24 +824,24 @@ public class ServerSettings implements ServerSettingsReader
     
     public void setPermitedLocalInterfaces(String localInterfaces)
     {
-        this.queryRetrieve.permitedLocalInterfaces  = localInterfaces;
+        this.permitedLocalInterfaces  = localInterfaces; 
     }
     
     @Override
     public String getPermitedLocalInterfaces()
     {
-        return this.queryRetrieve.permitedLocalInterfaces;
+        return this.permitedLocalInterfaces; 
     }
     
     public void setPermitedRemoteHostnames(String remoteHostnames)
     {
-        this.queryRetrieve.permitedRemoteHostnames = remoteHostnames;
+        this.permitedRemoteHostnames = remoteHostnames; 
     }
     
     @Override
     public String getPermitedRemoteHostnames()
     {
-        return this.queryRetrieve.permitedRemoteHostnames;
+        return this.permitedRemoteHostnames;
     }
 
     /**
@@ -970,40 +854,40 @@ public class ServerSettings implements ServerSettingsReader
     public boolean isStorage() {
         return storage;
     }
-
     @Override
     public boolean isQueryRetrive() {
-        return queryRetrieve.enabled;
+        return queryRetrieve;
     }
 
     public void add(MoveDestination m)
     {
-        this.options.destinations.dest.add(m);
+        this.dest.add(m);
     }
     public boolean remove(MoveDestination m)
     {
-        return this.options.destinations.dest.remove(m);
+        return this.dest.remove(m);
     }
     public boolean removeMoveDestination(String AETitle, String ipAddr, int port)
     {
-        Iterator<MoveDestination> it = this.options.destinations.dest.iterator();
-        while (it.hasNext()) {
-            MoveDestination mv = it.next();
-            if(mv.getAETitle().equals(AETitle) && mv.getIpAddrs().equals(ipAddr) && mv.getPort() == port) {
-                it.remove();
-                return true;
-            }
-        }
-
+    	for(int i=0;i<dest.size(); i++)
+    	{
+    		MoveDestination mv = dest.get(i);
+    		if(mv.getAETitle().equals(AETitle) && mv.getIpAddrs().equals(ipAddr) && mv.getPort() == port)
+    		{
+    			dest.remove(i);
+    			return true;
+    		}
+    			
+    	}
     	return false;
     }
     public boolean contains(MoveDestination m){
-        return this.options.destinations.dest.contains(m);
+        return this.dest.contains(m);
     }
     @Override
     public ArrayList<MoveDestination> getMoves()
     {
-        return new ArrayList<>(this.options.destinations.dest);
+        return this.dest ;
     }
 
     @Override
@@ -1022,10 +906,8 @@ public class ServerSettings implements ServerSettingsReader
 
     public void setMoves(ArrayList<MoveDestination> moves)
     {
-        LoggerFactory.getLogger(ServerSettings.class).info("SET Move Destinations: {}");
-        if(moves != null) {
-            this.options.destinations.dest = moves;
-        }
+        if(moves != null)
+            this.dest = moves;
     }
 
 
@@ -1056,7 +938,7 @@ public class ServerSettings implements ServerSettingsReader
      */
     public void addModalityFind(String sop, String description)
     {
-        this.options.modality.cfind.find.add(new Options.Modality.CFind.Find(sop, description));
+        this.modalityFind.put(sop, description);
     }
 
     /**
@@ -1066,11 +948,7 @@ public class ServerSettings implements ServerSettingsReader
     @Override
     public HashMap<String, String> getModalityFind()
     {
-        HashMap<String, String> modalityFinds = new HashMap<>();
-        for (Options.Modality.CFind.Find f : this.options.modality.cfind.find) {
-            modalityFinds.put(f.sop, f.description);
-        }
-        return modalityFinds;
+        return this.modalityFind;
     }
 
 
@@ -1255,7 +1133,7 @@ public class ServerSettings implements ServerSettingsReader
 
 		//result.put(STORAGE_SETTING_PATH, new ServerDirectoryPath(getPath()));
 		// TODO move some of these new classes onto the SDK, so that plugins can also process option types/fields
-		int destCount = this.options.destinations.dest.size();
+		int destCount = dest.size();
 		DataTable storageServers = new DataTable(3, destCount);
 		storageServers.setColumnName(0, "AETitle");
 		storageServers.setColumnName(1, "IP");
@@ -1271,7 +1149,7 @@ public class ServerSettings implements ServerSettingsReader
 		else
 			for (int i = 0; i < destCount; i++)
 			{
-				MoveDestination aDest = this.options.destinations.dest.get(i);
+				MoveDestination aDest = dest.get(i);
 				storageServers.setCellData(i, 0, aDest.getAETitle());
 				storageServers.setCellData(i, 1, aDest.getIpAddrs());
 				storageServers.setCellData(i, 2, "" + aDest.getPort());
@@ -1327,7 +1205,7 @@ public class ServerSettings implements ServerSettingsReader
 
     public void setQueryRetrive(boolean queryRetrieve)
     {
-        this.queryRetrieve.enabled = queryRetrieve;
+        this.queryRetrieve = queryRetrieve;
     }
 
     @Override
@@ -1397,9 +1275,24 @@ public class ServerSettings implements ServerSettingsReader
         }
         return null;
     }
+    /**
+     * Add an extension to list of allowed indexing extensions.
+     * <p>
+     * All extensions should be added (ie, dicom, etc).
+     *
+     * @param ext          It is the extensions of files that should be indexed.
+     * <b>empty</b> string means that documents without extension will be indexed.
+     * 
+     * @see   IndexEngine
+     */
+    public void addExtension(String ext)
+    {
+        this.extensionsAllowed.add(ext);
+    }
+
+
 
     @Override
-    @Deprecated
     public HashSet<String> getExtensionsAllowed()
     {
         return extensionsAllowed;
@@ -1409,7 +1302,6 @@ public class ServerSettings implements ServerSettingsReader
      * @return the maxMessages
      */
     @Override
-    @Deprecated
     public int getMaxMessages() {
         return maxMessages;
     }
@@ -1417,18 +1309,16 @@ public class ServerSettings implements ServerSettingsReader
     /**
      * @param maxMessages the maxMessages to set
      */
-    @Deprecated
     public void setMaxMessages(int maxMessages) {
         this.maxMessages = maxMessages;
     }
 
     @Override
-    @Deprecated
 	public boolean isWANModeEnabled() {
+		// TODO Auto-generated method stub
 		return wanmode;
 	}
 
-	@Deprecated
 	public void setWanmode(boolean wanmode) {
 		this.wanmode = wanmode;
 	}
