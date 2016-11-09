@@ -28,7 +28,7 @@ import java.io.*;
 
 import org.dcm4che2.data.*;
 import org.slf4j.Logger;
-import pt.ua.dicoogle.core.settings.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,6 +44,7 @@ import org.dcm4che2.io.DicomInputStream;
 import pt.ua.dicoogle.core.dim.*;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
 /**
@@ -218,10 +219,9 @@ public class SearchDicomResult implements Iterator<DicomObject>
         /** 
          * Get the fullpath of images 
          */
-        ServerSettings s = ServerSettings.getInstance();
-        String path = s.getPath(); 
-        
-        //DebugManager.getInstance().debug("Path of DICOM: "+path);
+        String path = ServerSettingsManager.getSettings().getArchiveSettings().getMainDirectory();
+
+        //DebugManager.getSettings().debug("Path of DICOM: "+path);
 
 
         if (it != null &&  it.hasNext())
@@ -234,7 +234,7 @@ public class SearchDicomResult implements Iterator<DicomObject>
                 
                 path = sR.getURI().toString();
                 currentFile = path ;
-                //DebugManager.getInstance().debug("-> Next::: " + next.toString());
+                //DebugManager.getSettings().debug("-> Next::: " + next.toString());
                 DicomInputStream din = null;
                 /*try
                 {
@@ -246,7 +246,7 @@ public class SearchDicomResult implements Iterator<DicomObject>
                     
                     URI uri = new URI(path);
                     //System.out.println("Trying to find Plugin for: "+uri.toString());
-                    StorageInterface plug = PluginController.getInstance().getStorageForSchema(uri);
+                    StorageInterface plug = PluginController.getSettings().getStorageForSchema(uri);
                     
                     if(plug != null){
                         //System.out.println("Found Plugin For: "+uri.toString());
@@ -261,7 +261,7 @@ public class SearchDicomResult implements Iterator<DicomObject>
                             }
                     }
                     
-                    //DebugManager.getInstance().debug("Imagem: "+path+"..."+next);
+                    //DebugManager.getSettings().debug("Imagem: "+path+"..."+next);
                 } catch (URISyntaxException ex) {
                     LoggerFactory.getLogger(SearchDicomResult.class).error(ex.getMessage(), ex);
                 }

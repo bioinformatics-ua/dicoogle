@@ -30,9 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 import javax.servlet.ServletOutputStream;
@@ -41,7 +39,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pt.ua.dicoogle.core.settings.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.StorageInputStream;
 import pt.ua.dicoogle.sdk.StorageInterface;
@@ -168,14 +166,7 @@ public class ImageServlet extends HttpServlet
     private ByteArrayOutputStream getPNGStream(StorageInputStream imgFile, int frame, boolean thumbnail) throws IOException {
         ByteArrayOutputStream pngStream;
         if (thumbnail) {
-            int thumbSize;
-            try {
-                // retrieve thumbnail dimension settings
-                thumbSize = Integer.parseInt(ServerSettings.getInstance().getThumbnailsMatrix());
-            } catch (NumberFormatException ex) {
-                logger.warn("Failed to parse ThumbnailMatrix, using default thumbnail size");
-                thumbSize = 64;
-            }
+            int thumbSize = ServerSettingsManager.getSettings().getArchiveSettings().getThumbnailSize();
             pngStream = Convert2PNG.DICOM2ScaledPNGStream(imgFile, frame, thumbSize, thumbSize);
         } else {
             pngStream = Convert2PNG.DICOM2PNGStream(imgFile, frame);
@@ -215,7 +206,7 @@ public class ImageServlet extends HttpServlet
 	}
 	
     private static StorageInputStream getFileFromSOPInstanceUID(String sopInstanceUID, List<String> providers) throws IOException {
-        // TODO use only DIM sources?
+
         JointQueryTask qt = new JointQueryTask() {
             @Override
             public void onCompletion() {
@@ -228,6 +219,19 @@ public class ImageServlet extends HttpServlet
             if (providers == null) {
                 providers = PluginController.getInstance().getQueryProvidersName(true);
             }
+            Collection<String> dimProviders = ServerSettingsManager.getSettings().getArchiveSettings().getDIMProviders();
+            if (!dimProviders.isEmpty()) {
+                // DIM providers known, filtering
+                providers = new ArrayList<>(providers);
+                Iterator<String> it = providers.iterator();
+                while (it.hasNext()) {
+                    if (!dimProviders.contains(it.next())) {
+                        // not a DIM source
+                        it.remove();
+                    }
+                }
+            }
+
             Iterator<SearchResult> it = PluginController.getInstance()
                     .query(qt, providers, "SOPInstanceUID:" + sopInstanceUID).get().iterator();
             if (!it.hasNext()) {

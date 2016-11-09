@@ -141,7 +141,7 @@ public class UsersManager extends javax.swing.JFrame {
 
         jLabel1.setText("List of Users:");
 
-        jButtonAdd.setIcon(new ImageIcon(getImage("add.png")));
+        jButtonAdd.setIcon(new ImageIcon(getImage("addMoveDestination.png")));
         jButtonAdd.setText("Add User");
         jButtonAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -278,7 +278,7 @@ public class UsersManager extends javax.swing.JFrame {
                 jCheckBox.setSelected(userManager.isAdmin(username));
                 
                 jCheckBox.setEnabled(false);
-                //jPasswordField.setEnabled(false);
+                //jPasswordField.setAutostart(false);
                 jButtonAdd.setEnabled(false);
                 jButtonRemove.setEnabled(true);
             }

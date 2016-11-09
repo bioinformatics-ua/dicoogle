@@ -77,7 +77,7 @@ public class LogXML extends DefaultHandler
             this.type = localName;
             this.ae = this.resolveAttrib("ae", attr, localName);
             this.date = this.resolveAttrib("date", attr, localName);
-            this.add = this.resolveAttrib("add", attr, localName);
+            this.add = this.resolveAttrib("addMoveDestination", attr, localName);
         }
     }
 
@@ -166,7 +166,7 @@ public class LogXML extends DefaultHandler
             {
                 atts.addAttribute("", "", "date", "", l.getDate());
                 atts.addAttribute("", "", "ae", "", l.getAe());
-                atts.addAttribute("", "", "add", "", l.getAdd());
+                atts.addAttribute("", "", "addMoveDestination", "", l.getAdd());
                 atts.addAttribute("","","params","",l.getParams());
 
                 hd.startElement("", "", l.getType(), atts);

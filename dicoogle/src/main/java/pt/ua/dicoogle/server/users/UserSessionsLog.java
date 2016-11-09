@@ -100,14 +100,14 @@ public class UserSessionsLog {
     private void writeLine(String line, boolean send) {
         BufferedWriter out = null;
 
-        //DebugManager.getInstance().debug(line);
+        //DebugManager.getSettings().debug(line);
 
 //        Date now = new Date();
 //        String tmp = now.toString() + ": " + line + "\n";
 
         if(send) {
             LoggerFactory.getLogger(UserSessions.class).info(line);
-//            Logs.getInstance().addSessionsLog(tmp);
+//            Logs.getSettings().addSessionsLog(tmp);
         }
         
 //        try {

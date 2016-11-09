@@ -18,10 +18,7 @@
  */
 package pt.ua.dicoogle.server;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Semaphore;
 
 import org.slf4j.Logger;
@@ -31,7 +28,8 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.dcm4che2.data.UID;
 
-import pt.ua.dicoogle.server.web.management.Dicoogle.SOPClassSettings;
+import pt.ua.dicoogle.sdk.datastructs.SOPClass;
+import pt.ua.dicoogle.server.web.management.SOPClassSettings;
 
 /**
  * Support class for keeping SOPClass/TransferSyntax association
@@ -154,7 +152,7 @@ public class SOPList {
      * Creates a new list 
      */
     private SOPList() {
-        table = new Hashtable<String, TransfersStorage>();
+        table = new Hashtable<>();
         
         table.put(UID.CTImageStorage, new TransfersStorage());
         table.put(UID.UltrasoundImageStorage, new TransfersStorage());
@@ -377,8 +375,13 @@ public class SOPList {
     		 
     	 }
     	 return sopList.toString();
-    	 
      }
-    
-            
+
+    public List<SOPClass> asSOPClassList() {
+        List<SOPClass> l = new ArrayList<>();
+        for (Map.Entry<String, TransfersStorage> e : this.table.entrySet()) {
+            l.add(new SOPClass(e.getKey(), e.getValue().asList()));
+        }
+        return l;
+    }
 }

@@ -30,7 +30,7 @@ import org.dcm4che2.data.DicomElement;
 import org.dcm4che2.data.DicomObject;
 import org.dcm4che2.data.Tag;
 
-import pt.ua.dicoogle.core.settings.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.sdk.utils.TagValue;
 import pt.ua.dicoogle.sdk.utils.TagsStruct;
 
@@ -91,7 +91,7 @@ public class CFindBuilder
 
         TagsStruct tagstruct = TagsStruct.getInstance();
         
-        //TagsStruct.getInstance().toStringNew();
+        //TagsStruct.getSettings().toStringNew();
         boolean all=false ;
         String append = "" ;
         query="";
@@ -104,11 +104,11 @@ public class CFindBuilder
         	TagValue tag = it.next();
             int k = tag.getTagNumber() ;
             DicomElement e = key.get(k);
-            //DebugManager.getInstance().debug("get key::"+ k );
+            //DebugManager.getSettings().debug("get key::"+ k );
             if (e!=null)
             {
                 String value = new String(e.getBytes());
-                //DebugManager.getInstance().debug("Value getted in CFIND RP:<"+t.get(k).getAlias() + "> "+ value  +".");
+                //DebugManager.getSettings().debug("Value getted in CFIND RP:<"+t.get(k).getAlias() + "> "+ value  +".");
                 if (value.equals(""))
                 {
                     continue ;
@@ -128,7 +128,7 @@ public class CFindBuilder
                         for (String mod : modality )
                         {
 
-                            //DebugManager.getInstance().debug(mod);
+                            //DebugManager.getSettings().debug(mod);
 
                             if (modified)
                             {
@@ -246,7 +246,7 @@ public class CFindBuilder
         
         if (query.equals(""))
             query="*:*"; 
-        //DebugManager.getInstance().debug(">> Query String DICOM: "+ query);
+        //DebugManager.getSettings().debug(">> Query String DICOM: "+ query);
 
 
     }
@@ -270,16 +270,16 @@ public class CFindBuilder
 
 
 
-        //DebugManager.getInstance().debug(">" + affectedSOP);
-        //DebugManager.getInstance().debug(">> "+ServerSettings.getInstance().getSOPClass());
+        //DebugManager.getSettings().debug(">" + affectedSOP);
+        //DebugManager.getSettings().debug(">> "+ServerSettingsManager.getSettings().getSOPClasses());
         
 
 
         boolean found = false;
 
-        for (String i : ServerSettings.getInstance().getSOPClass().split("\\|"))
+        for (String i : ServerSettingsManager.getSettings().getDicomServicesSettings().getQueryRetrieveSettings().getSOPClass())
         {
-            //DebugManager.getInstance().debug("It have in settings:>: " + i);
+            //DebugManager.getSettings().debug("It have in settings:>: " + i);
 
             if (affectedSOP.equals(i))
             {
@@ -287,7 +287,7 @@ public class CFindBuilder
                 1.2.840.10008.5.1.4.1.2.1.1 (Patient)
                 1.2.840.10008.5.1.4.1.2.2.1 (Study)
                  */
-                //DebugManager.getInstance().debug(">>> Affected SOPs in ");
+                //DebugManager.getSettings().debug(">>> Affected SOPs in ");
                 if (affectedSOP.equals("1.2.840.10008.5.1.4.1.2.1.1"))
                 {
                     this.patientRoot = true ;

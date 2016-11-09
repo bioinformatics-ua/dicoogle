@@ -31,14 +31,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletOutputStream;
 
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.sdk.datastructs.Report;
-import pt.ua.dicoogle.sdk.settings.types.ServerDirectoryPath;
+import pt.ua.dicoogle.sdk.settings.Utils;
 import pt.ua.dicoogle.sdk.task.Task;
-import pt.ua.dicoogle.server.web.management.Services;
 import pt.ua.dicoogle.server.web.auth.Session;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
 import pt.ua.dicoogle.plugins.PluginController;
-import pt.ua.dicoogle.server.web.management.Dicoogle;
 
 /**
  * Provides indexing start and stop requests (scan path). Also handles requests
@@ -137,7 +136,7 @@ public class IndexerServlet extends HttpServlet {
 		xml.append(escapeHtml4(parentPath));
 		xml.append("\">");
 
-		// loop through all the cildren and add their path name to the XML tree
+		// loop through all the cildren and addMoveDestination their path name to the XML tree
 		if (childs != null) {
 			for (File child : childs) {
 				String cName = child.getName();
@@ -195,7 +194,7 @@ public class IndexerServlet extends HttpServlet {
 		xml.append(Boolean.toString(isIndexing));
 		xml.append("\">");
 
-		// add percentage information
+		// addMoveDestination percentage information
 		xml.append("<percent completed=\"");
 		xml.append(percentCompleted);
 		xml.append("\" />");
@@ -277,14 +276,8 @@ public class IndexerServlet extends HttpServlet {
 		case ACTION_CODE_START_INDEXING:
 			System.err.println("Started Indexing!!");
 
-			Dicoogle dic = Dicoogle.getInstance();
-
-			ServerDirectoryPath thepath = (ServerDirectoryPath) dic
-					.getIndexingSettings().get(
-							"Dicoogle Directory Monitorization");
-
-			System.out.println("Indexing Home: " + thepath.getPath());
-			File f = new File(thepath.getPath());
+			String thepath = ServerSettingsManager.getSettings().getArchiveSettings().getMainDirectory();
+			File f = new File(thepath);
 			URI uri = f.toURI();
 
 			if (uri != null) {
@@ -347,7 +340,7 @@ public class IndexerServlet extends HttpServlet {
 			}
 
 			// HashMap<String, Object> settings = idx.getSettings();
-			// Services svcs = Services.getInstance();
+			// Services svcs = Services.getSettings();
 			// svcs.processAdvancedSettings(settings, advSettings);
 
 			// try to apply the settings
@@ -412,8 +405,6 @@ public class IndexerServlet extends HttpServlet {
 		HashMap<String, Object> settings = new HashMap<>();
 		HashMap<String, String> settingsHelp = new HashMap<>();
 
-		Services svcs = Services.getInstance();
-
 		// create a table row for each setting (includes name, value/type and
 		// help, if available)
 		for (Map.Entry<String, Object> setting : settings.entrySet()) {
@@ -421,7 +412,7 @@ public class IndexerServlet extends HttpServlet {
 			Object value = setting.getValue();
 			String help = settingsHelp.get(key);
 
-			result += svcs.getHTMLAdvancedSettingsFormRow(key, value, help);
+			result += getHTMLAdvancedSettingsFormRow(key, value, help);
 		}
 
 		result += "</tbody></table><br />";
@@ -436,4 +427,70 @@ public class IndexerServlet extends HttpServlet {
 			HttpServletResponse response) throws IOException {
 		doGet(request, response);
 	}
+
+	/**
+	 * Returns a row for the advanced settings form.
+	 *
+	 * @param name the name of the setting.
+	 * @param value the type/value of the setting.
+	 * @param help s String containing a help notice for this setting, can be
+	 * null if not needed.
+	 * @return a String containing a HTML code to a row for the advanced
+	 * settings form.
+	 */
+	private static String getHTMLAdvancedSettingsFormRow(String name, Object value, String help) {
+
+		String result = "";
+
+		String id = Utils.getHTMLElementIDFromString(name);
+
+		result += "<tr>";
+
+		result += "<td><label for=\"" + id + "\">" + escapeHtml4(name) + ":</label></td>";
+		result += "<td>" + Utils.getHTMLInputFromType(id, value) + getHTMLSettingHelp(escapeHtml4(name) , help) + "</td>"; // TODO addMoveDestination a button with help, like in the desktop application [getHelpForParam(pluginName, paramName) != null]
+
+		result += "</tr>";
+
+		return result;
+	}
+
+	private static String getHTMLSettingHelp(String fieldTitle, String help) {
+		String result = "";
+
+		// make sure that there is a valid help notice
+		if (help == null) {
+			return result;
+		}
+		help = help.trim();
+		if (help.isEmpty()) {
+			return result;
+		}
+
+		// replace the "\n" (#13/#10) with "\\n" so that JS can interpret that correctly instead of ending up with a new line on the document
+		//help = help.replaceAll("\n", "\\\\n");
+		// also the "\t" ones
+		//help = help.replaceAll("\t", "\\\\t");
+
+		// addMoveDestination a button that will show the help (button because of touch interfaces, instead of popup for desktop)
+		System.out.println("HELP: "+help);
+		String msg = escapeHtml4(help.replaceAll("\n", "<br>"));
+		result += buildInfoButton(fieldTitle, msg);
+		System.out.println("MSG: "+msg);
+		return result;
+	}
+
+	private static String buildInfoButton(String title, String msg){
+		StringBuilder builder = new StringBuilder();
+
+		builder.append("<a ");
+		//builder.append(id);
+		builder.append(" data-original-title=\"");
+		builder.append(title);
+		builder.append("\" href=\"#\" class=\"btn btn-mini btn-info\" data-toggle=\"popover\" data-html=\"true\" data-content=\"");
+		builder.append(msg);
+		builder.append("\" onclick=\"return false;\">Info</a>\n");
+
+		return builder.toString();
+	}
+
 }

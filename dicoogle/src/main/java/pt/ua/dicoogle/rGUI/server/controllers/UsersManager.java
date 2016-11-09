@@ -21,7 +21,7 @@ package pt.ua.dicoogle.rGUI.server.controllers;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import pt.ua.dicoogle.core.settings.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IUsersManager;
 import pt.ua.dicoogle.server.users.HashService;
 import pt.ua.dicoogle.server.users.User;
@@ -39,7 +39,7 @@ public class UsersManager implements IUsersManager {
 
     private UsersStruct users;
 
-    private boolean encryptUsersFile;
+    private boolean encryptUsersFile = false;
 
     //flag to indicate when setting are unsaved
     private boolean unsavedSettings;
@@ -56,7 +56,6 @@ public class UsersManager implements IUsersManager {
         users = UsersStruct.getInstance();
 
         unsavedSettings = false;
-        encryptUsersFile = ServerSettings.getInstance().isEncryptUsersFile();
     }
 
     public void loadSettings(){
@@ -64,8 +63,6 @@ public class UsersManager implements IUsersManager {
 
         UsersXML xml = new UsersXML();
         xml.getXML();
-
-        encryptUsersFile = ServerSettings.getInstance().isEncryptUsersFile();
     }
     
     /**
@@ -74,7 +71,7 @@ public class UsersManager implements IUsersManager {
      *          false - not
      */
     public boolean unsavedSettings(){
-        return unsavedSettings || (encryptUsersFile != ServerSettings.getInstance().isEncryptUsersFile());
+        return unsavedSettings;
     }
 
     /**
@@ -83,8 +80,7 @@ public class UsersManager implements IUsersManager {
      *  write in XML
      */
     public void saveSettings(){
-        ServerSettings.getInstance().setEncryptUsersFile(encryptUsersFile);
-        
+
         UsersXML xml = new UsersXML();
         xml.printXML();
 

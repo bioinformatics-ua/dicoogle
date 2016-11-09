@@ -30,8 +30,7 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.lang3.StringUtils;
 
-import pt.ua.dicoogle.core.settings.ServerSettings;
-import pt.ua.dicoogle.core.XMLSupport;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 
 /**
  *
@@ -54,9 +53,9 @@ public class IndexerSettingsServlet extends HttpServlet {
     	
     	String param = null;
     	String path = null;
-    	boolean watcher=false, zip = false, saveT = false;
+    	boolean watcher=false, saveT = false;
     	int ieffort = 0;
-    	String tumbnailSize = null;
+    	int thumbnailSize = -1;
     	if(type != SettingsType.all)
     	{
     		param = req.getParameter(type.toString());
@@ -68,51 +67,51 @@ public class IndexerSettingsServlet extends HttpServlet {
     	else{
     		path = req.getParameter("path");
     		watcher = Boolean.parseBoolean(req.getParameter("watcher"));
-    		zip = Boolean.parseBoolean(req.getParameter("zip"));
     		saveT = Boolean.parseBoolean(req.getParameter("saveThumbnail"));
     		ieffort = Integer.parseInt(req.getParameter("effort"));
-    		tumbnailSize = req.getParameter("thumbnailSize");
+    		thumbnailSize = Integer.parseInt(req.getParameter("thumbnailSize"));
     	}
 
         switch (type) {
             case path:
-                ServerSettings.getInstance().setDicoogleDir(param);
+                ServerSettingsManager.getSettings().getArchiveSettings().setWatchDirectory(param);
                 resp.getWriter().append("Dir set to: " + param);
                 break;
             case zip:
-                boolean gzip = Boolean.parseBoolean(param);
-                ServerSettings.getInstance().setGzipStorage(gzip);
-                resp.getWriter().append("Storage/Index Files compressed  set to: " + param);
+                resp.getWriter().append("indexZipFiles is no longer supported");
                 break;
             case effort:
                 //TODO: CHECK ACCPTABLE RANGE
                 int effort = Integer.parseInt(param);
-                ServerSettings.getInstance().setIndexerEffort(effort);
+                ServerSettingsManager.getSettings().getArchiveSettings().setIndexerEffort(effort);
                 resp.getWriter().append("index effort set to: " + effort);
                 break;
             case thumbnail:
             	boolean saveThumbanail = Boolean.parseBoolean(param);
-            	ServerSettings.getInstance().setSaveThumbnails(saveThumbanail);
+            	ServerSettingsManager.getSettings().getArchiveSettings().setSaveThumbnails(saveThumbanail);
             	break;
             case thumbnailSize:
             	//TODO: Should be a int
             	//int thumbSize = Integer.parseInt(param);
-            	ServerSettings.getInstance().setThumbnailsMatrix(param);
+            	ServerSettingsManager.getSettings().getArchiveSettings().setThumbnailSize(Integer.parseInt(param));
             	break;
             case watcher:
-            	ServerSettings.getInstance().setMonitorWatcher(Boolean.parseBoolean(param));
+            	ServerSettingsManager.getSettings().getArchiveSettings().setDirectoryWatcherEnabled(Boolean.parseBoolean(param));
             	break;
             case all:
-            	 ServerSettings.getInstance().setDicoogleDir(path);
-            	 ServerSettings.getInstance().setGzipStorage(zip);
-            	 ServerSettings.getInstance().setIndexerEffort(ieffort);
-            	 ServerSettings.getInstance().setSaveThumbnails(saveT);
-            	 ServerSettings.getInstance().setThumbnailsMatrix(tumbnailSize);
-            	 ServerSettings.getInstance().setMonitorWatcher(watcher);
+            	 ServerSettingsManager.getSettings().getArchiveSettings().setWatchDirectory(path);
+                 if (ieffort > 0 && ieffort <= 100) {
+                     ServerSettingsManager.getSettings().getArchiveSettings().setIndexerEffort(ieffort);
+                 }
+            	 ServerSettingsManager.getSettings().getArchiveSettings().setSaveThumbnails(saveT);
+                 if (thumbnailSize > 0) {
+                     ServerSettingsManager.getSettings().getArchiveSettings().setThumbnailSize(thumbnailSize);
+                 }
+            	 ServerSettingsManager.getSettings().getArchiveSettings().setDirectoryWatcherEnabled(watcher);
             	break;
             	
         }
-        new XMLSupport().printXML();
+        ServerSettingsManager.saveSettings();
     }
 
     @Override
@@ -121,31 +120,31 @@ public class IndexerSettingsServlet extends HttpServlet {
         resp.setContentType("application/json");
         switch (type) {
             case path:
-                result = ServerSettings.getInstance().getDicoogleDir();
+                result = ServerSettingsManager.getSettings().getArchiveSettings().getMainDirectory();
                 break;
             case zip:
-                result = String.valueOf(ServerSettings.getInstance().isGzipStorage());
+                result = "false"; // String.valueOf(ServerSettingsManager.getSettings().isGzipStorage());
                 break;
             case effort:
-                result = String.valueOf(ServerSettings.getInstance().getIndexerEffort());
+                result = String.valueOf(ServerSettingsManager.getSettings().getArchiveSettings().getIndexerEffort());
                 break;
             case thumbnail:
-            	result = String.valueOf(ServerSettings.getInstance().getSaveThumbnails());
+            	result = String.valueOf(ServerSettingsManager.getSettings().getArchiveSettings().getSaveThumbnails());
             	break;
             case thumbnailSize:
-            	result = String.valueOf(ServerSettings.getInstance().getThumbnailsMatrix());
+            	result = String.valueOf(ServerSettingsManager.getSettings().getArchiveSettings().getThumbnailSize());
             	break;
             case watcher:
-            	result = String.valueOf(ServerSettings.getInstance().isMonitorWatcher());
+            	result = String.valueOf(ServerSettingsManager.getSettings().getArchiveSettings().isDirectoryWatcherEnabled());
             	break;
             case all:
             	JSONObject allresponse = new JSONObject();
-            	allresponse.put("path", ServerSettings.getInstance().getDicoogleDir());
-            	allresponse.put("zip", ServerSettings.getInstance().isGzipStorage());
-            	allresponse.put("effort", String.valueOf(ServerSettings.getInstance().getIndexerEffort()));
-            	allresponse.put("thumbnail", ServerSettings.getInstance().getSaveThumbnails());
-            	allresponse.put("thumbnailSize", String.valueOf(ServerSettings.getInstance().getThumbnailsMatrix()));
-            	allresponse.put("watcher", ServerSettings.getInstance().isMonitorWatcher());
+            	allresponse.put("path", ServerSettingsManager.getSettings().getArchiveSettings().getMainDirectory());
+            	allresponse.put("zip", "false"); // ServerSettingsManager.getSettings().isGzipStorage());
+            	allresponse.put("effort", String.valueOf(ServerSettingsManager.getSettings().getArchiveSettings().getIndexerEffort()));
+            	allresponse.put("thumbnail", ServerSettingsManager.getSettings().getArchiveSettings().getSaveThumbnails());
+            	allresponse.put("thumbnailSize", String.valueOf(ServerSettingsManager.getSettings().getArchiveSettings().getThumbnailSize()));
+            	allresponse.put("watcher", ServerSettingsManager.getSettings().getArchiveSettings().isDirectoryWatcherEnabled());
             	
             	resp.getWriter().write(allresponse.toString());
             	break;

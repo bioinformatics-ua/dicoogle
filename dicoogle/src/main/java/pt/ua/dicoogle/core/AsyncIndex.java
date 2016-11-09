@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 
 import org.slf4j.Logger;
-import pt.ua.dicoogle.core.settings.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.plugins.PluginController;
 
 
@@ -45,8 +45,7 @@ public class AsyncIndex {
     public AsyncIndex() {
 
         // path to watch
-        String path = ServerSettings.getInstance().getDicoogleDir();
-
+        String path = ServerSettingsManager.getSettings().getArchiveSettings().getWatchDirectory();
 
         FileAlterationObserver observer = new FileAlterationObserver(path);
         FileAlterationMonitor monitor =

@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 
-import pt.ua.dicoogle.core.settings.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.server.web.utils.ResponseUtil;
 import pt.ua.dicoogle.server.web.utils.ResponseUtil.Pair;
 
@@ -43,7 +43,7 @@ public class AETitleServlet extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		List<Pair> mpairs = new ArrayList<>();
-		mpairs.add(new ResponseUtil.Pair("aetitle", ServerSettings.getInstance().getAE()));
+		mpairs.add(new ResponseUtil.Pair("aetitle", ServerSettingsManager.getSettings().getDicomServicesSettings().getAETitle()));
 		
 		ResponseUtil.objectResponse(resp, mpairs);
 	}
@@ -59,7 +59,7 @@ public class AETitleServlet extends HttpServlet{
 			return;
 		}
 		
-		ServerSettings.getInstance().setAE(aetitle);
+		ServerSettingsManager.getSettings().getDicomServicesSettings().setAETitle(aetitle);
 		
 		ResponseUtil.simpleResponse(resp, "success", true);
 		

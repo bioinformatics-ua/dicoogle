@@ -142,7 +142,7 @@ public class QRServers extends javax.swing.JFrame {
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Storage Servers Destinations"));
 
-        jButtonQRAddEntry.setIcon(new ImageIcon(getImage("add.png")));
+        jButtonQRAddEntry.setIcon(new ImageIcon(getImage("addMoveDestination.png")));
         jButtonQRAddEntry.setText("Add Entry");
         jButtonQRAddEntry.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -267,7 +267,7 @@ public class QRServers extends javax.swing.JFrame {
             m.clear();
 
             for (MoveDestination s : qrserv.getMoves()) {
-                //DebugManager.getInstance().debug(s.getAETitle());
+                //DebugManager.getSettings().debug(s.getAETitle());
 
                 int pos = jListQRMoveDest.getModel().getSize();
                 m.add(pos, s.getAETitle());
@@ -364,10 +364,10 @@ public class QRServers extends javax.swing.JFrame {
         /*
         }
         else{
-            ServerOptions serverOptions = ServerOptions.getInstance();
+            ServerOptions serverOptions = ServerOptions.getSettings();
 
             serverOptions.toFront();
-            serverOptions.setEnabled(true);
+            serverOptions.setAutostart(true);
         }
          *
          */

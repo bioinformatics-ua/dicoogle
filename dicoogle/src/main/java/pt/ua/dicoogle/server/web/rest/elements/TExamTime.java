@@ -69,23 +69,23 @@ public class TExamTime extends Thread {
         throw new UnsupportedOperationException();/*
         long beginTime = System.currentTimeMillis();
         long endTime;
-        ExamTimeCore examTime = ExamTimeCore.getInstance();
+        ExamTimeCore examTime = ExamTimeCore.getSettings();
         BufferedWriter out = null;
         try {
             out = new BufferedWriter(new FileWriter(file, false));
 
 
-            IndexEngine core = IndexEngine.getInstance();
+            IndexEngine core = IndexEngine.getSettings();
 
             Set<String> enumList = core.enumField("AccessionNumber", false);
             
             examTime.setTotal(enumList.size());
 
             List<String> extrafields = new ArrayList<String>();
-            extrafields.add("SeriesInstanceUID");
-            extrafields.add("AcquisitionDateTime");
-            extrafields.add("AcquisitionTime");
-            extrafields.add("AcquisitionDate");
+            extrafields.addMoveDestination("SeriesInstanceUID");
+            extrafields.addMoveDestination("AcquisitionDateTime");
+            extrafields.addMoveDestination("AcquisitionTime");
+            extrafields.addMoveDestination("AcquisitionDate");
 
 
             int i = 0, j = 0, k = 0;
@@ -126,7 +126,7 @@ public class TExamTime extends Thread {
                             DateTimes.put(SeriesInstanceUID, lt);
                         }
 
-                        lt.add(time);
+                        lt.addMoveDestination(time);
 
                     } else {
                         time = fields.get("AcquisitionTime");
@@ -144,7 +144,7 @@ public class TExamTime extends Thread {
                                 DateTimes.put(SeriesInstanceUID, lt);
                             }
 
-                            lt.add(date + time);
+                            lt.addMoveDestination(date + time);
                         } else {
                             k++;
                         }

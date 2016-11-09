@@ -187,7 +187,7 @@ public class Information
             providers = PluginController.getInstance().getQueryProvidersName(true);
         }
 
-		// add all those tags to the extra fields that will be retried on a search query
+		// addMoveDestination all those tags to the extra fields that will be retried on a search query
 		HashMap<String, String> extraFields = new HashMap<>();
 		// get all the tags that can possibly be used within the file
 		HashMap<String, Integer> allTags = DictionaryAccess.getInstance().getTagList();
@@ -196,12 +196,12 @@ public class Information
 			extraFields.put(key, null);
 		}
 		/*
-		HashMap<Integer, TagValue> mf = TagsStruct.getInstance().getManualFields();
+		HashMap<Integer, TagValue> mf = TagsStruct.getSettings().getManualFields();
 		for (Integer i : mf.keySet())
 		{
 			extraFields.put(mf.get(i).getAlias(), null);
 		}
-		HashMap<Integer, TagValue> df = TagsStruct.getInstance().getDimFields();
+		HashMap<Integer, TagValue> df = TagsStruct.getSettings().getDimFields();
 		for (Integer i : df.keySet())
 		{
 			extraFields.put(df.get(i).getAlias(), null);
@@ -284,7 +284,7 @@ public class Information
 		
 		Element rootElem = new Element("tags");
 		
-		// loop through all the tags set and add them and their values to the XML tree
+		// loop through all the tags set and addMoveDestination them and their values to the XML tree
 		Iterator<String> it = tags.keySet().iterator();
 		while (it.hasNext())
 		{

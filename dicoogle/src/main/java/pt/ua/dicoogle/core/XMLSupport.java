@@ -26,9 +26,8 @@ package pt.ua.dicoogle.core;
  * @modified Samuel da Costa Campos <samuelcampos@ua.pt>
  */
 
-
-import org.apache.logging.log4j.core.jmx.Server;
-import pt.ua.dicoogle.core.settings.ServerSettings;
+import org.apache.commons.lang3.StringUtils;
+import pt.ua.dicoogle.core.settings.LegacyServerSettings;
 import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.server.*;
 
@@ -38,13 +37,17 @@ import java.io.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
-//JAXP 
+//JAXP
 import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
 import javax.xml.transform.sax.*;
 
 import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -139,7 +142,7 @@ public class XMLSupport extends DefaultHandler
     private String currentService;
     
     private SOPList list;
-    private ServerSettings s;
+    private LegacyServerSettings s;
     private TransfersStorage LocalTS;
 
 	private DefaultListModel m;
@@ -148,16 +151,15 @@ public class XMLSupport extends DefaultHandler
     private boolean isIndexAnonymous = false;
 	private boolean isWANModeEnabled = false;
 
-    public XMLSupport(ServerSettings settings, SOPList list) {
+    public XMLSupport(LegacyServerSettings settings, SOPList list) {
         this.list = list;
         this.s = settings;
         LocalTS = new TransfersStorage();
         m = new DefaultListModel();
     }
 
-    public XMLSupport()
-    {
-        this(ServerSettings.getInstance(), SOPList.getInstance());
+    public XMLSupport() {
+        this(new LegacyServerSettings(), SOPList.getInstance());
     }
     
     @Override
@@ -368,7 +370,7 @@ public class XMLSupport extends DefaultHandler
 
             MoveDestination tmp = new MoveDestination(this.AETitle, this.IP,
                     this.port, this.isPublic.contains("true"), this.description);
-            s.add(tmp);
+            s.addMoveDestination(tmp);
         }
 
         else if(localName.equals("CSTOREPriorities"))
@@ -378,7 +380,7 @@ public class XMLSupport extends DefaultHandler
         else if (priorityAET && localName.equals("aetitle"))
         {
             String aet = this.resolveAttrib("aetitle", attribs, localName);
-            //ServerSettings.getInstance().addPriorityAETitle(aet);
+            //ServerSettingsManager.getSettings().addPriorityAETitle(aet);
         }
 
 
@@ -389,11 +391,11 @@ public class XMLSupport extends DefaultHandler
         else if (localName.equals("server") && this.isWeb)
         {
             String tmp = "";
-            ServerSettings.Web web = ServerSettings.getInstance().getWeb() ;
+            LegacyServerSettings.Web web = s.getWebServerSettings();
             tmp = this.resolveAttrib("enable", attribs, localName);
-            web.setWebServer(Boolean.parseBoolean(tmp));
+            web.setAutostart(Boolean.parseBoolean(tmp));
             int port = Integer.valueOf(this.resolveAttrib("port", attribs, localName));
-            web.setServerPort(port);
+            web.setPort(port);
 
             String allowedOrigins = this.resolveAttrib("allowedOrigins", attribs, "");
             web.setAllowedOrigins(allowedOrigins);
@@ -402,7 +404,7 @@ public class XMLSupport extends DefaultHandler
         else if (localName.equals("services") && this.isWeb)
         {
             String tmp = "";
-            ServerSettings.Web web = ServerSettings.getInstance().getWeb() ;
+            LegacyServerSettings.Web web = s.getWebServerSettings();
             tmp = this.resolveAttrib("enable", attribs, localName);
             if (tmp.equals("true"))
             {
@@ -414,9 +416,6 @@ public class XMLSupport extends DefaultHandler
             }
             int port = Integer.valueOf(this.resolveAttrib("port", attribs, localName));
             web.setServicePort(port);
-
-
-
         }
         else if( localName.equals("RGUIPort") )
         {
@@ -716,7 +715,7 @@ public class XMLSupport extends DefaultHandler
             boolean result = false;
             if (sView.compareToIgnoreCase("true") == 0)
                 result = true;
-            s.setMonitorWatcher(result);
+            s.setDirectoryWatcherEnabled(result);
             return;
         }
         if (isP2P) {
@@ -764,13 +763,13 @@ public class XMLSupport extends DefaultHandler
              boolean result = false;
              if (sView.compareToIgnoreCase("true") == 0)
                 result = true;
-             s.setStorage(result);
+             s.setStorageAutostart(result);
              return;
          }
          if(isDicoogleDir) //( "DicoogleDir" ) )
          {
              String sView = new String(data, start, length);
-             s.setDicoogleDir(sView);
+             s.setWatchDirectory(sView);
              return;           
          } 
          if(isFullContentIndex) 
@@ -794,19 +793,19 @@ public class XMLSupport extends DefaultHandler
          if(isThumbnailsMatrix) 
          {
              String sView = new String(data, start, length);
-             s.setThumbnailsMatrix(sView);
-             return;              
+             s.setThumbnailSize(Integer.parseInt(sView));
+             return;
          }
          if(isAET)
          { 
              String sAET = new String(data, start, length);
              if(sAET.equals(" "))
              {                
-                s.setAE(null);
+                s.setAETitle(null);
              }
              else
              {
-                s.setAE(sAET);
+                s.setAETitle(sAET);
              }
              return;
          }
@@ -816,7 +815,7 @@ public class XMLSupport extends DefaultHandler
              m.addElement(sCAET);
              String [] CAET = new String[m.getSize()];
              m.copyInto(CAET);
-             s.setCAET(CAET);
+             s.setAllowedAETitles(Arrays.asList(CAET));
              return;
          }
          if(isPermitAllAETitles){
@@ -920,14 +919,13 @@ public class XMLSupport extends DefaultHandler
          {
              String tmp = new String(data, start, length);
              if(tmp.equals("true")){
-                 s.setQueryRetrive(true);
+                 s.setQueryRetrieveAutostart(true);
              }
              else{
-                s.setQueryRetrive(false);
-                //DebugManager.getInstance().debug("QueryRetrieve service is disable by default");
+                s.setQueryRetrieveAutostart(false);
+                //DebugManager.getSettings().debug("QueryRetrieve service is disable by default");
              }
              return;
-
          }
          if (isQRConfigs && isSOPClass)
          {
@@ -969,6 +967,11 @@ public class XMLSupport extends DefaultHandler
         if(isMaxPDULengthSend){
             String sNumber = new String(data, start, length);
             s.setMaxPDULengthSend(Integer.parseInt(sNumber));
+            return;
+        }
+        if (isDIMSERspTimeout) {
+            String sNumber = new String(data, start, length);
+            s.setDIMSERspTimeout(Integer.parseInt(sNumber));
             return;
         }
         if(isRspDelay){
@@ -1039,27 +1042,33 @@ public class XMLSupport extends DefaultHandler
      private boolean getStatus( String uri, String localName, Attributes attribs, String defaultValue) {
          String tmp = attribs.getValue("state"); 
          return (tmp!=null && tmp.equals("on"))?(true):(false);
-     } 
-     
-     
-  
-    public ServerSettings getXML()
+     }
+
+    public LegacyServerSettings parseXML(InputStream istream) throws IOException, SAXException
+    {
+        InputSource src = new InputSource( istream );
+        XMLReader r = XMLReaderFactory.createXMLReader();
+        r.setContentHandler(this);
+        r.parse(src);
+        return s;
+    }
+
+    private Path getDefaultXmlPath() {
+        return Paths.get(Platform.homePath() + "config.xml");
+    }
+
+    public LegacyServerSettings getXML(Path path)
     {        
         try 
         {
-            File file = new File(Platform.homePath() + "config.xml");
-            if (!file.exists())
+            if (!Files.exists(path))
             {   
                 s.setDefaultSettings();
                 list.setDefaultSettings();                
-                printXML();
+                printXML(path);
                 return s;
             }
-            InputSource src = new InputSource( new FileInputStream(file) );
-            XMLReader r = XMLReaderFactory.createXMLReader();
-            r.setContentHandler(this);
-            r.parse(src);
-            return s;
+            return this.parseXML(Files.newInputStream(path));
         }
         catch (IOException | SAXException ex)
         {
@@ -1067,13 +1076,22 @@ public class XMLSupport extends DefaultHandler
         }        
         return null;
     }
-    
-    public void printXML()
+
+    public LegacyServerSettings getXML()
+    {
+        return getXML(getDefaultXmlPath());
+    }
+
+    public void printXML() {
+        printXML(getDefaultXmlPath());
+    }
+
+    public void printXML(Path path)
     {
         FileOutputStream out = null;
         list.CleanList();
         try {
-            out = new FileOutputStream(Platform.homePath() + "config.xml");
+            out = new FileOutputStream(path.toFile());
             PrintWriter pw = new PrintWriter(out);
             StreamResult streamResult = new StreamResult(pw);
             SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
@@ -1121,7 +1139,7 @@ public class XMLSupport extends DefaultHandler
             hd.endElement("", "", "RemoteGUI");
             
             
-            curTitle = s.getPath();
+            curTitle = s.getWatchDirectory();
             //path          
             hd.startElement("", "", "Path", atts);
             hd.characters(curTitle.toCharArray(), 0, curTitle.length());
@@ -1179,7 +1197,7 @@ public class XMLSupport extends DefaultHandler
             hd.endElement("", "", "IndexAnonymous");
             
             hd.startElement("", "", "MonitorWatcher", atts);
-            if (s.isMonitorWatcher())
+            if (s.isDirectoryWatcherEnabled())
                 curTitle = "true";
             else
                 curTitle = "false";
@@ -1249,7 +1267,7 @@ public class XMLSupport extends DefaultHandler
 
             hd.endElement("", "", "P2P");
 
-            if (s.isStorage())
+            if (s.isStorageAutostart())
                 curTitle = "true";
             else
                 curTitle = "false";
@@ -1278,13 +1296,13 @@ public class XMLSupport extends DefaultHandler
             hd.characters(curTitle.toCharArray(), 0, curTitle.length());
             hd.endElement("", "", "SaveThumbnails");
 
-            curTitle = s.getThumbnailsMatrix();
+            curTitle = String.valueOf(s.getThumbnailSize());
             // saveThumbnails           
             hd.startElement("", "", "ThumbnailsMatrix", atts);
             hd.characters(curTitle.toCharArray(), 0, curTitle.length());
             hd.endElement("", "", "ThumbnailsMatrix");
             
-            curTitle = s.getAE();
+            curTitle = s.getAETitle();
             //AET
             hd.startElement("", "", "AETitle", atts);
             hd.characters(curTitle.toCharArray(), 0, curTitle.length());
@@ -1442,7 +1460,7 @@ public class XMLSupport extends DefaultHandler
             hd.characters(curTitle.toCharArray(), 0, curTitle.length());
             hd.endElement("", "", "DeviceDescription");
 
-            if (s.isQueryRetrive())
+            if (s.isQueryRetrieveAutostart())
                 curTitle = "true";
             else
                 curTitle = "false";
@@ -1459,12 +1477,12 @@ public class XMLSupport extends DefaultHandler
             hd.endElement("", "", "Port");
 
             // Permited Local Interfaces
-            curTitle = s.getPermitedLocalInterfaces();
+            curTitle = StringUtils.join(s.getAllowedLocalInterfaces(), '|');
             hd.startElement("", "", "PermitedLocalInterfaces", atts);
             hd.characters(curTitle.toCharArray(), 0, curTitle.length());
             hd.endElement("", "", "PermitedLocalInterfaces");
 
-            curTitle = s.getPermitedRemoteHostnames();
+            curTitle = StringUtils.join(s.getAllowedHostnames(), '|');
             hd.startElement("", "", "PermitedHostnames", atts);
             hd.characters(curTitle.toCharArray(), 0, curTitle.length());
             hd.endElement("", "", "PermitedHostnames");
@@ -1494,12 +1512,12 @@ public class XMLSupport extends DefaultHandler
             hd.characters(curTitle.toCharArray(), 0, curTitle.length());
             hd.endElement("", "", "ConnectionTimeout");
 
-            curTitle = s.getTransfCap();
+            curTitle = StringUtils.join(s.getTransferCapabilities(), '|');
             hd.startElement("", "", "TRANSF_CAP", atts);
             hd.characters(curTitle.toCharArray(), 0, curTitle.length());
             hd.endElement("", "", "TRANSF_CAP");
 
-            curTitle = s.getSOPClass() ; 
+            curTitle = StringUtils.join(s.getQRSOPClass(), '|');
             hd.startElement("", "", "SOP_CLASS", atts);
             hd.characters(curTitle.toCharArray(), 0, curTitle.length());
             hd.endElement("", "", "SOP_CLASS");
@@ -1522,7 +1540,7 @@ public class XMLSupport extends DefaultHandler
 
             hd.startElement("", "", "Retrieve", atts);
 
-            curTitle = s.getSOPClass();
+            curTitle = StringUtils.join(s.getQRSOPClass(), '|');
             hd.startElement("", "", "SOPClass", atts);
             hd.characters(curTitle.toCharArray(), 0, curTitle.length());
             hd.endElement("", "", "SOPClass");
@@ -1563,7 +1581,7 @@ public class XMLSupport extends DefaultHandler
             hd.startElement("", "", "destinations", atts);
 
 
-            ArrayList<MoveDestination> moves = s.getMoves();
+            ArrayList<MoveDestination> moves = s.getMoveDestinations();
             for (MoveDestination m : moves)
             {
 
@@ -1589,7 +1607,7 @@ public class XMLSupport extends DefaultHandler
 
             hd.startElement("", "", "CSTOREPriorities", atts);
 
-            for (String aet : ServerSettings.getInstance().getPriorityAETitles())
+            for (String aet : this.s.getPriorityAETitles())
             {
                 atts.clear();
                 hd.startElement("", "", "aetitle", atts);
@@ -1614,17 +1632,17 @@ public class XMLSupport extends DefaultHandler
             hd.startElement("", "", "web", atts);
 
 
-            ServerSettings.Web web = ServerSettings.getInstance().getWeb() ;
+            LegacyServerSettings.Web web = s.getWebServerSettings() ;
 
             // WebServer
 
             String tmp = "false";
-            if (web.isWebServer())
+            if (web.isAutostart())
                 tmp = "true";
 
             atts.clear();
             atts.addAttribute("", "", "enable", "", tmp);
-            atts.addAttribute("", "", "port", "", String.valueOf(web.getServerPort()));
+            atts.addAttribute("", "", "port", "", String.valueOf(web.getPort()));
             atts.addAttribute("", "", "allowedOrigins", "", web.getAllowedOrigins());
 
             hd.startElement("", "", "server", atts);

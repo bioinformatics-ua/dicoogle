@@ -28,7 +28,7 @@ import java.net.URI;
 import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pt.ua.dicoogle.core.settings.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.StorageInputStream;
 import pt.ua.dicoogle.sdk.StorageInterface;
@@ -59,14 +59,8 @@ public class SimpleImageRetriever implements ImageRetriever {
     private static ByteArrayInputStream getPNGStream(StorageInputStream imgFile, int frame, boolean thumbnail) throws IOException {
         ByteArrayOutputStream pngStream;
         if (thumbnail) {
-            int thumbSize;
-            try {
-                // retrieve thumbnail dimension settings
-                thumbSize = Integer.parseInt(ServerSettings.getInstance().getThumbnailsMatrix());
-            } catch (NumberFormatException ex) {
-                logger.warn("Failed to parse ThumbnailMatrix, using default thumbnail size");
-                thumbSize = 64;
-            }
+            // retrieve thumbnail dimension settings
+            int thumbSize = ServerSettingsManager.getSettings().getArchiveSettings().getThumbnailSize();
             pngStream = Convert2PNG.DICOM2ScaledPNGStream(imgFile, frame, thumbSize, thumbSize);
         } else {
             pngStream = Convert2PNG.DICOM2PNGStream(imgFile, frame);

@@ -18,19 +18,24 @@
  */
 package pt.ua.dicoogle.core.settings;
 
-import pt.ua.dicoogle.core.XMLSupport;
-import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
-import java.net.*;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import org.apache.commons.lang3.StringUtils;
 import org.dcm4che2.data.UID;
 import org.slf4j.LoggerFactory;
-import pt.ua.dicoogle.sdk.core.ServerSettingsReader;
-import pt.ua.dicoogle.sdk.core.WebSettingsReader;
-
+import pt.ua.dicoogle.core.XMLSupport;
+import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
+import pt.ua.dicoogle.sdk.datastructs.SOPClass;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
+import pt.ua.dicoogle.server.SOPList;
 import pt.ua.dicoogle.server.web.utils.types.DataTable;
 
-/** Singleton class of all server settings.
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+/** Legacy implementation of server settings.
  *
  * @author Marco Pereira
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
@@ -38,7 +43,7 @@ import pt.ua.dicoogle.server.web.utils.types.DataTable;
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  * @see XMLSupport
  */
-public class ServerSettings implements ServerSettingsReader
+public class LegacyServerSettings implements ServerSettings, ServerSettings.Archive, ServerSettings.DicomServices
 {
     private String AETitle;
 
@@ -59,14 +64,14 @@ public class ServerSettings implements ServerSettingsReader
     private String dicoogleDir;
     private boolean fullContentIndex;
     private boolean saveThumbnails;
-    private String thumbnailsMatrix;
+    private int thumbnailsMatrix;
     //private boolean P2P;
 
     private boolean storage;
     private boolean queryRetrieve;
     private boolean encryptUsersFile;
 
-    /** 
+    /**
      * Indicates, for each plugin, if it is to start at server init or not.
      */
     private final ConcurrentHashMap<String, Boolean> autoStartPlugin; // NOTE the concurrent hash map is used to prevent having to synchronize the methods that use it
@@ -122,26 +127,26 @@ public class ServerSettings implements ServerSettingsReader
     /**
      * QueryRetrieve Server
      */
-    
-    private boolean wlsOn = false ; 
-    
+
+    private boolean wlsOn = false ;
+
     /* DEFAULT Brief class description */
     private String deviceDescription ;
     /* DEFAULT Process Worklist Server AE Title */
     private String localAETName ;
-    
+
     /* DEFAULT ("any"->null)Permited local interfaces to incomming connection
      * ('null'->any interface; 'ethx'->only this interface |->separator */
     private String permitedLocalInterfaces ;
-    
+
     /* DEFAULT ("any"->null)Permited remote host name connections
      * ('null'->any can connect; 'www.x.com'->only this can connect |->separator */
-    private String permitedRemoteHostnames ; 
-    
+    private String permitedRemoteHostnames ;
+
     /* DEFAULT Dimse response timeout (in sec) */
     private int DIMSERspTimeout ;
     // Connection settings
-    
+
     /* DEFAULT Listening TCP port */
     private int wlsPort ;
     /* DEFAULT Response delay (in miliseconds) */
@@ -152,14 +157,14 @@ public class ServerSettings implements ServerSettingsReader
     private int acceptTimeout ;
     /* DEFAULT Connection timeout (in sec) */
     private int connectionTimeout ;
-    
+
     private int maxMessages = 2000;
-    private String SOPClass  ; 
-    private String transfCAP ; 
-    
+    private String sopClass;
+    private String transfCAP ;
+
      /* DEFAULT Max Client Associations */
-    private int maxClientAssocs  ; 
-   
+    private int maxClientAssocs  ;
+
     private int maxPDULengthReceive ;
     private int maxPDULengthSend ;
 
@@ -173,7 +178,7 @@ public class ServerSettings implements ServerSettingsReader
     private boolean indexAnonymous = false;
 
     private boolean indexZIPFiles = true;
-    
+
     private boolean monitorWatcher = false;
 
     /**
@@ -198,7 +203,7 @@ public class ServerSettings implements ServerSettingsReader
      * @return the web
      */
     @Override
-    public Web getWeb()
+    public Web getWebServerSettings()
     {
         return web;
     }
@@ -228,7 +233,6 @@ public class ServerSettings implements ServerSettingsReader
     /**
      * @return the indexer
      */
-    @Override
     public String getIndexer() {
         return indexer;
     }
@@ -243,7 +247,6 @@ public class ServerSettings implements ServerSettingsReader
     /**
      * @return the nodeName
      */
-    @Override
     public String getNodeName() {
         return nodeName;
     }
@@ -258,7 +261,6 @@ public class ServerSettings implements ServerSettingsReader
     /**
      * @return the nodeNameDefined
      */
-    @Override
     public boolean isNodeNameDefined() {
         return nodeNameDefined;
     }
@@ -270,7 +272,6 @@ public class ServerSettings implements ServerSettingsReader
         this.nodeNameDefined = nodeNameDefined;
     }
 
-    @Override
     public String getNetworkInterfaceName()
     {
         return networkInterfaceName;
@@ -300,7 +301,6 @@ public class ServerSettings implements ServerSettingsReader
     /**
      * @return the encryptUsersFile
      */
-    @Override
     public boolean isEncryptUsersFile() {
         return encryptUsersFile;
     }
@@ -312,83 +312,50 @@ public class ServerSettings implements ServerSettingsReader
         this.encryptUsersFile = encryptUsersFile;
     }
 
-    /**
-     * @return the indexZIPFiles
-     */
-    @Override
     public boolean isIndexZIPFiles() {
         return indexZIPFiles;
     }
 
-    /**
-     * @param indexZIPFiles the indexZIPFiles to set
-     */
     public void setIndexZIPFiles(boolean indexZIPFiles) {
         this.indexZIPFiles = indexZIPFiles;
     }
 
-    /**
-     * @return the RGUIExternalIP
-     */
     @Deprecated
     public String getRGUIExternalIP() {
         return RGUIExternalIP;
     }
 
-    /**
-     * @param RGUIExternalIP the RGUIExternalIP to set
-     */
     @Deprecated
     public void setRGUIExternalIP(String RGUIExternalIP) {
         this.RGUIExternalIP = RGUIExternalIP;
     }
 
-    /**
-     * @return the monitorWatcher
-     */
     @Override
-    public boolean isMonitorWatcher() {
+    public boolean isDirectoryWatcherEnabled() {
         return monitorWatcher;
     }
 
-    /**
-     * @param monitorWatcher the monitorWatcher to set
-     */
-    public void setMonitorWatcher(boolean monitorWatcher) {
+    @Override
+    public void setDirectoryWatcherEnabled(boolean monitorWatcher) {
         this.monitorWatcher = monitorWatcher;
     }
 
-    /**
-     * @return the indexAnonymous
-     */
-    @Override
     public boolean isIndexAnonymous() {
         return indexAnonymous;
     }
 
-    /**
-     * @param indexAnonymous the indexAnonymous to set
-     */
     public void setIndexAnonymous(boolean indexAnonymous) {
         this.indexAnonymous = indexAnonymous;
     }
 
-    /**
-     * @return the gzipStorage
-     */
-    @Override
     public boolean isGzipStorage() {
         return gzipStorage;
     }
 
-    /**
-     * @param gzipStorage the gzipStorage to set
-     */
     public void setGzipStorage(boolean gzipStorage) {
         this.gzipStorage = gzipStorage;
     }
 
-    @Override
     public String getAccessListFileName() {
         return this.aclxmlFileName;
     }
@@ -396,7 +363,7 @@ public class ServerSettings implements ServerSettingsReader
     /**
      * Web (including web server, webservices, etc)
      */
-    public class Web implements WebSettingsReader
+    public class Web implements ServerSettings.WebServer
     {
         private boolean webServer = true;
         private int serverPort = 8080;
@@ -406,73 +373,40 @@ public class ServerSettings implements ServerSettingsReader
         private boolean webServices = false;
         @Deprecated
         private int servicePort = 6060;
-        
 
-
-        public Web()
-        {
+        public Web() {
         }
 
         /**
          * @return the webServer
          */
         @Override
-        public boolean isWebServer() {
+        public boolean isAutostart() {
             return webServer;
         }
 
         /**
          * @param webServer the webServer to set
          */
-        public void setWebServer(boolean webServer) {
+        @Override
+        public void setAutostart(boolean webServer) {
             this.webServer = webServer;
-        }
-
-        /**
-         * @return the webServices
-         */
-        @Deprecated
-        public boolean isWebServices() {
-            return webServices;
-        }
-
-        /**
-         * @param webServices the webServices to set
-         */
-        @Deprecated
-        public void setWebServices(boolean webServices) {
-            this.webServices = webServices;
         }
 
         /**
          * @return the serverPort
          */
         @Override
-        public int getServerPort() {
+        public int getPort() {
             return serverPort;
         }
 
         /**
          * @param serverPort the serverPort to set
          */
-        public void setServerPort(int serverPort) {
+        @Override
+        public void setPort(int serverPort) {
             this.serverPort = serverPort;
-        }
-
-        /**
-         * @return the servicePort
-         */
-        @Deprecated
-        public int getServicePort() {
-            return servicePort;
-        }
-
-        /**
-         * @param servicePort the servicePort to set
-         */
-        @Deprecated
-        public void setServicePort(int servicePort) {
-            this.servicePort = servicePort;
         }
 
         @Override
@@ -480,27 +414,37 @@ public class ServerSettings implements ServerSettingsReader
             return this.accessControlAllowOrigins;
         }
 
+        @Override
         public void setAllowedOrigins(String origins) {
             this.accessControlAllowOrigins = origins;
         }
 
+        @Deprecated
+        public void setWebServices(boolean webServices) {
+            this.webServices = webServices;
+        }
+
+        @Deprecated
+        public void setServicePort(int servicePort) {
+            this.servicePort = servicePort;
+        }
+
+        @Deprecated
+        public boolean isWebServices() {
+            return webServices;
+        }
+
+        @Deprecated
+        public int getServicePort() {
+            return servicePort;
+        }
     }
 
     private Web web = new Web();
 
 	private boolean wanmode;
 
-    private static ServerSettings instance = null;
-    
-    public static synchronized ServerSettings getInstance()
-    {
-        if (instance == null) {
-            instance = new ServerSettings();
-        }
-        return instance;
-    }
-
-    private ServerSettings()
+    public LegacyServerSettings()
     {
         rGUIPort = 9014;
         storagePort = 104;
@@ -511,7 +455,7 @@ public class ServerSettings implements ServerSettingsReader
         dicoogleDir = "";
         fullContentIndex = false;
         saveThumbnails = false;
-        thumbnailsMatrix = "64";
+        thumbnailsMatrix = 64;
 
         encryptUsersFile = false;
 
@@ -526,20 +470,19 @@ public class ServerSettings implements ServerSettingsReader
         this.wlsPort = 1045 ;  // default: 104
         this.idleTimeout = 60 ;
         this.acceptTimeout = 60 ;
-        this.rspDelay = 0 ;        
+        this.rspDelay = 0 ;
         this.DIMSERspTimeout = 60 ;
         this.connectionTimeout = 60 ;
         
         this.transfCAP = UID.ImplicitVRLittleEndian + "|" + UID.ExplicitVRBigEndian + "|" + UID.ExplicitVRLittleEndian;     
 
-        this.SOPClass = UID.StudyRootQueryRetrieveInformationModelFIND 
+        this.sopClass = UID.StudyRootQueryRetrieveInformationModelFIND
         + "|" + UID.PatientRootQueryRetrieveInformationModelFIND;
                
         fillModalityFindDefault();
         this.maxClientAssocs = 20 ; 
         this.maxPDULengthReceive = 16364 ; 
         this.maxPDULengthSend = 16364 ;
-        System.setProperty("java.net.preferIPv4Stack", "true");
 
         autoStartPlugin = new ConcurrentHashMap<>();
     }
@@ -556,19 +499,20 @@ public class ServerSettings implements ServerSettingsReader
         dicoogleDir = System.getProperty("java.io.tmpdir");
         fullContentIndex = false;
         saveThumbnails = false;
-        thumbnailsMatrix = "64";
+        thumbnailsMatrix = 64;
         autoStartPlugin.clear();
 
         setEncryptUsersFile(false);
     }
 
-    public void setAE(String AE)
+    @Override
+    public void setAETitle(String AE)
     {
         AETitle = AE;
     }
 
     @Override
-    public String getAE()
+    public String getAETitle()
     {
         return AETitle;
     }
@@ -578,18 +522,22 @@ public class ServerSettings implements ServerSettingsReader
         ID = I;
     }
 
-    @Override
     public String getID()
     {
         return ID;
     }
 
-    public void setCAET(String[] CAET)
+    @Override
+    public void setAllowedAETitles(Collection<String> CAET)
     {
-        CAETitle = CAET;            
+        CAETitle = CAET.toArray(CAETitle);
     }
 
     @Override
+    public List<String> getAllowedAETitles() {
+        return Arrays.asList(this.CAETitle);
+    }
+
     public String[] getCAET()
     {
         return CAETitle;
@@ -599,7 +547,6 @@ public class ServerSettings implements ServerSettingsReader
         permitAllAETitles = value;
     }
 
-    @Override
     public boolean getPermitAllAETitles(){
         return permitAllAETitles;
     }
@@ -615,12 +562,11 @@ public class ServerSettings implements ServerSettingsReader
     }
 
     @Override
-    public String getPath()
+    public String getWatchDirectory()
     {
         return Path;
     }
 
-    @Override
     public int getStoragePort()
     {
         return storagePort;
@@ -636,17 +582,23 @@ public class ServerSettings implements ServerSettingsReader
         return rGUIPort;
     }
 
-    @Override
     public String getDicoogleDir() {
         return dicoogleDir;
     }
 
-    public void setDicoogleDir(String dicoogleDir) {
+    public String getMainDirectory() {
+        return dicoogleDir;
+    }
+
+    public void setMainDirectory(String directory) {
+        this.dicoogleDir = directory;
+    }
+
+    @Override
+    public void setWatchDirectory(String dicoogleDir) {
         this.dicoogleDir = dicoogleDir;
     }
 
-
-    @Override
     public boolean getFullContentIndex() {
         return fullContentIndex;
     }
@@ -660,16 +612,18 @@ public class ServerSettings implements ServerSettingsReader
         return saveThumbnails;
     }
 
+    @Override
     public void setSaveThumbnails(boolean saveThumbnails) {
         this.saveThumbnails = saveThumbnails;
     }
     
     @Override
-    public String getThumbnailsMatrix() {
+    public int getThumbnailSize() {
         return thumbnailsMatrix;
     }
 
-    public void setThumbnailsMatrix(String thumbnailsMatrix) {
+    @Override
+    public void setThumbnailSize(int thumbnailsMatrix) {
         this.thumbnailsMatrix = thumbnailsMatrix;
     }
 
@@ -682,7 +636,6 @@ public class ServerSettings implements ServerSettingsReader
         this.wlsPort = port ;
     }
 
-    @Override
     public int getWlsPort()
     {
         return this.wlsPort ;
@@ -693,7 +646,6 @@ public class ServerSettings implements ServerSettingsReader
         this.idleTimeout = timeout ;
     }
 
-    @Override
     public int getIdleTimeout()
     {
         return this.idleTimeout ;
@@ -704,7 +656,6 @@ public class ServerSettings implements ServerSettingsReader
         this.rspDelay = delay ;
     }
 
-    @Override
     public int getRspDelay()
     {
         return this.rspDelay  ;
@@ -714,7 +665,6 @@ public class ServerSettings implements ServerSettingsReader
     {
         this.acceptTimeout = timeout ;
     }
-    @Override
     public int getAcceptTimeout()
     {
         return this.acceptTimeout;
@@ -724,7 +674,6 @@ public class ServerSettings implements ServerSettingsReader
     {
         this.connectionTimeout = timeout; 
     }
-    @Override
     public int getConnectionTimeout()
     {
         return this.connectionTimeout ;
@@ -732,29 +681,32 @@ public class ServerSettings implements ServerSettingsReader
     
     public void setSOPClass(String SOPClass)
     {
-        this.SOPClass = SOPClass ;
+        this.sopClass = SOPClass ;
     }
     
-    @Override
-    public String[] getSOPClasses()
-    {
-        String []tmp = {
+    public List<String> getQRSOPClass() {
+        return Arrays.asList(
             UID.StudyRootQueryRetrieveInformationModelFIND ,
             UID.PatientRootQueryRetrieveInformationModelFIND
-        };
-        return tmp ; 
+        );
+    }
+
+    public void setSOPClasses(Collection<SOPClass> classes) {
+        Objects.requireNonNull(classes);
+        LoggerFactory.getLogger(LegacyServerSettings.class).warn("Configuring DICOM SOP classes is unsupported "
+                + " in legacy configuration file \"config.xml\". Please upgrade your server to use the latest format.");
     }
 
     @Override
-    public String getSOPClass()
+    public List<SOPClass> getSOPClasses()
     {
-        return this.SOPClass ; 
+        return SOPList.getInstance().asSOPClassList();
     }
     public void setDIMSERspTimeout(int timeout)
     {
         this.DIMSERspTimeout = timeout ; 
     }
-    @Override
+
     public int getDIMSERspTimeout()
     {
         return this.DIMSERspTimeout ; 
@@ -764,7 +716,6 @@ public class ServerSettings implements ServerSettingsReader
         this.deviceDescription = desc ; 
     }
     
-    @Override
     public String getDeviceDescription()
     {
         return this.deviceDescription;
@@ -775,38 +726,36 @@ public class ServerSettings implements ServerSettingsReader
         this.transfCAP = transfCap;
     }
         
-    @Override
-    public String getTransfCap()
+    public List<String> getTransferCapabilities()
     {
-        return this.transfCAP; 
+        return Arrays.asList(this.transfCAP.split("\\|"));
     }
-    
+
     public void setMaxClientAssoc(int maxClients)
     {
         this.maxClientAssocs = maxClients; 
     }
     
-    @Override
     public int getMaxClientAssoc()
     {
         return this.maxClientAssocs; 
     }
-    
+
     public void setMaxPDULengthReceive(int len)
     {
         this.maxPDULengthReceive = len;
     }
     
-    @Override
     public int getMaxPDULengthReceive()
     {
         return this.maxPDULengthReceive; 
     }
+
     public void setMaxPDULengthSend(int len)
     {
         this.maxPDULengthSend = len;
     }
-    @Override
+
     public int getMaxPDULenghtSend() // FIXME typo
     {
         return this.maxPDULengthSend; 
@@ -816,7 +765,6 @@ public class ServerSettings implements ServerSettingsReader
     {
         this.localAETName = name; 
     }
-    @Override
     public String getLocalAETName()
     {
         return this.localAETName; 
@@ -826,22 +774,32 @@ public class ServerSettings implements ServerSettingsReader
     {
         this.permitedLocalInterfaces  = localInterfaces; 
     }
-    
+
     @Override
-    public String getPermitedLocalInterfaces()
+    public void setAllowedLocalInterfaces(Collection<String> localInterfaces) {
+        this.permitedLocalInterfaces = StringUtils.join(localInterfaces, '|');
+    }
+
+    @Override
+    public List<String> getAllowedLocalInterfaces()
     {
-        return this.permitedLocalInterfaces; 
+        return Arrays.asList(this.permitedLocalInterfaces.split("\\|"));
     }
     
     public void setPermitedRemoteHostnames(String remoteHostnames)
     {
         this.permitedRemoteHostnames = remoteHostnames; 
     }
-    
+
     @Override
-    public String getPermitedRemoteHostnames()
+    public void setAllowedHostnames(Collection<String> hostnames) {
+        this.permitedRemoteHostnames = StringUtils.join(hostnames, '|');
+    }
+
+    @Override
+    public List<String> getAllowedHostnames()
     {
-        return this.permitedRemoteHostnames;
+        return Arrays.asList(this.permitedRemoteHostnames.split("\\|"));
     }
 
     /**
@@ -850,42 +808,46 @@ public class ServerSettings implements ServerSettingsReader
    /* public boolean isP2P() {
         return P2P;
     }*/
-    @Override
-    public boolean isStorage() {
+
+    /** Whether the storage service auto-starts. */
+    public boolean isStorageAutostart() {
         return storage;
     }
-    @Override
-    public boolean isQueryRetrive() {
+
+    /** Whether the query/retrieve service auto-starts. */
+    public boolean isQueryRetrieveAutostart() {
         return queryRetrieve;
     }
 
-    public void add(MoveDestination m)
+    @Override
+    public void addMoveDestination(MoveDestination m)
     {
         this.dest.add(m);
     }
-    public boolean remove(MoveDestination m)
+
+    @Override
+    public boolean removeMoveDestination(String AETitle)
     {
-        return this.dest.remove(m);
-    }
-    public boolean removeMoveDestination(String AETitle, String ipAddr, int port)
-    {
-    	for(int i=0;i<dest.size(); i++)
-    	{
-    		MoveDestination mv = dest.get(i);
-    		if(mv.getAETitle().equals(AETitle) && mv.getIpAddrs().equals(ipAddr) && mv.getPort() == port)
+        boolean removed = false;
+        Iterator<MoveDestination> it = dest.iterator();
+    	while (it.hasNext()) {
+    		MoveDestination mv = it.next();
+    		if(mv.getAETitle().equals(AETitle))
     		{
-    			dest.remove(i);
-    			return true;
+    			it.remove();
+    			removed = true;
     		}
     			
     	}
-    	return false;
+    	return removed;
     }
+
     public boolean contains(MoveDestination m){
         return this.dest.contains(m);
     }
+
     @Override
-    public ArrayList<MoveDestination> getMoves()
+    public ArrayList<MoveDestination> getMoveDestinations()
     {
         return this.dest ;
     }
@@ -893,6 +855,11 @@ public class ServerSettings implements ServerSettingsReader
     @Override
     public Set<String> getPriorityAETitles() {
         return priorityAETitles;
+    }
+
+    @Override
+    public void setPriorityAETitles(Collection<String> aeTitles) {
+        this.priorityAETitles = new HashSet<>(aeTitles);
     }
 
     public void addPriorityAETitle(String aet)
@@ -904,13 +871,13 @@ public class ServerSettings implements ServerSettingsReader
         this.priorityAETitles.remove(aet);
     }
 
-    public void setMoves(ArrayList<MoveDestination> moves)
+    @Override
+    public void setMoveDestinations(List<MoveDestination> moves)
     {
-        if(moves != null)
-            this.dest = moves;
+        if(moves != null) {
+            this.dest = new ArrayList<>(moves);
+        }
     }
-
-
 
     private void fillModalityFindDefault()
     {
@@ -945,7 +912,6 @@ public class ServerSettings implements ServerSettingsReader
      *
      * @return HashMap with Modalitys FIND
      */
-    @Override
     public HashMap<String, String> getModalityFind()
     {
         return this.modalityFind;
@@ -976,7 +942,6 @@ public class ServerSettings implements ServerSettingsReader
      * @param name the name of the plugin.
      * @return true if the plugin is to be auto started on server init or false if it is not.
      */
-    @Override
     public boolean getAutoStartPlugin(String name)
     {
     	Boolean result = autoStartPlugin.get(name);
@@ -991,7 +956,6 @@ public class ServerSettings implements ServerSettingsReader
 	 *
 	 * @return the current settings for plugin auto start on server init.
 	 */
-    @Override
 	public ConcurrentHashMap<String, Boolean> getAutoStartPluginsSettings()
 	{
 		return autoStartPlugin;
@@ -1061,8 +1025,7 @@ public class ServerSettings implements ServerSettingsReader
 	 *
 	 * @return and HashMap containing the Query Retrieve list of settings (name, value/type pairs).
 	 */
-    @Override
-	public HashMap<String, Object> getQueryRetrieveSettings()
+	public HashMap<String, Object> getQueryRetrieveSettings_xml()
 	{
 		HashMap<String, Object> result = new HashMap<>();
 
@@ -1126,19 +1089,18 @@ public class ServerSettings implements ServerSettingsReader
 	 *
 	 * @return and HashMap containing the Storage list of settings (name, value/type pairs).
 	 */
-    @Override
-	public HashMap<String, Object> getStorageSettings()
+	public HashMap<String, Object> getStorageSettings_xml()
 	{
 		HashMap<String, Object> result = new HashMap<>();
 
-		//result.put(STORAGE_SETTING_PATH, new ServerDirectoryPath(getPath()));
+		//result.put(STORAGE_SETTING_PATH, new ServerDirectoryPath(getWatchDirectory()));
 		// TODO move some of these new classes onto the SDK, so that plugins can also process option types/fields
 		int destCount = dest.size();
 		DataTable storageServers = new DataTable(3, destCount);
 		storageServers.setColumnName(0, "AETitle");
 		storageServers.setColumnName(1, "IP");
 		storageServers.setColumnName(2, "Port");
-		// if there are no rows, then add an empty one (for reference)
+		// if there are no rows, then addMoveDestination an empty one (for reference)
 		if (destCount < 1)
 		{
 			storageServers.addRow();
@@ -1182,7 +1144,7 @@ public class ServerSettings implements ServerSettingsReader
 		if (! tryStorageSettings(settings))
 			return false;
 
-		//setPath(((ServerDirectoryPath) settings.get(STORAGE_SETTING_PATH)).getPath());
+		//setPath(((ServerDirectoryPath) settings.get(STORAGE_SETTING_PATH)).getWatchDirectory());
 		// TODO set the query retrieve options
 
 		return true;
@@ -1198,17 +1160,16 @@ public class ServerSettings implements ServerSettingsReader
 		return null; // no help available
 	}
 
-    public void setStorage(boolean storage)
+    public void setStorageAutostart(boolean storage)
     {
         this.storage = storage;
     }
 
-    public void setQueryRetrive(boolean queryRetrieve)
+    public void setQueryRetrieveAutostart(boolean queryRetrieve)
     {
         this.queryRetrieve = queryRetrieve;
     }
 
-    @Override
     public ArrayList<String> getNetworkInterfacesNames()
     {
         ArrayList<String> interfaces = new ArrayList<String>();
@@ -1239,13 +1200,12 @@ public class ServerSettings implements ServerSettingsReader
                 }
             } catch (SocketException ex)
             {
-                LoggerFactory.getLogger(ServerSettings.class).error(ex.getMessage(), ex);
+                LoggerFactory.getLogger(LegacyServerSettings.class).error(ex.getMessage(), ex);
             }
         }
         return interfaces;
     }
 
-    @Override
     public String getNetworkInterfaceAddress()
     {
         Enumeration<NetworkInterface> nets = null;
@@ -1275,24 +1235,7 @@ public class ServerSettings implements ServerSettingsReader
         }
         return null;
     }
-    /**
-     * Add an extension to list of allowed indexing extensions.
-     * <p>
-     * All extensions should be added (ie, dicom, etc).
-     *
-     * @param ext          It is the extensions of files that should be indexed.
-     * <b>empty</b> string means that documents without extension will be indexed.
-     * 
-     * @see   IndexEngine
-     */
-    public void addExtension(String ext)
-    {
-        this.extensionsAllowed.add(ext);
-    }
 
-
-
-    @Override
     public HashSet<String> getExtensionsAllowed()
     {
         return extensionsAllowed;
@@ -1301,7 +1244,6 @@ public class ServerSettings implements ServerSettingsReader
     /**
      * @return the maxMessages
      */
-    @Override
     public int getMaxMessages() {
         return maxMessages;
     }
@@ -1313,9 +1255,7 @@ public class ServerSettings implements ServerSettingsReader
         this.maxMessages = maxMessages;
     }
 
-    @Override
 	public boolean isWANModeEnabled() {
-		// TODO Auto-generated method stub
 		return wanmode;
 	}
 
@@ -1323,4 +1263,182 @@ public class ServerSettings implements ServerSettingsReader
 		this.wanmode = wanmode;
 	}
 
+
+	// --------- additional fields methods for compatibility with main API (will not persist though) -----------
+
+    @Override
+    public Archive getArchiveSettings() {
+        return this;
+    }
+
+    @Override
+    public DicomServices getDicomServicesSettings() {
+        return this;
+    }
+
+    private List<String> ds = Collections.EMPTY_LIST;
+    private List<String> dp = Collections.EMPTY_LIST;
+
+    @Override
+    public List<String> getDefaultStorage() { return ds; }
+
+    @Override
+    public List<String> getDIMProviders() { return dp; }
+
+    public void setDefaultStorage(List<String> storages) {
+        ds = storages;
+    }
+    public void setDIMProviders(List<String> providers) {
+        dp = providers;
+    }
+
+    @Override
+    public ServiceBase getStorageSettings() {
+        return new ServiceBase() {
+            @Override
+            public void setAutostart(boolean b) {
+                setStorageAutostart(b);
+            }
+
+            @Override
+            public void setPort(int i) {
+                setStoragePort(i);
+            }
+
+            @Override
+            public boolean isAutostart() {
+                return isStorageAutostart();
+            }
+
+            @Override
+            public int getPort() {
+                return getStoragePort();
+            }
+        };
+    }
+
+    @Override
+    public ServerSettings.DicomServices.QueryRetrieve getQueryRetrieveSettings() {
+        return new QueryRetrieve() {
+            @Override
+            public void setSOPClass(Collection<String> collection) {
+                LegacyServerSettings.this.setSOPClass(StringUtils.join(collection, '|'));
+            }
+
+            @Override
+            public void setTransferCapabilities(Collection<String> collection) {
+                LegacyServerSettings.this.setTransfCap(StringUtils.join(collection, '|'));
+            }
+
+            @Override
+            public void setAutostart(boolean b) {
+                LegacyServerSettings.this.setQueryRetrieveAutostart(b);
+            }
+
+            @Override
+            public void setPort(int i) {
+                LegacyServerSettings.this.setWlsPort(i);
+            }
+
+            @Override
+            public void setRspDelay(int i) {
+                LegacyServerSettings.this.setRspDelay(i);
+            }
+
+            @Override
+            public void setIdleTimeout(int i) {
+                LegacyServerSettings.this.setIdleTimeout(i);
+            }
+
+            @Override
+            public void setAcceptTimeout(int i) {
+                LegacyServerSettings.this.setAcceptTimeout(i);
+            }
+
+            @Override
+            public void setConnectionTimeout(int i) {
+                LegacyServerSettings.this.setConnectionTimeout(i);
+            }
+
+            @Override
+            public void setDIMSERspTimeout(int i) {
+                LegacyServerSettings.this.setDIMSERspTimeout(i);
+            }
+
+            @Override
+            public void setMaxClientAssoc(int i) {
+                LegacyServerSettings.this.setMaxClientAssoc(i);
+            }
+
+            @Override
+            public void setMaxPDULengthReceive(int i) {
+                LegacyServerSettings.this.setMaxPDULengthReceive(i);
+            }
+
+            @Override
+            public void setMaxPDULengthSend(int i) {
+                LegacyServerSettings.this.setMaxPDULengthReceive(i);
+            }
+
+            @Override
+            public Collection<String> getSOPClass() {
+                return LegacyServerSettings.this.getQRSOPClass();
+            }
+
+            @Override
+            public Collection<String> getTransferCapabilities() {
+                return LegacyServerSettings.this.getTransferCapabilities();
+            }
+
+            @Override
+            public int getRspDelay() {
+                return LegacyServerSettings.this.getRspDelay();
+            }
+
+            @Override
+            public int getIdleTimeout() {
+                return LegacyServerSettings.this.getIdleTimeout();
+            }
+
+            @Override
+            public int getAcceptTimeout() {
+                return LegacyServerSettings.this.getAcceptTimeout();
+            }
+
+            @Override
+            public int getConnectionTimeout() {
+                return LegacyServerSettings.this.getConnectionTimeout();
+            }
+
+            @Override
+            public int getDIMSERspTimeout() {
+                return LegacyServerSettings.this.getDIMSERspTimeout();
+            }
+
+            @Override
+            public int getMaxClientAssoc() {
+                return LegacyServerSettings.this.getMaxClientAssoc();
+            }
+
+            @Override
+            public int getMaxPDULengthReceive() {
+                return LegacyServerSettings.this.getMaxPDULengthReceive();
+            }
+
+            @Override
+            public int getMaxPDULengthSend() {
+                return LegacyServerSettings.this.getMaxPDULenghtSend();
+            }
+
+            @Override
+            public boolean isAutostart() {
+                return isQueryRetrieveAutostart();
+            }
+
+            @Override
+            public int getPort() {
+                return getWlsPort();
+            }
+        };
+    }
 }

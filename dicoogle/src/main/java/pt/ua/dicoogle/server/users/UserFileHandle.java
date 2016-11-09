@@ -39,7 +39,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import org.slf4j.LoggerFactory;
 
-import pt.ua.dicoogle.core.settings.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.sdk.Utils.Platform;
 
 /**
@@ -59,7 +59,7 @@ public class UserFileHandle {
 
     public UserFileHandle() throws IOException {
         filename = Platform.homePath() + "users.xml";
-        encrypt = ServerSettings.getInstance().isEncryptUsersFile();
+        encrypt = true; //ServerSettingsManager.getSettings().isEncryptUsersFile();
         try {
 
             if(encrypt){

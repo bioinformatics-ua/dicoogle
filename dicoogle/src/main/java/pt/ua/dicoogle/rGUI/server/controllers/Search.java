@@ -73,7 +73,7 @@ public class Search implements ISearch
         extrafields.add("Modality");
         extrafields.add("StudyDate");
         extrafields.add("SOPInstanceUID");
-        //extrafields.add("Thumbnail");
+        //extrafields.addMoveDestination("Thumbnail");
 
         searchHelper = new SearchHelper(this);
     }
@@ -88,7 +88,7 @@ public class Search implements ISearch
         searchSignal.sendSearchSignal(2);
         } catch (RemoteException ex) {
         searchSignal = null;
-        DebugManager.getInstance().debug("Failure to send the signal to the client..");
+        DebugManager.getSettings().debug("Failure to send the signal to the client..");
         LoggerFactory.getLogger(Search.class).error(ex.getMessage(), ex);
         }
          * 
@@ -109,7 +109,7 @@ public class Search implements ISearch
         } catch (RemoteException ex)
         {
             searchSignal = null;
-            //DebugManager.getInstance().debug("Failure to send the signal to the client..");
+            //DebugManager.getSettings().debug("Failure to send the signal to the client..");
             LoggerFactory.getLogger(Search.class).error(ex.getMessage(), ex);
         }
     }
@@ -127,7 +127,7 @@ public class Search implements ISearch
         } catch (RemoteException ex)
         {
             searchSignal = null;
-            //DebugManager.getInstance().debug("Failure to send the signal to the client..");
+            //DebugManager.getSettings().debug("Failure to send the signal to the client..");
             LoggerFactory.getLogger(Search.class).error(ex.getMessage(), ex);
         }
     }
@@ -148,7 +148,7 @@ public class Search implements ISearch
         } catch (RemoteException ex)
         {
             searchSignal = null;
-            //DebugManager.getInstance().debug("Failure to send the signal to the client..");
+            //DebugManager.getSettings().debug("Failure to send the signal to the client..");
             LoggerFactory.getLogger(Search.class).error(ex.getMessage(), ex);
         }
     }
@@ -174,7 +174,7 @@ public class Search implements ISearch
         } catch (RemoteException ex)
         {
             searchSignal = null;
-            //DebugManager.getInstance().debug("Failure to send the signal to the client..");
+            //DebugManager.getSettings().debug("Failure to send the signal to the client..");
             LoggerFactory.getLogger(Search.class).error(ex.getMessage(), ex);
         }
         
@@ -200,7 +200,7 @@ public class Search implements ISearch
         } catch (RemoteException ex)
         {
             searchSignal = null;
-            //DebugManager.getInstance().debug("Failure to send the signal to the client..");
+            //DebugManager.getSettings().debug("Failure to send the signal to the client..");
             LoggerFactory.getLogger(Search.class).error(ex.getMessage(), ex);
         }
     }
@@ -226,7 +226,7 @@ public class Search implements ISearch
                 QueryExpressionBuilder _expression = new QueryExpressionBuilder(query);
                 query = _expression.getQueryString();
             }
-            //DebugManager.getInstance().debug(">>> New Query String is:" + query);
+            //DebugManager.getSettings().debug(">>> New Query String is:" + query);
 
         }
         searchTime = 0;
@@ -273,7 +273,7 @@ public class Search implements ISearch
             /*synchronized(this)
             {
             	//TODO: DELETED
-                //result = PluginController.getInstance().searchOne(r.getURI().toString(),
+                //result = PluginController.getSettings().searchOne(r.getURI().toString(),
                 //query , extrafields, r.getURI().toString(), this);
                 
             	
@@ -394,8 +394,8 @@ public class Search implements ISearch
     public FileObservable RequestP2PFile(SearchResult file) throws RemoteException
     {
         //TOSO: fix this
-       // return PluginController.getInstance().requestFile(file.getURI(), file.getURI(), file.getURI(), file.get("filehash"));
-        //PeerEngine.getInstance().requestFile(file.getAddress(), file.getFileName(), file.getFileHash());
+       // return PluginController.getSettings().requestFile(file.getURI(), file.getURI(), file.getURI(), file.get("filehash"));
+        //PeerEngine.getSettings().requestFile(file.getAddress(), file.getFileName(), file.getFileHash());
         return null;
     }
 
@@ -409,7 +409,7 @@ public class Search implements ISearch
     @Override
     public SimpleEntry<RemoteFile, Integer> downloadFile(SearchResult result) throws RemoteException
     {
-        /*if (!PluginController.getInstance().isLocalPlugin(result.getPluginName()))
+        /*if (!PluginController.getSettings().isLocalPlugin(result.getPluginName()))
         {
             return null;
         }*/
@@ -424,7 +424,7 @@ public class Search implements ISearch
 
             SimpleEntry<RemoteFile, Integer> entry = new SimpleEntry<RemoteFile, Integer>(new RemoteFile(file), sender.getListenerPort());
 
-            //DebugManager.getInstance().debug("Transfering file: " + entry.getKey().getName() + ", listening port: " + entry.getValue());
+            //DebugManager.getSettings().debug("Transfering file: " + entry.getKey().getName() + ", listening port: " + entry.getValue());
 
             Thread tSender = sender;
             tSender.start();
@@ -442,7 +442,7 @@ public class Search implements ISearch
     public List<NetworkMember> getPeerList() throws RemoteException
     {
     	//TODO: DELETED
-        //return PluginController.getInstance().getMembers();
+        //return PluginController.getSettings().getMembers();
     	return null;
     }
 

@@ -81,7 +81,7 @@ public class ExportDataSupport extends Observable implements Observer, Serializa
         //System.out.println("1 - initiateExport");
         printFirstLine();
         //System.out.println("2 - initiateExport");
-        //Result2Tree.getInstance().searchToExport(query, keywords, origin, tags, this);
+        //Result2Tree.getSettings().searchToExport(query, keywords, origin, tags, this);
         ISearch search = new Search();
         obsAux  = search.SearchToExport(query, keywords, origin, tags, this);
         //System.out.println("3 - initiateExport"); 

@@ -26,7 +26,7 @@ import java.util.concurrent.Semaphore;
 
 import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
-import pt.ua.dicoogle.core.settings.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.rGUI.interfaces.controllers.IDicomSend;
 import pt.ua.dicoogle.server.queryretrieve.CallDCMSend;
 
@@ -58,7 +58,7 @@ public class DicomSend implements IDicomSend {
 
     @Override
     public ArrayList<MoveDestination> getDestinations() throws RemoteException {
-        return ServerSettings.getInstance().getMoves();
+        return new ArrayList<>(ServerSettingsManager.getSettings().getDicomServicesSettings().getMoveDestinations());
     }
 
     @Override
@@ -76,12 +76,12 @@ public class DicomSend implements IDicomSend {
             fileList.add(new File(it.next()));
         
 
-         //DebugManager.getInstance().debug("Sending files to Destination");
+         //DebugManager.getSettings().debug("Sending files to Destination");
          
         /**
          * Call DICOM Storage SCU for each image
          */
-        //DebugManager.getInstance().debug("AETITLE to DICOM STORAGE SCU: "
+        //DebugManager.getSettings().debug("AETITLE to DICOM STORAGE SCU: "
           //      + destination.getAETitle());
 
         try {

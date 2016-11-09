@@ -1,0 +1,76 @@
+{
+  "web-server": {
+    "autostart": true,
+    "port": 8282,
+    "allowed-origins": "test.dicoogle.com"
+  },
+  "archive": {
+    "save-thumbnails": true,
+    "thumbnail-size": 128,
+    "main-directory": "/opt/my-data",
+    "indexer-effort": 100,
+    "dim-providers": "lucene",
+    "default-storage": "filestorage",
+    "enable-watch-directory": true,
+    "watch-directory": "/opt/my-data/watched"
+  },
+  "dicom-services": {
+    "aetitle": "TEST-STORAGE",
+    "allowed-aetitles": "any",
+    "allowed-local-interfaces": "any",
+    "allowed-hostnames": "any",
+    "sop-classes": [
+      {
+        "uid": "",
+        "ts": [
+          "1.2.840.10008.1.2",
+          "1.2.840.10008.1.2.1",
+          "1.2.840.10008.1.2.4.80",
+          "1.2.840.10008.1.2.4.50"
+        ]
+      },
+      "1.2.840.10008.5.1.4.1.1.88.40",
+      "1.2.840.10008.5.1.4.1.1.77.1.1",
+      {
+        "uid": "1.2.840.10008.5.1.4.1.1.12.1.1",
+        "ts": [
+          "1.2.840.10008.1.2",
+          "1.2.840.10008.1.2.1",
+          "1.2.840.10008.1.2.5"
+        ]
+      }
+    ],
+    "move-destinations": [
+      {
+        "aetitle": "ANOTHER-STORAGE",
+        "address": "192.168.42.42",
+        "port": 6666,
+        "description": "Our test storage",
+        "public": false
+      }
+    ],
+    "storage": {
+      "autostart": true,
+      "port": 6666
+    },
+    "query-retrieve": {
+      "autostart": false,
+      "port": 1033,
+      "rsp-delay": 1,
+      "dimse-rsp-timeout": 50,
+      "idle-timeout": 51,
+      "accept-timeout": 52,
+      "connection-timeout": 53,
+      "sop-classes": [
+        "1.2.840.10008.5.1.4.1.2.1.1"
+      ],
+      "transfer-capabilities": [
+        "1.2.840.10008.1.2.2",
+        "1.2.840.10008.1.2.1"
+      ],
+      "max-client-assocs": 25,
+      "max-pdu-length-receive": 16374,
+      "max-pdu-length-send": 16374
+    }
+  }
+}

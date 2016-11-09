@@ -18,42 +18,30 @@
  */
 package pt.ua.dicoogle;
 
-import java.awt.Desktop;
-import java.io.File;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.SocketException;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Random;
-import java.util.Set;
-import java.util.TimerTask;
-
-import javax.swing.JOptionPane;
-
 import org.dcm4che2.data.TransferSyntax;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
-
-import pt.ua.dicoogle.core.AsyncIndex;
-import pt.ua.dicoogle.core.settings.ClientSettings;
-import pt.ua.dicoogle.core.settings.ServerSettings;
-import pt.ua.dicoogle.core.XMLSupport;
 import pt.ua.dicoogle.DicomLog.LogDICOM;
 import pt.ua.dicoogle.DicomLog.LogXML;
+import pt.ua.dicoogle.core.AsyncIndex;
 import pt.ua.dicoogle.core.TagsXML;
-import pt.ua.dicoogle.core.XMLClientSupport;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.plugins.PluginController;
-import pt.ua.dicoogle.rGUI.client.windows.ConnectWindow;
 import pt.ua.dicoogle.sdk.Utils.Platform;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 import pt.ua.dicoogle.sdk.utils.TagsStruct;
 import pt.ua.ieeta.emailreport.Configuration;
+
+import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.URI;
+import java.net.UnknownHostException;
+import java.util.*;
 
 /**
  * Main class for Dicoogle
@@ -67,10 +55,6 @@ public class Main
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     private static boolean optimizeMemory = true;
-    private static boolean isGUIServer = false;
-    //indicates whether the client and the server were pulled at the same time
-    private static boolean isFixedClient = false;
-    private static int remoteGUIPort = 0;
     public static boolean MAC_OS_X = (System.getProperty("os.name").toLowerCase().startsWith("mac os x"));
     /**
      * Generate a random integer number between 0 and 100
@@ -101,30 +85,20 @@ public class Main
         
         if (args.length == 0)
         {
-            isFixedClient = true;
-
             LaunchDicoogle();
             LaunchWebApplication();
         } else {
 
             if (args[0].equals("-v"))
             {
-                isFixedClient = true;
-                //DebugManager.getInstance().setDebug(true);
+                //DebugManager.getSettings().setDebug(true);
                 LaunchDicoogle();
-                //DebugManager.getInstance().debug("Starting Client Thread");
+                //DebugManager.getSettings().debug("Starting Client Thread");
                 LaunchWebApplication();
             }
             if (args[0].equals("-s"))
             {
                 LaunchDicoogle();
-            } else if (args[0].equals("-g") || args[0].equals("--gui"))
-            {
-                LaunchDicoogle();
-                LaunchGUIClient();
-            } else if (args[0].equals("-c"))
-            {
-                LaunchGUIClient();
             }
             else if (args[0].equals("-w") || args[0].equals("--web") || args[0].equals("--webapp")) {
                 // open browser
@@ -184,8 +158,8 @@ public class Main
             return false;
         } else {
             try {
-                ServerSettings settings = ServerSettings.getInstance();
-                URI uri = URI.create("http://localhost:" + settings.getWeb().getServerPort());
+                ServerSettings settings = ServerSettingsManager.getSettings();
+                URI uri = URI.create("http://localhost:" + settings.getWebServerSettings().getPort());
                 Desktop.getDesktop().browse(uri);
                 return true;
             } catch (IOException ex) {
@@ -201,6 +175,7 @@ public class Main
         {
             //System.out.println("\n"+addressString(localAddresses()) + "\n");
             System.setProperty("java.rmi.server.hostname", addressString(localAddresses()));
+            System.setProperty("java.net.preferIPv4Stack", "true");
         } catch (SocketException ex) {
             logger.warn(ex.getMessage(), ex);
         }
@@ -209,7 +184,7 @@ public class Main
         /* This logic will be not neccessary. This should be sent to the Plugins.
         try
         {
-            Anonymous.getInstance().start();
+            Anonymous.getSettings().start();
         } catch(Exception e) {
             logger.warn("Could not start Anonimize service", e);
         }*/
@@ -221,12 +196,18 @@ public class Main
             Configuration.getInstance().readValues();
             Configuration.getInstance().setProps(new Properties());
         } catch (FileNotFoundException ex) {
-            //DebugManager.getInstance().log("Missing crash report configuration (sender)\n");
+            //DebugManager.getSettings().log("Missing crash report configuration (sender)\n");
             logger.info("No configuration file");
         }
 
-        /* Load all Server Settings from XML */
-        ServerSettings settings = new XMLSupport().getXML();
+        /* Load all Server Settings */
+        try {
+            ServerSettingsManager.init();
+        } catch (IOException e) {
+            logger.error("A critical error occurred: cannot initialize server settings.", e);
+            System.exit(-1);
+        }
+        ServerSettings settings = ServerSettingsManager.getSettings();
 
         try
         {
@@ -239,89 +220,27 @@ public class Main
             logger.error(ex.getMessage(), ex);
         }
 
-        /***
-         * Connect to P2P
-         */
-        /** Verify if it have a defined node */
-        if (!settings.isNodeNameDefined())
-        {
-            String hostname = "Dicoogle";
-
-            try
-            {
-                InetAddress addr = InetAddress.getLocalHost();
-
-                // Get hostname
-                hostname = addr.getHostName();
-            } catch (UnknownHostException e)
-            {
-            }
-
-            String response = (String) JOptionPane.showInputDialog(null,
-                    "What is the name of the machine?",
-                    "Enter Node name",
-                    JOptionPane.QUESTION_MESSAGE, null, null,
-                    hostname);
-
-            settings.setNodeName(response);
-            settings.setNodeNameDefined(true);
-
-            // Save Settings in XML
-            XMLSupport _xml = new XMLSupport();
-            _xml.printXML();
-        }
-
-        logger.debug("Name: {}", ServerSettings.getInstance().getNodeName());
-        
         TransferSyntax.add(new TransferSyntax("1.2.826.0.1.3680043.2.682.1.40", false,false, false, true));
         TransferSyntax.add(new TransferSyntax("1.2.840.10008.1.2.4.70", true,false, false, true));
         TransferSyntax.add(new TransferSyntax("1.2.840.10008.1.2.5.50", false,false, false, true));    
 
         PluginController PController = PluginController.getInstance();
 
-        // Start the Inicial Services of Dicoogle
+        // Start the Initial Services of Dicoogle
         pt.ua.dicoogle.server.ControlServices.getInstance();
 
-        // Lauch Async Index 
+        // Launch Async Index
         // It monitors a folder, and when a file is touched an event
         // triggers and index is updated.
-        if (ServerSettings.getInstance().isMonitorWatcher()) {
+        if (ServerSettingsManager.getSettings().getArchiveSettings().isDirectoryWatcherEnabled()) {
             AsyncIndex asyncIndex = new AsyncIndex();
         }
-        //Signals that this application is GUI Server
-        isGUIServer = true;
-
-        //GUIServer GUIserv = new GUIServer();
     }
 
     @Deprecated
-    private static void LaunchGUIClient()
-    {
-
-        /* Load all Client Settings from XML */
-        ClientSettings settings = new XMLClientSupport().getXML();
-
-        if (isGUIServer)
-        {
-            remoteGUIPort = ServerSettings.getInstance().getRemoteGUIPort();
-
-            RunClient rc = new RunClient();
-            rc.run();
-        } else
-        {
-            ConnectWindow.getInstance();
-        }
-
-    }
-
     public static boolean isFixedClient()
     {
-        return isFixedClient;
-    }
-
-    public static int getRemoteGUIPort()
-    {
-        return remoteGUIPort;
+        return false;
     }
 
     private static Set<InetAddress> localAddresses() throws SocketException
@@ -334,7 +253,7 @@ public class Main
         NetworkInterface iface = ifaces.nextElement();
         Enumeration<InetAddress> addrs = iface.getInetAddresses();
         while (addrs.hasMoreElements())
-        localAddrs.add(addrs.nextElement());
+        localAddrs.addMoveDestination(addrs.nextElement());
         }
          *
          */
@@ -374,15 +293,5 @@ public class Main
             s += addr.getHostAddress();
         }
         return s;
-    }
-
-    private static class RunClient implements Runnable
-    {
-
-        @Override
-        public void run()
-        {
-            ConnectWindow.getInstance();
-        }
     }
 }

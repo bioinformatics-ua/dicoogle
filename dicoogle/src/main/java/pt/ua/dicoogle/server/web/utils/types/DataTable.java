@@ -148,7 +148,7 @@ public class DataTable
 		for (int i = 0; i < data.length; i++)
 			System.arraycopy(data[i], 0, newData[i], 0, columns.length);
 
-		// add the new data
+		// addMoveDestination the new data
 		newColumns[columns.length] = name;
 
 		// set the new data as the current one
@@ -211,7 +211,7 @@ public class DataTable
 
 		result += "<div id=\"" + htmlElementID + "\">";
 
-		// loop through all the rows and add their cell data and column name to the result
+		// loop through all the rows and addMoveDestination their cell data and column name to the result
 		for (int row = 0; row < data.length; row++)
 		{
 			result += "<div class=\"data-table-row\">";
@@ -225,7 +225,7 @@ public class DataTable
 				result += "&nbsp;&nbsp;&nbsp;";
 			}
 
-			// add a button to remove each element, except the first one
+			// addMoveDestination a button to remove each element, except the first one
 			result += 	"<button type=\"button\" class=\"removeButton\" onclick=\"removeDataTableRow(this.parentNode.parentNode, this.parentNode);\" " + ((row == 0) ? "hidden" : "") + ">Remove</button>";
 
 			result += "</div>";
@@ -233,7 +233,7 @@ public class DataTable
 
 		result += "</div>";
 
-		// add one button to add another element to the table
+		// addMoveDestination one button to addMoveDestination another element to the table
 		result += "<button type=\"button\" onclick=\"addDataTableRow(document.getElementById('" + htmlElementID + "'));\">Add</button><br />"; // FIXME replace the getelementbyid with this.previoussibling ?!? http://www.w3schools.com/dom/prop_element_previoussibling.asp
 
 		return result;
@@ -272,11 +272,11 @@ public class DataTable
 		// create a new DataTable with the same column size as the original one and the same row count as the new params
 		DataTable result = new DataTable(original.getColumnCount(), paramsCountMax);
 
-		// add all the columns titles/names
+		// addMoveDestination all the columns titles/names
 		for (int i = 0; i < result.getColumnCount(); i++)
 			result.setColumnName(i, original.columns[i]);
 
-		// add all the cells information present on the original DataTable
+		// addMoveDestination all the cells information present on the original DataTable
 		for (int j = 0; j < result.getColumnCount(); j++)
 		{
 			String columnID = Utils.getHTMLElementIDFromString(result.columns[j]);

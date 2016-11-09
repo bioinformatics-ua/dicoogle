@@ -25,8 +25,6 @@
 package pt.ua.dicoogle.rGUI.client.windows;
 
 import org.apache.commons.codec.binary.Base64;
-import org.jvnet.substance.SubstanceLookAndFeel;
-import org.jvnet.substance.skin.*;
 import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.Main;
 import pt.ua.dicoogle.core.settings.ClientSettings;
@@ -1732,7 +1730,7 @@ private void jMenuDirScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         if (logs != null) {
             logs.setVisible(true);
             logs.toFront();
-            //this.setEnabled(false);
+            //this.setAutostart(false);
         }
 
     }//GEN-LAST:event_jButtonLogsActionPerformed
@@ -1741,7 +1739,7 @@ private void jMenuDirScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         Services serv = Services.getInstance();
         serv.setVisible(true);
         serv.toFront();
-        //this.setEnabled(false);
+        //this.setAutostart(false);
     }//GEN-LAST:event_jButtonServicesActionPerformed
 
     private void jMenuItemServicesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemServicesActionPerformed
@@ -1751,37 +1749,30 @@ private void jMenuDirScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     }//GEN-LAST:event_jMenuItemServicesActionPerformed
 
     private void jMenuItem1ActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed1
-        SubstanceLookAndFeel.setSkin(new BusinessSkin());
         repaint();
     }//GEN-LAST:event_jMenuItem1ActionPerformed1
 
     private void jMenuItem2ActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed1
-        SubstanceLookAndFeel.setSkin(new BusinessBlueSteelSkin());
         repaint();
     }//GEN-LAST:event_jMenuItem2ActionPerformed1
 
     private void jMenuItem3ActionPerformed1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed1
-        SubstanceLookAndFeel.setSkin(new BusinessBlackSteelSkin());
         repaint();
     }//GEN-LAST:event_jMenuItem3ActionPerformed1
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
-        SubstanceLookAndFeel.setSkin(new CremeSkin());
         repaint();
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-        SubstanceLookAndFeel.setSkin(new MagmaSkin());
         repaint();
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
-        SubstanceLookAndFeel.setSkin(new RavenSkin());
         repaint();
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
-        SubstanceLookAndFeel.setSkin(new RavenGraphiteGlassSkin());
         repaint();
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
@@ -1817,7 +1808,7 @@ private void jMenuDirScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         if (usersManager != null) {
             usersManager.setVisible(true);
             usersManager.toFront();
-            //this.setEnabled(false);
+            //this.setAutostart(false);
         }
     }//GEN-LAST:event_jMenuItemUsersActionPerformed
 
@@ -1866,7 +1857,7 @@ private void jMenuDirScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         if (activeSessions != null) {
             activeSessions.setVisible(true);
             activeSessions.toFront();
-            //this.setEnabled(false);
+            //this.setAutostart(false);
         }
     }//GEN-LAST:event_jMenuItemActiveUsersActionPerformed
 
@@ -2099,7 +2090,7 @@ private void jTreeResultsValueChanged(javax.swing.event.TreeSelectionEvent evt) 
      if (node == null){
      return;
      }
-     this.jButtonDownload.setEnabled(false);
+     this.jButtonDownload.setAutostart(false);
      Object nodeInfo = null;
      DefaultMutableTreeNode nodeLeaf = null;
 
@@ -2166,7 +2157,7 @@ private void jTreeResultsValueChanged(javax.swing.event.TreeSelectionEvent evt) 
      //Controll the enable buttons
      if (node.isLeaf())
      {
-     jButtonDump.setEnabled(true);
+     jButtonDump.setAutostart(true);
      IPluginControllerUser plugins = null;
      try
      {
@@ -2182,12 +2173,12 @@ private void jTreeResultsValueChanged(javax.swing.event.TreeSelectionEvent evt) 
             //TODO: fix this!
             /*if (!plugins.isLocalPlugin(((SearchResult) nodeInfo).getPluginName()))
      {
-     jButtonDownload.setEnabled(true);
-     jButtonSend.setEnabled(false);
+     jButtonDownload.setAutostart(true);
+     jButtonSend.setAutostart(false);
      } else
      {*/
-    /*          jButtonSend.setEnabled(true);
-     jButtonView.setEnabled(true);
+    /*          jButtonSend.setAutostart(true);
+     jButtonView.setAutostart(true);
      //}
      }
      catch (RemoteException ex){
@@ -2195,11 +2186,11 @@ private void jTreeResultsValueChanged(javax.swing.event.TreeSelectionEvent evt) 
      }
      }
      else{
-     jButtonDump.setEnabled(false);
-     jButtonDownload.setEnabled(false);
-     jButtonView.setEnabled(false);
+     jButtonDump.setAutostart(false);
+     jButtonDownload.setAutostart(false);
+     jButtonView.setAutostart(false);
 
-     jButtonSend.setEnabled(true);
+     jButtonSend.setAutostart(true);
      }*/
 }//GEN-LAST:event_jTreeResultsValueChanged
 
@@ -2288,7 +2279,7 @@ private void jButtonViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
                         ProcessBuilder pb = new ProcessBuilder(ClientSettings.getInstance().getExtV(), tmp.getURI().toString());
                         pb.start();
 
-                        //Runtime.getRuntime().exec(ClientSettings.getInstance().getExtV() + " "+path);
+                        //Runtime.getRuntime().exec(ClientSettings.getSettings().getExtV() + " "+path);
                     } catch (IOException ex) {
                         //ex.printStackTrace();
 
@@ -2733,7 +2724,7 @@ private void SelectAdvancedSearchActionPerformed(java.awt.event.ActionEvent evt)
                 public void setFileChoosed(String filePath) {
                     AdminRefs.getInstance().index(filePath, resume);
 
-                    /*TaskList tasks = TaskList.getInstance();
+                    /*TaskList tasks = TaskList.getSettings();
                      tasks.setVisible(true);
                      tasks.toFront();*/
                 }
@@ -2760,7 +2751,7 @@ private void SelectAdvancedSearchActionPerformed(java.awt.event.ActionEvent evt)
             if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 AdminRefs.getInstance().index(chooser.getSelectedFile().toString(), resume);
 
-                /*TaskList tasks = TaskList.getInstance();
+                /*TaskList tasks = TaskList.getSettings();
                  tasks.setVisible(true);
                  tasks.toFront();*/
             }
@@ -2796,7 +2787,7 @@ private void jTextFieldQueryKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST
     }//GEN-LAST:event_formWindowOpened
 
     private void jTextFieldQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldQueryActionPerformed
-        // TODO add your handling code here:
+        // TODO addMoveDestination your handling code here:
     }//GEN-LAST:event_jTextFieldQueryActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

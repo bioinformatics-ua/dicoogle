@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is just a helper class to make it a lot easier to add the data onto the
+ * This is just a helper class to make it a lot easier to addMoveDestination the data onto the
  * treeview in html form the data gets sent to one of these first.
  *
  * @author Antonio

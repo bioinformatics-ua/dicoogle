@@ -108,7 +108,7 @@ public class LogLine implements Serializable
     }
 
     /**
-     * @return the add
+     * @return the addMoveDestination
      */
     public String getAdd()
     {
@@ -116,7 +116,7 @@ public class LogLine implements Serializable
     }
 
     /**
-     * @param add the add to set
+     * @param add the addMoveDestination to set
      */
     public void setAdd(String add)
     {

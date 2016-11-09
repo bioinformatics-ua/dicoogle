@@ -68,12 +68,12 @@ public class FileReceiver extends Thread {
 
     @Override
     public void run(){
-        //DebugManager.getInstance().debug("Starting transfer Thread...");
+        //DebugManager.getSettings().debug("Starting transfer Thread...");
 
         long sizeTransfered = receiver();
 
         if(sizeTransfered != -1)
-            //DebugManager.getInstance().debug("Transfer complete! File: " + file.getName());
+            //DebugManager.getSettings().debug("Transfer complete! File: " + file.getName());
 
         return;
     }

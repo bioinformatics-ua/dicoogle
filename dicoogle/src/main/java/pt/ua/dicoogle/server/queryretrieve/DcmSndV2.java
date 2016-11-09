@@ -62,7 +62,7 @@ import org.dcm4che2.net.service.StorageCommitmentService;
 import org.dcm4che2.util.CloseUtils;
 import org.dcm4che2.util.StringUtils;
 import org.dcm4che2.util.UIDUtils;
-import pt.ua.dicoogle.core.settings.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 
 /**
  * @author gunter zeilinger(gunterze@gmail.com)
@@ -189,8 +189,6 @@ public class DcmSndV2 extends StorageCommitmentService {
     
     private String MoveOriginatorMessageID = null;
 
-    private boolean gzip = ServerSettings.getInstance().isGzipStorage();
-    
     public DcmSndV2() {
         remoteAE.setInstalled(true);
         remoteAE.setAssociationAcceptor(true);
@@ -202,7 +200,7 @@ public class DcmSndV2 extends StorageCommitmentService {
         ae.setAssociationInitiator(true);
         ae.setAssociationAcceptor(true);
         ae.register(this);
-        ae.setAETitle(ServerSettings.getInstance().getAE());
+        ae.setAETitle(ServerSettingsManager.getSettings().getDicomServicesSettings().getAETitle());
     }
 
     public final void setLocalHost(String hostname) {

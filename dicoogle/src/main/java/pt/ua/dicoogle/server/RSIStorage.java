@@ -18,7 +18,7 @@
  */
 package pt.ua.dicoogle.server;
 
-import pt.ua.dicoogle.core.settings.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,6 +53,7 @@ import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.IndexerInterface;
 import pt.ua.dicoogle.sdk.StorageInterface;
 import pt.ua.dicoogle.sdk.datastructs.Report;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
 
 /**
@@ -78,8 +79,6 @@ public class RSIStorage extends StorageService
     private int threadPoolSize = 10;
     
     private ExecutorService pool = Executors.newFixedThreadPool(threadPoolSize);
-    
-    private boolean gzip = ServerSettings.getInstance().isGzipStorage();;
 
     private Set<String> alternativeAETs = new HashSet<>();
     private Set<String> priorityAETs = new HashSet<>();
@@ -92,7 +91,6 @@ public class RSIStorage extends StorageService
      * 
      * @param Services List of supported SOP Classes
      * @param l list of Supported SOPClasses with supported Transfer Syntax
-     * @param s Server Settings for this execution of the storage service
      */
     
     public RSIStorage(String [] Services, SOPList l)
@@ -102,17 +100,17 @@ public class RSIStorage extends StorageService
         
             //our configuration format
             list = l;
-            settings = ServerSettings.getInstance();
+            settings = ServerSettingsManager.getSettings();
 
             // Added default alternative AETitle.
-            alternativeAETs.add(ServerSettings.getInstance().getNodeName());
+            //alternativeAETs.add(ServerSettingsManager.getSettings().getNodeName());
 
-            path = settings.getPath();
+            path = settings.getArchiveSettings().getMainDirectory();
             if (path == null) {
                 path = "/dev/null";
             }
 
-            this.priorityAETs = settings.getPriorityAETitles();
+            this.priorityAETs = new HashSet<>(settings.getDicomServicesSettings().getPriorityAETitles());
             LoggerFactory.getLogger(RSIStorage.class).debug("Priority C-STORE: " + this.priorityAETs);
 
             device.setNetworkApplicationEntity(nae);
@@ -127,22 +125,24 @@ public class RSIStorage extends StorageService
             //and the StorageServiceSOP
             nae.register(this);
 
-            nae.setAETitle(settings.getAE());
+            nae.setAETitle(settings.getDicomServicesSettings().getAETitle());
 
 
-            nc.setPort(settings.getStoragePort());
+            nc.setPort(settings.getDicomServicesSettings().getStorageSettings().getPort());
             
             
             this.nae.setInstalled(true);
             this.nae.setAssociationAcceptor(true);
             this.nae.setAssociationInitiator(false);
             
-            
-            ServerSettings s  = ServerSettings.getInstance();
+            int maxPDULengthReceive = settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthReceive();
+            int maxPDULengthSend = settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthSend();
+
+            ServerSettings s  = ServerSettingsManager.getSettings();
             this.nae.setDimseRspTimeout(60000*300);
             this.nae.setIdleTimeout(60000*300);
-            this.nae.setMaxPDULengthReceive(s.getMaxPDULengthReceive()+1000);
-            this.nae.setMaxPDULengthSend(s.getMaxPDULenghtSend()+1000);
+            this.nae.setMaxPDULengthReceive(maxPDULengthReceive+1000);
+            this.nae.setMaxPDULengthSend(maxPDULengthSend+1000);
             this.nae.setRetrieveRspTimeout(60000*300);
 
 
@@ -160,8 +160,8 @@ public class RSIStorage extends StorageService
                 nae2.setNetworkConnection(nc);
                 nae2.setDimseRspTimeout(60000*300);
                 nae2.setIdleTimeout(60000*300);
-                nae2.setMaxPDULengthReceive(s.getMaxPDULengthReceive()+1000);
-                nae2.setMaxPDULengthSend(s.getMaxPDULenghtSend()+1000);
+                nae2.setMaxPDULengthReceive(maxPDULengthReceive+1000);
+                nae2.setMaxPDULengthSend(maxPDULengthSend+1000);
                 nae2.setRetrieveRspTimeout(60000*300);
                 //we accept assoociations, this is a server
                 nae2.setAssociationAcceptor(true);
@@ -170,12 +170,12 @@ public class RSIStorage extends StorageService
                 //and the StorageServiceSOP
                 nae2.register(this);
                 nae2.setAETitle(alternativeAET);
-                ServerSettings settings = ServerSettings.getInstance();
-                String[] array = settings.getCAET();
-
-                if (array != null)
-                {
-                    nae2.setPreferredCallingAETitle(settings.getCAET());
+                ServerSettings settings = ServerSettingsManager.getSettings();
+                Collection<String> caet = settings.getDicomServicesSettings().getAllowedAETitles();
+                if (!caet.isEmpty()) {
+                    String[] array = new String[caet.size()];
+                    caet.toArray(array);
+                    nae2.setPreferredCallingAETitle(array);
                 }
                 naeArr[k] = nae2;
                 k++;
@@ -236,32 +236,26 @@ public class RSIStorage extends StorageService
      */
     public void cstore(final Association as, final int pcid, DicomObject rq, PDVInputStream dataStream, String tsuid) throws DicomServiceException, IOException
     {
-        //DebugManager.getInstance().debug(":: Verify Permited AETs @??C-Store Request ");
+        //DebugManager.getSettings().debug(":: Verify Permited AETs @??C-Store Request ");
 
         boolean permited = false;
-
-        if(ServerSettings.getInstance().getPermitAllAETitles()){
+        Collection<String> allowedAETitles = ServerSettingsManager.getSettings()
+                .getDicomServicesSettings().getAllowedAETitles();
+        if(allowedAETitles.isEmpty()){
             permited = true;
         }
         else {
-            String permitedAETs[] = ServerSettings.getInstance().getCAET();
-
-            for (int i = 0; i < permitedAETs.length; i++) {
-                if (permitedAETs[i].equals(as.getCallingAET())) {
-                    permited = true;
-                    break;
-                }
-            }
+            permited = allowedAETitles.contains(as.getCallingAET());
         }
 
         if (!permited) {
-            //DebugManager.getInstance().debug("Client association NOT permited: " + as.getCallingAET() + "!");
+            //DebugManager.getSettings().debug("Client association NOT permited: " + as.getCallingAET() + "!");
             System.err.println("Client association NOT permited: " + as.getCallingAET() + "!");
             as.abort();
             
             return;
         } else {
-            //DebugManager.getInstance().debug("Client association permited: " + as.getCallingAET() + "!");
+            //DebugManager.getSettings().debug("Client association permited: " + as.getCallingAET() + "!");
             System.err.println("Client association permited: " + as.getCallingAET() + "!");
         }
 
@@ -342,7 +336,7 @@ public class RSIStorage extends StorageService
         public int compareTo(ImageElement<E> o1) {
             if (o1.getCallingAET().equals(this.getCallingAET()))
                 return 0 ;
-            else if (settings.getPriorityAETitles().contains(this.getCallingAET()))
+            else if (priorityAETs.contains(this.getCallingAET()))
                 return -1;
             else return 1;
         }

@@ -59,7 +59,7 @@ public class Patient
         if (this.studiesHash.containsKey(s.getStudyInstanceUID()))
         {
             /** 
-             * The study exists, so it will take the series and add the series
+             * The study exists, so it will take the series and addMoveDestination the series
              */
 
             Study es = this.studiesHash.get(s.getStudyInstanceUID()) ;

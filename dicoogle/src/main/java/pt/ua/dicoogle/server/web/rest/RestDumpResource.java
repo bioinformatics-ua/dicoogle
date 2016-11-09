@@ -37,7 +37,7 @@ import pt.ua.dicoogle.sdk.task.Task;
  */
 
 
-//TODO:add type to file search
+//TODO:addMoveDestination type to file search
 public class RestDumpResource extends ServerResource{
         
     @Get

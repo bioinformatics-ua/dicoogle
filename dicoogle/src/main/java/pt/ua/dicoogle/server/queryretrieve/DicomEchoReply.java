@@ -41,7 +41,8 @@ import org.dcm4che2.net.NewThreadExecutor;
 import org.dcm4che2.net.TransferCapability;
 import org.dcm4che2.net.UserIdentity;
 import org.dcm4che2.net.service.VerificationService;
-import pt.ua.dicoogle.core.settings.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
 /**
  *
@@ -56,7 +57,7 @@ public class DicomEchoReply extends VerificationService {
 
     
     /** Settings */         
-    ServerSettings s = ServerSettings.getInstance();
+    ServerSettings s = ServerSettingsManager.getSettings();
     
     private static final String[] TRANSF_CAP = {
         UID.ImplicitVRLittleEndian,
@@ -94,7 +95,7 @@ public class DicomEchoReply extends VerificationService {
 
         super();
 
-        this.port = s.getWlsPort() + DicomEchoReply.PORT_OFFSET; ;
+        this.port = s.getDicomServicesSettings().getQueryRetrieveSettings().getPort() + DicomEchoReply.PORT_OFFSET; ;
         /* clients */
         this.remoteAE.setInstalled(true);
         this.remoteAE.setAssociationInitiator(true);
@@ -108,7 +109,7 @@ public class DicomEchoReply extends VerificationService {
         this.localAE.setAssociationAcceptor(true);
         this.localAE.setAssociationInitiator(false);
         this.localAE.setNetworkConnection(this.localConn );
-        this.localAE.setAETitle(s.getAE() + DicomEchoReply.SERVICE_LABEL);
+        this.localAE.setAETitle(s.getDicomServicesSettings().getAETitle() + DicomEchoReply.SERVICE_LABEL);
         this.localAE.register(new VerificationService());
         this.localAE.register(this);
 
@@ -117,7 +118,7 @@ public class DicomEchoReply extends VerificationService {
                                                             TransferCapability.SCP) };
         this.localAE.setTransferCapability(tc);
 
-/*        this.localAE.setDimseRspTimeout(confs.getWlsConfigs().getDIMSE_RSP_TIMEOUT());
+/*        this.localAE.setDIMSERspTimeout(confs.getWlsConfigs().getDIMSE_RSP_TIMEOUT());
         this.localAE.setIdleTimeout(confs.getWlsConfigs().getIDLE_TIMEOUT());*/
 
         /*this.localAE.setMaxPDULengthReceive(confs.getWlsConfigs().getMAX_PDU_LENGTH_RECEIVE());

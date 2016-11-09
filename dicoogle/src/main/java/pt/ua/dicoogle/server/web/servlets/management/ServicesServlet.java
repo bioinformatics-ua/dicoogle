@@ -26,9 +26,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONObject;
 
-import pt.ua.dicoogle.core.settings.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettingsReader;
 import pt.ua.dicoogle.server.ControlServices;
-import pt.ua.dicoogle.server.web.management.Services;
 
 /** Servlet for reading and writing DICOM service configurations.
  * Modifying the "running" setting will trigger a start or a stop on the actual service.
@@ -56,23 +57,25 @@ public class ServicesServlet extends HttpServlet {
 			throws ServletException, IOException {
 
 		final ControlServices controlServices = ControlServices.getInstance();
-		final ServerSettings serverSettings = ServerSettings.getInstance();
+		final ServerSettings serverSettings = ServerSettingsManager.getSettings();
 
 		boolean isRunning = false; 
 		int port = -1;
         boolean autostart = false;
+		ServerSettingsReader.ServiceBase base;
 		switch (mType) {
 		case STORAGE:
+			base = serverSettings.getDicomServicesSettings().getStorageSettings();
 			isRunning = controlServices.storageIsRunning();
-			port = serverSettings.getStoragePort();
-			autostart = serverSettings.isStorage();
+			port = base.getPort();
+			autostart = base.isAutostart();
 			break;
 		case QUERY:
+			base = serverSettings.getDicomServicesSettings().getQueryRetrieveSettings();
 			isRunning = controlServices.queryRetrieveIsRunning();
-			port = serverSettings.getWlsPort();
-			autostart = serverSettings.isQueryRetrive();
+			port = base.getPort();
+			autostart = base.isAutostart();
 			break;
-
 		default:
 			break;
 		}
@@ -126,17 +129,17 @@ public class ServicesServlet extends HttpServlet {
         }
 
 		final ControlServices controlServices = ControlServices.getInstance();
-		final ServerSettings serverSettings = ServerSettings.getInstance();
+		final ServerSettings serverSettings = ServerSettingsManager.getSettings();
 
 		// update auto-start
 		if (updateAutostart) {
 			switch (mType) {
 				case STORAGE:
-					serverSettings.setStorage(autostart);
+					serverSettings.getDicomServicesSettings().getStorageSettings().setAutostart(autostart);
 					obj.element("autostart", autostart);
 					break;
 				case QUERY:
-					serverSettings.setQueryRetrive(autostart);
+					serverSettings.getDicomServicesSettings().getQueryRetrieveSettings().setAutostart(autostart);
 					obj.element("autostart", autostart);
 					break;
 			}
@@ -146,11 +149,11 @@ public class ServicesServlet extends HttpServlet {
 		if (updatePort) {
 			switch (mType) {
 				case STORAGE:
-					serverSettings.setStoragePort(port);
+					serverSettings.getDicomServicesSettings().getStorageSettings().setPort(port);
 					obj.element("port", port);
 					break;
 				case QUERY:
-					serverSettings.setWlsPort(port);
+					serverSettings.getDicomServicesSettings().getQueryRetrieveSettings().setPort(port);
 					obj.element("port", port);
 					break;
 			}
@@ -184,7 +187,7 @@ public class ServicesServlet extends HttpServlet {
 					break;
 			}
 		}
-		Services.getInstance().saveSettings();
+		ServerSettingsManager.saveSettings();
 		obj.element("success", true);
 		reply(resp, 200, obj);
 	}

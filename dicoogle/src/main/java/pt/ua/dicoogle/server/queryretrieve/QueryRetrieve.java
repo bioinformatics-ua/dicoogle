@@ -25,9 +25,10 @@ import aclmanager.core.LuceneQueryACLManager;
 import aclmanager.exceptions.CannotParseFileException;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.concurrent.Executor;
 
-import pt.ua.dicoogle.core.settings.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 
 import org.dcm4che2.data.UID;
 import org.dcm4che2.net.CommandUtils;
@@ -40,6 +41,7 @@ import org.dcm4che2.net.service.VerificationService;
 import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.sdk.Utils.Platform;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 import pt.ua.dicoogle.server.DicomNetwork;
 
 /**
@@ -52,10 +54,11 @@ public class QueryRetrieve extends DicomNetwork
     /**** Class Atributes ****/
     
 
-    ServerSettings s  = ServerSettings.getInstance();
+    ServerSettings.DicomServices.QueryRetrieve s  = ServerSettingsManager
+            .getSettings().getDicomServicesSettings().getQueryRetrieveSettings();
 
-    /* Implemented SOP Class */
-    private String sopClass = null;
+    /* Implemented SOP Classes */
+    private Collection<String> sopClass = null;
 
     private EchoReplyService verifService = null;
 
@@ -82,7 +85,7 @@ public class QueryRetrieve extends DicomNetwork
     /* Module executor  -  Server thread */
     private static Executor executor =  new NewThreadExecutor(MODULE_NAME);        
 
-    private String[] transfCap = ServerSettings.getInstance().getTransfCap().split("[|]");
+    private Collection<String> transfCap = s.getTransferCapabilities();
     private TransferCapability[] tc = new TransferCapability[5];
 
     private static String[] multiSop = {UID.StudyRootQueryRetrieveInformationModelFIND,
@@ -101,36 +104,39 @@ public class QueryRetrieve extends DicomNetwork
         super("DICOOGLE-QUERYRETRIEVE");
 
         // super(multiSop, executor);
-                this.sopClass = s.getSOPClass();
+        this.sopClass = s.getSOPClass();
 
 
-        //DebugManager.getInstance().debug("SOP Class: ");
-        //DebugManager.getInstance().debug(s.getSOPClass());
+        //DebugManager.getSettings().debug("SOP Class: ");
+        //DebugManager.getSettings().debug(s.getSOPClasses());
 
         for (String s : transfCap)
         {
-            //DebugManager.getInstance().debug("TransCap : " + s );
+            //DebugManager.getSettings().debug("TransCap : " + s );
         }
+
+        String[] arr = new String[transfCap.size()];
+        transfCap.toArray(arr);
 
         tc[0] = new TransferCapability(
                                         UID.StudyRootQueryRetrieveInformationModelFIND,
-                                        this.transfCap,
+                                        arr,
                                         TransferCapability.SCP
                                       );
         tc[1] = new TransferCapability(
                                         UID.StudyRootQueryRetrieveInformationModelMOVE,
-                                        this.transfCap,
+                                        arr,
                                         TransferCapability.SCP
                                       );
 
         tc[2] = new TransferCapability(
                                 UID.PatientRootQueryRetrieveInformationModelFIND,
-                                this.transfCap,
+                                arr,
                                 TransferCapability.SCP
         );
         tc[3] = new TransferCapability(
                         UID.PatientRootQueryRetrieveInformationModelMOVE,
-                        this.transfCap,
+                        arr,
                         TransferCapability.SCP
         );
         String [] Verification = {UID.ImplicitVRLittleEndian, UID.ExplicitVRLittleEndian, UID.ExplicitVRBigEndian};
@@ -145,15 +151,15 @@ public class QueryRetrieve extends DicomNetwork
         this.localAE.setAssociationAcceptor(true);
         this.localAE.setAssociationInitiator(false);
         this.localAE.setNetworkConnection(this.localConn );
-        this.localAE.setAETitle(s.getAE());
+        this.localAE.setAETitle(ServerSettingsManager.getSettings().getDicomServicesSettings().getAETitle());
         this.localAE.setTransferCapability(tc);
         this.localAE.setDimseRspTimeout(s.getDIMSERspTimeout());
         this.localAE.setIdleTimeout(s.getIdleTimeout());
         this.localAE.setMaxPDULengthReceive(s.getMaxPDULengthReceive()+1000);
-        this.localAE.setMaxPDULengthSend(s.getMaxPDULenghtSend()+1000);
+        this.localAE.setMaxPDULengthSend(s.getMaxPDULengthSend()+1000);
 
         try {//TODO: HERE IIII XD
-            File xmlFile = new File(Platform.homePath() + ServerSettings.getInstance().getAccessListFileName());
+            File xmlFile = new File(Platform.homePath() + "aetitleFilter.xml");
             
             if(xmlFile.exists()){
                 ACLManagerInterface manager = ACLXMLParser.parseFromFile(xmlFile);
@@ -167,12 +173,12 @@ public class QueryRetrieve extends DicomNetwork
         this.localAE.register(new CFindServiceSCP(multiSop, executor, luke));
         this.localAE.register(new VerificationService());
 
-        this.localConn.setPort(s.getWlsPort());
+        this.localConn.setPort(s.getPort());
         this.localConn.setMaxScpAssociations(s.getMaxClientAssoc());
         this.localConn.setAcceptTimeout(s.getAcceptTimeout());
         this.localConn.setConnectTimeout(s.getConnectionTimeout());
 
-        this.device.setDescription(s.getDeviceDescription());
+        this.device.setDescription(ServerSettingsManager.getSettings().getDicomServicesSettings().getDeviceDescription());
         this.device.setNetworkApplicationEntity(this.localAE);
         this.device.setNetworkConnection(this.localConn);        
     }
@@ -197,7 +203,7 @@ public class QueryRetrieve extends DicomNetwork
                  return false;
             }
             this.started = true;
-            //DebugManager.getInstance().debug("Starting server " +
+            //DebugManager.getSettings().debug("Starting server " +
              //       "- cmove server was started right now .. ");
                 this.startedAsService = true;
             return true;

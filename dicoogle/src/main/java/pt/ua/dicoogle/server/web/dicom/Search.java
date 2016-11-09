@@ -442,7 +442,7 @@ public class Search {
                                                             }
                                                         }                                                       
                                                 
-			// and add the modalities to the resulting query
+			// and addMoveDestination the modalities to the resulting query
 			if (!modalities.isEmpty()) {
 				result = addExtraQueryParam(result, "Modality:(" + modalities + ")");
 			}

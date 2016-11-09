@@ -54,7 +54,7 @@ public class PluginRestletApplication extends Application {
         // Defines routing to resources
         this.internalRouter.setDefaultMatchingQuery(false);
         
-        //lets add plugin registred services
+        //lets addMoveDestination plugin registred services
         //this is still a little brittle... :(
         for(ServerResource resource : pluginServices) {
             LoggerFactory.getLogger(PluginRestletApplication.class).debug("Inbound: {}", resource);

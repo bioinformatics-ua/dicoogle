@@ -28,7 +28,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import org.slf4j.LoggerFactory;
-import pt.ua.dicoogle.core.settings.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -61,7 +62,7 @@ public class Zip implements Closeable
         if (createFile)
             return;
 
-        ServerSettings ss = ServerSettings.getInstance() ;
+        ServerSettings ss = ServerSettingsManager.getSettings() ;
 
         try 
         {

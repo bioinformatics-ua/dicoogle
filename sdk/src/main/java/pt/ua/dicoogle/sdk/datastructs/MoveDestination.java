@@ -18,34 +18,39 @@
  */
 package pt.ua.dicoogle.sdk.datastructs;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.SocketAddress;
 import java.util.Objects;
 
 /** An immutable data structure for describing a DICOM node (potential C-MOVE destinations).
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-@XmlAccessorType(XmlAccessType.NONE)
 public class MoveDestination implements Serializable
 {
     static final long serialVersionUID = 2L;
 
-    @XmlAttribute(name = "ae", required = true)
+    @JsonProperty("aetitle")
     private final String AETitle;
-    @XmlAttribute(name = "ip", required = true)
+    @JsonProperty("address")
     private final String ipAddrs;
-    @XmlAttribute(name = "port", required = true)
+    @JsonProperty("port")
     private final int port;
 
-    @XmlAttribute(name = "description")
+    @JsonProperty("description")
     private final String description;
-    @XmlAttribute(name = "public")
+    @JsonProperty("public")
     private final boolean isPublic;
 
-    public MoveDestination(String AETitle, String ipAddr, int port, boolean isPublic, String description) {
+    @JsonCreator
+    public MoveDestination(@JsonProperty("aetitle") String AETitle, @JsonProperty("address") String ipAddr,
+                           @JsonProperty("port") int port, @JsonProperty("public") boolean isPublic,
+                           @JsonProperty("description") String description) {
         this.AETitle = AETitle;
         this.ipAddrs = ipAddr;
         this.port = port;
@@ -94,6 +99,7 @@ public class MoveDestination implements Serializable
         if (!description.isEmpty()) {
             result += " - " + this.description;
         }
+        result += "(" + (isPublic ? "Public)" : "Private)");
         
         return result ;
     }
@@ -110,7 +116,12 @@ public class MoveDestination implements Serializable
      * @return the isPublic
      * @todo rename method name
      */
+    @Deprecated
     public boolean isIsPublic() {
+        return isPublic;
+    }
+
+    public boolean isPublic() {
         return isPublic;
     }
 

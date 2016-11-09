@@ -284,7 +284,7 @@ public class LocalImageCache extends Thread implements ImageRetriever
     private File implCreateFile(File f) throws IOException {
         //f.createNewFile();
         f.deleteOnExit();
-		// if it does not exist add it to the list of files being written (because new content is going to be written to it outside this class) and create the empty file
+		// if it does not exist addMoveDestination it to the list of files being written (because new content is going to be written to it outside this class) and create the empty file
 		filesBeingWritten.put(f.getAbsolutePath(), f);
 		// return the common handle to the currently created and empty file
         return f;

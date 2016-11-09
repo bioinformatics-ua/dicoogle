@@ -28,9 +28,9 @@ public class Query
 	/**
 	 * For an input query adds the extra param to it, correctly.
 	 *
-	 * @param query the "up-to-now" query that we want to add the extra param to.
-	 * @param param the param to add to the query.
-	 * @param operator the logical operator to add between params.
+	 * @param query the "up-to-now" query that we want to addMoveDestination the extra param to.
+	 * @param param the param to addMoveDestination to the query.
+	 * @param operator the logical operator to addMoveDestination between params.
 	 * @return the new query that has the new/extra param on it.
 	 */
 	public static String addExtraQueryParam(String query, String param, String operator)
@@ -41,7 +41,7 @@ public class Query
 		if (! result.isEmpty())
 			result += " " + operator + " ";
 
-		// add the extra param
+		// addMoveDestination the extra param
 		result += param;
 
 		return result;
@@ -50,8 +50,8 @@ public class Query
 	/**
 	 * Same as the overloaded version, but the operator is AND.
 	 *
-	 * @param query the "up-to-now" query that we want to add the extra param to.
-	 * @param param the param to add to the query.
+	 * @param query the "up-to-now" query that we want to addMoveDestination the extra param to.
+	 * @param param the param to addMoveDestination to the query.
 	 * @return the new query that has the new/extra param on it.
 	 */
 	public static String addExtraQueryParam(String query, String param)

@@ -21,11 +21,11 @@ package pt.ua.dicoogle.server;
 import java.io.IOException;
 import java.util.List;
 import org.slf4j.Logger;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 import pt.ua.dicoogle.server.queryretrieve.QueryRetrieve;
 
 import org.slf4j.LoggerFactory;
-import pt.ua.dicoogle.core.settings.ServerSettings;
-import pt.ua.dicoogle.rGUI.interfaces.controllers.IServices;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.rGUI.server.controllers.Logs;
 import pt.ua.dicoogle.server.web.DicoogleWeb;
 import pt.ua.dicoogle.taskManager.TaskManager;
@@ -34,7 +34,7 @@ import pt.ua.dicoogle.taskManager.TaskManager;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
-public class ControlServices implements IServices
+public class ControlServices
 {
     private static final Logger logger = LoggerFactory.getLogger(ControlServices.class);
     
@@ -66,10 +66,10 @@ public class ControlServices implements IServices
     }
 
 
-    /* Strats the inicial services based on ServerSettings */
+    /* Strats the inicial services based on ServerSettingsManager */
     private void startInicialServices()
     {
-        ServerSettings settings = ServerSettings.getInstance();
+        ServerSettings settings = ServerSettingsManager.getSettings();
 
         try
         {
@@ -78,23 +78,18 @@ public class ControlServices implements IServices
                 startP2P();
             }*/
 
-            if (settings.isStorage())
+            if (!this.storageIsRunning())
             {
                 startStorage();
             }
 
-            if (settings.isQueryRetrive())
+            if (!this.queryRetrieveIsRunning())
             {
                 startQueryRetrieve();
             }
 
-            if(settings.getWeb().isWebServer()){
+            if(!this.webServerIsRunning()){
             	startWebServer();
-            }
-
-            if (settings.getWeb().isWebServices())
-            {
-                startWebServices();
             }
 
         } catch (Exception ex)
@@ -104,17 +99,15 @@ public class ControlServices implements IServices
     }
 
     /* Stop all services that are running */
-    @Override
     public boolean stopAllServices()
     {
         try
         {
         	//TODO: DELETED
-            //PluginController.getInstance().stopAll();
+            //PluginController.getSettings().stopAll();
            // stopP2P();
             stopStorage();
             stopQueryRetrieve();
-            stopWebServices();
         } catch (Exception ex)
         {
             logger.error(ex.getMessage(), ex);
@@ -132,12 +125,11 @@ public class ControlServices implements IServices
      * 
      * @throws IOException
      */
-    @Override
     public int startStorage() throws IOException
     {
         if (storage == null)
         {
-            ServerSettings settings = ServerSettings.getInstance();
+            ServerSettings settings = ServerSettingsManager.getSettings();
 
             SOPList list = SOPList.getInstance();
             //list.setDefaultSettings();
@@ -154,7 +146,7 @@ public class ControlServices implements IServices
             storage = new RSIStorage(keys, list);
             storage.start();
 
-            //DebugManager.getInstance().debug("Starting DICOM Storage SCP");
+            //DebugManager.getSettings().debug("Starting DICOM Storage SCP");
             Logs.getInstance().addServerLog("Starting DICOM Storage SCP");
 
             return 0;
@@ -163,86 +155,61 @@ public class ControlServices implements IServices
         return -2;
     }
 
-    @Override
     public void stopStorage()
     {
         if (storage != null)
         {
             storage.stop();
             storage = null;
-            //DebugManager.getInstance().debug("Stopping DICOM Storage SCP");
+            //DebugManager.getSettings().debug("Stopping DICOM Storage SCP");
             Logs.getInstance().addServerLog("Stopping DICOM Storage SCP");
         }
     }
 
-    @Override
     public boolean storageIsRunning()
     {
         return storage != null;
     }
 
-    @Override
     public void startQueryRetrieve()
     {
         if (retrieve == null)
         {
             retrieve = new QueryRetrieve();
             retrieve.startListening();
-            //DebugManager.getInstance().debug("Starting DICOM QueryRetrive");
+            //DebugManager.getSettings().debug("Starting DICOM QueryRetrive");
             Logs.getInstance().addServerLog("Starting DICOM QueryRetrive");
         }
     }
 
-    @Override
     public void stopQueryRetrieve()
     {
         if (retrieve != null)
         {
             retrieve.stopListening();
             retrieve = null;
-            //DebugManager.getInstance().debug("Stopping DICOM QueryRetrive");
+            //DebugManager.getSettings().debug("Stopping DICOM QueryRetrive");
             Logs.getInstance().addServerLog("Stopping DICOM QueryRetrive");
         }
     }
 
-    @Override
     public boolean queryRetrieveIsRunning()
     {
         return retrieve != null;
     }
 
-    @Override
     public boolean webServerIsRunning()
     {
         return webServerRunning;
     }
 
-    @Override
-    @Deprecated
-    public void startWebServices()
-    {
-    }
-
-    @Override
-    @Deprecated
-    public void stopWebServices()
-    {
-    }
-
-    @Override
-    public boolean webServicesIsRunning()
-    {
-        return webServicesRunning;
-    }
-    
     //TODO: Review those below!
-    @Override
     public void startWebServer(){
         logger.info("Starting WebServer");
 
         try {
             if (webServices == null) {
-                webServices = new DicoogleWeb(ServerSettings.getInstance().getWeb().getServerPort());
+                webServices = new DicoogleWeb(ServerSettingsManager.getSettings().getWebServerSettings().getPort());
                 webServerRunning = true;
                 webServicesRunning = true;
                 logger.info("Starting Dicoogle Web");
@@ -253,7 +220,6 @@ public class ControlServices implements IServices
         
     }
 
-    @Override
     public void stopWebServer(){
         logger.info("Stopping Web Server");
         

@@ -21,16 +21,16 @@ package pt.ua.dicoogle.plugins;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
-import pt.ua.dicoogle.core.settings.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 
 import pt.ua.dicoogle.sdk.IndexerInterface;
 import pt.ua.dicoogle.sdk.QueryInterface;
 import pt.ua.dicoogle.sdk.StorageInputStream;
 import pt.ua.dicoogle.sdk.StorageInterface;
 import pt.ua.dicoogle.sdk.core.DicooglePlatformInterface;
-import pt.ua.dicoogle.sdk.core.ServerSettingsReader;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettingsReader;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
 
@@ -148,7 +148,7 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
 
     @Override
     public ServerSettingsReader getSettings() {
-        return ServerSettings.getInstance();
+        return ServerSettingsManager.getSettings();
     }
     
 }

@@ -19,6 +19,7 @@
 package pt.ua.dicoogle.server.web;
 
 import org.apache.commons.codec.digest.Md5Crypt;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
 import pt.ua.dicoogle.server.web.rest.VersionResource;
@@ -38,7 +39,6 @@ import pt.ua.dicoogle.server.web.servlets.search.SearchServlet.SearchType;
 import pt.ua.dicoogle.server.web.servlets.search.WadoServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.LoginServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.UserServlet;
-import pt.ua.dicoogle.core.settings.ServerSettings;
 import pt.ua.dicoogle.server.web.servlets.management.AETitleServlet;
 import pt.ua.dicoogle.server.web.servlets.management.DicomQuerySettingsServlet;
 import pt.ua.dicoogle.server.web.servlets.management.ForceIndexing;
@@ -52,6 +52,7 @@ import pt.ua.dicoogle.server.web.servlets.management.TransferOptionsServlet;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.EnumSet;
 
 import org.eclipse.jetty.server.Handler;
@@ -140,7 +141,7 @@ public class DicoogleWeb {
 
         // setup the Export to CSV Servlet
         final ServletContextHandler csvServletHolder = createServletHandler(new ExportToCSVServlet(), "/export");
-        File tempDir = new File(ServerSettings.getInstance().getPath());
+        File tempDir = Paths.get(System.getProperty("java.io.tmpdir")).toFile();
         csvServletHolder.addServlet(new ServletHolder(new ExportCSVToFILEServlet(tempDir)), "/exportFile");
 
         // setup the search (DIMSE-service-user C-FIND ?!?) servlet
@@ -274,7 +275,7 @@ public class DicoogleWeb {
     }
 
     private void addCORSFilter(ServletContextHandler handler) {
-        String origins = ServerSettings.getInstance().getWeb().getAllowedOrigins();
+        String origins = ServerSettingsManager.getSettings().getWebServerSettings().getAllowedOrigins();
         if (origins != null) {
             handler.setDisplayName("cross-origin");
             FilterHolder corsHolder = new FilterHolder(CORSFilter.class);
@@ -286,7 +287,7 @@ public class DicoogleWeb {
     }
 
     private void addCORSFilter(Handler handler) {
-        String origins = ServerSettings.getInstance().getWeb().getAllowedOrigins();
+        String origins = ServerSettingsManager.getSettings().getWebServerSettings().getAllowedOrigins();
         if (origins == null) {
             return;
         }

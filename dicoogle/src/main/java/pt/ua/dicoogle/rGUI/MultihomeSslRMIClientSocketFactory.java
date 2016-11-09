@@ -88,7 +88,7 @@ public class MultihomeSslRMIClientSocketFactory extends SslRMIClientSocketFactor
                 throw new IOException("Connection failed for " + hostString +
                         ": " + exceptions);
             }
-            selector.select();  // you can add a timeout parameter in millseconds
+            selector.select();  // you can addMoveDestination a timeout parameter in millseconds
             Set<SelectionKey> keys = selector.selectedKeys();
             if (keys.isEmpty()) {
                 throw new IOException("Selection keys unexpectedly empty for " +

@@ -18,46 +18,123 @@
  */
 package pt.ua.dicoogle.core.settings;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
+import pt.ua.dicoogle.core.XMLSupport;
+import pt.ua.dicoogle.sdk.Utils.Platform;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Objects;
 
 /**
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
-public class ServerSettings
+public class ServerSettingsManager
 {
-    private static final Logger logger = LoggerFactory.getLogger(ServerSettings.class);
+    private static final Logger logger = LoggerFactory.getLogger(ServerSettingsManager.class);
+
+    private static final Path MAIN_CONFIG_PATH = Paths.get(Platform.homePath(), "config.json");
+    private static final Path LEGACY_CONFIG_PATH = Paths.get(Platform.homePath(), "config.xml");
+
+    private ServerSettingsManager() {}
+
+    private static ServerSettings inner;
+    private static XMLSupport xml;
+    private static ObjectMapper mapper;
 
     static {
-        init();
+        // configure object mapper
+        mapper = new ObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
     }
 
-    private static void init() {
-
+    /** Retrieve the managed server settings instance. Must be called only after explicit initialization with
+     * {@linkplain #init()}.
+     *
+     * @return a global instance of the server's settings
+     */
+    public static ServerSettings getSettings() {
+        if (inner == null) throw new IllegalStateException();
+        return inner;
     }
 
-    public static ServerSettings getSettingsAt(URL url) throws IOException {
-        throw new UnsupportedOperationException("Not implemented yet!");
+    public static void init() throws IOException {
+        // this is called by the main application in order to
+        // load the appropriate settings.
+
+        // check whether config.xml exists and config.json doesn't
+        if (!Files.exists(MAIN_CONFIG_PATH)) {
+            if (Files.exists(LEGACY_CONFIG_PATH)) {
+                logger.info("Using legacy server configuration file. Consider updating to the new format in the future.");
+                xml = new XMLSupport();
+                inner = xml.getXML();
+            } else {
+                // create a new configuration file
+                inner = ServerSettingsImpl.createDefault();
+            }
+        } else {
+
+        }
     }
 
-    public static ServerSettings getLegacySettings() throws IOException {
-        throw new UnsupportedOperationException("Not implemented yet!");
+    public static void saveSettings() {
+        try {
+            if (xml != null) {
+                xml.printXML();
+            } else {
+                mapper.writeValue(Files.newOutputStream(MAIN_CONFIG_PATH), inner);
+            }
+        } catch (Exception ex) {
+            logger.warn("Failed to save server settings", ex);
+        }
     }
 
-    public static ServerSettings getSettingsAt(File file) throws IOException {
-        throw new UnsupportedOperationException("Not implemented yet!");
+    // independent static methods
+
+    public static ServerSettings loadSettingsAt(URL url) throws IOException {
+        Objects.requireNonNull(url);
+        return mapper.readValue(url.openStream(), ServerSettingsImpl.class);
     }
 
-    public static ServerSettings getSettingsAt(String filePath) throws IOException {
-        return getSettingsAt(new File(filePath));
+    public static ServerSettings loadLegacySettings() {
+        return new XMLSupport().getXML();
     }
 
-    public static void saveSettingsTo(ServerSettings settings, String path) throws IOException {
-        throw new UnsupportedOperationException("Not implemented yet!");
+    public static ServerSettings loadLegacySettingsAt(URL url) throws IOException {
+        try {
+            return new XMLSupport().parseXML(url.openStream());
+        } catch (SAXException e) {
+            throw new IOException("SAX problem", e);
+        }
+    }
+
+    public static ServerSettings loadSettingsAt(Path path) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(Files.newInputStream(path), ServerSettingsImpl.class);
+    }
+
+    public static ServerSettings loadSettingsAt(File file) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(new FileInputStream(file), ServerSettingsImpl.class);
+    }
+
+    public static void saveSettingsTo(ServerSettings settings, Path path) throws IOException {
+        if (inner == null) throw new IllegalStateException();
+        if (xml != null) {
+            xml.printXML(path);
+        } else {
+            mapper.writeValue(Files.newOutputStream(path), inner);
+        }
     }
 
 }

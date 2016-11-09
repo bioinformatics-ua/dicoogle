@@ -103,7 +103,7 @@ public final class TaskList extends javax.swing.JPanel {
             PairTaskProgress pair = new PairTaskProgress();
             pair.task = task;
             pair.bar = bar;
-            //scrollPanel.add(pair.bar);
+            //scrollPanel.addMoveDestination(pair.bar);
             this.tasks.add(pair);
             add(bar);
 

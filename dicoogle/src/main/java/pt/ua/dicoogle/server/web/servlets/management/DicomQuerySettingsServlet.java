@@ -29,7 +29,8 @@ import net.sf.json.JSONSerializer;
 
 import org.apache.commons.lang3.StringUtils;
 
-import pt.ua.dicoogle.core.settings.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
 /**
  *
@@ -40,13 +41,14 @@ public class DicomQuerySettingsServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		ServerSettings ss = ServerSettings.getInstance();
+		ServerSettings.DicomServices.QueryRetrieve ss = ServerSettingsManager.getSettings()
+				.getDicomServicesSettings().getQueryRetrieveSettings();
 
 		int responseTimeout = ss.getRspDelay();
 		int connectionTimeout = ss.getConnectionTimeout();
 		int idleTimeout = ss.getIdleTimeout();
 		int acceptTimeout = ss.getAcceptTimeout();
-		int maxPduSend = ss.getMaxPDULenghtSend();
+		int maxPduSend = ss.getMaxPDULengthSend();
 		int maxPduReceive = ss.getMaxPDULengthReceive();
 		int maxAssociations = ss.getMaxClientAssoc();
 
@@ -68,7 +70,8 @@ public class DicomQuerySettingsServlet extends HttpServlet {
 		String maxPduReceive = req.getParameter("maxPduReceive");
 		String maxAssociations = req.getParameter("maxAssociations");
 
-		ServerSettings ss = ServerSettings.getInstance();
+		ServerSettings.DicomServices.QueryRetrieve ss = ServerSettingsManager.getSettings()
+				.getDicomServicesSettings().getQueryRetrieveSettings();
 
 		if (StringUtils.isNotEmpty(responseTimeout)) {
 			int intV = Integer.parseInt(responseTimeout);

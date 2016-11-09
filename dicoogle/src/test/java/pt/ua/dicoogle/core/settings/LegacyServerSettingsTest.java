@@ -19,19 +19,22 @@
 package pt.ua.dicoogle.core.settings;
 
 import org.junit.Before;
+import org.junit.ComparisonFailure;
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
+import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
-public class ServerSettingsTest {
+public class LegacyServerSettingsTest {
 
     private URL testConfig;
 
@@ -43,53 +46,67 @@ public class ServerSettingsTest {
     @Test
     public void test() throws IOException {
         // read the settings from our test config file
-        ServerSettingsManager settings = ServerSettingsManager.loadSettingsAt(this.testConfig);
+        ServerSettings settings = ServerSettingsManager.loadLegacySettingsAt(this.testConfig);
+
+        assertTrue(settings instanceof LegacyServerSettings);
+
+        ServerSettings.Archive a = settings.getArchiveSettings();
 
         // assertions follow
-        assertEquals("/tmp", settings.getPath());
-        assertEquals(100, settings.getIndexerEffort());
-        assertEquals("TEST-STORAGE", settings.getAE());
-        assertEquals("Dicoogle", settings.getLocalAETName());
-        assertFalse(settings.isGzipStorage());
-        assertFalse(settings.isIndexAnonymous());
-        assertTrue(settings.isIndexZIPFiles());
-        assertTrue(settings.isEncryptUsersFile());
+        assertEquals("/opt/dicoogle/repository", a.getMainDirectory());
+        assertEquals("/tmp", a.getWatchDirectory());
+        assertEquals(100, a.getIndexerEffort());
+
+        assertEquals("TEST-STORAGE", settings.getDicomServicesSettings().getAETitle());
 
         // QR settings
-        assertEquals(106, settings.getWlsPort());
-        assertEquals("any", settings.getPermitedLocalInterfaces());
-        assertEquals("any", settings.getPermitedRemoteHostnames());
-        assertEquals(3, settings.getRspDelay());
-        assertEquals(50, settings.getDIMSERspTimeout());
-        assertEquals(50, settings.getIdleTimeout());
-        assertEquals(50, settings.getAcceptTimeout());
-        assertEquals(50, settings.getConnectionTimeout());
-        assertEquals("1.2.840.10008.1.2.2|1.2.840.10008.1.2.1", settings.getTransfCap());
-        assertEquals("1.2.840.10008.5.1.4.1.2.1.1", settings.getSOPClass());
-        assertEquals(22, settings.getMaxClientAssoc());
-        assertEquals(16360, settings.getMaxPDULenghtSend());
-        assertEquals(16360, settings.getMaxPDULengthReceive());
+        assertEquals(106, settings.getDicomServicesSettings().getQueryRetrieveSettings().getPort());
+        assertSameContent(Collections.singleton("any"), settings.getDicomServicesSettings().getAllowedLocalInterfaces());
+        assertSameContent(Collections.singleton("any"), settings.getDicomServicesSettings().getAllowedHostnames());
+        assertEquals(3, settings.getDicomServicesSettings().getQueryRetrieveSettings().getRspDelay());
+        assertEquals(50, settings.getDicomServicesSettings().getQueryRetrieveSettings().getDIMSERspTimeout());
+        assertEquals(50, settings.getDicomServicesSettings().getQueryRetrieveSettings().getIdleTimeout());
+        assertEquals(50, settings.getDicomServicesSettings().getQueryRetrieveSettings().getAcceptTimeout());
+        assertEquals(50, settings.getDicomServicesSettings().getQueryRetrieveSettings().getConnectionTimeout());
+        //assertEquals("1.2.840.10008.5.1.4.1.2.1.1", settings.getSOPClasses());
+        assertEquals(22, settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxClientAssoc());
+        assertEquals(16360, settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthSend());
+        assertEquals(16360, settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthReceive());
 
         // DICOM Storage settings
-        assertFalse(settings.isStorage());
-        assertEquals(6666, settings.getStoragePort());
+        assertFalse(settings.getDicomServicesSettings().getStorageSettings().isAutostart());
+        assertEquals(6666, settings.getDicomServicesSettings().getStorageSettings().getPort());
 
         // Web server settings
-        ServerSettingsManager.Web web = settings.getWeb();
-        assertTrue(web.isWebServer());
-        assertEquals(8484, web.getServerPort());
+        ServerSettings.WebServer web = settings.getWebServerSettings();
+        assertTrue(web.isAutostart());
+        assertEquals(8484, web.getPort());
         assertEquals("test.dicoogle.com", web.getAllowedOrigins());
-    /*
+
+    /* // Doesn't work
         Map<String, String> modalityCFind = new HashMap<>();
         modalityCFind.put("find", "Study Root Query/Retrieve Info Model");
         modalityCFind.put("1.2.840.10008.5.1.4.1.2.1.1", "Patient Root Query/Retrieve Info Model");
         modalityCFind.put("1.2.840.10008.5.1.4.1.2.2.1", "Study Root Query/Retrieve Info Model");
         assertEquals(modalityCFind, settings.getModalityFind());
+    */
 
-        // complex stuff
         List<MoveDestination> destinations = Arrays.asList(
                 new MoveDestination("ADESTINATION", "192.168.42.42", 4444, true, "Our test destination"));
-        assertEquals(destinations, settings.getMoves());
-    */
+        assertSameContent(destinations, settings.getDicomServicesSettings().getMoveDestinations());
     }
+
+    private static void assertSameContent(Collection o1, Collection o2) {
+        for (Object o : o1) {
+            if (!o2.contains(o)) {
+                throw new ComparisonFailure(null, String.valueOf(o1), String.valueOf(o2));
+            }
+        }
+        for (Object o : o2) {
+            if (!o1.contains(o)) {
+                throw new ComparisonFailure(null, String.valueOf(o1), String.valueOf(o2));
+            }
+        }
+    }
+
 }
