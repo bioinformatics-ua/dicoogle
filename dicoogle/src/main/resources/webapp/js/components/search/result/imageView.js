@@ -65,8 +65,11 @@ const ImageView = React.createClass({
 
     return (<div onClick={self.showImage.bind(self, uid)}><ImageLoader
                 src={thumbUrl}
-                style={{"width": "64px", "cursor": "pointer"}}
-                wrapper={React.DOM.div}>
+                imgProps={{style: {width: '100%'}}}
+                style={{
+                  "width": "64px", "cursor": "pointer",
+                  marginLeft: 'auto', marginRight: 'auto'
+                }} wrapper={React.DOM.div}>
               <img src="assets/image-not-found.png" width="64px" />
           </ImageLoader></div>)
   },
@@ -349,6 +352,7 @@ var PopOverImageViewer = React.createClass({
           <div className='modal-body'>
             <ImageLoader
                 src={url}
+                imgProps={{style: {width: '100%'}}}
                 style={{"width": "100%"}}
                 wrapper={React.DOM.div}>
               <img src="assets/image-not-found.png" width="100%" />
