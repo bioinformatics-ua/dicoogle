@@ -2,12 +2,17 @@ import dicoogleClient from 'dicoogle-client';
 
 const Dicoogle = dicoogleClient(); // already configured, retrieve object
 
+export {Dicoogle};
+
 export function getDICOMFieldList(callback) {
-    Dicoogle.request('GET', 'export/list', callback);
+    Dicoogle.request('GET', 'export/list').end((err, resp) => {
+      if (err) callback(err);
+      else callback(null, resp.body);
+    });
 }
 
 export function getTransferSettings(callback) {
-  Dicoogle.request('GET', 'management/settings/transfer', callback);
+  Dicoogle.getTransferSyntaxSettings(callback);
 }
 
 export function getIndexerSettings(callback) {

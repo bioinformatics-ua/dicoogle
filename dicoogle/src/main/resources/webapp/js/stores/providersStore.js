@@ -34,7 +34,6 @@ const ProvidersStore = Reflux.createStore({
         //SUCCESS
         console.log("success", providers);
         this._providers = providers;
-        this._providers.splice(0, 0, "All providers");
 
         this.trigger({
           data: this._providers,

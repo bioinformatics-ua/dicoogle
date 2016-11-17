@@ -1,6 +1,6 @@
 {
   "name": "dicoogle-webcore",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "private": true,
   "author": "Universidade de Aveiro, DETI/IEETA, Bioinformatics Group (http://bioinformatics.ua.pt/)",
   "maintainers": [
@@ -31,7 +31,7 @@
     "eslint-plugin-import": "^1.8.1"
   },
   "peerDependencies": {
-    "dicoogle-client": "^3.7.0"
+    "dicoogle-client": "^4.0.0-rc1"
   },
   "dependencies": {
     "document-register-element": "^0.5.4",

@@ -33,8 +33,9 @@ const Search = React.createClass({
     },
 
     componentWillMount: function(){
-      ProvidersStore.listen(this._onProvidersChange);
-      SearchStore.listen(this._onSearchResult);
+      const u1 = ProvidersStore.listen(this._onProvidersChange);
+      const u2 = SearchStore.listen(this._onSearchResult);
+      this.unsubscribe = () => { u2(); u1(); };
     },
 
     componentDidMount: function(){
@@ -49,6 +50,7 @@ const Search = React.createClass({
     },
     componentWillUnmount: function(){
       $( "#free_text" ).unbind();
+      this.unsubscribe();
     },
     componentWillUpdate: function() {
 
@@ -61,10 +63,6 @@ const Search = React.createClass({
         }
         this.keyHash = getUrlVars()['_k'];
     },
-    componentDidUpdate: function(){
-      
-    },
-
     onReturn(error) {
       this.setState({
         requestedQuery: null,
@@ -140,12 +138,9 @@ const Search = React.createClass({
        }
     },
     _onProvidersChange: function(data) {
-        if (this.isMounted())
         this.setState({providers: data.data});
     },
     _onSearchResult: function(outcome) {
-      if (this.isMounted())
-      {
         console.log('outcome:', outcome);
 
         let error = null;
@@ -161,7 +156,6 @@ const Search = React.createClass({
           requestedQuery: error ? null : this.state.requestedQuery,
           error
         });
-      }
     },
     renderFilter: function(){
       var switchState;

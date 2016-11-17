@@ -2,9 +2,8 @@ import React from 'react';
 
 import {TransferStore} from '../../stores/transferStore';
 import {TransferActions} from '../../actions/transferActions';
-import {Endpoints} from '../../constants/endpoints';
-import $ from 'jquery';
 import {Button} from 'react-bootstrap';
+import dicoogleClient from 'dicoogle-client';
 
 const TransferOptionsView = React.createClass({
 
@@ -18,19 +17,20 @@ const TransferOptionsView = React.createClass({
       },
       componentDidMount() {
         console.log("componentdidmount: get");
-
         TransferActions.get();
       },
       componentWillMount() {
          // Subscribe to the store.
          console.log("subscribe listener");
-         TransferStore.listen(this._onChange);
+         this.unsubscribe = TransferStore.listen(this._onChange);
+         this.dicoogle = dicoogleClient();
+      },
+      componentWillUnmount() {
+        this.unsubscribe();
       },
       _onChange (data){
-        if (this.isMounted()){
-          console.log(data);
-          this.setState({data: data, status: "done"});
-        }
+        console.log(data);
+        this.setState({data: data, status: "done"});
       },
       render () {
         if(this.state.status === "loading")
@@ -90,7 +90,6 @@ const TransferOptionsView = React.createClass({
                         </ul>
                         <div>
                             <Button bsStyle="primary" onClick={this.handleSelectAll}>{this.selectAllOn ? 'Select all' : 'Unselect all'}</Button>
-
                         </div>
                     </div>
                 </div>
@@ -99,7 +98,6 @@ const TransferOptionsView = React.createClass({
         );
 
       },
-
       handleSelectAll()
       {
           if (this.selectAllOn)
@@ -108,7 +106,6 @@ const TransferOptionsView = React.createClass({
               TransferActions.unSelectAll();
 
           this.selectAllOn = !this.selectAllOn;
-
       },
       handleChange(id, index) {
         TransferActions.set(this.state.selectedIndex, index, document.getElementById(id).checked);
@@ -116,22 +113,18 @@ const TransferOptionsView = React.createClass({
       },
 
       onSopSelected() {
-        var selectedId = document.getElementById("sop_select").selectedIndex;
+        const selectedId = document.getElementById("sop_select").selectedIndex;
 
         this.setState({selectedIndex: selectedId});
       },
 
       request(id, value) {
-        var uid = this.state.data.data[document.getElementById("sop_select").selectedIndex].uid;
+        const uid = this.state.data.data[document.getElementById("sop_select").selectedIndex].uid;
         console.log("Selected uid:", uid);
-        // TODO use Dicoogle Client in the future
-        $.post(Endpoints.base + "/management/settings/transfer", {
-          uid: uid,
-          option: id,
-          value: value
-        }, (data, status) => {
-          //Response
-          console.log("Data: " + data + "\nStatus: " + status);
+        this.dicoogle.setTransferSyntaxOption(uid, id, value, (error) => {
+          if (error) {
+            console.error("Set TS option failed: ", error);
+          }
         });
       }
 });

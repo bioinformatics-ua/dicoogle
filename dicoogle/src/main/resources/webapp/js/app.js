@@ -6,7 +6,7 @@ import {Endpoints} from './constants/endpoints';
 import dicoogleClient from 'dicoogle-client';
 import Webcore from 'dicoogle-webcore';
 
-import {Router, Route, IndexRoute} from 'react-router';
+import {Router, Route, IndexRoute, hashHistory} from 'react-router';
 
 import {Search} from './components/search/searchView';
 import {SearchResultView} from './components/search/searchResultView';
@@ -18,7 +18,6 @@ import PluginView from './components/plugin/pluginView';
 import AboutView from './components/about/aboutView';
 import LoadingView from './components/login/loadingView';
 import LoginView from './components/login/loginView';
-import { hashHistory /*, browserHistory*/ } from 'react-router'
 import {UserActions} from './actions/userActions';
 import {UserStore} from './stores/userStore';
 
@@ -71,7 +70,7 @@ class App extends React.Component {
 		if (localStorage.token) {
 			Dicoogle.setToken(localStorage.token);
 		}
-		if (this.props.location.pathname=='/')
+		if (this.props.location.pathname === '/')
 		{
 			localStorage.token = null;
 			UserActions.logout();
@@ -84,7 +83,7 @@ class App extends React.Component {
 		if (localStorage.token === undefined) {
 			this.props.history.pushState(null, 'login');
     }
-		if (this.props.location.pathname=='/')
+		if (this.props.location.pathname === '/')
 		{
 			this.props.history.pushState(null, 'login');
 		}

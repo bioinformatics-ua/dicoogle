@@ -15,7 +15,7 @@ const IndexStatusStore = Reflux.createStore({
 
     onGet: function() {
 
-      Dicoogle.getRunningTasks((error, data) => {
+      Dicoogle.tasks.list((error, data) => {
         if (error) {
           this.trigger({
               success: false,
@@ -48,7 +48,7 @@ const IndexStatusStore = Reflux.createStore({
     },
 
     onClose: function(uid) {
-      Dicoogle.closeTask(uid, (error) => {
+      Dicoogle.tasks.close(uid, (error) => {
         console.log("closeTask: ", error || 'ok');
         for (let i = 0; i < this._contents.tasks.length; i++)
         {
@@ -65,7 +65,7 @@ const IndexStatusStore = Reflux.createStore({
     },
     onStop: function(uid){
       console.log("Stop: ", uid);
-      Dicoogle.stopTask(uid, (error) => {
+      Dicoogle.tasks.stop(uid, (error) => {
         console.log("stopTask: ", error || 'ok');
       });
     }

@@ -1,5 +1,5 @@
 {
-  "extends": ["eslint:recommended"],
+  "extends": ["eslint:recommended", "plugin:import/errors", "plugin:import/warnings"],
   "parser": "babel-eslint",
   "parser-options": {
     "ecmaFeatures": {
@@ -78,7 +78,7 @@
     "react/no-did-mount-set-state": 1,
     "react/no-did-update-set-state": 1,
     "react/jsx-boolean-value": 1,
-    "react/no-is-mounted": 0,
+    "react/no-is-mounted": 1,
     "react/display-name": 1,
     "react/prop-types": 0
   }

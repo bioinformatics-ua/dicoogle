@@ -1,7 +1,6 @@
 import React, {PropTypes} from 'react';
 import {ResultsSelected} from '../../stores/resultSelected';
 import dicoogleClient from 'dicoogle-client';
-const Dicoogle = dicoogleClient();
 
 export default class PluginFormModal extends React.Component {
 
@@ -21,6 +20,7 @@ export default class PluginFormModal extends React.Component {
     super(props);
     this.handleMounted = this.handleMounted.bind(this);
     this.handleHideSignal = this.handleHideSignal.bind(this);
+    this.dicoogle = dicoogleClient();
   }
 
   onConfirm() {
@@ -31,7 +31,7 @@ export default class PluginFormModal extends React.Component {
     if (component) {
       const node = component;
       node.addEventListener('hide', this.handleHideSignal);
-      Dicoogle.emitSlotSignal(node, 'result-selection-ready', ResultsSelected.get());
+      this.dicoogle.webcore.emitSlotSignal(node, 'result-selection-ready', ResultsSelected.get());
     }
   }
 

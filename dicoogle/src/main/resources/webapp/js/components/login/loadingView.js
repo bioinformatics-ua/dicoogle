@@ -14,17 +14,16 @@ const LoadingView = React.createClass({
     //LoggerActions.get();
     UserActions.isLoggedIn();
   },
-  componentDidUpdate: function() {
-  },
   componentWillMount: function() {
-    UserStore.listen(this._onChange);
-
+    this.unsubscribe = UserStore.listen(this._onChange);
+  },
+  componentWillUnmount() {
+    this.unsubscribe();
   },
   _onChange: function(data){
     const {router} = this.context;
     console.log(data);
-    if(data.isLoggedIn && this.isMounted())
-    {
+    if(data.isLoggedIn) {
       router.replace('/search');
     }
     else if(data.isLoggedIn === false){

@@ -4,8 +4,8 @@ import {SearchStore} from '../../../stores/searchStore';
 import {ActionCreators} from '../../../actions/searchActions';
 import ConfirmModal from './confirmModal';
 import PluginView from '../../plugin/pluginView.jsx';
-import {Input} from 'react-bootstrap';
-import ResultSelectActions from '../../../actions/resultSelectAction';
+import {Checkbox} from 'react-bootstrap';
+import * as ResultSelectActions from '../../../actions/resultSelectAction';
 import {UserStore} from '../../../stores/userStore';
 
 
@@ -23,8 +23,12 @@ const SeriesView = React.createClass({
 
   componentWillMount: function() {
     // Subscribe to the store.
-    SearchStore.listen(this._onChange);
+    this.unsubscribe = SearchStore.listen(this._onChange);
     ResultSelectActions.clear();
+  },
+
+  componentWillUnmount() {
+    this.unsubscribe();
   },
 
   /**
@@ -111,9 +115,8 @@ const SeriesView = React.createClass({
     let {serieInstanceUID} = item;
     let classNameForIt = "advancedOptions " + serieInstanceUID;
     return (<div className={classNameForIt}>
-              <Input type="checkbox" label=""
-                    onChange={this.handleSelect.bind(this, item)}
-                    ref={this.handleRefs.bind(this, serieInstanceUID)}/>
+              <Checkbox onChange={this.handleSelect.bind(this, item)}
+                        ref={this.handleRefs.bind(this, serieInstanceUID)}/>
             </div>
     );
   },
@@ -169,25 +172,21 @@ const SeriesView = React.createClass({
 		);
 	},
   hideUnindex () {
-    if (this.isMounted())
       this.setState({
         unindexSelected: null
       });
   },
   showUnindex (item) {
-    if (this.isMounted())
       this.setState({
         unindexSelected: item
       });
   },
   hideRemove () {
-    if (this.isMounted())
       this.setState({
         removeSelected: null
       });
   },
   showRemove (item) {
-    if (this.isMounted())
       this.setState({
         removeSelected: item
       });
@@ -210,14 +209,10 @@ const SeriesView = React.createClass({
 	},
 
   _onChange: function(data){
-
-    if (this.isMounted())
-    {
       this.setState({data: data.data,
       status: "stopped",
       success: data.success,
       enableAdvancedSearch: data.data.advancedOptions});
-    }
   }
 });
 

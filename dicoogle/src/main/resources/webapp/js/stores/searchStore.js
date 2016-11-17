@@ -2,9 +2,7 @@ import Reflux from 'reflux';
 
 import {ActionCreators} from '../actions/searchActions';
 
-import {getPatients} from '../handlers/requestHandler';
-import {unindex} from '../handlers/requestHandler';
-import {remove} from '../handlers/requestHandler';
+import {getPatients, unindex, remove} from '../handlers/requestHandler';
 
 const SearchStore = Reflux.createStore({
     listenables: ActionCreators,

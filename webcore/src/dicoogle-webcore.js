@@ -78,7 +78,7 @@ const DicoogleWebcore = (function () {
     // create dicoogle client access object
     // and inject webcore related methods
     Dicoogle = client(base_url);
-    Object.assign(Dicoogle, {
+    Object.assign(Dicoogle, { webcore: {
         issueQuery,
         emit,
         emitSlotSignal,
@@ -87,7 +87,7 @@ const DicoogleWebcore = (function () {
         addEventListener: m.addEventListener,
         addResultListener: m.addResultListener,
         removeEventListener: m.removeEventListener
-    });
+    }});
     
   };
   
@@ -275,9 +275,8 @@ const DicoogleWebcore = (function () {
    * function(query, options, callback)
    * @param {any} query an object containing the query (usually a string)
    * @param {object} options an object containing additional options (such as query plugins to use, result limit, etc.)
-   *      - overrideService [string] the name of the service to use instead of "search" 
-   * @param {function(error, result)} callback an optional callback function
-   * @return {void}
+   *      - overrideService [string] the name of the service to use instead of "search"
+   * @param {function(error, result)} [callback] an optional callback function
    */
   function issueQuery(query, options, callback) {
     if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
@@ -285,11 +284,12 @@ const DicoogleWebcore = (function () {
     options.query = query;
     let requestTime = new Date();
     let queryService = options.overrideService || 'search';
-    Dicoogle.request('GET', queryService, options, (error, data) => {
+    Dicoogle.request('GET', queryService).query(options).end((error, resp) => {
       if (error) {
-        if (callback) callback(error, null);
+        if (callback) callback(error);
         return;
       }
+      const data = resp.body;
       dispatch_result(data, requestTime, options);
       if (callback) callback(null, data);
     });

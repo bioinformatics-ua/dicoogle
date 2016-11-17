@@ -1,7 +1,7 @@
 import Reflux from 'reflux';
 import $ from 'jquery';
 
-import {ExportActions} from '../actions/exportActions';
+import * as ExportActions from '../actions/exportActions';
 import {Endpoints} from '../constants/endpoints';
 import {getDICOMFieldList} from '../handlers/requestHandler';
 
@@ -57,7 +57,7 @@ const ExportStore = Reflux.createStore({
           // create a download link and trigger it automatically
           const response = JSON.parse(data);
           const link = document.createElement("a");
-          const hacked_footer = document.getElementById("hacked-modal-footer");
+          const hacked_footer = document.getElementById("hacked-modal-footer-do-not-remove");
           link.style.visibility = "hidden";
           link.download = "file";
           link.href = Endpoints.base + "/exportFile?UID=" + response.uid;

@@ -15,7 +15,7 @@ const UserStore = Reflux.createStore({
        this._isAdmin = false;
        this._roles = [];
        this._token = '';
-
+       this.dicoogle = dicoogleClient();
     },
 
     saveLocalStore: function(){
@@ -44,29 +44,25 @@ const UserStore = Reflux.createStore({
     },
     onLogin: function(user, pass){
       console.log("onLogin");
-      const self = this;
 
-      let Dicoogle = dicoogleClient(Endpoints.base);
-
-      Dicoogle.login(user, pass, function(errorCallBack, data){
-          if (!data.token)
-          {
-              self.trigger({
+      this.dicoogle.login(user, pass, (error, data) => {
+          if (error || !data.token) {
+              this.trigger({
                 failed: true
               });
               return;
           }
-          self._username = data.user;
-          self._isAdmin = data.admin;
-          self._token = data.token;
-          self._roles = data.roles;
-          self._isLoggedIn = true;
-          localStorage.token = self._token;
-          self.saveLocalStore();
+          this._username = data.user;
+          this._isAdmin = data.admin;
+          this._token = data.token;
+          this._roles = data.roles;
+          this._isLoggedIn = true;
+          localStorage.token = this._token;
+          this.saveLocalStore();
 
           console.log("Localstorage token: " + localStorage.token);
-          self.trigger({
-              isLoggedIn: self._isLoggedIn,
+          this.trigger({
+              isLoggedIn: this._isLoggedIn,
               success: true
           });
       });
@@ -111,8 +107,7 @@ const UserStore = Reflux.createStore({
                     isLoggedIn: this._isLoggedIn,
                     success: false
                 });
-            }
-        });
+            }});
         }
 
       } else {

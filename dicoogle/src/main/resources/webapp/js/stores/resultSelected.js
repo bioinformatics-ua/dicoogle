@@ -1,7 +1,7 @@
 'use strict';
 
 import Reflux from 'reflux';
-import ResultSelectActions from '../actions/resultSelectAction';
+import * as ResultSelectActions from '../actions/resultSelectAction';
 
 /**
  * This list contains the selected results in the UI.

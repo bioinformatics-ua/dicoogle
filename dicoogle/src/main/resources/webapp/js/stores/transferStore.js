@@ -1,14 +1,14 @@
 import Reflux from 'reflux';
 import {TransferActions} from '../actions/transferActions';
-import {Endpoints} from '../constants/endpoints';
-import $ from 'jquery';
 import {getTransferSettings} from '../handlers/requestHandler';
+import dicoogleClient from 'dicoogle-client';
 
 const TransferStore = Reflux.createStore({
     listenables: TransferActions,
     init: function () {
        this._contents = {};
     },
+    dicoogle: dicoogleClient(),
     getSizeOptions: function() {
         return Object.keys(this._contents).length;
     },
@@ -65,17 +65,12 @@ const TransferStore = Reflux.createStore({
 
     },
     request(uid, id, value) {
-
-        $.post(Endpoints.base + "/management/settings/transfer", {
-            uid: uid,
-            option: id,
-            value: value
-        }, (data, status) => {
-            //Response
-            console.log("Data: " + data + "\nStatus: " + status);
+        this.dicoogle.setTransferSyntaxOption(uid, id, value, (err) => {
+            if (err) {
+                console.error("Dicoogle service error", err);
+            }
         });
     },
-
 
     onSet: function(index, indexOption, value){
       this._contents[index].options[indexOption].value = value;

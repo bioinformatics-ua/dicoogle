@@ -13,7 +13,7 @@ const IndexStatusView = React.createClass({
         IndexStatusActions.get();
 
         //Start refresh interval
-        refreshIntervalId = setInterval(this.update, 3000);
+        refreshIntervalId = setInterval(this.update, 2500);
        },
        componentDidUpdate: function(){
          console.log("indexstatus update");
@@ -22,7 +22,7 @@ const IndexStatusView = React.createClass({
          console.log("IndexStatusView unmounted");
          //Stop refresh interval
          clearInterval(refreshIntervalId);
-
+         this.unsubscribe();
        },
       update: function(){
         IndexStatusActions.get();
@@ -30,15 +30,13 @@ const IndexStatusView = React.createClass({
       componentWillMount: function() {
          // Subscribe to the store.
          console.log("subscribe listener");
-         IndexStatusStore.listen(this._onChange);
+         this.unsubscribe = IndexStatusStore.listen(this._onChange);
        },
       _onChange: function(contents){
-        if (this.isMounted()){
           this.setState({
             data: contents.data,
             status: "done"
           });
-        }
       },
       render: function() {
         const {data} = this.state;
