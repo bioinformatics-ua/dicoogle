@@ -5,7 +5,7 @@ Dicoogle is an extensible, platform-independent and open-source PACS archive sof
 
 The architecture of Dicoogle is described in the following article:
 
-Valente, F., Silva, L.A.B., Godinho, T.M., Costa, C. _Anatomy of an Extensible Open Source PACS_. J Digit Imaging (2016) 29: 284. doi:10.1007/s10278-015-9834-0
+Valente, F., Silva, L.A.B., Godinho, T.M., Costa, C. _Anatomy of an Extensible Open Source PACS_. J Digit Imaging (2016) 29: 284. doi:10.1007/s10278-015-9834-0 [Available Online: http://link.springer.com/article/10.1007/s10278-015-9834-0]
 
 Official Website
 ----------------
@@ -28,22 +28,26 @@ Brief Documentation
   
       Dicoogle may be run as a server: ```java -jar dicoogle.jar -s```
 
-      To also load Dicoogle's user interface to the default browser: ```java -jar dicoogle.jar```
+      To load the server and open Dicoogle's user interface with the default browser: ```java -jar dicoogle.jar```
 
 #### Available Plugins
+  
+  We provide a few plugins at the official website, in the [Downloads](http://www.dicoogle.com/?page_id=67) page.
+
   * Lucene Index/Query Plugin - (lucene.jar)
       
-      Plugin Based on lucene to support index and query of DICOM Meta-data.
+      Plugin Based on Apache Lucene to support indexing and querying of DICOM meta-data. With this plugin set, it is possible to index nearly meta-data and perform free text, keyword-based, and range-based queries.
+      
   * File Storage Plugin - (filestorage.jar)
 
       Plugin used for the storage of DICOM Files. This plugin is necessary in order to use Dicoogle as a complete DICOM Storage Provider. The core platform provides a fallback implementation which supports reading (but not storing) files from the local file system.
       
-      Our file storage plugin maps the DICOM hierarchical organization (Patient->Study->Series->Image) into a directory tree in the file system. Every object in the Dicoogle Platform may be traced back to its storage location by a URI, similar to file:/tmp/file. In order to support multiple providers, every Storage plugin must define a unique scheme, which maps to the protocol used to store and retrieve content. 
+      For storage purposes, our file storage plugin maps the DICOM hierarchical organization (Patient->Study->Series->Image) into a directory tree in the file system. Every object in the Dicoogle Platform may be traced back to its storage location by a URI, similar to file:/tmp/file. In order to support multiple providers, every Storage plugin must define a unique scheme, which maps to the protocol used to store and retrieve content. 
       
       * Settings
       
-        * root-dir: is the root directory where DICOM Files will be stored
-        * scheme: Specifies the scheme/protocol of the file plugin. This value is arbitrary, but must be unique among all installed plugins. As such, avoid using well known protocol names such as http or file.
+        * `root-dir`: is the root directory where DICOM Files will be stored
+        * `scheme`: Specifies the scheme/protocol of the file plugin. This value is arbitrary, but must be unique among all installed plugins. As such, avoid using well known protocol names such as http or file.
 
   * Dicoogle Wan Plugin - (wan-plugin.jar)
 
@@ -145,7 +149,7 @@ We also have programmatic APIs for interfacing with Dicoogle in [JavaScript](htt
  1. Retrieve the full source code from this repository: `git clone https://github.com/bioinformatics-ua/dicoogle.git`
  2. Navigate to the web app directory: "./dicoogle/src/main/java/pt/ua/dicoogle/server/web/webapp/WEB-INF/"
  3. Build the web application: `npm install`
-    - The full instructions can be read  [here](dicoogle/src/main/java/pt/ua/dicoogle/server/web/webapp/WEB-INF/README.md).
+    - The full instructions can be read [here](dicoogle/src/main/java/pt/ua/dicoogle/server/web/webapp/WEB-INF/README.md).
  4. Navigate to the project's base directory, and build the parent Maven project by calling `mvn install`.
  5. The resulting jar file can be found in "./dicoogle/target".
 
