@@ -97,7 +97,7 @@ public class DicoogleWeb {
     /**
      * Sets the path where the web-pages/scripts or .war are.
      */
-    public static final String WEBAPPDIR = "WEB-INF";
+    public static final String WEBAPPDIR = "webapp";
 
     /**
      * Sets the context path used to serve the contents.

@@ -77,18 +77,14 @@
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
-            </resource>
-            <resource>
-                <directory>src/main/java/pt/ua/dicoogle/server/web/webapp/WEB-INF</directory>
-                <targetPath>WEB-INF</targetPath>
                 <includes>
-                    <include>assets/**</include>
-                    <include>bootstrap/css/*.css</include>
-                    <include>bootstrap/fonts/*</include>
-                    <include>fonts/**</include>
-                    <include>css/**</include>
-                    <include>lib/**</include>
-                    <include>index.html</include>
+						<include>webapp/assets/**</include>
+						<include>webapp/bootstrap/css/*.css</include>
+						<include>webapp/bootstrap/fonts/*</include>
+						<include>webapp/fonts/**</include>
+						<include>webapp/css/**</include>
+						<include>webapp/lib/**</include>
+						<include>webapp/index.html</include>
                 </includes>
    <excludes>
 <exclude>META-INF/*.SF</exclude>
@@ -96,15 +92,14 @@
 <exclude>META-INF/*.RSA</exclude>
                                      </excludes>
             </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>**/version.txt</include>
-                </includes>
+           <resource>
+               <directory>src/main/resources</directory>
+               <filtering>true</filtering>
+               <includes>
+                   <include>version.txt</include>
+               </includes>
             </resource>
-            
-        </resources>
+         </resources>
 
         <plugins>
             <plugin>
