@@ -3,7 +3,6 @@
 	padding: 5px;
 	cursor: pointer;
 	margin-bottom: 10px;
-
 }
 .step.done{
 	background-color: $blue5;
@@ -36,8 +35,8 @@
 }
 .table tbody tr:hover td, .table tbody tr:hover th {
     background-color: $blue6;
-    height:5px; 
-    max-height:5px; 
+    height:5px;
+    max-height:5px;
     overflow:hidden;
 }
 
@@ -47,7 +46,7 @@
     background-color: #EEEEEE;
 	color: black;
     font-style: bold;
-    
+
 }
 
 
@@ -90,28 +89,28 @@
     .form-group{
         border: none;
         margin-bottom: 0px;
-        
-        text-align: center; 
+
+        text-align: center;
         padding: 0;
         white-space: nowrap;
-        
-        min-height: 10px; 
+
+        min-height: 10px;
         vertical-align: top;
-        
-       .radio input[type="radio"], 
-       .radio-inline input[type="radio"], 
-       .checkbox input[type="checkbox"], 
-       .checkbox-inline input[type="checkbox"] 
+
+       .radio input[type="radio"],
+       .radio-inline input[type="radio"],
+       .checkbox input[type="checkbox"],
+       .checkbox-inline input[type="checkbox"]
         {
             margin-left: -5px;
             margin-top: 0px;
-            margin-bottom: 0px; 
+            margin-bottom: 0px;
         }
     }
 }
 
 
-// Wizard 
+// Wizard
 /*Theming options - change and everything updates*/
 $wizardSize: 21px;
 
@@ -140,10 +139,8 @@ $borderRadiusVal: .25em;
   line-height: 1;
  // display: inline-block;
   margin: 20px 0;
-  width: 98%;
+  width: 100%;
   border-color: darkgray;
- 
-  
 }
 /*base item styles*/
 .wizardbar-item {
@@ -163,7 +160,7 @@ $borderRadiusVal: .25em;
     margin-bottom: $bottomMargin;
     cursor: pointer;
     border-color: black;
-}    
+}
 /*arrow styles*/
 .wizardbar-item:before,
 .wizardbar-item:after {
@@ -180,22 +177,22 @@ $borderRadiusVal: .25em;
 /*arrow overlapping left side of item*/
 .wizardbar-item:before {
     border-color: transparent transparent transparent black;
-    left: 0;  
+    left: 0;
 }
 /*arrow pointing out from right side of items*/
 .wizardbar-item:after {
-    border-color: transparent transparent transparent white;  
+    border-color: transparent transparent transparent white;
     z-index: 1;
 }
 /*current item styles*/
 .current.wizardbar-item {
-    
+
     background-color: $currentBGColor;
     color: $currentFontColor;
     cursor: pointer;
 }
 .current.wizardbar-item:after {
-    border-color: transparent transparent transparent $currentBGColor;  
+    border-color: transparent transparent transparent $currentBGColor;
 }
 
 .disabled.wizardbar-item {
@@ -208,8 +205,6 @@ $borderRadiusVal: .25em;
     border-color: transparent transparent transparent $disableBGColor;
 }
 
-
-
 .completed.wizardbar-item {
     background-color: $wizardBGColor;
     color: $completedFontColor;
@@ -219,8 +214,6 @@ $borderRadiusVal: .25em;
 .completed.wizardbar-item:after {
     border-color: transparent transparent transparent $wizardBGColor;
 }
-
-
 
 
 /*hover styles*/
