@@ -10,7 +10,7 @@
     <parent>
         <groupId>pt.ua.ieeta</groupId>
         <artifactId>dicoogle-all</artifactId>
-        <version>2.3.1</version>
+        <version>2.5.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -76,9 +76,6 @@
                 <directory>src/main/java/pt/ua/dicoogle/config</directory>
             </resource>
             <resource>
-                <directory>src/main/java/pt/ua/dicoogle/gfx</directory>
-            </resource>
-            <resource>
                 <directory>src/main/resources</directory>
                 <includes>
 						<include>webapp/assets/**</include>
@@ -121,11 +118,11 @@
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>pt.ua.dicoogle.Main</mainClass>
                                     <manifestEntries>
-                                        <Specification-Version>1.0-SNAPSHOT</Specification-Version>
-                                        <Implementation-Version>1.0-SNAPSHOT</Implementation-Version>
+					    <Specification-Version>${project.version}</Specification-Version>
+					    <Implementation-Version>${project.version}</Implementation-Version>
                                         <Extension-Name>com.sun.media.imageio</Extension-Name>
-                                        <Implementation-Vendor>MyCompany</Implementation-Vendor>
-                                        <Specification-Vendor>MyCompany</Specification-Vendor>
+                                        <Implementation-Vendor>BMD software/UA.PT Bioinformatics</Implementation-Vendor>
+                                        <Specification-Vendor>BMD software/UA.PT Bioinformatics</Specification-Vendor>
                                         <Class-Path>./src/main/resources/</Class-Path>
                                         <Sealed>true</Sealed>
                                     </manifestEntries>
@@ -251,8 +248,6 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
-
-
         <dependency>
             <groupId>pt.ua.ieeta</groupId>
             <artifactId>dicoogle-sdk</artifactId>
@@ -271,11 +266,6 @@
             <version>5.3</version>
         </dependency>
 
-        <dependency>
-            <groupId>pt.ieeta</groupId>
-            <artifactId>AnonymousPatientData</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
