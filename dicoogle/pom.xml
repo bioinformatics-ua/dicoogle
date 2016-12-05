@@ -118,11 +118,11 @@
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>pt.ua.dicoogle.Main</mainClass>
                                     <manifestEntries>
-                                        <Specification-Version>1.0-SNAPSHOT</Specification-Version>
-                                        <Implementation-Version>1.0-SNAPSHOT</Implementation-Version>
+					    <Specification-Version>${project.version}</Specification-Version>
+					    <Implementation-Version>${project.version}</Implementation-Version>
                                         <Extension-Name>com.sun.media.imageio</Extension-Name>
-                                        <Implementation-Vendor>MyCompany</Implementation-Vendor>
-                                        <Specification-Vendor>MyCompany</Specification-Vendor>
+                                        <Implementation-Vendor>BMD software/UA.PT Bioinformatics</Implementation-Vendor>
+                                        <Specification-Vendor>BMD software/UA.PT Bioinformatics</Specification-Vendor>
                                         <Class-Path>./src/main/resources/</Class-Path>
                                         <Sealed>true</Sealed>
                                     </manifestEntries>
