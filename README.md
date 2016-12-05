@@ -146,6 +146,12 @@ We also have programmatic APIs for interfacing with Dicoogle in [JavaScript](htt
 
 ### Building Dicoogle 
 
+Before building, please make sure that your system contains the following tools:
+
+ - Java JDK (at least version 7; JDK 8 is recommended)
+ - Maven 3
+ - [Node.js](https://nodejs.org/en/download/) (at least version 4; LTS or Stable versions are recommended) and npm (at least version 2)
+
  1. Retrieve the full source code from this repository: `git clone https://github.com/bioinformatics-ua/dicoogle.git`
  2. Navigate to the web app directory: "./dicoogle/src/main/java/pt/ua/dicoogle/server/web/webapp/WEB-INF/"
  3. Build the web application: `npm install`
