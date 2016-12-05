@@ -16,7 +16,13 @@ const StorageStore = Reflux.createStore({
         url: Endpoints.base + "/management/settings/storage/dicom",
         dataType: 'json',
         success: (data) => {
-          this._contents = data;
+          this._contents = data.map((store) => ({
+            aetitle: store.AETitle,
+            ip: store.ipAddrs,
+            port: store.port,
+            description: store.description,
+            public: store.isPublic
+          }));
           this.trigger({
             data: this._contents,
             success: true
@@ -32,18 +38,20 @@ const StorageStore = Reflux.createStore({
       });
 
     },
-    onAdd(aetitle, ip, port) {
+    onAdd(aetitle, ip, port, description, isPublic) {
       console.log("Onadd clicked 2");
-      this._contents.push({AETitle: aetitle, ipAddrs: ip, port});
 
       $.post(Endpoints.base + "/management/settings/storage/dicom",
       {
         type: "add",
         aetitle,
         ip,
-        port
+        port,
+        description,
+        public: isPublic
       },
       (data, status) => {
+        this._contents.push({aetitle, ip, port, description, public: isPublic});
         //Response
         console.log("Data: " + data + "\nStatus: " + status);
         this.trigger({
@@ -53,15 +61,16 @@ const StorageStore = Reflux.createStore({
       });
     },
     onRemove(index) {
-      const aetitle = this._contents[index].AETitle;
-      const ip = this._contents[index].ipAddrs;
-      const port = this._contents[index].port;
+      const {aetitle, ip, port, description} = this._contents[index];
+      const isPublic = this._contents[index].public;
       $.post(Endpoints.base + "/management/settings/storage/dicom",
       {
         type: "remove",
         aetitle,
         ip,
-        port
+        port,
+        description,
+        public: isPublic
       },
       (data, status) => {
           //Response
