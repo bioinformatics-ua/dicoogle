@@ -129,8 +129,8 @@
 					    <Specification-Version>${project.version}</Specification-Version>
 					    <Implementation-Version>${project.version}</Implementation-Version>
                                         <Extension-Name>com.sun.media.imageio</Extension-Name>
-                                        <Implementation-Vendor>UA.PT Bioinformatics</Implementation-Vendor>
-                                        <Specification-Vendor>UA.PT Bioinformatics</Specification-Vendor>
+                                        <Implementation-Vendor>BMD software/UA.PT Bioinformatics</Implementation-Vendor>
+                                        <Specification-Vendor>BMD software/UA.PT Bioinformatics</Specification-Vendor>
                                         <Class-Path>./src/main/resources/</Class-Path>
                                         <Sealed>true</Sealed>
                                     </manifestEntries>
