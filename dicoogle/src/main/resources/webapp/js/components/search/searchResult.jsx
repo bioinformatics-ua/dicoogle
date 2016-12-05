@@ -109,7 +109,6 @@ _onSearchResult: function(outcome) {
       </div>);
 		}
 
-
     //Check if search failed
     if(this.getError()) {
       return (
@@ -136,8 +135,25 @@ _onSearchResult: function(outcome) {
     );
 
     let toggleModalClassNames = this.state.showDangerousOptions ? "fa fa-toggle-on" : "fa fa-toggle-off";
-    return (<div>
-        <Step current={this.state.current} searchOutcome={this.props.searchOutcome} onClick={this.onStepClicked}/>
+
+    let counters = [];
+    if (this.props.searchOutcome.data) {
+      counters.push(this.props.searchOutcome.data.results.length);
+    }
+    if (this.state.current >= 1 && this.state.patient) {
+      counters.push(this.state.patient.nStudies);
+    }
+    if (this.state.current >= 2 && this.state.study) {
+      counters.push(this.state.study.series.length);
+    }
+    if (this.state.current >= 3 && this.state.serie) {
+      counters.push(this.state.serie.images.length);
+    }
+
+    return (<div className="container-fluid">
+        <div className="row">
+          <Step current={this.state.current} counters={counters} onClick={this.onStepClicked}/>
+        </div>
         <div id="step-container">
           {this.getCurrentView()}
         </div>
@@ -182,10 +198,10 @@ _onSearchResult: function(outcome) {
     this.setState({current: stepComponent});
   },
   onPatientClicked: function(patient){
-    this.setState({current: 1, patient});
+    this.setState({current: 1, patient, study: null, serie: null});
   },
   onStudyClicked: function(study){
-    this.setState({current: 2, study});
+    this.setState({current: 2, study, serie: null});
   },
   onSeriesClicked: function(serie){
     this.setState({current: 3, serie});
@@ -196,57 +212,51 @@ _onSearchResult: function(outcome) {
 });
 
 const Step = React.createClass({
-  getInitialState: function() {
-    return {current: this.props.current};
+  propTypes: {
+    current: PropTypes.number,
+    counters: PropTypes.arrayOf(PropTypes.number).isRequired
   },
-  componentWillReceiveProps: function(nextProps){
-    this.setState({current: nextProps.current});
-  },
-  render: function() {  
-    let numResults = 0;
-    if (this.props.searchOutcome.data!=null )
-    {
-      
-      numResults = this.props.searchOutcome.data.numResults;
-    }
+  render: function() {
+    const {current, counters: [nPatients, nStudies, nSeries, nImages]} = this.props;
 
     return (
-      <div className="row">
         <div className="wizardbar">
-          <div onClick={this.onStepClicked.bind(this, 0)} className={this.getStep(this.state.current, 0)}>
+          <div onClick={this.onStepClicked.bind(this, 0)} className={this.getStep(current, 0)}>
             <div>
-             <span className="label label-pill label-primary label-as-badge label-border">{numResults}</span> Patient</div>
+              {nPatients !== undefined && <span className="label label-pill label-primary label-as-badge label-border">{nPatients}</span>}
+              &nbsp; Patient
+            </div>
           </div>
-          <div onClick={this.onStepClicked.bind(this, 1)} className={this.getStep(this.state.current, 1)}>
-            <div>Study</div>
+          <div onClick={this.onStepClicked.bind(this, 1)} className={this.getStep(current, 1)}>
+            <div>
+              {nStudies !== undefined && <span className="label label-pill label-primary label-as-badge label-border">{nStudies}</span>}
+              &nbsp; Study
+            </div>
           </div>
-          <div onClick={this.onStepClicked.bind(this, 2)} className={this.getStep(this.state.current, 2)}>
-            <div>Series</div>
+          <div onClick={this.onStepClicked.bind(this, 2)} className={this.getStep(current, 2)}>
+            <div>
+              {nSeries !== undefined && <span className="label label-pill label-primary label-as-badge label-border">{nSeries}</span>}
+              &nbsp; Series
+            </div>
           </div>
-          <div onClick={this.onStepClicked.bind(this, 3)} className={this.getStep(this.state.current, 3)}>
-            <div>Image</div>
+          <div onClick={this.onStepClicked.bind(this, 3)} className={this.getStep(current, 3)}>
+            <div>
+              {nImages !== undefined && <span className="label label-pill label-primary label-as-badge label-border">{nImages}</span>}
+              &nbsp; Image
+            </div>
           </div>
-
-        </div>  
-      </div>  
+        </div>
       );
   },
   getStep: function(current, step) {
-    var state1 = "col-xs-3 wizardbar-item current";
-    var state2 = "col-xs-3 wizardbar-item completed";
-    var state3 = "col-xs-3 wizardbar-item disabled";
-
     if(step === current)
-      return state1;
+      return "col-xs-3 wizardbar-item current";
     else if(step > current)
-      return state3;
+      return "col-xs-3 wizardbar-item disabled";
     else if(step < current)
-      return state2;
+      return "col-xs-3 wizardbar-item completed";
   },
   onStepClicked: function(current) {
-      if(this.state.current <= current)
-        return;
-      this.setState({current: current});
       this.props.onClick(current);
   }
 
