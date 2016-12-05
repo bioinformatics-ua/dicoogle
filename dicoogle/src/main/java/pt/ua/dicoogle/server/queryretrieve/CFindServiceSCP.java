@@ -160,14 +160,18 @@ public class CFindServiceSCP extends CFindService {
             LogLine ll = new LogLine("cfind", getDateTime(), as.getCallingAET(),
                     as.toString() + " -- " + add, queryParams);
             LogDICOM.getInstance().addLine(ll);
-            LogXML l = new LogXML();
-            try {
-                l.printXML();
-            } catch (TransformerConfigurationException ex) {
-                ex.printStackTrace();
+
+            synchronized (LogDICOM.getInstance()) {
+                LogXML l = new LogXML();
+                try {
+                    l.printXML();
+                } catch (TransformerConfigurationException ex) {
+                    ex.printStackTrace();
+                }
             }
-            Logs.getInstance().addLog(ll);
+
         }
+        //Logs.getInstance().addLog(ll);
 
 
         return replay;
@@ -186,7 +190,7 @@ public class CFindServiceSCP extends CFindService {
         return service;
     }
 
-    /**
+    /**<
      * @param service the service to set
      */
     public void setService(DicomNetwork service) {

@@ -241,16 +241,17 @@ public class CMoveServiceSCP extends CMoveService {
             LogLine ll = new LogLine("cmove", LogLine.getDateTime(), destination,
                     "Files: " + files.size() + " -- (" + hostDest + ":" + portAddr + ")","studyUID="+data.getString(Tag.StudyInstanceUID));
             LogDICOM.getInstance().addLine(ll);
-            LogXML l = new LogXML();
 
-            try
-            {
-                l.printXML();
-            } catch (TransformerConfigurationException ex) {
-                LoggerFactory.getLogger(CMoveServiceSCP.class).error(ex.getMessage(), ex);
+            synchronized (LogDICOM.getInstance()) {
+                try {
+                    LogXML l = new LogXML();
+                    l.printXML();
+                } catch (TransformerConfigurationException ex) {
+                    LoggerFactory.getLogger(CMoveServiceSCP.class).error(ex.getMessage(), ex);
+                }
             }
 
-            Logs.getInstance().addLog(ll);
+            //Logs.getInstance().addLog(ll);
             if (CMoveID==null||CMoveID.equals(""))
             {
                 //DebugManager.getInstance().debug("No originator message ID");
