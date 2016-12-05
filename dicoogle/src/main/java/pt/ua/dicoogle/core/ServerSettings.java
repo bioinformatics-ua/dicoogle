@@ -880,6 +880,19 @@ public class ServerSettings implements ServerSettingsReader
     	}
     	return false;
     }
+
+    public boolean removeMoveDestination(String AETitle)
+    {
+        boolean removed = false;
+        Iterator<MoveDestination> it = dest.iterator();
+        while(it.hasNext()) {
+            if(it.next().getAETitle().equals(AETitle)) {
+                it.remove();
+                removed = true;
+            }
+        }
+        return removed;
+    }
     public boolean contains(MoveDestination m){
         return this.dest.contains(m);
     }
