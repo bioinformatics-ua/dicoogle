@@ -166,8 +166,8 @@ Authors
 
 Maintainers:
 
-* @bastiao - Luís Bastião (development leader)
-* @Enet4 - Eduardo Pinho
+* Luís Bastião (development leader) - [@bastiao](https://github.com/bastiao)
+* Eduardo Pinho - [@Enet4](https://github.com/Enet4)
 
 Contributors:
 
