@@ -158,19 +158,23 @@ public class SearchServlet extends HttpServlet {
         }
 
         List<String> knownProviders = null;
-        if (!queryAllProviders) {
+        if (!queryAllProviders) 
+        {
             knownProviders = new ArrayList<>();
             List<String> activeProviders = PluginController.getInstance().getQueryProvidersName(true);
-            for (String p : providers) {
-                if (activeProviders.contains(p)) {
-                    knownProviders.add(p);}
+            for (String p : providers)
+            {
+                if (activeProviders.contains(p)) 
+                {
+                    knownProviders.add(p);
+                }
                 else
                 {
                     response.setStatus(400);
                     JSONObject obj = new JSONObject();
                     obj.put("error", p.toString() +" is not a valid query provider");
                     response.getWriter().append(obj.toString());
-                	return;
+                    return;
                 }
             }
         }
