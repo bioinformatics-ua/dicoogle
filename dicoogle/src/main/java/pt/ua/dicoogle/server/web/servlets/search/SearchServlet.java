@@ -258,7 +258,7 @@ public class SearchServlet extends HttpServlet {
     }
 
     private static void sendError(HttpServletResponse resp, int code, String message) throws IOException {
-        resp.setStatus(500);
+        resp.setStatus(code);
         JSONObject obj = new JSONObject();
         obj.put("results", new JSONArray());
         obj.put("error", message);

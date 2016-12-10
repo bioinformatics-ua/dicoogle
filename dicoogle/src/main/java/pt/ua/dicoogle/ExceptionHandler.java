@@ -22,7 +22,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import javax.swing.JOptionPane;
-import pt.ieeta.anonymouspatientdata.core.Anonymous;
 
 //import pt.ieeta.anonymouspatientdata.core.Anonymous;
 
@@ -54,13 +53,10 @@ class ExceptionHandler implements Thread.UncaughtExceptionHandler {
             throwable.printStackTrace();
         } else {
             String msg = getStackTrace(throwable);
-            Anonymous.getInstance().stop();
-            //Anonymous.getInstance().stop();
             if (msg.contains("heap"))
             {
                 JOptionPane.showMessageDialog(null, "Generic Error, see log.txt.\n\nError: lack of memory. You should increase memory \n",
                     "Exception Error", JOptionPane.INFORMATION_MESSAGE);
-            
             }
             else
             {    
