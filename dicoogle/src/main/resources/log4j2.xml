@@ -13,11 +13,16 @@
         </RollingRandomAccessFile>
     </Appenders>
     <Loggers>
-        <Root level="debug">
+        <Root level="info">
             <AppenderRef ref="STDOUT" level="info" />
             <AppenderRef ref="Rolling" level="info" />
         </Root>
         <Logger name="pt.ua.dicoogle" level="info" additivity="false">
+            <AppenderRef ref="STDOUT" />
+            <AppenderRef ref="Rolling" />
+        </Logger>
+        <Logger name="org.eclipse.jetty" additivity="false">
+            <AppenderRef ref="STDOUT" level="warn" />
             <AppenderRef ref="Rolling" level="info" />
         </Logger>
     </Loggers>
