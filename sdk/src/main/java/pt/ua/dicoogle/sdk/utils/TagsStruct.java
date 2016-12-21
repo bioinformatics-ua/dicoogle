@@ -26,9 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.Semaphore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,11 +42,13 @@ import org.apache.commons.collections4.bidimap.DualHashBidiMap;
  * 
  * Other fields is the common designation for fields that do not belong to the DIM.
  *
- * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Tiago Marques Godinho <tmgodinho@ua.pt> Refactor
  */
 public class TagsStruct
 {
+	private static final Logger logger = LoggerFactory.getLogger(TagsStruct.class);
+
 	//Optimization @TODO
 	//Map Structures
 	private BidiMap<Integer, String> tagNameMappings;	
@@ -65,25 +64,14 @@ public class TagsStruct
     //DeepSearch modalities
     private boolean deepSearchModalities = true;
     
-    private List<String> dictionaries = new ArrayList<String>();
+    private List<String> dictionaries = new ArrayList<>();
 
     private static TagsStruct instance = null ;
-    private static Semaphore sem = new Semaphore(1, true);
 
     public static synchronized TagsStruct getInstance()
     {
-        try
-        {
-            sem.acquire();
-            if (instance == null)
-            {
-                instance = new TagsStruct();
-            }
-            sem.release();
-        }
-        catch (InterruptedException ex)
-        {
-            LoggerFactory.getLogger(TagsStruct.class).error(ex.getMessage(), ex);
+        if (instance == null) {
+            instance = new TagsStruct();
         }
         return instance;
     }
@@ -93,8 +81,8 @@ public class TagsStruct
     {
     	//Initialize fields;
     	this.tagNameMappings = new DualHashBidiMap<>();
-    	this.tagValueMappings = new HashMap<Integer, TagValue>();
-    	this.nDICOMFields = new HashSet<TagValue>();
+    	this.tagValueMappings = new HashMap<>();
+    	this.nDICOMFields = new HashSet<>();
     	this.nDIMFields = new HashSet<>();
     	this.nPrivateFields = new HashSet<>();
     	this.modalitiesSet = new HashSet<>();
@@ -352,7 +340,7 @@ public class TagsStruct
     
     /**
      * 
-     * @param tagNumber
+     * @param tagName
      * @return The TagValue object for the given its name, or null.
      */
     public TagValue getTagValue(String tagName){
