@@ -58,7 +58,7 @@ $ gulp --tasks
 
 ## Running as a standalone server
 
-    We have included a script for running a static server containing the standalone webapp. If you already have Python installed, simply execute:
+We have included a script for running a static server containing the standalone webapp. If you already have Python installed, simply execute:
 
     ./run_server
 
