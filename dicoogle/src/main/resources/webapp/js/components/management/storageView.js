@@ -51,7 +51,7 @@ const AddStorageModal = React.createClass({
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button bsStyle="primary" disabled={!this.validateAll()} onClick={this.handleAdd}>Add</Button>
+        <Button bsStyle="primary btn_dicoogle" disabled={!this.validateAll()} onClick={this.handleAdd}>Add</Button>
         <Button onClick={this.handleAdd}>Cancel</Button>
       </Modal.Footer>
     </Modal>);
@@ -84,7 +84,8 @@ const AddStorageModal = React.createClass({
   validateAETitle(input) {
     input = (input || this.state.aetitle).trim();
     if (input === '') return undefined;
-    return input.length <= 16 ? 'success' : 'error';
+    // AETitle length should be 16, but there are some implementations not respecting it.
+    return input.length <= 64 ? 'success' : 'error';
   },
   validateIPAddress(input) {
     input = (input || this.state.ip).trim();
