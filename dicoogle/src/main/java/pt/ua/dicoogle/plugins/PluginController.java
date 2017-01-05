@@ -357,9 +357,13 @@ public class PluginController{
         Collection<StorageInterface> storages = getStoragePlugins(false);
         
         for (StorageInterface store : storages) {
-            if (store.handles(location)) {
-            	logger.debug("Retrieved storage for scheme: {}", location);
-                return store;
+            try {
+                if (store.handles(location)) {
+                    logger.debug("Retrieved storage for scheme: {}", location);
+                    return store;
+                }
+            } catch (RuntimeException ex) {
+                logger.warn("Storage plugin {} failed unexpectedly", store.getName(), ex);
             }
         }
         logger.warn("Could not get storage for scheme: {}", location);
@@ -418,7 +422,7 @@ public class PluginController{
     			return p;
     		}
     	}
-    	logger.error("Could not retrive query provider {} for onlyEnabled = {}", name, onlyEnabled);
+    	logger.error("Could not retrieve query provider {} for onlyEnabled = {}", name, onlyEnabled);
     	return null;
     }
     
@@ -470,14 +474,19 @@ public class PluginController{
         return holder;//returns the handler to obtain the computation results
     }
     
-    private Task<Iterable<SearchResult>> getTaskForQuery(String querySource, final String query, final Object ... parameters){
+    private Task<Iterable<SearchResult>> getTaskForQuery(final String querySource, final String query, final Object ... parameters){
     	final QueryInterface queryEngine = getQueryProviderByName(querySource, true);
     	//returns a tasks that runs the query from the selected query engine
         Task<Iterable<SearchResult>> queryTask = new Task<>(querySource,
             new Callable<Iterable<SearchResult>>(){
             @Override public Iterable<SearchResult> call() throws Exception {
                 if(queryEngine == null) return Collections.emptyList();
-                return queryEngine.query(query, parameters);
+                try {
+                    return queryEngine.query(query, parameters);
+                } catch (RuntimeException ex) {
+                    logger.warn("Query plugin {} failed unexpectedly", querySource, ex);
+                    return Collections.EMPTY_LIST;
+                }
             }
         });
         //logger.info("Prepared Query Task: QueryString");
@@ -496,7 +505,7 @@ public class PluginController{
         StorageInterface store = getStorageForSchema(path);
 
         if(store==null){ 
-            logger.error("No storage plugin detected");
+            logger.error("No storage plugin detected, ignoring index request");
             return Collections.emptyList(); 
         }
         
@@ -504,26 +513,30 @@ public class PluginController{
         //Collection<IndexerInterface> indexers = getIndexingPluginsByMimeType(path);
         ArrayList<Task<Report>> rettasks = new ArrayList<>();
         final  String pathF = path.toString();
-        for(IndexerInterface indexer : indexers){            
-        	Task<Report> task = indexer.index(store.at(path));
-            if(task == null) continue;
-            final String taskUniqueID = UUID.randomUUID().toString();
-            task.setName(String.format("[%s]index %s", indexer.getName(), path));
-            task.onCompletion(new Runnable() {
-                @Override
-                public void run() {
-                    logger.info("Task [{}] complete: {} is indexed", taskUniqueID, pathF);
-                }
-            });
-                
-            taskManager.dispatch(task);
-            rettasks.add(task);
-            RunningIndexTasks.getInstance().addTask(taskUniqueID, task);
+        for(IndexerInterface indexer : indexers){
+            try {
+                Task<Report> task = indexer.index(store.at(path));
+                if(task == null) continue;
+                final String taskUniqueID = UUID.randomUUID().toString();
+                task.setName(String.format("[%s]index %s", indexer.getName(), path));
+                task.onCompletion(new Runnable() {
+                    @Override
+                    public void run() {
+                        logger.info("Task [{}] complete: {} is indexed", taskUniqueID, pathF);
+                    }
+                });
+
+                taskManager.dispatch(task);
+                rettasks.add(task);
+                RunningIndexTasks.getInstance().addTask(taskUniqueID, task);
+            } catch (RuntimeException ex) {
+                logger.warn("Indexer {} failed unexpectedly", indexer.getName(), ex);
+            }
         }
         logger.info("Finished firing all indexing plugins for {}", path);
         
         return rettasks;    	
-    }     
+    }
     
     //
     public List<Task<Report>> index(String pluginName, URI path) {
@@ -531,7 +544,7 @@ public class PluginController{
         StorageInterface store = getStorageForSchema(path);
 
         if(store==null){ 
-        	logger.error("No storage plugin detected");
+        	logger.error("No storage plugin detected, ignoring index request");
             return Collections.emptyList(); 
         }
         
@@ -540,26 +553,30 @@ public class PluginController{
         IndexerInterface indexer = getIndexerByName(pluginName, true);
         ArrayList<Task<Report>> rettasks = new ArrayList<>();
         final  String pathF = path.toString();
-    	Task<Report> task = indexer.index(store.at(path));
-        if(task != null) {
-            task.setName(String.format("[%s]index %s", pluginName, path));
-            task.onCompletion(new Runnable() {
+        try {
+            Task<Report> task = indexer.index(store.at(path));
+            if (task != null) {
+                task.setName(String.format("[%s]index %s", pluginName, path));
+                task.onCompletion(new Runnable() {
 
-                @Override
-                public void run() {
-                    logger.info("Task [{}] complete: {} is indexed", taskUniqueID, pathF);
-                    
-                    //RunningIndexTasks.getInstance().removeTask(taskUniqueID);
-                }
-            });
-            
-	        taskManager.dispatch(task);
-	        
-	        rettasks.add(task);
-	        logger.info("Fired indexer {} for URI {}", pluginName, path.toString());
-	        RunningIndexTasks.getInstance().addTask(taskUniqueID, task);
+                    @Override
+                    public void run() {
+                        logger.info("Task [{}] complete: {} is indexed", taskUniqueID, pathF);
+
+                        //RunningIndexTasks.getInstance().removeTask(taskUniqueID);
+                    }
+                });
+
+                taskManager.dispatch(task);
+
+                rettasks.add(task);
+                logger.info("Fired indexer {} for URI {}", pluginName, path.toString());
+                RunningIndexTasks.getInstance().addTask(taskUniqueID, task);
+            }
+        } catch (RuntimeException ex) {
+            logger.warn("Indexer {} failed unexpectedly", indexer.getName(), ex);
         }
-        
+
         return rettasks;    	
     }
 
@@ -594,7 +611,11 @@ public class PluginController{
      */
     private void doUnindex(URI path, Collection<IndexerInterface> indexers) {
         for (IndexerInterface indexer : indexers) {
-        	indexer.unindex(path);
+            try {
+                indexer.unindex(path);
+            } catch (RuntimeException ex) {
+                logger.warn("Indexer {} failed unexpectedly", indexer.getName(), ex);
+            }
         }
         logger.info("Finished unindexing {}", path);
     }
@@ -608,15 +629,20 @@ public class PluginController{
     }
     
     public void doRemove(URI uri, StorageInterface si) {
-        if(si.handles(uri)){
-            si.remove(uri); 
-        } else {
-            logger.warn("Storage Plugin does not handle URI: {},{}", uri, si);
+        try {
+            if (si.handles(uri)) {
+                si.remove(uri);
+            } else {
+                logger.warn("Storage Plugin does not handle URI: {},{}", uri, si);
+            }
+            logger.info("Finished removing {}", uri);
+        } catch (RuntimeException ex) {
+            logger.warn("Storage {} failed unexpectedly", si.getName(), ex);
         }
-        logger.info("Finished removing {}", uri);
     }
+
     /*
-     * Convinience method that calls index(URI) and runs the returned
+     * Convenience method that calls index(URI) and runs the returned
      * tasks on the executing thread 
      */
     public List<Report> indexBlocking(URI path) {
@@ -630,7 +656,9 @@ public class PluginController{
 			}
             catch (InterruptedException | ExecutionException e) {
                 logger.error(e.getMessage(), e);
-			}
+			} catch (RuntimeException e) {
+                logger.warn("Indexer task failed unexpectedly", e);
+            }
         }
         logger.info("Finished indexing {}", path);
         
