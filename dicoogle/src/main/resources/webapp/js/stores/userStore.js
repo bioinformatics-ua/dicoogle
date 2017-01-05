@@ -1,5 +1,5 @@
 import * as Reflux from 'reflux';
-import {UserActions} from '../actions/userActions';
+import * as UserActions from '../actions/userActions';
 
 import dicoogleClient from 'dicoogle-client';
 
@@ -46,7 +46,7 @@ const UserStore = Reflux.createStore({
       this.dicoogle.login(user, pass, (error, data) => {
           if (error || !data.token) {
               this.trigger({
-                failed: true
+                success: false
               });
               return;
           }
@@ -56,11 +56,11 @@ const UserStore = Reflux.createStore({
           this._roles = data.roles;
           this._isLoggedIn = true;
           localStorage.token = this._token;
+          console.log(`Saving token to local storage: ${localStorage.token}`);
           this.saveLocalStore();
 
-          console.log(`Saving token to local storage: ${localStorage.token}`);
           this.trigger({
-              isLoggedIn: this._isLoggedIn,
+              isLoggedIn: true,
               success: true
           });
       });
@@ -135,4 +135,4 @@ const UserStore = Reflux.createStore({
     }
 });
 
-export {UserStore};
+export default UserStore;

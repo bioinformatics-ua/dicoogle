@@ -18,8 +18,8 @@ import PluginView from './components/plugin/pluginView';
 import AboutView from './components/about/aboutView';
 import LoadingView from './components/login/loadingView';
 import LoginView from './components/login/loginView';
-import {UserActions} from './actions/userActions';
-import {UserStore} from './stores/userStore';
+import * as UserActions from './actions/userActions';
+import UserStore from './stores/userStore';
 
 require('core-js/shim');
 
@@ -33,7 +33,6 @@ class App extends React.Component {
     return {
 			router: PropTypes.object.isRequired,
 			location: React.PropTypes.object
-
 		};
   }
 
@@ -41,9 +40,11 @@ class App extends React.Component {
 		super(props);
 		this.pluginsFetched = false;
 		this.state = {
-			pluginMenuItems: []
+			pluginMenuItems: [],
+			username: null
 		};
 		this.logout = this.logout.bind(this);
+		this.handleUserStoreUpdate = this.handleUserStoreUpdate.bind(this);
 	}
 
 	/**
@@ -64,28 +65,23 @@ class App extends React.Component {
 
 	componentWillMount()
 	{
-		UserStore.listen(this.fetchPlugins.bind(this));
+		UserStore.listen(this.handleUserStoreUpdate);
 
-		const Dicoogle = dicoogleClient(Endpoints.base);
-		if (localStorage.token) {
-			Dicoogle.setToken(localStorage.token);
-		}
+		this.dicoogle = dicoogleClient(Endpoints.base);
 		if (this.props.location.pathname === '/')
 		{
 			localStorage.token = null;
 			UserActions.logout();
+		} else {
+			UserActions.isLoggedIn();
 		}
 		Webcore.init(Endpoints.base);
 	}
 
 	componentDidMount(){
     UserStore.loadLocalStore();
-		if (localStorage.token === undefined) {
-			this.props.history.pushState(null, 'login');
-    }
-		if (this.props.location.pathname === '/')
-		{
-			this.props.history.pushState(null, 'login');
+		if (localStorage.token === undefined || this.props.location.pathname === '/') {
+			this.context.router.push('login');
 		}
 
     $("#menu-toggle").click(function (e) {
@@ -93,20 +89,19 @@ class App extends React.Component {
       $("#wrapper").toggleClass("toggled");
     });
 	}
+
 	fetchPlugins(data) {
 		if (this.pluginsFetched)
 			return;
-		let self = this;
-		if (!data.success)
+		if (!data.isLoggedIn)
 			return;
-    this.setState(data);
 
-		Webcore.addPluginLoadListener(function(plugin) {
+		Webcore.addPluginLoadListener((plugin) => {
       console.log("Plugin loaded to Dicoogle:", plugin);
 		});
 		Webcore.fetchPlugins('menu', (packages) => {
-			self.onMenuPlugin(packages);
-        Webcore.fetchModules(packages);
+      this.onMenuPlugin(packages);
+      Webcore.fetchModules(packages);
 		});
 
     // pre-fetch modules of other plugin types
@@ -144,7 +139,7 @@ class App extends React.Component {
           </span>
 
           <span className="user-name buttonLogin">
-              <span onClick={this.logout.bind(this)} className="glyphicon glyphicon-log-out" style={{cursor: 'pointer'}} />
+              <span onClick={this.logout} className="glyphicon glyphicon-log-out" style={{cursor: 'pointer'}} />
           </span>
 
         </div>
@@ -152,13 +147,20 @@ class App extends React.Component {
 
 			<div id="wrapper">
 				<div id="sidebar-wrapper">
-					<Sidebar pluginMenuItems={this.state.pluginMenuItems} onLogout={this.logout.bind(this)}/>
+					<Sidebar pluginMenuItems={this.state.pluginMenuItems} onLogout={this.logout}/>
 				</div>
 				<div id="container" style={{display: 'block'}}>
 					{this.props.children}
 				</div>
 			</div>
 		</div>);
+	}
+
+	handleUserStoreUpdate(data) {
+		this.fetchPlugins(data);
+		if (data.username) {
+			this.setState(data);
+		}
 	}
 }
 

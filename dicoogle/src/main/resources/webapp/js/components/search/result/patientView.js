@@ -6,8 +6,7 @@ import ConfirmModal from './confirmModal';
 import PluginView from '../../plugin/pluginView.jsx';
 import {FormGroup, Checkbox} from 'react-bootstrap';
 import * as ResultSelectActions from '../../../actions/resultSelectAction';
-import {UserStore} from '../../../stores/userStore';
-
+import UserStore from '../../../stores/userStore';
 
   /**
    * 2015-09-11.

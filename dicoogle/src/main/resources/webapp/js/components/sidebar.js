@@ -6,7 +6,7 @@
 
 import React from 'react';
 import {Link} from 'react-router';
-import {UserStore} from '../stores/userStore';
+import UserStore from '../stores/userStore';
 
 const Sidebar = React.createClass({
 

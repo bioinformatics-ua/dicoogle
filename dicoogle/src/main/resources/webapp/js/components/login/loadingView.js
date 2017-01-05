@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
-import {UserActions} from "../../actions/userActions";
-import {UserStore} from "../../stores/userStore";
+import * as UserActions from "../../actions/userActions";
+import UserStore from "../../stores/userStore";
 
 const LoadingView = React.createClass({
   contextTypes: {
