@@ -28,7 +28,7 @@ const SearchResult = React.createClass({
         results: PropTypes.array
       }),
       error: PropTypes.any
-    }).isRequired,
+    }),
     onReturn: PropTypes.func
   },
 

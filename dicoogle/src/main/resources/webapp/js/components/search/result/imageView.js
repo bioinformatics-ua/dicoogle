@@ -343,7 +343,8 @@ const PopOverView = React.createClass({
 var PopOverImageViewer = React.createClass({
 
 	render() {
-    let url = (this.props.uid !== null) && Endpoints.base + "/dic2png?SOPInstanceUID=" + this.props.uid;
+    let url = (this.props.uid !== null) ?
+              Endpoints.base + "/dic2png?SOPInstanceUID=" + this.props.uid : null;
 		return (
 			<Modal onHide={this.props.onHide} show={this.props.uid !== null} bsStyle='primary' animation>
           <Modal.Header>
@@ -353,7 +354,7 @@ var PopOverImageViewer = React.createClass({
             <ImageLoader
                 src={url}
                 imgProps={{style: {width: '100%'}}}
-                style={{"width": "100%"}}
+                style={{width: "100%"}}
                 wrapper={React.DOM.div}>
               <img src="assets/image-not-found.png" width="100%" />
           </ImageLoader>

@@ -1,6 +1,5 @@
-import Reflux from 'reflux';
-import $ from 'jquery';
-
+import * as Reflux from 'reflux';
+import dicoogleClient from 'dicoogle-client';
 import * as ExportActions from '../actions/exportActions';
 import {Endpoints} from '../constants/endpoints';
 import {getDICOMFieldList} from '../handlers/requestHandler';
@@ -9,6 +8,7 @@ const ExportStore = Reflux.createStore({
     listenables: ExportActions,
     init: function () {
        this._contents = {};
+       this.dicoogle = dicoogleClient();
     },
 
     onGetFieldList: function(data){
@@ -43,24 +43,17 @@ const ExportStore = Reflux.createStore({
         keyword = true;
       }
 
-      $.ajax({
-        method: "POST",
-        url: Endpoints.base + "/exportFile",
-        traditional: true,
-        data: {
-          query: text,
-          keyword,
-          fields: JSON.stringify(fields),
-          providers: provider
-        }
-      }).then((data, status) => {
+      this.dicoogle.issueExport(text, fields, {keyword, providers: provider}, (error, id) => {
+          if (error) {
+            console.error("Failed to issue the export:", error);
+            return;
+          }
           // create a download link and trigger it automatically
-          const response = JSON.parse(data);
           const link = document.createElement("a");
           const hacked_footer = document.getElementById("hacked-modal-footer-do-not-remove");
           link.style.visibility = "hidden";
           link.download = "file";
-          link.href = Endpoints.base + "/exportFile?UID=" + response.uid;
+          link.href = Endpoints.base + "/exportFile?UID=" + id;
           hacked_footer.appendChild(link);
           link.click();
           hacked_footer.removeChild(link);

@@ -41,7 +41,7 @@
     "camelcase": 0,
     "curly": 0,
     "new-cap": 0,
-    "no-trailing-spaces": 0,
+    "no-trailing-spaces": 1,
     "eqeqeq": 1,
     "no-alert": 1,
     "key-spacing": 1,

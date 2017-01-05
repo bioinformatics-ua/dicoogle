@@ -1,7 +1,5 @@
-import Reflux from 'reflux';
-import $ from 'jquery';
+import * as Reflux from 'reflux';
 import {UserActions} from '../actions/userActions';
-import {Endpoints} from '../constants/endpoints';
 
 import dicoogleClient from 'dicoogle-client';
 
@@ -27,20 +25,20 @@ const UserStore = Reflux.createStore({
         }));
 
     },
-    loadLocalStore: function(){
-        if (localStorage.token) {
-            console.log("loadLocalStore");
-            let user = JSON.parse(localStorage.getItem("user"));
-            this._isAdmin = user.isAdmin;
-            this._username = user.username;
-            this._roles = user.roles;
-            this._token = user.token;
-            this._isLoggedIn = true;
-            this.trigger({
-                isLoggedIn: this._isLoggedIn,
-                success: true
-            });
+    loadLocalStore: function(user) {
+        if (!user) {
+            user = JSON.parse(localStorage.getItem("user"));
         }
+        console.log(`Loading previous session from local store`);
+        this._isAdmin = user.isAdmin;
+        this._username = user.username;
+        this._roles = user.roles;
+        this._token = user.token;
+        this._isLoggedIn = true;
+        this.trigger({
+            isLoggedIn: this._isLoggedIn,
+            success: true
+        });
     },
     onLogin: function(user, pass){
       console.log("onLogin");
@@ -60,7 +58,7 @@ const UserStore = Reflux.createStore({
           localStorage.token = this._token;
           this.saveLocalStore();
 
-          console.log("Localstorage token: " + localStorage.token);
+          console.log(`Saving token to local storage: ${localStorage.token}`);
           this.trigger({
               isLoggedIn: this._isLoggedIn,
               success: true
@@ -75,50 +73,45 @@ const UserStore = Reflux.createStore({
       {
 
         if (localStorage.token) {
-            this.loadLocalStore();
-            this.trigger({
-                isLoggedIn: self._isLoggedIn,
-                success: true
-            });
-        } else {
-            console.log("Verify ajax");
 
-            $.ajax({
-                type: "GET",
-                url: Endpoints.base + "/login",
-                dataType: 'json',
-                async: true,
-                success: (result) => {
-                /* if result is a JSon object */
-                this._username = result.user;
-                this._isAdmin = result.admin;
+            this.dicoogle.restoreSession(localStorage.token, (error, info) => {
+                if (error) {
+                    this.trigger({
+                        error,
+                        success: false
+                    });
+                    return;
+                }
+                info.token = localStorage.token;
+                this._username = info.user;
+                this._isAdmin = info.admin;
                 this._isLoggedIn = true;
-
                 this.saveLocalStore();
-                setTimeout(() => {
-                  this.trigger({
-                    isLoggedIn: this._isLoggedIn,
-                    success: true
-                  });
-                }, 500)
-            },
-            error: () => {
-                this.trigger({
-                    isLoggedIn: this._isLoggedIn,
-                    success: false
-                });
-            }});
-        }
+            });
 
+        } else {
+            this.dicoogle.request('GET', 'login')
+                .type('application/json')
+                .end((error, outcome) => {
+                    if (error) {
+                        this.trigger({
+                            isLoggedIn: this._isLoggedIn,
+                            success: false
+                        });
+                        return;
+                    }
+                    const result = outcome.body;
+                    this._username = result.user;
+                    this._isAdmin = result.admin;
+                    this._isLoggedIn = true;
+                    this.saveLocalStore();
+                });
+        }
       } else {
         //return this._isLoggedIn;
-          if (localStorage.token !== undefined) {
-              this.loadLocalStore();
-              this.trigger({
-                  isLoggedIn: self._isLoggedIn,
-                  success: true
-              });
-          }
+        if (localStorage.token !== undefined) {
+          this.loadLocalStore();
+        }
         this.trigger({
           isLoggedIn: self._isLoggedIn,
           success: true

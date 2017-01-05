@@ -11,7 +11,7 @@ import {SearchResult} from './searchResult';
 
 /**
  * This class is not used anymore.
- * Deprecated. 
+ * Deprecated.
  */
 const SearchResultView = React.createClass({
 

@@ -56,7 +56,7 @@ const AddStorageModal = React.createClass({
       </Modal.Footer>
     </Modal>);
   },
-  
+
   handleFieldKeyDown(e) {
     if (e.keyCode === 13) {
       if (this.validateAll()) {

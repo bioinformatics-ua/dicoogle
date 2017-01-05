@@ -110,9 +110,9 @@ export function setSaveT(state, callback) {
   Dicoogle.setIndexerSettings(Dicoogle.IndexerSettings.INDEX_THUMBNAIL, state, cb);
 }
 
-export function saveIndexOptions(path, watcher, zip, saveThumbnail, effort, thumbnailSize){
+export function saveIndexOptions(path, watcher, zip, thumbnail, effort, thumbnailSize){
   Dicoogle.setIndexerSettings({
-    path, watcher, zip, saveThumbnail, effort, thumbnailSize
+    path, watcher, zip, thumbnail, effort, thumbnailSize
   }, (error) => {
     if (error) {
       console.error('Dicoogle service failure', error);
