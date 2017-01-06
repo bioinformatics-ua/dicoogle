@@ -143,8 +143,6 @@ If you are in the development process and using the UI, you may need to change y
  5. The resulting jar file can be found in "./dicoogle/target".
 
 
-
-
 Web site
 ========
 

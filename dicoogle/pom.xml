@@ -238,13 +238,10 @@
                 </executions>
                 <configuration>
                     <nodeVersion>v6.9.1</nodeVersion>
-
-                    <!-- optional: with node version greater than 4.0.0 will use npm provided by node distribution -->
                     <npmVersion>3.10.10</npmVersion>
                     <installDirectory>target</installDirectory>
+                    <!-- Defining webapp directory -->
                     <workingDirectory>src/main/resources/webapp</workingDirectory>
-
-
                 </configuration>
             </plugin>
           
