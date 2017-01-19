@@ -41,7 +41,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 
 import pt.ua.dicoogle.core.QueryExpressionBuilder;
-import pt.ua.dicoogle.core.dim.DIMGeneric;
+import pt.ua.dicoogle.sdk.datastructs.dim.DIMGeneric;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;

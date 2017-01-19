@@ -33,7 +33,7 @@ import java.util.List;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import pt.ua.dicoogle.core.dim.DIMGeneric;
+import pt.ua.dicoogle.sdk.datastructs.dim.DIMGeneric;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.server.web.dicom.SearchHolder;
 import pt.ua.dicoogle.server.web.utils.DIM2JSONConverter;
