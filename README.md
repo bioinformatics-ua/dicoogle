@@ -139,13 +139,13 @@ We also have programmatic APIs for interfacing with Dicoogle in [JavaScript](htt
 
 #### Create your own Plugins
 
-  In order to integrate new functionalities in Dicoogle, you may create your own plugin set. A plugin set comprises plugins that are developed with the intent of supporting a given feature, and are packaged in a single jar file for deployment. See the wiki page on [Plugin Development](https://github.com/bioinformatics-ua/dicoogle/wiki/Plugin-Development) for additional information, and our [sample plugin project](https://github.com/bioinformatics-ua/dicoogle-plugin-sample) for a base project from which you can start making your own plugins.
+  In order to integrate new functionalities in Dicoogle, you may create your own plugin set. A plugin set comprises plugins that are developed with the intent of supporting a given feature, and are packaged in a single jar file for deployment. See the wiki page on [Plugin Development](https://github.com/bioinformatics-ua/dicoogle/wiki/Plugin-Development) for our guide, and our [sample plugin project](https://github.com/bioinformatics-ua/dicoogle-plugin-sample) for a base project from which you can start making your own plugins.
 
 ### Building Dicoogle 
 
 Before building, please make sure that your system contains the following tools:
 
- - Java JDK (at least version 7; JDK 8 is recommended)
+ - Java JDK, either Oracle or OpenJDK (at least version 7; JDK 8 is recommended)
  - Maven 3
  - [Node.js](https://nodejs.org/en/download/) (at least version 4; LTS or Stable versions are recommended) and npm (at least version 2)
 
