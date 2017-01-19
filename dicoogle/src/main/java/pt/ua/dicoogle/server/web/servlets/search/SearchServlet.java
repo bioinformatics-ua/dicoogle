@@ -29,6 +29,8 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
+import com.google.common.collect.ImmutableList;
+import jdk.nashorn.internal.ir.annotations.Immutable;
 import net.sf.json.JSONArray;
 import org.apache.commons.collections.ArrayStack;
 import org.json.JSONException;
@@ -216,9 +218,10 @@ public class SearchServlet extends HttpServlet {
 
             if (this.searchType == SearchType.PATIENT) {
                 try {
-                    DIMGeneric dimModel = new DIMGeneric(results, depth);
+                    DIMGeneric dimModel = new DIMGeneric(ImmutableList.copyOf(results));
                     elapsedTime = System.currentTimeMillis() - elapsedTime;
-                    dimModel.writeJSON(response.getWriter(), elapsedTime, depth, offset, psize);
+                    response.getWriter().write(dimModel.getJSON());
+                    //dimModel.writeJSON(response.getWriter(), elapsedTime, depth, offset, psize);
                 } catch (Exception e) {
                     logger.warn("Failed to get DIM", e);
                 }
