@@ -159,18 +159,20 @@ Before building, please make sure that your system contains the following tools:
 Contributing
 ------------
 
-The open source project is maintained by [PT.UA Bioinformatics](http://bioinformatics.ua.pt/) and [BMD Software](https://www.bmd-software.com/). However, your contributions to the software are welcome. Dicoogle is sought to be useful for R&D and the industry alike. You may find our [Development Guidelines](https://github.com/bioinformatics-ua/dicoogle/wiki#development-guidelines) in the wiki. Issues containing the [`easy`](https://github.com/bioinformatics-ua/dicoogle/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) label should be the most suitable for first open source contributions. For tech support, please prefer contacting the maintainers instead of creating an issue.
+The open source project is maintained by [PT.UA Bioinformatics](http://bioinformatics.ua.pt/) and [BMD Software](https://www.bmd-software.com/). Your contributions to the software are also welcomed. Dicoogle is sought to be useful for R&D and the industry alike. You may find our [Development Guidelines](https://github.com/bioinformatics-ua/dicoogle/wiki#development-guidelines) in the wiki. Issues containing the [`easy`](https://github.com/bioinformatics-ua/dicoogle/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) label should be the most suitable for first open source contributions. For tech support, please prefer contacting the maintainers instead of creating an issue.
 
-Authors
+Project commiters
 -------
 
 Maintainers:
 
-* Luís Bastião (development leader) - [@bastiao](https://github.com/bastiao)
+* Luís Bastião (BMD software - development leader) - [@bastiao](https://github.com/bastiao)
 * Eduardo Pinho - [@Enet4](https://github.com/Enet4)
 
 Contributors:
 
+* Renato Pinho (BMD software)
+* David Campos (BMD software)
 * Eriksson Monteiro
 * Tiago Godinho
 
@@ -184,5 +186,6 @@ Past developers:
 Project leaders
 ---------------
 
-* Carlos Costa
-* José Luis Oliveira
+* Carlos Costa and José Luis Oliveira (scientific)
+* Luís Bastião (BMD software - development)
+
