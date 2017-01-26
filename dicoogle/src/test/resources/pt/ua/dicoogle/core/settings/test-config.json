@@ -52,7 +52,7 @@
     ],
     "storage": {
       "autostart": true,
-      "port": 6666
+      "port": 6777
     },
     "query-retrieve": {
       "autostart": false,

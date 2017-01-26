@@ -44,11 +44,12 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
         s.allowedLocalInterfaces = Collections.singletonList("any");
         s.defaultTS = Arrays.asList();
         s.sopClasses = Arrays.asList();
+        s.moveDestinations = new ArrayList<>();
 
         s.storage = StorageImpl.createDefault();
         s.queryRetrieve = QueryRetrieveImpl.createDefault();
 
-        throw new UnsupportedOperationException("not implemented yet!");
+        return s;
     }
 
     private String aetitle;

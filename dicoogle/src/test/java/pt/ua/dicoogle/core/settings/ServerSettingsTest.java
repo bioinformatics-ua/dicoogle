@@ -27,6 +27,8 @@ import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -83,7 +85,7 @@ public class ServerSettingsTest {
 
         // DICOM Storage settings
         assertTrue(settings.getDicomServicesSettings().getStorageSettings().isAutostart());
-        assertEquals(6666, settings.getDicomServicesSettings().getStorageSettings().getPort());
+        assertEquals(6777, settings.getDicomServicesSettings().getStorageSettings().getPort());
 
         // Web server settings
         ServerSettings.WebServer web = settings.getWebServerSettings();
@@ -104,16 +106,84 @@ public class ServerSettingsTest {
     }
 
     @Test
-    @Ignore("Not implemented yet!")
     public void testDefaultSettings() throws IOException {
-        // TODO test that all default settings are ok
+        // test that all default settings are ok
+
+        // create default settings
+        ServerSettings settings = ServerSettingsImpl.createDefault();
+
+        assertTrue(settings instanceof ServerSettingsImpl);
+
+        // assertions follow
+
+        final ServerSettings.Archive ar = settings.getArchiveSettings();
+        assertEquals(null, ar.getMainDirectory());
+        assertEquals(100, ar.getIndexerEffort());
+        assertEquals("", ar.getWatchDirectory());
+        assertEquals(null, ar.getNodeName());
+
+        assertEquals("DICOOGLE-STORAGE", settings.getDicomServicesSettings().getAETitle());
+
+        // QR settings
+        assertTrue(settings.getDicomServicesSettings().getQueryRetrieveSettings().isAutostart());
+        assertEquals(1045, settings.getDicomServicesSettings().getQueryRetrieveSettings().getPort());
+        assertSameContent(Collections.singleton("any"), settings.getDicomServicesSettings().getAllowedLocalInterfaces());
+        assertSameContent(Collections.singleton("any"), settings.getDicomServicesSettings().getAllowedHostnames());
+        assertEquals(0, settings.getDicomServicesSettings().getQueryRetrieveSettings().getRspDelay());
+        assertEquals(60, settings.getDicomServicesSettings().getQueryRetrieveSettings().getDIMSERspTimeout());
+        assertEquals(60, settings.getDicomServicesSettings().getQueryRetrieveSettings().getIdleTimeout());
+        assertEquals(60, settings.getDicomServicesSettings().getQueryRetrieveSettings().getAcceptTimeout());
+        assertEquals(60, settings.getDicomServicesSettings().getQueryRetrieveSettings().getConnectionTimeout());
+        assertEquals(20, settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxClientAssoc());
+        assertEquals(16364, settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthSend());
+        assertEquals(16364, settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthReceive());
+        assertSameContent(Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.2", "1.2.840.10008.1.2.1"),
+                settings.getDicomServicesSettings().getQueryRetrieveSettings().getTransferCapabilities());
+        assertSameContent(Arrays.asList("1.2.840.10008.5.1.4.1.2.2.1", "1.2.840.10008.5.1.4.1.2.1.1"),
+                settings.getDicomServicesSettings().getQueryRetrieveSettings().getSOPClass());
+
+        // DICOM Storage settings
+        assertTrue(settings.getDicomServicesSettings().getStorageSettings().isAutostart());
+        assertEquals(6666, settings.getDicomServicesSettings().getStorageSettings().getPort());
+
+        // Web server settings
+        ServerSettings.WebServer web = settings.getWebServerSettings();
+        assertTrue(web.isAutostart());
+        assertEquals(8080, web.getPort());
+        assertEquals(null, web.getAllowedOrigins());
+    /*
+        Map<String, String> modalityCFind = new HashMap<>();
+        modalityCFind.put("find", "Study Root Query/Retrieve Info Model");
+        modalityCFind.put("1.2.840.10008.5.1.4.1.2.1.1", "Patient Root Query/Retrieve Info Model");
+        modalityCFind.put("1.2.840.10008.5.1.4.1.2.2.1", "Study Root Query/Retrieve Info Model");
+        assertEquals(modalityCFind, settings.getModalityFind());
+    */
+        assertTrue(settings.getDicomServicesSettings().getMoveDestinations().isEmpty());
     }
 
 
     @Test
-    @Ignore("Not implemented yet!")
     public void testSave() throws IOException {
-        // TODO test that saving is ok
+        Path target = Files.createTempFile("conf", ".json");
+
+        // Create default settings
+        ServerSettings settings = ServerSettingsImpl.createDefault();
+
+        assertTrue(settings instanceof ServerSettingsImpl);
+
+        settings.getArchiveSettings().setNodeName("dicoogle17");
+        settings.getDicomServicesSettings().getStorageSettings().setPort(6767);
+
+        ServerSettingsManager.saveSettingsTo(settings, target);
+
+        // read from file
+
+        settings = ServerSettingsManager.loadSettingsAt(target);
+        assertEquals("dicoogle17", settings.getArchiveSettings().getNodeName());
+        assertEquals(6767, settings.getDicomServicesSettings().getStorageSettings().getPort());
+
+        // clean up
+        Files.delete(target);
     }
 
     private static void assertSameContent(Collection o1, Collection o2) {

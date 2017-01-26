@@ -83,10 +83,12 @@ public class ServerSettingsManager
                 inner = ServerSettingsImpl.createDefault();
             }
         } else {
-
+            // use main configuration file
+            inner = loadSettingsAt(MAIN_CONFIG_PATH);
         }
     }
 
+    /** Save the internal settings. */
     public static void saveSettings() {
         try {
             if (xml != null) {
@@ -95,12 +97,13 @@ public class ServerSettingsManager
                 mapper.writeValue(Files.newOutputStream(MAIN_CONFIG_PATH), inner);
             }
         } catch (Exception ex) {
-            logger.warn("Failed to save server settings", ex);
+            logger.error("Failed to save server settings", ex);
         }
     }
 
     // independent static methods
 
+    /** Load settings in the new format from a URL. */
     public static ServerSettings loadSettingsAt(URL url) throws IOException {
         Objects.requireNonNull(url);
         return mapper.readValue(url.openStream(), ServerSettingsImpl.class);
@@ -118,17 +121,30 @@ public class ServerSettingsManager
         }
     }
 
+    /** Load settings in the new format from a file system path. */
     public static ServerSettings loadSettingsAt(Path path) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(Files.newInputStream(path), ServerSettingsImpl.class);
     }
 
+    /** Load settings in the new format from a file. */
     public static ServerSettings loadSettingsAt(File file) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(new FileInputStream(file), ServerSettingsImpl.class);
     }
 
+    /** Save the given settings to a path in the file system. This method will always
+     * output settings according to the new format.
+     */
     public static void saveSettingsTo(ServerSettings settings, Path path) throws IOException {
+        mapper.writeValue(Files.newOutputStream(path), settings);
+    }
+
+    /** Save the global settings to a path in the file system. The resulting format
+     * depends on whether the loaded configuration file is in the legacy format
+     * or the new one.
+     */
+    public static void saveSettingsTo(Path path) throws IOException {
         if (inner == null) throw new IllegalStateException();
         if (xml != null) {
             xml.printXML(path);
