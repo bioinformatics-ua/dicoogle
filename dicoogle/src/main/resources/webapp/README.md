@@ -56,9 +56,24 @@ $ gulp --tasks
    └── production
 ```
 
-If the webapp shows an error due to the `dicoogle-webcore` package, simply navigate to the webcore package
-(at the base of the project: "./webcore"), and run `npm install` there. Then try building the webapp again.
-
 ## Running as a standalone server
 
+We have included a script for running a static server containing the standalone webapp. If you already have Python installed, simply execute:
+
     ./run_server
+
+## Debugging the webapp
+
+The web application can be tested separately without having it embedded in a jar file. The steps are simple:
+
+1. Start Dicoogle, locally or on a server: `java -jar dicoogle.jar -s`. The jar file does not need to contain the web application in this case. You may also need to change your configuration in the config.xml file, so as to enable cross-origin requests:
+
+```xml
+<server enable="true" port="8080" allowedOrigins="*" />
+```
+
+2. Navigate to the webapp's source code. Define the URL to Dicoogle's base endpoint using the `DICOOGLE_BASE_URL` environment variable, and bundle the source code: `DICOOGLE_BASE_URL=http://localhost:8080 npm run debug`. See the **Building** section above for more scripts.
+
+3. Start a static server on the web application's base folder. If you have Python, the `run_server` script will do.
+
+4. Open your browser and navigate to the static server: http://localhost:9000

@@ -78,19 +78,20 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <includes>
-						<include>webapp/assets/**</include>
-						<include>webapp/bootstrap/css/*.css</include>
-						<include>webapp/bootstrap/fonts/*</include>
-						<include>webapp/fonts/**</include>
-						<include>webapp/css/**</include>
-						<include>webapp/lib/**</include>
-						<include>webapp/index.html</include>
+                    <include>log4j2.xml</include>
+                    <include>webapp/assets/**</include>
+                    <include>webapp/bootstrap/css/*.css</include>
+                    <include>webapp/bootstrap/fonts/*</include>
+                    <include>webapp/fonts/**</include>
+                    <include>webapp/css/**</include>
+                    <include>webapp/lib/**</include>
+                    <include>webapp/index.html</include>
                 </includes>
-   <excludes>
-<exclude>META-INF/*.SF</exclude>
-<exclude>META-INF/*.DSA</exclude>
-<exclude>META-INF/*.RSA</exclude>
-                                     </excludes>
+                <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                </excludes>
             </resource>
            <resource>
                <directory>src/main/resources</directory>
