@@ -60,6 +60,8 @@ public interface ServerSettings extends ServerSettingsReader {
         public void setDIMProviders(List<String> providers);
 
         public void setDefaultStorage(List<String> storages);
+
+        public void setNodeName(String nodeName);
     }
 
     public DicomServices getDicomServicesSettings();

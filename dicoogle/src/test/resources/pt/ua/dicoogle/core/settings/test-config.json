@@ -8,11 +8,12 @@
     "save-thumbnails": true,
     "thumbnail-size": 128,
     "main-directory": "/opt/my-data",
-    "indexer-effort": 100,
+    "indexer-effort": 98,
     "dim-providers": "lucene",
     "default-storage": "filestorage",
     "enable-watch-directory": true,
-    "watch-directory": "/opt/my-data/watched"
+    "watch-directory": "/opt/my-data/watched",
+    "node-name": "dicoogle01"
   },
   "dicom-services": {
     "aetitle": "TEST-STORAGE",

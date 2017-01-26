@@ -55,7 +55,8 @@ public class LegacyServerSettingsTest {
         // assertions follow
         assertEquals("/opt/dicoogle/repository", a.getMainDirectory());
         assertEquals("/tmp", a.getWatchDirectory());
-        assertEquals(100, a.getIndexerEffort());
+        assertEquals(97, a.getIndexerEffort());
+        assertEquals("dicoogle01", a.getNodeName());
 
         assertEquals("TEST-STORAGE", settings.getDicomServicesSettings().getAETitle());
 

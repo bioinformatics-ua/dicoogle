@@ -54,10 +54,14 @@ public class ServerSettingsTest {
         assertTrue(settings instanceof ServerSettingsImpl);
 
         // assertions follow
-        assertEquals("/opt/my-data", settings.getArchiveSettings().getMainDirectory());
-        assertEquals(100, settings.getArchiveSettings().getIndexerEffort());
+
+        final ServerSettings.Archive ar = settings.getArchiveSettings();
+        assertEquals("/opt/my-data", ar.getMainDirectory());
+        assertEquals(98, ar.getIndexerEffort());
+        assertEquals("/opt/my-data/watched", ar.getWatchDirectory());
+        assertEquals("dicoogle01", ar.getNodeName());
+
         assertEquals("TEST-STORAGE", settings.getDicomServicesSettings().getAETitle());
-        assertEquals("/opt/my-data/watched", settings.getArchiveSettings().getWatchDirectory());
 
         // QR settings
         assertFalse(settings.getDicomServicesSettings().getQueryRetrieveSettings().isAutostart());

@@ -110,6 +110,9 @@ public class ArchiveImpl implements ServerSettings.Archive {
     @JsonProperty("main-directory")
     private String mainDirectory;
 
+    @JsonProperty(value = "node-name")
+    private String nodeName;
+
     public boolean getSaveThumbnails() {
         return saveThumbnails;
     }
@@ -164,5 +167,15 @@ public class ArchiveImpl implements ServerSettings.Archive {
 
     public void setWatchDirectory(String watchDirectory) {
         this.watchDirectory = watchDirectory;
+    }
+
+    @Override
+    public String getNodeName() {
+        return nodeName;
+    }
+
+    @Override
+    public void setNodeName(String nodeName) {
+        this.nodeName = nodeName;
     }
 }

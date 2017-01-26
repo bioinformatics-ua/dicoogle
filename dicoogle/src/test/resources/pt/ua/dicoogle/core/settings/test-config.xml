@@ -2,13 +2,19 @@
 <Config>
   <Port>6666</Port>
   <Path>/tmp</Path>
-  <IndexEffort>100</IndexEffort>
+  <IndexEffort>97</IndexEffort>
   <IndexZipFiles>true</IndexZipFiles>
   <GZipStorage>false</GZipStorage>
   <IndexAnonymous>false</IndexAnonymous>
   <MonitorWatcher>false</MonitorWatcher>
   <EncryptUsersFile>true</EncryptUsersFile>
   <WANModeEnabled>false</WANModeEnabled>
+  <P2P>
+    <Node>
+      <name>dicoogle01</name>
+      <defined>true</defined>
+    </Node>
+  </P2P>
   <Storage>false</Storage>
   <DicoogleDir>/opt/dicoogle/repository</DicoogleDir>
   <fullContentIndex>false</fullContentIndex>
@@ -34,7 +40,7 @@
     <TS>1.2.840.10008.1.2.4.80</TS>
     <TS>1.2.840.10008.1.2.4.50</TS>
   </Service>
-  <LocalAETName>Dicoogle</LocalAETName>
+  <LocalAETName>DicoogleT</LocalAETName>
   <QueryRetrieve>
     <DeviceDescription>Dicoogle - Server SCP</DeviceDescription>
     <QREnable>false</QREnable>

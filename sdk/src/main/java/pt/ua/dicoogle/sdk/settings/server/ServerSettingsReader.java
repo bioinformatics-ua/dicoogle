@@ -58,6 +58,7 @@ public interface ServerSettingsReader {
         public String getWatchDirectory();
         public List<String> getDIMProviders();
         public List<String> getDefaultStorage();
+        public String getNodeName();
     }
 
     public DicomServices getDicomServicesSettings();
