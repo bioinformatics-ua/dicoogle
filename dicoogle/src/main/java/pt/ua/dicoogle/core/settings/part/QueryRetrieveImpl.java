@@ -20,13 +20,13 @@ package pt.ua.dicoogle.core.settings.part;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import org.dcm4che2.data.UID;
-import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Eduardo Pinho <eduardopinho@ua.pt>
@@ -35,7 +35,9 @@ import java.util.List;
         getterVisibility = JsonAutoDetect.Visibility.NONE,
         setterVisibility = JsonAutoDetect.Visibility.NONE)
 public class QueryRetrieveImpl implements ServerSettings.DicomServices.QueryRetrieve {
+    @JacksonXmlProperty(isAttribute = true)
     private boolean autostart;
+    @JacksonXmlProperty(isAttribute = true)
     private int port;
 
     public QueryRetrieveImpl() {}
@@ -74,10 +76,12 @@ public class QueryRetrieveImpl implements ServerSettings.DicomServices.QueryRetr
     @JsonProperty("connection-timeout")
     private int connectionTimeout;
 
-    @JsonProperty("transfer-capabilities")
+    @JacksonXmlElementWrapper(useWrapping = false, localName = "transfer-capabilities")
+    @JacksonXmlProperty(localName = "transfer-capabilities")
     private Collection<String> transferCapabilities;
 
-    @JsonProperty("sop-classes")
+    @JacksonXmlElementWrapper(useWrapping = false, localName = "sop-class")
+    @JacksonXmlProperty(localName = "sop-class")
     private Collection<String> sopClasses;
 
     @JsonProperty("max-client-assocs")

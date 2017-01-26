@@ -20,6 +20,7 @@ package pt.ua.dicoogle.core.settings;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -43,7 +44,7 @@ public class ServerSettingsManager
 {
     private static final Logger logger = LoggerFactory.getLogger(ServerSettingsManager.class);
 
-    private static final Path MAIN_CONFIG_PATH = Paths.get(Platform.homePath(), "config.json");
+    private static final Path MAIN_CONFIG_PATH = Paths.get(Platform.homePath(), "config-new.xml");
     private static final Path LEGACY_CONFIG_PATH = Paths.get(Platform.homePath(), "config.xml");
 
     private ServerSettingsManager() {}
@@ -54,8 +55,12 @@ public class ServerSettingsManager
 
     static {
         // configure object mapper
-        mapper = new ObjectMapper();
+        mapper = createObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
+    }
+
+    private static ObjectMapper createObjectMapper() {
+        return new XmlMapper();
     }
 
     /** Retrieve the managed server settings instance. Must be called only after explicit initialization with
@@ -123,13 +128,13 @@ public class ServerSettingsManager
 
     /** Load settings in the new format from a file system path. */
     public static ServerSettings loadSettingsAt(Path path) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = createObjectMapper();
         return mapper.readValue(Files.newInputStream(path), ServerSettingsImpl.class);
     }
 
     /** Load settings in the new format from a file. */
     public static ServerSettings loadSettingsAt(File file) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = createObjectMapper();
         return mapper.readValue(new FileInputStream(file), ServerSettingsImpl.class);
     }
 

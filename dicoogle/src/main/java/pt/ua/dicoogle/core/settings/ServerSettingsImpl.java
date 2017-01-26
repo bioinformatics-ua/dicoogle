@@ -19,20 +19,20 @@
 package pt.ua.dicoogle.core.settings;
 
 
-import com.fasterxml.jackson.annotation.*;
-
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import pt.ua.dicoogle.core.settings.part.ArchiveImpl;
 import pt.ua.dicoogle.core.settings.part.DicomServicesImpl;
 import pt.ua.dicoogle.core.settings.part.WebServerImpl;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
-import java.util.*;
+import java.util.Objects;
 
 /**
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE)
-//@JsonIgnoreProperties(ignoreUnknown = true)
 public class ServerSettingsImpl implements ServerSettings {
 
     public ServerSettingsImpl() {

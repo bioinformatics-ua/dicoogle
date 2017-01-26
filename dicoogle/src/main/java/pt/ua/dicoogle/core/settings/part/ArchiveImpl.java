@@ -21,6 +21,7 @@ package pt.ua.dicoogle.core.settings.part;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
 import java.util.ArrayList;
@@ -66,7 +67,9 @@ public class ArchiveImpl implements ServerSettings.Archive {
 
     @JsonSetter("dim-providers")
     protected void setDIMProviders_(Object o) {
-        if (o instanceof Collection) {
+        if (o == null) {
+            this.defaultStorage = Collections.EMPTY_LIST;
+        } else if (o instanceof Collection) {
             this.defaultStorage = new ArrayList<>();
             for (Object e : (Collection) o) {
                 this.defaultStorage.add(e.toString());
@@ -76,7 +79,7 @@ public class ArchiveImpl implements ServerSettings.Archive {
         }
     }
 
-    @JsonProperty("default-storage")
+    @JacksonXmlElementWrapper(useWrapping = false, localName = "default-storage")
     private List<String> defaultStorage;
 
     @JsonSetter("default-storage")

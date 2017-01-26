@@ -19,6 +19,7 @@
 package pt.ua.dicoogle.core.settings.part;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
 /**
@@ -29,7 +30,9 @@ import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
         getterVisibility = JsonAutoDetect.Visibility.PUBLIC_ONLY,
         setterVisibility = JsonAutoDetect.Visibility.PUBLIC_ONLY)
 public class StorageImpl implements ServerSettings.ServiceBase {
+    @JacksonXmlProperty(isAttribute = true)
     private boolean autostart;
+    @JacksonXmlProperty(isAttribute = true)
     private int port;
 
     public StorageImpl() {}

@@ -20,6 +20,7 @@ package pt.ua.dicoogle.sdk.datastructs;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -27,6 +28,7 @@ import java.util.Collections;
 /**
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
+@JsonRootName("sop-class")
 public final class SOPClass {
 
     @JsonProperty("uid")
@@ -35,8 +37,7 @@ public final class SOPClass {
     @JsonProperty("ts")
     private final Collection<String> ts;
 
-    @JsonCreator
-    public SOPClass(@JsonProperty("uid") String uid) {
+    public SOPClass(String uid) {
         this.uid = uid;
         this.ts = Collections.EMPTY_LIST;
     }

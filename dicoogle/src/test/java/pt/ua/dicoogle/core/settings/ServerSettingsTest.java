@@ -45,7 +45,7 @@ public class ServerSettingsTest {
 
     @Before
     public void init() {
-        this.testConfig = this.getClass().getResource("test-config.json");
+        this.testConfig = this.getClass().getResource("test-config-new.xml");
     }
 
     @Test

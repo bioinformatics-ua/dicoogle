@@ -18,10 +18,9 @@
  */
 package pt.ua.dicoogle.core.settings.part;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.sdk.datastructs.SOPClass;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
@@ -69,7 +68,8 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
         }
     }
 
-    @JsonProperty("allowed-aetitles")
+    @JacksonXmlElementWrapper(useWrapping = false, localName = "allowed-aetitles")
+    @JacksonXmlProperty(localName = "allowed-aetitles")
     private Collection<String> allowedAETitles;
 
     @JsonSetter("allowed-local-interfaces")
@@ -84,7 +84,8 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
         }
     }
 
-    @JsonProperty("priority-aetitles")
+    @JacksonXmlElementWrapper(useWrapping = false, localName = "priority-aetitles")
+    @JacksonXmlProperty(localName = "priority-aetitles")
     private Collection<String> priorityAETitles;
 
     @JsonProperty("allowed-local-interfaces")
@@ -108,13 +109,15 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
     @JsonIgnore
     private Collection<String> defaultTS;
 
-    @JsonProperty("sop-classes")
+    @JacksonXmlElementWrapper(localName = "sop-class")
     private List<SOPClass> sopClasses;
 
     @JsonSetter("sop-classes")
     private void setSOPClasses_(Collection<?> col) {
         this.defaultTS = null;
         this.sopClasses = new ArrayList<>();
+
+        if (col == null) return;
 
         for (Object o : col) {
             if (o instanceof SOPClass) {
@@ -141,9 +144,10 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
         }
     }
 
-    @JsonProperty("move-destinations")
+    @JacksonXmlElementWrapper(localName = "move-destinations")
     private List<MoveDestination> moveDestinations;
 
+    @JsonProperty("storage")
     private StorageImpl storage;
 
     @JsonProperty("query-retrieve")
@@ -214,6 +218,7 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
     }
 
     @Override
+    @JsonGetter("sop-classes")
     public Collection<SOPClass> getSOPClasses() {
         return sopClasses;
     }
@@ -224,13 +229,19 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
     }
 
     @Override
+    @JsonGetter("move-destinations")
     public List<MoveDestination> getMoveDestinations() {
         return Collections.unmodifiableList(moveDestinations);
     }
 
     @Override
+    @JsonSetter("move-destinations")
     public void setMoveDestinations(List<MoveDestination> moveDestinations) {
-        this.moveDestinations = new ArrayList<>(moveDestinations);
+        if (moveDestinations == null) {
+            this.moveDestinations = new ArrayList<>();
+        } else {
+            this.moveDestinations = new ArrayList<>(moveDestinations);
+        }
     }
 
     public StorageImpl getStorageSettings() {
