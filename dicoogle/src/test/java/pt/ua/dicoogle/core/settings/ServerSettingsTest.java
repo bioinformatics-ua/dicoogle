@@ -42,10 +42,12 @@ import static org.junit.Assert.*;
 public class ServerSettingsTest {
 
     private URL testConfig;
+    private URL legacyConfig;
 
     @Before
     public void init() {
         this.testConfig = this.getClass().getResource("test-config-new.xml");
+        this.legacyConfig = this.getClass().getResource("test-config.xml");
     }
 
     @Test
@@ -164,7 +166,7 @@ public class ServerSettingsTest {
 
     @Test
     public void testSave() throws IOException {
-        Path target = Files.createTempFile("conf", ".json");
+        Path target = Files.createTempFile("conf", ".xml");
 
         // Create default settings
         ServerSettings settings = ServerSettingsImpl.createDefault();
@@ -184,6 +186,58 @@ public class ServerSettingsTest {
 
         // clean up
         Files.delete(target);
+    }
+
+    @Test
+    public void testMigrate() throws IOException {
+        Path newconf = Files.createTempFile("conf", ".xml");
+
+        // load legacy server settings
+        ServerSettings settings = ServerSettingsManager.loadLegacySettingsAt(this.legacyConfig);
+        assertTrue(settings instanceof LegacyServerSettings);
+
+        // save as new
+        ServerSettingsManager.saveSettingsTo(settings, newconf);
+
+        // check new file
+        settings = ServerSettingsManager.loadSettingsAt(newconf);
+        assertTrue(settings instanceof ServerSettingsImpl);
+        ServerSettings.Archive a = settings.getArchiveSettings();
+
+        // assertions follow
+        assertEquals("/opt/dicoogle/repository", a.getMainDirectory());
+        assertEquals("/tmp", a.getWatchDirectory());
+        assertEquals(97, a.getIndexerEffort());
+        assertEquals("dicoogle-old", a.getNodeName());
+
+        assertEquals("TEST-STORAGE", settings.getDicomServicesSettings().getAETitle());
+
+        // QR settings
+        assertEquals(106, settings.getDicomServicesSettings().getQueryRetrieveSettings().getPort());
+        assertSameContent(Collections.singleton("any"), settings.getDicomServicesSettings().getAllowedLocalInterfaces());
+        assertSameContent(Collections.singleton("any"), settings.getDicomServicesSettings().getAllowedHostnames());
+        assertEquals(3, settings.getDicomServicesSettings().getQueryRetrieveSettings().getRspDelay());
+        assertEquals(50, settings.getDicomServicesSettings().getQueryRetrieveSettings().getDIMSERspTimeout());
+        assertEquals(50, settings.getDicomServicesSettings().getQueryRetrieveSettings().getIdleTimeout());
+        assertEquals(50, settings.getDicomServicesSettings().getQueryRetrieveSettings().getAcceptTimeout());
+        assertEquals(50, settings.getDicomServicesSettings().getQueryRetrieveSettings().getConnectionTimeout());
+        //assertEquals("1.2.840.10008.5.1.4.1.2.1.1", settings.getSOPClasses());
+        assertEquals(22, settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxClientAssoc());
+        assertEquals(16360, settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthSend());
+        assertEquals(16360, settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthReceive());
+
+        // DICOM Storage settings
+        assertFalse(settings.getDicomServicesSettings().getStorageSettings().isAutostart());
+        assertEquals(6666, settings.getDicomServicesSettings().getStorageSettings().getPort());
+
+        // Web server settings
+        ServerSettings.WebServer web = settings.getWebServerSettings();
+        assertTrue(web.isAutostart());
+        assertEquals(8484, web.getPort());
+        assertEquals("test.dicoogle.com", web.getAllowedOrigins());
+
+        // clean up
+        Files.delete(newconf);
     }
 
     private static void assertSameContent(Collection o1, Collection o2) {

@@ -62,10 +62,10 @@ public class ArchiveImpl implements ServerSettings.Archive {
     @JsonProperty("indexer-effort")
     private int indexerEffort;
 
-    @JsonProperty("dim-providers")
+    @JsonProperty("dim-provider")
     private List<String> dimProviders;
 
-    @JsonSetter("dim-providers")
+    @JsonSetter("dim-provider")
     protected void setDIMProviders_(Object o) {
         if (o == null) {
             this.defaultStorage = Collections.EMPTY_LIST;
@@ -84,7 +84,9 @@ public class ArchiveImpl implements ServerSettings.Archive {
 
     @JsonSetter("default-storage")
     protected void setDefaultStorage_(Object o) {
-        if (o instanceof Collection) {
+        if (o == null) {
+            this.defaultStorage = Collections.EMPTY_LIST;
+        } else if (o instanceof Collection) {
             this.defaultStorage = new ArrayList<>();
             for (Object e : (Collection) o) {
                 this.defaultStorage.add(e.toString());

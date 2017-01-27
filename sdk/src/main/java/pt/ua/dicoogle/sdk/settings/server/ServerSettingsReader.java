@@ -19,6 +19,9 @@
 
 package pt.ua.dicoogle.sdk.settings.server;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.sdk.datastructs.SOPClass;
 
@@ -34,76 +37,124 @@ import java.util.List;
  */
 public interface ServerSettingsReader {
 
-    public interface ServiceBase {
-        public boolean isAutostart();
+    interface ServiceBase {
+        @JacksonXmlProperty(isAttribute = true, localName = "autostart")
+        boolean isAutostart();
 
-        public int getPort();
+        @JacksonXmlProperty(isAttribute = true, localName = "port")
+        int getPort();
     }
 
-    public interface WebServer extends ServiceBase {
+    interface WebServer extends ServiceBase {
 
-        public String getAllowedOrigins();
-
+        @JsonGetter("allowed-origins")
+        String getAllowedOrigins();
     }
-    public WebServer getWebServerSettings();
+    @JsonGetter("web-server")
+    WebServer getWebServerSettings();
 
-    public Archive getArchiveSettings();
-    public interface Archive {
+    interface Archive {
 
-        public boolean getSaveThumbnails();
-        public int getThumbnailSize();
-        public int getIndexerEffort();
-        public String getMainDirectory();
-        public boolean isDirectoryWatcherEnabled();
-        public String getWatchDirectory();
-        public List<String> getDIMProviders();
-        public List<String> getDefaultStorage();
-        public String getNodeName();
+        @JsonGetter("save-thumbnails")
+        boolean getSaveThumbnails();
+
+        @JsonGetter("thumbnail-size")
+        int getThumbnailSize();
+
+        @JsonGetter("indexer-effort")
+        int getIndexerEffort();
+
+        @JsonGetter("main-directory")
+        String getMainDirectory();
+
+        @JsonGetter("enable-watch-directory")
+        boolean isDirectoryWatcherEnabled();
+
+        @JsonGetter("watch-directory")
+        String getWatchDirectory();
+
+        @JsonGetter("dim-provider")
+        List<String> getDIMProviders();
+
+        @JsonGetter("default-storage")
+        List<String> getDefaultStorage();
+
+        @JsonGetter("node-name")
+        String getNodeName();
     }
+    @JsonGetter("archive")
+    Archive getArchiveSettings();
 
-    public DicomServices getDicomServicesSettings();
-    public interface DicomServices {
+    interface DicomServices {
 
-        public String getAETitle();
+        @JsonGetter("aetitle")
+        String getAETitle();
 
-        public String getDeviceDescription();
+        @JsonGetter("device-description")
+        String getDeviceDescription();
 
-        public Collection<String> getAllowedAETitles();
+        @JacksonXmlElementWrapper(useWrapping = false, localName = "allowed-aetitles")
+        @JsonGetter("allowed-aetitles")
+        Collection<String> getAllowedAETitles();
 
-        public Collection<String> getPriorityAETitles();
+        @JacksonXmlElementWrapper(useWrapping = false, localName = "priority-aetitles")
+        @JsonGetter("priority-aetitles")
+        Collection<String> getPriorityAETitles();
 
-        public Collection<String> getAllowedLocalInterfaces();
+        @JacksonXmlElementWrapper(useWrapping = false, localName = "allowed-local-interfaces")
+        @JsonGetter("allowed-local-interfaces")
+        Collection<String> getAllowedLocalInterfaces();
 
-        public Collection<String> getAllowedHostnames();
+        @JacksonXmlElementWrapper(useWrapping = false, localName = "allowed-hostnames")
+        @JsonGetter("allowed-hostnames")
+        Collection<String> getAllowedHostnames();
 
-        public Collection<SOPClass> getSOPClasses();
+        @JsonGetter("sop-classes")
+        Collection<SOPClass> getSOPClasses();
 
-        public List<MoveDestination> getMoveDestinations();
+        @JsonGetter("move-destinations")
+        List<MoveDestination> getMoveDestinations();
 
-        public ServiceBase getStorageSettings();
+        @JsonGetter("storage")
+        ServiceBase getStorageSettings();
 
-        public interface QueryRetrieve extends ServiceBase {
-            public Collection<String> getSOPClass();
+        interface QueryRetrieve extends ServiceBase {
+            @JacksonXmlElementWrapper(useWrapping = false, localName = "sop-class")
+            @JacksonXmlProperty(localName = "sop-class")
+            Collection<String> getSOPClass();
 
-            public Collection<String> getTransferCapabilities();
+            @JacksonXmlElementWrapper(useWrapping = false, localName = "transfer-capabilities")
+            @JacksonXmlProperty(localName = "transfer-capabilities")
+            Collection<String> getTransferCapabilities();
 
-            public int getRspDelay();
+            @JsonGetter("rsp-delay")
+            int getRspDelay();
 
-            public int getIdleTimeout();
+            @JsonGetter("idle-timeout")
+            int getIdleTimeout();
 
-            public int getAcceptTimeout();
+            @JsonGetter("accept-timeout")
+            int getAcceptTimeout();
 
-            public int getConnectionTimeout();
+            @JsonGetter("connection-timeout")
+            int getConnectionTimeout();
 
-            public int getDIMSERspTimeout();
+            @JsonGetter("dimse-rsp-timeout")
+            int getDIMSERspTimeout();
 
-            public int getMaxClientAssoc();
+            @JsonGetter("max-client-assocs")
+            int getMaxClientAssoc();
 
-            public int getMaxPDULengthReceive();
+            @JsonGetter("max-pdu-length-receive")
+            int getMaxPDULengthReceive();
 
-            public int getMaxPDULengthSend();
+            @JsonGetter("max-pdu-length-send")
+            int getMaxPDULengthSend();
         }
-        public QueryRetrieve getQueryRetrieveSettings();
+        @JsonGetter("query-retrieve")
+        QueryRetrieve getQueryRetrieveSettings();
     }
+    @JsonGetter("dicom-services")
+    DicomServices getDicomServicesSettings();
 }
 

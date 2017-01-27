@@ -18,7 +18,10 @@
  */
 package pt.ua.dicoogle.core.settings;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.slf4j.Logger;
@@ -28,9 +31,7 @@ import pt.ua.dicoogle.core.XMLSupport;
 import pt.ua.dicoogle.sdk.Utils.Platform;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -93,13 +94,17 @@ public class ServerSettingsManager
         }
     }
 
-    /** Save the internal settings. */
+    /** Save the internal settings. The resulting format depends on whether
+     * the loaded configuration file is in the legacy format or the new one.
+     */
     public static void saveSettings() {
         try {
             if (xml != null) {
                 xml.printXML();
             } else {
-                mapper.writeValue(Files.newOutputStream(MAIN_CONFIG_PATH), inner);
+                try (OutputStream ostream = Files.newOutputStream(MAIN_CONFIG_PATH)) {
+                    mapper.writeValue(ostream, inner);
+                }
             }
         } catch (Exception ex) {
             logger.error("Failed to save server settings", ex);
@@ -111,7 +116,9 @@ public class ServerSettingsManager
     /** Load settings in the new format from a URL. */
     public static ServerSettings loadSettingsAt(URL url) throws IOException {
         Objects.requireNonNull(url);
-        return mapper.readValue(url.openStream(), ServerSettingsImpl.class);
+        try (InputStream istream = url.openStream()) {
+            return mapper.readValue(istream, ServerSettingsImpl.class);
+        }
     }
 
     public static ServerSettings loadLegacySettings() {
@@ -129,20 +136,26 @@ public class ServerSettingsManager
     /** Load settings in the new format from a file system path. */
     public static ServerSettings loadSettingsAt(Path path) throws IOException {
         ObjectMapper mapper = createObjectMapper();
-        return mapper.readValue(Files.newInputStream(path), ServerSettingsImpl.class);
+        try (InputStream istream = Files.newInputStream(path)) {
+            return mapper.readValue(istream, ServerSettingsImpl.class);
+        }
     }
 
     /** Load settings in the new format from a file. */
     public static ServerSettings loadSettingsAt(File file) throws IOException {
         ObjectMapper mapper = createObjectMapper();
-        return mapper.readValue(new FileInputStream(file), ServerSettingsImpl.class);
+        try (InputStream istream = new FileInputStream(file)) {
+            return mapper.readValue(istream, ServerSettingsImpl.class);
+        }
     }
 
     /** Save the given settings to a path in the file system. This method will always
      * output settings according to the new format.
      */
     public static void saveSettingsTo(ServerSettings settings, Path path) throws IOException {
-        mapper.writeValue(Files.newOutputStream(path), settings);
+        try (OutputStream ostream = Files.newOutputStream(path)) {
+            mapper.writeValue(ostream, settings);
+        }
     }
 
     /** Save the global settings to a path in the file system. The resulting format
@@ -154,7 +167,7 @@ public class ServerSettingsManager
         if (xml != null) {
             xml.printXML(path);
         } else {
-            mapper.writeValue(Files.newOutputStream(path), inner);
+            saveSettingsTo(inner, path);
         }
     }
 

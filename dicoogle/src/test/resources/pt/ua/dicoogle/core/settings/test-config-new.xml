@@ -1,7 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <config>
-    <web-server>
-        <autostart>true</autostart>
-        <port>8282</port>
+    <web-server autostart="true" port="8282">
         <allowed-origins>test.dicoogle.com</allowed-origins>
     </web-server>
     <archive>
@@ -9,7 +8,7 @@
         <thumbnail-size>128</thumbnail-size>
         <main-directory>/opt/my-data</main-directory>
         <indexer-effort>98</indexer-effort>
-        <dim-providers>lucene</dim-providers>
+        <dim-provider>lucene</dim-provider>
         <default-storage>filestorage</default-storage>
         <enable-watch-directory>true</enable-watch-directory>
         <watch-directory>/opt/my-data/watched</watch-directory>

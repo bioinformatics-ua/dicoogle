@@ -18,6 +18,11 @@
  */
 package pt.ua.dicoogle.core.settings;
 
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.dcm4che2.data.UID;
 import org.slf4j.LoggerFactory;
@@ -25,9 +30,11 @@ import pt.ua.dicoogle.core.XMLSupport;
 import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.sdk.datastructs.SOPClass;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettingsReader;
 import pt.ua.dicoogle.server.SOPList;
 import pt.ua.dicoogle.server.web.utils.types.DataTable;
 
+import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -43,7 +50,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  * @see XMLSupport
  */
-public class LegacyServerSettings implements ServerSettings, ServerSettings.Archive, ServerSettings.DicomServices
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        fieldVisibility = JsonAutoDetect.Visibility.NONE,
+        creatorVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonRootName("config")
+public class LegacyServerSettings implements ServerSettings
 {
     private String AETitle;
 
@@ -286,7 +299,6 @@ public class LegacyServerSettings implements ServerSettings, ServerSettings.Arch
     /**
      * @return the indexerEffort
      */
-    @Override
     public int getIndexerEffort() {
         return indexerEffort;
     }
@@ -330,12 +342,10 @@ public class LegacyServerSettings implements ServerSettings, ServerSettings.Arch
         this.RGUIExternalIP = RGUIExternalIP;
     }
 
-    @Override
     public boolean isDirectoryWatcherEnabled() {
         return monitorWatcher;
     }
 
-    @Override
     public void setDirectoryWatcherEnabled(boolean monitorWatcher) {
         this.monitorWatcher = monitorWatcher;
     }
@@ -363,15 +373,16 @@ public class LegacyServerSettings implements ServerSettings, ServerSettings.Arch
     /**
      * Web (including web server, webservices, etc)
      */
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
     public class Web implements ServerSettings.WebServer
     {
         private boolean webServer = true;
         private int serverPort = 8080;
         private String accessControlAllowOrigins = "*";
 
-        @Deprecated
+        @Deprecated @JsonIgnore
         private boolean webServices = false;
-        @Deprecated
+        @Deprecated @JsonIgnore
         private int servicePort = 6060;
 
         public Web() {
@@ -440,6 +451,7 @@ public class LegacyServerSettings implements ServerSettings, ServerSettings.Arch
         }
     }
 
+    @JsonProperty("web-server")
     private Web web = new Web();
 
 	private boolean wanmode;
@@ -505,13 +517,11 @@ public class LegacyServerSettings implements ServerSettings, ServerSettings.Arch
         setEncryptUsersFile(false);
     }
 
-    @Override
     public void setAETitle(String AE)
     {
         AETitle = AE;
     }
 
-    @Override
     public String getAETitle()
     {
         return AETitle;
@@ -527,13 +537,11 @@ public class LegacyServerSettings implements ServerSettings, ServerSettings.Arch
         return ID;
     }
 
-    @Override
     public void setAllowedAETitles(Collection<String> CAET)
     {
         CAETitle = CAET.toArray(CAETitle);
     }
 
-    @Override
     public List<String> getAllowedAETitles() {
         return Arrays.asList(this.CAETitle);
     }
@@ -561,7 +569,6 @@ public class LegacyServerSettings implements ServerSettings, ServerSettings.Arch
         Path = p;
     }
 
-    @Override
     public String getWatchDirectory()
     {
         return Path;
@@ -594,9 +601,8 @@ public class LegacyServerSettings implements ServerSettings, ServerSettings.Arch
         this.dicoogleDir = directory;
     }
 
-    @Override
-    public void setWatchDirectory(String dicoogleDir) {
-        this.dicoogleDir = dicoogleDir;
+    public void setWatchDirectory(String watchDirectory) {
+        this.Path = watchDirectory;
     }
 
     public boolean getFullContentIndex() {
@@ -607,22 +613,18 @@ public class LegacyServerSettings implements ServerSettings, ServerSettings.Arch
         this.fullContentIndex = fullContentIndex;
     }
 
-    @Override
     public boolean getSaveThumbnails() {
         return saveThumbnails;
     }
 
-    @Override
     public void setSaveThumbnails(boolean saveThumbnails) {
         this.saveThumbnails = saveThumbnails;
     }
     
-    @Override
     public int getThumbnailSize() {
         return thumbnailsMatrix;
     }
 
-    @Override
     public void setThumbnailSize(int thumbnailsMatrix) {
         this.thumbnailsMatrix = thumbnailsMatrix;
     }
@@ -697,7 +699,6 @@ public class LegacyServerSettings implements ServerSettings, ServerSettings.Arch
                 + " in legacy configuration file \"config.xml\". Please upgrade your server to use the latest format.");
     }
 
-    @Override
     public List<SOPClass> getSOPClasses()
     {
         return SOPList.getInstance().asSOPClassList();
@@ -775,12 +776,10 @@ public class LegacyServerSettings implements ServerSettings, ServerSettings.Arch
         this.permitedLocalInterfaces  = localInterfaces; 
     }
 
-    @Override
     public void setAllowedLocalInterfaces(Collection<String> localInterfaces) {
         this.permitedLocalInterfaces = StringUtils.join(localInterfaces, '|');
     }
 
-    @Override
     public List<String> getAllowedLocalInterfaces()
     {
         return Arrays.asList(this.permitedLocalInterfaces.split("\\|"));
@@ -791,12 +790,10 @@ public class LegacyServerSettings implements ServerSettings, ServerSettings.Arch
         this.permitedRemoteHostnames = remoteHostnames; 
     }
 
-    @Override
     public void setAllowedHostnames(Collection<String> hostnames) {
         this.permitedRemoteHostnames = StringUtils.join(hostnames, '|');
     }
 
-    @Override
     public List<String> getAllowedHostnames()
     {
         return Arrays.asList(this.permitedRemoteHostnames.split("\\|"));
@@ -819,13 +816,11 @@ public class LegacyServerSettings implements ServerSettings, ServerSettings.Arch
         return queryRetrieve;
     }
 
-    @Override
     public void addMoveDestination(MoveDestination m)
     {
         this.dest.add(m);
     }
 
-    @Override
     public boolean removeMoveDestination(String AETitle)
     {
         boolean removed = false;
@@ -846,18 +841,15 @@ public class LegacyServerSettings implements ServerSettings, ServerSettings.Arch
         return this.dest.contains(m);
     }
 
-    @Override
     public ArrayList<MoveDestination> getMoveDestinations()
     {
         return this.dest ;
     }
 
-    @Override
     public Set<String> getPriorityAETitles() {
         return priorityAETitles;
     }
 
-    @Override
     public void setPriorityAETitles(Collection<String> aeTitles) {
         this.priorityAETitles = new HashSet<>(aeTitles);
     }
@@ -871,7 +863,6 @@ public class LegacyServerSettings implements ServerSettings, ServerSettings.Arch
         this.priorityAETitles.remove(aet);
     }
 
-    @Override
     public void setMoveDestinations(List<MoveDestination> moves)
     {
         if(moves != null) {
@@ -1266,23 +1257,232 @@ public class LegacyServerSettings implements ServerSettings, ServerSettings.Arch
 
 	// --------- additional fields methods for compatibility with main API (will not persist though) -----------
 
-    @Override
-    public Archive getArchiveSettings() {
-        return this;
+    @JsonAutoDetect(isGetterVisibility = JsonAutoDetect.Visibility.ANY,
+    getterVisibility = JsonAutoDetect.Visibility.ANY,
+    setterVisibility = JsonAutoDetect.Visibility.ANY)
+    protected class StubArchive implements Archive {
+        @Override
+        public void setSaveThumbnails(boolean saveThumbnails) {
+            LegacyServerSettings.this.setSaveThumbnails(saveThumbnails);
+        }
+
+        @Override
+        public void setThumbnailSize(int thumbnailSize) {
+            LegacyServerSettings.this.setThumbnailSize(thumbnailSize);
+        }
+
+        @Override
+        public void setMainDirectory(String directory) {
+            LegacyServerSettings.this.setMainDirectory(directory);
+        }
+
+        @Override
+        public void setIndexerEffort(int effort) {
+            LegacyServerSettings.this.setIndexerEffort(effort);
+        }
+
+        @Override
+        public void setWatchDirectory(String dir) {
+            LegacyServerSettings.this.setWatchDirectory(dir);
+        }
+
+        @Override
+        public void setDirectoryWatcherEnabled(boolean watch) {
+            LegacyServerSettings.this.setDirectoryWatcherEnabled(watch);
+        }
+
+        @Override
+        public void setDIMProviders(List<String> providers) {
+            LegacyServerSettings.this.setDIMProviders(providers);
+        }
+
+        @Override
+        public void setDefaultStorage(List<String> storages) {
+            LegacyServerSettings.this.setDefaultStorage(storages);
+        }
+
+        @Override
+        public void setNodeName(String nodeName) {
+            LegacyServerSettings.this.setNodeName(nodeName);
+        }
+
+        @JsonGetter("save-thumbnails")
+        @Override
+        public boolean getSaveThumbnails() {
+            return LegacyServerSettings.this.getSaveThumbnails();
+        }
+
+        @JsonGetter("thumbnail-size")
+        @Override
+        public int getThumbnailSize() {
+            return LegacyServerSettings.this.getThumbnailSize();
+        }
+
+        @JsonGetter("indexer-effort")
+        @Override
+        public int getIndexerEffort() {
+            return LegacyServerSettings.this.getIndexerEffort();
+        }
+
+        @JsonGetter("main-directory")
+        @Override
+        public String getMainDirectory() {
+            return LegacyServerSettings.this.getMainDirectory();
+        }
+
+        @JsonGetter("enable-watch-directory")
+        @Override
+        public boolean isDirectoryWatcherEnabled() {
+            return LegacyServerSettings.this.isDirectoryWatcherEnabled();
+        }
+
+        @JsonGetter("watch-directory")
+        @Override
+        public String getWatchDirectory() {
+            return LegacyServerSettings.this.getWatchDirectory();
+        }
+
+        @JsonGetter("dim-provider")
+        @Override
+        public List<String> getDIMProviders() {
+            return LegacyServerSettings.this.getDIMProviders();
+        }
+
+        @JsonGetter("default-storage")
+        @Override
+        public List<String> getDefaultStorage() {
+            return LegacyServerSettings.this.getDefaultStorage();
+        }
+
+        @JsonGetter("node-name")
+        @Override
+        public String getNodeName() {
+            return LegacyServerSettings.this.getNodeName();
+        }
     }
 
+    @JsonGetter("archive")
+    @Override
+    public Archive getArchiveSettings() {
+        return new StubArchive();
+    }
+
+    @JsonAutoDetect(isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+            getterVisibility = JsonAutoDetect.Visibility.NONE,
+            setterVisibility = JsonAutoDetect.Visibility.NONE)
+    protected class StubDicomServices implements DicomServices {
+        @Override
+        public void setAETitle(String aetitle) {
+            LegacyServerSettings.this.setAETitle(aetitle);
+        }
+
+        @Override
+        public void setDeviceDescription(String description) {
+            LegacyServerSettings.this.setDeviceDescription(description);
+        }
+
+        @Override
+        public void setAllowedAETitles(Collection<String> AETitles) {
+            LegacyServerSettings.this.setAllowedAETitles(AETitles);
+        }
+
+        @Override
+        public void setPriorityAETitles(Collection<String> AETitles) {
+            LegacyServerSettings.this.setPriorityAETitles(AETitles);
+        }
+
+        @Override
+        public void setMoveDestinations(List<MoveDestination> destinations) {
+            LegacyServerSettings.this.setMoveDestinations(destinations);
+        }
+
+        @Override
+        public void addMoveDestination(MoveDestination destination) {
+            LegacyServerSettings.this.addMoveDestination(destination);
+        }
+
+        @Override
+        public boolean removeMoveDestination(String aetitle) {
+            return LegacyServerSettings.this.removeMoveDestination(aetitle);
+        }
+
+        @Override
+        public void setAllowedLocalInterfaces(Collection<String> localInterfaces) {
+            LegacyServerSettings.this.setAllowedLocalInterfaces(localInterfaces);
+        }
+
+        @Override
+        public void setAllowedHostnames(Collection<String> hostnames) {
+            LegacyServerSettings.this.setAllowedHostnames(hostnames);
+        }
+
+        @Override
+        public void setSOPClasses(Collection<SOPClass> sopClasses) {
+            LegacyServerSettings.this.setSOPClasses(sopClasses);
+        }
+
+        @Override
+        public ServiceBase getStorageSettings() {
+            return LegacyServerSettings.this.getStorageSettings();
+        }
+
+        @Override
+        public QueryRetrieve getQueryRetrieveSettings() {
+            return LegacyServerSettings.this.getQueryRetrieveSettings();
+        }
+
+        @Override
+        public String getAETitle() {
+            return LegacyServerSettings.this.getAETitle();
+        }
+
+        @Override
+        public String getDeviceDescription() {
+            return LegacyServerSettings.this.getDeviceDescription();
+        }
+
+        @Override
+        public Collection<String> getAllowedAETitles() {
+            return LegacyServerSettings.this.getAllowedAETitles();
+        }
+
+        @Override
+        public Collection<String> getPriorityAETitles() {
+            return LegacyServerSettings.this.getPriorityAETitles();
+        }
+
+        @Override
+        public Collection<String> getAllowedLocalInterfaces() {
+            return LegacyServerSettings.this.getAllowedLocalInterfaces();
+        }
+
+        @Override
+        public Collection<String> getAllowedHostnames() {
+            return LegacyServerSettings.this.getAllowedHostnames();
+        }
+
+        @Override
+        public Collection<SOPClass> getSOPClasses() {
+            return LegacyServerSettings.this.getSOPClasses();
+        }
+
+        @Override
+        public List<MoveDestination> getMoveDestinations() {
+            return LegacyServerSettings.this.getMoveDestinations();
+        }
+    }
+
+    @JsonGetter("dicom-services")
     @Override
     public DicomServices getDicomServicesSettings() {
-        return this;
+        return new StubDicomServices();
     }
 
     private List<String> ds = Collections.EMPTY_LIST;
     private List<String> dp = Collections.EMPTY_LIST;
 
-    @Override
     public List<String> getDefaultStorage() { return ds; }
 
-    @Override
     public List<String> getDIMProviders() { return dp; }
 
     public void setDefaultStorage(List<String> storages) {
@@ -1292,7 +1492,6 @@ public class LegacyServerSettings implements ServerSettings, ServerSettings.Arch
         dp = providers;
     }
 
-    @Override
     public ServiceBase getStorageSettings() {
         return new ServiceBase() {
             @Override
@@ -1317,9 +1516,8 @@ public class LegacyServerSettings implements ServerSettings, ServerSettings.Arch
         };
     }
 
-    @Override
     public ServerSettings.DicomServices.QueryRetrieve getQueryRetrieveSettings() {
-        return new QueryRetrieve() {
+        return new DicomServices.QueryRetrieve() {
             @Override
             public void setSOPClass(Collection<String> collection) {
                 LegacyServerSettings.this.setSOPClass(StringUtils.join(collection, '|'));

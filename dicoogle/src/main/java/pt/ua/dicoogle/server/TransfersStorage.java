@@ -135,7 +135,7 @@ public class TransfersStorage {
     public String [] getVerboseTS()
     {
         int i, count =0;
-        String [] return_value = null;
+        String [] return_value = new String[0];
         for(i= 0; i<14; i++)
         {
             if(TS[i])

@@ -21,13 +21,15 @@ package pt.ua.dicoogle.core.settings;
 import org.junit.Before;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
-import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -56,7 +58,7 @@ public class LegacyServerSettingsTest {
         assertEquals("/opt/dicoogle/repository", a.getMainDirectory());
         assertEquals("/tmp", a.getWatchDirectory());
         assertEquals(97, a.getIndexerEffort());
-        assertEquals("dicoogle01", a.getNodeName());
+        assertEquals("dicoogle-old", a.getNodeName());
 
         assertEquals("TEST-STORAGE", settings.getDicomServicesSettings().getAETitle());
 

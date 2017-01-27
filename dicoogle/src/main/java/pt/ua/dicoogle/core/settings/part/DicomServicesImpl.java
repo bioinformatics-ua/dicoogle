@@ -58,7 +58,9 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
 
     @JsonSetter("allowed-aetitles")
     private void setAllowedAETitles_(Object o) {
-        if (o instanceof Collection) {
+        if (o == null) {
+            this.allowedAETitles = Collections.EMPTY_LIST;
+        } else if (o instanceof Collection) {
             this.allowedAETitles = new ArrayList<>();
             for (Object e : (Collection) o) {
                 this.allowedAETitles.add(e.toString());

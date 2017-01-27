@@ -69,7 +69,7 @@ public class ServerSettingsImpl implements ServerSettings {
     @JsonProperty("dicom-services")
     private DicomServicesImpl dicomServices;
 
-    @Override @JsonIgnore
+    @Override
     public WebServer getWebServerSettings() {
         return this.webServer;
     }

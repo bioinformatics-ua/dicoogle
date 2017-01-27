@@ -18,10 +18,7 @@
  */
 package pt.ua.dicoogle.sdk.datastructs;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.annotation.*;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -33,6 +30,8 @@ import java.util.Objects;
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 @JsonRootName("move-destination")
+@JsonAutoDetect(isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        getterVisibility = JsonAutoDetect.Visibility.NONE)
 public class MoveDestination implements Serializable
 {
     static final long serialVersionUID = 2L;

@@ -769,8 +769,8 @@ public class XMLSupport extends DefaultHandler
          if(isDicoogleDir) //( "DicoogleDir" ) )
          {
              String sView = new String(data, start, length);
-             s.setWatchDirectory(sView);
-             return;           
+             s.setMainDirectory(sView);
+             return;
          } 
          if(isFullContentIndex) 
          {

@@ -18,6 +18,8 @@
  */
 package pt.ua.dicoogle.sdk.settings.server;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.sdk.datastructs.SOPClass;
 
@@ -29,78 +31,84 @@ import java.util.List;
  */
 public interface ServerSettings extends ServerSettingsReader {
 
-    public interface ServiceBase extends ServerSettingsReader.ServiceBase {
-        public void setAutostart(boolean autostart);
+    interface ServiceBase extends ServerSettingsReader.ServiceBase {
+        void setAutostart(boolean autostart);
 
-        public void setPort(int port);
+        void setPort(int port);
     }
 
     @Override
-    public WebServer getWebServerSettings();
+    @JsonGetter("web-server")
+    WebServer getWebServerSettings();
 
-    public interface WebServer extends ServiceBase, ServerSettingsReader.WebServer {
-        public void setAllowedOrigins(String allowedOrigins);
+    interface WebServer extends ServiceBase, ServerSettingsReader.WebServer {
+        @JsonProperty("allowed-origins")
+        void setAllowedOrigins(String allowedOrigins);
     }
 
-    public Archive getArchiveSettings();
+    @Override
+    @JsonGetter("archive")
+    Archive getArchiveSettings();
 
-    public interface Archive extends ServerSettingsReader.Archive {
-        public void setSaveThumbnails(boolean saveThumbnails);
+    interface Archive extends ServerSettingsReader.Archive {
+        void setSaveThumbnails(boolean saveThumbnails);
 
-        public void setThumbnailSize(int thumbnailSize);
+        void setThumbnailSize(int thumbnailSize);
 
-        public void setMainDirectory(String directory);
+        void setMainDirectory(String directory);
 
-        public void setIndexerEffort(int effort);
+        void setIndexerEffort(int effort);
 
-        public void setWatchDirectory(String dir);
+        void setWatchDirectory(String dir);
 
-        public void setDirectoryWatcherEnabled(boolean watch);
+        void setDirectoryWatcherEnabled(boolean watch);
 
-        public void setDIMProviders(List<String> providers);
+        void setDIMProviders(List<String> providers);
 
-        public void setDefaultStorage(List<String> storages);
+        void setDefaultStorage(List<String> storages);
 
-        public void setNodeName(String nodeName);
+        void setNodeName(String nodeName);
     }
 
-    public DicomServices getDicomServicesSettings();
+    @JsonGetter("dicom-services")
+    DicomServices getDicomServicesSettings();
 
-    public interface DicomServices extends ServerSettingsReader.DicomServices {
-        public void setAETitle(String aetitle);
+    interface DicomServices extends ServerSettingsReader.DicomServices {
+        void setAETitle(String aetitle);
 
-        public void setDeviceDescription(String description);
+        void setDeviceDescription(String description);
 
-        public void setAllowedAETitles(Collection<String> AETitles);
+        void setAllowedAETitles(Collection<String> AETitles);
 
-        public void setPriorityAETitles(Collection<String> AETitles);
+        void setPriorityAETitles(Collection<String> AETitles);
 
-        public void setMoveDestinations(List<MoveDestination> destinations);
+        void setMoveDestinations(List<MoveDestination> destinations);
 
-        public void addMoveDestination(MoveDestination destination);
+        void addMoveDestination(MoveDestination destination);
 
-        public boolean removeMoveDestination(String aetitle);
+        boolean removeMoveDestination(String aetitle);
 
-        public void setAllowedLocalInterfaces(Collection<String> localInterfaces);
+        void setAllowedLocalInterfaces(Collection<String> localInterfaces);
 
-        public void setAllowedHostnames(Collection<String> hostnames);
+        void setAllowedHostnames(Collection<String> hostnames);
 
-        public void setSOPClasses(Collection<SOPClass> sopClasses);
+        void setSOPClasses(Collection<SOPClass> sopClasses);
 
-        public ServiceBase getStorageSettings();
+        @JsonGetter("storage")
+        ServiceBase getStorageSettings();
 
-        public interface QueryRetrieve extends ServiceBase, ServerSettingsReader.DicomServices.QueryRetrieve {
-            public void setSOPClass(Collection<String> sopClasses);
+        interface QueryRetrieve extends ServiceBase, ServerSettingsReader.DicomServices.QueryRetrieve {
+            void setSOPClass(Collection<String> sopClasses);
 
-            public void setTransferCapabilities(Collection<String> tcap);
+            void setTransferCapabilities(Collection<String> tcap);
 
-            public void setRspDelay(int timeout);
+            void setRspDelay(int timeout);
 
-            public void setIdleTimeout(int timeout);
+            void setIdleTimeout(int timeout);
 
-            public void setAcceptTimeout(int timeout);
+            void setAcceptTimeout(int timeout);
 
-            public void setConnectionTimeout(int timeout);
+            void setConnectionTimeout(int timeout);
 
             public void setDIMSERspTimeout(int timeout);
 
@@ -110,6 +118,8 @@ public interface ServerSettings extends ServerSettingsReader {
 
             public void setMaxPDULengthSend(int pdu);
         }
-        public QueryRetrieve getQueryRetrieveSettings();
+
+        @JsonGetter("query-retrieve")
+        QueryRetrieve getQueryRetrieveSettings();
     }
 }

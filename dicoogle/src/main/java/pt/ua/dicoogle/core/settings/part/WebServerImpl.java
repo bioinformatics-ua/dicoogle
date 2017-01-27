@@ -20,6 +20,7 @@ package pt.ua.dicoogle.core.settings.part;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
 /**
@@ -27,7 +28,9 @@ import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
  */
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class WebServerImpl implements ServerSettings.WebServer {
+    @JacksonXmlProperty(isAttribute = true, localName = "autostart")
     private boolean autostart;
+    @JacksonXmlProperty(isAttribute = true, localName = "port")
     private int port;
 
     public WebServerImpl() {
