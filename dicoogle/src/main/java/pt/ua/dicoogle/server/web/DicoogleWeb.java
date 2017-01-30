@@ -18,9 +18,11 @@
  */
 package pt.ua.dicoogle.server.web;
 
+import org.apache.commons.beanutils.converters.IntegerConverter;
 import org.apache.commons.codec.digest.Md5Crypt;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
 import pt.ua.dicoogle.server.web.rest.VersionResource;
@@ -109,7 +111,7 @@ public class DicoogleWeb {
     public static final String CONTEXTPATH = "/";
     private LocalImageCache cache = null;
     private Server server = null;
-    private List<Integer> ports = new ArrayList<>();
+    private List<Integer> ports = new ArrayList<Integer>();
 
     private ContextHandlerCollection contextHandlers = null;
     private ServletContextHandler pluginHandler = null;
@@ -125,6 +127,7 @@ public class DicoogleWeb {
      */
     public DicoogleWeb(List<Integer> ports) throws Exception {
         this.ports = ports;
+        this.loadInitialConfigurations();
     }
 
 
@@ -280,13 +283,46 @@ public class DicoogleWeb {
                 webpages
         };
 
+
+        // Default values for Jetty Thread pool
+        int maxThreads = 200;
+        int minThreads = 10 ;
+        int idleTimeout = 60000;
+
+        try {
+
+            String maxThreadsStr = System.getenv("DICOOGLE_WEBSERVER_MAX_THREADS");
+            String minThreadsStr = System.getenv("DICOOGLE_WEBSERVER_MIN_THREADS");
+            String idleTimeoutStr = System.getenv("DICOOGLE_WEBSERVER_IDLE_TIMEOUT");
+
+            if (maxThreadsStr!=null){
+                maxThreads = Integer.parseInt(maxThreadsStr);
+            }
+            if (minThreadsStr!=null){
+                minThreads = Integer.parseInt(minThreadsStr);
+            }
+            if (idleTimeoutStr!=null){
+                idleTimeout = Integer.parseInt(idleTimeoutStr);
+            }
+
+
+        }
+        catch (Exception e){
+            logger.error("Error while reading enviroment variables to Thread Pool for Jetty", e);
+        }
+
         // setup the server
-        server = new Server();
+        QueuedThreadPool threadPool = new QueuedThreadPool(maxThreads, minThreads);
+        threadPool.setIdleTimeout(idleTimeout);
+        server = new Server(threadPool);
         Connector [] connectors = new Connector[this.ports.size()];
 
+        int i = 0;
         for (Integer port : ports){
             ServerConnector connector = new ServerConnector(server);
             connector.setPort(port);
+            connectors[i] = connector;
+            i++;
         }
 
         server.setConnectors(connectors);
