@@ -188,4 +188,22 @@ public class QueryRetrieveImpl implements ServerSettings.DicomServices.QueryRetr
     public void setMaxPDULengthSend(int maxPduLengthSend) {
         this.maxPduLengthSend = maxPduLengthSend;
     }
+
+    @Override
+    public String toString() {
+        return "QueryRetrieveImpl{" +
+                "autostart=" + autostart +
+                ", port=" + port +
+                ", rspDelay=" + rspDelay +
+                ", dimseRspTimeout=" + dimseRspTimeout +
+                ", idleTimeout=" + idleTimeout +
+                ", acceptTimeout=" + acceptTimeout +
+                ", connectionTimeout=" + connectionTimeout +
+                ", transferCapabilities=" + transferCapabilities +
+                ", sopClasses=" + sopClasses +
+                ", maxClientAssocs=" + maxClientAssocs +
+                ", maxPduLengthReceive=" + maxPduLengthReceive +
+                ", maxPduLengthSend=" + maxPduLengthSend +
+                '}';
+    }
 }

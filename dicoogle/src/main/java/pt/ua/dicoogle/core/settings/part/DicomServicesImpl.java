@@ -38,11 +38,8 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
         DicomServicesImpl s = new DicomServicesImpl();
         s.aetitle = "DICOOGLE-STORAGE";
 
-        s.allowedAETitles = Collections.EMPTY_LIST;
         s.allowedHosts = Collections.singletonList("any");
         s.allowedLocalInterfaces = Collections.singletonList("any");
-        s.defaultTS = Arrays.asList();
-        s.sopClasses = Arrays.asList();
         s.moveDestinations = new ArrayList<>();
 
         s.storage = StorageImpl.createDefault();
@@ -72,7 +69,7 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
 
     @JacksonXmlElementWrapper(useWrapping = false, localName = "allowed-aetitles")
     @JacksonXmlProperty(localName = "allowed-aetitles")
-    private Collection<String> allowedAETitles;
+    private Collection<String> allowedAETitles = Collections.EMPTY_LIST;
 
     @JsonSetter("allowed-local-interfaces")
     private void setAllowedLocalInterfaces_(Object o) {
@@ -109,36 +106,33 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
     }
 
     @JsonIgnore
-    private Collection<String> defaultTS;
+    private Collection<String> defaultTS = null;
 
-    @JacksonXmlElementWrapper(localName = "sop-class")
-    private List<SOPClass> sopClasses;
+    @JacksonXmlElementWrapper(localName = "sop-classes")
+    @JacksonXmlProperty(localName = "sop-classes")
+    private List<SOPClass> sopClasses = Collections.EMPTY_LIST;
 
     @JsonSetter("sop-classes")
-    private void setSOPClasses_(Collection<?> col) {
+    private void setSOPClasses_(Collection<SOPClass> col) {
         this.defaultTS = null;
         this.sopClasses = new ArrayList<>();
 
         if (col == null) return;
 
-        for (Object o : col) {
-            if (o instanceof SOPClass) {
-                SOPClass c = (SOPClass) o;
-                if ("".equals(c.getUID()) || "default".equals(c.getUID())) {
-                    this.defaultTS = c.getTransferSyntaxes();
-                } else {
-                    this.sopClasses.add(c);
-                }
-            } else if (o instanceof String) {
-                this.sopClasses.add(new SOPClass(o.toString()));
+        for (SOPClass c : col) {
+            if (c.getUID() == null || "".equals(c.getUID()) || "default".equals(c.getUID())) {
+                this.defaultTS = c.getTransferSyntaxes();
+            } else {
+                this.sopClasses.add(c);
             }
         }
 
         if (this.defaultTS != null) {
             List<SOPClass> l = this.sopClasses;
             this.sopClasses = new ArrayList<>();
-            for (SOPClass c : this.sopClasses) {
-                if (c.getTransferSyntaxes().isEmpty()) {
+            for (SOPClass c : l) {
+                Collection<String> ts = c.getTransferSyntaxes();
+                if (ts == null || ts.isEmpty()) {
                     c = c.withTS(this.defaultTS);
                 }
                 this.sopClasses.add(c);
@@ -182,7 +176,7 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
 
     @Override
     public void setAllowedAETitles(Collection<String> allowedAETitles) {
-        this.allowedAETitles = new ArrayList<>(allowedAETitles);
+        this.allowedAETitles = allowedAETitles;
     }
 
     @Override
@@ -216,7 +210,7 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
     }
 
     public Collection<String> getDefaultTransferSyntaxes() {
-        return Collections.unmodifiableCollection(defaultTS);
+        return defaultTS;
     }
 
     @Override
@@ -272,5 +266,22 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
             }
         }
         return removed;
+    }
+
+    @Override
+    public String toString() {
+        return "DicomServicesImpl{" +
+                "aetitle='" + aetitle + '\'' +
+                ", deviceDescription='" + deviceDescription + '\'' +
+                ", allowedAETitles=" + allowedAETitles +
+                ", priorityAETitles=" + priorityAETitles +
+                ", allowedLocalInterfaces=" + allowedLocalInterfaces +
+                ", allowedHosts=" + allowedHosts +
+                ", defaultTS=" + defaultTS +
+                ", sopClasses=" + sopClasses +
+                ", moveDestinations=" + moveDestinations +
+                ", storage=" + storage +
+                ", queryRetrieve=" + queryRetrieve +
+                '}';
     }
 }

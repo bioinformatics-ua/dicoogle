@@ -23,6 +23,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
+import java.util.Objects;
+
 /**
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
@@ -77,5 +79,29 @@ public class WebServerImpl implements ServerSettings.WebServer {
     @Override
     public String getAllowedOrigins() {
         return this.allowedOrigins;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        WebServerImpl webServer = (WebServerImpl) o;
+        return autostart == webServer.autostart &&
+                port == webServer.port &&
+                Objects.equals(allowedOrigins, webServer.allowedOrigins);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(autostart, port, allowedOrigins);
+    }
+
+    @Override
+    public String toString() {
+        return "WebServerImpl{" +
+                "autostart=" + autostart +
+                ", port=" + port +
+                ", allowedOrigins='" + allowedOrigins + '\'' +
+                '}';
     }
 }

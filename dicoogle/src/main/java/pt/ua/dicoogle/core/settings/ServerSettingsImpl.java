@@ -20,7 +20,6 @@ package pt.ua.dicoogle.core.settings;
 
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import pt.ua.dicoogle.core.settings.part.ArchiveImpl;
 import pt.ua.dicoogle.core.settings.part.DicomServicesImpl;
@@ -82,5 +81,14 @@ public class ServerSettingsImpl implements ServerSettings {
     @Override
     public DicomServices getDicomServicesSettings() {
         return this.dicomServices;
+    }
+
+    @Override
+    public String toString() {
+        return "ServerSettingsImpl{" +
+                "webServer=" + webServer +
+                ", archive=" + archive +
+                ", dicomServices=" + dicomServices +
+                '}';
     }
 }

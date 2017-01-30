@@ -86,14 +86,6 @@ public class LegacyServerSettingsTest {
         assertEquals(8484, web.getPort());
         assertEquals("test.dicoogle.com", web.getAllowedOrigins());
 
-    /* // Doesn't work
-        Map<String, String> modalityCFind = new HashMap<>();
-        modalityCFind.put("find", "Study Root Query/Retrieve Info Model");
-        modalityCFind.put("1.2.840.10008.5.1.4.1.2.1.1", "Patient Root Query/Retrieve Info Model");
-        modalityCFind.put("1.2.840.10008.5.1.4.1.2.2.1", "Study Root Query/Retrieve Info Model");
-        assertEquals(modalityCFind, settings.getModalityFind());
-    */
-
         List<MoveDestination> destinations = Arrays.asList(
                 new MoveDestination("ADESTINATION", "192.168.42.42", 4444, true, "Our test destination"));
         assertSameContent(destinations, settings.getDicomServicesSettings().getMoveDestinations());
@@ -102,12 +94,14 @@ public class LegacyServerSettingsTest {
     private static void assertSameContent(Collection o1, Collection o2) {
         for (Object o : o1) {
             if (!o2.contains(o)) {
-                throw new ComparisonFailure(null, String.valueOf(o1), String.valueOf(o2));
+                throw new ComparisonFailure("Collections do not have the same content",
+                        String.valueOf(o1), String.valueOf(o2));
             }
         }
         for (Object o : o2) {
             if (!o1.contains(o)) {
-                throw new ComparisonFailure(null, String.valueOf(o1), String.valueOf(o2));
+                throw new ComparisonFailure("Collections do not have the same content",
+                        String.valueOf(o1), String.valueOf(o2));
             }
         }
     }

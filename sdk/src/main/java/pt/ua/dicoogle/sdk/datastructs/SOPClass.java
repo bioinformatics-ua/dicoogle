@@ -18,23 +18,26 @@
  */
 package pt.ua.dicoogle.sdk.datastructs;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 
 /**
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 @JsonRootName("sop-class")
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
 public final class SOPClass {
 
     @JsonProperty("uid")
     private final String uid;
 
-    @JsonProperty("ts")
+    @JacksonXmlElementWrapper(useWrapping = false, localName = "ts")
+    @JacksonXmlProperty(localName = "ts")
     private final Collection<String> ts;
 
     public SOPClass(String uid) {
@@ -56,7 +59,31 @@ public final class SOPClass {
         return this.ts;
     }
 
+    /** Create a new, independent SOP class with the transfer syntax collection replaced.
+     */
     public SOPClass withTS(Collection<String> ts) {
         return new SOPClass(this.uid, ts);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SOPClass sopClass = (SOPClass) o;
+        return Objects.equals(uid, sopClass.uid) &&
+                Objects.equals(ts, sopClass.ts);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uid, ts);
+    }
+
+    @Override
+    public String toString() {
+        return "SOPClass{" +
+                "uid='" + uid + '\'' +
+                ", ts=" + ts +
+                '}';
     }
 }

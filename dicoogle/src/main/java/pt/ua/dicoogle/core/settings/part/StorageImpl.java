@@ -19,8 +19,11 @@
 package pt.ua.dicoogle.core.settings.part;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
+
+import java.util.Objects;
 
 /**
  * @author Eduardo Pinho <eduardopinho@ua.pt>
@@ -35,9 +38,9 @@ public class StorageImpl implements ServerSettings.ServiceBase {
     @JacksonXmlProperty(isAttribute = true)
     private int port;
 
-    public StorageImpl() {}
-
-    public StorageImpl(boolean autostart, int port) {
+    @JsonCreator
+    public StorageImpl(@JacksonXmlProperty(localName = "autostart") boolean autostart,
+                       @JacksonXmlProperty(localName = "port") int port) {
         this.autostart = autostart;
         this.port = port;
     }
@@ -64,5 +67,27 @@ public class StorageImpl implements ServerSettings.ServiceBase {
     @Override
     public void setPort(int port) {
         this.port = port;
+    }
+
+    @Override
+    public String toString() {
+        return "StorageImpl{" +
+                "autostart=" + autostart +
+                ", port=" + port +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StorageImpl storage = (StorageImpl) o;
+        return autostart == storage.autostart &&
+                port == storage.port;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(autostart, port);
     }
 }

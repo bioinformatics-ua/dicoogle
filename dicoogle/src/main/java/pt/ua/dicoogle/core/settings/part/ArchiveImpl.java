@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
 import java.util.ArrayList;
@@ -64,7 +63,6 @@ public class ArchiveImpl implements ServerSettings.Archive {
     private int indexerEffort;
 
     @JacksonXmlElementWrapper(useWrapping = false, localName = "dim-provider")
-    @JacksonXmlProperty(localName = "dim-provider")
     private List<String> dimProviders;
 
     @JsonSetter("dim-provider")
@@ -82,7 +80,6 @@ public class ArchiveImpl implements ServerSettings.Archive {
     }
 
     @JacksonXmlElementWrapper(useWrapping = false, localName = "default-storage")
-    @JacksonXmlProperty(localName = "default-storage")
     private List<String> defaultStorage;
 
     @JsonSetter("default-storage")
@@ -91,7 +88,7 @@ public class ArchiveImpl implements ServerSettings.Archive {
             this.defaultStorage = Collections.EMPTY_LIST;
         } else if (o instanceof Collection) {
             this.defaultStorage = new ArrayList<>();
-            for (Object e : (Collection) o) {
+            for (Object e : (Collection)o) {
                 this.defaultStorage.add(e.toString());
             }
         } else {
@@ -185,5 +182,20 @@ public class ArchiveImpl implements ServerSettings.Archive {
     @Override
     public void setNodeName(String nodeName) {
         this.nodeName = nodeName;
+    }
+
+    @Override
+    public String toString() {
+        return "ArchiveImpl{" +
+                "saveThumbnails=" + saveThumbnails +
+                ", thumbnailSize=" + thumbnailSize +
+                ", indexerEffort=" + indexerEffort +
+                ", dimProviders=" + dimProviders +
+                ", defaultStorage=" + defaultStorage +
+                ", dirWatcherEnabled=" + dirWatcherEnabled +
+                ", watchDirectory='" + watchDirectory + '\'' +
+                ", mainDirectory='" + mainDirectory + '\'' +
+                ", nodeName='" + nodeName + '\'' +
+                '}';
     }
 }
