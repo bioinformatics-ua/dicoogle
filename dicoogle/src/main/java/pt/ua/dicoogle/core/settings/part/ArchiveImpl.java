@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
 import java.util.ArrayList;
@@ -62,24 +63,26 @@ public class ArchiveImpl implements ServerSettings.Archive {
     @JsonProperty("indexer-effort")
     private int indexerEffort;
 
-    @JsonProperty("dim-provider")
+    @JacksonXmlElementWrapper(useWrapping = false, localName = "dim-provider")
+    @JacksonXmlProperty(localName = "dim-provider")
     private List<String> dimProviders;
 
     @JsonSetter("dim-provider")
     protected void setDIMProviders_(Object o) {
         if (o == null) {
-            this.defaultStorage = Collections.EMPTY_LIST;
+            this.dimProviders = Collections.EMPTY_LIST;
         } else if (o instanceof Collection) {
-            this.defaultStorage = new ArrayList<>();
+            this.dimProviders = new ArrayList<>();
             for (Object e : (Collection) o) {
-                this.defaultStorage.add(e.toString());
+                this.dimProviders.add(e.toString());
             }
         } else {
-            this.defaultStorage = Collections.singletonList(o.toString());
+            this.dimProviders = Collections.singletonList(o.toString());
         }
     }
 
     @JacksonXmlElementWrapper(useWrapping = false, localName = "default-storage")
+    @JacksonXmlProperty(localName = "default-storage")
     private List<String> defaultStorage;
 
     @JsonSetter("default-storage")
@@ -115,7 +118,7 @@ public class ArchiveImpl implements ServerSettings.Archive {
     @JsonProperty("main-directory")
     private String mainDirectory;
 
-    @JsonProperty(value = "node-name")
+    @JsonProperty("node-name")
     private String nodeName;
 
     public boolean getSaveThumbnails() {

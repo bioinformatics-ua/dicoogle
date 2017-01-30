@@ -73,10 +73,12 @@ public interface ServerSettingsReader {
         @JsonGetter("watch-directory")
         String getWatchDirectory();
 
-        @JsonGetter("dim-provider")
+        @JacksonXmlElementWrapper(useWrapping = false, localName = "dim-provider")
+        @JacksonXmlProperty(localName = "dim-provider")
         List<String> getDIMProviders();
 
-        @JsonGetter("default-storage")
+        @JacksonXmlElementWrapper(useWrapping = false, localName = "default-storage")
+        @JacksonXmlProperty(localName = "default-storage")
         List<String> getDefaultStorage();
 
         @JsonGetter("node-name")

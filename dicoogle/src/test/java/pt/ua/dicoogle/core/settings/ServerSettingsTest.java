@@ -65,6 +65,9 @@ public class ServerSettingsTest {
         assertEquals("/opt/my-data/watched", ar.getWatchDirectory());
         assertEquals("dicoogle01", ar.getNodeName());
 
+        assertSameContent(Collections.singleton("lucene"), ar.getDIMProviders());
+        assertSameContent(Collections.singleton("filestorage"), ar.getDefaultStorage());
+
         assertEquals("TEST-STORAGE", settings.getDicomServicesSettings().getAETitle());
 
         // QR settings
