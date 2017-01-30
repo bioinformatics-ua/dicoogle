@@ -19,6 +19,8 @@
 package pt.ua.dicoogle.server.web;
 
 import org.apache.commons.codec.digest.Md5Crypt;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.ServerConnector;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
 import pt.ua.dicoogle.server.web.rest.VersionResource;
@@ -52,7 +54,9 @@ import pt.ua.dicoogle.server.web.servlets.management.TransferOptionsServlet;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -105,13 +109,24 @@ public class DicoogleWeb {
     public static final String CONTEXTPATH = "/";
     private LocalImageCache cache = null;
     private Server server = null;
-    private final int port;
+    private List<Integer> ports = new ArrayList<>();
 
-    private final ContextHandlerCollection contextHandlers;
+    private ContextHandlerCollection contextHandlers = null;
     private ServletContextHandler pluginHandler = null;
     private PluginRestletApplication pluginApp = null;
     private ServletContextHandler legacyHandler = null;
     private LegacyRestletApplication legacyApp = null;
+
+
+    /**
+     * Initializes and starts the Dicoogle Web service.
+     * @param ports a list of ports to listen
+     * @throws Exception
+     */
+    public DicoogleWeb(List<Integer> ports) throws Exception {
+        this.ports = ports;
+    }
+
 
     /**
      * Initializes and starts the Dicoogle Web service.
@@ -119,12 +134,17 @@ public class DicoogleWeb {
      * @throws java.lang.Exception
      */
     public DicoogleWeb(int port) throws Exception {
-        logger.info("Starting Web Services in DicoogleWeb. Port: {}", port);
+
+        this.ports.add(port);
+        this.loadInitialConfigurations();
+    }
+
+    private void loadInitialConfigurations() throws Exception {
+        logger.info("Starting Web Services in DicoogleWeb. Port: {}", this.ports.get(0));
         System.setProperty("org.apache.jasper.compiler.disablejsr199", "true");
         //System.setProperty("org.mortbay.jetty.webapp.parentLoaderPriority", "true");
         //System.setProperty("production.mode", "true");
 
-        this.port = port;
 
         // "build" the input location, based on the www directory/.war chosen
         final URL warUrl = Thread.currentThread().getContextClassLoader().getResource(WEBAPPDIR);
@@ -215,8 +235,62 @@ public class DicoogleWeb {
             webpages
         };
 
+
+
+        // list the all the handlers mounted above
+        Handler[] handlers2 = new Handler[]{
+                pluginHandler,
+                legacyHandler,
+                dic2png,
+                dictags,
+                createServletHandler(new IndexerServlet(), "/indexer"), // DEPRECATED
+                createServletHandler(new SettingsServlet(), "/settings"),
+                csvServletHolder,
+                createServletHandler(new LoginServlet(), "/login"),
+                createServletHandler(new LogoutServlet(), "/logout"),
+                createServletHandler(new UserServlet(), "/user"),
+                createServletHandler(new SearchServlet(), "/search"),
+                createServletHandler(new SearchServlet(SearchType.PATIENT), "/searchDIM"),
+                createServletHandler(new DumpServlet(), "/dump"),
+                createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.path) , "/management/settings/index/path"),
+                createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.zip), "/management/settings/index/zip"),
+                createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.effort), "/management/settings/index/effort"),
+                createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnail), "/management/settings/index/thumbnail"),
+                createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.watcher), "/management/settings/index/watcher"),
+                createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnailSize), "/management/settings/index/thumbnail/size"),
+                createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.all), "/management/settings/index"),
+                createServletHandler(new TransferOptionsServlet(), "/management/settings/transfer"),
+                createServletHandler(new WadoServlet(), "/wado"),
+                createServletHandler(new ProvidersServlet(), "/providers"),
+                createServletHandler(new DicomQuerySettingsServlet(), "/management/settings/dicom/query"),
+                createServletHandler(new ForceIndexing(), "/management/tasks/index"),
+                createServletHandler(new UnindexServlet(), "/management/tasks/unindex"),
+                createServletHandler(new RemoveServlet(), "/management/tasks/remove"),
+                createServletHandler(new ServicesServlet(ServicesServlet.STORAGE), "/management/dicom/storage"),
+                createServletHandler(new ServicesServlet(ServicesServlet.QUERY), "/management/dicom/query"),
+                createServletHandler(new ServicesServlet(ServicesServlet.PLUGIN), "/management/plugins/"),
+                createServletHandler(new AETitleServlet(), "/management/settings/dicom"),
+                createServletHandler(new WebUIServlet(), "/webui"),
+                createWebUIModuleServletHandler(),
+                createServletHandler(new LoggerServlet(), "/logger"),
+                createServletHandler(new RunningTasksServlet(), "/index/task"),
+                createServletHandler(new ExportServlet(ExportType.EXPORT_CVS), "/export/cvs"),
+                createServletHandler(new ExportServlet(ExportType.LIST), "/export/list"),
+                createServletHandler(new ServerStorageServlet(), "/management/settings/storage/dicom"),
+                webpages
+        };
+
         // setup the server
-        server = new Server(port);
+        server = new Server();
+        Connector [] connectors = new Connector[this.ports.size()];
+
+        for (Integer port : ports){
+            ServerConnector connector = new ServerConnector(server);
+            connector.setPort(port);
+        }
+
+        server.setConnectors(connectors);
+
         // register the handlers on the server
         this.contextHandlers = new ContextHandlerCollection();
         this.contextHandlers.setHandlers(handlers);
@@ -224,6 +298,8 @@ public class DicoogleWeb {
         
         // and then start the server
         server.start();
+
+
     }
 
     private ServletContextHandler createWebUIModuleServletHandler() {
