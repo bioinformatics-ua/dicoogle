@@ -54,7 +54,7 @@ public class ServerStorageServlet extends HttpServlet{
 		int _port= Integer.parseInt(port);
 		
 		switch(type){
-		case "addMoveDestination":
+		case "add":
 			ServerSettingsManager.getSettings().getDicomServicesSettings().addMoveDestination(new MoveDestination(aetitle, ip, _port));
 			ResponseUtil.simpleResponse(resp, "added", true);
 			break;

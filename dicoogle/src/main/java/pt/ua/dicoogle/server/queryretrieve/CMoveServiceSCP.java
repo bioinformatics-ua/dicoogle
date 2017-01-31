@@ -195,7 +195,7 @@ public class CMoveServiceSCP extends CMoveService {
                     tmp = new String(e.getBytes());
                 }
                 if (SOPUID != null && tmp != null) {
-                    //files.addMoveDestination(new File(search.getCurrentFile()));
+                    //files.add(new File(search.getCurrentFile()));
                     String uriString = search.getCurrentFile();
                      
                     try {

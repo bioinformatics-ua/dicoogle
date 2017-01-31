@@ -1091,7 +1091,7 @@ public class LegacyServerSettings implements ServerSettings
 		storageServers.setColumnName(0, "AETitle");
 		storageServers.setColumnName(1, "IP");
 		storageServers.setColumnName(2, "Port");
-		// if there are no rows, then addMoveDestination an empty one (for reference)
+		// if there are no rows, then add an empty one (for reference)
 		if (destCount < 1)
 		{
 			storageServers.addRow();

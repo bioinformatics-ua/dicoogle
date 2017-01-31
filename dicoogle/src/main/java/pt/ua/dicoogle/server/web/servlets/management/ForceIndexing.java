@@ -103,7 +103,7 @@ public class ForceIndexing extends HttpServlet {
     for (Task<Report> t : reports) {
       try {
         Report report = t.get();
-        done.addMoveDestination(report);
+        done.add(report);
         JSONObject obj;
         if (report instanceof IndexReport) {
             IndexReport indexReport = (IndexReport) report;
@@ -114,7 +114,7 @@ public class ForceIndexing extends HttpServlet {
             obj.put("complete", true);
             obj.put("errors", 0);
         }
-        ret.addMoveDestination(obj);
+        ret.add(obj);
       } catch (InterruptedException | ExecutionException ex) {
         // log.error("UNKNOW ERROR", ex);
       }

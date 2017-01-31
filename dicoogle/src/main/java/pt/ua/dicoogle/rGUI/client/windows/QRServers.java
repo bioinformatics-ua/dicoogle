@@ -142,7 +142,7 @@ public class QRServers extends javax.swing.JFrame {
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Storage Servers Destinations"));
 
-        jButtonQRAddEntry.setIcon(new ImageIcon(getImage("addMoveDestination.png")));
+        jButtonQRAddEntry.setIcon(new ImageIcon(getImage("add.png")));
         jButtonQRAddEntry.setText("Add Entry");
         jButtonQRAddEntry.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

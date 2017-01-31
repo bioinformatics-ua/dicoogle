@@ -412,7 +412,7 @@ public class SettingsServlet extends HttpServlet
 
 			// create a HintedCheckbox with the info gotten above and the current value of the setting
 			CheckboxWithHint box = new CheckboxWithHint(ts.getTS()[index], name, uid);
-			// and addMoveDestination the checkbox to the data table
+			// and add the checkbox to the data table
 			table.setCellData(i, 0, box);
 
 			i++;
@@ -420,7 +420,7 @@ public class SettingsServlet extends HttpServlet
 
 		// mount the return object array
 		Object[] result = new Object[2];
-		// and addMoveDestination the proper objects to it
+		// and add the proper objects to it
 		result[0] = new Boolean(ts.getAccepted());
 		result[1] = table;
 
@@ -459,7 +459,7 @@ public class SettingsServlet extends HttpServlet
 
 			// create a HintedCheckbox with the info gotten above and the current value of the setting
 			CheckboxWithHint box = new CheckboxWithHint(ts.getTS()[index], name, uid);
-			// and addMoveDestination the checkbox to the data table
+			// and add the checkbox to the data table
 			table.setCellData(i, 0, box);
 
 			i++;
@@ -467,7 +467,7 @@ public class SettingsServlet extends HttpServlet
 
 		// mount the return object array
 		Object[] result = new Object[2];
-		// and addMoveDestination the proper objects to it
+		// and add the proper objects to it
 		result[0] = new Boolean(ts.getAccepted());
 		result[1] = table;
 

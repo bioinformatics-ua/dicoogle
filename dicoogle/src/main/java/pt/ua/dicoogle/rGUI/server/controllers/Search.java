@@ -73,7 +73,7 @@ public class Search implements ISearch
         extrafields.add("Modality");
         extrafields.add("StudyDate");
         extrafields.add("SOPInstanceUID");
-        //extrafields.addMoveDestination("Thumbnail");
+        //extrafields.add("Thumbnail");
 
         searchHelper = new SearchHelper(this);
     }

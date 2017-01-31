@@ -25,7 +25,7 @@ package pt.ua.dicoogle.DicomLog;
 import java.io.*;
 // SAX classes.
 
-//JAXP 
+//JAXP
 import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
 import javax.xml.transform.sax.*;
@@ -77,7 +77,7 @@ public class LogXML extends DefaultHandler
             this.type = localName;
             this.ae = this.resolveAttrib("ae", attr, localName);
             this.date = this.resolveAttrib("date", attr, localName);
-            this.add = this.resolveAttrib("addMoveDestination", attr, localName);
+            this.add = this.resolveAttrib("add", attr, localName);
         }
     }
 
@@ -166,7 +166,7 @@ public class LogXML extends DefaultHandler
             {
                 atts.addAttribute("", "", "date", "", l.getDate());
                 atts.addAttribute("", "", "ae", "", l.getAe());
-                atts.addAttribute("", "", "addMoveDestination", "", l.getAdd());
+                atts.addAttribute("", "", "add", "", l.getAdd());
                 atts.addAttribute("","","params","",l.getParams());
 
                 hd.startElement("", "", l.getType(), atts);

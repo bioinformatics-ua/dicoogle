@@ -136,7 +136,7 @@ public class IndexerServlet extends HttpServlet {
 		xml.append(escapeHtml4(parentPath));
 		xml.append("\">");
 
-		// loop through all the cildren and addMoveDestination their path name to the XML tree
+		// loop through all the cildren and add their path name to the XML tree
 		if (childs != null) {
 			for (File child : childs) {
 				String cName = child.getName();
@@ -194,7 +194,7 @@ public class IndexerServlet extends HttpServlet {
 		xml.append(Boolean.toString(isIndexing));
 		xml.append("\">");
 
-		// addMoveDestination percentage information
+		// add percentage information
 		xml.append("<percent completed=\"");
 		xml.append(percentCompleted);
 		xml.append("\" />");
@@ -447,7 +447,7 @@ public class IndexerServlet extends HttpServlet {
 		result += "<tr>";
 
 		result += "<td><label for=\"" + id + "\">" + escapeHtml4(name) + ":</label></td>";
-		result += "<td>" + Utils.getHTMLInputFromType(id, value) + getHTMLSettingHelp(escapeHtml4(name) , help) + "</td>"; // TODO addMoveDestination a button with help, like in the desktop application [getHelpForParam(pluginName, paramName) != null]
+		result += "<td>" + Utils.getHTMLInputFromType(id, value) + getHTMLSettingHelp(escapeHtml4(name) , help) + "</td>"; // TODO add a button with help, like in the desktop application [getHelpForParam(pluginName, paramName) != null]
 
 		result += "</tr>";
 
@@ -471,7 +471,7 @@ public class IndexerServlet extends HttpServlet {
 		// also the "\t" ones
 		//help = help.replaceAll("\t", "\\\\t");
 
-		// addMoveDestination a button that will show the help (button because of touch interfaces, instead of popup for desktop)
+		// add a button that will show the help (button because of touch interfaces, instead of popup for desktop)
 		System.out.println("HELP: "+help);
 		String msg = escapeHtml4(help.replaceAll("\n", "<br>"));
 		result += buildInfoButton(fieldTitle, msg);

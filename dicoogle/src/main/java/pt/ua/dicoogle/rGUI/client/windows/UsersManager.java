@@ -141,7 +141,7 @@ public class UsersManager extends javax.swing.JFrame {
 
         jLabel1.setText("List of Users:");
 
-        jButtonAdd.setIcon(new ImageIcon(getImage("addMoveDestination.png")));
+        jButtonAdd.setIcon(new ImageIcon(getImage("add.png")));
         jButtonAdd.setText("Add User");
         jButtonAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

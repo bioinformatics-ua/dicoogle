@@ -82,10 +82,10 @@ public class TExamTime extends Thread {
             examTime.setTotal(enumList.size());
 
             List<String> extrafields = new ArrayList<String>();
-            extrafields.addMoveDestination("SeriesInstanceUID");
-            extrafields.addMoveDestination("AcquisitionDateTime");
-            extrafields.addMoveDestination("AcquisitionTime");
-            extrafields.addMoveDestination("AcquisitionDate");
+            extrafields.add("SeriesInstanceUID");
+            extrafields.add("AcquisitionDateTime");
+            extrafields.add("AcquisitionTime");
+            extrafields.add("AcquisitionDate");
 
 
             int i = 0, j = 0, k = 0;
@@ -126,7 +126,7 @@ public class TExamTime extends Thread {
                             DateTimes.put(SeriesInstanceUID, lt);
                         }
 
-                        lt.addMoveDestination(time);
+                        lt.add(time);
 
                     } else {
                         time = fields.get("AcquisitionTime");
@@ -144,7 +144,7 @@ public class TExamTime extends Thread {
                                 DateTimes.put(SeriesInstanceUID, lt);
                             }
 
-                            lt.addMoveDestination(date + time);
+                            lt.add(date + time);
                         } else {
                             k++;
                         }

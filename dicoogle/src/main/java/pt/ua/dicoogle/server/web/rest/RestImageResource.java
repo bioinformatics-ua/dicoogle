@@ -61,7 +61,7 @@ public class RestImageResource extends ServerResource {
 
         IndexEngine core = IndexEngine.getInstance();
         ArrayList<String> extra = new ArrayList<String>();
-        extra.addMoveDestination("SOPInstanceUID");
+        extra.add("SOPInstanceUID");
         String query = "SOPInstanceUID:" + SOPInstanceUID;
         List<SearchResult> queryResultList = core.search(query, extra);
         if (queryResultList.size() < 1) {

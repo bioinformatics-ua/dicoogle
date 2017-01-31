@@ -273,7 +273,7 @@ public class Main
         NetworkInterface iface = ifaces.nextElement();
         Enumeration<InetAddress> addrs = iface.getInetAddresses();
         while (addrs.hasMoreElements())
-        localAddrs.addMoveDestination(addrs.nextElement());
+        localAddrs.add(addrs.nextElement());
         }
          *
          */

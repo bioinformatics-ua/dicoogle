@@ -2787,7 +2787,7 @@ private void jTextFieldQueryKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST
     }//GEN-LAST:event_formWindowOpened
 
     private void jTextFieldQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldQueryActionPerformed
-        // TODO addMoveDestination your handling code here:
+        // TODO add your handling code here:
     }//GEN-LAST:event_jTextFieldQueryActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
