@@ -23,7 +23,6 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.concurrent.Semaphore;
 import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.sdk.Utils.Platform;
@@ -37,18 +36,10 @@ public class UserSessionsLog {
 
     private String sessionsLogFile;
     private static UserSessionsLog instance = null;
-    private static Semaphore sem = new Semaphore(1, true);
-    private static Semaphore semFile = new Semaphore(1, true);
 
     public static synchronized UserSessionsLog getInstance() {
-        try {
-            sem.acquire();
-            if (instance == null) {
-                instance = new UserSessionsLog();
-            }
-            sem.release();
-        } catch (InterruptedException ex) {
-            LoggerFactory.getLogger(UserSessions.class).error(ex.getMessage(), ex);
+        if (instance == null) {
+            instance = new UserSessionsLog();
         }
         return instance;
     }
@@ -130,31 +121,25 @@ public class UserSessionsLog {
 //        semFile.release();
     }
 
-    public void cleanLog() {
+    public synchronized void cleanLog() {
         BufferedWriter out = null;
         try {
-            semFile.acquire();
-
             out = new BufferedWriter(new FileWriter(sessionsLogFile));
             out.write("");
             out.close();
 
-        } catch (InterruptedException ex) {
-            LoggerFactory.getLogger(UserSessions.class).error(ex.getMessage(), ex);
         } catch (IOException ex) {
-            LoggerFactory.getLogger(UserSessions.class).error(ex.getMessage(), ex);
+            LoggerFactory.getLogger(UserSessions.class).error("Failed to clean log", ex);
         } finally {
             try {
                 out.close();
             } catch (IOException ex) {
-                LoggerFactory.getLogger(UserSessions.class).error(ex.getMessage(), ex);
+                LoggerFactory.getLogger(UserSessions.class).error("Failed to clean log", ex);
             }
         }
-
-        semFile.release();
     }
 
-    public String readLog() {
+    public synchronized String readLog() {
         String ret = "";
 
         BufferedReader in = null;
@@ -162,7 +147,6 @@ public class UserSessionsLog {
             String tmp;
 
 
-            semFile.acquire();
             in = new BufferedReader(new FileReader(sessionsLogFile));
 
             while ((tmp = in.readLine()) != null) {
@@ -171,21 +155,18 @@ public class UserSessionsLog {
 
             in.close();
 
-        } catch (InterruptedException ex) {
-            LoggerFactory.getLogger(UserSessions.class).error(ex.getMessage(), ex);
         } catch (IOException ex) {
-            LoggerFactory.getLogger(UserSessions.class).error(ex.getMessage(), ex);
+            LoggerFactory.getLogger(UserSessions.class).error("Failed to read log", ex);
         } finally {
             try {
                 in.close();
 
             } catch (IOException ex) {
-                LoggerFactory.getLogger(UserSessions.class).error(ex.getMessage(), ex);
+                LoggerFactory.getLogger(UserSessions.class).error("Failed to read log", ex);
             }
         }
         
         ret = ret + "\n";
-        semFile.release();
 
         return ret;
     }

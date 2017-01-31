@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.concurrent.Semaphore;
 import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.plugins.PluginController;
@@ -52,7 +51,6 @@ public class ExportDataSupport extends Observable implements Observer, Serializa
     private ArrayList<String> tags;
     private String filePath;
 
-    private static Semaphore semFile = new Semaphore(1, true);
     private ListObservableSearch obsAux = null;
 
     
