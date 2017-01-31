@@ -18,10 +18,7 @@
  */
 package pt.ua.dicoogle.core.settings;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.slf4j.Logger;
@@ -45,13 +42,12 @@ public class ServerSettingsManager
 {
     private static final Logger logger = LoggerFactory.getLogger(ServerSettingsManager.class);
 
-    private static final Path MAIN_CONFIG_PATH = Paths.get(Platform.homePath(), "config-new.xml");
+    private static final Path MAIN_CONFIG_PATH = Paths.get(Platform.homePath(), "confs/server.xml");
     private static final Path LEGACY_CONFIG_PATH = Paths.get(Platform.homePath(), "config.xml");
 
     private ServerSettingsManager() {}
 
     private static ServerSettings inner;
-    private static XMLSupport xml;
     private static ObjectMapper mapper;
 
     static {
@@ -70,22 +66,28 @@ public class ServerSettingsManager
      * @return a global instance of the server's settings
      */
     public static ServerSettings getSettings() {
-        if (inner == null) throw new IllegalStateException();
+        if (inner == null) throw new IllegalStateException("Server settings not initialized");
         return inner;
     }
 
+    /// This is called by the main application in order to
+    /// load the appropriate settings into the manager.
     public static void init() throws IOException {
-        // this is called by the main application in order to
-        // load the appropriate settings.
 
-        // check whether config.xml exists and config.json doesn't
+        Files.createDirectories(MAIN_CONFIG_PATH.getParent());
+
+        // check whether the old config.xml exists and the new one doesn't
         if (!Files.exists(MAIN_CONFIG_PATH)) {
             if (Files.exists(LEGACY_CONFIG_PATH)) {
-                logger.info("Using legacy server configuration file. Consider updating to the new format in the future.");
-                xml = new XMLSupport();
-                inner = xml.getXML();
+                logger.info("Legacy server configuration file found. Migrating settings to {} ...", MAIN_CONFIG_PATH);
+                LegacyServerSettings old = new XMLSupport().getXML();
+                // time to migrate!
+                saveSettingsTo(old, MAIN_CONFIG_PATH);
+                inner = loadSettingsAt(MAIN_CONFIG_PATH);
+                logger.info("Settings were migrated.");
             } else {
                 // create a new configuration file
+                logger.info("Creating server settings file {} ...", MAIN_CONFIG_PATH);
                 inner = ServerSettingsImpl.createDefault();
             }
         } else {
@@ -94,17 +96,12 @@ public class ServerSettingsManager
         }
     }
 
-    /** Save the internal settings. The resulting format depends on whether
-     * the loaded configuration file is in the legacy format or the new one.
+    /** Save the internal settings.
      */
     public static void saveSettings() {
         try {
-            if (xml != null) {
-                xml.printXML();
-            } else {
-                try (OutputStream ostream = Files.newOutputStream(MAIN_CONFIG_PATH)) {
-                    mapper.writeValue(ostream, inner);
-                }
+            try (OutputStream ostream = Files.newOutputStream(MAIN_CONFIG_PATH)) {
+                mapper.writeValue(ostream, inner);
             }
         } catch (Exception ex) {
             logger.error("Failed to save server settings", ex);
@@ -121,10 +118,12 @@ public class ServerSettingsManager
         }
     }
 
+    @Deprecated
     public static ServerSettings loadLegacySettings() {
         return new XMLSupport().getXML();
     }
 
+    @Deprecated
     public static ServerSettings loadLegacySettingsAt(URL url) throws IOException {
         try {
             return new XMLSupport().parseXML(url.openStream());
@@ -158,17 +157,11 @@ public class ServerSettingsManager
         }
     }
 
-    /** Save the global settings to a path in the file system. The resulting format
-     * depends on whether the loaded configuration file is in the legacy format
-     * or the new one.
+    /** Save the global settings to a path in the file system.
      */
     public static void saveSettingsTo(Path path) throws IOException {
-        if (inner == null) throw new IllegalStateException();
-        if (xml != null) {
-            xml.printXML(path);
-        } else {
-            saveSettingsTo(inner, path);
-        }
+        if (inner == null) throw new IllegalStateException("Server settings not initialized");
+        saveSettingsTo(inner, path);
     }
 
 }

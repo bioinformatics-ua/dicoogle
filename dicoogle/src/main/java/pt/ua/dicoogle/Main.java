@@ -33,6 +33,7 @@ import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 import pt.ua.dicoogle.sdk.utils.TagsStruct;
 import pt.ua.ieeta.emailreport.Configuration;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -107,15 +108,17 @@ public class Main
             }
             else if (args[0].equals("-h") || args[0].equals("--h") || args[0].equals("-help") || args[0].equals("--help"))
             {
-                System.out.println("Dicoogle PACS: help");
+                System.out.println("Dicoogle PACS");
                 System.out.println("-s : Start the server");
                 System.out.println("-w : Start the server and load web application in default browser (default)");
-                System.out.println("-g : [deprecated] Start the server and run the desktop client application");
-                System.out.println("-c : [deprecated] Run the desktop client application");
             }
             else
             {
                 System.out.println("Wrong arguments!");
+                System.out.println();
+                System.out.println("Dicoogle PACS");
+                System.out.println("-s : Start the server");
+                System.out.println("-w : Start the server and load web application in default browser (default)");
             }
         }
         /** Register System Exceptions Hook */
@@ -181,14 +184,6 @@ public class Main
         }
         
         logger.debug("Starting Dicoogle");
-        /* This logic will be not neccessary. This should be sent to the Plugins.
-        try
-        {
-            Anonymous.getSettings().start();
-        } catch(Exception e) {
-            logger.warn("Could not start Anonimize service", e);
-        }*/
-        
         
         logger.debug("Loading configuration file: {}", Platform.homePath());
         Configuration.initInstance(Platform.homePath());
@@ -209,8 +204,7 @@ public class Main
         }
         ServerSettings settings = ServerSettingsManager.getSettings();
 
-        try
-        {
+        try {
             TagsStruct _tags = new TagsXML().getXML();
 
             //load DICOM Services Log
@@ -220,11 +214,37 @@ public class Main
             logger.error(ex.getMessage(), ex);
         }
 
+        /** Verify if it have a defined node */
+        if (settings.getArchiveSettings().getNodeName() == null)
+        {
+            String hostname = "Dicoogle";
+
+            try
+            {
+                InetAddress addr = InetAddress.getLocalHost();
+
+                // Get hostname
+                hostname = addr.getHostName();
+            } catch (UnknownHostException e) {
+            }
+
+            String response = (String) JOptionPane.showInputDialog(null,
+                    "What is the name of the machine?",
+                    "Enter Node name",
+                    JOptionPane.QUESTION_MESSAGE, null, null,
+                    hostname);
+
+            settings.getArchiveSettings().setNodeName(response);
+
+            // Save settings
+            ServerSettingsManager.saveSettings();
+        }
+
         TransferSyntax.add(new TransferSyntax("1.2.826.0.1.3680043.2.682.1.40", false,false, false, true));
         TransferSyntax.add(new TransferSyntax("1.2.840.10008.1.2.4.70", true,false, false, true));
         TransferSyntax.add(new TransferSyntax("1.2.840.10008.1.2.5.50", false,false, false, true));    
 
-        PluginController PController = PluginController.getInstance();
+        PluginController.getInstance();
 
         // Start the Initial Services of Dicoogle
         pt.ua.dicoogle.server.ControlServices.getInstance();
@@ -232,7 +252,7 @@ public class Main
         // Launch Async Index
         // It monitors a folder, and when a file is touched an event
         // triggers and index is updated.
-        if (ServerSettingsManager.getSettings().getArchiveSettings().isDirectoryWatcherEnabled()) {
+        if (settings.getArchiveSettings().isDirectoryWatcherEnabled()) {
             AsyncIndex asyncIndex = new AsyncIndex();
         }
     }
