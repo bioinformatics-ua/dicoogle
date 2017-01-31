@@ -48,7 +48,7 @@ public final class SOPClass {
     @JsonCreator
     public SOPClass(@JsonProperty("uid")String uid, @JsonProperty("ts") Collection<String> ts) {
         this.uid = uid;
-        this.ts = ts;
+        this.ts = ts != null ? ts : Collections.EMPTY_LIST;
     }
 
     public String getUID() {
@@ -63,6 +63,13 @@ public final class SOPClass {
      */
     public SOPClass withTS(Collection<String> ts) {
         return new SOPClass(this.uid, ts);
+    }
+
+    /** Retrieve an SOP class with the transfer syntax collection replaced only if this SOP class
+     * has no transfer syntaxes specified, return itself otherwise.
+     */
+    public SOPClass withDefaultTS(Collection<String> ts) {
+        return this.ts.isEmpty() ? this.withTS(ts) : this;
     }
 
     @Override

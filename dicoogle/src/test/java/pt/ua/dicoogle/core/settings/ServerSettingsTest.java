@@ -26,15 +26,13 @@ import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.sdk.datastructs.SOPClass;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettingsReader;
+import pt.ua.dicoogle.server.SOPList;
 
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -129,8 +127,9 @@ public class ServerSettingsTest {
         assertEquals(modalityCFind, settings.getModalityFind());
     */
         // complex stuff
-        List<MoveDestination> destinations = Arrays.asList(
-                new MoveDestination("ANOTHER-STORAGE", "192.168.42.42", 6666, false, "Our test storage"));
+        List<MoveDestination> destinations = Collections.singletonList(
+                new MoveDestination("ANOTHER-STORAGE", "192.168.42.42",
+                        6666, false, "Our test storage"));
         assertSameContent(destinations, dcm.getMoveDestinations());
     }
 
@@ -144,8 +143,6 @@ public class ServerSettingsTest {
         final ServerSettings.DicomServices dcm = settings.getDicomServicesSettings();
         final ServerSettingsReader.DicomServices.QueryRetrieve qr = dcm.getQueryRetrieveSettings();
 
-        assertTrue(settings instanceof ServerSettingsImpl);
-
         // assertions follow
 
         assertEquals(null, ar.getMainDirectory());
@@ -154,6 +151,23 @@ public class ServerSettingsTest {
         assertEquals(null, ar.getNodeName());
 
         assertEquals("DICOOGLE-STORAGE", dcm.getAETitle());
+
+        // default
+        Collection<String> defaultTS = Arrays.asList(
+                "1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.2",
+                "1.2.840.10008.1.2.4.70", "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.57",
+                "1.2.840.10008.1.2.4.90", "1.2.840.10008.1.2.4.91", "1.2.840.10008.1.2.5",
+                "1.2.840.10008.1.2.4.100", "1.2.840.10008.1.2.4.51");
+        assertSameContent(defaultTS, ((DicomServicesImpl)dcm).getDefaultTransferSyntaxes());
+
+        Collection<SOPClass> expectedRawSOP = SOPList.getInstance().asSOPClassList();
+        assertSameContent(expectedRawSOP, ((DicomServicesImpl)dcm).getRawSOPClasses());
+
+        Collection<SOPClass> expectedSOP = new ArrayList<>(expectedRawSOP.size());
+        for (SOPClass sop: expectedRawSOP) {
+            expectedSOP.add(sop.withDefaultTS(defaultTS));
+        }
+        assertSameContent(expectedSOP, dcm.getSOPClasses());
 
         // QR settings
         assertTrue(qr.isAutostart());
@@ -193,15 +207,14 @@ public class ServerSettingsTest {
 
         // Create default settings
         ServerSettings settings = ServerSettingsImpl.createDefault();
-
-        assertTrue(settings instanceof ServerSettingsImpl);
+        final ServerSettings.DicomServices dcm = settings.getDicomServicesSettings();
 
         settings.getArchiveSettings().setNodeName("dicoogle17");
         settings.getArchiveSettings().setDefaultStorage(Arrays.asList("filestorage", "dropbox"));
         MoveDestination md = new MoveDestination("MORE-TESTING", "192.168.0.55",
                 6060, true, "DESCRIPTION");
-        settings.getDicomServicesSettings().addMoveDestination(md);
-        settings.getDicomServicesSettings().getStorageSettings().setPort(6767);
+        dcm.addMoveDestination(md);
+        dcm.getStorageSettings().setPort(6767);
 
         ServerSettingsManager.saveSettingsTo(settings, target);
 
@@ -210,11 +223,23 @@ public class ServerSettingsTest {
         assertEquals("dicoogle17", settings.getArchiveSettings().getNodeName());
         assertSameContent(Arrays.asList("filestorage", "dropbox"),
                 settings.getArchiveSettings().getDefaultStorage());
-        assertEquals(6767, settings.getDicomServicesSettings().getStorageSettings().getPort());
+        assertEquals(6767, dcm.getStorageSettings().getPort());
 
         Collection<MoveDestination> destinations = Collections.singleton(md);
-        assertSameContent(destinations, settings.getDicomServicesSettings().getMoveDestinations());
+        assertSameContent(destinations, dcm.getMoveDestinations());
 
+        // default
+        Collection<String> defaultTS = Arrays.asList(
+                "1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.2",
+                "1.2.840.10008.1.2.4.70", "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.57",
+                "1.2.840.10008.1.2.4.90", "1.2.840.10008.1.2.4.91", "1.2.840.10008.1.2.5",
+                "1.2.840.10008.1.2.4.100", "1.2.840.10008.1.2.4.51");
+        assertSameContent(defaultTS, ((DicomServicesImpl)dcm).getDefaultTransferSyntaxes());
+
+        Collection<SOPClass> expectedRawSOP = SOPList.getInstance().asSOPClassList();
+        assertSameContent(expectedRawSOP, ((DicomServicesImpl)dcm).getRawSOPClasses());
+
+        // test remove move destination
         boolean removed = settings.getDicomServicesSettings().removeMoveDestination(md.getAETitle());
         assertTrue(removed);
         assertTrue(settings.getDicomServicesSettings().getMoveDestinations().isEmpty());
@@ -278,14 +303,15 @@ public class ServerSettingsTest {
     private static void assertSameContent(Collection o1, Collection o2) {
         assertNotNull("left-hand collection is null", o1);
         assertNotNull("right-hand collection is null", o2);
+        assertEquals(o1.size(), o2.size());
         for (Object o : o1) {
             if (!o2.contains(o)) {
-                throw new ComparisonFailure(null, String.valueOf(o1), String.valueOf(o2));
+                throw new ComparisonFailure("collection contents do not match", String.valueOf(o1), String.valueOf(o2));
             }
         }
         for (Object o : o2) {
             if (!o1.contains(o)) {
-                throw new ComparisonFailure(null, String.valueOf(o1), String.valueOf(o2));
+                throw new ComparisonFailure("collection contents do not match", String.valueOf(o1), String.valueOf(o2));
             }
         }
     }

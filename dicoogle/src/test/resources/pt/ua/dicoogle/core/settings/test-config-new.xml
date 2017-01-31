@@ -19,14 +19,13 @@
         <allowed-aetitles>any</allowed-aetitles>
         <allowed-local-interfaces>any</allowed-local-interfaces>
         <allowed-hostnames>any</allowed-hostnames>
+        <default-ts>
+            <ts>1.2.840.10008.1.2</ts>
+            <ts>1.2.840.10008.1.2.1</ts>
+            <ts>1.2.840.10008.1.2.4.80</ts>
+            <ts>1.2.840.10008.1.2.4.50</ts>
+        </default-ts>
         <sop-classes>
-            <sop-class>
-                <uid />
-                <ts>1.2.840.10008.1.2</ts>
-                <ts>1.2.840.10008.1.2.1</ts>
-                <ts>1.2.840.10008.1.2.4.80</ts>
-                <ts>1.2.840.10008.1.2.4.50</ts>
-            </sop-class>
             <sop-class>
                 <uid>1.2.840.10008.5.1.4.1.1.88.40</uid>
             </sop-class>

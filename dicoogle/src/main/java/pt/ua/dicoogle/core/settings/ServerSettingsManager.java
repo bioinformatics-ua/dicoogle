@@ -123,7 +123,6 @@ public class ServerSettingsManager
         return new XMLSupport().getXML();
     }
 
-    @Deprecated
     public static ServerSettings loadLegacySettingsAt(URL url) throws IOException {
         try {
             return new XMLSupport().parseXML(url.openStream());

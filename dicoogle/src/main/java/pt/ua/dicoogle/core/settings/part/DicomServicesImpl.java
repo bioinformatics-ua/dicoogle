@@ -24,6 +24,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.sdk.datastructs.SOPClass;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
+import pt.ua.dicoogle.server.SOPList;
 
 import java.util.*;
 
@@ -42,6 +43,14 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
         s.allowedLocalInterfaces = Collections.singletonList("any");
         s.moveDestinations = new ArrayList<>();
 
+        s.defaultTS = Arrays.asList(
+                "1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.2",
+                "1.2.840.10008.1.2.4.70", "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.57",
+                "1.2.840.10008.1.2.4.90", "1.2.840.10008.1.2.4.91", "1.2.840.10008.1.2.5",
+                "1.2.840.10008.1.2.4.100", "1.2.840.10008.1.2.4.51");
+
+        s.sopClasses = SOPList.getInstance().asSOPClassList();
+
         s.storage = StorageImpl.createDefault();
         s.queryRetrieve = QueryRetrieveImpl.createDefault();
 
@@ -56,7 +65,7 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
     @JsonSetter("allowed-aetitles")
     private void setAllowedAETitles_(Object o) {
         if (o == null) {
-            this.allowedAETitles = Collections.EMPTY_LIST;
+            this.allowedAETitles = Collections.emptyList();
         } else if (o instanceof Collection) {
             this.allowedAETitles = new ArrayList<>();
             for (Object e : (Collection) o) {
@@ -69,7 +78,7 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
 
     @JacksonXmlElementWrapper(useWrapping = false, localName = "allowed-aetitles")
     @JacksonXmlProperty(localName = "allowed-aetitles")
-    private Collection<String> allowedAETitles = Collections.EMPTY_LIST;
+    private Collection<String> allowedAETitles = Collections.emptyList();
 
     @JsonSetter("allowed-local-interfaces")
     private void setAllowedLocalInterfaces_(Object o) {
@@ -105,40 +114,12 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
         }
     }
 
-    @JsonIgnore
+    @JacksonXmlElementWrapper(localName = "default-ts")
+    @JacksonXmlProperty(localName = "ts")
     private Collection<String> defaultTS = null;
 
-    @JacksonXmlElementWrapper(localName = "sop-classes")
-    @JacksonXmlProperty(localName = "sop-classes")
-    private List<SOPClass> sopClasses = Collections.EMPTY_LIST;
-
-    @JsonSetter("sop-classes")
-    private void setSOPClasses_(Collection<SOPClass> col) {
-        this.defaultTS = null;
-        this.sopClasses = new ArrayList<>();
-
-        if (col == null) return;
-
-        for (SOPClass c : col) {
-            if (c.getUID() == null || "".equals(c.getUID()) || "default".equals(c.getUID())) {
-                this.defaultTS = c.getTransferSyntaxes();
-            } else {
-                this.sopClasses.add(c);
-            }
-        }
-
-        if (this.defaultTS != null) {
-            List<SOPClass> l = this.sopClasses;
-            this.sopClasses = new ArrayList<>();
-            for (SOPClass c : l) {
-                Collection<String> ts = c.getTransferSyntaxes();
-                if (ts == null || ts.isEmpty()) {
-                    c = c.withTS(this.defaultTS);
-                }
-                this.sopClasses.add(c);
-            }
-        }
-    }
+    @JsonProperty("sop-classes")
+    private Collection<SOPClass> sopClasses = Collections.emptyList();
 
     @JacksonXmlElementWrapper(localName = "move-destinations")
     private List<MoveDestination> moveDestinations;
@@ -213,15 +194,25 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
         return defaultTS;
     }
 
-    @Override
     @JsonGetter("sop-classes")
-    public Collection<SOPClass> getSOPClasses() {
-        return sopClasses;
+    public Collection<SOPClass> getRawSOPClasses() {
+        return this.sopClasses;
     }
 
     @Override
+    @JsonIgnore
+    public Collection<SOPClass> getSOPClasses() {
+        List<SOPClass> l = new ArrayList<>();
+        for (SOPClass c : this.sopClasses) {
+            l.add(c.withDefaultTS(this.defaultTS));
+        }
+        return l;
+    }
+
+    @Override
+    @JsonSetter("sop-classes")
     public void setSOPClasses(Collection<SOPClass> sopClasses) {
-        this.setSOPClasses_(sopClasses);
+        this.sopClasses = sopClasses;
     }
 
     @Override

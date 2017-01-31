@@ -18,18 +18,15 @@
  */
 package pt.ua.dicoogle.server;
 
-import java.util.*;
-import java.util.concurrent.Semaphore;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.dcm4che2.data.UID;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.sdk.datastructs.SOPClass;
 import pt.ua.dicoogle.server.web.management.SOPClassSettings;
+
+import java.util.*;
 
 /**
  * Support class for keeping SOPClass/TransferSyntax association
@@ -39,7 +36,6 @@ import pt.ua.dicoogle.server.web.management.SOPClassSettings;
 public class SOPList {
 
     private static SOPList instance = null;
-    private static Semaphore sem = new Semaphore(1, true);
     private static Logger logger = LoggerFactory.getLogger(SOPList.class);
 
     private Hashtable<String, TransfersStorage> table;    
@@ -132,18 +128,9 @@ public class SOPList {
 
     public static synchronized SOPList getInstance()
     {
-        try
+        if (instance == null)
         {
-            sem.acquire();
-            if (instance == null)
-            {
-                instance = new SOPList();
-            }
-            sem.release();
-        }
-        catch (InterruptedException ex)
-        {
-            LoggerFactory.getLogger(SOPList.class).error(ex.getMessage(), ex);
+            instance = new SOPList();
         }
         return instance;
     }
@@ -153,13 +140,10 @@ public class SOPList {
      */
     private SOPList() {
         table = new Hashtable<>();
-        
-        table.put(UID.CTImageStorage, new TransfersStorage());
-        table.put(UID.UltrasoundImageStorage, new TransfersStorage());
-        
-        for(int i=0; i<SOP.length; i++)
+
+        for(String sop: SOP)
         {
-            table.put(SOP[i], new TransfersStorage());
+            table.put(sop, new TransfersStorage());
         }        
     }     
     
@@ -168,11 +152,9 @@ public class SOPList {
      */
     public synchronized void setDefaultSettings()
     {
-        TransfersStorage TS;
-        for(int i=0; i<SOP.length; i++)
+        for (TransfersStorage ts: table.values())
         {
-            TS = table.get(SOP[i]);
-            TS.setDefaultSettings();
+            ts.setDefaultSettings();
         }
     }
     
