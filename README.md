@@ -161,6 +161,13 @@ Contributing
 
 The open source project is maintained by [UA.PT Bioinformatics](http://bioinformatics.ua.pt/) and [BMD Software](https://www.bmd-software.com/). Your contributions to the software are also welcome. Dicoogle is sought to be useful for R&D and the industry alike. You may find our [Development Guidelines](https://github.com/bioinformatics-ua/dicoogle/wiki#development-guidelines) in the wiki. Issues containing the [`easy`](https://github.com/bioinformatics-ua/dicoogle/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) label should be the most suitable for first open source contributions. For tech support, please prefer contacting the maintainers instead of creating an issue.
 
+
+## Support and consulting
+[<img src="https://raw.githubusercontent.com/wiki/BMDSoftware/dicoogle/images/bmd.png" height="64" alt="BMD Software">](https://www.bmd-software.com)
+
+Please contact [BMD Software](https://www.bmd-software.com) for professional support and consulting services.
+
+
 Project committers
 ------------------
 
