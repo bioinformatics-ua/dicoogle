@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -34,26 +33,26 @@ import org.dcm4che2.data.DicomObject;
 import net.sf.json.JSONObject;
 
 /**
- * A decorator to the MapedDICOMObject which features a structural index to speed-up more complex queries.
+ * A decorator to the MappedDICOMObject which features a structural index to speed-up more complex queries.
  * 
  * @author Tiago Marques Godinho, tmgodinho@ua.pt
  *
  */
-public class MapedDICOMObjectV2 extends DICOMObject {
+public class MappedDICOMObjectV2 extends DICOMObject {
 
   private StructuralIndex structuralIndex;
-  private MapedDICOMObject innerObject;
+  private MappedDICOMObject innerObject;
   
-  public MapedDICOMObjectV2(MapedDICOMObject obj) {
+  public MappedDICOMObjectV2(MappedDICOMObject obj) {
     super();
     this.structuralIndex = new StructuralIndex();
     this.innerObject = obj;
     this.createStructuralIndex();
   }
     
-  public static MapedDICOMObjectV2 createWithIndex(DicomObject obj) {
-    MapedDICOMObject ret = DicomObjectFactory.toMap(obj);
-    return new MapedDICOMObjectV2(ret);
+  public static MappedDICOMObjectV2 createWithIndex(DicomObject obj) {
+    MappedDICOMObject ret = DicomObjectFactory.toMap(obj);
+    return new MappedDICOMObjectV2(ret);
   }
   
   public void createStructuralIndex(){     

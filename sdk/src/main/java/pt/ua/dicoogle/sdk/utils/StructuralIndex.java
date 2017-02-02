@@ -30,7 +30,7 @@ import java.util.TreeMap;
 import org.apache.commons.collections4.map.MultiValueMap;
 
 /**
- * A structural index implementation to be used in MapedDICOMObjectV2
+ * A structural index implementation to be used in MappedDICOMObjectV2
  * 
  * @author Tiago Marques Godinho, tmgodinho@ua.pt
  *

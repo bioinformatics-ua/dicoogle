@@ -37,19 +37,19 @@ import org.dcm4che2.data.DicomObject;
  * @author Tiago Marques Godinho, tmgodinho@ua.pt
  *
  */
-public class MapedDICOMObject extends DICOMObject {
+public class MappedDICOMObject extends DICOMObject {
 
   public Map<String, Object> map;
   
-  public MapedDICOMObject() {
+  public MappedDICOMObject() {
     this.map = new HashMap<String, Object>();
   }
 
-  public MapedDICOMObject(Path parent) {
+  public MappedDICOMObject(Path parent) {
     this.map = new HashMap<String, Object>();
   }
 
-  public static MapedDICOMObject create(DicomObject obj) {
+  public static MappedDICOMObject create(DicomObject obj) {
     return DicomObjectFactory.toMap(obj);
   }
 
@@ -76,7 +76,7 @@ public class MapedDICOMObject extends DICOMObject {
   public Object put(String key, Object value) {
     Path p = Path.fromString(key);
     
-    MapedDICOMObject current = this;
+    MappedDICOMObject current = this;
     String[] nodes = p.getNodes();
     //System.out.println(Arrays.toString(nodes));
     int i;
@@ -84,12 +84,12 @@ public class MapedDICOMObject extends DICOMObject {
       String node = nodes[i];
       Object o = current.map.get(node);
       if(o == null){
-        o = new MapedDICOMObject();
+        o = new MappedDICOMObject();
         current.map.put(node, o);
       }
-      if(!(o instanceof MapedDICOMObject))
+      if(!(o instanceof MappedDICOMObject))
         throw new IllegalAccessError(node);
-      current = (MapedDICOMObject) o;
+      current = (MappedDICOMObject) o;
     }
     current.map.put(nodes[i], value);
     return current;
@@ -98,17 +98,17 @@ public class MapedDICOMObject extends DICOMObject {
   public Object remove(Object key) {
     Path p = Path.fromString((String)key);
     
-    MapedDICOMObject current = this;
+    MappedDICOMObject current = this;
     String[] nodes = p.getNodes();
     //System.out.println(Arrays.toString(nodes));
     int i;
     for(i=0; i< nodes.length-1;i++){
       String node = nodes[i];
       Object o = current.map.get(node);
-      if(o == null || !(o instanceof MapedDICOMObject)){
+      if(o == null || !(o instanceof MappedDICOMObject)){
         return null;
       }
-      current = (MapedDICOMObject) o;
+      current = (MappedDICOMObject) o;
     }
     return current.map.remove(nodes[i]);
   }
@@ -161,17 +161,17 @@ public class MapedDICOMObject extends DICOMObject {
   public Object getByPath(String path) {
     Path p = Path.fromString(path);
     
-    MapedDICOMObject current = this;
+    MappedDICOMObject current = this;
     String[] nodes = p.getNodes();
     //System.out.println(Arrays.toString(nodes));
     int i;
     for(i=0; i< nodes.length-1;i++){
       String node = nodes[i];
       Object o = current.map.get(node);
-      if(o == null || !(o instanceof MapedDICOMObject)){
+      if(o == null || !(o instanceof MappedDICOMObject)){
         return null;
       }
-      current = (MapedDICOMObject) o;
+      current = (MappedDICOMObject) o;
     }
     return current.map.get(nodes[i]);
   }

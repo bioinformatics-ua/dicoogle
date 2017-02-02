@@ -40,18 +40,18 @@ public class DicomObjectFactory {
   private static TagsStruct tagStruct = TagsStruct.getInstance();
   private static boolean cache = false;
 
-  public static MapedDICOMObject toMap(DicomObject obj) {
+  public static MappedDICOMObject toMap(DicomObject obj) {
     if(obj == null)
       return null;
     
     return toMap(obj, Path.NULL_PATH);
   }
   
-  public static MapedDICOMObject toMap(DicomObject obj, Path parent) {
+  public static MappedDICOMObject toMap(DicomObject obj, Path parent) {
     if(obj == null)
       return null;
     
-    MapedDICOMObject map = new MapedDICOMObject(parent);
+    MappedDICOMObject map = new MappedDICOMObject(parent);
     
     SpecificCharacterSet charSet = obj.getSpecificCharacterSet();
     Iterator<DicomElement> it = obj.iterator();
@@ -114,7 +114,7 @@ public class DicomObjectFactory {
       DicomObject d = elem.getDicomObject();
       TagValue tag = tagStruct.getTagValue(elem.tag());
       String t = (tag != null) ? tag.getAlias() : Integer.toString(elem.tag());
-      MapedDICOMObject map = DicomObjectFactory.toMap(d,parentPath.getAttributePath(t));
+      MappedDICOMObject map = DicomObjectFactory.toMap(d,parentPath.getAttributePath(t));
 
       ret = map;
     }
