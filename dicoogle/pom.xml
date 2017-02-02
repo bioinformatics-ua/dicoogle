@@ -10,7 +10,7 @@
     <parent>
         <groupId>pt.ua.ieeta</groupId>
         <artifactId>dicoogle-all</artifactId>
-        <version>2.4.0</version>
+        <version>2.5.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -76,38 +76,31 @@
                 <directory>src/main/java/pt/ua/dicoogle/config</directory>
             </resource>
             <resource>
-                <directory>src/main/java/pt/ua/dicoogle/gfx</directory>
-            </resource>
-            <resource>
                 <directory>src/main/resources</directory>
-            </resource>
-            <resource>
-                <directory>src/main/java/pt/ua/dicoogle/server/web/webapp/WEB-INF</directory>
-                <targetPath>WEB-INF</targetPath>
                 <includes>
-                    <include>assets/**</include>
-                    <include>bootstrap/css/*.css</include>
-                    <include>bootstrap/fonts/*</include>
-                    <include>fonts/**</include>
-                    <include>css/**</include>
-                    <include>lib/**</include>
-                    <include>index.html</include>
+                    <include>log4j2.xml</include>
+                    <include>webapp/assets/**</include>
+                    <include>webapp/bootstrap/css/*.css</include>
+                    <include>webapp/bootstrap/fonts/*</include>
+                    <include>webapp/fonts/**</include>
+                    <include>webapp/css/**</include>
+                    <include>webapp/lib/**</include>
+                    <include>webapp/index.html</include>
                 </includes>
-   <excludes>
-<exclude>META-INF/*.SF</exclude>
-<exclude>META-INF/*.DSA</exclude>
-<exclude>META-INF/*.RSA</exclude>
-                                     </excludes>
+                <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                </excludes>
             </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>**/version.txt</include>
-                </includes>
+           <resource>
+               <directory>src/main/resources</directory>
+               <filtering>true</filtering>
+               <includes>
+                   <include>version.txt</include>
+               </includes>
             </resource>
-            
-        </resources>
+         </resources>
 
         <plugins>
             <plugin>
@@ -126,11 +119,11 @@
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>pt.ua.dicoogle.Main</mainClass>
                                     <manifestEntries>
-                                        <Specification-Version>1.0-SNAPSHOT</Specification-Version>
-                                        <Implementation-Version>1.0-SNAPSHOT</Implementation-Version>
+					    <Specification-Version>${project.version}</Specification-Version>
+					    <Implementation-Version>${project.version}</Implementation-Version>
                                         <Extension-Name>com.sun.media.imageio</Extension-Name>
-                                        <Implementation-Vendor>MyCompany</Implementation-Vendor>
-                                        <Specification-Vendor>MyCompany</Specification-Vendor>
+                                        <Implementation-Vendor>BMD software/UA.PT Bioinformatics</Implementation-Vendor>
+                                        <Specification-Vendor>BMD software/UA.PT Bioinformatics</Specification-Vendor>
                                         <Class-Path>./src/main/resources/</Class-Path>
                                         <Sealed>true</Sealed>
                                     </manifestEntries>
@@ -256,8 +249,6 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
-
-
         <dependency>
             <groupId>pt.ua.ieeta</groupId>
             <artifactId>dicoogle-sdk</artifactId>
@@ -276,11 +267,6 @@
             <version>5.3</version>
         </dependency>
 
-        <dependency>
-            <groupId>pt.ieeta</groupId>
-            <artifactId>AnonymousPatientData</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>

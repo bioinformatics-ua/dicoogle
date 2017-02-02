@@ -27,8 +27,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Observable;
-import java.util.concurrent.Semaphore;
-import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.sdk.Utils.Platform;
 
@@ -44,22 +42,11 @@ public class QueryHistorySupport extends Observable {
     private static String fileName = Platform.homePath() + "QueryHistory.ser";
 
     private static QueryHistorySupport instance = null;
-    private static Semaphore sem = new Semaphore(1, true);
 
     public static synchronized QueryHistorySupport getInstance()
     {
-        try
-        {
-            sem.acquire();
-            if (instance == null)
-            {
-                instance = new QueryHistorySupport();
-            }
-            sem.release();
-        }
-        catch (InterruptedException ex)
-        {
-            LoggerFactory.getLogger(QueryHistorySupport.class).error(ex.getMessage(), ex);
+        if (instance == null) {
+            instance = new QueryHistorySupport();
         }
         return instance;
     }

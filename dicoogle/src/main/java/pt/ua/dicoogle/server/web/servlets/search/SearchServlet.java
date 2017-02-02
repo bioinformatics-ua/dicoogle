@@ -158,16 +158,27 @@ public class SearchServlet extends HttpServlet {
         }
 
         List<String> knownProviders = null;
-        if (!queryAllProviders) {
+        if (!queryAllProviders) 
+        {
             knownProviders = new ArrayList<>();
             List<String> activeProviders = PluginController.getInstance().getQueryProvidersName(true);
-            for (String p : providers) {
-                if (activeProviders.contains(p)) {
+            for (String p : providers)
+            {
+                if (activeProviders.contains(p)) 
+                {
                     knownProviders.add(p);
+                }
+                else
+                {
+                    response.setStatus(400);
+                    JSONObject obj = new JSONObject();
+                    obj.put("error", p.toString() +" is not a valid query provider");
+                    response.getWriter().append(obj.toString());
+                    return;
                 }
             }
         }
-
+        
         HashMap<String, String> extraFields = new HashMap<>();
         if (actualFields == null) {
             
@@ -197,7 +208,9 @@ public class SearchServlet extends HttpServlet {
             Iterable<SearchResult> results;
             if (queryAllProviders) {
                 results = PluginController.getInstance().queryAll(queryTaskHolder, query, extraFields).get();
-            } else {
+            }
+            
+            else {
                 results = PluginController.getInstance().query(queryTaskHolder, knownProviders, query, extraFields).get();
             }
 
@@ -258,7 +271,7 @@ public class SearchServlet extends HttpServlet {
     }
 
     private static void sendError(HttpServletResponse resp, int code, String message) throws IOException {
-        resp.setStatus(500);
+        resp.setStatus(code);
         JSONObject obj = new JSONObject();
         obj.put("results", new JSONArray());
         obj.put("error", message);
