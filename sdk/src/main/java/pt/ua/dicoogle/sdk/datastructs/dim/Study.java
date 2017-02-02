@@ -26,7 +26,7 @@ import java.util.Hashtable;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class Study {
+public class Study implements StudyInterface{
 
     private Patient parent;
     private String StudyInstanceUID ;

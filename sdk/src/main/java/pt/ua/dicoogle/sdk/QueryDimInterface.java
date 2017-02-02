@@ -14,5 +14,5 @@ public interface QueryDimInterface extends QueryInterface {
     public Iterable<Patient> queryPatient(String query, Object ... parameters);
     public Iterable<Study> queryStudy(String query, Object ... parameters);
     public Iterable<Serie> querySeries(String query, Object ... parameters);
-
+    
 }

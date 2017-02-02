@@ -25,7 +25,7 @@ import java.util.ArrayList;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class Serie
+public class Serie implements SerieInterface
 {
 
     private Study parent;

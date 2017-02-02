@@ -27,7 +27,7 @@ import java.util.Map;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class Patient
+public class Patient implements PatientInterface
 {
     private String PatientID;
     private String PatientName;
