@@ -30,8 +30,8 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * An interface that maps a DICOM Object into a Map. 
  * The idea is to have an in-memory model of the DICOM Objects document tree.
- *   
- * @author Tiago Marques Godinho, tmgodinho@ua.pt 
+ * 
+ * @author Tiago Marques Godinho, tmgodinho@ua.pt
  */
 public abstract class DICOMObject implements Map<String, Object>{
   

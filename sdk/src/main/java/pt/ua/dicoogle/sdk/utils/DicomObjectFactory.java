@@ -110,14 +110,12 @@ public class DicomObjectFactory {
     } else if (vr == VR.OB || vr == VR.OF || vr == VR.OW || vr == VR.UN) {
       ret = writeInlineBinary(elem);
     } else if (vr == VR.SQ) {
-      //String x = String.format("CountItems: %d, hasObjects: %s, hasFrags: %s, hasItems: %s", elem.countItems(), elem.hasDicomObjects(), elem.hasFragments(), elem.hasItems());
-      //System.out.println(x);
+
       DicomObject d = elem.getDicomObject();
       TagValue tag = tagStruct.getTagValue(elem.tag());
       String t = (tag != null) ? tag.getAlias() : Integer.toString(elem.tag());
       MapedDICOMObject map = DicomObjectFactory.toMap(d,parentPath.getAttributePath(t));
-      //for( String xx : map.keySet())
-      //  System.out.println("---> "+xx);
+
       ret = map;
     }
     
