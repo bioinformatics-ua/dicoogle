@@ -150,11 +150,10 @@ Before building, please make sure that your system contains the following tools:
  - [Node.js](https://nodejs.org/en/download/) (at least version 4; LTS or Stable versions are recommended) and npm (at least version 2)
 
  1. Retrieve the full source code from this repository: `git clone https://github.com/bioinformatics-ua/dicoogle.git`
- 2. Navigate to the web app directory: "./dicoogle/src/main/resources/webapp/"
- 3. Build the web application: `npm install`
-    - The full instructions can be read [here](dicoogle/src/main/resources/webapp/README.md).
- 4. Navigate to the project's base directory, and build the parent Maven project by calling `mvn install`.
- 5. The resulting jar file can be found in "./dicoogle/target".
+ 2. Navigate to the project's base directory, and build the parent Maven project by calling `mvn install`.
+    - Note: if you want, you can skip the npm part: `mvn install -Dskip.npm`
+ 3. The resulting jar file can be found in "./dicoogle/target".
+
 
 Contributing
 ------------
