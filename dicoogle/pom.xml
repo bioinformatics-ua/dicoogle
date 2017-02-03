@@ -206,6 +206,44 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Webapp -->
+
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <executions>
+                    <!-- Install Node and NPM -->
+                    <execution>
+                        <id>install node and npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                    </execution>
+                    <!-- install dependencies and build for webapp for production-->
+                    <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+
+                        <phase>generate-resources</phase>
+
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+
+                </executions>
+                <configuration>
+                    <nodeVersion>v6.9.1</nodeVersion>
+                    <npmVersion>3.10.10</npmVersion>
+                    <installDirectory>target</installDirectory>
+                    <!-- Defining webapp directory -->
+                    <workingDirectory>src/main/resources/webapp</workingDirectory>
+                </configuration>
+            </plugin>
           
         </plugins>
     </build>
