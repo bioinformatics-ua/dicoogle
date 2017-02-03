@@ -239,6 +239,7 @@ public class LocalImageCache extends Thread implements ImageRetriever
     
     protected static String toFileName(String imageUri, int frameNumber, boolean thumbnail) {
         String filename = imageUri.replace('/', '_') + "_" + frameNumber;
+        filename = filename.replace(':', '_') ; // only for windows.
         if (thumbnail) {
             filename += "__thumb";
         }
