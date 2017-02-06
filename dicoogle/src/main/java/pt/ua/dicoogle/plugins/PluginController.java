@@ -439,12 +439,16 @@ public class PluginController{
     	logger.error("No indexer matching name {} for onlyEnabled = {}", name, onlyEnabled);
     	return null;
     }
-    
+
+    public JointQueryTask queryAll(JointQueryTask holder, final String query, final Object ... parameters)
+    {
+        return queryAll(holder, query, DimLevel.INSTANCE, parameters);
+    }
+
     public JointQueryTask queryAll(JointQueryTask holder, final String query, final DimLevel level, final Object ... parameters)
     {
     	//logger.info("Querying all providers");
     	List<String> providers = this.getQueryProvidersName(true);
-    	
     	return query(holder, providers, query, level, parameters);
     }
     
@@ -455,7 +459,11 @@ public class PluginController{
         
         return t;//returns the handler to obtain the computation results
     }
-    
+
+    public JointQueryTask query(JointQueryTask holder, List<String> querySources, final String query, final Object ... parameters){
+        return query(holder, querySources, query, DimLevel.INSTANCE, parameters);
+    }
+
     public JointQueryTask query(JointQueryTask holder, List<String> querySources, final String query,
                                 final DimLevel level, final Object ... parameters){
         if(holder == null)
