@@ -138,7 +138,7 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
 
     @Override
     public Task<Iterable<SearchResult>> query(String querySource, DimLevel level, String query, Object... parameters) {
-        return null;
+        return pluginController.query(querySource, query, level, parameters);
     }
 
     @Override
@@ -149,7 +149,7 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
 
     @Override
     public JointQueryTask query(JointQueryTask holder, List<String> querySources, DimLevel level, String query, Object... parameters) {
-        return null;
+        return pluginController.query(holder, querySources, query, level, parameters);
     }
 
     @Override
