@@ -3,46 +3,13 @@
 This JavaScript project aims to provide the backbone for Dicoogle Web UI plugins.
 The essence of this architecture is that Dicoogle web pages will contain stub slots where plugins can be attached to.
 
-## Building and Using
-
-> Note: These details are only relevant to developers of Dicoogle and its web app. To learn how to develop web UI plugins, please skip this section.
-
-The project can be built by calling `npm install`. On Dicoogle, simply install `dicoogle-webcore` as a dependency and `import` (or `require`) the package module. Then:
-
- - Place `<dicoogle-slot>` elements in the page. They must contain a unique slot id attribute `data-slot-id`.
- - Invoke the module's `init()` to initialize the module. It will automatically detect slots, as well as fetch and attach plugins. This method
-   should only be called once. New slots attached dynamically will be automatically filled.
- - In order to know what menu plugins are available, invoke `fetchPlugins('menu'[, callback])`.
-
-The optional web component attribute `data-plugin-name` can be passed to the `<dicoogle-slot>` in order to retrieve a specific plugin (rather than all compatible plugins for that slot).
-
-Furthermore, slot elements will emit a `plugin-load` custom event (not to be confused with the webcore's event emitter) each time a specific plugin is created and rendered. The event can be listened by adding a typical DOM event listener:
-
-```javascript
-slotElement.addEventListener('plugin-load', fnHandleEvent);
-```
-
-The `detail` property of the event will contain the object returned by the render method. In Dicoogle, this can be used for attaching React elements without rendering directly to the DOM.
-
-Plugin web components will be attached to a div in the `<dicoogle-slot>` with its class defined as
-`"dicoogle-webcore-<slotid>-instance"` (e.g. `"dicoogle-webcore-query-instance"`). The div of these parents
-will have a class `"dicoogle-webcore-<slotid>"`. The Dicoogle web application may use these classes to style these
-additional UI elements.
-
-A few examples of web pages using the Dicoogle Web Core are available in "test/TC".
-
-### Runtime Dependencies
-
-Dicoogle Web Core requires HTML custom element support.
-Include the "document-register-elements" script in order to extend HTML5 custom element support to other browsers.
-
 ## Creating plugins
 
 You can create your own plugins by providing a directory containing two essential files: a plugin descriptor and a JavaScript module.
 
 ### Plugin descriptor
 
-A descriptor takes the form of a "package.json", an `npm` package descriptor, containing at least these attributes:
+A descriptor takes the form of a "package.json", a package descriptor compliant with npm, containing at least these attributes:
 
  - `name` : the unique name of the plugin (must be compliant with npm)
  - `version` : the version of the plugin (must be compliant with npm)
@@ -51,7 +18,6 @@ A descriptor takes the form of a "package.json", an `npm` package descriptor, co
       - `caption` _(optional, defaults to name)_ : an appropriate title for being shown as a tab (or similar) on the web page
       - `slot-id` : the unique ID of the slot where this plugin is meant to be attached
       - `module-file` _(optional, defaults to "module.js")_ : the name of the file containing the JavaScript module
-
 
 In addition, these attributes are recommended:
 
@@ -154,9 +120,9 @@ export default class MyPluginModule() {
 Either `require` the `dicoogle-client` module (if the page supports the operation) or use the alias `Dicoogle` to 
 access and perform operations on Dicoogle and the page's web core. All methods described in
 [`dicoogle-client`](https://github.com/bioinformatics-ua/dicoogle-client-js) are available. Furthermore, the web
-core injects the following methods:
+core injects the following methods in the `webcore` namespace:
 
-#### **issueQuery** : `function(query, options, callback)`
+#### **webcore.issueQuery** : `function(query, options, callback)`
 
 Issue a query to the system. This operation is asynchronous and will automatically issue back a result exposal to the
 page's result module. The query service requested will be "search" unless modified with the _overrideService_ option.
@@ -166,40 +132,40 @@ page's result module. The query service requested will be "search" unless modifi
      - \[_overrideService_\] {string} the name of the service to use instead of "search"
  - _callback_ an optional callback function(error, result)
 
-####  **addEventListener** : `function(eventName, fn)`
+####  **webcore.addEventListener** : `function(eventName, fn)`
 
 Add an event listener to an event triggered by the web core.
 
  - _eventName_ : the name of the event (can be one of 'load','menu' or a custom one)
  - _fn_ : a callback function (arguments vary) -- `function(...)`
 
-#### **addResultListener** : `function(fn)`
+#### **webcore.addResultListener** : `function(fn)`
 
 Add a listener to the 'result' event, triggered when a query result is obtained.
 
  - _fn_ : `function(result, requestTime, options)`
 
-#### **addPluginLoadListener** : `function(fn)`
+#### **webcore.addPluginLoadListener** : `function(fn)`
 
 Add a listener to the 'load' event, triggered when a plugin is loaded.
 
  - _fn_ : `function(Object{name, slotId, caption})`
 
-#### **addMenuPluginListener** : `function(fn)`
+#### **webcore.addMenuPluginListener** : `function(fn)`
 
 Add a listener to the 'menu' event, triggered when a menu plugin descriptor is retrieved.
 This may be useful for a web page to react to retrievals by automatically adding menu entries.
 
  - _fn_ : `function(Object{name, slotId, caption})`
 
-#### **emit**: `function(eventName, ...args)`
+#### **webcore.emit**: `function(eventName, ...args)`
 
 Emit an event through the webcore's event emitter.
 
  - _eventName_ : the name of the event
  - _args_ : variable list of arguments to be passed to the listeners
 
-#### **emitSlotSignal**: `function(slotDOM, eventName, data)`
+#### **webcore.emitSlotSignal**: `function(slotDOM, eventName, data)`
 
 Emit a DOM custom event from the slot element.
 
@@ -212,6 +178,7 @@ Emit a DOM custom event from the slot element.
 Full list of events that can be used by plugins and the webapp. _(Work in Progress)_
 
  - "load" : Emitted when a plugin package is retrieved.
+ - "menu" : Emitted when a new menu entry is added to the webapp's side bar.
  - "result" : Emitted when a list of search results is obtained from the search interface.
 
 ## Installing Plugins
@@ -220,6 +187,39 @@ Place all contents of a plugin in a directory and insert the directory (by copyi
 into the "WebPlugins" folder at the base working directory. Alternatively, package a "WebPlugins"
 directory with the same contents in a Dicoogle plugin jar. All plugins will then be retrieved the
 next time the Dicoogle server loads.
+
+## Building and Using
+
+> Note: These details are only relevant to developers of Dicoogle and its webapp. To learn how to develop web UI plugins, please ignore this section.
+
+The project can be built by calling `npm install`. On Dicoogle, simply install `dicoogle-webcore` as a dependency and `import` (or `require`) the package module. Then:
+
+ - Place `<dicoogle-slot>` elements in the page. They must contain a unique slot id attribute `data-slot-id`.
+ - Invoke the module's `init()` to initialize the module. It will automatically detect slots, as well as fetch and attach plugins. This method
+   should only be called once. New slots attached dynamically will be automatically filled.
+ - In order to know what menu plugins are available, invoke `fetchPlugins('menu'[, callback])`.
+
+The optional web component attribute `data-plugin-name` can be passed to the `<dicoogle-slot>` in order to retrieve a specific plugin (rather than all compatible plugins for that slot).
+
+Furthermore, slot elements will emit a `plugin-load` custom event (not to be confused with the webcore's event emitter) each time a specific plugin is created and rendered. The event can be listened by adding a typical DOM event listener:
+
+```javascript
+slotElement.addEventListener('plugin-load', fnHandleEvent);
+```
+
+The `detail` property of the event will contain the object returned by the render method. In Dicoogle, this can be used for attaching React elements without rendering directly to the DOM.
+
+Plugin web components will be attached to a div in the `<dicoogle-slot>` with its class defined as
+`"dicoogle-webcore-<slotid>-instance"` (e.g. `"dicoogle-webcore-query-instance"`). The div of these parents
+will have a class `"dicoogle-webcore-<slotid>"`. The Dicoogle web application may use these classes to style these
+additional UI elements.
+
+A few examples of web pages using the Dicoogle Web Core are available in "test/TC".
+
+### Runtime Dependencies
+
+Dicoogle Web Core requires HTML custom element support.
+Include the "document-register-elements" script in order to extend HTML5 custom element support to other browsers.
 
 ## Testing Plugins
 

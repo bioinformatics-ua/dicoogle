@@ -31,7 +31,7 @@
     "eslint-plugin-import": "^1.8.1"
   },
   "peerDependencies": {
-    "dicoogle-client": "^4.0.0-rc1"
+    "dicoogle-client": "^4.0.0"
   },
   "dependencies": {
     "document-register-element": "^0.5.4",
