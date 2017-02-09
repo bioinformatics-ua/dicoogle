@@ -31,88 +31,84 @@ require('bootstrap');
 class App extends React.Component {
   static get contextTypes () {
     return {
-			router: PropTypes.object.isRequired,
-			location: React.PropTypes.object
-		};
+      router: PropTypes.object.isRequired,
+      location: React.PropTypes.object
+    };
   }
 
-	constructor(props) {
-		super(props);
-		this.pluginsFetched = false;
-		this.state = {
-			pluginMenuItems: [],
-			username: null
-		};
-		this.logout = this.logout.bind(this);
-		this.handleUserStoreUpdate = this.handleUserStoreUpdate.bind(this);
-	}
+  constructor(props) {
+    super(props);
+    this.pluginsFetched = false;
+    this.state = {
+      pluginMenuItems: [],
+      username: null
+    };
+    this.logout = this.logout.bind(this);
+    this.handleUserStoreUpdate = this.handleUserStoreUpdate.bind(this);
+  }
 
-	/**
-	 * @param {packageJSON|packageJSON[]} plugins
-	 */
-	onMenuPlugin(packages) {
-		const {pluginMenuItems} = this.state;
+  /**
+   * @param {packageJSON|packageJSON[]} plugins
+   */
+  onMenuPlugin(packages) {
+    const {pluginMenuItems} = this.state;
 
-		this.setState({
-			pluginMenuItems: pluginMenuItems.concat(packages.map(pkg => ({
-					value: pkg.name,
-					caption: pkg.dicoogle.caption || pkg.name,
-					isPlugin: true,
-					icon: 'fa fa-plug'
-				})))
-		});
-	}
+    this.setState({
+      pluginMenuItems: pluginMenuItems.concat(packages.map(pkg => ({
+          value: pkg.name,
+          caption: pkg.dicoogle.caption || pkg.name,
+          isPlugin: true,
+          icon: 'fa fa-plug'
+        })))
+    });
+  }
 
-	componentWillMount()
-	{
-		UserStore.listen(this.handleUserStoreUpdate);
+  componentWillMount() {
+    UserStore.listen(this.handleUserStoreUpdate);
 
-		this.dicoogle = dicoogleClient(Endpoints.base);
-		if (this.props.location.pathname === '/')
-		{
-			localStorage.token = null;
-			UserActions.logout();
-		} else {
-			UserActions.isLoggedIn();
-		}
-		Webcore.init(Endpoints.base);
-	}
+    this.dicoogle = dicoogleClient(Endpoints.base);
+    if (this.props.location.pathname === '/') {
+      localStorage.token = null;
+      UserActions.logout();
+    } else {
+      UserActions.isLoggedIn();
+    }
+    Webcore.init(Endpoints.base);
+  }
 
-	componentDidMount(){
+  componentDidMount(){
     UserStore.loadLocalStore();
-		if (localStorage.token === undefined || this.props.location.pathname === '/') {
-			this.context.router.push('login');
-		}
+    if (localStorage.token === undefined || this.props.location.pathname === '/') {
+      this.context.router.push('login');
+    }
 
     $("#menu-toggle").click(function (e) {
       e.preventDefault();
       $("#wrapper").toggleClass("toggled");
     });
-	}
+  }
 
-	fetchPlugins(data) {
-		if (this.pluginsFetched)
-			return;
-		if (!data.isLoggedIn)
-			return;
+  fetchPlugins(data) {
+    if (this.pluginsFetched || !data.isLoggedIn)
+      return;
 
-		Webcore.addPluginLoadListener((plugin) => {
+    Webcore.addPluginLoadListener((plugin) => {
       console.log("Plugin loaded to Dicoogle:", plugin);
-		});
-		Webcore.fetchPlugins('menu', (packages) => {
+    });
+    Webcore.fetchPlugins('menu', (packages) => {
       this.onMenuPlugin(packages);
       Webcore.fetchModules(packages);
-		});
+    });
 
     // pre-fetch modules of other plugin types
-		Webcore.fetchPlugins(['search', 'result-options', 'query', 'result'], Webcore.fetchModules)
-		this.pluginsFetched = true;
+    Webcore.fetchPlugins(['search', 'result-options', 'query', 'result'], Webcore.fetchModules)
+    this.pluginsFetched = true;
   }
 
   // TODO put this elsewhere
-	logout() {
-		const Dicoogle = dicoogleClient();
-		Dicoogle.logout((error) => {
+  logout() {
+    const Dicoogle = dicoogleClient();
+    Dicoogle.logout((error) => {
       if (error) {
         console.error(error);
       }
@@ -121,17 +117,17 @@ class App extends React.Component {
       this.pluginsFetched = false;
       UserActions.logout()
 
-			this.context.router.push('login');
-		});
-	}
+      this.context.router.push('login');
+    });
+  }
 
-	render() {
+  render() {
 
-		return (
-		<div>
-			<div className="topbar">
-				<img className="btn_drawer" src="assets/drawer_menu.png" id="menu-toggle" />
-				<a>Dicoogle</a>
+    return (
+    <div>
+      <div className="topbar">
+        <img className="btn_drawer" src="assets/drawer_menu.png" id="menu-toggle" />
+        <a>Dicoogle</a>
         <div className="pull-right" bsStyle="padding:15px">
 
           <span className="user-name usernameLogin" bsStyle="padding-right:10px">
@@ -145,29 +141,29 @@ class App extends React.Component {
         </div>
       </div>
 
-			<div id="wrapper">
-				<div id="sidebar-wrapper">
-					<Sidebar pluginMenuItems={this.state.pluginMenuItems} onLogout={this.logout}/>
-				</div>
-				<div id="container" style={{display: 'block'}}>
-					{this.props.children}
-				</div>
-			</div>
-		</div>);
-	}
+      <div id="wrapper">
+        <div id="sidebar-wrapper">
+          <Sidebar pluginMenuItems={this.state.pluginMenuItems} onLogout={this.logout}/>
+        </div>
+        <div id="container" style={{display: 'block'}}>
+          {this.props.children}
+        </div>
+      </div>
+    </div>);
+  }
 
-	handleUserStoreUpdate(data) {
-		this.fetchPlugins(data);
-		if (data.username) {
-			this.setState(data);
-		}
-	}
+  handleUserStoreUpdate(data) {
+    this.fetchPlugins(data);
+    if (data.username) {
+      this.setState(data);
+    }
+  }
 }
 
 function NotFoundView() {
-	return (<div>
+  return (<div>
     <h1>Not Found</h1>
-	</div>);
+  </div>);
 }
 
 ReactDOM.render((
