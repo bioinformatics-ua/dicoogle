@@ -451,7 +451,13 @@ public class PluginController{
     	List<String> providers = this.getQueryProvidersName(true);
     	return query(holder, providers, query, level, parameters);
     }
-    
+
+    public Task<Iterable<SearchResult>> query(String querySource, final String query,
+                                                final Object ... parameters){
+        return this.query(querySource, query, DimLevel.INSTANCE, parameters);
+    }
+
+
     public Task<Iterable<SearchResult>> query(String querySource, final String query, final DimLevel level, final Object ... parameters){
         Task<Iterable<SearchResult>> t = getTaskForQuery(querySource, query, level, parameters);
         taskManager.dispatch(t);
