@@ -1,7 +1,7 @@
 import {Endpoints} from '../constants/endpoints';
 import $ from 'jquery';
 
-function getPatients(freetext, isKeyword, provider, callbackSucccess, callbackError){
+function getPatients(freetext, provider, callbackSucccess, callbackError){
         console.log("store param: ", freetext);
         // ??? use dicoogle client?
 
@@ -9,10 +9,9 @@ function getPatients(freetext, isKeyword, provider, callbackSucccess, callbackEr
         if(freetext.length === 0)
         {
           freetext = "*:*";
-          isKeyword = true;
         }
 
-        var url = Endpoints.base + '/searchDIM?query=' + freetext + '&keyword=' + isKeyword;
+        var url = Endpoints.base + '/searchDIM?query=' + freetext;
         if(provider !== "all")
         {
           provider = Array.prototype.concat.apply([], provider);

@@ -193,7 +193,7 @@ const Search = React.createClass({
     onSearchClicked: function() {
         const text = this.state.queryText;
         const provider = this.state.selectedProviders;
-        const params = {text, keyword: this.isKeyword(text), other: true, provider};
+        const params = {text, provider};
         this.triggerSearch(params);
     },
     triggerSearch: function(params){
@@ -203,9 +203,6 @@ const Search = React.createClass({
           error: null
         });
       ActionCreators.search(params);
-    },
-    isKeyword: function(freetext) {
-      return !!freetext.match(/[^\s\\]:\S/);
     },
     isAutocompletOpened: function(){
       if($('.ui-autocomplete').css('display') === 'none'){return false;}
