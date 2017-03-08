@@ -34,6 +34,7 @@ import pt.ua.dicoogle.sdk.utils.DICOMObject.Path;
  * Very inspired in dcm4che3 dcm2json implementation.
  * 
  * @author Tiago Marques Godinho, tmgodinho@ua.pt
+ * @author Luís A. Bastião Silva <bastiao@bmd-software.com>
  */
 public class DicomObjectFactory {
 

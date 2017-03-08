@@ -30,9 +30,10 @@ import java.util.TreeMap;
 import org.apache.commons.collections4.map.MultiValueMap;
 
 /**
- * A structural index implementation to be used in MappedDICOMObjectV2
+ * A structural index implementation to be used in MappedDICOMObjectDecorator
  * 
  * @author Tiago Marques Godinho, tmgodinho@ua.pt
+ * @author Luís A. Bastião Silva <bastiao@bmd-software.com>
  *
  */
 public class StructuralIndex {
