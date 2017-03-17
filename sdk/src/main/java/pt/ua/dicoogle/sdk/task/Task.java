@@ -19,6 +19,7 @@
 package pt.ua.dicoogle.sdk.task;
 
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
@@ -30,20 +31,27 @@ import java.util.concurrent.FutureTask;
  */
 public class Task<Type> extends FutureTask<Type> {
 
-    private String taskName = "unnamed task";
+    private final String uid;
+    private String taskName;
     private Callable callable;
-    ArrayList<Runnable> toRunWhenComplete;
-    
-    public Task(Callable<Type> c){
-        super(c);
-        callable = c;
-        toRunWhenComplete = new ArrayList<>();//we could lazy initialize this in onCompletion
+    private ArrayList<Runnable> toRunWhenComplete;
+
+    /** Create a new task with a randomly generated ID. */
+    public Task(Callable<Type> c) {
+        this("unnamed task", c);
     }
-    
-    public Task(String name, Callable<Type> c){
+
+    /** Create a new task with a specific name and a randomly generated ID. */
+    public Task(String name, Callable<Type> c) {
+        this(generateUID(), name, c);
+    }
+
+    public Task(String uid, String name, Callable<Type> c) {
         super(c);
+        this.callable = c;
+        this.uid = uid;
         taskName = name;
-        toRunWhenComplete = new ArrayList<>();//we could lazy initialize this in onCompletion
+        toRunWhenComplete = new ArrayList<>();
     }
     
     @Override
@@ -53,7 +61,11 @@ public class Task<Type> extends FutureTask<Type> {
             r.run();
         }
     }
-    
+
+    public String getUid() {
+        return uid;
+    }
+
     public void onCompletion(Runnable r){
         toRunWhenComplete.add(r);
     }
@@ -77,6 +89,9 @@ public class Task<Type> extends FutureTask<Type> {
         }
         return -1;
     }
-    
+
+    private static String generateUID() {
+        return UUID.randomUUID().toString();
+    }
 }
 
