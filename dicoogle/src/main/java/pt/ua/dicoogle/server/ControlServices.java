@@ -50,7 +50,7 @@ public class ControlServices implements IServices
     
     private ControlServices()
     {
-        TaskManager taskManager = new TaskManager(4);
+        TaskManager taskManager = new TaskManager(Integer.parseInt(System.getProperty("dicoogle.taskManager.nThreads", "4")));
 
         startInicialServices();
     }
