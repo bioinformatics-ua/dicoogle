@@ -53,7 +53,7 @@
     "react-imageloader": "^2.1.0",
     "react-router": "^2.0.0",
     "react-router-bootstrap": "^0.20.1",
-    "reflux": "^5.0.4"
+    "reflux": "^0.4.1"
   },
   "devDependencies": {
     "babel-eslint": "^7.1.0",
@@ -76,7 +76,6 @@
     "gulp-sourcemaps": "^2.2.0",
     "gulp-uglify": "^2.0.0",
     "gulp-util": "^3.0.8",
-    "react-addons-update": "^0.14.8",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.7.0"

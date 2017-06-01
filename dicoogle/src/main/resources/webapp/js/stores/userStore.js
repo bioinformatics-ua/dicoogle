@@ -29,16 +29,18 @@ const UserStore = Reflux.createStore({
         if (!user) {
             user = JSON.parse(localStorage.getItem("user"));
         }
-        console.log(`Loading previous session from local store`);
-        this._isAdmin = user.isAdmin;
-        this._username = user.username;
-        this._roles = user.roles;
-        this._token = user.token;
-        this._isLoggedIn = true;
-        this.trigger({
-            isLoggedIn: this._isLoggedIn,
-            success: true
-        });
+        if (user) {
+            console.log(`Loading previous session from local store`);
+            this._isAdmin = user.isAdmin;
+            this._username = user.username;
+            this._roles = user.roles;
+            this._token = user.token;
+            this._isLoggedIn = true;
+            this.trigger({
+                isLoggedIn: this._isLoggedIn,
+                success: true
+            });
+        }
     },
     onLogin: function(user, pass){
       console.log("onLogin");

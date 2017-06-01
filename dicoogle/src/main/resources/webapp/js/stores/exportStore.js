@@ -34,8 +34,7 @@ const ExportStore = Reflux.createStore({
       });
     },
 
-    onExportCSV: function(data, fields){
-
+    onExportCSV(data, fields){
       let {text, keyword, provider} = data;
       if(text.length === 0)
       {
@@ -43,7 +42,7 @@ const ExportStore = Reflux.createStore({
         keyword = true;
       }
 
-      this.dicoogle.issueExport(text, fields, {keyword, providers: provider}, (error, id) => {
+      this.dicoogle.issueExport(text, fields, {keyword, provider}, (error, id) => {
           if (error) {
             console.error("Failed to issue the export:", error);
             return;
