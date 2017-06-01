@@ -5,10 +5,9 @@ import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import {ActionCreators} from '../../../actions/searchActions';
 import ConfirmModal from './confirmModal';
 import PluginView from '../../plugin/pluginView.jsx';
-import {Input} from 'react-bootstrap';
-import ResultSelectActions from '../../../actions/resultSelectAction';
-
-import {UserStore} from '../../../stores/userStore';
+import {FormGroup, Checkbox} from 'react-bootstrap';
+import * as ResultSelectActions from '../../../actions/resultSelectAction';
+import UserStore from '../../../stores/userStore';
 
 const StudyView = React.createClass({
     getInitialState: function() {
@@ -24,11 +23,11 @@ const StudyView = React.createClass({
 
   componentWillMount: function() {
     // Subscribe to the store.
-    SearchStore.listen(this._onChange);
+    this.unsubscribe = SearchStore.listen(this._onChange);
     ResultSelectActions.clear();
   },
   componentWillUnmount: function() {
-    console.log("Study Component will umount. ");
+    this.unsubscribe();
   },
 
   /**
@@ -103,9 +102,10 @@ const StudyView = React.createClass({
     let {studyInstanceUID} = item;
     let classNameForIt = "advancedOptions " + studyInstanceUID;
     return (<div className={classNameForIt}>
-              <Input type="checkbox" label=""
-                    onChange={this.handleSelect.bind(this, item)}
-                    ref={this.handleRefs.bind(this, studyInstanceUID)}/>
+              <FormGroup>
+                <Checkbox onChange={this.handleSelect.bind(this, item)}
+                          ref={this.handleRefs.bind(this, studyInstanceUID)}/>
+              </FormGroup>
             </div>
     );
   },
@@ -151,26 +151,22 @@ const StudyView = React.createClass({
       );
 	},
   hideUnindex () {
-      if (this.isMounted())
     this.setState({
       unindexSelected: null
     });
   },
   showUnindex (item) {
-      if (this.isMounted())
     this.setState({
       unindexSelected: item,
       removeSelected: null
     });
   },
   hideRemove () {
-      if (this.isMounted())
     this.setState({
       removeSelected: null
     });
   },
   showRemove (item) {
-      if (this.isMounted())
     this.setState({
       removeSelected: item,
       unindexSelected: null
@@ -201,14 +197,12 @@ const StudyView = React.createClass({
     this.props.onItemClick(row);
   },
   _onChange: function(data){
-
-    if (this.isMounted())
-    {
-      this.setState({data: data.data,
+    this.setState({
+      data: data.data,
       status: "stopped",
       success: data.success,
-      enableAdvancedSearch: data.data.advancedOptions});
-    }
+      enableAdvancedSearch: data.data.advancedOptions
+    });
   }
 });
 

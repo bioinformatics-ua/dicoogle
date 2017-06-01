@@ -16,25 +16,24 @@ const QueryAdvancedOptionsModal = React.createClass({
       status: "loading"
     };
   },
-  componentWillMount: function() {
-    ServicesStore.listen(this._onChange);
+  componentWillMount() {
+    this.unsubscribe = ServicesStore.listen(this._onChange);
   },
-  componentDidMount: function() {
+  componentWillUnmount: function() {
+    this.unsubscribe();
   },
   _onChange: function(data){
-    if (this.isMounted()) {
-      const querySettings = data.querySettings;
-      this.setState({
-        connectionTimeout: querySettings.connectionTimeout,
-        acceptTimeout: querySettings.acceptTimeout,
-        idleTimeout: querySettings.idleTimeout,
-        maxAssociations: querySettings.maxAssociations,
-        maxPduReceive: querySettings.maxPduReceive,
-        maxPduSend: querySettings.maxPduSend,
-        responseTimeout: querySettings.responseTimeout,
-        status: "done"
-      });
-    }
+    const querySettings = data.querySettings;
+    this.setState({
+      connectionTimeout: querySettings.connectionTimeout,
+      acceptTimeout: querySettings.acceptTimeout,
+      idleTimeout: querySettings.idleTimeout,
+      maxAssociations: querySettings.maxAssociations,
+      maxPduReceive: querySettings.maxPduReceive,
+      maxPduSend: querySettings.maxPduSend,
+      responseTimeout: querySettings.responseTimeout,
+      status: "done"
+    });
    },
   render: function() {
     return (<Modal {...this.props} bsStyle='primary' title='Query Retrieve - Advanced Settings' animation>
@@ -123,19 +122,18 @@ const QueryAdvancedOptionsModal = React.createClass({
   handleMaxAssociationsTimeoutChange: function(event){
     this.setState({maxAssociations: event.target.value});
   },
-  onSave: function(){
+  onSave() {
     console.log("onSave clicked");
     ServiceAction.saveQuerySettings(
-      // TODO use state instead
-      document.getElementById("input_connection_t").value, // connection timeout
-      document.getElementById("input_accept_t").value, // accept timeout
-      document.getElementById("input_idle_t").value, // idle timeout
-      document.getElementById("input_max_associations").value, // max associations
-      document.getElementById("input_max_pdu_receive").value, // max PDU receive
-      document.getElementById("input_max_pdu_send").value, // max PDU send
-      document.getElementById("input_response_t").value); // response timeout
-      this.props.onHide();
-    }
-  });
+        this.state.connectionTimeout,
+        this.state.acceptTimeout,
+        this.state.idleTimeout,
+        this.state.maxAssociations,
+        this.state.maxPduReceive,
+        this.state.maxPduSend,
+        this.state.responseTimeout);
+    this.props.onHide();
+  }
+});
 
 export default QueryAdvancedOptionsModal;

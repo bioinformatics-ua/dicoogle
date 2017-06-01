@@ -44,17 +44,18 @@ const IndexerView = React.createClass({
       componentWillMount: function() {
         // Subscribe to the store
          console.log("subscribe listener");
-         IndexerStore.listen(this._onChange);
+         this.unsubscribe = IndexerStore.listen(this._onChange);
+      },
+      componentWillUnmount() {
+        this.unsubscribe();
       },
       _onChange: function(data){
-        if (this.isMounted()){
           console.log(data);
           var nState = {data: data.data, status: "done"};
           if (data.data.watcher) {
             nState.currentWatch = data.data.watcher;
           }
           this.setState(nState);
-        }
       },
       onToggleWatcher() {
         this.setState({currentWatch: !this.state.currentWatch});
@@ -84,7 +85,7 @@ const IndexerView = React.createClass({
                                       <ConfigurationEntry description="Index Zip Files">
                                         <input id="zip" type="checkbox" aria-label="..." defaultChecked={this.state.data.zip} onChange={this.onZipClicked}/>
                                       </ConfigurationEntry>
-                                      <ConfigurationEntry description="Indexation Effort">
+                                      <ConfigurationEntry description="Indexing Effort">
                                         <input className="bar" type="range" id="effort_range" defaultValue={this.state.data.effort} onChange={this.onEffortChanged} />
                                       </ConfigurationEntry>
                                       <ConfigurationEntry description="Save Thumbnail">

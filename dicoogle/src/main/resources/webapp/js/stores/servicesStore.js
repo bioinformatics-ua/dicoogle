@@ -1,8 +1,8 @@
 import Reflux from 'reflux';
 import ServiceAction from '../actions/servicesAction';
-import {Endpoints} from '../constants/endpoints';
-import {request} from '../handlers/requestHandler';
-import $ from 'jquery';
+import dicoogleClient from 'dicoogle-client';
+
+const Dicoogle = dicoogleClient();
 
 const ServicesStore = Reflux.createStore({
     listenables: ServiceAction,
@@ -35,118 +35,122 @@ const ServicesStore = Reflux.createStore({
        };
     },
 
-    onGetStorage: function(){
-      request(
-        Endpoints.base + "/management/dicom/storage",
-          (data) => {
-            this._contents.storageRunning = data.isRunning;
-            this._contents.storagePort = data.port;
-            this._contents.storageAutostart = data.autostart;
-            this.trigger(this._contents);
-          },
-          function(error) {
-            console.log("onGetStoreage: failure");
-          }
-      );
-    },
-    onGetQuery: function(){
-      request(
-        Endpoints.base + "/management/dicom/query",
-        (data) => {
-          this._contents.queryRunning = data.isRunning;
-          this._contents.queryPort = data.port;
-          this._contents.queryAutostart = data.autostart;
-          this.trigger(this._contents);
 
-        }, (error) => {
-          console.log("onGetStoreage: failure");
+    onGetStorage() {
+      Dicoogle.storage.getStatus((error, data) => {
+        if (error) {
+          console.log("onGetStoreage: failure", error);
+          return;
         }
-      );
-    },
-    onSetStorage: function(state){
-      $.post(Endpoints.base + "/management/dicom/storage",
-      {
-        running: state
-      }, (data, status) => {
-          //Response
-          console.log("Data: " + data + "\nStatus: " + status);
-          this._contents.storageRunning = state;
-          this.trigger(this._contents);
-        });
 
+        this._contents.storageRunning = data.isRunning;
+        this._contents.storagePort = data.port;
+        this._contents.storageAutostart = data.autostart;
+        this.trigger(this._contents);
+      });
+    },
+
+    onGetQuery() {
+      Dicoogle.queryRetrieve.getStatus((error, data) => {
+        if (error) {
+          console.log("onGetStoreage: failure");
+          return;
+        }
+
+        this._contents.queryRunning = data.isRunning;
+        this._contents.queryPort = data.port;
+        this._contents.queryAutostart = data.autostart;
+        this.trigger(this._contents);
+      });
+    },
+    onSetStorage (running) {
+      const callback = (error) => {
+          if (error) {
+            console.error('Dicoogle service error', error);
+            return;
+          }
+          //Response
+          this._contents.storageRunning = running;
+          this.trigger(this._contents);
+      }
+      if (running) {
+        Dicoogle.storage.start(callback);
+      } else {
+        Dicoogle.storage.stop(callback);
+      }
     },
     onSetStorageAutostart (enabled) {
-      $.post(Endpoints.base + "/management/dicom/storage",
-      {
-        autostart: enabled
-      },
-        (data, status) => {
-          console.log("Data: " + data + "\nStatus: " + status);
+      Dicoogle.storage.configure({autostart: enabled}, (error) => {
+          if (error) {
+            console.error('Dicoogle service error', error);
+            return;
+          }
           this._contents.storageAutostart = enabled;
           this.trigger(this._contents);
-        });
+      });
     },
 
     onSetStoragePort(port) {
-      $.post(Endpoints.base + "/management/dicom/storage", {
-        port
-      }, (data, status) => {
-          console.log("Data: " + data + "\nStatus: " + status);
+      Dicoogle.storage.configure({port}, (error) => {
+          if (error) {
+            console.error('Dicoogle service error', error);
+            return;
+          }
           this._contents.storagePort = port;
           this.trigger(this._contents);
-        });
+      });
     },
-
-    onSetQuery: function(state){
-      $.post(Endpoints.base + "/management/dicom/query",
-      {
-        running: state
-      },
-        (data, status) => {
+    onSetQuery (running) {
+      const callback = (error) => {
+          if (error) {
+            console.error('Dicoogle service error', error);
+            return;
+          }
           //Response
-          console.log("Data: " + data + "\nStatus: " + status);
-          this._contents.queryRunning = state;
+          this._contents.queryRunning = running;
           this.trigger(this._contents);
-
-        });
+      }
+      if (running) {
+        Dicoogle.queryRetrieve.start(callback);
+      } else {
+        Dicoogle.queryRetrieve.stop(callback);
+      }
     },
     onSetQueryAutostart (enabled) {
-      $.post(Endpoints.base + "/management/dicom/query",
-      {
-        autostart: enabled
-      }, (data, status) => {
-          console.log("Data: " + data + "\nStatus: " + status);
+      Dicoogle.queryRetrieve.configure({autostart: enabled}, (error) => {
+          if (error) {
+            console.error('Dicoogle service error', error);
+            return;
+          }
           this._contents.queryAutostart = enabled;
           this.trigger(this._contents);
       });
     },
 
     onSetQueryPort(port) {
-      $.post(Endpoints.base + "/management/dicom/query", {
-        port
-      }, (data, status) => {
-          console.log("Data: " + data + "\nStatus: " + status);
+      Dicoogle.queryRetrieve.configure({port}, (error) => {
+          if (error) {
+            console.error('Dicoogle service error', error);
+            return;
+          }
           this._contents.queryPort = port;
           this.trigger(this._contents);
-        });
+      });
     },
 
-    onGetQuerySettings: function(){
-      request(
-        Endpoints.base + "/management/settings/dicom/query",
-        (data) => {
-          this._querySettings = data;
-          this._contents.querySettings = this._querySettings;
-          this.trigger(this._contents);
-        }, (error) => {
-          console.log("onGetQuerySettigns: failure");
+    onGetQuerySettings: function() {
+      Dicoogle.queryRetrieve.getDicomQuerySettings((error, data) => {
+        if (error) {
+          console.error("Dicoogle service error", error);
+          return;
         }
-
-      );
+        this._querySettings = data;
+        this._contents.querySettings = this._querySettings;
+        this.trigger(this._contents);
+      });
     },
-  onSaveQuerySettings: function(connectionTimeout, acceptTimeout, idleTimeout, maxAssociations, maxPduReceive, maxPduSend, responseTimeout) {
-    $.post(Endpoints.base + "/management/settings/dicom/query",
-    {
+  onSaveQuerySettings(connectionTimeout, acceptTimeout, idleTimeout, maxAssociations, maxPduReceive, maxPduSend, responseTimeout) {
+    Dicoogle.queryRetrieve.setDicomQuerySettings({
       connectionTimeout,
       acceptTimeout,
       idleTimeout,
@@ -155,9 +159,10 @@ const ServicesStore = Reflux.createStore({
       maxPduSend,
       responseTimeout
     },
-      (data, status) => {
-        //Response
-        console.log("Data: " + data + "\nStatus: " + status);
+      (error, data) => {
+        if (error) {
+          console.error("Dicoogle service error", error);
+        }
       });
   }
 

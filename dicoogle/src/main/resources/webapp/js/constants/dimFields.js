@@ -1,5 +1,5 @@
 /* eslint comma-spacing:0 */
-const DimFields = [
+export const DimFields = [
 "ModalitiesInStudy"
 ,"PerformingPhysicianName"
 ,"StudyTime"
@@ -30,5 +30,3 @@ const DimFields = [
 ,"SOPInstanceUID"
 ,"PatientName"
 ,"SliceLocation"];
-
-export {DimFields};

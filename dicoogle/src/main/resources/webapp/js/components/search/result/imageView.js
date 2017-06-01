@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Modal} from 'react-bootstrap';
+import {Button, Modal, Checkbox, FormGroup} from 'react-bootstrap';
 import {SearchStore} from '../../../stores/searchStore';
 import {ActionCreators} from '../../../actions/searchActions';
 import ConfirmModal from './confirmModal';
@@ -9,9 +9,8 @@ import ImageLoader from 'react-imageloader';
 import PluginView from '../../plugin/pluginView';
 import {DumpActions} from '../../../actions/dumpActions';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
-import {Input} from 'react-bootstrap';
-import ResultSelectActions from '../../../actions/resultSelectAction';
-import {UserStore} from '../../../stores/userStore';
+import * as ResultSelectActions from '../../../actions/resultSelectAction';
+import UserStore from '../../../stores/userStore';
 
 const ImageView = React.createClass({
     getInitialState: function() {
@@ -28,8 +27,12 @@ const ImageView = React.createClass({
 
     componentWillMount: function() {
       // Subscribe to the store.
-      SearchStore.listen(this._onChange);
+      this.unsubscribe = SearchStore.listen(this._onChange);
       ResultSelectActions.clear();
+    },
+
+    componentWillUnmount() {
+      this.unsubscribe();
     },
 
 
@@ -62,8 +65,11 @@ const ImageView = React.createClass({
 
     return (<div onClick={self.showImage.bind(self, uid)}><ImageLoader
                 src={thumbUrl}
-                style={{"width": "64px", "cursor": "pointer"}}
-                wrapper={React.DOM.div}>
+                imgProps={{style: {width: '100%'}}}
+                style={{
+                  "width": "64px", "cursor": "pointer",
+                  marginLeft: 'auto', marginRight: 'auto'
+                }} wrapper={React.DOM.div}>
               <img src="assets/image-not-found.png" width="64px" />
           </ImageLoader></div>)
   },
@@ -120,8 +126,6 @@ const ImageView = React.createClass({
             ResultSelectActions.select(item, sopInstanceUID);
         else
             ResultSelectActions.unSelect(item, sopInstanceUID);
-
-
     },
   handleRefs: function (id, input){
       this.refsClone[id] = input;
@@ -130,9 +134,10 @@ const ImageView = React.createClass({
     let {sopInstanceUID} = item;
     let classNameForIt = "advancedOptions " + sopInstanceUID;
     return (<div className={classNameForIt}>
-              <Input type="checkbox" label=""
-                    onChange={this.handleSelect.bind(this, item)}
-                    ref={this.handleRefs.bind(this, sopInstanceUID)}/>
+              <FormGroup>
+                <Checkbox onChange={this.handleSelect.bind(this, item)}
+                          ref={this.handleRefs.bind(this, sopInstanceUID)}/>
+              </FormGroup>
             </div>
     );
   },
@@ -207,42 +212,34 @@ const ImageView = React.createClass({
       );
 	},
   onHideDump() {
-    if (this.isMounted())
       this.setState({dump: null});
   },
   onHideImage() {
-    if (this.isMounted())
       this.setState({image: null});
   },
   showDump(uid) {
-    if (this.isMounted())
       this.setState({dump: uid, image: null, unindexSelected: null});
       DumpActions.get(uid);
   },
   showImage(uid) {
-    if (this.isMounted())
       this.setState({dump: null, image: uid, unindexSelected: null});
   },
   hideUnindex() {
-    if (this.isMounted())
       this.setState({
         unindexSelected: null
       });
   },
   showUnindex(item) {
-    if (this.isMounted())
       this.setState({
         unindexSelected: item, dump: null, image: null
       });
   },
   hideRemove() {
-    if (this.isMounted())
       this.setState({
         removeSelected: null
       });
   },
   showRemove(item) {
-      if (this.isMounted())
     this.setState({
       removeSelected: item, dump: null, image: null
     });
@@ -259,18 +256,15 @@ const ImageView = React.createClass({
     uris.push(item.uri);
     ActionCreators.remove(uris);
   },
-    _onChange: function(data){
-      if (this.isMounted())
-      {
-        this.setState({data: data.data,
-          status: "stopped",
-          success: data.success
-        });
-      }
-    }
+  _onChange: function(data){
+      this.setState({data: data.data,
+        status: "stopped",
+        success: data.success
+      });
+  }
 });
 
-var PopOverView = React.createClass({
+const PopOverView = React.createClass({
 	getInitialState: function() {
     return {data: null,
       status: "loading",
@@ -279,13 +273,15 @@ var PopOverView = React.createClass({
   },
   componentWillMount: function() {
     // Subscribe to the store.
-    DumpStore.listen(this._onChange);
+    this.unsubscribe = DumpStore.listen(this._onChange);
+  },
+
+  componentWillUnmount() {
+    this.unsubscribe();
   },
 
   _onChange: function(data){
-    if (this.isMounted()) {
-      this.setState({data, status: "stopped"});
-    }
+    this.setState({data, status: "stopped"});
   },
 
   onHide () {
@@ -347,7 +343,8 @@ var PopOverView = React.createClass({
 var PopOverImageViewer = React.createClass({
 
 	render() {
-    let url = (this.props.uid !== null) && Endpoints.base + "/dic2png?SOPInstanceUID=" + this.props.uid;
+    let url = (this.props.uid !== null) ?
+              Endpoints.base + "/dic2png?SOPInstanceUID=" + this.props.uid : null;
 		return (
 			<Modal onHide={this.props.onHide} show={this.props.uid !== null} bsStyle='primary' animation>
           <Modal.Header>
@@ -356,7 +353,8 @@ var PopOverImageViewer = React.createClass({
           <div className='modal-body'>
             <ImageLoader
                 src={url}
-                style={{"width": "100%"}}
+                imgProps={{style: {width: '100%'}}}
+                style={{width: "100%"}}
                 wrapper={React.DOM.div}>
               <img src="assets/image-not-found.png" width="100%" />
           </ImageLoader>

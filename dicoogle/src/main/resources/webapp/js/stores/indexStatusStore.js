@@ -2,93 +2,72 @@
 
 import Reflux from 'reflux';
 import {IndexStatusActions} from '../actions/indexStatusAction';
-import {Endpoints} from '../constants/endpoints';
 import {forceIndex} from '../handlers/requestHandler';
-import $ from 'jquery';
+import dicoogleClient from 'dicoogle-client';
+
+const Dicoogle = dicoogleClient();
 
 const IndexStatusStore = Reflux.createStore({
     listenables: IndexStatusActions,
-    init: function () {
+    init: function() {
        this._contents = {};
     },
 
-    onGet: function(data){
-      var self = this;
+    onGet: function() {
 
-      $.ajax({
-        url: Endpoints.base + "/index/task",
-        dataType: 'json',
-        success: function(data) {
-          self._contents = data;
-
-          self.trigger({
-            data: self._contents,
-            success: true
-          });
-
-        },
-        error: function(xhr, status, err) {
-          //FAILURE
-          self.trigger({
+      Dicoogle.tasks.list((error, data) => {
+        if (error) {
+          this.trigger({
               success: false,
-              status: xhr.status
+              status: error.status,
+              error
             });
+          return;
         }
-      });
 
+        this._contents = data;
+        this.trigger({
+          data: this._contents,
+          success: true
+        });
+
+      });
     },
 
     onStart: function(uri){
-      var self = this;
       forceIndex(uri);
 
-      self._contents.results.push({taskUid: "...", taskName: uri, taskProgress: -1})
-      self._contents.count = self._contents.count + 1;
-      self.trigger({
-        data: self._contents,
+      this._contents.tasks.push({taskUid: "...", taskName: uri, taskProgress: -1}); // TODO show loading instead
+      this._contents.count = this._contents.count + 1;
+      this.trigger({
+        data: this._contents,
         success: true
       });
 
       console.log(this._contents);
     },
 
-    onClose: function(uid){
-
-      $.post(Endpoints.base + "/index/task",
-      {
-        uid: uid,
-        action: "delete",
-        type: "close"
-      },
-        function(data, status){
-          //Response
-          console.log("Data: ", data, " ; Status: ", status);
-        });
-
-      for (var i = 0; i < this._contents.results.length; i++)
-      {
-        if (this._contents.results[i].taskUid === uid) {
-          this._contents.results.splice(i, 1);
-          break;
+    onClose: function(uid) {
+      Dicoogle.tasks.close(uid, (error) => {
+        console.log("closeTask: ", error || 'ok');
+        for (let i = 0; i < this._contents.tasks.length; i++)
+        {
+          if (this._contents.tasks[i].taskUid === uid) {
+            this._contents.tasks.splice(i, 1);
+            break;
+          }
         }
-      }
-      this.trigger({
-        data: this._contents,
-        success: true
+        this.trigger({
+          data: this._contents,
+          success: true
+        });
       });
     },
     onStop: function(uid){
       console.log("Stop: ", uid);
-      $.post(Endpoints.base + "/index/task",
-      {
-        uid: uid,
-        action: "delete",
-        type: "stop"
-      },
-        function(data, status){
-          //Response
-          console.log("Data: ", data, " ; Status: ", status);
-        });
+      Dicoogle.tasks.stop(uid, (error) => {
+        console.log("stopTask: ", error || 'ok');
+      });
     }
 
 });

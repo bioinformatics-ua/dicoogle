@@ -1,7 +1,5 @@
-import Reflux from 'reflux';
-import $ from 'jquery';
-import {UserActions} from '../actions/userActions';
-import {Endpoints} from '../constants/endpoints';
+import * as Reflux from 'reflux';
+import * as UserActions from '../actions/userActions';
 
 import dicoogleClient from 'dicoogle-client';
 
@@ -15,7 +13,7 @@ const UserStore = Reflux.createStore({
        this._isAdmin = false;
        this._roles = [];
        this._token = '';
-
+       this.dicoogle = dicoogleClient();
     },
 
     saveLocalStore: function(){
@@ -27,10 +25,12 @@ const UserStore = Reflux.createStore({
         }));
 
     },
-    loadLocalStore: function(){
-        if (localStorage.token) {
-            console.log("loadLocalStore");
-            let user = JSON.parse(localStorage.getItem("user"));
+    loadLocalStore: function(user) {
+        if (!user) {
+            user = JSON.parse(localStorage.getItem("user"));
+        }
+        if (user) {
+            console.log(`Loading previous session from local store`);
             this._isAdmin = user.isAdmin;
             this._username = user.username;
             this._roles = user.roles;
@@ -44,29 +44,25 @@ const UserStore = Reflux.createStore({
     },
     onLogin: function(user, pass){
       console.log("onLogin");
-      const self = this;
 
-      let Dicoogle = dicoogleClient(Endpoints.base);
-
-      Dicoogle.login(user, pass, function(errorCallBack, data){
-          if (!data.token)
-          {
-              self.trigger({
-                failed: true
+      this.dicoogle.login(user, pass, (error, data) => {
+          if (error || !data.token) {
+              this.trigger({
+                success: false
               });
               return;
           }
-          self._username = data.user;
-          self._isAdmin = data.admin;
-          self._token = data.token;
-          self._roles = data.roles;
-          self._isLoggedIn = true;
-          localStorage.token = self._token;
-          self.saveLocalStore();
+          this._username = data.user;
+          this._isAdmin = data.admin;
+          this._token = data.token;
+          this._roles = data.roles;
+          this._isLoggedIn = true;
+          localStorage.token = this._token;
+          console.log(`Saving token to local storage: ${localStorage.token}`);
+          this.saveLocalStore();
 
-          console.log("Localstorage token: " + localStorage.token);
-          self.trigger({
-              isLoggedIn: self._isLoggedIn,
+          this.trigger({
+              isLoggedIn: true,
               success: true
           });
       });
@@ -79,52 +75,45 @@ const UserStore = Reflux.createStore({
       {
 
         if (localStorage.token) {
-            this.loadLocalStore();
-            this.trigger({
-                isLoggedIn: self._isLoggedIn,
-                success: true
-            });
-        } else {
-            console.log("Verify ajax");
 
-            $.ajax({
-                type: "GET",
-                url: Endpoints.base + "/login",
-                dataType: 'json',
-                async: true,
-                success: (result) => {
-                /* if result is a JSon object */
-                this._username = result.user;
-                this._isAdmin = result.admin;
+            this.dicoogle.restoreSession(localStorage.token, (error, info) => {
+                if (error) {
+                    this.trigger({
+                        error,
+                        success: false
+                    });
+                    return;
+                }
+                info.token = localStorage.token;
+                this._username = info.user;
+                this._isAdmin = info.admin;
                 this._isLoggedIn = true;
-
                 this.saveLocalStore();
-            setTimeout(() => {
-                this.trigger({
-                isLoggedIn: this._isLoggedIn,
-                success: true
             });
-        }, 500)
 
-        },
-            error: () => {
-                this.trigger({
-                    isLoggedIn: this._isLoggedIn,
-                    success: false
+        } else {
+            this.dicoogle.request('GET', 'login')
+                .type('application/json')
+                .end((error, outcome) => {
+                    if (error) {
+                        this.trigger({
+                            isLoggedIn: this._isLoggedIn,
+                            success: false
+                        });
+                        return;
+                    }
+                    const result = outcome.body;
+                    this._username = result.user;
+                    this._isAdmin = result.admin;
+                    this._isLoggedIn = true;
+                    this.saveLocalStore();
                 });
-            }
-        });
         }
-
       } else {
         //return this._isLoggedIn;
-          if (localStorage.token !== undefined) {
-              this.loadLocalStore();
-              this.trigger({
-                  isLoggedIn: self._isLoggedIn,
-                  success: true
-              });
-          }
+        if (localStorage.token !== undefined) {
+          this.loadLocalStore();
+        }
         this.trigger({
           isLoggedIn: self._isLoggedIn,
           success: true
@@ -148,4 +137,4 @@ const UserStore = Reflux.createStore({
     }
 });
 
-export {UserStore};
+export default UserStore;

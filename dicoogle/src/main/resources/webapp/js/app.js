@@ -6,7 +6,7 @@ import {Endpoints} from './constants/endpoints';
 import dicoogleClient from 'dicoogle-client';
 import Webcore from 'dicoogle-webcore';
 
-import {Router, Route, IndexRoute} from 'react-router';
+import {Router, Route, IndexRoute, hashHistory} from 'react-router';
 
 import {Search} from './components/search/searchView';
 import {SearchResultView} from './components/search/searchResultView';
@@ -18,9 +18,8 @@ import PluginView from './components/plugin/pluginView';
 import AboutView from './components/about/aboutView';
 import LoadingView from './components/login/loadingView';
 import LoginView from './components/login/loginView';
-import { hashHistory /*, browserHistory*/ } from 'react-router'
-import {UserActions} from './actions/userActions';
-import {UserStore} from './stores/userStore';
+import * as UserActions from './actions/userActions';
+import UserStore from './stores/userStore';
 
 require('core-js/shim');
 
@@ -32,93 +31,84 @@ require('bootstrap');
 class App extends React.Component {
   static get contextTypes () {
     return {
-			router: PropTypes.object.isRequired,
-			location: React.PropTypes.object
-
-		};
+      router: PropTypes.object.isRequired,
+      location: React.PropTypes.object
+    };
   }
 
-	constructor(props) {
-		super(props);
-		this.pluginsFetched = false;
-		this.state = {
-			pluginMenuItems: []
-		};
-		this.logout = this.logout.bind(this);
-	}
+  constructor(props) {
+    super(props);
+    this.pluginsFetched = false;
+    this.state = {
+      pluginMenuItems: [],
+      username: null
+    };
+    this.logout = this.logout.bind(this);
+    this.handleUserStoreUpdate = this.handleUserStoreUpdate.bind(this);
+  }
 
-	/**
-	 * @param {packageJSON|packageJSON[]} plugins
-	 */
-	onMenuPlugin(packages) {
-		const {pluginMenuItems} = this.state;
+  /**
+   * @param {packageJSON|packageJSON[]} plugins
+   */
+  onMenuPlugin(packages) {
+    const {pluginMenuItems} = this.state;
 
-		this.setState({
-			pluginMenuItems: pluginMenuItems.concat(packages.map(pkg => ({
-					value: pkg.name,
-					caption: pkg.dicoogle.caption || pkg.name,
-					isPlugin: true,
-					icon: 'fa fa-plug'
-				})))
-		});
-	}
+    this.setState({
+      pluginMenuItems: pluginMenuItems.concat(packages.map(pkg => ({
+          value: pkg.name,
+          caption: pkg.dicoogle.caption || pkg.name,
+          isPlugin: true,
+          icon: 'fa fa-plug'
+        })))
+    });
+  }
 
-	componentWillMount()
-	{
-		UserStore.listen(this.fetchPlugins.bind(this));
+  componentWillMount() {
+    UserStore.listen(this.handleUserStoreUpdate);
 
-		const Dicoogle = dicoogleClient(Endpoints.base);
-		if (localStorage.token) {
-			Dicoogle.setToken(localStorage.token);
-		}
-		if (this.props.location.pathname=='/')
-		{
-			localStorage.token = null;
-			UserActions.logout();
-		}
-		Webcore.init(Endpoints.base);
-	}
-
-	componentDidMount(){
-    UserStore.loadLocalStore();
-		if (localStorage.token === undefined) {
-			this.props.history.pushState(null, 'login');
+    this.dicoogle = dicoogleClient(Endpoints.base);
+    if (this.props.location.pathname === '/') {
+      localStorage.token = null;
+      UserActions.logout();
+    } else {
+      UserActions.isLoggedIn();
     }
-		if (this.props.location.pathname=='/')
-		{
-			this.props.history.pushState(null, 'login');
-		}
+    Webcore.init(Endpoints.base);
+  }
+
+  componentDidMount(){
+    UserStore.loadLocalStore();
+    if (localStorage.token === undefined || this.props.location.pathname === '/') {
+      this.context.router.push('login');
+    }
 
     $("#menu-toggle").click(function (e) {
       e.preventDefault();
       $("#wrapper").toggleClass("toggled");
     });
-	}
-	fetchPlugins(data) {
-		if (this.pluginsFetched)
-			return;
-		let self = this;
-		if (!data.success)
-			return;
-    this.setState(data);
-
-		Webcore.addPluginLoadListener(function(plugin) {
-      console.log("Plugin loaded to Dicoogle:", plugin);
-		});
-		Webcore.fetchPlugins('menu', (packages) => {
-			self.onMenuPlugin(packages);
-        Webcore.fetchModules(packages);
-		});
-
-
-    // pre-fetch modules of other plugin types
-		Webcore.fetchPlugins(['search', 'result-options', 'query', 'result'], Webcore.fetchModules)
-		this.pluginsFetched = true;
   }
 
-	logout() {
-		const Dicoogle = dicoogleClient();
-		Dicoogle.request('POST', 'logout', {}, (error) => {
+  fetchPlugins(data) {
+    if (this.pluginsFetched || !data.isLoggedIn)
+      return;
+
+    Webcore.addPluginLoadListener((plugin) => {
+      console.log("Plugin loaded to Dicoogle:", plugin);
+    });
+    Webcore.fetchPlugins('menu', (packages) => {
+      this.onMenuPlugin(packages);
+      Webcore.fetchModules(packages);
+    });
+
+    // pre-fetch modules of other plugin types
+    Webcore.fetchPlugins(['search', 'result-options', 'query', 'result'], Webcore.fetchModules)
+    this.pluginsFetched = true;
+  }
+
+  // TODO put this elsewhere
+  logout() {
+    const Dicoogle = dicoogleClient();
+    Dicoogle.logout((error) => {
       if (error) {
         console.error(error);
       }
@@ -127,17 +117,17 @@ class App extends React.Component {
       this.pluginsFetched = false;
       UserActions.logout()
 
-			this.context.router.push('login');
-		});
-	}
+      this.context.router.push('login');
+    });
+  }
 
-	render() {
+  render() {
 
-		return (
-		<div>
-			<div className="topbar">
-				<img className="btn_drawer" src="assets/drawer_menu.png" id="menu-toggle" />
-				<a>Dicoogle</a>
+    return (
+    <div>
+      <div className="topbar">
+        <img className="btn_drawer" src="assets/drawer_menu.png" id="menu-toggle" />
+        <a>Dicoogle</a>
         <div className="pull-right" bsStyle="padding:15px">
 
           <span className="user-name usernameLogin" bsStyle="padding-right:10px">
@@ -145,28 +135,35 @@ class App extends React.Component {
           </span>
 
           <span className="user-name buttonLogin">
-              <span onClick={this.logout.bind(this)} className="glyphicon glyphicon-log-out" style={{cursor: 'pointer'}} />
+              <span onClick={this.logout} className="glyphicon glyphicon-log-out" style={{cursor: 'pointer'}} />
           </span>
 
         </div>
       </div>
 
-			<div id="wrapper">
-				<div id="sidebar-wrapper">
-					<Sidebar pluginMenuItems={this.state.pluginMenuItems} onLogout={this.logout.bind(this)}/>
-				</div>
-				<div id="container" style={{display: 'block'}}>
-					{this.props.children}
-				</div>
-			</div>
-		</div>);
-	}
+      <div id="wrapper">
+        <div id="sidebar-wrapper">
+          <Sidebar pluginMenuItems={this.state.pluginMenuItems} onLogout={this.logout}/>
+        </div>
+        <div id="container" style={{display: 'block'}}>
+          {this.props.children}
+        </div>
+      </div>
+    </div>);
+  }
+
+  handleUserStoreUpdate(data) {
+    this.fetchPlugins(data);
+    if (data.username) {
+      this.setState(data);
+    }
+  }
 }
 
 function NotFoundView() {
-	return (<div>
+  return (<div>
     <h1>Not Found</h1>
-	</div>);
+  </div>);
 }
 
 ReactDOM.render((

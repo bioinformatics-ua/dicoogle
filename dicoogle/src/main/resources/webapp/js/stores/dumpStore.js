@@ -1,5 +1,3 @@
-'use strict';
-
 import Reflux from 'reflux';
 import {DumpActions} from '../actions/dumpActions';
 import {getImageInfo} from '../handlers/requestHandler';

@@ -2,7 +2,7 @@ import React from 'react';
 
 import {StorageActions} from '../../actions/storageActions';
 import {StorageStore} from '../../stores/storageStore';
-import {Button, Modal, FormGroup, FormControl, ControlLabel, Checkbox, HelpBlock} from 'react-bootstrap';
+import {Button, Modal, FormGroup, FormControl, ControlLabel, Checkbox} from 'react-bootstrap';
 
 const AddStorageModal = React.createClass({
     getInitialState() {
@@ -15,19 +15,17 @@ const AddStorageModal = React.createClass({
     },
 
   render: function() {
-    const valAETitle = this.validateAETitle();
     return(<Modal {...this.props} bsStyle='primary' animation>
       <Modal.Header>
         <Modal.Title>Add Storage Server</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <div>
-          <FormGroup validationState={valAETitle.code}>
+          <FormGroup validationState={this.validateAETitle()}>
             <ControlLabel>AE Title</ControlLabel>
             <FormControl style={{width: '100%'}} type="text"
                     placeholder="AE Title" onChange={this.handleChangeAETitle}
                     value={this.state.aetitle} />
-            <HelpBlock>{valAETitle.help}</HelpBlock>
           </FormGroup>
           <FormGroup validationState={this.validateIPAddress()}>
             <ControlLabel>IP Address</ControlLabel>
@@ -53,12 +51,12 @@ const AddStorageModal = React.createClass({
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button bsClass="btn btn_dicoogle" disabled={!this.validateAll()} onClick={this.handleAdd}>Add</Button>
-        <Button onClick={this.props.onHide}>Cancel</Button>
+        <Button bsStyle="primary" disabled={!this.validateAll()} onClick={this.handleAdd}>Add</Button>
+        <Button onClick={this.handleAdd}>Cancel</Button>
       </Modal.Footer>
     </Modal>);
   },
-
+  
   handleFieldKeyDown(e) {
     if (e.keyCode === 13) {
       if (this.validateAll()) {
@@ -85,11 +83,8 @@ const AddStorageModal = React.createClass({
 
   validateAETitle(input) {
     input = (input || this.state.aetitle).trim();
-    if (input === '') return {code: undefined, help: ''};
-    if (input.length <= 16) return {code: 'success', help: ''};
-    // AETitle length should be 16, but there are some implementations not respecting it.
-    if (input.length <= 64) return {code: 'warning', help: 'This AE title is not DICOM compliant. Dicoogle will accept it anyway.'};
-    return {code: 'error', help: 'Invalid AE title. Please shorten the device\'s AE title length.'};
+    if (input === '') return undefined;
+    return input.length <= 16 ? 'success' : 'error';
   },
   validateIPAddress(input) {
     input = (input || this.state.ip).trim();
@@ -102,8 +97,7 @@ const AddStorageModal = React.createClass({
     return (v > 0 && v < 65536) ? 'success' : 'error';
   },
   validateAll() {
-    const aet = this.validateAETitle(this.state.aetitle).code;
-    return (aet === 'warning' || aet === 'success')
+    return this.validateAETitle(this.state.aetitle) === 'success'
         && this.validateIPAddress(this.state.ip) === 'success'
         && this.validatePort(this.state.port) === 'success';
   },

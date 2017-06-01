@@ -78,7 +78,7 @@ const DicoogleWebcore = (function () {
     // create dicoogle client access object
     // and inject webcore related methods
     Dicoogle = client(base_url);
-    Object.assign(Dicoogle, {
+    Object.assign(Dicoogle, { webcore: {
         issueQuery,
         emit,
         emitSlotSignal,
@@ -87,7 +87,7 @@ const DicoogleWebcore = (function () {
         addEventListener: m.addEventListener,
         addResultListener: m.addResultListener,
         removeEventListener: m.removeEventListener
-    });
+    }});
     
   };
   
@@ -231,31 +231,30 @@ const DicoogleWebcore = (function () {
   m.fetchPlugins = function (slotIds, callback) {
     if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
     console.log('Fetching Dicoogle web UI plugin descriptors ...');
-    slotIds = [].concat(slotIds);
-    let uri = 'webui';
-    service_get(uri, {'slot-id': slotIds}, function(error, data) {
+    const uri = 'webui';
+    Dicoogle.getWebUIPlugins(slotIds, (error, plugins) => {
       if (error) {
         console.error('Failed to fetch plugin descriptors:' , error);
         return;
       }
-      var packageArray = data.plugins;
-      for (let i = 0; i < packageArray.length; i++) {
-        if (!packages[packageArray[i].name]) {
-          packages[packageArray[i].name] = packageArray[i];
-          if (packageArray[i].dicoogle.slotId === 'menu') {
-            event_hub.emit('menu', {name: packageArray[i].name, slotId: 'menu', caption: packageArray[i].dicoogle.caption});
+      for (const p of plugins) {
+        const {name, slotId, caption} = p;
+        if (!packages[name]) {
+          packages[name] = p;
+          if (slotId === 'menu') {
+            event_hub.emit('menu', {name, slotId: 'menu', caption});
           }
         }
       }
       if (callback) {
-        callback(packageArray);
+        callback(plugins);
       }
     });
   };
 
   /** Issue that the JavaScript modules are loaded, even if no slot has requested it.
    * This function is asynchronous, but currently provides no callback.
-   * @param {PackageJSON|PackageJSON[]} packages the JSON package descriptors
+   * @param {WebUIPlugin|WebUIPlugin[]} packages the plugin descriptors
    * @return {void}
    */
   m.fetchModules = function(packages) {
@@ -276,9 +275,8 @@ const DicoogleWebcore = (function () {
    * function(query, options, callback)
    * @param {any} query an object containing the query (usually a string)
    * @param {object} options an object containing additional options (such as query plugins to use, result limit, etc.)
-   *      - overrideService [string] the name of the service to use instead of "search" 
-   * @param {function(error, result)} callback an optional callback function
-   * @return {void}
+   *      - overrideService [string] the name of the service to use instead of "search"
+   * @param {function(error, result)} [callback] an optional callback function
    */
   function issueQuery(query, options, callback) {
     if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
@@ -286,11 +284,12 @@ const DicoogleWebcore = (function () {
     options.query = query;
     let requestTime = new Date();
     let queryService = options.overrideService || 'search';
-    service_get(queryService, options, function (error, data) {
+    Dicoogle.request('GET', queryService).query(options).end((error, resp) => {
       if (error) {
-        if (callback) callback(error, null);
+        if (callback) callback(error);
         return;
       }
+      const data = resp.body;
       dispatch_result(data, requestTime, options);
       if (callback) callback(null, data);
     });
@@ -312,8 +311,7 @@ const DicoogleWebcore = (function () {
       console.error('Dicoogle web UI plugin ', name, ' is corrupted or invalid: ', pluginInstance);
       return;
     }
-    let thisPackage = packages[name];
-    let slotId = thisPackage.dicoogle['slot-id'];
+    let {slotId, caption} = packages[name];
     if (slotId === 'result' && typeof pluginInstance.onResult !== 'function') {
       console.error('Dicoogle web UI plugin ', name, ' does not provide onResult');
       return;
@@ -321,7 +319,7 @@ const DicoogleWebcore = (function () {
     console.log('Executed plugin: ', name);
     pluginInstance.Name = name;
     pluginInstance.SlotId = slotId;
-    pluginInstance.Caption = thisPackage.dicoogle.caption || name;
+    pluginInstance.Caption = caption || name;
     plugins[name] = pluginInstance;
     if (slots[slotId]) {
       for (let slot of slots[slotId]) {
@@ -421,13 +419,13 @@ const DicoogleWebcore = (function () {
     return id;
   }
 
-  function load_plugin(packageJSON, callback) {
-    console.log('Loading plugin', packageJSON.name);
-    const {name} = packageJSON;
+  function load_plugin(pluginInfo, callback) {
+    const {name} = pluginInfo;
+    console.log(`Loading plugin ${name}`);
     if (plugins[name]) {
         if (callback) callback(plugins[name]);
     } else {
-        getScript(packageJSON.name, function() {
+        getScript(pluginInfo.name, function() {
           console.log('Loaded module ', name);
           if (!isFunction(m.constructors[name])) {
              console.error(`The loaded module ${name} is not a function!`);
@@ -463,22 +461,7 @@ const DicoogleWebcore = (function () {
     }
     event_hub.emit('result', result, requestTime, options);
   }
-  
-  /**
-   * Send a GET request to a Dicoogle service.
-   *
-   * @param {string} uri the request URI in string or array form
-   * @param {string} qs an object containing query string parameters (or a QS without '?')
-   * @param {function(error, outcome)} callback a callback function
-   * @return {void}
-   */
-  function service_get(uri, qs, callback) {
-    // issue request
-    //const full_uri = [base_url].concat(uri);
-    //request('GET', full_uri, qs, callback);
-    Dicoogle.request('GET', uri, qs, callback);
-  }
-  
+    
   function getScript(moduleName, callback) {
     let script = document.createElement('script');
     let prior = document.getElementsByTagName('script')[0];

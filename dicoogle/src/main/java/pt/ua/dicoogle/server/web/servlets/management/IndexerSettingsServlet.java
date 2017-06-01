@@ -41,7 +41,7 @@ public class IndexerSettingsServlet extends HttpServlet {
 
     public enum SettingsType {
 
-        all,path, zip, effort, thumbnail,thumbnailSize, watcher;
+        all, path, zip, effort, thumbnail, thumbnailSize, watcher;
     }
     private final SettingsType type;
 
@@ -50,8 +50,13 @@ public class IndexerSettingsServlet extends HttpServlet {
     }
 
     @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        this.doPost(req, resp);
+    }
+
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    	
+
     	String param = null;
     	String path = null;
     	boolean watcher=false, zip = false, saveT = false;
@@ -60,7 +65,7 @@ public class IndexerSettingsServlet extends HttpServlet {
     	if(type != SettingsType.all)
     	{
     		param = req.getParameter(type.toString());
-    	
+
     		if (StringUtils.isEmpty(param)) {
                 resp.sendError(400, "Invalid " + type.toString());
             }
@@ -110,7 +115,7 @@ public class IndexerSettingsServlet extends HttpServlet {
             	 ServerSettings.getInstance().setThumbnailsMatrix(tumbnailSize);
             	 ServerSettings.getInstance().setMonitorWatcher(watcher);
             	break;
-            	
+
         }
         new XMLSupport().printXML();
     }
@@ -146,7 +151,7 @@ public class IndexerSettingsServlet extends HttpServlet {
             	allresponse.put("thumbnail", ServerSettings.getInstance().getSaveThumbnails());
             	allresponse.put("thumbnailSize", String.valueOf(ServerSettings.getInstance().getThumbnailsMatrix()));
             	allresponse.put("watcher", ServerSettings.getInstance().isMonitorWatcher());
-            	
+
             	resp.getWriter().write(allresponse.toString());
             	break;
         }

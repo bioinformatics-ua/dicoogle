@@ -28,7 +28,7 @@ const SearchResult = React.createClass({
         results: PropTypes.array
       }),
       error: PropTypes.any
-    }).isRequired,
+    }),
     onReturn: PropTypes.func
   },
 
@@ -56,7 +56,11 @@ const SearchResult = React.createClass({
         caption: pkg.dicoogle.caption || pkg.name
       }))});
     });
-    SearchStore.listen(this._onSearchResult);
+    this.unsubscribe = SearchStore.listen(this._onSearchResult);
+  },
+
+  componentWillUnmount() {
+    this.unsubscribe();
   },
 
   componentWillUpdate(nextProps) {
@@ -67,11 +71,8 @@ const SearchResult = React.createClass({
         this.onStepClicked(0);
     }
   },
-_onSearchResult: function(outcome) {
-      if (this.isMounted())
-      {
-        this.onStepClicked(0);
-      }
+  _onSearchResult: function(outcome) {
+    this.onStepClicked(0);
   },
   handleClickExport() {
     this.setState({showExport: true, currentPlugin: null});
@@ -245,7 +246,7 @@ const Step = React.createClass({
               &nbsp; Image
             </div>
           </div>
-        </div>
+      </div>
       );
   },
   getStep: function(current, step) {
