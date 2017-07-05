@@ -18,46 +18,29 @@
  */
 package pt.ua.dicoogle;
 
-import java.awt.Desktop;
-import java.io.File;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.SocketException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Random;
-import java.util.Set;
-import java.util.TimerTask;
-
-import javax.swing.JOptionPane;
-
 import org.dcm4che2.data.TransferSyntax;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
-
-import pt.ieeta.anonymouspatientdata.core.Anonymous;
-
-import pt.ua.dicoogle.core.AsyncIndex;
-import pt.ua.dicoogle.core.ClientSettings;
-import pt.ua.dicoogle.core.ServerSettings;
-import pt.ua.dicoogle.core.XMLSupport;
 import pt.ua.dicoogle.DicomLog.LogDICOM;
 import pt.ua.dicoogle.DicomLog.LogXML;
-import pt.ua.dicoogle.core.TagsXML;
-import pt.ua.dicoogle.core.XMLClientSupport;
+import pt.ua.dicoogle.core.*;
 import pt.ua.dicoogle.plugins.PluginController;
-import pt.ua.dicoogle.rGUI.server.GUIServer;
 import pt.ua.dicoogle.rGUI.client.windows.ConnectWindow;
 import pt.ua.dicoogle.sdk.Utils.Platform;
 import pt.ua.dicoogle.sdk.utils.TagsStruct;
 import pt.ua.ieeta.emailreport.Configuration;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.URI;
+import java.net.UnknownHostException;
+import java.util.*;
 
 /**
  * Main class for Dicoogle
@@ -289,9 +272,9 @@ public class Main
         // Lauch Async Index 
         // It monitors a folder, and when a file is touched an event
         // triggers and index is updated.
-
-        AsyncIndex asyncIndex = new AsyncIndex();
-
+        if (ServerSettings.getInstance().isMonitorWatcher()) {
+            AsyncIndex asyncIndex = new AsyncIndex();
+        }
         //Signals that this application is GUI Server
         isGUIServer = true;
 

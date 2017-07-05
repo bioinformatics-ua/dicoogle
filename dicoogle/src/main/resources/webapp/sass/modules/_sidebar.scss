@@ -1,0 +1,29 @@
+#sidebar-wrapper {
+    background-color: $main_color;
+}
+.sidebar-nav {
+    li {
+
+        a {
+            &:hover {
+                background: $blue5;
+            }
+            color:$blue1;
+            font-size:17px;
+            font-weight:bold;
+            text-indent: 5px;
+
+        }
+        i {
+          width: 25px;
+          text-align: center;
+        }
+
+    }
+    margin-top:50px;
+    .active{
+        background: $blue5;
+        color: #ffffff;
+
+    }
+}

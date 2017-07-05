@@ -19,7 +19,9 @@
 package pt.ua.dicoogle.sdk.datastructs.dim;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 
 /**
  *
@@ -27,25 +29,24 @@ import java.util.Hashtable;
  */
 public class Patient
 {
-    private String PatientID ;
-    private String PatientName ;
-    private String PatientSex ;
+    private String PatientID;
+    private String PatientName;
+    private String PatientSex;
     private String PatientBirthDate;
-    
 
-
-    private ArrayList<Study> studies = new ArrayList<Study>() ;
-    private Hashtable<String, Study> studiesHash = new Hashtable<String, Study>();
+    private ArrayList<Study> studies = new ArrayList<>() ;
+    private Map<String, Study> studiesHash = new HashMap<>();
+    private int nStudyOverride = -1;
 
     public Patient(String PatientID, String PatientName)
     {
-        this.PatientName = PatientName ;
-        this.PatientID = PatientID ; 
+        this.PatientName = PatientName;
+        this.PatientID = PatientID;
     }
+
     public Patient(String PatientID)
     {
-        this.PatientID = PatientID ;
-        
+        this.PatientID = PatientID;
     }
 
     /**
@@ -58,16 +59,15 @@ public class Patient
         if (this.studiesHash.containsKey(s.getStudyInstanceUID()))
         {
             /** 
-             * The studie exists, so it will take the series and add the series
+             * The study exists, so it will take the series and add the series
              */
 
             Study es = this.studiesHash.get(s.getStudyInstanceUID()) ;
             es.setStudyDescription(s.getStudyDescription());
             for (Serie e: s.getSeries())
             {
-                es.addSerie(e) ; 
+                es.addSerie(e);
             }
-            
            
         }
         else
@@ -83,12 +83,9 @@ public class Patient
      * will be returned. Otherwise a null is returned
      * @return s Stydy Result
      */
-    public Study getStudy(String instaceUID)
+    public Study getStudy(String studyInstanceUID)
     {
-
-        Study s = null ;
-
-        return null ;
+        return this.studiesHash.get(studyInstanceUID);
     }
 
 
@@ -168,6 +165,5 @@ public class Patient
     public void setPatientBirthDate(String PatientBirthDate) {
         this.PatientBirthDate = PatientBirthDate;
     }
-
 
 }

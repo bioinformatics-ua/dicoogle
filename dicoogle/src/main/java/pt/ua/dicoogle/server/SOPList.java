@@ -22,7 +22,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.concurrent.Semaphore;
+
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.json.JSONArray;
@@ -39,7 +40,7 @@ import pt.ua.dicoogle.server.web.management.Dicoogle.SOPClassSettings;
 public class SOPList {
 
     private static SOPList instance = null;
-    private static Semaphore sem = new Semaphore(1, true);
+    private static Logger logger = LoggerFactory.getLogger(SOPList.class);
 
     private Hashtable<String, TransfersStorage> table;    
     
@@ -124,23 +125,15 @@ public class SOPList {
         UID.CardiacElectrophysiologyWaveformStorage,
         UID.BasicVoiceAudioWaveformStorage,
         UID.HangingProtocolStorage,
-        UID.SiemensCSANonImageStorage
+        UID.SiemensCSANonImageStorage,
+        UID.VLWholeSlideMicroscopyImageStorage,
+        UID.BreastTomosynthesisImageStorage
         };
 
     public static synchronized SOPList getInstance()
     {
-        try
-        {
-            sem.acquire();
-            if (instance == null)
-            {
-                instance = new SOPList();
-            }
-            sem.release();
-        }
-        catch (InterruptedException ex)
-        {
-            LoggerFactory.getLogger(SOPList.class).error(ex.getMessage(), ex);
+        if (instance == null) {
+            instance = new SOPList();
         }
         return instance;
     }
@@ -230,6 +223,8 @@ public class SOPList {
      * @return -1 if something went wrong, 1 otherwise
      */
     public synchronized int updateTSField(String UID, String name, boolean value) {
+        logger.debug("UID: {}, name: {}, value: {}", UID, name, value);
+
         TransfersStorage TS;
         TS = table.get(UID);
         
@@ -247,6 +242,7 @@ public class SOPList {
         		return -1;
         	}
         }
+        logger.debug("UID: {}, name: {}, value: {}", UID, name, value);
       
         return 0;    
     }   

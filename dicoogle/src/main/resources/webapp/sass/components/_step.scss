@@ -1,0 +1,252 @@
+.step{
+	height: 45px;
+	padding: 5px;
+	cursor: pointer;
+	margin-bottom: 10px;
+}
+.step.done{
+	background-color: $blue5;
+}
+.step.current{
+	background-color: $blue5;
+	border-color: $blue1;
+	border-style: solid;
+    border-width: 4px;
+
+    -webkit-box-shadow: 5px 5px 5px 0px rgba(50, 50, 50, 0.75);
+    -moz-box-shadow:    5px 5px 5px 0px rgba(50, 50, 50, 0.75);
+    box-shadow:         5px 5px 5px 0px rgba(50, 50, 50, 0.75);
+
+}
+.step.disabled{
+	background-color: $blue6;
+	cursor: default;
+    display: none;
+}
+.stepa{
+    margin-top: 20px;
+	padding: 5px;
+}
+
+.resultRow{
+	&:hover{
+		background-color: $blue6;
+	}
+}
+.table tbody tr:hover td, .table tbody tr:hover th {
+    background-color: $blue6;
+    height:5px;
+    max-height:5px;
+    overflow:hidden;
+}
+
+
+
+.table thead th {
+    background-color: #EEEEEE;
+	color: black;
+    font-style: bold;
+
+}
+
+
+.pagination {
+    li.active {
+        a {
+            background-color: $blue1;
+            &:hover {
+                background: $blue1;
+            }
+            &:focus {
+                background: $blue1;
+            }
+        }
+    }
+    li {
+        a {
+            background-color: $main_color;
+            color: $blue1;
+            &:hover {
+                background: $hover_color;
+            }
+        }
+    }
+}
+/** Advanced Options SASS */
+.advancedOptions {
+    // For select, default padding margins
+    .select {
+        padding: 2px !important;
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+    // Define radio values (bootstrap default are not good for this one)
+    .radio {
+        margin-left: 0px;
+    }
+    // Define radio values (bootstrap default are not good for this one)
+    // + checkbox type
+    .form-group{
+        border: none;
+        margin-bottom: 0px;
+
+        text-align: center;
+        padding: 0;
+        white-space: nowrap;
+
+        min-height: 10px;
+        vertical-align: top;
+
+       .radio input[type="radio"],
+       .radio-inline input[type="radio"],
+       .checkbox input[type="checkbox"],
+       .checkbox-inline input[type="checkbox"]
+        {
+            margin-left: -5px;
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
+    }
+}
+
+
+// Wizard
+/*Theming options - change and everything updates*/
+$wizardSize: 21px;
+
+$bodyColor: white;
+$wizardBGColor: #eeeeee;
+$wizardBGHoverColor: #e6e6e6;
+$currentBGColor: $blue6;
+//$currentBGColor: #3a87ad;
+$currentFontColor:#3a87ad;
+$disableBGColor: #eeeeee;
+$disableFontColor: #999999;
+$completedFontColor: #468847;
+
+
+$paddingVert: .5em; /*don't use more decimals, as it makes browser round errors more likely, make heights unmatching
+-also watch using decimals at all at low wizardSize font sizes!*/
+$paddingSide: 2em;
+$arrowLength: 1em;
+$itemMargin: 2px;
+$bottomMargin: 20px;
+
+$borderRadiusVal: .25em;
+
+.wizardbar {
+  font-size: $wizardSize;
+  line-height: 1;
+ // display: inline-block;
+  margin: 20px 0;
+  width: 100%;
+  border-color: darkgray;
+}
+/*base item styles*/
+.wizardbar-item {
+    display: inline-block;
+    padding: $paddingVert $paddingSide;
+    padding-left: $paddingSide + $arrowLength;
+    text-decoration: none;
+    transition: all .15s;
+
+/*default styles*/
+    background-color: $wizardBGColor;
+    color: $currentFontColor;
+    text-align: center;
+
+    position: relative;
+    //margin-right: $itemMargin;
+    margin-bottom: $bottomMargin;
+    cursor: pointer;
+    border-color: black;
+}
+/*arrow styles*/
+.wizardbar-item:before,
+.wizardbar-item:after {
+    content: "";
+    height: 0;
+    width: 0;
+    border-width: (.5+$paddingVert) 0 (.5+$paddingVert) $arrowLength;
+    border-style: solid;
+    transition: all .15s;
+    position: absolute;
+    left: 100%;
+    top: 0;
+}
+/*arrow overlapping left side of item*/
+.wizardbar-item:before {
+    border-color: transparent transparent transparent black;
+    left: 0;
+}
+/*arrow pointing out from right side of items*/
+.wizardbar-item:after {
+    border-color: transparent transparent transparent white;
+    z-index: 1;
+}
+/*current item styles*/
+.current.wizardbar-item {
+
+    background-color: $currentBGColor;
+    color: $currentFontColor;
+    cursor: pointer;
+}
+.current.wizardbar-item:after {
+    border-color: transparent transparent transparent $currentBGColor;
+}
+
+.disabled.wizardbar-item {
+    background-color: $wizardBGColor;
+    color: $disableFontColor;
+    cursor: not-allowed;
+
+}
+.disabled.wizardbar-item:after {
+    border-color: transparent transparent transparent $disableBGColor;
+}
+
+.completed.wizardbar-item {
+    background-color: $wizardBGColor;
+    color: $completedFontColor;
+    cursor: pointer;
+
+}
+.completed.wizardbar-item:after {
+    border-color: transparent transparent transparent $wizardBGColor;
+}
+
+
+/*hover styles*/
+.wizardbar-item:not(.current):hover {
+    background-color: $wizardBGHoverColor;
+}
+.wizardbar-item:not(.current):hover:after{
+    border-color: transparent transparent transparent $wizardBGHoverColor;
+}
+/*remove arrows from beginning and end*/
+.wizardbar-item:first-of-type:before,
+.wizardbar-item:last-of-type:after
+{
+    border-color: transparent!important;
+}
+/*no inset arrow for first item*/
+.wizardbar-item:first-of-type {
+    border-radius: $borderRadiusVal 0 0 $borderRadiusVal;
+    padding-left: $paddingSide + ($arrowLength/2)
+}
+/*no protruding arrow for last item*/
+.wizardbar-item:last-of-type {
+    border-radius: 0 $borderRadiusVal $borderRadiusVal 0;
+    padding-right: $paddingSide + ($arrowLength/2);
+}
+
+.label-border {
+    margin-bottom: 2px;
+
+
+}
+
+.label-as-badge {
+    border-radius: 1em;
+
+}

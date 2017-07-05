@@ -1,13 +1,22 @@
 {
-  "extends": "eslint:recommended",
-  "ecmaFeatures": {
-    "modules": true
+  "extends": [
+    "eslint:recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "modules": true
+    }
   },
   "env": {
     "browser": true,
     "commonjs": true,
     "es6": true
   },
+  "plugins": [ "import" ],
   "globals": {
     "process": false
   },
@@ -24,6 +33,11 @@
     "semi-spacing": 1,
     "eol-last": 1,
     "valid-jsdoc": 1,
-    "no-undef": 2
+    "no-undef": 2,
+    "import/no-unresolved": [2, {"commonjs": true}],
+    "import/named": 2,
+    "import/namespace": 2,
+    "import/default": 2,
+    "import/export": 2
   }
 }

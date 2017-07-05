@@ -24,16 +24,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
-import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
+
+import net.sf.json.JSONArray;
+import org.apache.commons.collections.ArrayStack;
+import org.json.JSONException;
+import org.json.JSONWriter;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.json.JSONObject;
@@ -54,8 +54,9 @@ import pt.ua.dicoogle.sdk.task.Task;
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 public class SearchServlet extends HttpServlet {
+    private static final Logger logger = LoggerFactory.getLogger(SearchServlet.class);
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
   
     private final Collection<String> DEFAULT_FIELDS = Arrays.asList(
             "SOPInstanceUID", "StudyInstanceUID", "SeriesInstanceUID", "PatientID",
@@ -76,16 +77,56 @@ public class SearchServlet extends HttpServlet {
   		else
   		searchType = stype;
   	}
-    //TODO: QIDO;
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         /*
-         Example: http://localhost:8080/search?query=wrix&keyword=false&provicer=lucene
+         Example: http://localhost:8080/search?query=wrix&keyword=false&provider=lucene&psize=10&offset=10
          */
+        response.setContentType("application/json");
+
         String query = request.getParameter("query");
         String providers[] = request.getParameterValues("provider");
         boolean keyword = Boolean.parseBoolean(request.getParameter("keyword"));
         String[] fields = request.getParameterValues("field");
+
+        final int psize;
+        final int offset;
+        final int depth;
+        try {
+            psize = getReqParameter(request, "psize", Integer.MAX_VALUE);
+            if (psize < 0) throw new NumberFormatException();
+        } catch (NumberFormatException e) {
+            sendError(response, 400, "Invalid parameter psize: must be a non-negative integer");
+            return;
+        }
+        try {
+            offset = getReqParameter(request, "offset", 0);
+            if (offset < 0) throw new NumberFormatException();
+        } catch (NumberFormatException e) {
+            sendError(response, 400, "Invalid parameter offset: must be a non-negative integer");
+            return;
+        }
+        String paramDepth = request.getParameter("depth");
+        if (paramDepth != null) {
+            if (this.searchType != SearchType.PATIENT) {
+                sendError(response, 400, "Parameter depth is only applicable to /searchDIM endpoint");
+                return;
+            }
+            switch (paramDepth.toLowerCase()) {
+                case "none": depth = 0; break;
+                case "patient": depth = 1; break;
+                case "study": depth = 2; break;
+                case "series": depth = 3; break;
+                case "image": depth = 4; break;
+                default:
+                sendError(response, 400, "Invalid parameter depth: must be a valid level: "
+                        + "'none', 'patient', 'study', 'series' or 'image'");
+                return;
+            }
+        } else {
+            depth = 4;
+        }
 
         // retrieve desired fields
         Set<String> actualFields;
@@ -94,9 +135,9 @@ public class SearchServlet extends HttpServlet {
         } else {
             actualFields = new HashSet<>(Arrays.asList(fields));
         }
-      
+
         if (StringUtils.isEmpty(query)) {
-            response.sendError(400, "No query supplied!");
+            sendError(response, 400, "No query supplied!");
             return;
         }
         
@@ -117,16 +158,27 @@ public class SearchServlet extends HttpServlet {
         }
 
         List<String> knownProviders = null;
-        if (!queryAllProviders) {
+        if (!queryAllProviders) 
+        {
             knownProviders = new ArrayList<>();
             List<String> activeProviders = PluginController.getInstance().getQueryProvidersName(true);
-            for (String p : providers) {
-                if (activeProviders.contains(p)) {
+            for (String p : providers)
+            {
+                if (activeProviders.contains(p)) 
+                {
                     knownProviders.add(p);
+                }
+                else
+                {
+                    response.setStatus(400);
+                    JSONObject obj = new JSONObject();
+                    obj.put("error", p.toString() +" is not a valid query provider");
+                    response.getWriter().append(obj.toString());
+                    return;
                 }
             }
         }
-
+        
         HashMap<String, String> extraFields = new HashMap<>();
         if (actualFields == null) {
             
@@ -151,73 +203,78 @@ public class SearchServlet extends HttpServlet {
             }
         };
 
-        Iterable<SearchResult> results = null;
-        long elapsedTime = System.currentTimeMillis();
         try {
+            long elapsedTime = System.currentTimeMillis();
+            Iterable<SearchResult> results;
             if (queryAllProviders) {
                 results = PluginController.getInstance().queryAll(queryTaskHolder, query, extraFields).get();
-            } else {
-                results = PluginController.getInstance().query(queryTaskHolder, knownProviders, query, extraFields).get();
-            }
-        } catch (InterruptedException | ExecutionException ex) {
-            LoggerFactory.getLogger(SearchServlet.class).error(ex.getMessage(), ex);
-        }
-        elapsedTime = System.currentTimeMillis()-elapsedTime;
-        
-        if (results == null) {
-            response.sendError(500, "Could not generate results!");
-            response.setContentType("application/json");
-            response.getWriter().append("{\"results\":[],\"error\":\"Could not generate results\"}");
-            return;
-        }
-
-        ArrayList<SearchResult> resultsArr = new ArrayList<>();
-        for (SearchResult r : results) {
-            resultsArr.add(r);
-        }
-                
-        String json;
-        if(searchType == SearchType.PATIENT) {
-        	response.setContentType("application/json");
-            response.getWriter().append(getDIM(resultsArr));
-        	return;
-        }
-        json = processJSON(resultsArr, elapsedTime);
-
-        response.setContentType("application/json");
-        response.getWriter().append(json);
-    }
-
-    private static String processJSON(Collection<SearchResult> results, long elapsedTime) {
-        JSONObject resp = new JSONObject();
-        for (SearchResult r : results) {
-            JSONObject rj = new JSONObject();
-            rj.put("uri", String.valueOf(r.getURI()));
-
-            JSONObject fields = new JSONObject();
-
-            for (Entry<String,Object> f : r.getExtraData().entrySet()) {
-                // remove padding from string representations before accumulating
-                fields.accumulate(f.getKey(), String.valueOf(f.getValue()).trim());
             }
             
-            rj.put("fields", fields);
+            else {
+                results = PluginController.getInstance().query(queryTaskHolder, knownProviders, query, extraFields).get();
+            }
 
-            resp.accumulate("results", rj);
+            if (this.searchType == SearchType.PATIENT) {
+                try {
+                    DIMGeneric dimModel = new DIMGeneric(results, depth);
+                    elapsedTime = System.currentTimeMillis() - elapsedTime;
+                    dimModel.writeJSON(response.getWriter(), elapsedTime, depth, offset, psize);
+                } catch (Exception e) {
+                    logger.warn("Failed to get DIM", e);
+                }
+            } else {
+                elapsedTime = System.currentTimeMillis() - elapsedTime;
+                this.writeResponse(response, results, elapsedTime, offset, psize);
+            }
+
+        } catch (InterruptedException | ExecutionException | RuntimeException ex) {
+            logger.error("Failed to retrieve results", ex);
+            sendError(response, 500, "Could not generate results");
+            return;
+        } catch (JSONException e) {
+            logger.error("Failed to serialize results", e);
+            return;
         }
-        resp.put("numResults", results.size());
-        resp.put("elapsedTime", elapsedTime);
-
-        return resp.toString();
     }
-    
-    private static String getDIM(ArrayList<SearchResult> allresults){
-    	try {
-        	DIMGeneric dimModel = new DIMGeneric(allresults);
-            return dimModel.getJSON();
-		} catch (Exception e) {
-            LoggerFactory.getLogger(SearchServlet.class).warn("failed to get DIM", e);
-            return "";
-		}
+
+    private void writeResponse(HttpServletResponse resp, Iterable<SearchResult> results, long elapsedTime, int offset, int psize) throws IOException, JSONException {
+        JSONWriter writer = new JSONWriter(resp.getWriter());
+        writer.object(); //begin output
+        // results
+        writer.key("results").array(); // begin results
+        int count = 0;
+        for (Iterator<SearchResult> it = results.iterator(); it.hasNext(); ++count) {
+            SearchResult res = it.next();
+            if (count < offset || count >= offset + psize) continue;
+            writer.object() // begin result
+                    .key("uri").value(res.getURI().toString())
+                    .key("fields").object();
+            for (Map.Entry<String, Object> e : res.getExtraData().entrySet()) {
+                writer.key(e.getKey()).value(String.valueOf(e.getValue()).trim());
+            }
+            writer.endObject().endObject(); // end result
+        }
+        // other fields
+        writer.endArray() // end results
+                .key("elapsedTime").value(elapsedTime)
+                .key("numResults").value(count);
+        writer.endObject(); // end output
+    }
+
+    private int getReqParameter(HttpServletRequest req, String name, int defaultValue) throws NumberFormatException {
+        String param = req.getParameter(name);
+        int val = defaultValue;
+        if (param != null) {
+            val = Integer.parseInt(param);
+        }
+        return val;
+    }
+
+    private static void sendError(HttpServletResponse resp, int code, String message) throws IOException {
+        resp.setStatus(code);
+        JSONObject obj = new JSONObject();
+        obj.put("results", new JSONArray());
+        obj.put("error", message);
+        resp.getWriter().append(obj.toString());
     }
 }

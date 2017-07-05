@@ -429,12 +429,6 @@ public class Services extends javax.swing.JFrame
 
     private void showOptions()
     {
-        ServerOptions t = ServerOptions.getInstance();
-        t.setReturnToMain(true);
-        t.setVisible(true);
-        //this.setVisible(false);
-        t.toFront();
-        //this.setEnabled(false);
     }
 
     /** This method is called from within the constructor to

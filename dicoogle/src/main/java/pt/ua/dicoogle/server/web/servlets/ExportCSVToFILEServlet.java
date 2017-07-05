@@ -24,11 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.servlet.ServletException;
@@ -41,37 +37,34 @@ import org.apache.commons.io.IOUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.core.QueryExpressionBuilder;
 import pt.ua.dicoogle.core.query.ExportToCSVQueryTask;
 import pt.ua.dicoogle.plugins.PluginController;
 
 public class ExportCSVToFILEServlet extends HttpServlet {
+	private static final Logger logger = LoggerFactory.getLogger(ExportCSVToFILEServlet.class);
 
 	private File tempDirectory;
 	public ExportCSVToFILEServlet(File tempDirectory) {
 		super();
 		this.tempDirectory = tempDirectory;
-		new AtomicLong(0);
 	}
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
-	
-	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String uid = req.getParameter("UID");
 		if(uid == null){
-			resp.sendError(401, "No Query UID Suplied: Please fill the field \"UID\"");
+			resp.sendError(401, "No Query UID Supplied: Please fill the field \"UID\"");
 			return;
 		}
 		
-		File tmp = new File(tempDirectory, "QueryResultsExport-"+uid);
-		if(!tmp.exists()){
+		File tmpFile = new File(tempDirectory, "QueryResultsExport-"+uid);
+		if(!tmpFile.exists()){
 			resp.sendError(402, "The file for the given uid was not found. Please try again...");
 			return; 
 		}
@@ -84,29 +77,16 @@ public class ExportCSVToFILEServlet extends HttpServlet {
         // Make sure to show the download dialog
         resp.setHeader("Content-disposition","attachment; filename=QueryResultsExport.csv");		
 		
-		FileInputStream fi = new FileInputStream(tmp);
-		BufferedInputStream bi = new BufferedInputStream(fi);
-		
-		IOUtils.copy(bi, resp.getOutputStream());
-		resp.getOutputStream().flush();
-	
-		IOUtils.closeQuietly(fi);
-		IOUtils.closeQuietly(bi);
+		try (BufferedInputStream bi = new BufferedInputStream(new FileInputStream(tmpFile))) {
+
+			IOUtils.copy(bi, resp.getOutputStream());
+			resp.getOutputStream().flush();
+		}
 	}
-
-
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		/*String dataString = req.getParameter("JSON-DATA");
-		if (dataString == null) {
-			resp.sendError(401,
-					"No data suplied: Please fill the field \"JSON-DATA\"");
-			return;
-		}
-*/
 		List<String> orderedFields = new ArrayList<>();
 		Map<String, String> fields = new HashMap<>();
 		String queryString = null;
@@ -114,35 +94,30 @@ public class ExportCSVToFILEServlet extends HttpServlet {
 		boolean keyword;
 		
 		try {
-			//JSONObject data = JSONObject.fromObject(dataString);
 			queryString = req.getParameter("query");
 			if (queryString == null) {
-				resp.sendError(
-						402,
-						"QueryString no suplied: Please fill the field \"queryString\" in \"JSON-DATA\"");
+				resp.sendError(402,
+						"QueryString not supplied: Please fill the field \"query\"");
 				return;
 			}
 
 			System.out.println(req.getParameter("fields"));
 			JSONArray jsonObj = new JSONArray().fromObject(req.getParameter("fields"));
-			//arr = jsonObj.get;//getJSONArray("extraFields");
 			if (jsonObj.size()== 0) {
 				resp.sendError(403,
-						"No fields no suplied: Please fill the field \"extraFiekds\" in \"JSON-DATA\"");
+						"No fields supplied: Please fill the field \"extraFields\" in \"JSON\"");
 				return;
 			}
 
 			for (Object f : jsonObj) {
-				System.out.println(f.toString());
 				fields.put(f.toString(), f.toString());
 				orderedFields.add(f.toString());
 			}
 			keyword = Boolean.parseBoolean(req.getParameter("keyword"));
 
-			arr = req.getParameterValues("providers");//data.getJSONArray("providers");
+			arr = req.getParameterValues("providers");
 		} catch (JSONException ex) {
-			resp.sendError(400,
-					"Error parsing the JSON String: " + ex.toString());
+			resp.sendError(400, "Invalid JSON content");
 			return;
 		}
 		
@@ -155,8 +130,8 @@ public class ExportCSVToFILEServlet extends HttpServlet {
 		//File tempFile = File.createTempFile("QueryResultsExport-", uid, tempDirectory);
 		File tempFile = new File(tempDirectory, "QueryResultsExport-"+uid);
 		tempFile.deleteOnExit();
-		System.out.println("UID: "+uid);
-		System.out.println("FilePath: "+tempFile.getAbsolutePath());
+		logger.debug("UID: {}", uid);
+		logger.debug("FilePath: {}", tempFile.getAbsolutePath());
 		
 		FileOutputStream outStream = new FileOutputStream(tempFile);
 		BufferedOutputStream bos = new BufferedOutputStream(outStream);

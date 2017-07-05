@@ -26,8 +26,7 @@ import java.util.Hashtable;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class Study
-{
+public class Study {
 
     private Patient parent;
     private String StudyInstanceUID ;
@@ -122,6 +121,10 @@ public class Study
      */
     public ArrayList<Serie> getSeries() {
         return series;
+    }
+
+    public Serie getSeries(String seriesInstanceUID) {
+        return this.seriesHash.get(seriesInstanceUID);
     }
 
     /**

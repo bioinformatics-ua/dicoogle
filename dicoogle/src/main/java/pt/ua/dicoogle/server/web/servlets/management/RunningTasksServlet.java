@@ -40,12 +40,7 @@ public class RunningTasksServlet extends HttpServlet {
 			throws ServletException, IOException {
 		
 		resp.setContentType("application/json");
-		try {
-			resp.getWriter().write(RunningIndexTasks.getInstance().toJson());
-		} catch (InterruptedException | ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		resp.getWriter().write(RunningIndexTasks.getInstance().toJson());
 	}
 
 	@Override

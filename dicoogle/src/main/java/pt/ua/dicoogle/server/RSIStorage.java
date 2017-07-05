@@ -85,11 +85,12 @@ public class RSIStorage extends StorageService
     
     private boolean gzip = ServerSettings.getInstance().isGzipStorage();;
 
+    private Set<String> alternativeAETs = new HashSet<>();
     private Set<String> priorityAETs = new HashSet<>();
 
     // Changed to support priority queue.
     private BlockingQueue<ImageElement> queue = new PriorityBlockingQueue<ImageElement>();
-    
+    private NetworkApplicationEntity[] naeArr = null;
     
     /**
      * 
@@ -107,16 +108,19 @@ public class RSIStorage extends StorageService
             list = l;
             settings = ServerSettings.getInstance();
 
+            // Added default alternative AETitle.
+            alternativeAETs.add(ServerSettings.getInstance().getNodeName());
+
             path = settings.getPath();
             if (path == null) {
                 path = "/dev/null";
             }
 
-
             this.priorityAETs = settings.getPriorityAETitles();
             LoggerFactory.getLogger(RSIStorage.class).debug("Priority C-STORE: " + this.priorityAETs);
 
             device.setNetworkApplicationEntity(nae);
+
             device.setNetworkConnection(nc);
             nae.setNetworkConnection(nc);
 
@@ -128,6 +132,7 @@ public class RSIStorage extends StorageService
             nae.register(this);
 
             nae.setAETitle(settings.getAE());
+
 
             nc.setPort(settings.getStoragePort());
             
@@ -143,14 +148,50 @@ public class RSIStorage extends StorageService
             this.nae.setMaxPDULengthReceive(s.getMaxPDULengthReceive()+1000);
             this.nae.setMaxPDULengthSend(s.getMaxPDULenghtSend()+1000);
             this.nae.setRetrieveRspTimeout(60000*300);
+
+
+            // Added alternative AETitles.
+
+            naeArr = new NetworkApplicationEntity[alternativeAETs.size()+1];
+            // Just adding the first AETitle
+            naeArr[0] = nae;
             
-                    
-            String[] array = settings.getCAET();
-            if (array != null) {
-                //nae.setPreferredCallingAETitle(settings.getCAET());
+            int k = 1 ; 
+            
+            for (String alternativeAET: alternativeAETs)
+            {
+                NetworkApplicationEntity nae2 = new NetworkApplicationEntity();
+                nae2.setNetworkConnection(nc);
+                nae2.setDimseRspTimeout(60000*300);
+                nae2.setIdleTimeout(60000*300);
+                nae2.setMaxPDULengthReceive(s.getMaxPDULengthReceive()+1000);
+                nae2.setMaxPDULengthSend(s.getMaxPDULenghtSend()+1000);
+                nae2.setRetrieveRspTimeout(60000*300);
+                //we accept assoociations, this is a server
+                nae2.setAssociationAcceptor(true);
+                //we support the VerificationServiceSOP
+                nae2.register(new VerificationService());
+                //and the StorageServiceSOP
+                nae2.register(this);
+                nae2.setAETitle(alternativeAET);
+                ServerSettings settings = ServerSettings.getInstance();
+                String[] array = settings.getCAET();
+
+                if (array != null)
+                {
+                    nae2.setPreferredCallingAETitle(settings.getCAET());
+                }
+                naeArr[k] = nae2;
+                k++;
+                
             }
 
-            initTS(Services);       
+            // Just set the Network Application Entity array - which accepts a set of AEs.
+            device.setNetworkApplicationEntity(naeArr);
+
+            
+
+            initTS(Services);
     }
     /**
      *  Sets the tranfer capability for this execution of the storage service
@@ -183,6 +224,12 @@ public class RSIStorage extends StorageService
             }
         }
         
+        // Setting the TS in all NetworkApplicationEntitys 
+        for (int i = 0 ; i<naeArr.length;i++)
+        {
+
+            naeArr[i].setTransferCapability(tc);
+        }
         nae.setTransferCapability(tc);
     }
       

@@ -64,7 +64,7 @@ public class Information
 	}
 
     /**
-	 * Based on a SOP Instance UID, returns a File handler for the respective .dcm file.
+	 * Based on a SOP Instance UID, returns a Dicoogle storage file handle for the respective resource file.
 	 *
 	 * @param sopInstanceUID a String containing a valid/indexed SOP Instance UID.
      * @param providers a list of query sources to issue the file handler (if null, all enabled providers are queried)

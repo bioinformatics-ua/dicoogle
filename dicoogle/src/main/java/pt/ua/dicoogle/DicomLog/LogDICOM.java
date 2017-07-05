@@ -20,7 +20,6 @@
 package pt.ua.dicoogle.DicomLog;
 
 import java.util.ArrayList;
-import java.util.concurrent.Semaphore;
 import org.slf4j.LoggerFactory;
 import javax.xml.transform.TransformerConfigurationException;
 
@@ -31,7 +30,6 @@ import javax.xml.transform.TransformerConfigurationException;
 public class LogDICOM{
 
     private static LogDICOM instance = null ;
-    private static Semaphore sem = new Semaphore(1, true);
 
     private ArrayList<LogLine> ll = new ArrayList<LogLine>(); 
 
@@ -43,18 +41,8 @@ public class LogDICOM{
 
     public static synchronized LogDICOM getInstance()
     {
-        try
-        {
-            sem.acquire();
-            if (instance == null)
-            {
-                instance = new LogDICOM();
-            }
-            sem.release();
-        }
-        catch (InterruptedException ex)
-        {
-            LoggerFactory.getLogger(LogDICOM.class).error(ex.getMessage(), ex);
+        if (instance == null) {
+            instance = new LogDICOM();
         }
         return instance;
     }
