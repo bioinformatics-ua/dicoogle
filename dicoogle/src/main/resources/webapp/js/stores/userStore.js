@@ -27,20 +27,23 @@ const UserStore = Reflux.createStore({
         }));
 
     },
-    loadLocalStore: function(){
-        if (localStorage.token) {
-            console.log("loadLocalStore");
-            let user = JSON.parse(localStorage.getItem("user"));
-            this._isAdmin = user.isAdmin;
-            this._username = user.username;
-            this._roles = user.roles;
-            this._token = user.token;
-            this._isLoggedIn = true;
-            this.trigger({
-                isLoggedIn: this._isLoggedIn,
-                success: true
-            });
+    loadLocalStore(user) {
+        if (!user) {
+            user = localStorage.getItem('user');
         }
+        if (user) {
+            console.log('Loading previous session from local store');
+            let userData = JSON.parse(user);
+            this._isAdmin = userData.isAdmin;
+            this._username = userData.username;
+            this._roles = userData.roles;
+            this._token = userData.token;
+            this._isLoggedIn = true;
+        }
+        this.trigger({
+            isLoggedIn: this._isLoggedIn,
+            success: true
+        });
     },
     onLogin: function(user, pass){
       console.log("onLogin");
@@ -52,7 +55,7 @@ const UserStore = Reflux.createStore({
           if (!data.token)
           {
               self.trigger({
-                failed: true
+                success: false
               });
               return;
           }
@@ -62,11 +65,10 @@ const UserStore = Reflux.createStore({
           self._roles = data.roles;
           self._isLoggedIn = true;
           localStorage.token = self._token;
+          console.log("Saving token to local storage:", localStorage.token);
           self.saveLocalStore();
-
-          console.log("Localstorage token: " + localStorage.token);
           self.trigger({
-              isLoggedIn: self._isLoggedIn,
+              isLoggedIn: true,
               success: true
           });
       });
