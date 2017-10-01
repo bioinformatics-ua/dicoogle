@@ -27,7 +27,7 @@ const ServicesView = React.createClass({
     },
 
     componentWillMount () {
-      ServicesStore.listen(this._onChange);
+      this.unsubscribe = ServicesStore.listen(this._onChange);
       Webcore.fetchPlugins('settings', (packages) => {
         Webcore.fetchModules(packages);
         this.setState({plugins: packages.map(pkg => ({
@@ -35,6 +35,9 @@ const ServicesView = React.createClass({
           caption: pkg.dicoogle.caption || pkg.name
         }))});
       });
+    },
+    componentWillUnmount() {
+      this.unsubscribe();
     },
 
     componentDidMount () {
@@ -44,8 +47,7 @@ const ServicesView = React.createClass({
 
     _onChange (data) {
       console.log(data);
-      if(this.isMounted()) {
-        this.setState({
+      this.setState({
         storageRunning: data.storageRunning,
         storagePort: data.storagePort,
         storageAutostart: data.storageAutostart,
@@ -55,10 +57,9 @@ const ServicesView = React.createClass({
         status: "done",
         storageLoading: false,
         queryLoading: false
-        });
+      });
 
-        console.log("Service data update: ", data);
-      }
+      console.log("Service data update: ", data);
     },
 
     render () {
