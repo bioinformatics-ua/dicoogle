@@ -27,15 +27,19 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.IndexReport;
 import pt.ua.dicoogle.sdk.datastructs.Report;
@@ -96,7 +100,7 @@ public class ForceIndexing extends HttpServlet {
     // waiting is bad, clearing all this and giving an ok
     resp.setStatus(200);
     
-    /*
+    
     //Waiting for results, construct the output.
     List<Report> done = new ArrayList<>(reports.size());
     JSONArray ret = new JSONArray();
@@ -124,7 +128,7 @@ public class ForceIndexing extends HttpServlet {
     resp.setContentType("application/json");
     resp.getWriter().write(ret.toString());
     resp.getWriter().flush();
-    */
+    
   }
   
   @Deprecated
