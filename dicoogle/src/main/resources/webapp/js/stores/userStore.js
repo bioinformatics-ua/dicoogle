@@ -47,29 +47,27 @@ const UserStore = Reflux.createStore({
     },
     onLogin: function(user, pass){
       console.log("onLogin");
-      const self = this;
 
       let Dicoogle = dicoogleClient(Endpoints.base);
 
-      Dicoogle.login(user, pass, function(error, data){
-          if (error)
-          {
-              self.trigger({
-                success: false,
-                loginFailed: true
+      Dicoogle.login(user, pass, (error, data) => {
+          if (error) {
+              this.trigger({
+                failed: true
               });
               return;
           }
-          self._username = data.user;
-          self._isAdmin = data.admin;
-          self._token = data.token;
-          self._roles = data.roles;
-          self._isLoggedIn = true;
-          localStorage.token = self._token;
+          this._username = data.user;
+          this._isAdmin = data.admin;
+          this._token = data.token;
+          this._roles = data.roles;
+          this._isLoggedIn = true;
+          localStorage.token = this._token;
+          this.saveLocalStore();
+
           console.log("Saving token to local storage:", localStorage.token);
-          self.saveLocalStore();
-          self.trigger({
-              isLoggedIn: true,
+          this.trigger({
+              isLoggedIn: this._isLoggedIn,
               success: true
           });
       });

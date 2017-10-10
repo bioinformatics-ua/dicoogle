@@ -35,6 +35,11 @@ const LoginView = React.createClass({
   },
 
   render: function() {
+    const guestCredentials = process.env.GUEST_USERNAME && ([<hr/>, <div>
+      Guest credentials: <br/>
+      <b>username:</b> {process.env.GUEST_USERNAME} <br/>
+      <b>password:</b> {process.env.GUEST_PASSWORD}
+    </div>])
     return (
       <div id="loginwrapper" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 10000}}>
         <div className="loginbody">
@@ -62,6 +67,7 @@ const LoginView = React.createClass({
                        value={this.state.password} onChange={this.handlePasswordChange} onKeyDown={this.handleKeyDown} />
                 {this.state.failed && (<p style={{color: 'red'}}> Login Failed. Please try again. </p>)}
                 <button type="button" className="btn submit btn_dicoogle" onClick={this.onLoginClick}>Login</button>
+                {guestCredentials}
               </form>
 
             </div>
