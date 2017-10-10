@@ -44,6 +44,7 @@ class App extends React.Component {
 		this.state = {
 			pluginMenuItems: []
 		};
+		this.dicoogle = dicoogleClient(Endpoints.base);
 		this.logout = this.logout.bind(this);
 	}
 
@@ -67,11 +68,10 @@ class App extends React.Component {
 	{
 		UserStore.listen(this.fetchPlugins.bind(this));
 
-		const Dicoogle = dicoogleClient(Endpoints.base);
 		if (localStorage.token) {
-			Dicoogle.setToken(localStorage.token);
+			this.dicoogle.setToken(localStorage.token);
 		}
-		if (this.props.location.pathname=='/')
+		if (this.props.location.pathname === '/')
 		{
 			localStorage.token = null;
 			UserActions.logout();
@@ -81,13 +81,23 @@ class App extends React.Component {
 
 	componentDidMount(){
     UserStore.loadLocalStore();
-		if (localStorage.token === undefined) {
-			this.props.history.pushState(null, 'login');
+		if (!this.dicoogle.getToken() && this.props.location.pathname === '/') {
+			if (process.env.GUEST_USERNAME) {
+				console.log("Using guest credentials: ", process.env.GUEST_USERNAME, "; password:", process.env.GUEST_PASSWORD);
+				const unsubscribe = UserStore.listen((outcome) => {
+					if (outcome.isLoggedIn) {
+						this.props.history.replace('search');
+					} else {
+						this.props.history.replace(null, 'login');
+					}
+					unsubscribe();
+				})
+				UserActions.login(process.env.GUEST_USERNAME, process.env.GUEST_PASSWORD);
+				this.props.history.pushState(null, 'loading');
+			} else {
+				this.props.history.pushState(null, 'login');
+			}
     }
-		if (this.props.location.pathname=='/')
-		{
-			this.props.history.pushState(null, 'login');
-		}
 
     $("#menu-toggle").click(function (e) {
       e.preventDefault();
@@ -125,8 +135,7 @@ class App extends React.Component {
 
       this.setState({pluginMenuItems: []});
       this.pluginsFetched = false;
-      UserActions.logout()
-
+      UserActions.logout();
 			this.context.router.push('login');
 		});
 	}

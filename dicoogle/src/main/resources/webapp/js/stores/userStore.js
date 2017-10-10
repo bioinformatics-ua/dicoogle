@@ -31,42 +31,42 @@ const UserStore = Reflux.createStore({
         if (localStorage.token) {
             console.log("loadLocalStore");
             let user = JSON.parse(localStorage.getItem("user"));
-            this._isAdmin = user.isAdmin;
-            this._username = user.username;
-            this._roles = user.roles;
-            this._token = user.token;
-            this._isLoggedIn = true;
-            this.trigger({
-                isLoggedIn: this._isLoggedIn,
-                success: true
-            });
+            if (user) {
+                this._isAdmin = user.isAdmin;
+                this._username = user.username;
+                this._roles = user.roles;
+                this._token = user.token;
+                this._isLoggedIn = true;
+                this.trigger({
+                    isLoggedIn: this._isLoggedIn,
+                    success: true
+                });
+            }
         }
     },
     onLogin: function(user, pass){
       console.log("onLogin");
-      const self = this;
 
       let Dicoogle = dicoogleClient(Endpoints.base);
 
-      Dicoogle.login(user, pass, function(errorCallBack, data){
-          if (!data.token)
-          {
-              self.trigger({
+      Dicoogle.login(user, pass, (error, data) => {
+          if (error) {
+              this.trigger({
                 failed: true
               });
               return;
           }
-          self._username = data.user;
-          self._isAdmin = data.admin;
-          self._token = data.token;
-          self._roles = data.roles;
-          self._isLoggedIn = true;
-          localStorage.token = self._token;
-          self.saveLocalStore();
+          this._username = data.user;
+          this._isAdmin = data.admin;
+          this._token = data.token;
+          this._roles = data.roles;
+          this._isLoggedIn = true;
+          localStorage.token = this._token;
+          this.saveLocalStore();
 
-          console.log("Localstorage token: " + localStorage.token);
-          self.trigger({
-              isLoggedIn: self._isLoggedIn,
+          console.log("Localstorage token:", localStorage.token);
+          this.trigger({
+              isLoggedIn: this._isLoggedIn,
               success: true
           });
       });
