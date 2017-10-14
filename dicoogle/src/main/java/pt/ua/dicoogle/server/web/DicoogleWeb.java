@@ -30,6 +30,7 @@ import pt.ua.dicoogle.server.web.servlets.ExportCSVToFILEServlet;
 import pt.ua.dicoogle.server.web.servlets.SearchHolderServlet;
 import pt.ua.dicoogle.server.web.servlets.IndexerServlet;
 import pt.ua.dicoogle.server.web.servlets.ImageServlet;
+import pt.ua.dicoogle.server.web.servlets.plugins.PluginsServlet;
 import pt.ua.dicoogle.server.web.servlets.search.ExportServlet;
 import pt.ua.dicoogle.server.web.servlets.search.ExportServlet.ExportType;
 import pt.ua.dicoogle.server.web.servlets.search.ProvidersServlet;
@@ -205,6 +206,7 @@ public class DicoogleWeb {
             createServletHandler(new ServicesServlet(ServicesServlet.QUERY), "/management/dicom/query"),
             createServletHandler(new ServicesServlet(ServicesServlet.PLUGIN), "/management/plugins/"),
             createServletHandler(new AETitleServlet(), "/management/settings/dicom"),
+            createServletHandler(new PluginsServlet(), "/plugins/*"),
             createServletHandler(new WebUIServlet(), "/webui"),
             createWebUIModuleServletHandler(),
             createServletHandler(new LoggerServlet(), "/logger"),
