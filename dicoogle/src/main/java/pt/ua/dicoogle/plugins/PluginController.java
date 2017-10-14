@@ -76,12 +76,14 @@ public class PluginController{
         return instance;
     }
     private final Collection<PluginSet> pluginSets;
+    private final Collection<DeadPlugin> deadPluginSets;
     private File pluginFolder;
     private TaskQueue tasks = null;
 
 	private PluginSet remoteQueryPlugins = null;
     private final WebUIPluginManager webUI;
     private final DicooglePlatformProxy proxy;
+    private TaskManager taskManager = new TaskManager(Integer.parseInt(System.getProperty("dicoogle.taskManager.nThreads", "4")));
     
     public PluginController(File pathToPluginDirectory) {
     	logger.info("Creating PluginController Instance");
@@ -95,59 +97,18 @@ public class PluginController{
             pathToPluginDirectory.mkdirs();
         }
 
+        this.deadPluginSets = new ArrayList<>(4);
+
         //loads the plugins
         pluginSets = PluginFactory.getPlugins(pathToPluginDirectory);
         //load web UI plugins (they are not Java, so the process is delegated to another entity)
         this.webUI = new WebUIPluginManager();
-        // loadByPluginName all at "WebPlugins"
-        this.webUI.loadAll(new File("WebPlugins"));
-        
-        // go through each jar'd plugin and fetch their WebPlugins
-        for (File j : FileUtils.listFiles(pluginFolder, new String[]{"jar", "zip"}, false)) {
-            try {
-                this.webUI.loadAllFromZip(new ZipFile(j));
-            } catch (IOException ex) {
-                // ignore
-                logger.warn("Failed to load web UI plugins from {}: {}", j.getName(), ex.getMessage());
-            }
-        }
-        
+        this.loadWebUIPlugins();
+
         logger.info("Loaded Local Plugins");
 
-        //loads plugins' settings and passes them to the plugin
-        File settingsFolder = new File(pluginFolder.getPath() + "/settings/");
-        if (!settingsFolder.exists()) {
-        	logger.info("Creating Local Settings Folder");
-            settingsFolder.mkdir();
-        }
+        this.configurePlugins();
 
-        for (Iterator<PluginSet> it = pluginSets.iterator(); it.hasNext();) {
-            PluginSet plugin = it.next();
-            logger.info("Loading plugin: " + plugin.getName());
-            File pluginSettingsFile = new File(settingsFolder + "/" + plugin.getName().replace('/', '-') + ".xml");
-            try {
-                ConfigurationHolder holder = new ConfigurationHolder(pluginSettingsFile);
-                if(plugin.getName().equals("RemotePluginSet")) {
-                	this.remoteQueryPlugins = plugin;
-                	holder.getConfiguration().setProperty("NodeName", ServerSettings.getInstance().getNodeName());
-    	        	holder.getConfiguration().setProperty("TemporaryPath", ServerSettings.getInstance().getPath());
-                	
-                	logger.info("Started Remote Communications Manager");
-                }
-                applySettings(plugin, holder);
-            }
-            catch (ConfigurationException e){
-                logger.error("Failed to create configuration holder", e);
-			}
-            catch (RuntimeException e) {
-                logger.error("Unexpected error while loading plugin set {}. Plugin disabled.", plugin.getName(), e);
-                it.remove();
-            }
-        }
-        logger.info("Settings pushed to plugins");
-        webUI.loadSettings(settingsFolder);
-        logger.info("Settings pushed to web UI plugins");
-        
         pluginSets.add(new DefaultFileStoragePlugin());
         logger.info("Added default storage plugin");
         
@@ -157,6 +118,66 @@ public class PluginController{
         initRestInterface(pluginSets);
         initJettyInterface(pluginSets);
         logger.info("Initialized plugins");
+    }
+
+    private void loadWebUIPlugins() {
+        // loadByPluginName all at "WebPlugins"
+        this.webUI.loadAll(new File("WebPlugins"));
+
+        // go through each jar'd plugin and fetch their WebPlugins
+        for (File j : FileUtils.listFiles(pluginFolder, new String[]{"jar", "zip"}, false)) {
+            try {
+                this.webUI.loadAllFromZip(new ZipFile(j));
+            } catch (IOException ex) {
+                // ignore
+                logger.warn("Failed to load web UI plugins from {}: {}", j.getName(), ex.getMessage());
+            }
+        }
+    }
+
+    private void configurePlugins() {
+        //loads plugins' settings and passes them to the plugin
+        File settingsFolder = new File(pluginFolder.getPath() + "/settings/");
+        if (!settingsFolder.exists()) {
+            logger.info("Creating Local Settings Folder");
+            settingsFolder.mkdir();
+        }
+
+        for (Iterator<PluginSet> it = pluginSets.iterator(); it.hasNext();) {
+            PluginSet plugin = it.next();
+            try {
+                final String name = plugin.getName();
+                logger.info("Loading plugin: {}", name);
+                File pluginSettingsFile = new File(settingsFolder + "/" + name.replace('/', '-') + ".xml");
+                ConfigurationHolder holder = new ConfigurationHolder(pluginSettingsFile);
+                if(plugin.getName().equals("RemotePluginSet")) {
+                    this.remoteQueryPlugins = plugin;
+                    holder.getConfiguration().setProperty("NodeName", ServerSettings.getInstance().getNodeName());
+                    holder.getConfiguration().setProperty("TemporaryPath", ServerSettings.getInstance().getPath());
+
+                    logger.info("Started Remote Communications Manager");
+                }
+                applySettings(plugin, holder);
+            }
+            catch (ConfigurationException e){
+                logger.error("Failed to create configuration holder", e);
+            }
+            catch (RuntimeException e) {
+                String name;
+                try {
+                    name = plugin.getName();
+                } catch (Exception ex2) {
+                    logger.warn("Plugin set name cannot be retrieved: {}", ex2.getMessage());
+                    name = "UNKNOWN";
+                }
+                logger.error("Unexpected error while loading plugin set {}. Plugin set marked as dead.", name, e);
+                this.deadPluginSets.add(new DeadPlugin(name, e));
+                it.remove();
+            }
+        }
+        logger.debug("Settings pushed to plugins");
+        webUI.loadSettings(settingsFolder);
+        logger.debug("Settings pushed to web UI plugins");
     }
     
     private void initializePlugins(Collection<PluginSet> plugins) {
@@ -315,6 +336,34 @@ public class PluginController{
         return storagePlugins;
     }
 
+    public Collection<JettyPluginInterface> getServletPlugins(boolean onlyEnabled) {
+        List<JettyPluginInterface> plugins = new ArrayList<>();
+        for (PluginSet pSet : pluginSets) {
+            for (JettyPluginInterface p : pSet.getJettyPlugins()) {
+                if (!p.isEnabled() && onlyEnabled) {
+                    continue;
+                }
+                plugins.add(p);
+            }
+        }
+        return plugins;
+    }
+    public Collection<JettyPluginInterface> getServletPlugins() {
+        return this.getServletPlugins(true);
+    }
+
+    public Collection<String> getPluginSetNames() {
+        Collection<String> l = new ArrayList<>();
+        for (PluginSet s: this.pluginSets) {
+            l.add(s.getName());
+        }
+        return l;
+    }
+
+    public Collection<DeadPlugin> getDeadPluginSets() {
+        return new ArrayList<>(this.deadPluginSets);
+    }
+
     /**
      * Resolve a URI to a DicomInputStream
      * @param location
@@ -402,7 +451,7 @@ public class PluginController{
         this.tasks.addTask(task);
     }
    
-    private TaskManager taskManager = new TaskManager(4);
+
     
     public List<String> getQueryProvidersName(boolean enabled){
     	Collection<QueryInterface> plugins = getQueryPlugins(enabled);
