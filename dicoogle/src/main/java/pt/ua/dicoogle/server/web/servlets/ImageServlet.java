@@ -67,7 +67,7 @@ public class ImageServlet extends HttpServlet
     public static final int BUFFER_SIZE = 1500; // byte size for read-write ring bufer, optimized for regular TCP connection windows
 
     private final LocalImageCache cache;
-	
+
     /**
      * Creates an image servlet.
      *
@@ -77,27 +77,31 @@ public class ImageServlet extends HttpServlet
         this.cache = cache;
     }
     
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-	{
-		String sopInstanceUID = request.getParameter("SOPInstanceUID");
-		String uri = request.getParameter("uri");
-        boolean thumbnail = Boolean.valueOf(request.getParameter("thumbnail"));
-        
-		if (sopInstanceUID == null) {
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    {
+        String sopInstanceUID = request.getParameter("SOPInstanceUID");
+        String uri = request.getParameter("uri");
+        String qsThumbnail = request.getParameter("thumbnail");
+        boolean thumbnail = qsThumbnail != null && (qsThumbnail.isEmpty() || Boolean.valueOf(qsThumbnail));
+
+        if (sopInstanceUID == null) {
             if (uri == null) {
                 response.sendError(400, "URI or SOP Instance UID not provided");
                 return;
             }
-        } else if (sopInstanceUID.trim().isEmpty()) {
-			response.sendError(400, "Invalid SOP Instance UID!");
-			return;
-		}
-		String[] providerArray = request.getParameterValues("provider");
+        } else {
+            sopInstanceUID = sopInstanceUID.trim();
+            if (sopInstanceUID.isEmpty()) {
+                response.sendError(400, "Invalid SOP Instance UID!");
+                return;
+            }
+        }
+        String[] providerArray = request.getParameterValues("provider");
         List<String> providers = providerArray == null ? null : Arrays.asList(providerArray);
-		String sFrame = request.getParameter("frame");
+        String sFrame = request.getParameter("frame");
         int frame;
-		if (sFrame == null) {
+        if (sFrame == null) {
             frame = 0;
         } else {
             frame = Integer.parseInt(sFrame);
@@ -131,8 +135,8 @@ public class ImageServlet extends HttpServlet
             }
         }
 
-		// if there is a cache available then use it
-		if (cache != null && cache.isRunning()) {
+        // if there is a cache available then use it
+        if (cache != null && cache.isRunning()) {
 
             try {
                 InputStream istream = cache.get(imgFile.getURI(), frame, thumbnail);
@@ -148,7 +152,7 @@ public class ImageServlet extends HttpServlet
                 response.sendError(500);
             }
             
- 		} else {
+        } else {
             // if the cache is invalid or not running convert the image and return it "on-the-fly"
             try {
                 ByteArrayOutputStream pngStream = getPNGStream(imgFile, frame, thumbnail);
@@ -162,7 +166,7 @@ public class ImageServlet extends HttpServlet
                 logger.warn("Could not convert the image", ex);
                 response.sendError(500, "Could not convert the image");
             }
-		}
+        }
     }
     
     private ByteArrayOutputStream getPNGStream(StorageInputStream imgFile, int frame, boolean thumbnail) throws IOException {
@@ -213,7 +217,7 @@ public class ImageServlet extends HttpServlet
 		PrintWriter wr = resp.getWriter();
 		wr.print(r.toString());	
 	}
-	
+
     private static StorageInputStream getFileFromSOPInstanceUID(String sopInstanceUID, List<String> providers) throws IOException {
         // TODO use only DIM sources?
         JointQueryTask qt = new JointQueryTask() {
@@ -248,5 +252,4 @@ public class ImageServlet extends HttpServlet
         }
         
     }
-    	
 }
