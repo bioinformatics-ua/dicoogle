@@ -76,12 +76,14 @@ public class PluginController{
         return instance;
     }
     private final Collection<PluginSet> pluginSets;
+    private final Collection<DeadPlugin> deadPluginSets;
     private File pluginFolder;
     private TaskQueue tasks = null;
 
 	private PluginSet remoteQueryPlugins = null;
     private final WebUIPluginManager webUI;
     private final DicooglePlatformProxy proxy;
+    private TaskManager taskManager = new TaskManager(Integer.parseInt(System.getProperty("dicoogle.taskManager.nThreads", "4")));
     
     public PluginController(File pathToPluginDirectory) {
     	logger.info("Creating PluginController Instance");
@@ -95,13 +97,33 @@ public class PluginController{
             pathToPluginDirectory.mkdirs();
         }
 
+        this.deadPluginSets = new ArrayList<>(4);
+
         //loads the plugins
         pluginSets = PluginFactory.getPlugins(pathToPluginDirectory);
         //load web UI plugins (they are not Java, so the process is delegated to another entity)
         this.webUI = new WebUIPluginManager();
+        this.loadWebUIPlugins();
+
+        logger.info("Loaded Local Plugins");
+
+        this.configurePlugins();
+
+        pluginSets.add(new DefaultFileStoragePlugin());
+        logger.info("Added default storage plugin");
+        
+        this.proxy = new DicooglePlatformProxy(this);
+        
+        initializePlugins(pluginSets);
+        initRestInterface(pluginSets);
+        initJettyInterface(pluginSets);
+        logger.info("Initialized plugins");
+    }
+
+    private void loadWebUIPlugins() {
         // loadByPluginName all at "WebPlugins"
         this.webUI.loadAll(new File("WebPlugins"));
-        
+
         // go through each jar'd plugin and fetch their WebPlugins
         for (File j : FileUtils.listFiles(pluginFolder, new String[]{"jar", "zip"}, false)) {
             try {
@@ -111,21 +133,22 @@ public class PluginController{
                 logger.warn("Failed to load web UI plugins from {}: {}", j.getName(), ex.getMessage());
             }
         }
-        
-        logger.info("Loaded Local Plugins");
+    }
 
+    private void configurePlugins() {
         //loads plugins' settings and passes them to the plugin
         File settingsFolder = new File(pluginFolder.getPath() + "/settings/");
         if (!settingsFolder.exists()) {
-        	logger.info("Creating Local Settings Folder");
+            logger.info("Creating Local Settings Folder");
             settingsFolder.mkdir();
         }
 
         for (Iterator<PluginSet> it = pluginSets.iterator(); it.hasNext();) {
             PluginSet plugin = it.next();
-            logger.info("Loading plugin: " + plugin.getName());
-            File pluginSettingsFile = new File(settingsFolder + "/" + plugin.getName().replace('/', '-') + ".xml");
             try {
+                final String name = plugin.getName();
+                logger.info("Loading plugin: {}", name);
+                File pluginSettingsFile = new File(settingsFolder + "/" + name.replace('/', '-') + ".xml");
                 ConfigurationHolder holder = new ConfigurationHolder(pluginSettingsFile);
                 if(plugin.getName().equals("RemotePluginSet")) {
                 	this.remoteQueryPlugins = plugin;
@@ -138,25 +161,23 @@ public class PluginController{
             }
             catch (ConfigurationException e){
                 logger.error("Failed to create configuration holder", e);
-			}
+            }
             catch (RuntimeException e) {
-                logger.error("Unexpected error while loading plugin set {}. Plugin disabled.", plugin.getName(), e);
+                String name;
+                try {
+                    name = plugin.getName();
+                } catch (Exception ex2) {
+                    logger.warn("Plugin set name cannot be retrieved: {}", ex2.getMessage());
+                    name = "UNKNOWN";
+                }
+                logger.error("Unexpected error while loading plugin set {}. Plugin set marked as dead.", name, e);
+                this.deadPluginSets.add(new DeadPlugin(name, e));
                 it.remove();
             }
         }
-        logger.info("Settings pushed to plugins");
+        logger.debug("Settings pushed to plugins");
         webUI.loadSettings(settingsFolder);
-        logger.info("Settings pushed to web UI plugins");
-        
-        pluginSets.add(new DefaultFileStoragePlugin());
-        logger.info("Added default storage plugin");
-        
-        this.proxy = new DicooglePlatformProxy(this);
-        
-        initializePlugins(pluginSets);
-        initRestInterface(pluginSets);
-        initJettyInterface(pluginSets);
-        logger.info("Initialized plugins");
+        logger.debug("Settings pushed to web UI plugins");
     }
     
     private void initializePlugins(Collection<PluginSet> plugins) {
@@ -315,6 +336,34 @@ public class PluginController{
         return storagePlugins;
     }
 
+    public Collection<JettyPluginInterface> getServletPlugins(boolean onlyEnabled) {
+        List<JettyPluginInterface> plugins = new ArrayList<>();
+        for (PluginSet pSet : pluginSets) {
+            for (JettyPluginInterface p : pSet.getJettyPlugins()) {
+                if (!p.isEnabled() && onlyEnabled) {
+                    continue;
+                }
+                plugins.add(p);
+            }
+        }
+        return plugins;
+    }
+    public Collection<JettyPluginInterface> getServletPlugins() {
+        return this.getServletPlugins(true);
+    }
+
+    public Collection<String> getPluginSetNames() {
+        Collection<String> l = new ArrayList<>();
+        for (PluginSet s: this.pluginSets) {
+            l.add(s.getName());
+        }
+        return l;
+    }
+
+    public Collection<DeadPlugin> getDeadPluginSets() {
+        return new ArrayList<>(this.deadPluginSets);
+    }
+
     /**
      * Resolve a URI to a DicomInputStream
      * @param location
@@ -398,7 +447,7 @@ public class PluginController{
         this.tasks.addTask(task);
     }
    
-    private TaskManager taskManager = new TaskManager(4);
+
     
     public List<String> getQueryProvidersName(boolean enabled){
     	Collection<QueryInterface> plugins = getQueryPlugins(enabled);
@@ -473,7 +522,8 @@ public class PluginController{
     private Task<Iterable<SearchResult>> getTaskForQuery(String querySource, final String query, final Object ... parameters){
     	final QueryInterface queryEngine = getQueryProviderByName(querySource, true);
     	//returns a tasks that runs the query from the selected query engine
-        Task<Iterable<SearchResult>> queryTask = new Task<>(querySource,
+        String uid = UUID.randomUUID().toString();
+        Task<Iterable<SearchResult>> queryTask = new Task<>(uid, querySource,
             new Callable<Iterable<SearchResult>>(){
             @Override public Iterable<SearchResult> call() throws Exception {
                 if(queryEngine == null) return Collections.emptyList();
@@ -504,28 +554,31 @@ public class PluginController{
         //Collection<IndexerInterface> indexers = getIndexingPluginsByMimeType(path);
         ArrayList<Task<Report>> rettasks = new ArrayList<>();
         final  String pathF = path.toString();
-        for(IndexerInterface indexer : indexers){            
-        	Task<Report> task = indexer.index(store.at(path));
-            if(task == null) continue;
-            final String taskUniqueID = UUID.randomUUID().toString();
-            task.setName(String.format("[%s]index %s", indexer.getName(), path));
-            task.onCompletion(new Runnable() {
-                @Override
-                public void run() {
-                    logger.info("Task [{}] complete: {} is indexed", taskUniqueID, pathF);
-                }
-            });
-                
-            taskManager.dispatch(task);
-            rettasks.add(task);
-            RunningIndexTasks.getInstance().addTask(taskUniqueID, task);
+        for(IndexerInterface indexer : indexers){
+            try {
+                Task<Report> task = indexer.index(store.at(path));
+                if(task == null) continue;
+                final String taskUniqueID = UUID.randomUUID().toString();
+                task.setName(String.format("[%s]index %s", indexer.getName(), path));
+                task.onCompletion(new Runnable() {
+                    @Override
+                    public void run() {
+                        logger.info("Task [{}] complete: {} is indexed", taskUniqueID, pathF);
+                    }
+                });
+
+                taskManager.dispatch(task);
+                rettasks.add(task);
+                RunningIndexTasks.getInstance().addTask(task);
+            } catch (RuntimeException ex) {
+                logger.warn("Indexer {} failed unexpectedly", indexer.getName(), ex);
+            }
         }
         logger.info("Finished firing all indexing plugins for {}", path);
         
         return rettasks;    	
     }     
     
-    //
     public List<Task<Report>> index(String pluginName, URI path) {
     	logger.info("Starting Indexing procedure for {}", path);
         StorageInterface store = getStorageForSchema(path);
@@ -540,24 +593,26 @@ public class PluginController{
         IndexerInterface indexer = getIndexerByName(pluginName, true);
         ArrayList<Task<Report>> rettasks = new ArrayList<>();
         final  String pathF = path.toString();
-    	Task<Report> task = indexer.index(store.at(path));
-        if(task != null) {
-            task.setName(String.format("[%s]index %s", pluginName, path));
-            task.onCompletion(new Runnable() {
+        try {
+            Task<Report> task = indexer.index(store.at(path));
+            if (task != null) {
+                task.setName(String.format("[%s]index %s", pluginName, path));
+                task.onCompletion(new Runnable() {
 
-                @Override
-                public void run() {
-                    logger.info("Task [{}] complete: {} is indexed", taskUniqueID, pathF);
-                    
-                    //RunningIndexTasks.getSettings().removeTask(taskUniqueID);
-                }
-            });
-            
-	        taskManager.dispatch(task);
-	        
-	        rettasks.add(task);
-	        logger.info("Fired indexer {} for URI {}", pluginName, path.toString());
-	        RunningIndexTasks.getInstance().addTask(taskUniqueID, task);
+                    @Override
+                    public void run() {
+                        logger.info("Task [{}] complete: {} is indexed", taskUniqueID, pathF);
+                    }
+                });
+
+                taskManager.dispatch(task);
+
+                rettasks.add(task);
+                logger.info("Fired indexer {} for URI {}", pluginName, path.toString());
+                RunningIndexTasks.getInstance().addTask(task);
+            }
+        } catch (RuntimeException ex) {
+            logger.warn("Indexer {} failed unexpectedly", indexer.getName(), ex);
         }
         
         return rettasks;    	

@@ -31,7 +31,7 @@ import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.Utils.Platform;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 import pt.ua.dicoogle.sdk.utils.TagsStruct;
-import pt.ua.ieeta.emailreport.Configuration;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -186,14 +186,6 @@ public class Main
         logger.debug("Starting Dicoogle");
         
         logger.debug("Loading configuration file: {}", Platform.homePath());
-        Configuration.initInstance(Platform.homePath());
-        try {
-            Configuration.getInstance().readValues();
-            Configuration.getInstance().setProps(new Properties());
-        } catch (FileNotFoundException ex) {
-            //DebugManager.getSettings().log("Missing crash report configuration (sender)\n");
-            logger.info("No configuration file");
-        }
 
         /* Load all Server Settings */
         try {

@@ -49,8 +49,6 @@ public class ControlServices
     
     private ControlServices()
     {
-        TaskManager taskManager = new TaskManager(4);
-
         startInicialServices();
     }
 

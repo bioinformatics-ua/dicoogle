@@ -34,6 +34,8 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
+
+import org.apache.commons.codec.digest.DigestUtils;
 import pt.ua.dicoogle.server.web.dicom.Convert2PNG;
 
 /**
@@ -186,7 +188,12 @@ public class LocalImageCache extends Thread implements ImageRetriever
 		long currentTime = System.currentTimeMillis();
 
 		// go through all the files inside the temp folder and check their last access
-		for (File f : cacheFolder.listFiles())
+		File[] files = cacheFolder.listFiles();
+		if (files == null) {
+			cacheFolder.mkdirs();
+			return;
+		}
+		for (File f : files)
 		{
 			// skip if the current file is a folder
 			if (f.isDirectory())
@@ -238,11 +245,8 @@ public class LocalImageCache extends Thread implements ImageRetriever
 	}
     
     protected static String toFileName(String imageUri, int frameNumber, boolean thumbnail) {
-        String filename = imageUri.replace('/', '_') + "_" + frameNumber;
-        if (thumbnail) {
-            filename += "__thumb";
-        }
-        return filename + ".png";
+        String filecode = imageUri + ':' + frameNumber + ':' + (thumbnail ? '1' : '0');
+        return DigestUtils.sha1Hex(filecode) + ".png";
     }
     
     @Override

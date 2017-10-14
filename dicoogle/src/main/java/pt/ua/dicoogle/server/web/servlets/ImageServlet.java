@@ -30,7 +30,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.servlet.ServletOutputStream;
@@ -65,7 +67,7 @@ public class ImageServlet extends HttpServlet
     public static final int BUFFER_SIZE = 1500; // byte size for read-write ring bufer, optimized for regular TCP connection windows
 
     private final LocalImageCache cache;
-	
+
     /**
      * Creates an image servlet.
      *
@@ -75,27 +77,31 @@ public class ImageServlet extends HttpServlet
         this.cache = cache;
     }
     
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-	{
-		String sopInstanceUID = request.getParameter("SOPInstanceUID");
-		String uri = request.getParameter("uri");
-        boolean thumbnail = Boolean.valueOf(request.getParameter("thumbnail"));
-        
-		if (sopInstanceUID == null) {
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    {
+        String sopInstanceUID = request.getParameter("SOPInstanceUID");
+        String uri = request.getParameter("uri");
+        String qsThumbnail = request.getParameter("thumbnail");
+        boolean thumbnail = qsThumbnail != null && (qsThumbnail.isEmpty() || Boolean.valueOf(qsThumbnail));
+
+        if (sopInstanceUID == null) {
             if (uri == null) {
                 response.sendError(400, "URI or SOP Instance UID not provided");
                 return;
             }
-        } else if (sopInstanceUID.trim().isEmpty()) {
-			response.sendError(400, "Invalid SOP Instance UID!");
-			return;
-		}
-		String[] providerArray = request.getParameterValues("provider");
+        } else {
+            sopInstanceUID = sopInstanceUID.trim();
+            if (sopInstanceUID.isEmpty()) {
+                response.sendError(400, "Invalid SOP Instance UID!");
+                return;
+            }
+        }
+        String[] providerArray = request.getParameterValues("provider");
         List<String> providers = providerArray == null ? null : Arrays.asList(providerArray);
-		String sFrame = request.getParameter("frame");
+        String sFrame = request.getParameter("frame");
         int frame;
-		if (sFrame == null) {
+        if (sFrame == null) {
             frame = 0;
         } else {
             frame = Integer.parseInt(sFrame);
@@ -129,8 +135,8 @@ public class ImageServlet extends HttpServlet
             }
         }
 
-		// if there is a cache available then use it
-		if (cache != null && cache.isRunning()) {
+        // if there is a cache available then use it
+        if (cache != null && cache.isRunning()) {
 
             try {
                 InputStream istream = cache.get(imgFile.getURI(), frame, thumbnail);
@@ -146,7 +152,7 @@ public class ImageServlet extends HttpServlet
                 response.sendError(500);
             }
             
- 		} else {
+        } else {
             // if the cache is invalid or not running convert the image and return it "on-the-fly"
             try {
                 ByteArrayOutputStream pngStream = getPNGStream(imgFile, frame, thumbnail);
@@ -160,12 +166,13 @@ public class ImageServlet extends HttpServlet
                 logger.warn("Could not convert the image", ex);
                 response.sendError(500, "Could not convert the image");
             }
-		}
+        }
     }
     
     private ByteArrayOutputStream getPNGStream(StorageInputStream imgFile, int frame, boolean thumbnail) throws IOException {
         ByteArrayOutputStream pngStream;
         if (thumbnail) {
+            // retrieve thumbnail dimension settings
             int thumbSize = ServerSettingsManager.getSettings().getArchiveSettings().getThumbnailSize();
             pngStream = Convert2PNG.DICOM2ScaledPNGStream(imgFile, frame, thumbSize, thumbSize);
         } else {
@@ -204,9 +211,9 @@ public class ImageServlet extends HttpServlet
 		PrintWriter wr = resp.getWriter();
 		wr.print(r.toString());	
 	}
-	
-    private static StorageInputStream getFileFromSOPInstanceUID(String sopInstanceUID, List<String> providers) throws IOException {
 
+    private static StorageInputStream getFileFromSOPInstanceUID(String sopInstanceUID, List<String> providers) throws IOException {
+        // TODO use only DIM sources?
         JointQueryTask qt = new JointQueryTask() {
             @Override
             public void onCompletion() {
@@ -219,19 +226,6 @@ public class ImageServlet extends HttpServlet
             if (providers == null) {
                 providers = PluginController.getInstance().getQueryProvidersName(true);
             }
-            Collection<String> dimProviders = ServerSettingsManager.getSettings().getArchiveSettings().getDIMProviders();
-            if (!dimProviders.isEmpty()) {
-                // DIM providers known, filtering
-                providers = new ArrayList<>(providers);
-                Iterator<String> it = providers.iterator();
-                while (it.hasNext()) {
-                    if (!dimProviders.contains(it.next())) {
-                        // not a DIM source
-                        it.remove();
-                    }
-                }
-            }
-
             Iterator<SearchResult> it = PluginController.getInstance()
                     .query(qt, providers, "SOPInstanceUID:" + sopInstanceUID).get().iterator();
             if (!it.hasNext()) {
@@ -252,5 +246,4 @@ public class ImageServlet extends HttpServlet
         }
         
     }
-    	
 }

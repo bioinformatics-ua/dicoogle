@@ -18,11 +18,6 @@
  */
 package pt.ua.dicoogle.taskManager;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
@@ -30,6 +25,11 @@ import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.sdk.datastructs.IndexReport;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.task.Task;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Singleton that contains all running index tasks
@@ -55,8 +55,8 @@ public class RunningIndexTasks {
 		taskRunningList = new HashMap<>();
 	}
 
-	public void addTask(String taskUid, Task<Report> task) {
-		taskRunningList.put(taskUid, task);
+	public void addTask(Task<Report> task) {
+		taskRunningList.put(task.getUid(), task);
 	}
 
 	public boolean removeTask(String taskUid) {
@@ -75,8 +75,7 @@ public class RunningIndexTasks {
 	}
 
 	public Map<String, Task<Report>> getRunningTasks() {
-
-		return taskRunningList;
+		return Collections.unmodifiableMap(taskRunningList);
 	}
 
     public String toJson() {
@@ -85,30 +84,12 @@ public class RunningIndexTasks {
 
         int countComplete = 0;
         int countCancelled = 0;
-        for (Map.Entry<String, Task<Report>> pair : taskRunningList.entrySet()) {
-            Task<Report> task = pair.getValue();
-            JSONObject entry = new JSONObject();
-            entry.put("taskUid", pair.getKey());
-            entry.put("taskName", task.getName());
-            entry.put("taskProgress", task.getProgress());
-
+        for (Task<Report> task: taskRunningList.values()) {
+            JSONObject entry = asJSON(task);
             if (task.isDone() && !task.isCancelled()) {
-                entry.put("complete", true);
                 countComplete += 1;
-                try {
-                    Report r = task.get();
-                    if (r instanceof IndexReport) {
-                        entry.put("elapsedTime", ((IndexReport)r).getElapsedTime());
-                        entry.put("nIndexed", ((IndexReport)r).getNIndexed());
-                        entry.put("nErrors", ((IndexReport)r).getNErrors());
-                    }
-                } catch (InterruptedException | ExecutionException ex) {
-                    logger.warn("Could not retrieve task result, ignoring", ex);
-                }
-            }
-            if (task.isCancelled()) {
+            } else if (task.isCancelled()) {
                 countCancelled += 1;
-                entry.put("canceled", true);
             }
             array.add(entry);
         }
@@ -116,5 +97,30 @@ public class RunningIndexTasks {
         object.put("results", array);
         object.put("count", array.size() - countComplete - countCancelled);
         return object.toString();
+    }
+
+    public JSONObject asJSON(Task<? extends Report> task) {
+        JSONObject entry = new JSONObject();
+        entry.put("taskUid", task.getUid());
+        entry.put("taskName", task.getName());
+        entry.put("taskProgress", task.getProgress());
+
+        if (task.isDone() && !task.isCancelled()) {
+            entry.put("complete", true);
+            try {
+                Report r = task.get();
+                if (r instanceof IndexReport) {
+                    entry.put("elapsedTime", ((IndexReport)r).getElapsedTime());
+                    entry.put("nIndexed", ((IndexReport)r).getNIndexed());
+                    entry.put("nErrors", ((IndexReport)r).getNErrors());
+                }
+            } catch (InterruptedException | ExecutionException ex) {
+                logger.warn("Could not retrieve task result, ignoring", ex);
+            }
+        }
+        if (task.isCancelled()) {
+            entry.put("canceled", true);
+        }
+        return entry;
     }
 }
