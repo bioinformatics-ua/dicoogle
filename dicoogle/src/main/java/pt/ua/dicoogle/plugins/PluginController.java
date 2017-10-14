@@ -526,7 +526,8 @@ public class PluginController{
     private Task<Iterable<SearchResult>> getTaskForQuery(final String querySource, final String query, final Object ... parameters){
     	final QueryInterface queryEngine = getQueryProviderByName(querySource, true);
     	//returns a tasks that runs the query from the selected query engine
-        Task<Iterable<SearchResult>> queryTask = new Task<>(querySource,
+        String uid = UUID.randomUUID().toString();
+        Task<Iterable<SearchResult>> queryTask = new Task<>(uid, querySource,
             new Callable<Iterable<SearchResult>>(){
             @Override public Iterable<SearchResult> call() throws Exception {
                 if(queryEngine == null) return Collections.emptyList();
@@ -577,7 +578,7 @@ public class PluginController{
 
                 taskManager.dispatch(task);
                 rettasks.add(task);
-                RunningIndexTasks.getInstance().addTask(taskUniqueID, task);
+                RunningIndexTasks.getInstance().addTask(task);
             } catch (RuntimeException ex) {
                 logger.warn("Indexer {} failed unexpectedly", indexer.getName(), ex);
             }
@@ -587,7 +588,6 @@ public class PluginController{
         return rettasks;    	
     }
     
-    //
     public List<Task<Report>> index(String pluginName, URI path) {
     	logger.info("Starting Indexing procedure for {}", path);
         StorageInterface store = getStorageForSchema(path);
@@ -611,8 +611,6 @@ public class PluginController{
                     @Override
                     public void run() {
                         logger.info("Task [{}] complete: {} is indexed", taskUniqueID, pathF);
-
-                        //RunningIndexTasks.getInstance().removeTask(taskUniqueID);
                     }
                 });
 
@@ -620,7 +618,7 @@ public class PluginController{
 
                 rettasks.add(task);
                 logger.info("Fired indexer {} for URI {}", pluginName, path.toString());
-                RunningIndexTasks.getInstance().addTask(taskUniqueID, task);
+                RunningIndexTasks.getInstance().addTask(task);
             }
         } catch (RuntimeException ex) {
             logger.warn("Indexer {} failed unexpectedly", indexer.getName(), ex);
