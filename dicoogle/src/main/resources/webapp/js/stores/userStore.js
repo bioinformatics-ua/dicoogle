@@ -51,11 +51,12 @@ const UserStore = Reflux.createStore({
 
       let Dicoogle = dicoogleClient(Endpoints.base);
 
-      Dicoogle.login(user, pass, function(errorCallBack, data){
-          if (!data.token)
+      Dicoogle.login(user, pass, function(error, data){
+          if (error)
           {
               self.trigger({
-                success: false
+                success: false,
+                loginFailed: true
               });
               return;
           }
@@ -81,13 +82,10 @@ const UserStore = Reflux.createStore({
       {
 
         if (localStorage.token) {
+            console.log("Using existing token")
             this.loadLocalStore();
-            this.trigger({
-                isLoggedIn: self._isLoggedIn,
-                success: true
-            });
         } else {
-            console.log("Verify ajax");
+            console.log(`Token is ${localStorage.token} - checking login state...`);
 
             $.ajax({
                 type: "GET",
@@ -101,36 +99,28 @@ const UserStore = Reflux.createStore({
                 this._isLoggedIn = true;
 
                 this.saveLocalStore();
-            setTimeout(() => {
-                this.trigger({
-                isLoggedIn: this._isLoggedIn,
-                success: true
-            });
-        }, 500)
-
-        },
-            error: () => {
+                    this.trigger({
+                        isLoggedIn: this._isLoggedIn,
+                        success: true
+                });
+            }, error: () => {
                 this.trigger({
                     isLoggedIn: this._isLoggedIn,
                     success: false
                 });
-            }
-        });
+            }});
         }
 
-      } else {
+    } else {
         //return this._isLoggedIn;
-          if (localStorage.token !== undefined) {
-              this.loadLocalStore();
-              this.trigger({
-                  isLoggedIn: self._isLoggedIn,
-                  success: true
-              });
-          }
-        this.trigger({
-          isLoggedIn: self._isLoggedIn,
-          success: true
-        });
+        if (localStorage.token !== undefined) {
+            this.loadLocalStore();
+        } else {
+            this.trigger({
+                isLoggedIn: self._isLoggedIn,
+                success: true
+            });
+        }
       }
     },
 

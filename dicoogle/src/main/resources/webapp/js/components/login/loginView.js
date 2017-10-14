@@ -1,7 +1,6 @@
 import React from 'react';
 import {UserActions} from "../../actions/userActions";
 import {UserStore} from "../../stores/userStore";
-import $ from 'jquery';
 
 const LoginView = React.createClass({
   contextTypes: {
@@ -23,7 +22,7 @@ const LoginView = React.createClass({
   _onChange: function(data){
     console.log(data);
     const {router} = this.context;
-    if(!data.success)
+    if(data.loginFailed)
     {
       this.setState({failed: true});
       return;
