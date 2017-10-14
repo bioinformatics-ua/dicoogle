@@ -82,6 +82,7 @@ public class PluginController{
 	private PluginSet remoteQueryPlugins = null;
     private final WebUIPluginManager webUI;
     private final DicooglePlatformProxy proxy;
+    private TaskManager taskManager = new TaskManager(Integer.parseInt(System.getProperty("dicoogle.taskManager.nThreads", "4")));
     
     public PluginController(File pathToPluginDirectory) {
     	logger.info("Creating PluginController Instance");
@@ -402,7 +403,7 @@ public class PluginController{
         this.tasks.addTask(task);
     }
    
-    private TaskManager taskManager = new TaskManager(4);
+
     
     public List<String> getQueryProvidersName(boolean enabled){
     	Collection<QueryInterface> plugins = getQueryPlugins(enabled);
