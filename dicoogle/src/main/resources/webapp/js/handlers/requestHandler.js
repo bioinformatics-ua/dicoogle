@@ -193,12 +193,13 @@ function saveIndexOptions(path, watcher, zip, saveThumbnail, effort, thumbnailSi
 
 }
 
-function forceIndex(uri){
+function forceIndex(uri, plugin){
   //console.log(state);
   // TODO use dicoogle client
   $.post(Endpoints.base + "/management/tasks/index",
   {
-    uri: uri
+    uri: uri,
+    plugin: plugin
   },
   function(data, status){
     //Response

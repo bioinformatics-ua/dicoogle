@@ -60,7 +60,7 @@ public class ForceIndexing extends HttpServlet {
 
     // Getting Parameters.
     String[] uris = req.getParameterValues("uri");
-    String[] pluginsName = req.getParameterValues("plugin");
+    String[] pluginsName = req.getParameterValues("plugin[]");
 
     if (uris == null) {
       resp.sendError(400, "No uri provided");

@@ -1,13 +1,21 @@
 import React from 'react';
 import {IndexStatusActions} from "../../actions/indexStatusAction";
 import {IndexStatusStore} from "../../stores/indexStatusStore";
+import {ProvidersActions} from '../../actions/providersActions';
+import {ProvidersStore} from '../../stores/providersStore';
 import TaskStatus from "./TaskStatus.jsx";
+
+import Select from 'react-select';
 
 var refreshIntervalId;
 const IndexStatusView = React.createClass({
       getInitialState: function() {
-        return {data: {},
-        status: "loading"};
+        return {
+          data: {},
+          status: "loading",
+          providers: [],
+          selectedProviders: []
+        };
       },
       componentDidMount: function(){
         IndexStatusActions.get();
@@ -15,6 +23,7 @@ const IndexStatusView = React.createClass({
         //Start refresh interval
         refreshIntervalId = setInterval(this.update, 3000);
         //$("#consolediv").scrollTop($("#consolediv")[0].scrollHeight);
+        ProvidersActions.get();
        },
        componentDidUpdate: function(){
          console.log("indexstatus update");
@@ -35,6 +44,7 @@ const IndexStatusView = React.createClass({
       componentWillMount: function() {
          // Subscribe to the store.
          console.log("subscribe listener");
+         ProvidersStore.listen(this._onProvidersChange);
          IndexStatusStore.listen(this._onChange);
        },
       _onChange: function(data){
@@ -58,6 +68,9 @@ const IndexStatusView = React.createClass({
             <TaskStatus key={item.taskUid} index={item.taskUid} item={item} onCloseStopClicked={this.onCloseStopClicked.bind(this, item.taskUid, item.complete)} />
           ));
         }
+
+        let providersList = this.state.providers.map(item => ({value: item, label: item}));
+
         return (
           <div className="">
             <div className="panel panel-primary topMargin">
@@ -71,6 +84,21 @@ const IndexStatusView = React.createClass({
                   </div>
                   <div className="col-xs-6 col-sm-10">
                     <input id="path" type="text" className="form-control" value={this.state.data.path} placeholder="/path/to/directory"/>
+                  </div>
+                </div>
+                <div className="row" style={{marginTop: 15}}>
+                  <div className="col-xs-6 col-sm-2">
+                    Index providers:
+                  </div>
+                  <div className="col-xs-6 col-sm-10">
+                    <Select multi
+                      id="providersList"
+                      name="form-field-name"
+                      value={this.state.selectedProviders}
+                      options={providersList}
+                      placeholder="All Providers"
+                      onChange={this.handleProviderSelect}
+                    />
                   </div>
                 </div>
                 <button className="btn btn_dicoogle" onClick={this.onStartClicked}>Start</button>
@@ -89,7 +117,7 @@ const IndexStatusView = React.createClass({
         );
       },
       onStartClicked: function(){
-        IndexStatusActions.start(document.getElementById("path").value);
+        IndexStatusActions.start(document.getElementById("path").value, this.state.selectedProviders);
       },
       onCloseStopClicked: function(uid, type){
         if(type){
@@ -98,6 +126,15 @@ const IndexStatusView = React.createClass({
         else{
           IndexStatusActions.stop(uid);
         }
+      },
+      _onProvidersChange: function(data) {
+        if (this.isMounted())
+          this.setState({providers: data.data});
+      },
+      handleProviderSelect(providers) {
+        this.setState({
+          selectedProviders: providers.map((e) => e.value)
+        });
       }
       });
 
