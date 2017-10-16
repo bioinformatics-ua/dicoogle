@@ -38,9 +38,9 @@ const IndexStatusStore = Reflux.createStore({
 
     },
 
-    onStart: function(uri, plugin){
+    onStart: function(uri, providers){
       var self = this;
-      forceIndex(uri, plugin);
+      forceIndex(uri, providers);
 
       self._contents.results.push({taskUid: "...", taskName: uri, taskProgress: -1})
       self._contents.count = self._contents.count + 1;
