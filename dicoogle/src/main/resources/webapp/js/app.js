@@ -20,7 +20,7 @@ import LoadingView from './components/login/loadingView';
 import LoginView from './components/login/loginView';
 import { hashHistory /*, browserHistory*/ } from 'react-router'
 import {UserActions} from './actions/userActions';
-import {UserStore} from './stores/userStore';
+import UserStore from './stores/userStore';
 
 require('core-js/shim');
 

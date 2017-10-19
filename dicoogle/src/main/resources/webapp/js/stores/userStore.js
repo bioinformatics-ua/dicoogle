@@ -139,4 +139,4 @@ const UserStore = Reflux.createStore({
     }
 });
 
-export {UserStore};
+export default UserStore;

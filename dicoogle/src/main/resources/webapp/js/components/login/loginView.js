@@ -1,6 +1,6 @@
 import React from 'react';
 import {UserActions} from "../../actions/userActions";
-import {UserStore} from "../../stores/userStore";
+import UserStore from "../../stores/userStore";
 
 const LoginView = React.createClass({
   contextTypes: {

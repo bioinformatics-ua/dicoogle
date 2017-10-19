@@ -6,7 +6,7 @@ import ConfirmModal from './confirmModal';
 import PluginView from '../../plugin/pluginView.jsx';
 import {Input} from 'react-bootstrap';
 import ResultSelectActions from '../../../actions/resultSelectAction';
-import {UserStore} from '../../../stores/userStore';
+import UserStore from '../../../stores/userStore';
 
 
   /**
