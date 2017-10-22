@@ -93,9 +93,10 @@ const LoginView = React.createClass({
                 <a href="http://www.ua.pt/"><img src="assets/logos/logo-ua.png" style={{height: 60, margin: 5}} /></a>
               </div>
               <div style={{display: 'inline-block'}}>
-                <a><img src="assets/logos/logoFCT_1.png" style={{height: 30, marginTop: 5, marginBottom: 5}} /></a>
-                <a><img src="assets/logos/logoFCT_2.png" style={{height: 30, marginTop: 5, marginBottom: 5}} /></a>
-                <a><img src="assets/logos/logoFCT_3.png" style={{height: 30, marginTop: 5, marginBottom: 5}} /></a>
+                <a><img src="assets/logos/logoFCT_1.png" style={{height: 30, margin: 10}} /></a>
+                <a><img src="assets/logos/logoFCT_2.png" style={{height: 30, margin: 10}} /></a>
+                <a><img src="assets/logos/logoFCT_3.png" style={{height: 30, margin: 10}} /></a>
+                <a><img src="assets/logos/logoFCT_4.png" style={{height: 30, margin: 10}} /></a>
               </div>
 
             </div>
