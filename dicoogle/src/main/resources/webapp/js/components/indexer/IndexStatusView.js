@@ -1,11 +1,14 @@
 import React from 'react';
 import {IndexStatusActions} from "../../actions/indexStatusAction";
 import {IndexStatusStore} from "../../stores/indexStatusStore";
+import {PluginActions} from "../../actions/pluginActions";
 import {ProvidersActions} from '../../actions/providersActions';
 import {ProvidersStore} from '../../stores/providersStore';
 import TaskStatus from "./TaskStatus.jsx";
 
+import Autosuggest from 'react-autosuggest';
 import Select from 'react-select';
+import {PluginStore} from "../../stores/pluginStore";
 
 var refreshIntervalId;
 const IndexStatusView = React.createClass({
@@ -14,7 +17,10 @@ const IndexStatusView = React.createClass({
           data: {},
           status: "loading",
           providers: [],
-          selectedProviders: []
+          selectedProviders: [],
+          schemeList: [],
+          suggestions: [],
+          directoryInput: ''
         };
       },
       componentDidMount: function(){
@@ -24,6 +30,8 @@ const IndexStatusView = React.createClass({
         refreshIntervalId = setInterval(this.update, 3000);
         //$("#consolediv").scrollTop($("#consolediv")[0].scrollHeight);
         ProvidersActions.get();
+
+        PluginActions.get("storage");
        },
        componentDidUpdate: function(){
          console.log("indexstatus update");
@@ -37,6 +45,9 @@ const IndexStatusView = React.createClass({
          //Stop refresh interval
          clearInterval(refreshIntervalId);
 
+         this.unsubscribeProviders;
+         this.unsubscribeIndexStatus;
+         this.unsubscribePlugin;
        },
       update: function(){
         IndexStatusActions.get();
@@ -44,14 +55,12 @@ const IndexStatusView = React.createClass({
       componentWillMount: function() {
          // Subscribe to the store.
          console.log("subscribe listener");
-         ProvidersStore.listen(this._onProvidersChange);
-         IndexStatusStore.listen(this._onChange);
+         this.unsubscribeProviders = ProvidersStore.listen(this._onProvidersChange);
+         this.unsubscribeIndexStatus = IndexStatusStore.listen(this._onChange);
+         this.unsubscribePlugin = PluginStore.listen(this._onStoragePluginsChange);
        },
       _onChange: function(data){
-        if (this.isMounted()){
-
           this.setState({data: data.data, status: "done"});
-        }
       },
       render: function() {
         if(this.state.status === "loading"){
@@ -71,6 +80,16 @@ const IndexStatusView = React.createClass({
 
         let providersList = this.state.providers.map(item => ({value: item, label: item}));
 
+        const inputProps = {
+          placeholder: 'e.g.: file:/path/to/directory',
+          value: this.state.directoryInput,
+          onChange: (event, { newValue, method }) => {
+            this.setState({
+              directoryInput: newValue
+            });
+          }
+        };
+
         return (
           <div className="">
             <div className="panel panel-primary topMargin">
@@ -83,7 +102,15 @@ const IndexStatusView = React.createClass({
                     Index directory:
                   </div>
                   <div className="col-xs-6 col-sm-10">
-                    <input id="path" type="text" className="form-control" value={this.state.data.path} placeholder="/path/to/directory"/>
+                    <Autosuggest
+                      suggestions={this.state.suggestions}
+                      onSuggestionsFetchRequested={this._onSuggestionsFetchRequested}
+                      onSuggestionsClearRequested={this._onSuggestionsClearRequested}
+                      shouldRenderSuggestions={() => true}
+                      getSuggestionValue={suggestion => (suggestion)}
+                      renderSuggestion={suggestion => (<div> {suggestion} </div>)}
+                      inputProps={inputProps}
+                    />
                   </div>
                 </div>
                 <div className="row" style={{marginTop: 15}}>
@@ -117,7 +144,7 @@ const IndexStatusView = React.createClass({
         );
       },
       onStartClicked: function(){
-        IndexStatusActions.start(document.getElementById("path").value, this.state.selectedProviders);
+        IndexStatusActions.start(this.state.directoryInput, this.state.selectedProviders);
       },
       onCloseStopClicked: function(uid, type){
         if(type){
@@ -128,8 +155,43 @@ const IndexStatusView = React.createClass({
         }
       },
       _onProvidersChange: function(data) {
-        if (this.isMounted())
-          this.setState({providers: data.data});
+        this.setState({providers: data.data});
+      },
+      _onStoragePluginsChange: function (data) {
+        var schemeList = data.data.map(plugin => plugin.scheme);
+
+        // filter duplicates
+        schemeList = schemeList.filter(function(elem, index, self) {
+          return index === self.indexOf(elem);
+        });
+
+        this.setState({
+          schemeList: schemeList
+        });
+      },
+      _onSuggestionsFetchRequested: function({value}) {
+        const formattedSchemeList = this.state.schemeList.map(scheme => scheme + ((scheme.includes(":")) ? "" : ":"));
+
+        function getSuggestions(value) {
+          // https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions#Using_Special_Characters
+          const escapedValue = value.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+          if (escapedValue === '') {
+            return formattedSchemeList;
+          }
+
+          const regex = new RegExp('^' + escapedValue, 'i');
+          return formattedSchemeList.filter(scheme => regex.test(scheme));
+        }
+
+        this.setState({
+          suggestions: getSuggestions(value, formattedSchemeList)
+        });
+      },
+      _onSuggestionsClearRequested: function() {
+        this.setState({
+          suggestions: []
+        });
       },
       handleProviderSelect(providers) {
         this.setState({
