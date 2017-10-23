@@ -45,9 +45,9 @@ const IndexStatusView = React.createClass({
          //Stop refresh interval
          clearInterval(refreshIntervalId);
 
-         this.unsubscribeProviders;
-         this.unsubscribeIndexStatus;
-         this.unsubscribePlugin;
+         this.unsubscribeProviders();
+         this.unsubscribeIndexStatus();
+         this.unsubscribePlugin();
        },
       update: function(){
         IndexStatusActions.get();
