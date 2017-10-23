@@ -1,4 +1,2 @@
 import Reflux from 'reflux';
-export const PluginActions = {
-  get: Reflux.createAction()
-};
+export const get = Reflux.createAction();

@@ -1,6 +1,6 @@
 import Reflux from 'reflux';
 import {Endpoints} from '../constants/endpoints';
-import {PluginActions} from "../actions/pluginActions";
+import * as PluginActions from "../actions/pluginActions";
 import {request} from '../handlers/requestHandler';
 
 const PluginStore = Reflux.createStore({
@@ -12,7 +12,7 @@ const PluginStore = Reflux.createStore({
   onGet: function(type) {
     const self = this;
 
-    request(Endpoints.base + "/plugins" + "/" + type,
+    request(Endpoints.base + "/plugins/" + type,
       function(data){
         self._contents = data.plugins;
         self.trigger({
@@ -30,4 +30,4 @@ const PluginStore = Reflux.createStore({
   }
 });
 
-export {PluginStore};
+export default PluginStore;

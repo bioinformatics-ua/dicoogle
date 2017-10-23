@@ -1,14 +1,14 @@
 import React from 'react';
 import {IndexStatusActions} from "../../actions/indexStatusAction";
 import {IndexStatusStore} from "../../stores/indexStatusStore";
-import {PluginActions} from "../../actions/pluginActions";
+import * as PluginActions from "../../actions/pluginActions";
 import {ProvidersActions} from '../../actions/providersActions';
 import {ProvidersStore} from '../../stores/providersStore';
 import TaskStatus from "./TaskStatus.jsx";
 
 import Autosuggest from 'react-autosuggest';
 import Select from 'react-select';
-import {PluginStore} from "../../stores/pluginStore";
+import PluginStore from "../../stores/pluginStore";
 
 var refreshIntervalId;
 const IndexStatusView = React.createClass({
@@ -158,7 +158,7 @@ const IndexStatusView = React.createClass({
         this.setState({providers: data.data});
       },
       _onStoragePluginsChange: function (data) {
-        var schemeList = data.data.map(plugin => plugin.scheme);
+        let schemeList = data.data.map(plugin => plugin.scheme);
 
         // filter duplicates
         schemeList = schemeList.filter(function(elem, index, self) {
