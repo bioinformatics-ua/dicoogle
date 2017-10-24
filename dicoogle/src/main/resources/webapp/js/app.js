@@ -19,7 +19,7 @@ import AboutView from './components/about/aboutView';
 import LoadingView from './components/login/loadingView';
 import LoginView from './components/login/loginView';
 import { hashHistory /*, browserHistory*/ } from 'react-router'
-import {UserActions} from './actions/userActions';
+import * as UserActions from './actions/userActions';
 import UserStore from './stores/userStore';
 
 require('core-js/shim');
@@ -34,13 +34,12 @@ class App extends React.Component {
     return {
 			router: PropTypes.object.isRequired,
 			location: React.PropTypes.object
-
 		};
   }
 
 	constructor(props) {
 		super(props);
-		this.pluginsFetched = false;
+		this.needsPluginUpdate = true;
 		this.state = {
 			pluginMenuItems: []
 		};
@@ -65,38 +64,32 @@ class App extends React.Component {
 		});
 	}
 
-	componentWillMount()
-	{
+	componentDidMount() {
 		UserStore.listen(this.handleUserStoreUpdate);
-
-		if (localStorage.token) {
-			this.dicoogle.setToken(localStorage.token);
+		if (this.props.location.pathname !== '/') {
+			UserStore.loadLocalStore();
 		}
-		if (this.props.location.pathname === '/')
-		{
-			localStorage.token = null;
-			UserActions.logout();
-		}
-		Webcore.init(Endpoints.base);
-	}
-
-	componentDidMount(){
-    UserStore.loadLocalStore();
-		if (!this.dicoogle.getToken() && this.props.location.pathname === '/') {
+		const token = localStorage.getItem('token');
+		if (!token || this.props.location.pathname === '/') {
+			let lastLocation = this.props.location.pathname.slice(1);
+			if (lastLocation === '') {
+				lastLocation = 'search';
+			}
 			if (process.env.GUEST_USERNAME) {
 				console.log("Using guest credentials: ", process.env.GUEST_USERNAME, "; password:", process.env.GUEST_PASSWORD);
 				const unsubscribe = UserStore.listen((outcome) => {
+					this.needsPluginUpdate = true;
 					if (outcome.isLoggedIn) {
-						this.props.history.replace('search');
+						this.props.router.replace(lastLocation);
 					} else {
-						this.props.history.replace(null, 'login');
+						this.props.router.replace('login');
 					}
 					unsubscribe();
-				})
+				});
 				UserActions.login(process.env.GUEST_USERNAME, process.env.GUEST_PASSWORD);
-				this.props.history.pushState(null, 'loading');
+				this.props.router.push('loading');
 			} else {
-				this.props.history.pushState(null, 'login');
+				this.props.router.push('login');
 			}
     }
 
@@ -107,6 +100,7 @@ class App extends React.Component {
 	}
 
 	handleUserStoreUpdate(data) {
+		this.needsPluginUpdate = true;
 		this.fetchPlugins(data);
 		if (data.username) {
 			this.setState(data);
@@ -114,37 +108,44 @@ class App extends React.Component {
 	}
 
 	fetchPlugins(data) {
-    if (this.pluginsFetched || !data.isLoggedIn)
-      return;
-		if (!data.success)
+    if (!this.needsPluginUpdate) {
+			console.log("Plugin fetch not required, ignoring plugin fetch request");
 			return;
-    this.setState(data);
+		}
+    if (!data.isLoggedIn) {
+			console.log("Not logged in, ignoring plugin fetch request");
+			return;
+		}
+		if (!data.success) {
+			console.log("Unsuccessfull operation, ignoring plugin fetch request");
+			return;
+		}
 
-		Webcore.addPluginLoadListener(function(plugin) {
-      console.log("Plugin loaded to Dicoogle:", plugin);
-		});
+		let k = 2;
 		Webcore.fetchPlugins('menu', (packages) => {
 			this.onMenuPlugin(packages);
-      Webcore.fetchModules(packages);
+			Webcore.fetchModules(packages);
+			k -= 1;
+			if (k === 0) {
+				this.needsPluginUpdate = false;
+			}
 		});
 
     // pre-fetch modules of other plugin types
-		Webcore.fetchPlugins(['search', 'result-options', 'query', 'result'], Webcore.fetchModules)
-		this.pluginsFetched = true;
+		Webcore.fetchPlugins(['search', 'result-options', 'query', 'result'], (pkgs) => {
+			Webcore.fetchModules(pkgs);
+			k -= 1;
+			if (k === 0) {
+				this.needsPluginUpdate = false;
+			}
+		})
   }
 
 	logout() {
-		const Dicoogle = dicoogleClient();
-		Dicoogle.request('POST', 'logout', {}, (error) => {
-      if (error) {
-        console.error(error);
-      }
-
-      this.setState({pluginMenuItems: []});
-      this.pluginsFetched = false;
-      UserActions.logout();
-			this.context.router.push('login');
-		});
+		UserActions.logout();
+		this.setState({pluginMenuItems: []});
+		this.needsPluginUpdate = true;
+		this.context.router.push('login');
 	}
 
 	render() {
@@ -185,6 +186,8 @@ function NotFoundView() {
 	</div>);
 }
 
+Webcore.init(Endpoints.base);
+
 ReactDOM.render((
   <Router history={hashHistory}>
     <Route path="/" component={App}>
@@ -198,7 +201,7 @@ ReactDOM.render((
       <Route path="loading" component={LoadingView} />
       <Route path="image/:uid" component={DirectImageView} />
       <Route path="dump/:uid" component={DirectDumpView} />
-      <Route path="ext/:plugin" component={PluginView} />
+      <Route path='ext/:plugin' component={PluginView} />
       <Route path="*" component={NotFoundView} />
     </Route>
   </Router>

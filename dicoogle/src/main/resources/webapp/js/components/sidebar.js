@@ -12,7 +12,7 @@ const Sidebar = React.createClass({
 
   propTypes: {
     pluginMenuItems: React.PropTypes.array.isRequired,
-    onLogout: React.PropTypes.func.isRequired
+    onLogout: React.PropTypes.func
   },
 
   render() {
