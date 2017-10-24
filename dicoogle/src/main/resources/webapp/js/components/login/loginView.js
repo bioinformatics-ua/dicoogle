@@ -1,6 +1,6 @@
 import React from 'react';
-import {UserActions} from "../../actions/userActions";
-import {UserStore} from "../../stores/userStore";
+import * as UserActions from "../../actions/userActions";
+import UserStore from "../../stores/userStore";
 
 const LoginView = React.createClass({
   contextTypes: {
@@ -30,12 +30,12 @@ const LoginView = React.createClass({
 
     if(data.isLoggedIn && this.isMounted())
     {
-      router.replace('/search');
+      router.replace('search');
     }
   },
 
   render: function() {
-    const guestCredentials = process.env.GUEST_USERNAME && ([<hr/>, <div>
+    const guestCredentials = process.env.GUEST_USERNAME && ([<hr key='0'/>, <div key='1'>
       Guest credentials: <br/>
       <b>username:</b> {process.env.GUEST_USERNAME} <br/>
       <b>password:</b> {process.env.GUEST_PASSWORD}
