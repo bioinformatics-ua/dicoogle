@@ -24,8 +24,6 @@ package pt.ua.dicoogle.server.queryretrieve;
 
 //import configurations.ConfigurationsValues;
 
-//import gui.MainWindow;
-//import gui.MainWindow.LOG_MODES;
 import java.io.IOException;
 import java.util.concurrent.Executor;
 
@@ -377,7 +375,6 @@ public class DicomEchoReply extends VerificationService {
                 CommandUtils.setIncludeUIDinRSP(true);
                 this.device.startListening(DicomEchoReply.executor);
             } catch (Exception ex) {
-                 ///MainWindow.getMw().add2ServerLogln(ex.getMessage(), LOG_MODES.ERROR);
                  return false;
             }
             this.started = true;
@@ -420,13 +417,7 @@ public class DicomEchoReply extends VerificationService {
 
     @Override
     public void cecho(Association as, int pcid, DicomObject cmd) throws IOException {
-        ///MainWindow.getMw().add2ServerLogln("CEcho request from " + as.getRemoteAET() + " received!", LOG_MODES.INFO);
-
         super.cecho(as, pcid, cmd);
-
-        //System.out.println(cmd);
-
-        ///MainWindow.getMw().add2ServerLogln("CEcho response send to " + as.getRemoteAET() + "!", LOG_MODES.INFO);
 
     }
     

@@ -32,17 +32,13 @@ import pt.ua.dicoogle.sdk.Utils.Platform;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 import pt.ua.dicoogle.sdk.utils.TagsStruct;
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.SocketException;
 import java.net.URI;
 import java.net.UnknownHostException;
-import java.util.*;
 
 /**
  * Main class for Dicoogle
@@ -54,18 +50,6 @@ import java.util.*;
 public class Main
 {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
-
-    private static boolean optimizeMemory = true;
-    public static boolean MAC_OS_X = (System.getProperty("os.name").toLowerCase().startsWith("mac os x"));
-    /**
-     * Generate a random integer number between 0 and 100
-     *
-     * This is used to verify if the RMI client is in the same
-     * process as the RMI server.
-     * The client as 1/1000 probability to hit the correct number
-     * if it is not in the same process.
-     */
-    public static int randomInteger = (new Random()).nextInt(1001);
 
     /**
      * Starts the graphical user interface for Dicoogle
@@ -83,7 +67,7 @@ public class Main
                 homeDir.mkdir();
             }
         }
-        
+
         if (args.length == 0)
         {
             LaunchDicoogle();
@@ -92,9 +76,7 @@ public class Main
 
             if (args[0].equals("-v"))
             {
-                //DebugManager.getSettings().setDebug(true);
                 LaunchDicoogle();
-                //DebugManager.getSettings().debug("Starting Client Thread");
                 LaunchWebApplication();
             }
             if (args[0].equals("-s"))
@@ -109,8 +91,9 @@ public class Main
             else if (args[0].equals("-h") || args[0].equals("--h") || args[0].equals("-help") || args[0].equals("--help"))
             {
                 System.out.println("Dicoogle PACS");
-                System.out.println("-s : Start the server");
-                System.out.println("-w : Start the server and load web application in default browser (default)");
+                System.out.println();
+                System.out.println(" -s : Start the server");
+                System.out.println(" -w : Start the server and load web application in default browser (default)");
             }
             else
             {
@@ -123,38 +106,9 @@ public class Main
         }
         /** Register System Exceptions Hook */
         ExceptionHandler.registerExceptionHandler();
-
-        optimizeMemoryUsage();
-    }
-
-    /**
-     * This function creates a TimerTask to periodically run Garbage Colector
-     *
-     */
-    private static void optimizeMemoryUsage()
-    {
-        if (optimizeMemory)
-        {
-            class FreeMemoryTask extends TimerTask
-            {
-
-                @Override
-                public void run()
-                {
-                    Runtime.getRuntime().gc();
-                    System.out.println("\nFree Memory: " + Runtime.getRuntime().freeMemory() / 1024 / 1024
-                            + "\nTotal Memory: " + Runtime.getRuntime().totalMemory() / 1024 / 1024
-                            + "\nMax Memory: " + Runtime.getRuntime().maxMemory() / 1024 / 1024);
-                }
-            }
-
-            //FreeMemoryTask freeMemTask = new FreeMemoryTask();
-            //Timer timer = new Timer();
-            //timer.schedule(freeMemTask, 5000, 5000);
-        }
     }
     
-    public static boolean LaunchWebApplication() {
+    private static boolean LaunchWebApplication() {
         if (!Desktop.isDesktopSupported() || !Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
             logger.warn("Desktop browsing is not supported in this machine! "
                     + "Request to open web application ignored.");
@@ -172,19 +126,9 @@ public class Main
         }
     }
 
-    public static void LaunchDicoogle()
+    private static void LaunchDicoogle()
     {
-        try
-        {
-            //System.out.println("\n"+addressString(localAddresses()) + "\n");
-            System.setProperty("java.rmi.server.hostname", addressString(localAddresses()));
-            System.setProperty("java.net.preferIPv4Stack", "true");
-        } catch (SocketException ex) {
-            logger.warn(ex.getMessage(), ex);
-        }
-        
         logger.debug("Starting Dicoogle");
-        
         logger.debug("Loading configuration file: {}", Platform.homePath());
 
         /* Load all Server Settings */
@@ -220,13 +164,15 @@ public class Main
             } catch (UnknownHostException e) {
             }
 
-            String response = (String) JOptionPane.showInputDialog(null,
-                    "What is the name of the machine?",
-                    "Enter Node name",
-                    JOptionPane.QUESTION_MESSAGE, null, null,
-                    hostname);
+            if (Desktop.isDesktopSupported()) {
+                String response = (String) JOptionPane.showInputDialog(null,
+                        "What is the name of the machine?",
+                        "Enter Node name",
+                        JOptionPane.QUESTION_MESSAGE, null, null,
+                        hostname);
 
-            settings.getArchiveSettings().setNodeName(response);
+                settings.getArchiveSettings().setNodeName(response);
+            }
 
             // Save settings
             ServerSettingsManager.saveSettings();
@@ -238,7 +184,7 @@ public class Main
 
         PluginController.getInstance();
 
-        // Start the Initial Services of Dicoogle
+        // Start the initial Services of Dicoogle
         pt.ua.dicoogle.server.ControlServices.getInstance();
 
         // Launch Async Index
@@ -249,61 +195,9 @@ public class Main
         }
     }
 
-    @Deprecated
-    public static boolean isFixedClient()
+    private static void LaunchGUIClient()
     {
-        return false;
-    }
-
-    private static Set<InetAddress> localAddresses() throws SocketException
-    {
-        Set<InetAddress> localAddrs = new HashSet<>();
-
-        /*Enumeration<NetworkInterface> ifaces = NetworkInterface.getNetworkInterfaces();
-
-        while (ifaces.hasMoreElements()) {
-        NetworkInterface iface = ifaces.nextElement();
-        Enumeration<InetAddress> addrs = iface.getInetAddresses();
-        while (addrs.hasMoreElements())
-        localAddrs.add(addrs.nextElement());
-        }
-         *
-         */
-        InetAddress in;
-        try
-        {
-            in = InetAddress.getLocalHost();
-            InetAddress[] all = InetAddress.getAllByName(in.getHostName());
-            localAddrs.addAll(Arrays.asList(all));
-
-        } catch (UnknownHostException ex)
-        {
-            logger.error(ex.getMessage(), ex);
-        }
-
-        return localAddrs;
-    }
-
-    /**
-     *
-     * @param addrs
-     * @return
-     */
-    private static String addressString(Collection<InetAddress> addrs)
-    {
-        String s = "";
-        for (InetAddress addr : addrs)
-        {
-            if (addr.isLoopbackAddress())
-            {
-                continue;
-            }
-            if (s.length() > 0)
-            {
-                s += "!";
-            }
-            s += addr.getHostAddress();
-        }
-        return s;
+        logger.error("Remote GUI is no longer supported: please enter the Dicoogle web application");
+        System.exit(-1);
     }
 }

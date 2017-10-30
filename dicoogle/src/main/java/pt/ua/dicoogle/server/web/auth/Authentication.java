@@ -85,7 +85,7 @@ public class Authentication
 	 *
 	 * @param username the user name of the user to login.
 	 * @param password the clear text password of the user.
-	 * @return a Login object if successful login, null otherwise.
+	 * @return a LoggedIn object if successful login, null otherwise.
 	 */
 	public LoggedIn login(String username, String password)
 	{
