@@ -140,6 +140,56 @@ public class PluginsServlet extends HttpServlet {
         }
     }
 
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // /plugins/<type>/<name>/[enable|disable]
+        String subpath = req.getRequestURI().substring(req.getServletPath().length());
+        String[] subpathParts = subpath.split("/");
+
+        String type = subpathParts[1];
+        String name = subpathParts[2];
+        String action = subpathParts[3];
+
+        final PluginController pc = PluginController.getInstance();
+        DicooglePlugin plugin;
+
+        switch (type) {
+            case "index":
+                plugin = pc.getIndexerByName(name, false);
+                break;
+            case "query":
+                plugin = pc.getQueryProviderByName(name, false);
+                break;
+            case "servlet":
+                plugin = pc.getServletByName(name, false);
+                break;
+            case "storage":
+                plugin = pc.getStorageByName(name, false);
+                break;
+            default:
+                sendError(resp, 400, "Illegal plugin request type");
+                return;
+        }
+
+        if (plugin == null) {
+            sendError(resp, 400, "Illegal plugin request name");
+            return;
+        }
+
+        if (action.equals("enable")) {
+            if (!plugin.enable()) {
+                sendError(resp, 500, "Could not enable plugin");
+            }
+        } else if (action.equals("disable")) {
+            if (!plugin.disable()) {
+                sendError(resp, 500, "Could not disable plugin");
+            }
+
+        } else {
+            sendError(resp, 400, "Illegal plugin request action");
+        }
+    }
+
     private static <T extends DicooglePlugin> List<T> sorted(Collection<T> col) {
         final Comparator<DicooglePlugin> byEnabledThenName = new Comparator<DicooglePlugin>() {
             @Override
