@@ -142,13 +142,17 @@ public class PluginsServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // /plugins/<type>/<name>/[enable|disable]
-        String subpath = req.getRequestURI().substring(req.getServletPath().length());
-        String[] subpathParts = subpath.split("/");
+        List<String> pathParts = sanitizedSubpathParts(req);
 
-        String type = subpathParts[1];
-        String name = subpathParts[2];
-        String action = subpathParts[3];
+        // the format must be /<type>/<name>/[enable|disable]
+        if (pathParts.size() != 3) {
+            sendError(resp, 400, "Illegal plugin request URI: wrong resource path size");
+            return;
+        }
+
+        String type = pathParts.get(0);
+        String name = pathParts.get(1);
+        String action = pathParts.get(2);
 
         final PluginController pc = PluginController.getInstance();
         DicooglePlugin plugin;
