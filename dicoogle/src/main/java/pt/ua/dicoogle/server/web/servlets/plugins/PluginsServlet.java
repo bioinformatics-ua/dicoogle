@@ -144,7 +144,7 @@ public class PluginsServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<String> pathParts = sanitizedSubpathParts(req);
 
-        // the format must be /<type>/<name>/[enable|disable]
+        // the format must be /<type>/<name>/(enable|disable)
         if (pathParts.size() != 3) {
             sendError(resp, 400, "Illegal plugin request URI: wrong resource path size");
             return;
