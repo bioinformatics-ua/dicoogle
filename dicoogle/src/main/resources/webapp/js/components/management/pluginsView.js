@@ -8,7 +8,8 @@ const PluginsView = React.createClass({
     return {
       plugins: {},
       currentlyLoading: 4,
-      status: "loading"
+      status: "loading",
+      error: null
     };
   },
 
@@ -26,6 +27,14 @@ const PluginsView = React.createClass({
   },
 
   _onPluginsChange (data) {
+    this.setState({
+      error: data.error
+    });
+
+    if (!data.success) {
+      return;
+    }
+
     if (data.data.length !== 0) {
       let type = data.data[0].type;
       let plugins = this.state.plugins;
@@ -54,6 +63,10 @@ const PluginsView = React.createClass({
     });
   },
 
+  _onActionClicked(type, name, action) {
+    PluginActions.setAction(type, name, action);
+  },
+
   render () {
     if(this.state.status === "loading"){
       return (<div className="loader-inner ball-pulse">
@@ -61,22 +74,39 @@ const PluginsView = React.createClass({
         </div>);
     }
 
+    const errorMessage = this.state.error ? (
+      <div className="col-md-12">
+        <div className="alert alert-info">
+          {this.state.error}
+        </div>
+      </div>
+    ) : ("");
+
     let collapseId = 1;
-    const ignoreFieldList = ["name", "type"];
+    const ignoreFieldList = ["name", "type", "enabled"];
     const pluginPanels = Object.keys(this.state.plugins).sort().map(type => {
       return (
-        <div className="col-md-3 col-sm-6">
+        <div className="col-lg-3 col-md-6 col-sm-12">
           <p>{type.charAt(0).toUpperCase() + type.slice(1)}</p>
           {this.state.plugins[type].map(plugin => (
             <div className="panel panel-default">
               <div className="panel-heading">
                 <h4 className="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion"
+                  <a className="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion"
                      href={"#collapse" + collapseId}>{plugin.name}</a>
                 </h4>
               </div>
               <div id={"collapse" + collapseId++} className="panel-collapse collapse">
                 <div className="panel-body">
+                  <button type="button"
+                          className={(plugin.enabled ? "btn btn-danger" : "btn btn-success") + " pull-right"}
+                          onClick={this._onActionClicked.bind(
+                            this,
+                            type,
+                            plugin.name,
+                            (plugin.enabled ? "disable" : "enable"))}>
+                    {plugin.enabled ? "Disable" : "Enable"}
+                  </button>
                   {
                     Object.keys(plugin).filter(field => ignoreFieldList.indexOf(field) < 0).map(field => (
                       <p><b>{field}:</b> {
@@ -99,6 +129,7 @@ const PluginsView = React.createClass({
         </div>
         <div className="panel-body">
           <div className="row">
+            {errorMessage}
             {pluginPanels}
           </div>
         </div>
