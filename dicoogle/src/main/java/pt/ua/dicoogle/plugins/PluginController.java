@@ -487,6 +487,30 @@ public class PluginController{
     	logger.error("No indexer matching name {} for onlyEnabled = {}", name, onlyEnabled);
     	return null;
     }
+
+    public JettyPluginInterface getServletByName(String name, boolean onlyEnabled){
+        Collection<JettyPluginInterface> plugins = getServletPlugins(onlyEnabled);
+        for(JettyPluginInterface p : plugins){
+            if(p.getName().equalsIgnoreCase(name)){
+                //logger.info("Retrived Query Provider: "+name);
+                return p;
+            }
+        }
+        logger.debug("No indexer matching name {} for onlyEnabled = {}", name, onlyEnabled);
+        return null;
+    }
+
+    public StorageInterface getStorageByName(String name, boolean onlyEnabled){
+        Collection<StorageInterface> plugins = getStoragePlugins(onlyEnabled);
+        for(StorageInterface p : plugins){
+            if(p.getName().equalsIgnoreCase(name)){
+                //logger.info("Retrived Query Provider: "+name);
+                return p;
+            }
+        }
+        logger.debug("No indexer matching name {} for onlyEnabled = {}", name, onlyEnabled);
+        return null;
+    }
     
     public JointQueryTask queryAll(JointQueryTask holder, final String query, final Object ... parameters)
     {
