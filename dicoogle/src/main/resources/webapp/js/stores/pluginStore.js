@@ -1,8 +1,9 @@
 import Reflux from 'reflux';
 import {Endpoints} from '../constants/endpoints';
 import * as PluginActions from "../actions/pluginActions";
-import {request} from '../handlers/requestHandler';
-import $ from "jquery";
+
+import dicoogleClient from 'dicoogle-client';
+const Dicoogle = dicoogleClient(Endpoints.base);
 
 const PluginStore = Reflux.createStore({
   listenables: PluginActions,
@@ -13,19 +14,20 @@ const PluginStore = Reflux.createStore({
   onGet: function(type) {
     const self = this;
 
-    request(Endpoints.base + "/plugins/" + type,
-      function(data) {
-        self._contents[type] = data.plugins;
-        self.trigger({
-          data: self._contents[type],
-          success: true
-        });
-      },
-      function(xhr) {
-        self.trigger({
-          success: false,
-          status: xhr.status
-        });
+    Dicoogle.request('GET', ['plugins', type],
+      (error, data) => {
+        if (!error) {
+          self._contents[type] = data.plugins;
+          self.trigger({
+            data: self._contents[type],
+            success: true
+          });
+        } else {
+          self.trigger({
+            success: false,
+            status: error.status
+          });
+        }
       }
     );
   },
@@ -33,24 +35,23 @@ const PluginStore = Reflux.createStore({
   onSetAction: function(type, name, action) {
     const self = this;
 
-    $.ajax({
-      url: Endpoints.base + "/plugins/" + type + "/" + name + "/" + action,
-      method: 'post',
-      success: function(data) {
-        self._contents[type].find(plugin => (plugin.name === name)).enabled = (action === "enable");
-        self.trigger({
-          data: self._contents[type],
-          success: true
-        });
-      },
-      error: function(xhr, status, err) {
-        self.trigger({
-          success: false,
-          status: xhr.status,
-          error: "Could not " + action + " the plugin."
-        });
+    Dicoogle.request('POST', ['plugins', type, name, action],
+      (error, data) => {
+        if (!error) {
+          self._contents[type].find(plugin => (plugin.name === name)).enabled = (action === 'enable');
+          self.trigger({
+            data: self._contents[type],
+            success: true
+          });
+        } else {
+          self.trigger({
+            success: false,
+            status: error.status,
+            error: "Could not " + action + " the plugin."
+          });
+        }
       }
-    });
+    );
   }
 });
 
