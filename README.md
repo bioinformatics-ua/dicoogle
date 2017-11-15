@@ -6,7 +6,7 @@ The architecture of Dicoogle is described in the following article:
 
 Valente, F., Silva, L.A.B., Godinho, T.M., Costa, C. _Anatomy of an Extensible Open Source PACS_. J Digit Imaging (2016) 29: 284. doi:10.1007/s10278-015-9834-0 [Available Online: http://link.springer.com/article/10.1007/s10278-015-9834-0]
 
-Our official website is at www.dicoogle.com. A few essential plugins for Dicoogle are available to download there, as well as a built jar of the Dicoogle platform. To build the core platform yourself, please see the section on [Building Dicoogle](#building-dicoogle).
+Our official website is at www.dicoogle.com. A few essential plugins for Dicoogle are available to download there, as well as a built jar of the Dicoogle platform. To learn how to use Dicoogle, please see our [Learning Pack](//bioinformatics-ua.github.io/dicoogle-learning-pack). To build the core platform yourself, please see the section on [Building Dicoogle](#building-dicoogle).
 
 Brief Documentation
 -------------------
