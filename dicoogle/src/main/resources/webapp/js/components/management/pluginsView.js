@@ -1,6 +1,7 @@
 import React from 'react';
 import * as PluginActions from "../../actions/pluginActions";
 import PluginStore from "../../stores/pluginStore";
+import $ from 'jquery';
 
 const PluginsView = React.createClass({
 
@@ -26,10 +27,19 @@ const PluginsView = React.createClass({
     this.unsubscribe();
   },
 
-  _onPluginsChange (data) {
+  _onPluginsChange(data) {
     this.setState({
       error: data.error
     });
+
+    if (this.state.actionPerformed) {
+      this.setState({
+        actionPerformed: false
+      });
+
+      let toastMessage = this.state.error ? this.state.error : "Saved.";
+      $('.toast').stop().text(toastMessage).fadeIn(400).delay(3000).fadeOut(400); // fade out after 3 seconds
+    }
 
     if (!data.success) {
       return;
@@ -65,6 +75,9 @@ const PluginsView = React.createClass({
 
   _onActionClicked(type, name, action) {
     PluginActions.setAction(type, name, action);
+    this.setState({
+      actionPerformed: true
+    });
   },
 
   render () {
@@ -73,14 +86,6 @@ const PluginsView = React.createClass({
         <div/><div/><div/>
         </div>);
     }
-
-    const errorMessage = this.state.error ? (
-      <div className="col-md-12">
-        <div className="alert alert-info">
-          {this.state.error}
-        </div>
-      </div>
-    ) : ("");
 
     let collapseId = 1;
     const ignoreFieldList = ["name", "type", "enabled"];
@@ -108,11 +113,10 @@ const PluginsView = React.createClass({
                     {plugin.enabled ? "Disable" : "Enable"}
                   </button>
                   {
-                    Object.keys(plugin).filter(field => ignoreFieldList.indexOf(field) < 0).map(field => (
-                      <p><b>{field}:</b> {
-                        plugin[field] !== null ? plugin[field].toString() : "undefined"
-                      }</p>
-                    ))
+                    Object.keys(plugin)
+                      .filter(field => ignoreFieldList.indexOf(field) < 0)
+                      .filter(field => plugin[field] !== null)
+                      .map(field => (<p><b>{field}:</b> {plugin[field].toString()}</p>))
                   }
                 </div>
               </div>
@@ -129,10 +133,10 @@ const PluginsView = React.createClass({
         </div>
         <div className="panel-body">
           <div className="row">
-            {errorMessage}
             {pluginPanels}
           </div>
         </div>
+        <div className="toast">Saved</div>
       </div>
     );
   }
