@@ -75,11 +75,11 @@ const IndexStatusView = React.createClass({
         }
 
         let items;
-        if (this.state.data.results.length === 0) {
+        if (this.state.data.tasks.length === 0) {
           items = (<div>No tasks</div>);
         } else {
-          items = this.state.data.results.map(item => (
-            <TaskStatus key={item.taskUid} index={item.taskUid} item={item} onCloseStopClicked={this.onCloseStopClicked.bind(this, item.taskUid, item.complete)} />
+          items = this.state.data.tasks.map(item => (
+            <TaskStatus key={item.taskUid} index={item.taskUid} item={item} onCloseStopClicked={this.onCloseStopClicked.bind(this, item.taskUid, item.complete, item.canceled)} />
           ));
         }
 
@@ -96,7 +96,7 @@ const IndexStatusView = React.createClass({
         };
 
         return (
-          <div className="">
+          <div>
             <div className="panel panel-primary topMargin">
               <div className="panel-heading">
                 <h3 className="panel-title">Start indexing</h3>
@@ -151,11 +151,12 @@ const IndexStatusView = React.createClass({
       onStartClicked: function(){
         IndexStatusActions.start(this.state.directoryInput, this.state.selectedProviders);
       },
-      onCloseStopClicked: function(uid, type){
-        if(type){
+
+      onCloseStopClicked: function(uid, isComplete, isCanceled) {
+        if (isComplete || isCanceled) {
           IndexStatusActions.close(uid);
         }
-        else{
+        else {
           IndexStatusActions.stop(uid);
         }
       },
@@ -203,7 +204,7 @@ const IndexStatusView = React.createClass({
           selectedProviders: providers.map((e) => e.value)
         });
       }
-      });
+});
 
 export {
   IndexStatusView

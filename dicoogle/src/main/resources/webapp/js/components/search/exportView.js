@@ -1,18 +1,17 @@
 import React from 'react';
-import {Button, Modal} from 'react-bootstrap';
+import {Button, Modal, FormGroup, FormControl, ControlLabel} from 'react-bootstrap';
 
 import {ExportActions} from '../../actions/exportActions';
 import {ExportStore} from '../../stores/exportStore';
 
 const ExportView = React.createClass({
 	getInitialState: function() {
-      return {data: [],
-      status: "loading",
-      current: 0};
-    },
-    componentDidMount: function() {
-    },
-	componentDidUpdate: function() {
+		return {
+			data: [],
+			status: "loading",
+			fieldText: "",
+			current: 0
+		};
 	},
 	componentWillMount: function() {
 		// Subscribe to the store.
@@ -26,25 +25,41 @@ const ExportView = React.createClass({
 		this.setState({data: data.data, status: "done"});
 	},
 
-	render: function(){
+	render: function() {
     return (
-      <Modal {...this.props} bsStyle='primary' title='Export to CSV' animation>
-        <div className='modal-body'>
-            <textarea id="textFields" placeholder="Paste export fields here (one per line) ..." rows="10" className="exportlist form-control"></textarea>
-        </div>
-        <div id="hacked-modal-footer" className='modal-footer'>
-          <Button onClick={this.onExportClicked}>Export</Button>
-        </div>
-      </Modal>);
+			<Modal {...this.props} bsStyle='primary' animation>
+				<Modal.Header>
+					<Modal.Title>Export to CSV</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<FormGroup>
+						<ControlLabel>Export Field List</ControlLabel>
+						<FormControl
+							componentClass="textarea"
+							placeholder="Paste export fields here (one per line) ..."
+							rows="10"
+							bsClass="exportlist"
+							onChange={this.handleTextChanged}
+							value={this.state.fieldText}
+						/>
+					</FormGroup>
+				</Modal.Body>
+				<Modal.Footer id="hacked-modal-footer-do-not-remove">
+					<Button bsStyle="primary" onClick={this.handleExportClicked}>Export</Button>
+				</Modal.Footer>
+			</Modal>)
 	},
 
-  onExportClicked: function(){
-    //console.log("onExportCLicked", document.getElementById("textFields").value);
-		var fields = document.getElementById("textFields").value.split("\n");
-		console.log(fields);
+	handleTextChanged: function(e) {
+		this.setState({fieldText: e.target.value});
+	},
 
-		var query = this.props.query;
-		ExportActions.exportCSV(query, fields);
+  handleExportClicked: function() {
+    const fields = this.state.fieldText.split("\n");
+    console.log(fields);
+
+    const query = this.props.query;
+    ExportActions.exportCSV(query, fields);
   }
 });
 
