@@ -79,8 +79,9 @@ public class PluginController{
     private final Collection<DeadPlugin> deadPluginSets;
     private File pluginFolder;
     private TaskQueue tasks = null;
-
-	private PluginSet remoteQueryPlugins = null;
+    private final PluginPreparer preparer;
+    
+    private PluginSet remoteQueryPlugins = null;
     private final WebUIPluginManager webUI;
     private final DicooglePlatformProxy proxy;
     private TaskManager taskManager = new TaskManager(Integer.parseInt(System.getProperty("dicoogle.taskManager.nThreads", "4")));
@@ -113,6 +114,7 @@ public class PluginController{
         logger.info("Added default storage plugin");
         
         this.proxy = new DicooglePlatformProxy(this);
+        this.preparer = new PluginPreparer(this.proxy);
         
         initializePlugins(pluginSets);
         initRestInterface(pluginSets);
@@ -192,22 +194,18 @@ public class PluginController{
                     set.getJettyPlugins(),
                     set.getRestPlugins()
             );
-            for (Collection interfaces : all) {
+            for (Collection<?> interfaces : all) {
                 if (interfaces == null) {
                     logger.debug("Plugin set {} provided a null collection!");
                     continue;
                 }
                 for (Object o : interfaces) {
-                    if (o instanceof PlatformCommunicatorInterface) {
-                        ((PlatformCommunicatorInterface)o).setPlatformProxy(proxy);
-                    }
+                    this.preparer.injectPlatform(o);
                 }
             }
 
             // and to the set itself
-            if (set instanceof PlatformCommunicatorInterface) {
-                ((PlatformCommunicatorInterface) set).setPlatformProxy(proxy);
-            }
+            this.preparer.setup(set);
         }
     }
     
