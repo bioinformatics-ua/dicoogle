@@ -34,12 +34,9 @@ import pt.ua.dicoogle.server.web.servlets.IndexerServlet;
 import pt.ua.dicoogle.server.web.servlets.ImageServlet;
 import pt.ua.dicoogle.server.web.servlets.plugins.PluginsServlet;
 import pt.ua.dicoogle.server.web.servlets.management.*;
-import pt.ua.dicoogle.server.web.servlets.search.ExportServlet;
+import pt.ua.dicoogle.server.web.servlets.search.*;
 import pt.ua.dicoogle.server.web.servlets.search.ExportServlet.ExportType;
-import pt.ua.dicoogle.server.web.servlets.search.ProvidersServlet;
-import pt.ua.dicoogle.server.web.servlets.search.SearchServlet;
 import pt.ua.dicoogle.server.web.servlets.search.SearchServlet.SearchType;
-import pt.ua.dicoogle.server.web.servlets.search.WadoServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.LoginServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.UserServlet;
 
@@ -85,6 +82,7 @@ import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.server.LegacyRestletApplication;
 import pt.ua.dicoogle.server.web.servlets.accounts.LogoutServlet;
 import pt.ua.dicoogle.server.web.servlets.search.DumpServlet;
+import pt.ua.dicoogle.server.web.servlets.management.UnindexServlet;
 import pt.ua.dicoogle.server.web.servlets.webui.WebUIModuleServlet;
 import pt.ua.dicoogle.server.web.servlets.webui.WebUIServlet;
 import pt.ua.dicoogle.server.web.utils.LocalImageCache;
@@ -214,6 +212,7 @@ public class DicoogleWeb {
             createServletHandler(new ServicesServlet(ServicesServlet.PLUGIN), "/management/plugins/"),
             createServletHandler(new AETitleServlet(), "/management/settings/dicom"),
             createServletHandler(new PluginsServlet(), "/plugins/*"),
+            createServletHandler(new PresetsServlet(), "/presets"),
             createServletHandler(new WebUIServlet(), "/webui"),
             createWebUIModuleServletHandler(),
             createServletHandler(new LoggerServlet(), "/logger"),
