@@ -212,7 +212,7 @@ public class DicoogleWeb {
             createServletHandler(new ServicesServlet(ServicesServlet.PLUGIN), "/management/plugins/"),
             createServletHandler(new AETitleServlet(), "/management/settings/dicom"),
             createServletHandler(new PluginsServlet(), "/plugins/*"),
-            createServletHandler(new PresetsServlet(), "/presets"),
+            createServletHandler(new PresetsServlet(), "/presets/*"),
             createServletHandler(new WebUIServlet(), "/webui"),
             createWebUIModuleServletHandler(),
             createServletHandler(new LoggerServlet(), "/logger"),

@@ -19,9 +19,12 @@
 package pt.ua.dicoogle.server.users;
 
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import pt.ua.dicoogle.sdk.Utils.Platform;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 
 /**
@@ -29,18 +32,22 @@ import java.util.*;
  *
  * @author Leonardo Oliveira <leonardooliveira@ua.pt>
  */
-public class PresetsHandler {
+public class UserExportPresets {
 
-    public static boolean savePreset(String username, String presetName, String presetContent) {
+    /**
+     * Saves a user's preset.
+     *
+     * @param username the username the preset belongs to
+     * @param presetName the preset description
+     * @param fields the list of fields that make the preset
+     * @return whether the preset was successfully saved or not
+     * @throws IOException if an I/O error occurs
+     */
+    public static boolean savePreset(String username, String presetName, String[] fields) throws IOException {
         File presetsDir = new File(Platform.homePath() + "users/" + username + "/presets");
 
-        if (!presetsDir.isDirectory()) {
-            // try to create non-existent dir
-            if (!presetsDir.mkdirs()) {
-                System.out.println("NOOO!");
-                return false;
-            }
-        }
+        // create presets dir, if it doesn't exist
+        Files.createDirectories(presetsDir.toPath());
 
         File presetFile = new File(presetsDir + "/" + presetName + ".txt");
 
@@ -49,38 +56,34 @@ public class PresetsHandler {
             return false;
         }
 
-        try {
-            Writer writer = new PrintWriter(presetFile);
-            writer.write(presetContent);
-            writer.close();
-
-        } catch (Exception e) {
-            presetFile.delete();
-            return false;
+        Writer writer = new PrintWriter(presetFile);
+        for (String field: fields) {
+            writer.write(field + "\n");
         }
+        writer.close();
 
         return true;
     }
 
-    public static Map getPresets(String username) {
+    /**
+     * Gets a user's presets.
+     *
+     * @param username the username the presets belong to
+     * @return a map with the association of the presets' descriptions with their list of fields
+     * @throws IOException if an I/O error occurs
+     */
+    public static Map<String, String[]> getPresets(String username) throws IOException {
         File presetsDir = new File(Platform.homePath() + "users/" + username + "/presets/");
 
-        Map<String, String> presets = new HashMap<>();
+        Map<String, String[]> presets = new HashMap<>();
 
         if (!presetsDir.isDirectory()) {
             return presets;
         }
 
         for (File presetFile: presetsDir.listFiles()) {
-            try {
-                // read all lines
-                String presetContent = new Scanner(presetFile).useDelimiter("\\Z").next();
-                presets.put(presetFile.getName(), presetContent);
-
-            } catch (FileNotFoundException e) {
-                // this should never happen, because the file exists
-                return null;
-            }
+            String[] fields = FileUtils.readFileToString(presetFile, "UTF-8").split("\n");
+            presets.put(FilenameUtils.removeExtension(presetFile.getName()), fields);
         }
 
         return presets;

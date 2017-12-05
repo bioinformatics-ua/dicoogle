@@ -20,6 +20,8 @@
 package pt.ua.dicoogle.server.web.servlets.search;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -30,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import pt.ua.dicoogle.server.users.PresetsHandler;
+import pt.ua.dicoogle.server.users.UserExportPresets;
 import pt.ua.dicoogle.server.users.User;
 import pt.ua.dicoogle.server.web.auth.Authentication;
 
@@ -46,17 +48,36 @@ public class PresetsServlet extends HttpServlet {
         String token = req.getHeader("Authorization");
         User user = Authentication.getInstance().getUsername(token);
         if (user == null) {
-            resp.sendError(401);
+            sendError(resp, 401, "Unauthorized access to this user.");
+            return;
         }
 
-        String presetName = req.getParameter("name");
-        String presetContent = req.getParameter("content");
-        if (presetName == null || presetContent == null) {
-            resp.sendError(400, "Invalid parameters.");
+        List<String> pathParts = sanitizedSubpathParts(req);
+
+        // the format must be /<username>/<preset-name>
+        if (pathParts.size() != 2) {
+            sendError(resp, 400, "Illegal plugin request URI: wrong resource path size");
+            return;
         }
 
-        if (!PresetsHandler.savePreset(user.getUsername(), presetName, presetContent)) {
-            resp.sendError(500, "Could not save preset.");
+        String username = pathParts.get(0);
+        String presetName = pathParts.get(1);
+        String[] fields = req.getParameterValues("field");
+
+        if (username.isEmpty() || presetName.isEmpty() || fields == null) {
+            sendError(resp, 400, "Invalid parameters.");
+            return;
+        }
+
+        // if the specified user is not the requester, he must have admin privileges
+        if (!username.equals(user.getUsername()) && !user.isAdmin()) {
+            sendError(resp, 401, "Unauthorized access to this user.");
+            return;
+        }
+
+        if (!UserExportPresets.savePreset(username, presetName, fields)) {
+            sendError(resp, 500, "Could not save preset.");
+            return;
         }
     }
 
@@ -65,24 +86,65 @@ public class PresetsServlet extends HttpServlet {
         String token = req.getHeader("Authorization");
         User user = Authentication.getInstance().getUsername(token);
         if (user == null) {
-            resp.sendError(401);
+            sendError(resp, 401, "Unauthorized access to this user.");
+            return;
         }
 
-        Map<String, String> presets = PresetsHandler.getPresets(user.getUsername());
-        if (presets == null) {
-            resp.sendError(500, "Could not retrieve presets.");
+        List<String> pathParts = sanitizedSubpathParts(req);
+
+        // the format must be /<username>
+        if (pathParts.size() != 1) {
+            sendError(resp, 400, "Illegal plugin request URI: wrong resource path size");
+            return;
         }
 
+        String username = pathParts.get(0);
+
+        // if the specified user is not the requester, he must have admin privileges
+        if (!username.equals(user.getUsername()) && !user.isAdmin()) {
+            sendError(resp, 401, "Unauthorized access to this user.");
+            return;
+        }
+
+        Map<String, String[]> presets = UserExportPresets.getPresets(username);
         JSONArray jsonPresets = new JSONArray();
         for (String presetName: presets.keySet()) {
             JSONObject jsonPreset = new JSONObject();
+
             jsonPreset.put("name", presetName);
-            jsonPreset.put("content", presets.get(presetName));
+
+            JSONArray jsonFields = new JSONArray();
+            String[] fields = presets.get(presetName);
+            for (String field: fields) {
+                jsonFields.add(field);
+            }
+            jsonPreset.put("fields", jsonFields);
 
             jsonPresets.add(jsonPreset);
         }
 
         resp.setContentType("application/json");
         resp.getWriter().write(jsonPresets.toString());
+    }
+
+    private List<String> sanitizedSubpathParts(HttpServletRequest req) {
+        String subpath = req.getRequestURI().substring(req.getServletPath().length());
+
+        String[] subpathParts = subpath.split("/");
+
+        List<String> l = new ArrayList<>();
+        for (String s : subpathParts) {
+            if (!s.isEmpty()) {
+                l.add(s);
+            }
+        }
+        return l;
+    }
+
+    private static void sendError(HttpServletResponse resp, int code, String message) throws IOException {
+        resp.setStatus(code);
+        JSONObject obj = new JSONObject();
+        obj.put("error", message);
+        resp.getWriter().append(obj.toString());
     }
 }
