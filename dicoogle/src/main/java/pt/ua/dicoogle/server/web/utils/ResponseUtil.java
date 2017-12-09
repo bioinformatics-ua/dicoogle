@@ -50,6 +50,21 @@ public class ResponseUtil {
     	
     	object.write(resp.getWriter());
     }
+
+    /**
+     * Associates an error to an http response.
+     *
+     * @param resp the response
+     * @param code the status code
+     * @param message the error message
+     * @throws IOException if an I/O error occurs
+     */
+    public static void sendError(HttpServletResponse resp, int code, String message) throws IOException {
+        resp.setStatus(code);
+        JSONObject obj = new JSONObject();
+        obj.put("error", message);
+        resp.getWriter().append(obj.toString());
+    }
     
     /*
      * Generic Pair Util for Json response

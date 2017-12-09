@@ -40,10 +40,9 @@ public class UserExportPresets {
      * @param username the username the preset belongs to
      * @param presetName the preset description
      * @param fields the list of fields that make the preset
-     * @return whether the preset was successfully saved or not
      * @throws IOException if an I/O error occurs
      */
-    public static boolean savePreset(String username, String presetName, String[] fields) throws IOException {
+    public static void savePreset(String username, String presetName, String[] fields) throws IOException {
         File presetsDir = new File(Platform.homePath() + "users/" + username + "/presets");
 
         // create presets dir, if it doesn't exist
@@ -51,18 +50,12 @@ public class UserExportPresets {
 
         File presetFile = new File(presetsDir + "/" + presetName + ".txt");
 
-        // stop if a file with the same name already exists
-        if (presetFile.isFile()) {
-            return false;
+        try (Writer writer = new PrintWriter(presetFile)) {
+            for (String field: fields) {
+                writer.write(field);
+                writer.write('\n');
+            }
         }
-
-        Writer writer = new PrintWriter(presetFile);
-        for (String field: fields) {
-            writer.write(field + "\n");
-        }
-        writer.close();
-
-        return true;
     }
 
     /**
