@@ -101,6 +101,10 @@ const ImageView = React.createClass({
 
                   {/* plugin-based result options*/}
                   <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
+                  type: 'image',
+                  uri: item.uri,
+                  uid: item.sopInstanceUID,
+                  // deprecated data properties
                   'data-result-type': 'image',
                   'data-result-uri': item.uri,
                   'data-result-uid': item.sopInstanceUID

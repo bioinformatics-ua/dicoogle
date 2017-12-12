@@ -3,7 +3,7 @@ import {ResultsSelected} from '../../stores/resultSelected';
 import dicoogleClient from 'dicoogle-client';
 const Dicoogle = dicoogleClient();
 
-export default class PluginFormModal extends React.Component {
+export default class PluginForm extends React.Component {
 
   static get propTypes() {
     return {
@@ -12,7 +12,7 @@ export default class PluginFormModal extends React.Component {
         name: PropTypes.string.isRequired,
         caption: PropTypes.string
       }),
-      data: React.PropTypes.object,
+      data: React.PropTypes.object.isRequired,
       onHide: PropTypes.func.isRequired
     };
   }
@@ -30,6 +30,7 @@ export default class PluginFormModal extends React.Component {
   handleMounted(component) {
     if (component) {
       const node = component;
+      node.data = this.props.data;
       node.addEventListener('hide', this.handleHideSignal);
       Dicoogle.emitSlotSignal(node, 'result-selection-ready', ResultsSelected.get());
     }
@@ -44,15 +45,11 @@ export default class PluginFormModal extends React.Component {
   render() {
     const {plugin} = this.props;
     return (plugin &&
-      <div>
-
-          <dicoogle-slot {...this.props.data} ref={this.handleMounted} data-slot-id={this.props.slotId} data-plugin-name={plugin.name}>
-            {plugin.name && <div className="loader-inner ball-pulse">
-              <div/><div/><div/>
-            </div>}
-          </dicoogle-slot>
-
-      </div>
+      <dicoogle-slot {...this.props.data} ref={this.handleMounted} data-slot-id={this.props.slotId} data-plugin-name={plugin.name}>
+        {plugin.name && <div className="loader-inner ball-pulse">
+          <div/><div/><div/>
+        </div>}
+      </dicoogle-slot>
     );
   }
 }

@@ -87,6 +87,10 @@ const PatientView = React.createClass({
                     {removeFiles}
                 {/* plugin-based result options */}
                 <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
+                  type: 'patient',
+                  patientName: item.name,
+                  patientId: item.id,
+                  // deprecated data fields
                   'data-result-type': 'patient',
                   'data-result-patient': item.name,
                   'data-result-patientid': item.id

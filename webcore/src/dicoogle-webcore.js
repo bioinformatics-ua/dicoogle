@@ -520,6 +520,19 @@ const DicoogleWebcore = (function () {
             this._webUi = webUi;
           }
         },
+        data: {
+          get () {
+            return this._data;
+          },
+          set (data) {
+            this._data = data;
+            for (let i = 0; i < this.webUi.attachments.length; i++) {
+              if (isFunction(this.webUi.attachments[i].onReceiveData)) {
+                this.webUi.attachments[i].onReceiveData(data);
+              }
+            }
+          }
+        },
         createdCallback: { value () {
         }},
         attachedCallback: { value () {

@@ -77,6 +77,9 @@ const StudyView = React.createClass({
               {removeFiles}
               {/* plugin-based result options */}
               <PluginView style={{display: 'inline-block'}} slotId="result-options" data={{
+                  'type': 'study',
+                  'uid': item.studyInstanceUID,
+                  // deprecated data fields
                   'data-result-type': 'study',
                   'data-result-uid': item.studyInstanceUID
                 }}/>

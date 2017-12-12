@@ -1,6 +1,6 @@
 import React from 'react';
 
-class PluginView extends React.Component {
+export default class PluginView extends React.Component {
 
   static get propTypes() {
     return {
@@ -9,7 +9,7 @@ class PluginView extends React.Component {
       // the plugin name
       plugin: React.PropTypes.string,
       slotId: React.PropTypes.string,
-      data: React.PropTypes.object
+      data: React.PropTypes.object.isRequired
     };
   }
 
@@ -37,6 +37,7 @@ class PluginView extends React.Component {
           this.handleLoaded(e.detail);
         }
       });
+      node.data = this.props.data;
     }
   }
 
@@ -72,5 +73,3 @@ class PluginView extends React.Component {
     );
   }
 }
-
-export default PluginView;
