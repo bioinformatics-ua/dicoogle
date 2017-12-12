@@ -17,7 +17,16 @@
   "jsnext:main": "src/dicoogle-webcore.js",
   "main": "src/dicoogle-webcore.js",
   "browserify": {
-    "transform": [["babelify", { "presets": ["es2015"] }]]
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015"
+          ]
+        }
+      ]
+    ]
   },
   "keywords": [
     "dicoogle"
@@ -27,8 +36,8 @@
   },
   "license": "GPL-3.0+",
   "devDependencies": {
-    "eslint": "^2.11.1",
-    "eslint-plugin-import": "^1.8.1"
+    "eslint": "^4.13.1",
+    "eslint-plugin-import": "^2.8.0"
   },
   "peerDependencies": {
     "dicoogle-client": "^3.6.0"

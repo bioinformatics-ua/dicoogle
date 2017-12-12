@@ -392,10 +392,6 @@ const DicoogleWebcore = (function () {
 
   // ---------------- private methods ----------------
   const ostring = Object.prototype.toString;
-  function isArray(it) {
-    return ostring.call(it) === '[object Array]';
-  }
-  
   function isFunction(it) {
     return ostring.call(it) === '[object Function]';
   }
@@ -545,7 +541,7 @@ const DicoogleWebcore = (function () {
 
           // add content if the webcore plugin is already available
           if (base_url !== null) {
-            m.updateSlot(this, pluginInstance => {
+            m.updateSlot(this, (/* pluginInstance */) => {
             });
           }
           //console.log('[CALLBACK] Dicoogle slot attached: ', this);
@@ -560,7 +556,7 @@ const DicoogleWebcore = (function () {
             }
           }
         }},
-        attributeChangedCallback: { value (attrName, oldVal, newVal) {
+        attributeChangedCallback: { value (attrName) {
           // console.log('[CALLBACK] Dicoogle attribute changed');
           if (attrName === 'data-slot-id' || attrName === 'data-plugin-name') {
             m.updateSlot(this);
