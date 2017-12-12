@@ -75,7 +75,7 @@ const ServicesView = React.createClass({
                 <p>{p.caption}</p>
               </div>
               <div className="col-xs-8">
-                <PluginView plugin={p.name} slotId="settings" data={{}} />
+                <PluginView plugin={p.name} slotId="settings" />
               </div>
             </div>
           </div>

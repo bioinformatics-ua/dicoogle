@@ -9,13 +9,14 @@ export default class PluginView extends React.Component {
       // the plugin name
       plugin: React.PropTypes.string,
       slotId: React.PropTypes.string,
-      data: React.PropTypes.object.isRequired
+      data: React.PropTypes.object
     };
   }
 
   static get defaultProps() {
     return {
-      slotId: 'menu'
+      slotId: 'menu',
+      data: {}
     };
   }
 

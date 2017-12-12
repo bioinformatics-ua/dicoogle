@@ -12,8 +12,14 @@ export default class PluginForm extends React.Component {
         name: PropTypes.string.isRequired,
         caption: PropTypes.string
       }),
-      data: React.PropTypes.object.isRequired,
+      data: React.PropTypes.object,
       onHide: PropTypes.func.isRequired
+    };
+  }
+
+  static get defaultProps() {
+    return {
+      data: {}
     };
   }
 
