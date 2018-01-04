@@ -181,7 +181,7 @@ Contributors:
 * Eriksson Monteiro (UA.PT Bioinformatics)
 * Tiago Godinho (UA.PT Bioinformatics)
 * Jorge Miguel Silva (UA.PT Bioinformatics)
-* Rui Lebre (UA.PT Bioinformatics) - [@rlebre](https://github.com/rlebre)
+* Rui Lebre (UA.PT Bioinformatics)
 
 Past developers:
 
