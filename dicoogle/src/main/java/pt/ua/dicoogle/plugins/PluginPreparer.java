@@ -27,7 +27,6 @@ import pt.ua.dicoogle.sdk.core.DicooglePlatformInterface;
 import pt.ua.dicoogle.sdk.core.PlatformCommunicatorInterface;
 
 import java.lang.reflect.Field;
-import java.util.List;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 /** Class type which prepares plugins for use.

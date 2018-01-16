@@ -23,6 +23,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/** Run-time annotation that instructs the core platform to
+ * automatically inject the platform proxy to a plugin's field.
+ *
+ * @since 3.0.0
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface InjectPlatformProxy {
