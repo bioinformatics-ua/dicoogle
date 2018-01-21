@@ -1,0 +1,39 @@
+language: java
+dist: trusty
+sudo: false
+matrix:
+  include:
+    - jdk: oraclejdk8
+      env: NODE_VERSION=6
+    - jdk: oraclejdk8
+      env: NODE_VERSION=lts/*
+    - jdk: oraclejdk8
+      env: NODE_VERSION=stable
+    - jdk: openjdk8
+      env: NODE_VERSION=lts/*
+    - jdk: oraclejdk9
+      env: NODE_VERSION=lts/*
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gcc-4.7
+      - g++-4.7
+
+before_install:
+  - nvm install $NODE_VERSION
+  - if [ $TRAVIS_OS_NAME == "linux" ]; then
+      export CC="gcc-4.7";
+      export CXX="g++-4.7";
+      export LINK="gcc-4.7";
+      export LINKXX="g++-4.7";
+    fi
+  - gcc --version
+  - g++ --version
+
+install: true
+
+script:
+  - cd dicoogle/src/main/resources/webapp && npm install && cd ../../../../.. && mvn install -Dskip.installnodenpm -Dskip.npm -Dmaven.javadoc.skip=true -B -V
