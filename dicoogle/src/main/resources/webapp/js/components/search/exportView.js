@@ -14,7 +14,7 @@ const ExportView = React.createClass({
 			status: "loading",
 
       selectedFields: [],
-      selectedPresetName: "",
+      selectedPresetName: null,
       exportPresetName: "default",
 
       actionPerformed: false,
@@ -138,11 +138,18 @@ const ExportView = React.createClass({
   },
 
   handlePresetSelect: function(name) {
-    let fields = this.state.presets.filter(preset => preset.name === name)[0].fields;
-    let selectedFields = fields.map(field => ({value: field, label: field}));
+	  // default values if no preset is selected
+    let selectedFields = [];
+    let exportPresetName = "default";
+
+    if (name) {
+      exportPresetName = name;
+      let fields = this.state.presets.filter(preset => preset.name === name)[0].fields;
+      selectedFields = fields.map(field => ({value: field, label: field}));
+    }
 
     this.setState({
-      exportPresetName: name,
+      exportPresetName: exportPresetName,
       selectedPresetName: name,
       selectedFields: selectedFields
     });
