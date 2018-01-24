@@ -47,7 +47,10 @@ const ExportView = React.createClass({
     }
 
     let fields = data.data.fields;
+    if (fields) fields = fields.map(field => ({value: field, label: field}));
+
     let presets = data.data.presets;
+    if (presets) presets = presets.sort((p1, p2) => (p1.name.localeCompare(p2.name)));
 
     let status = this.state.status;
     if (fields && presets) status = "done";
@@ -70,8 +73,7 @@ const ExportView = React.createClass({
 	},
 
 	render: function() {
-    let fieldList = this.state.fields.map(field => ({value: field, label: field}));
-    let presetList = this.state.presets.map(preset => ({value: preset.name, label: preset.name}));
+    let presetNames = this.state.presets.map(preset => ({value: preset.name, label: preset.name}));
 
     return (
 			<Modal {...this.props} bsStyle='primary' animation>
@@ -84,17 +86,17 @@ const ExportView = React.createClass({
             <Select simpleValue
                     id="selected-preset"
                     value={this.state.selectedPresetName}
-                    options={presetList}
+                    options={presetNames}
                     placeholder="Choose a preset"
                     onChange={this.handlePresetSelect}
             />
           </FormGroup>
           <FormGroup>
             <ControlLabel>Fields to export:</ControlLabel>
-            <Select multi
+            <Select.AsyncCreatable multi
                     id="selected-fields"
                     value={this.state.selectedFields}
-                    options={fieldList}
+                    loadOptions={this.loadOptionFields}
                     placeholder="Choose fields"
                     onChange={this.handleFieldSelect}
             />
@@ -117,19 +119,32 @@ const ExportView = React.createClass({
 			</Modal>)
 	},
 
-  handleFieldSelect: function(fields) {
+  loadOptionFields: function(input, callback) {
+    // display no options if the input is empty
+    let options = input.length === 0 ? [] : this.state.fields.filter(i => (i.value.toLowerCase().substr(0, input.length) === input.toLowerCase()));
+
+    let data = {
+        options: options,
+        complete: true
+    };
+
+    callback(null, data);
+  },
+
+  handleFieldSelect: function(selectedFields) {
     this.setState({
-      selectedFields: fields.map((e) => e.value)
+      selectedFields: selectedFields
     });
   },
 
   handlePresetSelect: function(name) {
     let fields = this.state.presets.filter(preset => preset.name === name)[0].fields;
+    let selectedFields = fields.map(field => ({value: field, label: field}));
 
     this.setState({
       exportPresetName: name,
       selectedPresetName: name,
-      selectedFields: fields
+      selectedFields: selectedFields
     });
   },
 
@@ -140,15 +155,16 @@ const ExportView = React.createClass({
   },
 
   handleSavePresetClicked: function() {
-    ExportActions.savePresets(this.state.exportPresetName, this.state.selectedFields);
+    ExportActions.savePresets(this.state.exportPresetName, this.state.selectedFields.map(i => (i.value)));
 
     this.setState({
+      selectedPresetName: this.state.exportPresetName,
       actionPerformed: true
     });
   },
 
   handleExportClicked: function() {
-    let fields = this.state.selectedFields;
+    let fields = this.state.selectedFields.map(i => (i.value));
     let query = this.props.query;
     ExportActions.exportCSV(query, fields);
   },

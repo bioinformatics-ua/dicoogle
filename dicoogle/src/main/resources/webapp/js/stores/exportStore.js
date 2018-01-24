@@ -10,7 +10,9 @@ import {UserStore} from "./userStore";
 const ExportStore = Reflux.createStore({
     listenables: ExportActions,
     init: function () {
-      this._contents = {};
+      this._contents = {
+          presets: []
+      };
 
       this.dicoogle = dicoogleClient();
     },
