@@ -42,16 +42,28 @@ const UserStore = Reflux.createStore({
             this._isLoggedIn = true;
             console.log(`> ${this._username} (admin: ${this._isAdmin}) | token: ${this._token}`);
         }
-        const o = {
-            isLoggedIn: this._isLoggedIn,
-            username: this._username,
-            roles: this._roles,
-            isAdmin: this._isAdmin,
-            token: this._token,
-            success: true
-        };
-        this.trigger(o);
-        return o;
+
+        // check if session is still alive
+        this.dicoogle.request('GET', 'login').end((error, data) => {
+            this._loginFailed = false;
+            if (error) {
+                this._isLoggedIn = false;
+                this._loginFailed = true;
+                localStorage.removeItem('token');
+            }
+
+            const o = {
+                loginFailed: this._loginFailed,
+                isLoggedIn: this._isLoggedIn,
+                username: this._username,
+                roles: this._roles,
+                isAdmin: this._isAdmin,
+                token: this._token,
+                success: true
+            };
+
+            this.trigger(o);
+        });
     },
     onLogin: function(user, pass){
       console.log("onLogin");
@@ -83,40 +95,6 @@ const UserStore = Reflux.createStore({
             });
       });
 
-    },
-
-    onIsLoggedIn: function(){
-
-      if (this._isLoggedIn === false) {
-        const token = localStorage.getItem('token');
-        if (token) {
-            this.loadLocalStore();
-            console.log(`Token is ${localStorage.getItem('token')}, assuming that the session is ok.`);
-            this._isLoggedIn = true;
-            this.trigger({
-                success: true,
-                isLoggedIn: this._isLoggedIn,
-                username: this._username,
-                roles: this._roles,
-                isAdmin: this._isAdmin,
-                token: this._token
-            });
-        }
-
-    } else {
-        if (localStorage.getItem('token')) {
-            this.loadLocalStore();
-        } else {
-            this.trigger({
-                success: true,
-                isLoggedIn: this._isLoggedIn,
-                username: this._username,
-                roles: this._roles,
-                isAdmin: this._isAdmin,
-                token: this._token
-            });
-        }
-      }
     },
 
     onLogout() {

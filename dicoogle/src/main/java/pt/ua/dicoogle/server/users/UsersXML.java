@@ -115,7 +115,7 @@ public class UsersXML extends DefaultHandler
                 for (int i = 0; i<rolesTmp.length; i++)
                 {
                     Role role = RolesStruct.getInstance().getRole(rolesTmp[i]);
-                    u.addRole(role);
+                    if (role != null) u.addRole(role);
                 }
 
             }
