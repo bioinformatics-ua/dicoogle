@@ -42,7 +42,7 @@ class App extends React.Component {
 		this.needsPluginUpdate = true;
 		this.state = {
 			pluginMenuItems: [],
-      lastLocation: 'search'
+			lastLocation: 'search'
 		};
 		this.dicoogle = dicoogleClient(Endpoints.base);
 		this.logout = this.logout.bind(this);
@@ -65,7 +65,7 @@ class App extends React.Component {
 		});
 	}
 
-	componentWillMount() {
+  componentWillMount() {
     UserStore.listen(this.handleUserStoreUpdate);
 
     let lastLocation = this.props.location.pathname.slice(1);
@@ -74,9 +74,9 @@ class App extends React.Component {
         lastLocation: lastLocation
       });
     }
-	}
+  }
 
-	componentDidMount() {
+  componentDidMount() {
     if (process.env.GUEST_USERNAME && !localStorage.getItem('token')) {
       console.log("Using guest credentials: ", process.env.GUEST_USERNAME, "; password:", process.env.GUEST_PASSWORD);
       UserActions.login(process.env.GUEST_USERNAME, process.env.GUEST_PASSWORD);
@@ -88,29 +88,29 @@ class App extends React.Component {
       e.preventDefault();
       $("#wrapper").toggleClass("toggled");
     });
-	}
+  }
 
-	handleUserStoreUpdate(data) {
-		this.needsPluginUpdate = true;
-		this.fetchPlugins(data);
-		if (data.username) {
-			this.setState(data);
-		}
+  handleUserStoreUpdate(data) {
+    this.needsPluginUpdate = true;
+    this.fetchPlugins(data);
+    if (data.username) {
+      this.setState(data);
+    }
 
-		if (!data.isLoggedIn) {
-			if (!process.env.GUEST_USERNAME) {
+    if (!data.isLoggedIn) {
+      if (!process.env.GUEST_USERNAME) {
         this.props.router.push('login');
       } else {
-				if (!data.loginFailed) {
+        if (!data.loginFailed) {
           this.props.router.push('loading');
         } else {
           this.props.router.push('login');
-				}
-			}
+        }
+      }
     } else {
-			this.props.router.replace(this.state.lastLocation);
-		}
-	}
+      this.props.router.replace(this.state.lastLocation);
+    }
+  }
 
 	fetchPlugins(data) {
     if (!this.needsPluginUpdate) {
@@ -146,15 +146,15 @@ class App extends React.Component {
 		})
   }
 
-	logout() {
-		UserActions.logout();
-		this.setState({
-			pluginMenuItems: [],
+  logout() {
+    UserActions.logout();
+    this.setState({
+      pluginMenuItems: [],
       lastLocation: 'search'
-		});
-		this.needsPluginUpdate = true;
-		this.context.router.push('login');
-	}
+    });
+    this.needsPluginUpdate = true;
+    this.context.router.push('login');
+  }
 
 	render() {
 

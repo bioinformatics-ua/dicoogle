@@ -75,19 +75,19 @@ public class LoginServlet extends HttpServlet {
         json_resp.write(resp.getWriter());
     }
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
 
-		String token = req.getHeader("Authorization");
-		User user = Authentication.getInstance().getUsername(token);
+        String token = req.getHeader("Authorization");
+        User user = Authentication.getInstance().getUsername(token);
 
-		if(user == null) {
-			resp.sendError(401);
+        if(user == null) {
+            resp.sendError(401);
             return;
-		}
-			
-		JSONObject json_resp = new JSONObject();
+        }
+
+        JSONObject json_resp = new JSONObject();
         json_resp.put("user", user.getUsername());
         json_resp.put("admin", user.isAdmin());
         JSONArray rolesObj = new JSONArray();
