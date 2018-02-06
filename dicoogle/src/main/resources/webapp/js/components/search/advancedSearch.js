@@ -1,6 +1,7 @@
+
+import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import DatePicker from 'react-datepicker';
 import {SearchStore} from '../../stores/searchStore';
 import {ActionCreators} from '../../actions/searchActions';
 import {SearchResult} from './searchResult';
@@ -12,6 +13,9 @@ import {SearchResult} from './searchResult';
 const AdvancedSearch = React.createClass({
     getInitialState: function (){
         return { label: 'login' };
+    },
+    componentDidMount: function() {
+      $("#datepicker").datepicker();
     },
 
     render: function() {
@@ -98,10 +102,7 @@ const AdvancedSearch = React.createClass({
 
                             </div>
                             <div className="subject_text space_up">Date</div>
-                            <DatePicker
-                              selected={this.state.date}
-                              onChange={this.onDateChange}
-                            />
+                            <input type="text" id="datepicker"></input>
 
                         </div>
 
@@ -118,12 +119,6 @@ const AdvancedSearch = React.createClass({
     },
     componentWillUnmount() {
         this.unsubscribe();
-    },
-  
-    onDateChange: function (date) {
-      this.setState({
-        date: date
-      });
     },
 
     _onChange: function(data){
@@ -185,9 +180,11 @@ const AdvancedSearch = React.createClass({
        }
 
        //DATE
-       if (this.state.date) {
-         let dateFormated = this.state.date.format("YYYYMMDD");
-         query = query + " AND StudyDate:[" + dateFormated + " TO " + dateFormated + "]";
+       if(document.getElementById("datepicker").value !== "")
+       {
+         var date = $('#datepicker').datepicker('getDate').getFullYear() + this.fix2($('#datepicker').datepicker('getDate').getMonth()) + this.fix2($('#datepicker').datepicker('getDate').getDate());
+
+         query = query + " AND StudyDate:[" + date + " TO " + date + "]";
        }
 
        var providerEl = document.getElementById("providersList");
