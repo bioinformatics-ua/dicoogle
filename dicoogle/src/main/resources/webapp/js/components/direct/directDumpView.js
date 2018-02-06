@@ -2,7 +2,6 @@ import React from 'react';
 import {DumpStore} from '../../stores/dumpStore';
 import {DumpActions} from '../../actions/dumpActions';
 import {getUrlVars} from '../../utils/url';
-import $ from 'jquery';
 
 const DirectDumpView = React.createClass({
   propTypes: {
@@ -23,9 +22,6 @@ const DirectDumpView = React.createClass({
   },
   componentWillUnmount() {
     this.unsubscribe();
-  },
-  componentDidUpdate: function(){
-    $('#dumptable').dataTable({paging: false, searching: false, info: false, responsive: false});
   },
 
   _onChange(data) {
