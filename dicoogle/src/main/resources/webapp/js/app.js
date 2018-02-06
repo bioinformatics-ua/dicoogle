@@ -91,12 +91,11 @@ class App extends React.Component {
 			} else {
 				this.props.router.push('login');
 			}
-    }
-
-    $("#menu-toggle").click(function (e) {
-      e.preventDefault();
-      $("#wrapper").toggleClass("toggled");
-    });
+    	}
+		if (this.props.location.pathname=='/')
+		{
+			this.props.history.pushState(null, 'login');
+		}
 	}
 
 	handleUserStoreUpdate(data) {
@@ -131,7 +130,7 @@ class App extends React.Component {
 			}
 		});
 
-    // pre-fetch modules of other plugin types
+    	// pre-fetch modules of other plugin types
 		Webcore.fetchPlugins(['search', 'result-options', 'query', 'result'], (pkgs) => {
 			Webcore.fetchModules(pkgs);
 			k -= 1;
@@ -139,7 +138,12 @@ class App extends React.Component {
 				this.needsPluginUpdate = false;
 			}
 		})
-  }
+    }
+
+	onClickToggle(e) {
+		e.preventDefault();
+		document.getElementById("wrapper").classList.toggle("toggled");
+	}
 
 	logout() {
 		UserActions.logout();
@@ -153,7 +157,7 @@ class App extends React.Component {
 		return (
 		<div>
 			<div className="topbar">
-				<img className="btn_drawer" src="assets/drawer_menu.png" id="menu-toggle" />
+				<img className="btn_drawer" src="assets/drawer_menu.png" id="menu-toggle" onClick={this.onClickToggle} />
 				<a>Dicoogle</a>
         <div className="pull-right" bsStyle="padding:15px">
 
