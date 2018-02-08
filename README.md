@@ -178,7 +178,7 @@ Contributors:
 
 * Renato Pinho (BMD software)
 * David Campos (BMD software)
-* Eriksson Monteiro (UA.PT Bioinformatics)
+* Eriksson Monteiro (BMD software)
 * Tiago Godinho (UA.PT Bioinformatics)
 * Jorge Miguel Silva (UA.PT Bioinformatics)
 * Rui Lebre (UA.PT Bioinformatics)
