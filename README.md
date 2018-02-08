@@ -1,4 +1,4 @@
-# <img src="https://cloud.githubusercontent.com/assets/4738426/21611123/64d0b4de-d1c3-11e6-8f99-d14fce8591f2.png" height="50"/>
+# <img src="http://dicoogle.com/static/images/logo.png" height="45"/>
 
 Dicoogle is an extensible, platform-independent and open-source PACS archive software that replaces the traditional centralized database with a more agile indexing and retrieval mechanism. It was designed to support automatic extraction, indexing and storage of all meta-data detected in medical images, including private DICOM attribute tags, without re-engineering or reconfiguration requirements.
 
@@ -178,7 +178,7 @@ Contributors:
 
 * Renato Pinho (BMD software)
 * David Campos (BMD software)
-* Eriksson Monteiro (UA.PT Bioinformatics)
+* Eriksson Monteiro (BMD software)
 * Tiago Godinho (UA.PT Bioinformatics)
 * Jorge Miguel Silva (UA.PT Bioinformatics)
 
