@@ -53,7 +53,8 @@ import pt.ua.dicoogle.sdk.task.Task;
  * @author Frederico Silva <fredericosilva@ua.pt>
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
-public class SearchServlet extends HttpServlet {
+public class SearchServlet extends HttpServlet 
+{
     private static final Logger logger = LoggerFactory.getLogger(SearchServlet.class);
 
     private static final long serialVersionUID = 1L;
