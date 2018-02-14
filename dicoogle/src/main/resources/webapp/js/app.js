@@ -45,6 +45,7 @@ class App extends React.Component {
 			pluginMenuItems: []
 		};
 		this.logout = this.logout.bind(this);
+		this.handleUserStoreUpdate = this.handleUserStoreUpdate.bind(this);
 	}
 
 	/**
@@ -65,7 +66,7 @@ class App extends React.Component {
 
 	componentWillMount()
 	{
-		UserStore.listen(this.fetchPlugins.bind(this));
+		UserStore.listen(this.handleUserStoreUpdate);
 
 		const Dicoogle = dicoogleClient(Endpoints.base);
 		if (localStorage.token) {
@@ -94,10 +95,17 @@ class App extends React.Component {
       $("#wrapper").toggleClass("toggled");
     });
 	}
+
+	handleUserStoreUpdate(data) {
+		this.fetchPlugins(data);
+		if (data.username) {
+			this.setState(data);
+		}
+	}
+
 	fetchPlugins(data) {
-		if (this.pluginsFetched)
-			return;
-		let self = this;
+    if (this.pluginsFetched || !data.isLoggedIn)
+      return;
 		if (!data.success)
 			return;
     this.setState(data);
@@ -106,10 +114,9 @@ class App extends React.Component {
       console.log("Plugin loaded to Dicoogle:", plugin);
 		});
 		Webcore.fetchPlugins('menu', (packages) => {
-			self.onMenuPlugin(packages);
-        Webcore.fetchModules(packages);
+			this.onMenuPlugin(packages);
+      Webcore.fetchModules(packages);
 		});
-
 
     // pre-fetch modules of other plugin types
 		Webcore.fetchPlugins(['search', 'result-options', 'query', 'result'], Webcore.fetchModules)
@@ -145,7 +152,7 @@ class App extends React.Component {
           </span>
 
           <span className="user-name buttonLogin">
-              <span onClick={this.logout.bind(this)} className="glyphicon glyphicon-log-out" style={{cursor: 'pointer'}} />
+              <span onClick={this.logout} className="glyphicon glyphicon-log-out" style={{cursor: 'pointer'}} />
           </span>
 
         </div>
@@ -153,7 +160,7 @@ class App extends React.Component {
 
 			<div id="wrapper">
 				<div id="sidebar-wrapper">
-					<Sidebar pluginMenuItems={this.state.pluginMenuItems} onLogout={this.logout.bind(this)}/>
+					<Sidebar pluginMenuItems={this.state.pluginMenuItems} onLogout={this.logout}/>
 				</div>
 				<div id="container" style={{display: 'block'}}>
 					{this.props.children}
