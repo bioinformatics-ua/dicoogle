@@ -82,8 +82,8 @@
                 <version>2.3.2</version>
                 <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -120,12 +120,6 @@
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8.1</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>

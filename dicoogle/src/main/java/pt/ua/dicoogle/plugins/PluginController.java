@@ -240,7 +240,7 @@ public class PluginController{
 
         ArrayList<ServerResource> restInterfaces = new ArrayList<>();
         for (PluginSet set : plugins) {
-            Collection<ServerResource> restInterface = set.getRestPlugins();
+            Collection<? extends ServerResource> restInterface = set.getRestPlugins();
             if (restInterface == null) {
                 continue;
             }
@@ -258,7 +258,7 @@ public class PluginController{
                 
          ArrayList<JettyPluginInterface> jettyInterfaces = new ArrayList<>();
          for(PluginSet set : plugins){
-        	 Collection<JettyPluginInterface> jettyInterface = set.getJettyPlugins();
+        	 Collection<? extends JettyPluginInterface> jettyInterface = set.getJettyPlugins();
         	 if(jettyInterface == null) continue;
         	 jettyInterfaces.addAll(jettyInterface);
          }
@@ -693,75 +693,25 @@ public class PluginController{
     }
 
     //METHODs FOR PluginController4Users
-    //TODO:this method is a workaround! we do get rightmenu items, but only for the search window
-    //which should be moved to plugins and hence we are assuming too much in here!
+    // which are obsolete and no longer supported
  
     @Deprecated
 	public List<JMenuItem> getRightButtonItems() {
         logger.info("getRightButtonItems()");
-        ArrayList<JMenuItem> rightMenuItems = new ArrayList<>();
-        
-        for (PluginSet set : pluginSets) {
-            logger.info("Set plugins: {}", set.getGraphicalPlugins());
-            Collection<GraphicalInterface> graphicalPlugins = set.getGraphicalPlugins();
-            if (graphicalPlugins == null) {
-                continue;
-            }
-            logger.info("Looking for plugin");
-            for (GraphicalInterface gpi : graphicalPlugins) {
-                logger.info("GPI: {}", gpi);
-                ArrayList<JMenuItem> rbPanels = gpi.getRightButtonItems();
-                if (rbPanels == null) {
-                    continue;
-                }
-                rightMenuItems.addAll(rbPanels);
-            }
-        }
-        return rightMenuItems;
+        return Collections.EMPTY_LIST;
     }
 
     //returns a list of tabs from all plugins
     @Deprecated
     public List<JPanel> getTabItems() {
         logger.info("getTabItems");
-        ArrayList<JPanel> panels = new ArrayList<>();
-
-        for (PluginSet set : pluginSets) {
-            Collection<GraphicalInterface> graphicalPlugins = set.getGraphicalPlugins();
-            if (graphicalPlugins == null) {
-                continue;
-            }
-            for (GraphicalInterface gpi : graphicalPlugins) {
-                ArrayList<JPanel> tPanels = gpi.getTabPanels();
-                if (tPanels == null) {
-                    continue;
-                }
-                panels.addAll(tPanels);
-            }
-        }
-        return panels;
+        return Collections.EMPTY_LIST;
     }
 
     @Deprecated
     public List<JMenuItem> getMenuItems() {
         logger.info("getMenuItems");
-        ArrayList<JMenuItem> items = new ArrayList<>();
-
-        for (PluginSet set : pluginSets) {
-            Collection<GraphicalInterface> graphicalPlugins = set.getGraphicalPlugins();
-            if (graphicalPlugins == null) {
-                continue;
-            }
-
-            for (GraphicalInterface gpi : graphicalPlugins) {
-                Collection<JMenuItem> setItems = gpi.getMenuItems();
-                if (setItems == null) {
-                    continue;
-                }
-                items.addAll(setItems);
-            }
-        }
-        return items;
+        return Collections.EMPTY_LIST;
     }
     
     // Methods for Web UI 

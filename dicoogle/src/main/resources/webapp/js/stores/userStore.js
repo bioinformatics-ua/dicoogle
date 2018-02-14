@@ -27,20 +27,23 @@ const UserStore = Reflux.createStore({
         }));
 
     },
-    loadLocalStore: function(){
-        if (localStorage.token) {
-            console.log("loadLocalStore");
-            let user = JSON.parse(localStorage.getItem("user"));
-            this._isAdmin = user.isAdmin;
-            this._username = user.username;
-            this._roles = user.roles;
-            this._token = user.token;
-            this._isLoggedIn = true;
-            this.trigger({
-                isLoggedIn: this._isLoggedIn,
-                success: true
-            });
+    loadLocalStore(user) {
+        if (!user) {
+            user = localStorage.getItem('user');
         }
+        if (user) {
+            console.log('Loading previous session from local store');
+            let userData = JSON.parse(user);
+            this._isAdmin = userData.isAdmin;
+            this._username = userData.username;
+            this._roles = userData.roles;
+            this._token = userData.token;
+            this._isLoggedIn = true;
+        }
+        this.trigger({
+            isLoggedIn: this._isLoggedIn,
+            success: true
+        });
     },
     onLogin: function(user, pass){
       console.log("onLogin");
@@ -48,11 +51,12 @@ const UserStore = Reflux.createStore({
 
       let Dicoogle = dicoogleClient(Endpoints.base);
 
-      Dicoogle.login(user, pass, function(errorCallBack, data){
-          if (!data.token)
+      Dicoogle.login(user, pass, function(error, data){
+          if (error)
           {
               self.trigger({
-                failed: true
+                success: false,
+                loginFailed: true
               });
               return;
           }
@@ -62,11 +66,10 @@ const UserStore = Reflux.createStore({
           self._roles = data.roles;
           self._isLoggedIn = true;
           localStorage.token = self._token;
+          console.log("Saving token to local storage:", localStorage.token);
           self.saveLocalStore();
-
-          console.log("Localstorage token: " + localStorage.token);
           self.trigger({
-              isLoggedIn: self._isLoggedIn,
+              isLoggedIn: true,
               success: true
           });
       });
@@ -79,13 +82,10 @@ const UserStore = Reflux.createStore({
       {
 
         if (localStorage.token) {
+            console.log("Using existing token")
             this.loadLocalStore();
-            this.trigger({
-                isLoggedIn: self._isLoggedIn,
-                success: true
-            });
         } else {
-            console.log("Verify ajax");
+            console.log(`Token is ${localStorage.token} - checking login state...`);
 
             $.ajax({
                 type: "GET",
@@ -99,36 +99,28 @@ const UserStore = Reflux.createStore({
                 this._isLoggedIn = true;
 
                 this.saveLocalStore();
-            setTimeout(() => {
-                this.trigger({
-                isLoggedIn: this._isLoggedIn,
-                success: true
-            });
-        }, 500)
-
-        },
-            error: () => {
+                    this.trigger({
+                        isLoggedIn: this._isLoggedIn,
+                        success: true
+                });
+            }, error: () => {
                 this.trigger({
                     isLoggedIn: this._isLoggedIn,
                     success: false
                 });
-            }
-        });
+            }});
         }
 
-      } else {
+    } else {
         //return this._isLoggedIn;
-          if (localStorage.token !== undefined) {
-              this.loadLocalStore();
-              this.trigger({
-                  isLoggedIn: self._isLoggedIn,
-                  success: true
-              });
-          }
-        this.trigger({
-          isLoggedIn: self._isLoggedIn,
-          success: true
-        });
+        if (localStorage.token !== undefined) {
+            this.loadLocalStore();
+        } else {
+            this.trigger({
+                isLoggedIn: self._isLoggedIn,
+                success: true
+            });
+        }
       }
     },
 
