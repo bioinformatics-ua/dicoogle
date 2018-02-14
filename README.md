@@ -177,7 +177,6 @@ Maintainers:
 Contributors:
 
 * Renato Pinho (BMD software)
-* David Campos (BMD software)
 * Eriksson Monteiro (BMD software)
 * Tiago Godinho (UA.PT Bioinformatics)
 * Jorge Miguel Silva (UA.PT Bioinformatics)
@@ -185,6 +184,7 @@ Contributors:
 
 Past developers:
 
+* David Campos
 * Samuel Campos
 * Carlos Ferreira
 * Luis Ribeiro
