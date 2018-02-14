@@ -24,8 +24,6 @@ import UserStore from './stores/userStore';
 
 require('core-js/shim');
 
-require('jquery-ui');
-
 window.jQuery = $; // Bootstrap won't work without this hack. browserify-shim didn't help either
 require('bootstrap');
 
