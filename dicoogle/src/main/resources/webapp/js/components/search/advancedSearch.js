@@ -1,5 +1,4 @@
 
-import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {SearchStore} from '../../stores/searchStore';
@@ -13,9 +12,6 @@ import {SearchResult} from './searchResult';
 const AdvancedSearch = React.createClass({
     getInitialState: function (){
         return { label: 'login' };
-    },
-    componentDidMount: function() {
-      $("#datepicker").datepicker();
     },
 
     render: function() {
@@ -102,7 +98,7 @@ const AdvancedSearch = React.createClass({
 
                             </div>
                             <div className="subject_text space_up">Date</div>
-                            <input type="text" id="datepicker"></input>
+                            <input type="text" id="datepicker" placeholder={"YYYYMMDD"}></input>
 
                         </div>
 
@@ -180,10 +176,9 @@ const AdvancedSearch = React.createClass({
        }
 
        //DATE
-       if(document.getElementById("datepicker").value !== "")
+       let date = document.getElementById("datepicker").value; // format: YYYYMMDD
+       if(date !== "")
        {
-         var date = $('#datepicker').datepicker('getDate').getFullYear() + this.fix2($('#datepicker').datepicker('getDate').getMonth()) + this.fix2($('#datepicker').datepicker('getDate').getDate());
-
          query = query + " AND StudyDate:[" + date + " TO " + date + "]";
        }
 
