@@ -18,19 +18,15 @@
  */
 package pt.ua.dicoogle.server;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.dcm4che2.data.UID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pt.ua.dicoogle.sdk.datastructs.SOPClass;
+import pt.ua.dicoogle.server.web.management.SOPClassSettings;
 
-import pt.ua.dicoogle.server.web.management.Dicoogle.SOPClassSettings;
+import java.util.*;
 
 /**
  * Support class for keeping SOPClass/TransferSyntax association
@@ -132,7 +128,8 @@ public class SOPList {
 
     public static synchronized SOPList getInstance()
     {
-        if (instance == null) {
+        if (instance == null)
+        {
             instance = new SOPList();
         }
         return instance;
@@ -142,14 +139,11 @@ public class SOPList {
      * Creates a new list 
      */
     private SOPList() {
-        table = new Hashtable<String, TransfersStorage>();
-        
-        table.put(UID.CTImageStorage, new TransfersStorage());
-        table.put(UID.UltrasoundImageStorage, new TransfersStorage());
-        
-        for(int i=0; i<SOP.length; i++)
+        table = new Hashtable<>();
+
+        for(String sop: SOP)
         {
-            table.put(SOP[i], new TransfersStorage());
+            table.put(sop, new TransfersStorage());
         }        
     }     
     
@@ -158,11 +152,9 @@ public class SOPList {
      */
     public synchronized void setDefaultSettings()
     {
-        TransfersStorage TS;
-        for(int i=0; i<SOP.length; i++)
+        for (TransfersStorage ts: table.values())
         {
-            TS = table.get(SOP[i]);
-            TS.setDefaultSettings();
+            ts.setDefaultSettings();
         }
     }
     
@@ -219,7 +211,7 @@ public class SOPList {
      * Updates a given SOP Class accepted Tranfer Syntaxes
      * @param UID SOP Class
      * @param name
-     * @param vale
+     * @param value
      * @return -1 if something went wrong, 1 otherwise
      */
     public synchronized int updateTSField(String UID, String name, boolean value) {
@@ -365,8 +357,13 @@ public class SOPList {
     		 
     	 }
     	 return sopList.toString();
-    	 
      }
-    
-            
+
+    public List<SOPClass> asSOPClassList() {
+        List<SOPClass> l = new ArrayList<>();
+        for (Map.Entry<String, TransfersStorage> e : this.table.entrySet()) {
+            l.add(new SOPClass(e.getKey(), e.getValue().asList()));
+        }
+        return l;
+    }
 }

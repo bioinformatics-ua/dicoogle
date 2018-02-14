@@ -18,25 +18,40 @@
  */
 package pt.ua.dicoogle.sdk.datastructs;
 
+import com.fasterxml.jackson.annotation.*;
+
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.SocketAddress;
 import java.util.Objects;
 
 /** An immutable data structure for describing a DICOM node (potential C-MOVE destinations).
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
+@JsonRootName("move-destination")
+@JsonAutoDetect(isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        getterVisibility = JsonAutoDetect.Visibility.NONE)
 public class MoveDestination implements Serializable
 {
     static final long serialVersionUID = 2L;
 
+    @JsonProperty("aetitle")
     private final String AETitle;
+    @JsonProperty("address")
     private final String ipAddrs;
+    @JsonProperty("port")
     private final int port;
 
+    @JsonProperty("description")
     private final String description;
+    @JsonProperty("public")
     private final boolean isPublic;
 
-    public MoveDestination(String AETitle, String ipAddr, int port, boolean isPublic, String description) {
+    @JsonCreator
+    public MoveDestination(@JsonProperty("aetitle") String AETitle, @JsonProperty("address") String ipAddr,
+                           @JsonProperty("port") int port, @JsonProperty("public") boolean isPublic,
+                           @JsonProperty("description") String description) {
         this.AETitle = AETitle;
         this.ipAddrs = ipAddr;
         this.port = port;
@@ -61,28 +76,12 @@ public class MoveDestination implements Serializable
     }
 
     /**
-     * @param AETitle the AETitle to set
-     */
-/*    public void setAETitle(String AETitle)
-    {
-        this.AETitle = AETitle;
-    }*/
-
-    /**
      * @return the ipAddrs
      */
     public String getIpAddrs()
     {
         return ipAddrs;
     }
-
-    /**
-     * @param ipAddrs the ipAddrs to set
-     */
-/*    public void setIpAddrs(String ipAddrs)
-    {
-        this.ipAddrs = ipAddrs;
-    } */
 
     /**
      * @return the port
@@ -101,6 +100,7 @@ public class MoveDestination implements Serializable
         if (!description.isEmpty()) {
             result += " - " + this.description;
         }
+        result += "(" + (isPublic ? "Public)" : "Private)");
         
         return result ;
     }
@@ -115,31 +115,31 @@ public class MoveDestination implements Serializable
 
     /**
      * @return the isPublic
+     * @todo rename method name
      */
+    @Deprecated
     public boolean isIsPublic() {
         return isPublic;
     }
 
+    public boolean isPublic() {
+        return isPublic;
+    }
+
     @Override
-    public boolean equals(Object obj){
-        if(obj == null || getClass() != obj.getClass())
-            return false;
-
-        if(obj == this)
-            return true;
-
-        MoveDestination move = (MoveDestination) obj;
-
-        // To the list of MoveDestinations may not be repeated AETitles
-        return move.AETitle.equals(AETitle) && move.ipAddrs.equals(ipAddrs) && move.port == port;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MoveDestination that = (MoveDestination) o;
+        return port == that.port &&
+                isPublic == that.isPublic &&
+                Objects.equals(AETitle, that.AETitle) &&
+                Objects.equals(ipAddrs, that.ipAddrs) &&
+                Objects.equals(description, that.description);
     }
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + Objects.hashCode(this.AETitle);
-        hash = 97 * hash + Objects.hashCode(this.ipAddrs);
-        hash = 97 * hash + this.port;
-        return hash;
+        return Objects.hash(AETitle, ipAddrs, port, description, isPublic);
     }
 }
