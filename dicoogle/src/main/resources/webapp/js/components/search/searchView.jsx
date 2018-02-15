@@ -112,13 +112,15 @@ const Search = React.createClass({
                 inputProps={{
                   placeholder: "Free text or advanced query",
                   value: this.state.queryText,
+                  autoFocus: true,
                   onChange: this.onQueryChange,
                   onKeyDown: this.onKeyDown
                 }} />
             </div>
             <div className="col-xs-4 col-sm-2">
-              <button type="button" className="btn btn_dicoogle" id="search-btn"
-                      onClick={this.onSearchClicked}> <i className="fa fa-search"/> &nbsp; Search</button>
+              <button type="submit" className="btn btn_dicoogle" id="search-btn">
+                <i className="fa fa-search"/> &nbsp; Search
+              </button>
             </div>
           </form>
         </div>
@@ -235,7 +237,10 @@ const Search = React.createClass({
         selectedProviders: providers.map((e) => e.value)
       });
     },
-    onSearchClicked: function() {
+    onSearchClicked: function(event) {
+        // see https://github.com/react-bootstrap/react-bootstrap/issues/1510
+        event.preventDefault();
+
         const text = this.state.queryText;
         const provider = this.state.selectedProviders;
         const params = {text, provider};
