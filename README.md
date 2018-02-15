@@ -150,7 +150,7 @@ Before building, please make sure that your system contains the following tools:
 
  1. Retrieve the full source code from this repository: `git clone https://github.com/bioinformatics-ua/dicoogle.git`
  2. Navigate to the project's base directory, and build the parent Maven project by calling `mvn install`.
-    - Note: if you want, you can skip the npm part: `mvn install -Dskip.npm`
+    - Note: if you want, you can skip the npm part: `mvn install -Dskip.npm`; or/and to skip node/npm install `mvn install -Dskip.installnodenpm`
  3. The resulting jar file can be found in "./dicoogle/target".
 
 
