@@ -583,3 +583,10 @@ customElements.define("dicoogle-slot", DicoogleSlotElement, { extends: "div" });
 
 /// Alias for `DicoogleSlotElement`
 export const HTMLDicoogleSlotElement = DicoogleSlotElement;
+
+export default {
+  constructors,
+  onRegister,
+  WebUISlot,
+  HTMLDicoogleSlotElement
+};
