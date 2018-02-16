@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import Sidebar from './components/sidebar';
 import {Endpoints} from './constants/endpoints';
 import dicoogleClient from 'dicoogle-client';
-import Webcore from 'dicoogle-webcore';
+import * as Webcore from 'dicoogle-webcore';
 
 import {Router, Route, IndexRoute} from 'react-router';
 

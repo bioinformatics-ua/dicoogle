@@ -5,7 +5,7 @@ import {StudyView} from './result/studyView';
 import {SeriesView} from './result/serieView';
 import {ImageView} from './result/imageView';
 import {ExportView} from './exportView';
-import Webcore from 'dicoogle-webcore';
+import * as Webcore from 'dicoogle-webcore';
 import PluginForm from '../plugin/pluginForm.jsx';
 import {DefaultOptions} from '../../constants/defaultOptions';
 import {SearchStore} from '../../stores/searchStore';

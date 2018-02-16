@@ -34,7 +34,7 @@
     "eol-last": 1,
     "valid-jsdoc": 1,
     "no-undef": 2,
-    "import/no-unresolved": [2, {"commonjs": true}],
+    "import/no-unresolved": [2, {"commonjs": true, "ignore": ["dicoogle-client"]}],
     "import/named": 2,
     "import/namespace": 2,
     "import/default": 2,

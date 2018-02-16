@@ -3,7 +3,7 @@ import React, {PropTypes} from 'react';
 import {SearchStore} from '../../stores/searchStore';
 import {ActionCreators} from '../../actions/searchActions';
 
-import Webcore from 'dicoogle-webcore';
+import * as Webcore from 'dicoogle-webcore';
 import {DefaultOptions} from '../../constants/defaultOptions';
 import {SearchResult} from './searchResult';
 
