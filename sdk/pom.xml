@@ -28,13 +28,6 @@
             </snapshots>
         </repository>
         <repository>
-            <id>dcm4che</id>
-            <url>http://www.dcm4che.org/maven2/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>mi</id>
             <url>http://bioinformatics.ua.pt/maven/content/repositories/mi</url>
             <snapshots>
@@ -45,6 +38,14 @@
             <id>maven-restlet</id>
             <name>Public online Restlet repository</name>
             <url>http://maven.restlet.org</url>
+        </repository>
+        <repository>
+            <id>dcm4che</id>
+            <url>http://www.dcm4che.org/maven2/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            
         </repository>
     </repositories>
 
