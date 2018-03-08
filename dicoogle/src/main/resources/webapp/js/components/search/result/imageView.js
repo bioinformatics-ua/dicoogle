@@ -11,7 +11,7 @@ import {DumpActions} from '../../../actions/dumpActions';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import {Input} from 'react-bootstrap';
 import ResultSelectActions from '../../../actions/resultSelectAction';
-import {UserStore} from '../../../stores/userStore';
+import UserStore from '../../../stores/userStore';
 
 const ImageView = React.createClass({
     getInitialState: function() {

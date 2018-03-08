@@ -1,5 +1,5 @@
 import {Router} from 'react-router';
-import {UserStore} from '../../stores/userStore';
+import UserStore from '../../stores/userStore';
 
 const UserMixin = {
   mixins: [Router.Navigation],

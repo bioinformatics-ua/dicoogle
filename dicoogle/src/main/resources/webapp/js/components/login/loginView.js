@@ -1,6 +1,6 @@
 import React from 'react';
-import {UserActions} from "../../actions/userActions";
-import {UserStore} from "../../stores/userStore";
+import * as UserActions from "../../actions/userActions";
+import UserStore from "../../stores/userStore";
 
 const LoginView = React.createClass({
   contextTypes: {
@@ -30,11 +30,16 @@ const LoginView = React.createClass({
 
     if(data.isLoggedIn && this.isMounted())
     {
-      router.replace('/search');
+      router.replace('search');
     }
   },
 
   render: function() {
+    const guestCredentials = process.env.GUEST_USERNAME && ([<hr key='0'/>, <div key='1'>
+      Guest credentials: <br/>
+      <b>username:</b> {process.env.GUEST_USERNAME} <br/>
+      <b>password:</b> {process.env.GUEST_PASSWORD}
+    </div>])
     return (
       <div id="loginwrapper" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 10000}}>
         <div className="loginbody">
@@ -62,6 +67,7 @@ const LoginView = React.createClass({
                        value={this.state.password} onChange={this.handlePasswordChange} onKeyDown={this.handleKeyDown} />
                 {this.state.failed && (<p style={{color: 'red'}}> Login Failed. Please try again. </p>)}
                 <button type="button" className="btn submit btn_dicoogle" onClick={this.onLoginClick}>Login</button>
+                {guestCredentials}
               </form>
 
             </div>
