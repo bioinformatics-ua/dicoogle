@@ -47,7 +47,6 @@ import org.dcm4che2.io.DicomOutputStream;
 import org.dcm4che2.io.StopTagInputHandler;
 import org.dcm4che2.io.TranscoderInputHandler;
 import org.dcm4che2.net.Association;
-import org.dcm4che2.net.CommandUtils;
 import org.dcm4che2.net.ConfigurationException;
 import org.dcm4che2.net.Device;
 import org.dcm4che2.net.DimseRSP;
@@ -63,7 +62,7 @@ import org.dcm4che2.net.service.StorageCommitmentService;
 import org.dcm4che2.util.CloseUtils;
 import org.dcm4che2.util.StringUtils;
 import org.dcm4che2.util.UIDUtils;
-import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 
 /**
  * @author gunter zeilinger(gunterze@gmail.com)
@@ -190,8 +189,6 @@ public class DcmSnd extends StorageCommitmentService {
     
     private String MoveOriginatorMessageID = null;
 
-    private boolean gzip = ServerSettings.getInstance().isGzipStorage();
-    
     public DcmSnd() {
         remoteAE.setInstalled(true);
         remoteAE.setAssociationAcceptor(true);
@@ -203,7 +200,7 @@ public class DcmSnd extends StorageCommitmentService {
         ae.setAssociationInitiator(true);
         ae.setAssociationAcceptor(true);
         ae.register(this);
-        ae.setAETitle(ServerSettings.getInstance().getAE());
+        ae.setAETitle(ServerSettingsManager.getSettings().getDicomServicesSettings().getAETitle());
     }
 
     public final void setLocalHost(String hostname) {

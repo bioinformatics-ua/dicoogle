@@ -16,8 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.core;
+package pt.ua.dicoogle.core.settings;
 
+import pt.ua.dicoogle.core.XMLClientSupport;
 import pt.ua.dicoogle.server.users.HashService;
 
 /**

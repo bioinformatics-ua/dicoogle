@@ -10,6 +10,9 @@ import {DimFields} from '../../constants/dimFields';
 import {getUrlVars} from '../../utils/url';
 import {SearchStore} from '../../stores/searchStore';
 
+import Select from 'react-select';
+
+
 // just a workaround
 var countGlobalEnter = 0;
 const Search = React.createClass({
@@ -78,28 +81,29 @@ const Search = React.createClass({
     },
 
     render: function() {
+      let providersList = this.state.providers.map(item => ({value: item, label: item}));
 
-      let providersList = this.state.providers.map(
-          (item, index) => (<option key={item} value={item}>
-                              {item}
-                            </option>));
-      providersList.unshift(<option key="__all__" value="__all__">All Providers</option>);
-
-      const currProvider = this.state.selectedProviders[0];
       let selectionButtons = (
-          <div>
-          <button type="button" className="btn btn_dicoogle" onClick={this.renderFilter} data-trigger="advance-search" id="btn-advance">
-            {this.state.searchState === "simple" ? "Advanced" : "Basic"}
-          </button>
-              <div className="btn-group">
-                  <select id="providersList" className="btn btn_dicoogle form-control"
-                          value={currProvider}
-                          onChange={this.handleProviderSelect}>
-                    {providersList}
-                  </select>
-              </div>
-              </div>
-        );
+        <div>
+          <div className="row">
+            <div className="col-md-2 col-sm-3">
+              <button type="button" className="btn btn_dicoogle btn-block" onClick={this.renderFilter} data-trigger="advance-search" id="btn-advance">
+                {this.state.searchState === "simple" ? "Advanced" : "Basic"}
+              </button>
+            </div>
+            <div className="col-md-4 col-sm-9">
+              <Select multi
+                id="providersList"
+                name="form-field-name"
+                value={this.state.selectedProviders}
+                options={providersList}
+                placeholder="All Providers"
+                onChange={this.handleProviderSelect}
+              />
+            </div>
+          </div>
+        </div>
+      );
 
       let simpleSearchInstance = (
             <div className="row space_up" id="main-search">
@@ -184,10 +188,9 @@ const Search = React.createClass({
     handleQueryTextChanged(e) {
       this.setState({queryText: e.target.value});
     },
-    handleProviderSelect(e) {
-      const name = e.target.value;
+    handleProviderSelect(providers) {
       this.setState({
-        selectedProviders: name === '__all__' ? [] : [name]
+        selectedProviders: providers.map((e) => e.value)
       });
     },
     onSearchClicked: function() {
