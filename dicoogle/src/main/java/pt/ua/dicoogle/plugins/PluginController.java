@@ -691,28 +691,6 @@ public class PluginController{
         
         return reports;
     }
-
-    //METHODs FOR PluginController4Users
-    // which are obsolete and no longer supported
- 
-    @Deprecated
-	public List<JMenuItem> getRightButtonItems() {
-        logger.info("getRightButtonItems()");
-        return Collections.EMPTY_LIST;
-    }
-
-    //returns a list of tabs from all plugins
-    @Deprecated
-    public List<JPanel> getTabItems() {
-        logger.info("getTabItems");
-        return Collections.EMPTY_LIST;
-    }
-
-    @Deprecated
-    public List<JMenuItem> getMenuItems() {
-        logger.info("getMenuItems");
-        return Collections.EMPTY_LIST;
-    }
     
     // Methods for Web UI 
 

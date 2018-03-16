@@ -78,7 +78,7 @@ public class PluginController4user implements IPluginControllerUser
 
     @Override
     public List<JPanel> getTabPanels() throws RemoteException{
-        return PluginController.getInstance().getTabItems();
+        return null;
     }
 
     @Override
@@ -88,11 +88,11 @@ public class PluginController4user implements IPluginControllerUser
 
     @Override
     public List<JMenuItem> getRightButtonItems() throws RemoteException {
-        return PluginController.getInstance().getRightButtonItems();
+        return null;
     }
     
     @Override
     public List<JMenuItem> getPluginMenus() throws RemoteException{
-        return PluginController.getInstance().getMenuItems();
+        return null;
     }
 }
