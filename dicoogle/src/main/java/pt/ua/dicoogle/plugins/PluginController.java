@@ -33,6 +33,7 @@ import pt.ua.dicoogle.sdk.core.PlatformCommunicatorInterface;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.settings.ConfigurationHolder;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
 import pt.ua.dicoogle.server.ControlServices;
@@ -469,6 +470,31 @@ public class PluginController{
     	}
     	logger.error("Could not retrive query provider {} for onlyEnabled = {}", name, onlyEnabled);
     	return null;
+    }
+
+    /**
+     * Filter a list of query providers, returning the ones that are DICOM and active.
+     * If the list is empty, return all the active DICOM query providers.
+     *
+     * @param providers a list of query providers
+     * @return the filtered list of active DICOM query providers
+     */
+    public List<String> filterDicomQueryProviders(String[] providers) {
+        List<String> filteredProviders = (providers == null || providers.length == 0)
+                ? PluginController.getInstance().getQueryProvidersName(true)
+                : new LinkedList<>(Arrays.asList(providers));
+
+        ServerSettings.Archive as = ServerSettingsManager.getSettings().getArchiveSettings();
+
+        // filter the ones that are DICOM
+        List<String> validDicomProviders = as.getDIMProviders();
+        filteredProviders.removeIf(p -> !validDicomProviders.contains(p));
+
+        // filter the ones that are active
+        List<String> activeProviders = PluginController.getInstance().getQueryProvidersName(true);
+        filteredProviders.removeIf(p -> !activeProviders.contains(p));
+
+        return filteredProviders;
     }
     
     //TODO: CONVENIENCE METHOD

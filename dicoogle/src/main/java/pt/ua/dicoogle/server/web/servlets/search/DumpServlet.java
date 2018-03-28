@@ -20,7 +20,6 @@
 package pt.ua.dicoogle.server.web.servlets.search;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,12 +34,10 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
-import pt.ua.dicoogle.core.TagsXML;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
-import pt.ua.dicoogle.sdk.utils.DictionaryAccess;
 import pt.ua.dicoogle.sdk.utils.TagValue;
 import pt.ua.dicoogle.sdk.utils.TagsStruct;
 
@@ -58,11 +55,13 @@ public class DumpServlet extends HttpServlet {
         if (StringUtils.isEmpty(uid)) {
             resp.sendError(400, "No uid supplied");
         }
-        
+
         String[] providerArr = req.getParameterValues("provider");
-        List<String> providers = (providerArr == null)
-                ? PluginController.getInstance().getQueryProvidersName(true)
-                : Arrays.asList(providerArr);
+        List<String> providers = PluginController.getInstance().filterDicomQueryProviders(providerArr);
+
+        if (providers.size() == 0) {
+            resp.sendError(400, "No DIM providers supplied.");
+        }
         
         String query = "SOPInstanceUID:" + uid;
         

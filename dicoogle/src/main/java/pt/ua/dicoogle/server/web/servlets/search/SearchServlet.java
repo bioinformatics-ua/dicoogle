@@ -146,39 +146,8 @@ public class SearchServlet extends HttpServlet {
             query = q.getQueryString();
         }
 
-        List<String> providerList;
-        boolean queryAllProviders = false;
-        if (providers == null || providers.length == 0) {
-            queryAllProviders = true;
-        } else {
-            providerList = Arrays.asList(providers);
-            if (providerList.isEmpty()) {
-                queryAllProviders = true;
-            }
-        }
+        List<String> providerList = PluginController.getInstance().filterDicomQueryProviders(providers);
 
-        List<String> knownProviders = null;
-        if (!queryAllProviders) 
-        {
-            knownProviders = new ArrayList<>();
-            List<String> activeProviders = PluginController.getInstance().getQueryProvidersName(true);
-            for (String p : providers)
-            {
-                if (activeProviders.contains(p)) 
-                {
-                    knownProviders.add(p);
-                }
-                else
-                {
-                    response.setStatus(400);
-                    JSONObject obj = new JSONObject();
-                    obj.put("error", p.toString() +" is not a valid query provider");
-                    response.getWriter().append(obj.toString());
-                    return;
-                }
-            }
-        }
-        
         HashMap<String, String> extraFields = new HashMap<>();
         if (actualFields == null) {
             
@@ -205,14 +174,7 @@ public class SearchServlet extends HttpServlet {
 
         try {
             long elapsedTime = System.currentTimeMillis();
-            Iterable<SearchResult> results;
-            if (queryAllProviders) {
-                results = PluginController.getInstance().queryAll(queryTaskHolder, query, extraFields).get();
-            }
-            
-            else {
-                results = PluginController.getInstance().query(queryTaskHolder, knownProviders, query, extraFields).get();
-            }
+            Iterable<SearchResult> results = PluginController.getInstance().query(queryTaskHolder, providerList, query, extraFields).get();
 
             if (this.searchType == SearchType.PATIENT) {
                 try {
