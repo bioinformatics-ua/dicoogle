@@ -146,7 +146,13 @@ public class SearchServlet extends HttpServlet {
             query = q.getQueryString();
         }
 
-        List<String> providerList = PluginController.getInstance().filterDicomQueryProviders(providers);
+        List<String> providerList = providers != null ? Arrays.asList(providers) : new ArrayList<>();
+        providerList = PluginController.getInstance().filterDicomQueryProviders(providerList);
+
+        if (providerList.size() == 0) {
+            sendError(response, 400, "No valid DIM providers supplied.");
+            return;
+        }
 
         HashMap<String, String> extraFields = new HashMap<>();
         if (actualFields == null) {

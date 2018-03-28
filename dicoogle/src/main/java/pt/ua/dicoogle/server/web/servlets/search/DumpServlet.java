@@ -20,6 +20,8 @@
 package pt.ua.dicoogle.server.web.servlets.search;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,10 +59,11 @@ public class DumpServlet extends HttpServlet {
         }
 
         String[] providerArr = req.getParameterValues("provider");
-        List<String> providers = PluginController.getInstance().filterDicomQueryProviders(providerArr);
+        List<String> providers = providerArr != null ? Arrays.asList(providerArr) : new ArrayList<>();
+        providers = PluginController.getInstance().filterDicomQueryProviders(providers);
 
         if (providers.size() == 0) {
-            resp.sendError(400, "No DIM providers supplied.");
+            resp.sendError(400, "No valid DIM providers supplied.");
         }
         
         String query = "SOPInstanceUID:" + uid;

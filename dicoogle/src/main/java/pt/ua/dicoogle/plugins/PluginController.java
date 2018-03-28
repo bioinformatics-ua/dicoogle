@@ -33,7 +33,6 @@ import pt.ua.dicoogle.sdk.core.PlatformCommunicatorInterface;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.settings.ConfigurationHolder;
-import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
 import pt.ua.dicoogle.server.ControlServices;
@@ -49,6 +48,7 @@ import java.net.URI;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
 /**
@@ -474,27 +474,23 @@ public class PluginController{
 
     /**
      * Filter a list of query providers, returning the ones that are DICOM and active.
-     * If the list is empty, return all the active DICOM query providers.
+     * If the list to filter is empty, return all the active DICOM query providers.
+     * If there are no DICOM query providers specified in the settings, filter across all the active query providers.
      *
      * @param providers a list of query providers
      * @return the filtered list of active DICOM query providers
      */
-    public List<String> filterDicomQueryProviders(String[] providers) {
-        List<String> filteredProviders = (providers == null || providers.length == 0)
-                ? PluginController.getInstance().getQueryProvidersName(true)
-                : new LinkedList<>(Arrays.asList(providers));
+    public List<String> filterDicomQueryProviders(List<String> providers) {
+        List<String> baseProviders = ServerSettingsManager.getSettings()
+                .getArchiveSettings().getDIMProviders();
 
-        ServerSettings.Archive as = ServerSettingsManager.getSettings().getArchiveSettings();
+        if (baseProviders.isEmpty()) {
+            baseProviders = PluginController.getInstance().getQueryProvidersName(true);
+        }
 
-        // filter the ones that are DICOM
-        List<String> validDicomProviders = as.getDIMProviders();
-        filteredProviders.removeIf(p -> !validDicomProviders.contains(p));
-
-        // filter the ones that are active
-        List<String> activeProviders = PluginController.getInstance().getQueryProvidersName(true);
-        filteredProviders.removeIf(p -> !activeProviders.contains(p));
-
-        return filteredProviders;
+        return baseProviders.stream()
+                .filter(p -> providers.isEmpty() || providers.contains(p))
+                .collect(Collectors.toList());
     }
     
     //TODO: CONVENIENCE METHOD
