@@ -23,8 +23,11 @@ const SeriesView = React.createClass({
 
   componentWillMount: function() {
     // Subscribe to the store.
-    SearchStore.listen(this._onChange);
+    this.unsubscribe = SearchStore.listen(this._onChange);
     ResultSelectActions.clear();
+  },
+  componentWillUnmount() {
+    this.unsubscribe();
   },
 
   /**
@@ -169,28 +172,24 @@ const SeriesView = React.createClass({
 		);
 	},
   hideUnindex () {
-    if (this.isMounted())
-      this.setState({
-        unindexSelected: null
-      });
+    this.setState({
+      unindexSelected: null
+    });
   },
   showUnindex (item) {
-    if (this.isMounted())
-      this.setState({
-        unindexSelected: item
-      });
+    this.setState({
+      unindexSelected: item
+    });
   },
   hideRemove () {
-    if (this.isMounted())
-      this.setState({
-        removeSelected: null
-      });
+    this.setState({
+      removeSelected: null
+    });
   },
   showRemove (item) {
-    if (this.isMounted())
-      this.setState({
-        removeSelected: item
-      });
+    this.setState({
+      removeSelected: item
+    });
   },
 	extractURISFromData: function(item){
 		let uris = [];
@@ -210,14 +209,12 @@ const SeriesView = React.createClass({
 	},
 
   _onChange: function(data){
-
-    if (this.isMounted())
-    {
-      this.setState({data: data.data,
+    this.setState({
+      data: data.data,
       status: "stopped",
       success: data.success,
-      enableAdvancedSearch: data.data.advancedOptions});
-    }
+      enableAdvancedSearch: data.data.advancedOptions
+    });
   }
 });
 

@@ -115,15 +115,14 @@ const AdvancedSearch = React.createClass({
     },
     componentWillMount: function() {
     // Subscribe to the store.
-        SearchStore.listen(this._onChange);
-
+        this.unsubscribe = SearchStore.listen(this._onChange);
     },
-
+    componentWillUnmount() {
+        this.unsubscribe();
+    },
     _onChange: function(data){
         console.log(data);
-     //    if (this.isMounted())
-     // this.setState({label:data});
-   },
+    },
    onSearchClicked: function(){
      console.log("SEARCH CLICKED");
        //NAME

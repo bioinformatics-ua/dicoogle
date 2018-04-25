@@ -76,6 +76,6 @@
     "react/no-did-mount-set-state": 1,
     "react/no-did-update-set-state": 1,
     "react/jsx-boolean-value": 1,
-    "react/no-is-mounted": 0
+    "react/no-is-mounted": 2
   }
 }
