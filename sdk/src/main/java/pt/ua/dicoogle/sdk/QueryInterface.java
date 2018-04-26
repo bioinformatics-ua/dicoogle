@@ -33,7 +33,8 @@ public interface QueryInterface extends DicooglePlugin
      * Performs a search on the database.
      * 
      * The consumer of the results would either request an iterator or use a for-each loop. The underlying
-     * iterator implementation can be redefined to wait for more results at the caller.
+     * iterator implementation can be redefined to wait for more results at the caller. Furthermore, the
+     * resulting iterable is expected to be traversed only once.
      *
      * @param query a string describing the query. The underlying plugin is currently free to follow any
      * query format, but only those based on Lucene with work with the search user interface.

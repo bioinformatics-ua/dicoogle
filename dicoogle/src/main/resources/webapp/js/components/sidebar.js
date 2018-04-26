@@ -6,13 +6,13 @@
 
 import React from 'react';
 import {Link} from 'react-router';
-import {UserStore} from '../stores/userStore';
+import UserStore from '../stores/userStore';
 
 const Sidebar = React.createClass({
 
   propTypes: {
     pluginMenuItems: React.PropTypes.array.isRequired,
-    onLogout: React.PropTypes.func.isRequired
+    onLogout: React.PropTypes.func
   },
 
   render() {

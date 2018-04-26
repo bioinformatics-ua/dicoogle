@@ -1,6 +1,6 @@
 import React from 'react';
-import {UserActions} from "../../actions/userActions";
-import {UserStore} from "../../stores/userStore";
+import * as UserActions from "../../actions/userActions";
+import UserStore from "../../stores/userStore";
 
 const LoginView = React.createClass({
   contextTypes: {
@@ -16,8 +16,10 @@ const LoginView = React.createClass({
     };
   },
   componentWillMount: function() {
-    UserStore.listen(this._onChange);
-
+    this.unsubscribe = UserStore.listen(this._onChange);
+  },
+  componentWillUnmount() {
+    this.unsubscribe();
   },
   _onChange: function(data){
     console.log(data);
@@ -28,15 +30,19 @@ const LoginView = React.createClass({
       return;
     }
 
-    if(data.isLoggedIn && this.isMounted())
-    {
-      router.replace('/search');
+    if(data.isLoggedIn) {
+      router.replace('search');
     }
   },
 
   render: function() {
+    const guestCredentials = process.env.GUEST_USERNAME && ([<hr key='0'/>, <div key='1'>
+      Guest credentials: <br/>
+      <b>username:</b> {process.env.GUEST_USERNAME} <br/>
+      <b>password:</b> {process.env.GUEST_PASSWORD}
+    </div>])
     return (
-      <div id="loginwrapper" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 10000}}>
+      <div id="loginwrapper">
         <div className="loginbody">
 
           <section className="container row-fluid loginbox logincontainer">
@@ -62,11 +68,15 @@ const LoginView = React.createClass({
                        value={this.state.password} onChange={this.handlePasswordChange} onKeyDown={this.handleKeyDown} />
                 {this.state.failed && (<p style={{color: 'red'}}> Login Failed. Please try again. </p>)}
                 <button type="button" className="btn submit btn_dicoogle" onClick={this.onLoginClick}>Login</button>
+                {guestCredentials}
               </form>
 
             </div>
 
           </section>
+
+          {/*to fill the empty space between the login and footer*/}
+          <div id="filler"></div>
 
           <footer id="footer">
             <div style={{width: '100%', textAlign: 'center'}} className="footercontainer">
@@ -77,7 +87,10 @@ const LoginView = React.createClass({
                 <a href="http://www.ua.pt/"><img src="assets/logos/logo-ua.png" style={{height: 60, margin: 5}} /></a>
               </div>
               <div style={{display: 'inline-block'}}>
-                <a><img src="assets/logos/logoFCT.png" style={{height: 30, margin: 5}} /></a>
+                <a><img src="assets/logos/logoFCT_1.png" style={{height: 30, margin: 10}} /></a>
+                <a><img src="assets/logos/logoFCT_2.png" style={{height: 30, margin: 10}} /></a>
+                <a><img src="assets/logos/logoFCT_3.png" style={{height: 30, margin: 10}} /></a>
+                <a><img src="assets/logos/logoFCT_4.png" style={{height: 30, margin: 10}} /></a>
               </div>
 
             </div>
