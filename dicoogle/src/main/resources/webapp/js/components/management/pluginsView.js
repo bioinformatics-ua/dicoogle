@@ -95,7 +95,7 @@ const PluginsView = React.createClass({
           <p>{type.charAt(0).toUpperCase() + type.slice(1)}</p>
           {this.state.plugins[type].map(plugin => (
             <div className="panel panel-default">
-              <div className="panel-heading">
+              <div className="panel-heading panel-heading-toggle">
                 <h4 className="panel-title">
                   <a className="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion"
                      href={"#collapse" + collapseId}>{plugin.name}</a>

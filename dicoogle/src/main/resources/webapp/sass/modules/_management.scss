@@ -69,10 +69,14 @@
     /* symbol for "opening" panels */
     font-family: 'Glyphicons Halflings';
     content: "\e114";
-    float: right;
+    position: absolute;
+    right: 30px;
     color: $blue1;
 }
 .panel-heading .accordion-toggle.collapsed:after {
     /* symbol for "collapsed" panels */
     content: "\e080";
+}
+.panel-heading-toggle {
+    padding-right: 40px;
 }
