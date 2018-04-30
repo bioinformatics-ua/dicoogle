@@ -23,7 +23,7 @@ import org.apache.commons.io.FileUtils;
 import org.restlet.resource.ServerResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
 import pt.ua.dicoogle.plugins.webui.WebUIPluginManager;
 import pt.ua.dicoogle.sdk.*;
@@ -151,11 +151,11 @@ public class PluginController{
                 File pluginSettingsFile = new File(settingsFolder + "/" + name.replace('/', '-') + ".xml");
                 ConfigurationHolder holder = new ConfigurationHolder(pluginSettingsFile);
                 if(plugin.getName().equals("RemotePluginSet")) {
-                    this.remoteQueryPlugins = plugin;
-                    holder.getConfiguration().setProperty("NodeName", ServerSettings.getInstance().getNodeName());
-                    holder.getConfiguration().setProperty("TemporaryPath", ServerSettings.getInstance().getPath());
-
-                    logger.info("Started Remote Communications Manager");
+                	this.remoteQueryPlugins = plugin;
+                	//holder.getConfiguration().setProperty("NodeName", ServerSettingsManager.getSettings().getNodeName());
+    	        	//holder.getConfiguration().setProperty("TemporaryPath", ServerSettingsManager.getSettings().getPath());
+                	
+                	logger.info("Started Remote Communications Manager");
                 }
                 applySettings(plugin, holder);
             }
@@ -240,7 +240,7 @@ public class PluginController{
 
         ArrayList<ServerResource> restInterfaces = new ArrayList<>();
         for (PluginSet set : plugins) {
-            Collection<ServerResource> restInterface = set.getRestPlugins();
+            Collection<? extends ServerResource> restInterface = set.getRestPlugins();
             if (restInterface == null) {
                 continue;
             }
@@ -258,7 +258,7 @@ public class PluginController{
                 
          ArrayList<JettyPluginInterface> jettyInterfaces = new ArrayList<>();
          for(PluginSet set : plugins){
-        	 Collection<JettyPluginInterface> jettyInterface = set.getJettyPlugins();
+        	 Collection<? extends JettyPluginInterface> jettyInterface = set.getJettyPlugins();
         	 if(jettyInterface == null) continue;
         	 jettyInterfaces.addAll(jettyInterface);
          }
@@ -406,13 +406,9 @@ public class PluginController{
         Collection<StorageInterface> storages = getStoragePlugins(false);
         
         for (StorageInterface store : storages) {
-            try {
-                if (store.handles(location)) {
-                    logger.debug("Retrieved storage for scheme: {}", location);
-                    return store;
-                }
-            } catch (RuntimeException ex) {
-                logger.warn("Storage plugin {} failed unexpectedly", store.getName(), ex);
+            if (store.handles(location)) {
+            	logger.debug("Retrieved storage for scheme: {}", location);
+                return store;
             }
         }
         logger.warn("Could not get storage for scheme: {}", location);
@@ -471,7 +467,7 @@ public class PluginController{
     			return p;
     		}
     	}
-    	logger.error("Could not retrieve query provider {} for onlyEnabled = {}", name, onlyEnabled);
+    	logger.error("Could not retrive query provider {} for onlyEnabled = {}", name, onlyEnabled);
     	return null;
     }
     
@@ -547,7 +543,7 @@ public class PluginController{
         return holder;//returns the handler to obtain the computation results
     }
     
-    private Task<Iterable<SearchResult>> getTaskForQuery(final String querySource, final String query, final Object ... parameters){
+    private Task<Iterable<SearchResult>> getTaskForQuery(String querySource, final String query, final Object ... parameters){
     	final QueryInterface queryEngine = getQueryProviderByName(querySource, true);
     	//returns a tasks that runs the query from the selected query engine
         String uid = UUID.randomUUID().toString();
@@ -555,12 +551,7 @@ public class PluginController{
             new Callable<Iterable<SearchResult>>(){
             @Override public Iterable<SearchResult> call() throws Exception {
                 if(queryEngine == null) return Collections.emptyList();
-                try {
-                    return queryEngine.query(query, parameters);
-                } catch (RuntimeException ex) {
-                    logger.warn("Query plugin {} failed unexpectedly", querySource, ex);
-                    return Collections.EMPTY_LIST;
-                }
+                return queryEngine.query(query, parameters);
             }
         });
         //logger.info("Prepared Query Task: QueryString");
@@ -579,7 +570,7 @@ public class PluginController{
         StorageInterface store = getStorageForSchema(path);
 
         if(store==null){ 
-            logger.error("No storage plugin detected, ignoring index request");
+            logger.error("No storage plugin detected");
             return Collections.emptyList(); 
         }
         
@@ -610,14 +601,14 @@ public class PluginController{
         logger.info("Finished firing all indexing plugins for {}", path);
         
         return rettasks;    	
-    }
+    }     
     
     public List<Task<Report>> index(String pluginName, URI path) {
     	logger.info("Starting Indexing procedure for {}", path);
         StorageInterface store = getStorageForSchema(path);
 
         if(store==null){ 
-        	logger.error("No storage plugin detected, ignoring index request");
+        	logger.error("No storage plugin detected");
             return Collections.emptyList(); 
         }
         
@@ -647,7 +638,7 @@ public class PluginController{
         } catch (RuntimeException ex) {
             logger.warn("Indexer {} failed unexpectedly", indexer.getName(), ex);
         }
-
+        
         return rettasks;    	
     }
 
@@ -682,11 +673,7 @@ public class PluginController{
      */
     private void doUnindex(URI path, Collection<IndexerInterface> indexers) {
         for (IndexerInterface indexer : indexers) {
-            try {
-                indexer.unindex(path);
-            } catch (RuntimeException ex) {
-                logger.warn("Indexer {} failed unexpectedly", indexer.getName(), ex);
-            }
+        	indexer.unindex(path);
         }
         logger.info("Finished unindexing {}", path);
     }
@@ -700,20 +687,15 @@ public class PluginController{
     }
     
     public void doRemove(URI uri, StorageInterface si) {
-        try {
-            if (si.handles(uri)) {
-                si.remove(uri);
-            } else {
-                logger.warn("Storage Plugin does not handle URI: {},{}", uri, si);
-            }
-            logger.info("Finished removing {}", uri);
-        } catch (RuntimeException ex) {
-            logger.warn("Storage {} failed unexpectedly", si.getName(), ex);
+        if(si.handles(uri)){
+            si.remove(uri); 
+        } else {
+            logger.warn("Storage Plugin does not handle URI: {},{}", uri, si);
         }
+        logger.info("Finished removing {}", uri);
     }
-
     /*
-     * Convenience method that calls index(URI) and runs the returned
+     * Convinience method that calls index(URI) and runs the returned
      * tasks on the executing thread 
      */
     public List<Report> indexBlocking(URI path) {
@@ -727,9 +709,7 @@ public class PluginController{
 			}
             catch (InterruptedException | ExecutionException e) {
                 logger.error(e.getMessage(), e);
-			} catch (RuntimeException e) {
-                logger.warn("Indexer task failed unexpectedly", e);
-            }
+			}
         }
         logger.info("Finished indexing {}", path);
         
@@ -737,75 +717,25 @@ public class PluginController{
     }
 
     //METHODs FOR PluginController4Users
-    //TODO:this method is a workaround! we do get rightmenu items, but only for the search window
-    //which should be moved to plugins and hence we are assuming too much in here!
+    // which are obsolete and no longer supported
  
     @Deprecated
 	public List<JMenuItem> getRightButtonItems() {
         logger.info("getRightButtonItems()");
-        ArrayList<JMenuItem> rightMenuItems = new ArrayList<>();
-        
-        for (PluginSet set : pluginSets) {
-            logger.info("Set plugins: {}", set.getGraphicalPlugins());
-            Collection<GraphicalInterface> graphicalPlugins = set.getGraphicalPlugins();
-            if (graphicalPlugins == null) {
-                continue;
-            }
-            logger.info("Looking for plugin");
-            for (GraphicalInterface gpi : graphicalPlugins) {
-                logger.info("GPI: {}", gpi);
-                ArrayList<JMenuItem> rbPanels = gpi.getRightButtonItems();
-                if (rbPanels == null) {
-                    continue;
-                }
-                rightMenuItems.addAll(rbPanels);
-            }
-        }
-        return rightMenuItems;
+        return Collections.EMPTY_LIST;
     }
 
     //returns a list of tabs from all plugins
     @Deprecated
     public List<JPanel> getTabItems() {
         logger.info("getTabItems");
-        ArrayList<JPanel> panels = new ArrayList<>();
-
-        for (PluginSet set : pluginSets) {
-            Collection<GraphicalInterface> graphicalPlugins = set.getGraphicalPlugins();
-            if (graphicalPlugins == null) {
-                continue;
-            }
-            for (GraphicalInterface gpi : graphicalPlugins) {
-                ArrayList<JPanel> tPanels = gpi.getTabPanels();
-                if (tPanels == null) {
-                    continue;
-                }
-                panels.addAll(tPanels);
-            }
-        }
-        return panels;
+        return Collections.EMPTY_LIST;
     }
 
     @Deprecated
     public List<JMenuItem> getMenuItems() {
         logger.info("getMenuItems");
-        ArrayList<JMenuItem> items = new ArrayList<>();
-
-        for (PluginSet set : pluginSets) {
-            Collection<GraphicalInterface> graphicalPlugins = set.getGraphicalPlugins();
-            if (graphicalPlugins == null) {
-                continue;
-            }
-
-            for (GraphicalInterface gpi : graphicalPlugins) {
-                Collection<JMenuItem> setItems = gpi.getMenuItems();
-                if (setItems == null) {
-                    continue;
-                }
-                items.addAll(setItems);
-            }
-        }
-        return items;
+        return Collections.EMPTY_LIST;
     }
     
     // Methods for Web UI 

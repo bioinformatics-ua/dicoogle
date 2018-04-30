@@ -17,24 +17,25 @@ const QueryAdvancedOptionsModal = React.createClass({
     };
   },
   componentWillMount: function() {
-    ServicesStore.listen(this._onChange);
+    this.unsubscribe = ServicesStore.listen(this._onChange);
+  },
+  componentWillUnmount() {
+    this.unsubscribe();
   },
   componentDidMount: function() {
   },
   _onChange: function(data){
-    if (this.isMounted()) {
-      const querySettings = data.querySettings;
-      this.setState({
-        connectionTimeout: querySettings.connectionTimeout,
-        acceptTimeout: querySettings.acceptTimeout,
-        idleTimeout: querySettings.idleTimeout,
-        maxAssociations: querySettings.maxAssociations,
-        maxPduReceive: querySettings.maxPduReceive,
-        maxPduSend: querySettings.maxPduSend,
-        responseTimeout: querySettings.responseTimeout,
-        status: "done"
-      });
-    }
+    const querySettings = data.querySettings;
+    this.setState({
+      connectionTimeout: querySettings.connectionTimeout,
+      acceptTimeout: querySettings.acceptTimeout,
+      idleTimeout: querySettings.idleTimeout,
+      maxAssociations: querySettings.maxAssociations,
+      maxPduReceive: querySettings.maxPduReceive,
+      maxPduSend: querySettings.maxPduSend,
+      responseTimeout: querySettings.responseTimeout,
+      status: "done"
+    });
    },
   render: function() {
     return (<Modal {...this.props} bsStyle='primary' title='Query Retrieve - Advanced Settings' animation>

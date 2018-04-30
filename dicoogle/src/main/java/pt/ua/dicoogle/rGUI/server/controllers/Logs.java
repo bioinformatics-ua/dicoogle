@@ -119,7 +119,7 @@ public class Logs implements ILogs {
             }
         } catch (RemoteException ex) {
             //Logger.getLogger(Logs.class.getName()).log(Level.SEVERE, null, ex);
-            //DebugManager.getInstance().debug("Problem sending signal to log: 4");
+            //DebugManager.getSettings().debug("Problem sending signal to log: 4");
         }
         
         serverLog = null;
@@ -142,7 +142,7 @@ public class Logs implements ILogs {
             }
         } catch (IOException ex) {
             //Logger.getLogger(Logs.class.getName()).log(Level.SEVERE, null, ex);
-            //DebugManager.getInstance().debug("Problem sending signal to log: 1");
+            //DebugManager.getSettings().debug("Problem sending signal to log: 1");
         }
     }
 
@@ -154,7 +154,7 @@ public class Logs implements ILogs {
                 signalBack.sendLogSignal(0);
         } catch (RemoteException ex) {
             //Logger.getLogger(Logs.class.getName()).log(Level.SEVERE, null, ex);
-            //DebugManager.getInstance().debug("Problem sending signal to log: 2");
+            //DebugManager.getSettings().debug("Problem sending signal to log: 2");
         }
     }
 
@@ -182,7 +182,7 @@ public class Logs implements ILogs {
                 signalBack.sendLogSignal(2);
         } catch (RemoteException ex) {
             //Logger.getLogger(Logs.class.getName()).log(Level.SEVERE, null, ex);
-            //DebugManager.getInstance().debug("Problem sending signal to log: 3");
+            //DebugManager.getSettings().debug("Problem sending signal to log: 3");
         }
     }
 
@@ -191,7 +191,7 @@ public class Logs implements ILogs {
         partialDICOMLog.clear();
         LogDICOM.getInstance().clearLog();
 
-        //DebugManager.getInstance().debug("Clear DICOM Log");
+        //DebugManager.getSettings().debug("Clear DICOM Log");
     }
 
     @Override

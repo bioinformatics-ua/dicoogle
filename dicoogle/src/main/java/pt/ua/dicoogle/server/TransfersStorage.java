@@ -17,9 +17,7 @@
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
 package pt.ua.dicoogle.server;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.dcm4che2.data.UID;
 
@@ -137,7 +135,7 @@ public class TransfersStorage {
     public String [] getVerboseTS()
     {
         int i, count =0;
-        String [] return_value = null;
+        String [] return_value = new String[0];
         for(i= 0; i<14; i++)
         {
             if(TS[i])
@@ -221,5 +219,9 @@ public class TransfersStorage {
             }
         }        
         return return_value;        
+    }
+
+    public List<String> asList() {
+        return Arrays.asList(this.getVerboseTS());
     }
 }

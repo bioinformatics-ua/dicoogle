@@ -44,17 +44,18 @@ const IndexerView = React.createClass({
       componentWillMount: function() {
         // Subscribe to the store
          console.log("subscribe listener");
-         IndexerStore.listen(this._onChange);
+         this.unsubscribe = IndexerStore.listen(this._onChange);
+      },
+      componentWillUnmount() {
+        this.unsubscribe();
       },
       _onChange: function(data){
-        if (this.isMounted()){
-          console.log(data);
-          var nState = {data: data.data, status: "done"};
-          if (data.data.watcher) {
-            nState.currentWatch = data.data.watcher;
-          }
-          this.setState(nState);
+        console.log(data);
+        var nState = {data: data.data, status: "done"};
+        if (data.data.watcher) {
+          nState.currentWatch = data.data.watcher;
         }
+        this.setState(nState);
       },
       onToggleWatcher() {
         this.setState({currentWatch: !this.state.currentWatch});

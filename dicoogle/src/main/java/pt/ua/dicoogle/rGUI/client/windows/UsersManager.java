@@ -278,7 +278,7 @@ public class UsersManager extends javax.swing.JFrame {
                 jCheckBox.setSelected(userManager.isAdmin(username));
                 
                 jCheckBox.setEnabled(false);
-                //jPasswordField.setEnabled(false);
+                //jPasswordField.setAutostart(false);
                 jButtonAdd.setEnabled(false);
                 jButtonRemove.setEnabled(true);
             }

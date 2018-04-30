@@ -28,14 +28,13 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.net.URL;
 import java.util.concurrent.Semaphore;
-import org.slf4j.Logger;
+
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import pt.ua.dicoogle.core.ClientSettings;
+import pt.ua.dicoogle.core.settings.ClientSettings;
 import pt.ua.dicoogle.core.XMLClientSupport;
 import pt.ua.dicoogle.server.users.HashService;
 

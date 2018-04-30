@@ -24,13 +24,14 @@ const TransferOptionsView = React.createClass({
       componentWillMount() {
          // Subscribe to the store.
          console.log("subscribe listener");
-         TransferStore.listen(this._onChange);
+         this.unsubscribe = TransferStore.listen(this._onChange);
+      },
+      componentWillUnmount() {
+        this.unsubscribe();
       },
       _onChange (data){
-        if (this.isMounted()){
-          console.log(data);
-          this.setState({data: data, status: "done"});
-        }
+        console.log(data);
+        this.setState({data: data, status: "done"});
       },
       render () {
         if(this.state.status === "loading")

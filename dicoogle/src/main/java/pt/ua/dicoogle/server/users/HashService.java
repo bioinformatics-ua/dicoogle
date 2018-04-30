@@ -19,13 +19,12 @@
 package pt.ua.dicoogle.server.users;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import org.slf4j.Logger;
+
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import sun.misc.BASE64Encoder;
 
 /**
  * This class provides hashing service to passwords with SHA-1 algoritm
@@ -44,16 +43,15 @@ public class HashService {
             MessageDigest md = MessageDigest.getInstance("SHA-1");
             md.update(plaintext.getBytes("UTF-8"));
             byte[] raw = md.digest();
-
-            String hash = (new BASE64Encoder()).encode(raw);
+            byte[] asbase64 = Base64.encodeBase64(raw);
+            String hash = new String(asbase64, Charset.forName("UTF-8"));
             return hash;
-            
-        } catch (UnsupportedEncodingException ex) {
-            LoggerFactory.getLogger(HashService.class).error(ex.getMessage(), ex);
-        } catch (NoSuchAlgorithmException ex) {
-            LoggerFactory.getLogger(HashService.class).error(ex.getMessage(), ex);
+
+        } catch (UnsupportedEncodingException|NoSuchAlgorithmException ex) {
+            LoggerFactory.getLogger(HashService.class).error("Failed to encode text", ex);
         }
 
         return null;
     }
+
 }
