@@ -19,20 +19,20 @@ const DirectDumpView = React.createClass({
   },
   componentWillMount: function() {
     // Subscribe to the store.
-    DumpStore.listen(this._onChange);
+    this.unsubscribe = DumpStore.listen(this._onChange);
+  },
+  componentWillUnmount() {
+    this.unsubscribe();
   },
   componentDidUpdate: function(){
     $('#dumptable').dataTable({paging: false, searching: false, info: false, responsive: false});
   },
 
   _onChange(data) {
-    if (this.isMounted())
-    {
-      this.setState({
-        data,
-        status: "stopped"
-      });
-    }
+    this.setState({
+      data,
+      status: "stopped"
+    });
   },
 
 	render() {

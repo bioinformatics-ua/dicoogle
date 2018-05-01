@@ -140,6 +140,60 @@ public class PluginsServlet extends HttpServlet {
         }
     }
 
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        List<String> pathParts = sanitizedSubpathParts(req);
+
+        // the format must be /<type>/<name>/(enable|disable)
+        if (pathParts.size() != 3) {
+            sendError(resp, 400, "Illegal plugin request URI: wrong resource path size");
+            return;
+        }
+
+        String type = pathParts.get(0);
+        String name = pathParts.get(1);
+        String action = pathParts.get(2);
+
+        final PluginController pc = PluginController.getInstance();
+        DicooglePlugin plugin;
+
+        switch (type) {
+            case "index":
+                plugin = pc.getIndexerByName(name, false);
+                break;
+            case "query":
+                plugin = pc.getQueryProviderByName(name, false);
+                break;
+            case "servlet":
+                plugin = pc.getServletByName(name, false);
+                break;
+            case "storage":
+                plugin = pc.getStorageByName(name, false);
+                break;
+            default:
+                sendError(resp, 400, "Illegal plugin request type");
+                return;
+        }
+
+        if (plugin == null) {
+            sendError(resp, 400, "Illegal plugin request name");
+            return;
+        }
+
+        if (action.equals("enable")) {
+            if (!plugin.enable()) {
+                sendError(resp, 500, "Could not enable plugin");
+            }
+        } else if (action.equals("disable")) {
+            if (!plugin.disable()) {
+                sendError(resp, 500, "Could not disable plugin");
+            }
+
+        } else {
+            sendError(resp, 400, "Illegal plugin request action");
+        }
+    }
+
     private static <T extends DicooglePlugin> List<T> sorted(Collection<T> col) {
         final Comparator<DicooglePlugin> byEnabledThenName = new Comparator<DicooglePlugin>() {
             @Override

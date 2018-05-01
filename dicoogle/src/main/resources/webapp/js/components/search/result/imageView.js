@@ -11,26 +11,28 @@ import {DumpActions} from '../../../actions/dumpActions';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import {Input} from 'react-bootstrap';
 import ResultSelectActions from '../../../actions/resultSelectAction';
-import {UserStore} from '../../../stores/userStore';
+import UserStore from '../../../stores/userStore';
 
 const ImageView = React.createClass({
-    getInitialState: function() {
-      // We need this because refs are not updated in BootstrapTable.
-      this.refsClone = {};
-      return {data: [],
-        image: null,
-        dump: null,
-        status: "loading",
-        unindexSelected: null,
-        removeSelected: null
-      };
-    },
+  getInitialState: function() {
+    // We need this because refs are not updated in BootstrapTable.
+    this.refsClone = {};
+    return {data: [],
+      image: null,
+      dump: null,
+      status: "loading",
+      unindexSelected: null,
+      removeSelected: null
+    };
+  },
 
-    componentWillMount: function() {
-      // Subscribe to the store.
-      SearchStore.listen(this._onChange);
-      ResultSelectActions.clear();
-    },
+  componentWillMount: function() {
+    this.unsubscribe = SearchStore.listen(this._onChange);
+    ResultSelectActions.clear();
+  },
+  componentWillUnmount() {
+    this.unsubscribe();
+  },
 
 
   /**
@@ -207,42 +209,34 @@ const ImageView = React.createClass({
       );
 	},
   onHideDump() {
-    if (this.isMounted())
-      this.setState({dump: null});
+    this.setState({dump: null});
   },
   onHideImage() {
-    if (this.isMounted())
-      this.setState({image: null});
+    this.setState({image: null});
   },
   showDump(uid) {
-    if (this.isMounted())
-      this.setState({dump: uid, image: null, unindexSelected: null});
-      DumpActions.get(uid);
+    this.setState({dump: uid, image: null, unindexSelected: null});
+    DumpActions.get(uid);
   },
   showImage(uid) {
-    if (this.isMounted())
-      this.setState({dump: null, image: uid, unindexSelected: null});
+    this.setState({dump: null, image: uid, unindexSelected: null});
   },
   hideUnindex() {
-    if (this.isMounted())
-      this.setState({
-        unindexSelected: null
-      });
+    this.setState({
+      unindexSelected: null
+    });
   },
   showUnindex(item) {
-    if (this.isMounted())
-      this.setState({
-        unindexSelected: item, dump: null, image: null
-      });
+    this.setState({
+      unindexSelected: item, dump: null, image: null
+    });
   },
   hideRemove() {
-    if (this.isMounted())
-      this.setState({
-        removeSelected: null
-      });
+    this.setState({
+      removeSelected: null
+    });
   },
   showRemove(item) {
-      if (this.isMounted())
     this.setState({
       removeSelected: item, dump: null, image: null
     });
@@ -260,13 +254,10 @@ const ImageView = React.createClass({
     ActionCreators.remove(uris);
   },
     _onChange: function(data){
-      if (this.isMounted())
-      {
-        this.setState({data: data.data,
-          status: "stopped",
-          success: data.success
-        });
-      }
+      this.setState({data: data.data,
+        status: "stopped",
+        success: data.success
+      });
     }
 });
 
@@ -279,13 +270,14 @@ var PopOverView = React.createClass({
   },
   componentWillMount: function() {
     // Subscribe to the store.
-    DumpStore.listen(this._onChange);
+    this.unsubscribe = DumpStore.listen(this._onChange);
+  },
+  componentWillUnmount() {
+    this.unsubscribe();
   },
 
   _onChange: function(data){
-    if (this.isMounted()) {
-      this.setState({data, status: "stopped"});
-    }
+    this.setState({data, status: "stopped"});
   },
 
   onHide () {

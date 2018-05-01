@@ -1,7 +1,10 @@
 import {Endpoints} from '../constants/endpoints';
+import dicoogleClient from 'dicoogle-client'
 import $ from 'jquery';
 
-function getPatients(freetext, isKeyword, provider, callbackSucccess, callbackError){
+const client = dicoogleClient();
+
+function getPatients(freetext, provider, callbackSucccess, callbackError){
         console.log("store param: ", freetext);
         // ??? use dicoogle client?
 
@@ -9,10 +12,9 @@ function getPatients(freetext, isKeyword, provider, callbackSucccess, callbackEr
         if(freetext.length === 0)
         {
           freetext = "*:*";
-          isKeyword = true;
         }
 
-        var url = Endpoints.base + '/searchDIM?query=' + freetext + '&keyword=' + isKeyword;
+        var url = Endpoints.base + '/searchDIM?query=' + freetext;
         if(provider !== "all")
         {
           provider = Array.prototype.concat.apply([], provider);
@@ -193,17 +195,8 @@ function saveIndexOptions(path, watcher, zip, saveThumbnail, effort, thumbnailSi
 
 }
 
-function forceIndex(uri){
-  //console.log(state);
-  // TODO use dicoogle client
-  $.post(Endpoints.base + "/management/tasks/index",
-  {
-    uri: uri
-  },
-  function(data, status){
-    //Response
-    console.log("Status:", status);
-  });
+function forceIndex(uri, providers){
+  client.index(uri, providers, error => console.log("Status:", error.status));
 }
 
 export {

@@ -34,15 +34,12 @@ import pt.ua.dicoogle.sdk.core.PlatformCommunicatorInterface;
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Luís S. Ribeiro
  */
-public abstract class PluginBase implements PluginSet, PlatformCommunicatorInterface{
+public abstract class PluginBase implements PluginSet, PlatformCommunicatorInterface {
     
 	protected List<IndexerInterface> indexPlugins = new ArrayList<>();
-    protected List<GraphicalInterface> graphicPlugins = new ArrayList<>();
     protected List<QueryInterface> queryPlugins = new ArrayList<>();
     protected List<JettyPluginInterface> jettyPlugins = new ArrayList<>();
-    //protected List<StorageInterface> storagePlugins = new ArrayList<>();
-    protected List<StorageInterface> storagePlugins = new LinkedList<>();
-    
+    protected List<StorageInterface> storagePlugins = new ArrayList<>();
     protected List<ServerResource> services = new ArrayList<>();
     protected ConfigurationHolder settings = null;
     
@@ -53,18 +50,10 @@ public abstract class PluginBase implements PluginSet, PlatformCommunicatorInter
         return indexPlugins;
     }
 
- 
-    @Override
-    public List<GraphicalInterface> getGraphicalPlugins() {
-        return graphicPlugins;
-    }
-
-
     @Override
     public List<QueryInterface> getQueryPlugins() {
         return queryPlugins;
     }
-
    
     @Override
     public List<ServerResource> getRestPlugins() {
@@ -88,12 +77,6 @@ public abstract class PluginBase implements PluginSet, PlatformCommunicatorInter
     public void setSettings(ConfigurationHolder xmlSettings){
         settings = xmlSettings;
     }
-    
-    @Override
-    public void shutdown(){
-        
-        //settings.save();
-    }
 
     @Override
     public Collection<StorageInterface> getStoragePlugins() 
@@ -105,5 +88,4 @@ public abstract class PluginBase implements PluginSet, PlatformCommunicatorInter
 	public void setPlatformProxy(DicooglePlatformInterface core) {
 		this.platform = core;
 	}
-    
 }

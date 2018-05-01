@@ -17,13 +17,13 @@ const ExportView = React.createClass({
 	componentWillMount: function() {
 		// Subscribe to the store.
 		console.log("subscribe listener");
-		ExportStore.listen(this._onChange);
+		this.unsubscribe = ExportStore.listen(this._onChange);
 	},
+  componentWillUnmount() {
+    this.unsubscribe();
+  },
 	_onChange: function(data){
-		if (this.isMounted()){
-
-			this.setState({data: data.data, status: "done"});
-		}
+		this.setState({data: data.data, status: "done"});
 	},
 
 	render: function(){
