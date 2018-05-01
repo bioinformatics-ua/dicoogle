@@ -400,7 +400,7 @@
   /* Fallback color for IE 8 */
   border-left: 1px solid rgba(0, 126, 255, 0.24);
 }
-.Select--multi.is-disabled .Select-value {
+.Select--multi.is-disabled .Select-value {DicoogleWeb.java
   background-color: #fcfcfc;
   border: 1px solid #e3e3e3;
   color: #333;
