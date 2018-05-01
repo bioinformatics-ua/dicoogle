@@ -5,7 +5,7 @@ import {Endpoints} from '../constants/endpoints';
 import {getDICOMFieldList} from '../handlers/requestHandler';
 
 import dicoogleClient from 'dicoogle-client';
-import {UserStore} from "./userStore";
+import UserStore from "./userStore";
 
 const ExportStore = Reflux.createStore({
     listenables: ExportActions,
