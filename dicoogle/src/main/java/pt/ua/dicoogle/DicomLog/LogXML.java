@@ -25,7 +25,7 @@ package pt.ua.dicoogle.DicomLog;
 import java.io.*;
 // SAX classes.
 
-//JAXP 
+//JAXP
 import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
 import javax.xml.transform.sax.*;

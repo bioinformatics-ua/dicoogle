@@ -252,7 +252,7 @@ public class Logs extends JFrame {
                 logs.clearServerLog();
             } else if(jTabbedPane1.getSelectedIndex() == 1) {
 
-                //LogDICOM.getInstance().clearLog();
+                //LogDICOM.getSettings().clearLog();
                 logs.clearDICOMLog();
 
                 topLog = new DefaultMutableTreeNode("Logging..");

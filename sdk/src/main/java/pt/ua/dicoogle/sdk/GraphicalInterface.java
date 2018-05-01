@@ -31,7 +31,7 @@ import javax.swing.JPanel;
  * @author Frederico Valente
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * 
- * @deprecated The remote Swing-based GUI is outdated and will no longer be supported.
+ * @deprecated The remote Swing-based GUI is outdated and is no longer supported.
  */
 @Deprecated
 public interface GraphicalInterface extends DicooglePlugin

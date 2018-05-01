@@ -20,6 +20,8 @@ package pt.ua.dicoogle.sdk;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Objects;
+
 import org.dcm4che2.data.DicomObject;
 import org.dcm4che2.io.DicomInputStream;
 
@@ -45,7 +47,10 @@ public interface StorageInterface extends DicooglePlugin {
      * @param location a URI containing a scheme to be verified
      * @return true if this storage plugin is in charge of URIs in the given form 
      */
-    public boolean handles(URI location);
+    @Deprecated
+    public default boolean handles(URI location) {
+        return Objects.equals(this.getScheme(), location.getScheme());
+    }
     
     /**
      * Provides a means of iteration over existing objects at a specified location.

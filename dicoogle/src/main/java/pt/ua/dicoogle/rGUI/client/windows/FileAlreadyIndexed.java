@@ -247,7 +247,7 @@ public class FileAlreadyIndexed extends javax.swing.JFrame {
 
         /*if (showTaskList)
         {
-            TaskList tasks = TaskList.getInstance();
+            TaskList tasks = TaskList.getSettings();
             tasks.setVisible(true);
             tasks.toFront();
         }*/

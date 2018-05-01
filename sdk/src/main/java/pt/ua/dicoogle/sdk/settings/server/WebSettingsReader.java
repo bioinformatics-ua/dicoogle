@@ -17,17 +17,9 @@
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package pt.ua.dicoogle.sdk.core;
+package pt.ua.dicoogle.sdk.settings.server;
 
 /** A read-only interface for accessing web server settings.
  *
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
-public interface WebSettingsReader {
-
-    public boolean isWebServer();
-    
-    public int getServerPort();
-    
-    public String getAllowedOrigins();
-}
