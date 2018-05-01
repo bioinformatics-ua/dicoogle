@@ -367,8 +367,8 @@ public class Result2Tree extends Observable
         if (level == 2)
         {
             // Study
-            //DebugManager.getInstance().debug("Study");
-            //System.out.println("PatientName:" + evt.getPath().getPathComponent(1));
+            //DebugManager.getSettings().debug("Study");
+            //System.out.println("PatientName:" + evt.getWatchDirectory().getPathComponent(1));
             LoggerFactory.getLogger(Result2Tree.class).trace("level 2");
             DefaultMutableTreeNode patient_name = (DefaultMutableTreeNode) evt.getPath().getPathComponent(1);
 
@@ -383,8 +383,8 @@ public class Result2Tree extends Observable
         } else if (level == 3)
         {
             // Serie
-            //DebugManager.getInstance().debug("Serie");
-            //System.out.println("Study Date:" + evt.getPath().getPathComponent(2));
+            //DebugManager.getSettings().debug("Serie");
+            //System.out.println("Study Date:" + evt.getWatchDirectory().getPathComponent(2));
             LoggerFactory.getLogger(Result2Tree.class).trace("completeTree - level 3");
             DefaultMutableTreeNode study_date = (DefaultMutableTreeNode) evt.getPath().getPathComponent(2);
 
@@ -395,8 +395,8 @@ public class Result2Tree extends Observable
         } else if (level == 4)
         {
             // Image
-            //DebugManager.getInstance().debug("Image");
-            //System.out.println("Modality:" + evt.getPath().getPathComponent(3));
+            //DebugManager.getSettings().debug("Image");
+            //System.out.println("Modality:" + evt.getWatchDirectory().getPathComponent(3));
             LoggerFactory.getLogger(Result2Tree.class).trace("completeTree - level 4");
             DefaultMutableTreeNode modality = (DefaultMutableTreeNode) evt.getPath().getPathComponent(3);
 

@@ -24,13 +24,13 @@ const LoggerView = React.createClass({
   componentWillMount: function() {
      // Subscribe to the store.
      console.log("subscribe listener");
-     LoggerStore.listen(this._onChange);
+     this.unsubscribe = LoggerStore.listen(this._onChange);
    },
+  componentWillUnmount() {
+    this.unsubscribe();
+  },
   _onChange: function(data){
-    if (this.isMounted()){
-
-      this.setState({data: data.data, status: "done"});
-    }
+    this.setState({data: data.data, status: "done"});
   },
       render: function() {
         if(this.state.status === "loading"){

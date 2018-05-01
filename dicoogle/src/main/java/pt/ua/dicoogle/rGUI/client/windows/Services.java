@@ -323,7 +323,7 @@ public class Services extends javax.swing.JFrame
         );
 
         Services.serv = AdminRefs.getInstance().getServices();
-      //  Services.networkInterfaces = AdminRefs.getInstance().getNetworkInterfaces();
+      //  Services.networkInterfaces = AdminRefs.getSettings().getNetworkInterfaces();
         Services.plugin = AdminRefs.getInstance().getPluginController();
         Image image = Toolkit.getDefaultToolkit().getImage(Thread.currentThread().getContextClassLoader().getResource("trayicon.gif"));
         this.setIconImage(image);
