@@ -1,73 +1,63 @@
 import Reflux from 'reflux';
-import $ from 'jquery';
 
 import {ExportActions} from '../actions/exportActions';
 import {Endpoints} from '../constants/endpoints';
-import {request} from '../handlers/requestHandler';
+import {getDICOMFieldList} from '../handlers/requestHandler';
+
+import dicoogleClient from 'dicoogle-client';
 
 const ExportStore = Reflux.createStore({
     listenables: ExportActions,
     init: function () {
-       this._contents = {};
+      this._contents = {};
+
+      this.dicoogle = dicoogleClient();
     },
 
     onGetFieldList: function(data){
       var self = this;
-      var url = Endpoints.base + "/export/list";
-      request(url,
-        function(data){
-          //SUCCESS
-          //console.log("success", data);
-          self._contents = data;
 
-
+      getDICOMFieldList((error, data) => {
+        if (error) {
           self.trigger({
-            data: self._contents,
-            success: true
+            success: false,
+            status: error.status
           });
-        },
-        function(xhr){
-          //FAILURE
-          self.trigger({
-              success: false,
-              status: xhr.status
-            });
+          return;
         }
-      );
+
+        // console.log("success", data);
+        self._contents = data;
+        self.trigger({
+          data: self._contents,
+          success: true
+        });
+      });
     },
 
-    onExportCSV: function(data, fields){
-
+    onExportCSV: function(data, fields) {
       let {text, keyword, provider} = data;
-      if(text.length === 0)
-      {
+      if(text.length === 0) {
         text = "*:*";
         keyword = true;
       }
 
-      $.ajax({
-        method: "POST",
-        url: Endpoints.base + "/exportFile",
-        traditional: true,
-        data: {
-          query: text,
-          keyword,
-          fields: JSON.stringify(fields),
-          providers: provider
+      this.dicoogle.issueExport(text, fields, {keyword, provider}, (error, id) => {
+        if (error) {
+          console.error("Failed to issue the export:", error);
+          return;
         }
-      }).then((data, status) => {
-          // create a download link and trigger it automatically
-          const response = JSON.parse(data);
-          const link = document.createElement("a");
-          const hacked_footer = document.getElementById("hacked-modal-footer");
-          link.style.visibility = "hidden";
-          link.download = "file";
-          link.href = Endpoints.base + "/exportFile?UID=" + response.uid;
-          hacked_footer.appendChild(link);
-          link.click();
-          hacked_footer.removeChild(link);
-      });
 
+        // create a download link and trigger it automatically
+        const link = document.createElement("a");
+        const hacked_footer = document.getElementById("hacked-modal-footer-do-not-remove");
+        link.style.visibility = "hidden";
+        link.download = "file";
+        link.href = Endpoints.base + "/exportFile?UID=" + id;
+        hacked_footer.appendChild(link);
+        link.click();
+        hacked_footer.removeChild(link);
+      });
     }
 });
 
