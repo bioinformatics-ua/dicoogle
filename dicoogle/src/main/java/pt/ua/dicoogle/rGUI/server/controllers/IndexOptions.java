@@ -63,7 +63,6 @@ public class IndexOptions implements IIndexOptions {
             }
             sem.release();
         } catch (InterruptedException ex) {
-            LoggerFactory.getLogger(QRServers.class).error(ex.getMessage(), ex);
         }
         return instance;
     }
@@ -105,7 +104,7 @@ public class IndexOptions implements IIndexOptions {
 
     @Override
     public HashMap<String, ArrayList<TagValue>> getDIMFields() throws RemoteException {
-        //DebugManager.getInstance().debug("Getting DIM Fields");        
+        //DebugManager.getSettings().debug("Getting DIM Fields");
         /** Get groups **/
         HashMap<String, ArrayList<TagValue>> groupTable = new HashMap<String, ArrayList<TagValue>>();      
         for(TagValue tag : tags.getDIMFields()){
@@ -148,7 +147,7 @@ public class IndexOptions implements IIndexOptions {
         /** Get groups **/
         HashMap<String, ArrayList<TagValue>> groupTable = new HashMap<String, ArrayList<TagValue>>();
         for (TagValue tag : tags.getOtherFields()) {
-            //DebugManager.getInstance().debug(">> Grouping the Others Tags in MainWindow Notebook");
+            //DebugManager.getSettings().debug(">> Grouping the Others Tags in MainWindow Notebook");
 
             if (groupTable.containsKey(tag.getGroup())) {
                 groupTable.get(String.valueOf(tag.getGroup())).add(tag);
@@ -231,7 +230,7 @@ public class IndexOptions implements IIndexOptions {
                     try {
                         PluginController.getInstance().index(new URI(Path));
                     } catch (URISyntaxException ex) {
-                        LoggerFactory.getLogger(DirectorySettings.class).error(ex.getMessage(), ex);
+                        LoggerFactory.getLogger(IndexOptions.class).error(ex.getMessage(), ex);
                     }
             }
         }
@@ -260,7 +259,7 @@ public class IndexOptions implements IIndexOptions {
                     try {
                         PluginController.getInstance().index(new URI(Path));
                     } catch (URISyntaxException ex) {
-                        LoggerFactory.getLogger(DirectorySettings.class).error(ex.getMessage(), ex);
+                        LoggerFactory.getLogger(IndexOptions.class).error(ex.getMessage(), ex);
                     }
                 
                     if (delete)

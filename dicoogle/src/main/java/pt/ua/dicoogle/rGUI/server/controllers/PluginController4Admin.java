@@ -55,7 +55,7 @@ public class PluginController4Admin implements IPluginControllerAdmin
     	//return null;
         return new ArrayList();
         //TODO DELETED
-        //return PluginController.getInstance().getPluginsNames();
+        //return PluginController.getSettings().getPluginsNames();
     }
 
     @Override
@@ -64,7 +64,7 @@ public class PluginController4Admin implements IPluginControllerAdmin
 
     	return ;
         //TODO DELETED
-        //PluginController.getInstance().setSettings(settings);
+        //PluginController.getSettings().setSettings(settings);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class PluginController4Admin implements IPluginControllerAdmin
 
     	return ;
         //TODO DELETED
-        //PluginController.getInstance().initializePlugin(PluginName);
+        //PluginController.getSettings().initializePlugin(PluginName);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class PluginController4Admin implements IPluginControllerAdmin
 
     	return false;
         //TODO DELETED
-        //return PluginController.getInstance().isPluginRunning(PluginName);
+        //return PluginController.getSettings().isPluginRunning(PluginName);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class PluginController4Admin implements IPluginControllerAdmin
 
     	return false;
         //TODO DELETED
-       // return PluginController.getInstance().isLocalPlugin(PluginName);
+       // return PluginController.getSettings().isLocalPlugin(PluginName);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class PluginController4Admin implements IPluginControllerAdmin
 
     	return null;
         //TODO DELETED
-       // return PluginController.getInstance().getPanelInitialParams();
+       // return PluginController.getSettings().getPanelInitialParams();
     }
 
     @Override
@@ -114,7 +114,7 @@ public class PluginController4Admin implements IPluginControllerAdmin
     {
     	return null;
         //TODO DELETED
-        //return PluginController.getInstance().getJarFile(PluginName);
+        //return PluginController.getSettings().getJarFile(PluginName);
     }
 
     @Override
@@ -123,7 +123,7 @@ public class PluginController4Admin implements IPluginControllerAdmin
 
     	return ;
         //TODO DELETED
-       //PluginController.getInstance().saveSettings();
+       //PluginController.getSettings().saveSettings();
     }
 
 }

@@ -267,7 +267,7 @@ public class QRServers extends javax.swing.JFrame {
             m.clear();
 
             for (MoveDestination s : qrserv.getMoves()) {
-                //DebugManager.getInstance().debug(s.getAETitle());
+                //DebugManager.getSettings().debug(s.getAETitle());
 
                 int pos = jListQRMoveDest.getModel().getSize();
                 m.add(pos, s.getAETitle());
@@ -364,10 +364,10 @@ public class QRServers extends javax.swing.JFrame {
         /*
         }
         else{
-            ServerOptions serverOptions = ServerOptions.getInstance();
+            ServerOptions serverOptions = ServerOptions.getSettings();
 
             serverOptions.toFront();
-            serverOptions.setEnabled(true);
+            serverOptions.setAutostart(true);
         }
          *
          */

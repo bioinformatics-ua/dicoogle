@@ -45,9 +45,13 @@ const IndexStatusView = React.createClass({
          //Stop refresh interval
          clearInterval(refreshIntervalId);
 
+
          this.unsubscribeProviders();
          this.unsubscribeIndexStatus();
          this.unsubscribePlugin();
+
+         //this.unsubscribe();
+
        },
       update: function(){
         IndexStatusActions.get();
@@ -61,7 +65,8 @@ const IndexStatusView = React.createClass({
        },
       _onChange: function(data){
           this.setState({data: data.data, status: "done"});
-      },
+         //this.unsubscribe = IndexStatusStore.listen(this._onChange);
+       },
       render: function() {
         if(this.state.status === "loading"){
           return (<div className="loader-inner ball-pulse">

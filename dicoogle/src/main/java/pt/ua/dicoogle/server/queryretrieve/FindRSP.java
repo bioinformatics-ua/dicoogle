@@ -82,13 +82,13 @@ public class FindRSP implements DimseRSP
         /** Debug - show keys, rsp, index */ 
         if (keys!=null)
         {
-            //DebugManager.getInstance().debug("keys object: ");
-            //DebugManager.getInstance().debug(keys.toString());
+            //DebugManager.getSettings().debug("keys object: ");
+            //DebugManager.getSettings().debug(keys.toString());
         }
         if (rsp!=null)
         {
-            //DebugManager.getInstance().debug("Rsp object");
-            //DebugManager.getInstance().debug(rsp.toString());
+            //DebugManager.getSettings().debug("Rsp object");
+            //DebugManager.getSettings().debug(rsp.toString());
         }
         
         /** 
@@ -189,7 +189,7 @@ public class FindRSP implements DimseRSP
 
          if (search == null)
          {
-            //DebugManager.getInstance().debug(">> Search is null, so" +
+            //DebugManager.getSettings().debug(">> Search is null, so" +
             //        " somethig is wrong ");
          }
          
@@ -253,7 +253,7 @@ public class FindRSP implements DimseRSP
         {
             if (search.hasNext())
             {
-                    //DebugManager.getInstance().debug("We have next, so get it");
+                    //DebugManager.getSettings().debug("We have next, so get it");
                     mwl = search.next();
                     //if (mwl.matches(this.keys, true))
                     //{
@@ -299,7 +299,7 @@ public class FindRSP implements DimseRSP
     @Override
     public DicomObject getDataset() 
     {
-        //DebugManager.getInstance().debug("Get Data Set");
+        //DebugManager.getSettings().debug("Get Data Set");
         return  this.mwl != null ? this.mwl.subSet(this.keys) : null;
     }
 
