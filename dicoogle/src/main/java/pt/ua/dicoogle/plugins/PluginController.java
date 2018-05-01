@@ -467,7 +467,7 @@ public class PluginController{
     			return p;
     		}
     	}
-    	logger.error("Could not retrive query provider {} for onlyEnabled = {}", name, onlyEnabled);
+    	logger.debug("Could not retrieve query provider {} for onlyEnabled = {}", name, onlyEnabled);
     	return null;
     }
     
@@ -480,7 +480,7 @@ public class PluginController{
     			return p;
     		}
     	}
-    	logger.error("No indexer matching name {} for onlyEnabled = {}", name, onlyEnabled);
+    	logger.debug("No indexer matching name {} for onlyEnabled = {}", name, onlyEnabled);
     	return null;
     }
 
