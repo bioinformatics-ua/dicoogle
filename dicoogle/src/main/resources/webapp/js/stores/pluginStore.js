@@ -2,8 +2,11 @@ import Reflux from 'reflux';
 import {Endpoints} from '../constants/endpoints';
 import * as PluginActions from "../actions/pluginActions";
 
+//import {request} from '../handlers/requestHandler';
+
 import dicoogleClient from 'dicoogle-client';
 const Dicoogle = dicoogleClient(Endpoints.base);
+
 
 const PluginStore = Reflux.createStore({
   listenables: PluginActions,
@@ -13,6 +16,7 @@ const PluginStore = Reflux.createStore({
 
   onGet: function(type) {
     const self = this;
+
 
     Dicoogle.request('GET', ['plugins', type],
       (error, data) => {

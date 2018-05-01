@@ -1,5 +1,8 @@
 import {Endpoints} from '../constants/endpoints';
+import dicoogleClient from 'dicoogle-client'
 import $ from 'jquery';
+
+const client = dicoogleClient();
 
 function getPatients(freetext, provider, callbackSucccess, callbackError){
         console.log("store param: ", freetext);
@@ -192,17 +195,8 @@ function saveIndexOptions(path, watcher, zip, saveThumbnail, effort, thumbnailSi
 
 }
 
-function forceIndex(uri){
-  //console.log(state);
-  // TODO use dicoogle client
-  $.post(Endpoints.base + "/management/tasks/index",
-  {
-    uri: uri
-  },
-  function(data, status){
-    //Response
-    console.log("Status:", status);
-  });
+function forceIndex(uri, providers){
+  client.index(uri, providers, error => console.log("Status:", error.status));
 }
 
 export {
