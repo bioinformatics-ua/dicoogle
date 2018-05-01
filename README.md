@@ -144,7 +144,7 @@ We also have programmatic APIs for interfacing with Dicoogle in [JavaScript](htt
 
 Before building, please make sure that your system contains the following tools:
 
- - Java JDK, either Oracle or OpenJDK (at least version 7; JDK 8 is recommended)
+ - Java JDK, either Oracle or OpenJDK (at least version 8)
  - Maven 3
  - [Node.js](https://nodejs.org/en/download/) (at least version 4; LTS or Stable versions are recommended) and npm (at least version 2)
 
