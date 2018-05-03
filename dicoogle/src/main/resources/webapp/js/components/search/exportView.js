@@ -15,6 +15,7 @@ const ExportView = React.createClass({
 
       selectedFields: [],
       selectedPresetName: null,
+      selectedFieldsAdditionals: "",
       exportPresetName: "default",
 
       actionPerformed: false,
@@ -100,9 +101,20 @@ const ExportView = React.createClass({
                     placeholder="Choose fields"
                     onChange={this.handleFieldSelect}
             />
-					</FormGroup>
+          </FormGroup>
+              <FormGroup>
+                  <ControlLabel>Inline fields to export (optional):</ControlLabel>
+
+                <div className='modal-body'>
+                  <textarea id="textFields" placeholder="Paste export fields here (one per line)" onChange={this.handleFieldSelectTextArea}
+                    rows="10" value={this.state.selectedFieldsAdditionals} className="exportlist form-control"></textarea>
+              </div>
+
+            </FormGroup>
+
 				</Modal.Body>
 				<Modal.Footer id="hacked-modal-footer-do-not-remove">
+
           <Form inline>
             <FormControl
               type="text"
@@ -111,6 +123,8 @@ const ExportView = React.createClass({
               onChange={this.handlePresetNameChange}
               maxLength="100"
             />
+
+
             <Button bsStyle="default" onClick={this.handleSavePresetClicked} disabled={!this.canExport()}>Save Preset</Button>
             <Button bsStyle="primary" onClick={this.handleExportClicked} disabled={!this.canSave()}>Export</Button>
           </Form>
@@ -131,11 +145,21 @@ const ExportView = React.createClass({
     callback(null, data);
   },
 
+  handleFieldSelectTextArea: function(event){
+
+      this.setState({
+          selectedFieldsAdditionals: event.target.value
+      });
+  },
+
+
   handleFieldSelect: function(selectedFields) {
     this.setState({
       selectedFields: selectedFields
     });
   },
+
+
 
   handlePresetSelect: function(name) {
 	// default values if no preset is selected
@@ -151,7 +175,8 @@ const ExportView = React.createClass({
     this.setState({
       exportPresetName: exportPresetName,
       selectedPresetName: name,
-      selectedFields: selectedFields
+      selectedFields: selectedFields,
+      selectedFieldsAdditionals: ""
     });
   },
 
@@ -160,9 +185,18 @@ const ExportView = React.createClass({
       exportPresetName: e.target.value
     });
   },
+  __getSelectedFields: function() {
+      let fields = this.state.selectedFields.map(i => (i.value));
+      if (this.state.selectedFieldsAdditionals !== ""){
+          let fieldsInline = this.state.selectedFieldsAdditionals.split("\n");
+          fields = fields.concat(fieldsInline);
+      }
 
+      return fields;
+  },
   handleSavePresetClicked: function() {
-    ExportActions.savePresets(this.state.exportPresetName, this.state.selectedFields.map(i => (i.value)));
+	let fields = this.__getSelectedFields();
+    ExportActions.savePresets(this.state.exportPresetName, fields);
 
     this.setState({
       selectedPresetName: this.state.exportPresetName,
@@ -171,13 +205,14 @@ const ExportView = React.createClass({
   },
 
   handleExportClicked: function() {
-    let fields = this.state.selectedFields.map(i => (i.value));
+
+    let fields = this.__getSelectedFields();
     let query = this.props.query;
     ExportActions.exportCSV(query, fields);
   },
 
   canSave: function () {
-    return this.state.selectedFields.length !== 0;
+    return this.__getSelectedFields().length !== 0;
   },
 
   canExport: function () {
