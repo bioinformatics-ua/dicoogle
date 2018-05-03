@@ -58,7 +58,7 @@ public class SearchTips extends javax.swing.JFrame {
             this.query = query;
             initComponents();
 
-            //this.aThis.setEnabled(false);
+            //this.aThis.setAutostart(false);
             this.search = UserRefs.getInstance().getSearch();
 
             tags = search.getTagList();

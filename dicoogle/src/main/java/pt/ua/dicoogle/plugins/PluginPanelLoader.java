@@ -60,7 +60,7 @@ public class PluginPanelLoader extends ClassLoader
     {
         try
         {
-            IPluginControllerAdmin plugins = AdminRefs.getInstance().getPluginController();
+            IPluginControllerAdmin plugins = AdminRefs.getSettings().getPluginController();
             HashMap<String, byte[]> panelClasses = plugins.getPanelClasses();
             Set<String> keys = panelClasses.keySet();
             for (String key : keys)
@@ -84,7 +84,7 @@ public class PluginPanelLoader extends ClassLoader
     {
         try
         {
-            IPluginControllerAdmin plugins = AdminRefs.getInstance().getPluginController();
+            IPluginControllerAdmin plugins = AdminRefs.getSettings().getPluginController();
             HashMap<String, byte[]> panelClasses = plugins.getPanelClasses();
             Set<String> keys = panelClasses.keySet();
             for (String key : keys)

@@ -163,7 +163,7 @@ public class ClientCore {
     }
 
     public void stopKeepAlives(){
-        //DebugManager.getInstance().log("Stopping KeepAlive messages between server and client");
+        //DebugManager.getSettings().log("Stopping KeepAlive messages between server and client");
         if(isAdmin() && adminKeep != null){
             adminKeep.timer.cancel();
             adminKeep = null;

@@ -32,25 +32,6 @@ import static pt.ua.dicoogle.server.web.servlets.webui.WebUIServlet.camelize;
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 public class CamelizeTest {
-    
-    public CamelizeTest() {
-    }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
 
     @Test
     public void theTest() {

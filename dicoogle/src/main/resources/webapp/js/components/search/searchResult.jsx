@@ -56,7 +56,11 @@ const SearchResult = React.createClass({
         caption: pkg.dicoogle.caption || pkg.name
       }))});
     });
-    SearchStore.listen(this._onSearchResult);
+    this.unsubscribe = SearchStore.listen(this._onSearchResult);
+  },
+
+  componentWillUnmount() {
+    this.unsubscribe();
   },
 
   componentWillUpdate(nextProps) {
@@ -67,11 +71,8 @@ const SearchResult = React.createClass({
         this.onStepClicked(0);
     }
   },
-_onSearchResult: function(outcome) {
-      if (this.isMounted())
-      {
-        this.onStepClicked(0);
-      }
+  _onSearchResult: function(outcome) {
+    this.onStepClicked(0);
   },
   handleClickExport() {
     this.setState({showExport: true, currentPlugin: null});
@@ -157,7 +158,7 @@ _onSearchResult: function(outcome) {
         <div id="step-container">
           {this.getCurrentView()}
         </div>
-        <button className="btn btn_dicoogle" onClick={this.handleClickExport}><i className="fa fa-download"/>Export</button>
+        <button className="btn btn_dicoogle" onClick={this.handleClickExport}><i className="fa fa-download"/> Export</button>
         <button className="btn btn_dicoogle" onClick={this.toggleAdvOpt}><i className={toggleModalClassNames}/> Advanced Options </button>
         {pluginButtons}
         <ExportView show={this.state.showExport} onHide={this.handleHideExport} query={this.props.requestedQuery}/>

@@ -212,7 +212,7 @@ public class SearchHelper implements Observer
         public void run()
         {
             //TODO: DELETED
-        	//SearchResList = PluginController.getInstance().search(pluginsLocals, query, extrafields, searchHelper);
+        	//SearchResList = PluginController.getSettings().search(pluginsLocals, query, extrafields, searchHelper);
         }
     }
 }

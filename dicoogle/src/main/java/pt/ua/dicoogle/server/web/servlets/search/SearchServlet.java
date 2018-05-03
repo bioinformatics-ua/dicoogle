@@ -81,14 +81,15 @@ public class SearchServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         /*
-         Example: http://localhost:8080/search?query=wrix&keyword=false&provider=lucene&psize=10&offset=10
+         Example: http://localhost:8080/search?query=wrix&provider=lucene&psize=10&offset=10
          */
         response.setContentType("application/json");
 
         String query = request.getParameter("query");
-        String providers[] = request.getParameterValues("provider");
-        boolean keyword = Boolean.parseBoolean(request.getParameter("keyword"));
+        String[] providers = request.getParameterValues("provider");
         String[] fields = request.getParameterValues("field");
+        String pExpand = request.getParameter("expand");
+        boolean expand = pExpand != null && (pExpand.isEmpty() || Boolean.parseBoolean(pExpand));
 
         final int psize;
         final int offset;
@@ -129,7 +130,7 @@ public class SearchServlet extends HttpServlet {
         }
 
         // retrieve desired fields
-        Set<String> actualFields;
+        final Set<String> actualFields;
         if (fields == null || fields.length == 0) {
             actualFields = null;
         } else {
@@ -140,8 +141,8 @@ public class SearchServlet extends HttpServlet {
             sendError(response, 400, "No query supplied!");
             return;
         }
-        
-        if (!keyword) {
+
+        if (expand) {
             QueryExpressionBuilder q = new QueryExpressionBuilder(query);
             query = q.getQueryString();
         }
@@ -172,7 +173,7 @@ public class SearchServlet extends HttpServlet {
                 {
                     response.setStatus(400);
                     JSONObject obj = new JSONObject();
-                    obj.put("error", p.toString() +" is not a valid query provider");
+                    obj.put("error", p.toString() + " is not a valid query provider");
                     response.getWriter().append(obj.toString());
                     return;
                 }

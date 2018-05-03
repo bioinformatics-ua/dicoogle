@@ -6,7 +6,7 @@ import ConfirmModal from './confirmModal';
 import PluginView from '../../plugin/pluginView.jsx';
 import {Input} from 'react-bootstrap';
 import ResultSelectActions from '../../../actions/resultSelectAction';
-import {UserStore} from '../../../stores/userStore';
+import UserStore from '../../../stores/userStore';
 
 
   /**
@@ -37,8 +37,11 @@ const PatientView = React.createClass({
 
   componentWillMount: function() {
     // Subscribe to the store.
-    SearchStore.listen(this._onChange);
+    this.unsubscribe = SearchStore.listen(this._onChange);
     ResultSelectActions.clear();
+  },
+  componentWillUnmount() {
+    this.unsubscribe();
   },
 
   /**
@@ -204,10 +207,9 @@ const PatientView = React.createClass({
     });
   },
   hideRemove () {
-    if (this.isMounted())
-        this.setState({
-            removeSelected: null
-        });
+    this.setState({
+        removeSelected: null
+    });
   },
   showRemove (index) {
       this.setState({
@@ -216,12 +218,11 @@ const PatientView = React.createClass({
       });
   },
   _onChange: function(data){
-    if (this.isMounted())
-    {
-      this.setState({data: data.data,
+    this.setState({
+      data: data.data,
       status: "stopped",
-      success: data.success});
-    }
+      success: data.success
+    });
   }
 });
 

@@ -19,8 +19,10 @@
 package pt.ua.dicoogle.server.web;
 
 import org.apache.commons.codec.digest.Md5Crypt;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
+import pt.ua.dicoogle.sdk.utils.TagsStruct;
 import pt.ua.dicoogle.server.web.rest.VersionResource;
 import pt.ua.dicoogle.server.web.servlets.RestletHttpServlet;
 import pt.ua.dicoogle.server.web.servlets.ExportToCSVServlet;
@@ -31,15 +33,15 @@ import pt.ua.dicoogle.server.web.servlets.SearchHolderServlet;
 import pt.ua.dicoogle.server.web.servlets.IndexerServlet;
 import pt.ua.dicoogle.server.web.servlets.ImageServlet;
 import pt.ua.dicoogle.server.web.servlets.plugins.PluginsServlet;
-import pt.ua.dicoogle.server.web.servlets.search.ExportServlet;
+import pt.ua.dicoogle.server.web.servlets.management.*;
+import pt.ua.dicoogle.server.web.servlets.search.*;
 import pt.ua.dicoogle.server.web.servlets.search.ExportServlet.ExportType;
-import pt.ua.dicoogle.server.web.servlets.search.ProvidersServlet;
-import pt.ua.dicoogle.server.web.servlets.search.SearchServlet;
 import pt.ua.dicoogle.server.web.servlets.search.SearchServlet.SearchType;
-import pt.ua.dicoogle.server.web.servlets.search.WadoServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.LoginServlet;
 import pt.ua.dicoogle.server.web.servlets.accounts.UserServlet;
-import pt.ua.dicoogle.core.ServerSettings;
+
+//import pt.ua.dicoogle.core.ServerSettings;
+
 import pt.ua.dicoogle.server.web.servlets.management.AETitleServlet;
 import pt.ua.dicoogle.server.web.servlets.management.DicomQuerySettingsServlet;
 import pt.ua.dicoogle.server.web.servlets.management.ForceIndexing;
@@ -51,8 +53,10 @@ import pt.ua.dicoogle.server.web.servlets.management.ServerStorageServlet;
 import pt.ua.dicoogle.server.web.servlets.management.ServicesServlet;
 import pt.ua.dicoogle.server.web.servlets.management.TransferOptionsServlet;
 
+
 import java.io.File;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.EnumSet;
 
 import org.eclipse.jetty.server.Handler;
@@ -77,8 +81,8 @@ import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.server.LegacyRestletApplication;
 import pt.ua.dicoogle.server.web.servlets.accounts.LogoutServlet;
-import pt.ua.dicoogle.server.web.servlets.management.UnindexServlet;
 import pt.ua.dicoogle.server.web.servlets.search.DumpServlet;
+import pt.ua.dicoogle.server.web.servlets.management.UnindexServlet;
 import pt.ua.dicoogle.server.web.servlets.webui.WebUIModuleServlet;
 import pt.ua.dicoogle.server.web.servlets.webui.WebUIServlet;
 import pt.ua.dicoogle.server.web.utils.LocalImageCache;
@@ -141,7 +145,7 @@ public class DicoogleWeb {
 
         // setup the Export to CSV Servlet
         final ServletContextHandler csvServletHolder = createServletHandler(new ExportToCSVServlet(), "/export");
-        File tempDir = new File(ServerSettings.getInstance().getPath());
+        File tempDir = Paths.get(System.getProperty("java.io.tmpdir")).toFile();
         csvServletHolder.addServlet(new ServletHolder(new ExportCSVToFILEServlet(tempDir)), "/exportFile");
 
         // setup the search (DIMSE-service-user C-FIND ?!?) servlet
@@ -199,6 +203,7 @@ public class DicoogleWeb {
             createServletHandler(new WadoServlet(), "/wado"),
             createServletHandler(new ProvidersServlet(), "/providers"),
             createServletHandler(new DicomQuerySettingsServlet(), "/management/settings/dicom/query"),
+            createServletHandler(new DimTagsServlet(TagsStruct.getInstance()), "/management/settings/dicom/tags"),
             createServletHandler(new ForceIndexing(), "/management/tasks/index"),
             createServletHandler(new UnindexServlet(), "/management/tasks/unindex"),
             createServletHandler(new RemoveServlet(), "/management/tasks/remove"),
@@ -207,6 +212,7 @@ public class DicoogleWeb {
             createServletHandler(new ServicesServlet(ServicesServlet.PLUGIN), "/management/plugins/"),
             createServletHandler(new AETitleServlet(), "/management/settings/dicom"),
             createServletHandler(new PluginsServlet(), "/plugins/*"),
+            createServletHandler(new PresetsServlet(), "/presets/*"),
             createServletHandler(new WebUIServlet(), "/webui"),
             createWebUIModuleServletHandler(),
             createServletHandler(new LoggerServlet(), "/logger"),
@@ -276,7 +282,7 @@ public class DicoogleWeb {
     }
 
     private void addCORSFilter(ServletContextHandler handler) {
-        String origins = ServerSettings.getInstance().getWeb().getAllowedOrigins();
+        String origins = ServerSettingsManager.getSettings().getWebServerSettings().getAllowedOrigins();
         if (origins != null) {
             handler.setDisplayName("cross-origin");
             FilterHolder corsHolder = new FilterHolder(CORSFilter.class);
@@ -288,7 +294,7 @@ public class DicoogleWeb {
     }
 
     private void addCORSFilter(Handler handler) {
-        String origins = ServerSettings.getInstance().getWeb().getAllowedOrigins();
+        String origins = ServerSettingsManager.getSettings().getWebServerSettings().getAllowedOrigins();
         if (origins == null) {
             return;
         }
