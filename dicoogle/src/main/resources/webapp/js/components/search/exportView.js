@@ -138,7 +138,7 @@ const ExportView = React.createClass({
   },
 
   handlePresetSelect: function(name) {
-	  // default values if no preset is selected
+	// default values if no preset is selected
     let selectedFields = [];
     let exportPresetName = "default";
 
