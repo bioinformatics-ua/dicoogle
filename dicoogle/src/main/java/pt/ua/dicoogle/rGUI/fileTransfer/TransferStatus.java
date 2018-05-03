@@ -24,13 +24,9 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.swing.JOptionPane;
-import pt.ua.dicoogle.Main;
-import pt.ua.dicoogle.core.ClientSettings;
+
+import pt.ua.dicoogle.core.settings.ClientSettings;
 import pt.ua.dicoogle.rGUI.RFileBrowser.RemoteFile;
 
 /**

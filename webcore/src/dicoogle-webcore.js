@@ -24,35 +24,35 @@ require('document-register-element');
 /** Dicoogle web application core.
  * This module provides support to web interface plugins.
  */
-const DicoogleWebcore = (function () {
-  var m = { constructors: {} };
-  
-  // hidden properties
-  
-  var slots = {}; // [slotId:string]: WebUiSlot
-  var plugins = {}; // [name:string]:Constructor
-  var packages = {}; // [name:string]:JSONPackage
-  var base_url = null;
-  var Dicoogle; // eslint-disable-line no-unused-vars
-  var event_hub = null;
+let m = { constructors: {} };
 
-  const EVENT_NAMES = Object.freeze([ // eslint-disable-line no-unused-vars
-    'load',
-    'menu',
-    'loadMenu',
-    'loadQuery',
-    'loadResult',
-    'result'
-  ]);
-  
-  // development-time checker
-  function check_initialized() {
-      if (base_url === null) {
-          console.error('Dicoogle Webcore has not been initialized! Please call the init method.');
-          return false;
-      }
-      return true;
-  }
+// hidden properties
+
+let slots = {}; // [slotId:string]: WebUiSlot
+let plugins = {}; // [name:string]:Constructor
+let packages = {}; // [name:string]:JSONPackage
+let base_url = null;
+let Dicoogle; // eslint-disable-line no-unused-vars
+let event_hub = null;
+
+export const EVENT_NAMES = Object.freeze([ // eslint-disable-line no-unused-vars
+  'load',
+  'menu',
+  'loadMenu',
+  'loadQuery',
+  'loadResult',
+  'result'
+]);
+
+
+// development-time checker
+function check_initialized() {
+    if (base_url === null) {
+        console.error('Dicoogle Webcore has not been initialized! Please call the init method.');
+        return false;
+    }
+    return true;
+}
 
   /** Initialize Dicoogle Webcore. This should be called once and at the beginning
    * of the web page's life time.
@@ -88,8 +88,8 @@ const DicoogleWebcore = (function () {
         addResultListener: m.addResultListener,
         removeEventListener: m.removeEventListener
     });
-    
   };
+export const init = m.init;
   
   /** Emit an event from the webcore's event emitter.
    * @param {string} name the event name
@@ -122,7 +122,8 @@ const DicoogleWebcore = (function () {
     event_hub.on(eventName, fn);
     return m;
   };
-
+export const addEventListener = m.addEventListener;
+  
   /** Remove an event listener from the webcore's event emitter.
    * @param {string} eventName the name of the event
    * @param {function(...any)} fn the listener function
@@ -133,6 +134,7 @@ const DicoogleWebcore = (function () {
     event_hub.removeListener(eventName, fn);
     return m;
   };
+export const removeEventListener = m.removeEventListener;
   
   /**@typedef {object} PluginDesc
    * @property {string} name the unique name of the plugin
@@ -149,6 +151,7 @@ const DicoogleWebcore = (function () {
     event_hub.on('result', fn);
     return m;
   };
+export const addResultListener = m.addResultListener;
   
   /** Add a listener to the 'load' event
    * @param {function(PluginDesc)} fn the listener function
@@ -158,7 +161,8 @@ const DicoogleWebcore = (function () {
     if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
     event_hub.on('load', fn);
   };
-
+export const addPluginLoadListener = m.addPluginLoadListener;
+  
   /** Add a listener to the 'menu' event
    * @param {function(PluginDesc)} fn the listener function
    * @return {DicoogleWebcore} the webcore module itself, used for chaining
@@ -167,7 +171,8 @@ const DicoogleWebcore = (function () {
     if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
     event_hub.on('menu', fn);
   };
-    
+export const addMenuPluginListener = m.addMenuPluginListener;
+  
   m.updateSlots = function() {
     if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
     if (typeof document !== 'object') {
@@ -194,7 +199,8 @@ const DicoogleWebcore = (function () {
     });
     //}
   };
-
+export const updateSlots = m.updateSlots;
+  
   /** Update a given slot.
    * @param {HTMLDicoogleSlotElement} elem the Dicoogle slot DOM element
    * @param {function()} callback called once per plugin
@@ -222,7 +228,8 @@ const DicoogleWebcore = (function () {
       });
     }
   };
-    
+export const updateSlot = m.updateSlot;
+  
   /** Fetch the plugin information from the server.
    * @param {string|string[]} slotIds a slot id name or an array of slot id's
    * @param {function(object[])} [callback] a callback function
@@ -252,7 +259,8 @@ const DicoogleWebcore = (function () {
       }
     });
   };
-
+export const fetchPlugins = m.fetchPlugins;
+  
   /** Issue that the JavaScript modules are loaded, even if no slot has requested it.
    * This function is asynchronous, but currently provides no callback.
    * @param {PackageJSON|PackageJSON[]} packages the JSON package descriptors
@@ -267,7 +275,8 @@ const DicoogleWebcore = (function () {
       }
     }
   };
-      
+export const fetchModules = m.fetchModules;
+  
   // --------------------- Injected Plugin-accessible methods ----------------------------
   
   /** Issue a query to the system. This operation is asynchronous
@@ -331,6 +340,7 @@ const DicoogleWebcore = (function () {
     const eventData = {name, slotId, caption: pluginInstance.Caption};
     event_hub.emit('load', eventData);
   };
+export const onRegister = m.onRegister;
   
   /** Attach all discovered plugins to the given compatible slot if compatible.
    * @param {HTMLDicoogleSlotElement} elem the slot element
@@ -342,7 +352,8 @@ const DicoogleWebcore = (function () {
       elem.webUi.attachPlugin(pluginInstance);
     });
   };
-
+export const attachAllPlugins = m.attachAllPlugins;
+  
   // ----------------------------------------------------------------------------
   m.WebUISlot = function(id, dom) {
     this.id = id;
@@ -389,13 +400,11 @@ const DicoogleWebcore = (function () {
       }
     };
   };
+export const webUISlot = m.webUISlot;
+  
 
   // ---------------- private methods ----------------
   const ostring = Object.prototype.toString;
-  function isArray(it) {
-    return ostring.call(it) === '[object Array]';
-  }
-  
   function isFunction(it) {
     return ostring.call(it) === '[object Function]';
   }
@@ -474,8 +483,6 @@ const DicoogleWebcore = (function () {
    */
   function service_get(uri, qs, callback) {
     // issue request
-    //const full_uri = [base_url].concat(uri);
-    //request('GET', full_uri, qs, callback);
     Dicoogle.request('GET', uri, qs, callback);
   }
   
@@ -499,8 +506,7 @@ const DicoogleWebcore = (function () {
   }
 
   // custom element definitions
-  var HTMLDicoogleSlotElement = (function() {
-    var elem = document.registerElement('dicoogle-slot', {
+  export const HTMLDicoogleSlotElement = document.registerElement('dicoogle-slot', {
       prototype: Object.create(HTMLDivElement.prototype, {
         slotId: {
           get () {
@@ -520,6 +526,19 @@ const DicoogleWebcore = (function () {
             this._webUi = webUi;
           }
         },
+        data: {
+          get () {
+            return this._data;
+          },
+          set (data) {
+            this._data = data;
+            for (let i = 0; i < this.webUi.attachments.length; i++) {
+              if (isFunction(this.webUi.attachments[i].onReceiveData)) {
+                this.webUi.attachments[i].onReceiveData(data);
+              }
+            }
+          }
+        },
         createdCallback: { value () {
         }},
         attachedCallback: { value () {
@@ -532,7 +551,7 @@ const DicoogleWebcore = (function () {
 
           // add content if the webcore plugin is already available
           if (base_url !== null) {
-            m.updateSlot(this, pluginInstance => {
+            m.updateSlot(this, (/* pluginInstance */) => {
             });
           }
           //console.log('[CALLBACK] Dicoogle slot attached: ', this);
@@ -547,7 +566,7 @@ const DicoogleWebcore = (function () {
             }
           }
         }},
-        attributeChangedCallback: { value (attrName, oldVal, newVal) {
+        attributeChangedCallback: { value (attrName) {
           // console.log('[CALLBACK] Dicoogle attribute changed');
           if (attrName === 'data-slot-id' || attrName === 'data-plugin-name') {
             m.updateSlot(this);
@@ -556,12 +575,7 @@ const DicoogleWebcore = (function () {
       })
     });
     console.log('Registered HTMLDicoogleSlotElement');
-    return elem;
-  })();
 
-  m.HTMLDicoogleSlotElement = HTMLDicoogleSlotElement;
-  
-  return m;
-})();
+m.HTMLDicoogleSlotElement = HTMLDicoogleSlotElement;
 
-export default DicoogleWebcore;
+export default m;

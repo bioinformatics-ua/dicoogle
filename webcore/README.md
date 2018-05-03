@@ -90,14 +90,28 @@ The exported module must be a single constructor function (or class), in which i
 
 ```javascript
 /** Render and attach the contents of a new plugin instance to the given DOM element.
- * @param {DOMElement} parent the parent element of the plugin component
- * @param {DOMElement} slot the DOM element of the Dicoogle slot
+ * @param {HTMLElement} parent the parent element of the plugin component, unique to this component.
+ * @param {SlotHTMLElement} slot the DOM element of the Dicoogle slot, containing a few additional properties:
+ `slotId`, `pluginName` and `data`.
  * @return Alternatively, return a React element while leaving `parent` intact. (Experimental, still unstable!)
  */
 function render(parent, slot) {
     // ...
 }
 ```
+
+Additional data is provided to the plugin through the `onReceiveData` method, which is called shortly after `render`. This `data` argument
+is always an object, and will be automatically attached to the `data` property of the slot HTML element.
+
+```javascript
+/** Obtain access to other pieces of information, which depend on the plugin's context.
+ * @param {PluginData} data the data provided to this plugin component
+ */
+function onReceiveData(data) {
+    // ...
+}
+```
+
 
 Furthermore, the `onResult` method must be implemented if the plugin is for a "result" slot:
 
@@ -129,25 +143,52 @@ module.exports = function() {
 
   this.render = function(parent, slot) {
     var e = document.create('span');
-    e.innerHTML = 'Hello Dicoogle!';
+    e.innerHTML = 'Hello Dicoogle! This is plugin ' + slot.pluginName;
     parent.appendChild(e);
+  };
+
+  this.onReceive = function(data) {
   };
 };
 ```
 
-Exporting a class in ECMAScript 6 also works (since classes are syntatic sugar for ES5 constructors).
-The code below can be converted to ES5 using Babel:
+Exporting a class in ECMAScript 2015+ also works (since classes are syntatic sugar for ES5 constructors).
+The code below can be converted to a more compatible ECMAScript version (e.g. ES5) using Babel:
 
 ```javascript
 export default class MyPluginModule() {
 
   render(parent) {
     let e = document.create('span');
-    e.innerHTML = 'Hello Dicoogle!';
+    e.innerHTML = `Hello Dicoogle! This is plugin ${slot.pluginName}`;
     parent.appendChild(e);
+  }
+
+  onReceive(data) {
   }
 };
 ```
+
+### Types of Web Plugins
+
+This section documents each possible type of web UI plugin. Note that not all of them are fully supported at the moment.
+
+- **menu**: Menu plugins are used to augment the main menu. A new entry is added to the side bar (named by the plugin's caption
+  property), and the component is created when the user navigates to that entry.
+- **result-option**: Result option plugins are used to provide advanced operations to a result entry. If the user activates
+  _"Advanced Options"_ in the search results view, these plugins will be attached into a new column, one for each visible result entry.
+- **result-batch**: Result batch plugins are used to provide advanced operations over an existing list of results. These plugins will
+  attach a button (named with the plugin's caption property), which will pop-up a division below the search result view.
+- **settings**: Settings plugins can be used to provide addition management information and control. These plugins will be attached to
+  the _"Plugins & Services"_ tab in the _Management_ menu.
+- **query**: _(currently unsupported)_ Create different query user interfaces. Once supported, they will be
+  attached in some way to the _Search_ menu, but only replace the query component (existing search result views will be reused).
+- **result**: _(currently unsupported)_ They are used to expose results of a search. Once supported, they will be attached
+  in some way to the _Search_ menu when the results of a search are successfully retrieved.
+- **search**: _(currently unsupported)_ Create different search user interfaces. Once supported, they will be
+  attached in some way to the _Search_ menu, as a complete substitute to the existing search interface. This type of plugin
+  is particularly useful for non-DICOM content, since other search result views may not be compatible with existing Dicoogle
+  data providers.
 
 ### Dicoogle Web API
 

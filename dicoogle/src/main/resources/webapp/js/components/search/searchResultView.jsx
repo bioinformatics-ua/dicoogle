@@ -42,8 +42,7 @@ const SearchResultView = React.createClass({
   },
 
   componentWillMount: function() {
-    // Subscribe to the store.
-    SearchStore.listen(this._onChange);
+    this.unsubscribe = SearchStore.listen(this._onChange);
     Webcore.fetchPlugins('result-batch', (packages) => {
       Webcore.fetchModules(packages);
       this.setState({batchPlugins: packages.map(pkg => ({
@@ -51,6 +50,10 @@ const SearchResultView = React.createClass({
         caption: pkg.dicoogle.caption || pkg.name
       }))});
     });
+  },
+
+  componentWillUnmount() {
+    this.unsubscribe();
   },
 
 	initSearch: function(props){
@@ -67,8 +70,6 @@ const SearchResultView = React.createClass({
 	},
 
   _onChange: function(outcome) {
-    if (this.isMounted())
-    {
       console.log('outcome:', outcome);
 
       this.setState({
@@ -76,7 +77,6 @@ const SearchResultView = React.createClass({
         status: "stopped",
         success: outcome.success
       });
-    }
   }
 });
 

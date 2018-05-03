@@ -60,7 +60,9 @@ public interface IndexerInterface extends DicooglePlugin {
      * @param path a URI to the file to check
      * @return whether the indexer can handle the file at the given path
      */
-    public boolean handles(URI path);    
+    public default boolean handles(URI path) {
+        return true;
+    }
     
     /**
      * Removes the indexed file at the given path from the database.
