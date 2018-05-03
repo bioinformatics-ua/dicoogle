@@ -2,93 +2,80 @@
 
 import Reflux from 'reflux';
 import {IndexStatusActions} from '../actions/indexStatusAction';
-import {Endpoints} from '../constants/endpoints';
 import {forceIndex} from '../handlers/requestHandler';
-import $ from 'jquery';
+
+import dicoogleClient from 'dicoogle-client';
 
 const IndexStatusStore = Reflux.createStore({
     listenables: IndexStatusActions,
     init: function () {
-       this._contents = {};
+      this._contents = {};
+
+      this.dicoogle = dicoogleClient();
     },
 
-    onGet: function(data){
-      var self = this;
-
-      $.ajax({
-        url: Endpoints.base + "/index/task",
-        dataType: 'json',
-        success: function(data) {
-          self._contents = data;
-
-          self.trigger({
-            data: self._contents,
-            success: true
+    onGet: function() {
+      this.dicoogle.tasks.list((error, data) => {
+        if (error) {
+          this.trigger({
+            success: false,
+            status: error.status
           });
-
-        },
-        error: function(xhr, status, err) {
-          //FAILURE
-          self.trigger({
-              success: false,
-              status: xhr.status
-            });
+          return;
         }
-      });
 
-    },
-
-    onStart: function(uri){
-      var self = this;
-      forceIndex(uri);
-
-      self._contents.results.push({taskUid: "...", taskName: uri, taskProgress: -1})
-      self._contents.count = self._contents.count + 1;
-      self.trigger({
-        data: self._contents,
-        success: true
-      });
-
-      console.log(this._contents);
-    },
-
-    onClose: function(uid){
-
-      $.post(Endpoints.base + "/index/task",
-      {
-        uid: uid,
-        action: "delete",
-        type: "close"
-      },
-        function(data, status){
-          //Response
-          console.log("Data: ", data, " ; Status: ", status);
+        this._contents = data;
+        this.trigger({
+          data: this._contents,
+          success: true
         });
-
-      for (var i = 0; i < this._contents.results.length; i++)
-      {
-        if (this._contents.results[i].taskUid === uid) {
-          this._contents.results.splice(i, 1);
-          break;
-        }
-      }
-      this.trigger({
-        data: this._contents,
-        success: true
       });
     },
-    onStop: function(uid){
+
+    onStart: function(uri, providers){
+      forceIndex(uri, providers, (error) => {
+        if (error) {
+          this.trigger({
+            success: false,
+            status: error.status
+          });
+          return;
+        }
+
+        this.onGet();
+      });
+    },
+
+    onClose: function(uid) {
+      this.dicoogle.tasks.close(uid, (error) => {
+        console.log("closeTask: ", error || 'ok');
+
+        if (error) {
+          this.trigger({
+            success: false,
+            status: error.status
+          });
+          return;
+        }
+
+        for (let i = 0; i < this._contents.tasks.length; i++) {
+          if (this._contents.tasks[i].taskUid === uid) {
+            this._contents.tasks.splice(i, 1);
+            break;
+          }
+        }
+        this.trigger({
+          data: this._contents,
+          success: true
+        });
+      });
+    },
+
+    onStop: function(uid) {
       console.log("Stop: ", uid);
-      $.post(Endpoints.base + "/index/task",
-      {
-        uid: uid,
-        action: "delete",
-        type: "stop"
-      },
-        function(data, status){
-          //Response
-          console.log("Data: ", data, " ; Status: ", status);
-        });
+      this.dicoogle.tasks.stop(uid, (error) => {
+        console.log("stopTask: ", error || 'ok');
+      });
     }
 
 });

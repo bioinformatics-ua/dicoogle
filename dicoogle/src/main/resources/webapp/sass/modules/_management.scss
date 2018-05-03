@@ -64,3 +64,19 @@
 .topMargin{
  margin-top: 30px;
 }
+
+.panel-heading .accordion-toggle:after {
+    /* symbol for "opening" panels */
+    font-family: 'Glyphicons Halflings';
+    content: "\e114";
+    position: absolute;
+    right: 30px;
+    color: $blue1;
+}
+.panel-heading .accordion-toggle.collapsed:after {
+    /* symbol for "collapsed" panels */
+    content: "\e080";
+}
+.panel-heading-toggle {
+    padding-right: 40px;
+}

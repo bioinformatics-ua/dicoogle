@@ -54,7 +54,7 @@ public class PluginController4user implements IPluginControllerUser
     public synchronized List<String> getPluginNames() throws RemoteException
     {
     	return PluginController.getInstance().getQueryProvidersName(true);
-        //return PluginController.getInstance().getPluginsNames();
+        //return PluginController.getSettings().getPluginsNames();
     	//TODO: DELETED
     }
 
@@ -63,7 +63,7 @@ public class PluginController4user implements IPluginControllerUser
     {
     	return false;
 //        
-//        return PluginController.getInstance().isPluginRunning(PluginName);
+//        return PluginController.getSettings().isPluginRunning(PluginName);
 //        TODO: DELETED
     }
 
@@ -72,7 +72,7 @@ public class PluginController4user implements IPluginControllerUser
     {
     	return false;
         
-//        return PluginController.getInstance().isLocalPlugin(PluginName);
+//        return PluginController.getSettings().isLocalPlugin(PluginName);
 //        TODO: DELETED
     }
 

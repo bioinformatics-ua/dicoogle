@@ -33,9 +33,23 @@ import static pt.ua.dicoogle.server.web.servlets.webui.WebUIServlet.camelize;
  * Created by bastiao on 23/01/16.
  */
 public class TestUsers {
+    @BeforeClass
+    public static void setUpClass() {
+    }
 
-    @Test
-    @Ignore // needs isolation
+    @AfterClass
+    public static void tearDownClass() {
+    }
+
+    @Before
+    public void setUp() {
+    }
+
+    @After
+    public void tearDown() {
+    }
+
+    //@Test
     public void testUsers() {
 
         UsersStruct users = UsersStruct.getInstance();

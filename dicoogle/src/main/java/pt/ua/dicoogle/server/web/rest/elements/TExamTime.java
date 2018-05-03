@@ -69,13 +69,13 @@ public class TExamTime extends Thread {
         throw new UnsupportedOperationException();/*
         long beginTime = System.currentTimeMillis();
         long endTime;
-        ExamTimeCore examTime = ExamTimeCore.getInstance();
+        ExamTimeCore examTime = ExamTimeCore.getSettings();
         BufferedWriter out = null;
         try {
             out = new BufferedWriter(new FileWriter(file, false));
 
 
-            IndexEngine core = IndexEngine.getInstance();
+            IndexEngine core = IndexEngine.getSettings();
 
             Set<String> enumList = core.enumField("AccessionNumber", false);
             
