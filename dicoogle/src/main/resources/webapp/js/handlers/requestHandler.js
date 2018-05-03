@@ -5,7 +5,7 @@ const Dicoogle = dicoogleClient();
 export function getDICOMFieldList(callback) {
   Dicoogle.request('GET', 'export/list').end((err, resp) => {
     if (err) callback(err);
-    else callback(null, resp.body);
+    else callback(null, resp.text);
   });
 }
 
