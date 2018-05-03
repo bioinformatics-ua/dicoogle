@@ -158,7 +158,7 @@ const SearchResult = React.createClass({
         <div id="step-container">
           {this.getCurrentView()}
         </div>
-        <button className="btn btn_dicoogle" onClick={this.handleClickExport}><i className="fa fa-download"/>Export</button>
+        <button className="btn btn_dicoogle" onClick={this.handleClickExport}><i className="fa fa-download"/> Export</button>
         <button className="btn btn_dicoogle" onClick={this.toggleAdvOpt}><i className={toggleModalClassNames}/> Advanced Options </button>
         {pluginButtons}
         <ExportView show={this.state.showExport} onHide={this.handleHideExport} query={this.props.requestedQuery}/>
