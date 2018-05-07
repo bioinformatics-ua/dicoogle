@@ -18,19 +18,58 @@
  */
 package pt.ua.dicoogle.sdk;
 
-import pt.ua.dicoogle.sdk.QueryInterface;
-import pt.ua.dicoogle.sdk.datastructs.SearchResult;
+
 import pt.ua.dicoogle.sdk.datastructs.dim.Patient;
 import pt.ua.dicoogle.sdk.datastructs.dim.Serie;
 import pt.ua.dicoogle.sdk.datastructs.dim.Study;
 
 /**
+ *
+ * Query Interface provides methods to query at different levels in DICOM Information Model.
+ *
  * Created by bastiao on 02-02-2017.
  */
 public interface QueryDimInterface extends QueryInterface {
 
+
+
+
+    /**
+     * Performs a search on the database.
+     *
+     * The consumer of the results would either request an iterator or use a for-each loop. The underlying
+     * iterator implementation can be redefined to wait for more results at the caller. Furthermore, the
+     * resulting iterable is expected to be traversed only once.
+     *
+     * @param query a string describing the query. The underlying plugin is currently free to follow any
+     * query format, but only those based on Lucene with work with the search user interface.
+     * @param parameters A variable list of parameters of the query. The plugin can use them to establish
+     * their own API's, which may require more complex data structures (e.g. images).
+     *
+     * @return the results of the query as a (possibly lazy) iterable with <b>Patient</b>
+     */
     public Iterable<Patient> queryPatient(String query, Object ... parameters);
+
+    /**
+     *
+     * Performs a search on the database.
+     *
+     * @param query a string describing the query. The underlying plugin is currently free to follow any
+     *      * query format
+     * @param parameters
+     * @return the results of the query as a (possibly lazy) iterable with <b>Study</b>
+     */
     public Iterable<Study> queryStudy(String query, Object ... parameters);
+
+    /**
+     *
+     * Performs a search on the database.
+     *
+     * @param query a string describing the query. The underlying plugin is currently free to follow any
+     *      * query format, but only those based on Lucene with work with the search user interface.
+     * @param parameters
+     * @return the results of the query as a (possibly lazy) iterable with <b>Series</b>
+     */
     public Iterable<Serie> querySeries(String query, Object ... parameters);
     
 }
