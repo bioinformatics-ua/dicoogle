@@ -39,7 +39,8 @@ class App extends React.Component {
 		super(props);
 		this.needsPluginUpdate = true;
 		this.state = {
-			pluginMenuItems: []
+			pluginMenuItems: [],
+			lastLocation: 'search'
 		};
 		this.dicoogle = dicoogleClient(Endpoints.base);
 		this.logout = this.logout.bind(this);
@@ -62,47 +63,58 @@ class App extends React.Component {
 		});
 	}
 
-	componentDidMount() {
-		UserStore.listen(this.handleUserStoreUpdate);
-		if (this.props.location.pathname !== '/') {
-			UserStore.loadLocalStore();
-		}
-		const token = localStorage.getItem('token');
-		if (!token || this.props.location.pathname === '/') {
-			let lastLocation = this.props.location.pathname.slice(1);
-			if (lastLocation === '') {
-				lastLocation = 'search';
-			}
-			if (process.env.GUEST_USERNAME) {
-				console.log("Using guest credentials: ", process.env.GUEST_USERNAME, "; password:", process.env.GUEST_PASSWORD);
-				const unsubscribe = UserStore.listen((outcome) => {
-					this.needsPluginUpdate = true;
-					if (outcome.isLoggedIn) {
-						this.props.router.replace(lastLocation);
-					} else {
-						this.props.router.replace('login');
-					}
-					unsubscribe();
-				});
-				UserActions.login(process.env.GUEST_USERNAME, process.env.GUEST_PASSWORD);
-				this.props.router.push('loading');
-			} else {
-				this.props.router.push('login');
-			}
-    	}
-		if (this.props.location.pathname=='/')
-		{
-			this.props.history.pushState(null, 'login');
-		}
-	}
 
-	handleUserStoreUpdate(data) {
-		this.needsPluginUpdate = true;
-		this.fetchPlugins(data);
-		if (data.username) {
-			this.setState(data);
-		}
+  componentWillMount() {
+    UserStore.listen(this.handleUserStoreUpdate);
+
+    let lastLocation = this.props.location.pathname.slice(1);
+    if (lastLocation !== '' && lastLocation !== 'login' && lastLocation !== 'loading') {
+      this.setState({
+        lastLocation: lastLocation
+      });
+    }
+  }
+
+  componentDidMount() {
+    if (process.env.GUEST_USERNAME && !localStorage.getItem('token')) {
+      console.log("Using guest credentials: ", process.env.GUEST_USERNAME, "; password:", process.env.GUEST_PASSWORD);
+      UserActions.login(process.env.GUEST_USERNAME, process.env.GUEST_PASSWORD);
+    } else {
+      UserStore.loadLocalStore();
+    }
+
+    if (this.props.location.pathname=='/')
+	{
+    	this.props.history.pushState(null, 'login');
 	}
+    /*$("#menu-toggle").click(function (e) {
+      e.preventDefault();
+      $("#wrapper").toggleClass("toggled");
+    });*/
+  }
+
+
+  handleUserStoreUpdate(data) {
+    this.needsPluginUpdate = true;
+    this.fetchPlugins(data);
+    if (data.username) {
+      this.setState(data);
+    }
+
+    if (!data.isLoggedIn) {
+      if (!process.env.GUEST_USERNAME) {
+        this.props.router.push('login');
+      } else {
+        if (!data.loginFailed) {
+          this.props.router.push('loading');
+        } else {
+          this.props.router.push('login');
+        }
+      }
+    } else {
+      this.props.router.replace(this.state.lastLocation);
+    }
+  }
 
 	fetchPlugins(data) {
     if (!this.needsPluginUpdate) {
@@ -143,12 +155,15 @@ class App extends React.Component {
 		document.getElementById("wrapper").classList.toggle("toggled");
 	}
 
-	logout() {
-		UserActions.logout();
-		this.setState({pluginMenuItems: []});
-		this.needsPluginUpdate = true;
-		this.context.router.push('login');
-	}
+  logout() {
+    UserActions.logout();
+    this.setState({
+      pluginMenuItems: [],
+      lastLocation: 'search'
+    });
+    this.needsPluginUpdate = true;
+    this.context.router.push('login');
+  }
 
 	render() {
 

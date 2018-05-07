@@ -5,16 +5,19 @@ import {Endpoints} from '../constants/endpoints';
 import {getDICOMFieldList} from '../handlers/requestHandler';
 
 import dicoogleClient from 'dicoogle-client';
+import UserStore from "./userStore";
 
 const ExportStore = Reflux.createStore({
     listenables: ExportActions,
     init: function () {
-      this._contents = {};
+      this._contents = {
+          presets: []
+      };
 
       this.dicoogle = dicoogleClient();
     },
 
-    onGetFieldList: function(data){
+    onGetFieldList: function() {
       var self = this;
 
       getDICOMFieldList((error, data) => {
@@ -26,8 +29,7 @@ const ExportStore = Reflux.createStore({
           return;
         }
 
-        // console.log("success", data);
-        self._contents = data;
+        self._contents.fields = JSON.parse(data).sort();
         self.trigger({
           data: self._contents,
           success: true
@@ -58,7 +60,54 @@ const ExportStore = Reflux.createStore({
         link.click();
         hacked_footer.removeChild(link);
       });
+    },
+
+    onGetPresets: function () {
+      let self = this;
+      let username = UserStore._username;
+
+      this.dicoogle.request('GET', ['presets', username])
+        .end((error, data) => {
+          if (error) {
+            self.trigger({
+              success: false,
+              status: error.status
+            });
+            return;
+          }
+
+          self._contents.presets = JSON.parse(data.text);
+          self.trigger({
+            data: self._contents,
+            success: true
+          });
+        });
+    },
+
+    onSavePresets: function (name, fields) {
+      let self = this;
+
+      let queryParams = "";
+      fields.forEach((field) => (queryParams += "field=" + field + "&"));
+      if (queryParams.length !== 0) queryParams.slice(0, -1);
+
+      let username = UserStore._username;
+
+      this.dicoogle
+        .request('POST', ['presets', username, name])
+        .query(queryParams)
+        .then((res) => {
+          if (res.status !== 200) {
+            self.trigger({
+              success: false,
+              status: res.status
+            });
+            return;
+          }
+
+          // refresh list of presets
+          self.onGetPresets();
+        })
     }
 });
-
 export {ExportStore};

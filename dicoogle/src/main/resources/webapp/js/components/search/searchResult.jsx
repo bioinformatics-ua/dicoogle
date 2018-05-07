@@ -65,7 +65,7 @@ const SearchResult = React.createClass({
 
   componentWillUpdate(nextProps) {
 
-    if (this.props.requestedQuery.queryText !== nextProps.requestedQuery.queryText) {
+    if (this.props.requestedQuery.text !== nextProps.requestedQuery.text) {
       //init StepView
       if(!this.state.current)
         this.onStepClicked(0);
@@ -158,13 +158,16 @@ const SearchResult = React.createClass({
         <div id="step-container">
           {this.getCurrentView()}
         </div>
-        <button className="btn btn_dicoogle" onClick={this.handleClickExport}><i className="fa fa-download"/>Export</button>
+        <button className="btn btn_dicoogle" onClick={this.handleClickExport}><i className="fa fa-download"/> Export</button>
         <button className="btn btn_dicoogle" onClick={this.toggleAdvOpt}><i className={toggleModalClassNames}/> Advanced Options </button>
         {pluginButtons}
         <ExportView show={this.state.showExport} onHide={this.handleHideExport} query={this.props.requestedQuery}/>
         <PluginForm show={!!this.state.currentPlugin} slotId="result-batch"
                     plugin={this.state.currentPlugin} onHide={this.handleHideBatchForm}
-                    data={{results: this.props.searchOutcome.data.results}} />
+                    data={{
+                      query: this.props.requestedQuery.text,
+                      queryProvider: this.props.requestedQuery.provider,
+                      results: this.props.searchOutcome.data.results}} />
       </div>);
 	},
 
