@@ -10,6 +10,9 @@ import {DimFields} from '../../constants/dimFields';
 import {getUrlVars} from '../../utils/url';
 import {SearchStore} from '../../stores/searchStore';
 
+import Select from 'react-select';
+
+
 // just a workaround
 var countGlobalEnter = 0;
 const Search = React.createClass({
@@ -33,8 +36,9 @@ const Search = React.createClass({
     },
 
     componentWillMount: function(){
-      ProvidersStore.listen(this._onProvidersChange);
-      SearchStore.listen(this._onSearchResult);
+      const u1 = ProvidersStore.listen(this._onProvidersChange);
+      const u2 = SearchStore.listen(this._onSearchResult);
+      this.unsubscribe = () => { u2(); u1(); };
     },
 
     componentDidMount: function(){
@@ -49,6 +53,7 @@ const Search = React.createClass({
     },
     componentWillUnmount: function(){
       $( "#free_text" ).unbind();
+      this.unsubscribe();
     },
     componentWillUpdate: function() {
 
@@ -60,9 +65,6 @@ const Search = React.createClass({
             });
         }
         this.keyHash = getUrlVars()['_k'];
-    },
-    componentDidUpdate: function(){
-      
     },
 
     onReturn(error) {
@@ -78,28 +80,29 @@ const Search = React.createClass({
     },
 
     render: function() {
+      let providersList = this.state.providers.map(item => ({value: item, label: item}));
 
-      let providersList = this.state.providers.map(
-          (item, index) => (<option key={item} value={item}>
-                              {item}
-                            </option>));
-      providersList.unshift(<option key="__all__" value="__all__">All Providers</option>);
-
-      const currProvider = this.state.selectedProviders[0];
       let selectionButtons = (
-          <div>
-          <button type="button" className="btn btn_dicoogle" onClick={this.renderFilter} data-trigger="advance-search" id="btn-advance">
-            {this.state.searchState === "simple" ? "Advanced" : "Basic"}
-          </button>
-              <div className="btn-group">
-                  <select id="providersList" className="btn btn_dicoogle form-control"
-                          value={currProvider}
-                          onChange={this.handleProviderSelect}>
-                    {providersList}
-                  </select>
-              </div>
-              </div>
-        );
+        <div>
+          <div className="row">
+            <div className="col-md-2 col-sm-3">
+              <button type="button" className="btn btn_dicoogle btn-block" onClick={this.renderFilter} data-trigger="advance-search" id="btn-advance">
+                {this.state.searchState === "simple" ? "Advanced" : "Basic"}
+              </button>
+            </div>
+            <div className="col-md-4 col-sm-9">
+              <Select multi
+                id="providersList"
+                name="form-field-name"
+                value={this.state.selectedProviders}
+                options={providersList}
+                placeholder="All Providers"
+                onChange={this.handleProviderSelect}
+              />
+            </div>
+          </div>
+        </div>
+      );
 
       let simpleSearchInstance = (
             <div className="row space_up" id="main-search">
@@ -140,28 +143,24 @@ const Search = React.createClass({
        }
     },
     _onProvidersChange: function(data) {
-        if (this.isMounted())
-        this.setState({providers: data.data});
+      this.setState({providers: data.data});
     },
     _onSearchResult: function(outcome) {
-      if (this.isMounted())
-      {
-        console.log('outcome:', outcome);
+      console.log('outcome:', outcome);
 
-        let error = null;
-        if (!outcome.success) {
-          error = "An error occurred. Please contact your system administrator.";
-        } else if (outcome.data.numResults === 0) {
-          error = "No studies were found for that search.";
-        }
-        this.setState({
-          data: outcome.data,
-          status: "stopped",
-          success: outcome.success,
-          requestedQuery: error ? null : this.state.requestedQuery,
-          error
-        });
+      let error = null;
+      if (!outcome.success) {
+        error = "An error occurred. Please contact your system administrator.";
+      } else if (outcome.data.numResults === 0) {
+        error = "No studies were found for that search.";
       }
+      this.setState({
+        data: outcome.data,
+        status: "stopped",
+        success: outcome.success,
+        requestedQuery: error ? null : this.state.requestedQuery,
+        error
+      });
     },
     renderFilter: function(){
       var switchState;
@@ -184,16 +183,15 @@ const Search = React.createClass({
     handleQueryTextChanged(e) {
       this.setState({queryText: e.target.value});
     },
-    handleProviderSelect(e) {
-      const name = e.target.value;
+    handleProviderSelect(providers) {
       this.setState({
-        selectedProviders: name === '__all__' ? [] : [name]
+        selectedProviders: providers.map((e) => e.value)
       });
     },
     onSearchClicked: function() {
         const text = this.state.queryText;
         const provider = this.state.selectedProviders;
-        const params = {text, keyword: this.isKeyword(text), other: true, provider};
+        const params = {text, provider};
         this.triggerSearch(params);
     },
     triggerSearch: function(params){
@@ -203,9 +201,6 @@ const Search = React.createClass({
           error: null
         });
       ActionCreators.search(params);
-    },
-    isKeyword: function(freetext) {
-      return !!freetext.match(/[^\s\\]:\S/);
     },
     isAutocompletOpened: function(){
       if($('.ui-autocomplete').css('display') === 'none'){return false;}

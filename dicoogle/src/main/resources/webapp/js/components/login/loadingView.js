@@ -1,6 +1,4 @@
 import React, {PropTypes} from 'react';
-import {UserActions} from "../../actions/userActions";
-import {UserStore} from "../../stores/userStore";
 
 const LoadingView = React.createClass({
   contextTypes: {
@@ -9,27 +7,6 @@ const LoadingView = React.createClass({
   getInitialState: function() {
     return {data: {},
     status: "loading"};
-  },
-  componentDidMount: function(){
-    //LoggerActions.get();
-    UserActions.isLoggedIn();
-  },
-  componentDidUpdate: function() {
-  },
-  componentWillMount: function() {
-    UserStore.listen(this._onChange);
-
-  },
-  _onChange: function(data){
-    const {router} = this.context;
-    console.log(data);
-    if(data.isLoggedIn && this.isMounted())
-    {
-      router.replace('/search');
-    }
-    else if(data.isLoggedIn === false){
-      router.replace('/login');
-    }
   },
   render: function() {
     return (

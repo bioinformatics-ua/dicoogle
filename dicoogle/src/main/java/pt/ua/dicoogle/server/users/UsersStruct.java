@@ -59,7 +59,7 @@ public class UsersStruct {
      * This user is administrator
      */
     public void setDefaults(){
-        //DebugManager.getInstance().debug("Setting default user settings");
+        //DebugManager.getSettings().debug("Setting default user settings");
 
         String username = "dicoogle";
         boolean admin = true;

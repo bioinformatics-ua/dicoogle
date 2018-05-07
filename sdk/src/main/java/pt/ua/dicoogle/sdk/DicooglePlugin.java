@@ -40,7 +40,7 @@ public interface DicooglePlugin extends Plugin {
      * 
      * @return the name of the plugin
      */
-    public abstract String getName();
+    public String getName();
     
     /**
      * Issues the plugin to become enabled. It is expected that an enabled plugin, once configured, is ready
@@ -48,14 +48,14 @@ public interface DicooglePlugin extends Plugin {
      * 
      * @return whether the plugin was successfully enabled
      */
-    public abstract boolean enable();
+    public boolean enable();
     
     /**
      * Issues the plugin to become disabled. When called, the plugin is responsible
      * for stopping all services that the plugin is running. 
      * @return whether the plugin was successfully disabled
      */
-    public abstract boolean disable();
+    public boolean disable();
     
     
     /**
@@ -63,18 +63,18 @@ public interface DicooglePlugin extends Plugin {
      *
      * @return whether the plugin is enabled
      */
-    public abstract boolean isEnabled();
+    public boolean isEnabled();
 
     /** Sets the settings of this plugin.
      * This method lets the plugin receive its settings from the core Dicoogle system.
      * 
      * @param settings the parameters that will be used by the plugin
      */
-    public abstract void setSettings(ConfigurationHolder settings);
+    public void setSettings(ConfigurationHolder settings);
     
     /**
      * Obtains access to the settings of the plugin.
      * @return the plugin's settings
      */
-    public abstract ConfigurationHolder getSettings();    
+    public ConfigurationHolder getSettings();
 }

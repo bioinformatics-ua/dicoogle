@@ -19,6 +19,19 @@
 
 package pt.ua.dicoogle.server.web.servlets.management;
 
+import net.sf.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pt.ua.dicoogle.plugins.PluginController;
+import pt.ua.dicoogle.sdk.datastructs.IndexReport;
+import pt.ua.dicoogle.sdk.datastructs.Report;
+import pt.ua.dicoogle.sdk.task.Task;
+import pt.ua.dicoogle.taskManager.RunningIndexTasks;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -27,19 +40,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import net.sf.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import pt.ua.dicoogle.plugins.PluginController;
-import pt.ua.dicoogle.sdk.datastructs.IndexReport;
-import pt.ua.dicoogle.sdk.datastructs.Report;
-import pt.ua.dicoogle.sdk.task.Task;
 
 /**
  *
@@ -69,21 +69,22 @@ public class ForceIndexing extends HttpServlet {
 
     final PluginController pc = PluginController.getInstance();
 
-    int expectedReports = uris.length * ((pluginsName == null) ?
+    int expectedTasks = uris.length * ((pluginsName == null) ?
             pc.getIndexingPlugins(true).size() :
             pluginsName.length);
     
     //Firing Tasks.
-    List<Task<Report>> reports = new ArrayList<>(expectedReports);
+    List<Task<Report>> tasks = new ArrayList<>(expectedTasks);
+    List<JSONObject> taskObjs = new ArrayList<>(expectedTasks);
     for (String uri : uris) {
         try {
-            URI u = new URI(uri.replaceAll(" ", "%20"));
-            // log.info("Sent Index Request: {}, {}",pluginName, u.toString());
+            URI u = encodeURI(uri);
+            logger.debug("Request to index {}", u);
             if (pluginsName == null) {
-              reports.addAll(pc.index(u));
+              tasks.addAll(pc.index(u));
             } else {
               for (String pluginName : pluginsName) {
-                reports.addAll(pc.index(pluginName, u));
+                tasks.addAll(pc.index(pluginName, u));
               }
             }
         } catch (URISyntaxException ex) {
@@ -93,38 +94,16 @@ public class ForceIndexing extends HttpServlet {
         }
     }
 
+    for (Task<Report> t : tasks) {
+      taskObjs.add(RunningIndexTasks.getInstance().asJSON(t));
+    }
+
     // waiting is bad, clearing all this and giving an ok
     resp.setStatus(200);
-    
-    /*
-    //Waiting for results, construct the output.
-    List<Report> done = new ArrayList<>(reports.size());
-    JSONArray ret = new JSONArray();
-    for (Task<Report> t : reports) {
-      try {
-        Report report = t.get();
-        done.add(report);
-        JSONObject obj;
-        if (report instanceof IndexReport) {
-            IndexReport indexReport = (IndexReport) report;
-            obj = convertReportToJSON(indexReport);
-        } else {
-            // no information is available
-            obj = new JSONObject();
-            obj.put("complete", true);
-            obj.put("errors", 0);
-        }
-        ret.add(obj);
-      } catch (InterruptedException | ExecutionException ex) {
-        // log.error("UNKNOW ERROR", ex);
-      }
-    }
-    // log.info("Finished forced indexing procedure: {}", reports.size());
-
+    JSONObject reply = new JSONObject()
+       .element("tasks", tasks);
     resp.setContentType("application/json");
-    resp.getWriter().write(ret.toString());
-    resp.getWriter().flush();
-    */
+    resp.getWriter().print(reply.toString());
   }
   
   @Deprecated
@@ -151,5 +130,9 @@ public class ForceIndexing extends HttpServlet {
     
     obj.put("extra", extraObjects);
     return obj;
+  }
+
+  private static URI encodeURI(String uri) throws URISyntaxException {
+      return new URI(uri.replaceAll(" ", "%20"));
   }
 }

@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONSerializer;
-import pt.ua.dicoogle.core.XMLSupport;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.server.SOPList;
 import pt.ua.dicoogle.server.TransfersStorage;
 import pt.ua.dicoogle.server.web.utils.ResponseUtil;
@@ -60,7 +60,7 @@ public class TransferOptionsServlet extends HttpServlet {
 		boolean value = Boolean.parseBoolean(req.getParameter("value"));
 
 		SOPList.getInstance().updateTSField(UID, option, value);
-		new XMLSupport().printXML();
+        ServerSettingsManager.saveSettings();
 		ResponseUtil.simpleResponse(resp, "success", true);
 	}
 

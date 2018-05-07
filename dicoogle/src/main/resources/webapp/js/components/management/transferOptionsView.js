@@ -2,8 +2,6 @@ import React from 'react';
 
 import {TransferStore} from '../../stores/transferStore';
 import {TransferActions} from '../../actions/transferActions';
-import {Endpoints} from '../../constants/endpoints';
-import $ from 'jquery';
 import {Button} from 'react-bootstrap';
 
 const TransferOptionsView = React.createClass({
@@ -24,13 +22,14 @@ const TransferOptionsView = React.createClass({
       componentWillMount() {
          // Subscribe to the store.
          console.log("subscribe listener");
-         TransferStore.listen(this._onChange);
+         this.unsubscribe = TransferStore.listen(this._onChange);
+      },
+      componentWillUnmount() {
+        this.unsubscribe();
       },
       _onChange (data){
-        if (this.isMounted()){
-          console.log(data);
-          this.setState({data: data, status: "done"});
-        }
+        console.log(data);
+        this.setState({data: data, status: "done"});
       },
       render () {
         if(this.state.status === "loading")
@@ -110,28 +109,17 @@ const TransferOptionsView = React.createClass({
           this.selectAllOn = !this.selectAllOn;
 
       },
+
       handleChange(id, index) {
-        TransferActions.set(this.state.selectedIndex, index, document.getElementById(id).checked);
-        this.request(id, document.getElementById(id).checked);
+        let uid = this.state.data.data[document.getElementById("sop_select").selectedIndex].uid;
+        let value = document.getElementById(id).checked;
+        TransferActions.set(this.state.selectedIndex, index, uid, id, value);
       },
 
       onSopSelected() {
         var selectedId = document.getElementById("sop_select").selectedIndex;
 
         this.setState({selectedIndex: selectedId});
-      },
-
-      request(id, value) {
-        var uid = this.state.data.data[document.getElementById("sop_select").selectedIndex].uid;
-        console.log("Selected uid:", uid);
-        $.post(Endpoints.base + "/management/settings/transfer", {
-          uid: uid,
-          option: id,
-          value: value
-        }, (data, status) => {
-          //Response
-          console.log("Data: " + data + "\nStatus: " + status);
-        });
       }
 });
 

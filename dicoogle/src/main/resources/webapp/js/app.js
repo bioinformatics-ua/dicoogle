@@ -19,8 +19,8 @@ import AboutView from './components/about/aboutView';
 import LoadingView from './components/login/loadingView';
 import LoginView from './components/login/loginView';
 import { hashHistory /*, browserHistory*/ } from 'react-router'
-import {UserActions} from './actions/userActions';
-import {UserStore} from './stores/userStore';
+import * as UserActions from './actions/userActions';
+import UserStore from './stores/userStore';
 
 require('core-js/shim');
 
@@ -34,17 +34,19 @@ class App extends React.Component {
     return {
 			router: PropTypes.object.isRequired,
 			location: React.PropTypes.object
-
 		};
   }
 
 	constructor(props) {
 		super(props);
-		this.pluginsFetched = false;
+		this.needsPluginUpdate = true;
 		this.state = {
-			pluginMenuItems: []
+			pluginMenuItems: [],
+			lastLocation: 'search'
 		};
+		this.dicoogle = dicoogleClient(Endpoints.base);
 		this.logout = this.logout.bind(this);
+		this.handleUserStoreUpdate = this.handleUserStoreUpdate.bind(this);
 	}
 
 	/**
@@ -63,73 +65,96 @@ class App extends React.Component {
 		});
 	}
 
-	componentWillMount()
-	{
-		UserStore.listen(this.fetchPlugins.bind(this));
+  componentWillMount() {
+    UserStore.listen(this.handleUserStoreUpdate);
 
-		const Dicoogle = dicoogleClient(Endpoints.base);
-		if (localStorage.token) {
-			Dicoogle.setToken(localStorage.token);
-		}
-		if (this.props.location.pathname=='/')
-		{
-			localStorage.token = null;
-			UserActions.logout();
-		}
-		Webcore.init(Endpoints.base);
-	}
-
-	componentDidMount(){
-    UserStore.loadLocalStore();
-		if (localStorage.token === undefined) {
-			this.props.history.pushState(null, 'login');
+    let lastLocation = this.props.location.pathname.slice(1);
+    if (lastLocation !== '' && lastLocation !== 'login' && lastLocation !== 'loading') {
+      this.setState({
+        lastLocation: lastLocation
+      });
     }
-		if (this.props.location.pathname=='/')
-		{
-			this.props.history.pushState(null, 'login');
-		}
+  }
+
+  componentDidMount() {
+    if (process.env.GUEST_USERNAME && !localStorage.getItem('token')) {
+      console.log("Using guest credentials: ", process.env.GUEST_USERNAME, "; password:", process.env.GUEST_PASSWORD);
+      UserActions.login(process.env.GUEST_USERNAME, process.env.GUEST_PASSWORD);
+    } else {
+      UserStore.loadLocalStore();
+    }
 
     $("#menu-toggle").click(function (e) {
       e.preventDefault();
       $("#wrapper").toggleClass("toggled");
     });
-	}
-	fetchPlugins(data) {
-		if (this.pluginsFetched)
-			return;
-		let self = this;
-		if (!data.success)
-			return;
-    this.setState(data);
-
-		Webcore.addPluginLoadListener(function(plugin) {
-      console.log("Plugin loaded to Dicoogle:", plugin);
-		});
-		Webcore.fetchPlugins('menu', (packages) => {
-			self.onMenuPlugin(packages);
-        Webcore.fetchModules(packages);
-		});
-
-
-    // pre-fetch modules of other plugin types
-		Webcore.fetchPlugins(['search', 'result-options', 'query', 'result'], Webcore.fetchModules)
-		this.pluginsFetched = true;
   }
 
-	logout() {
-		const Dicoogle = dicoogleClient();
-		Dicoogle.request('POST', 'logout', {}, (error) => {
-      if (error) {
-        console.error(error);
+  handleUserStoreUpdate(data) {
+    this.needsPluginUpdate = true;
+    this.fetchPlugins(data);
+    if (data.username) {
+      this.setState(data);
+    }
+
+    if (!data.isLoggedIn) {
+      if (!process.env.GUEST_USERNAME) {
+        this.props.router.push('login');
+      } else {
+        if (!data.loginFailed) {
+          this.props.router.push('loading');
+        } else {
+          this.props.router.push('login');
+        }
       }
+    } else {
+      this.props.router.replace(this.state.lastLocation);
+    }
+  }
 
-      this.setState({pluginMenuItems: []});
-      this.pluginsFetched = false;
-      UserActions.logout()
+	fetchPlugins(data) {
+    if (!this.needsPluginUpdate) {
+			console.log("Plugin fetch not required, ignoring plugin fetch request");
+			return;
+		}
+    if (!data.isLoggedIn) {
+			console.log("Not logged in, ignoring plugin fetch request");
+			return;
+		}
+		if (!data.success) {
+			console.log("Unsuccessfull operation, ignoring plugin fetch request");
+			return;
+		}
 
-			this.context.router.push('login');
+		let k = 2;
+		Webcore.fetchPlugins('menu', (packages) => {
+			this.onMenuPlugin(packages);
+			Webcore.fetchModules(packages);
+			k -= 1;
+			if (k === 0) {
+				this.needsPluginUpdate = false;
+			}
 		});
-	}
+
+    // pre-fetch modules of other plugin types
+		Webcore.fetchPlugins(['search', 'result-options', 'query', 'result'], (pkgs) => {
+			Webcore.fetchModules(pkgs);
+			k -= 1;
+			if (k === 0) {
+				this.needsPluginUpdate = false;
+			}
+		})
+  }
+
+  logout() {
+    UserActions.logout();
+    this.setState({
+      pluginMenuItems: [],
+      lastLocation: 'search'
+    });
+    this.needsPluginUpdate = true;
+    this.context.router.push('login');
+  }
 
 	render() {
 
@@ -145,7 +170,7 @@ class App extends React.Component {
           </span>
 
           <span className="user-name buttonLogin">
-              <span onClick={this.logout.bind(this)} className="glyphicon glyphicon-log-out" style={{cursor: 'pointer'}} />
+              <span onClick={this.logout} className="glyphicon glyphicon-log-out" style={{cursor: 'pointer'}} />
           </span>
 
         </div>
@@ -153,7 +178,7 @@ class App extends React.Component {
 
 			<div id="wrapper">
 				<div id="sidebar-wrapper">
-					<Sidebar pluginMenuItems={this.state.pluginMenuItems} onLogout={this.logout.bind(this)}/>
+					<Sidebar pluginMenuItems={this.state.pluginMenuItems} onLogout={this.logout}/>
 				</div>
 				<div id="container" style={{display: 'block'}}>
 					{this.props.children}
@@ -169,6 +194,8 @@ function NotFoundView() {
 	</div>);
 }
 
+Webcore.init(Endpoints.base);
+
 ReactDOM.render((
   <Router history={hashHistory}>
     <Route path="/" component={App}>
@@ -182,7 +209,7 @@ ReactDOM.render((
       <Route path="loading" component={LoadingView} />
       <Route path="image/:uid" component={DirectImageView} />
       <Route path="dump/:uid" component={DirectDumpView} />
-      <Route path="ext/:plugin" component={PluginView} />
+      <Route path='ext/:plugin' component={PluginView} />
       <Route path="*" component={NotFoundView} />
     </Route>
   </Router>

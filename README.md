@@ -1,5 +1,4 @@
-<img src="https://cloud.githubusercontent.com/assets/4738426/21611123/64d0b4de-d1c3-11e6-8f99-d14fce8591f2.png" height="50"/>
-===================================================================
+# <img src="https://user-images.githubusercontent.com/4738426/33545371-e652d482-d8d5-11e7-9ea5-c676d9313378.png" height="50"/>
 
 Dicoogle is an extensible, platform-independent and open-source PACS archive software that replaces the traditional centralized database with a more agile indexing and retrieval mechanism. It was designed to support automatic extraction, indexing and storage of all meta-data detected in medical images, including private DICOM attribute tags, without re-engineering or reconfiguration requirements.
 
@@ -7,7 +6,7 @@ The architecture of Dicoogle is described in the following article:
 
 Valente, F., Silva, L.A.B., Godinho, T.M., Costa, C. _Anatomy of an Extensible Open Source PACS_. J Digit Imaging (2016) 29: 284. doi:10.1007/s10278-015-9834-0 [Available Online: http://link.springer.com/article/10.1007/s10278-015-9834-0]
 
-Our official website is at www.dicoogle.com. A few essential plugins for Dicoogle are available to download there, as well as a built jar of the Dicoogle platform. To build the core platform yourself, please see the section on [Building Dicoogle](#building-dicoogle).
+Our official website is at www.dicoogle.com. A few essential plugins for Dicoogle are available to download there, as well as a built jar of the Dicoogle platform. To learn how to use Dicoogle, please see our [Learning Pack](//bioinformatics-ua.github.io/dicoogle-learning-pack). To build the core platform yourself, please see the section on [Building Dicoogle](#building-dicoogle).
 
 Brief Documentation
 -------------------
@@ -145,13 +144,13 @@ We also have programmatic APIs for interfacing with Dicoogle in [JavaScript](htt
 
 Before building, please make sure that your system contains the following tools:
 
- - Java JDK, either Oracle or OpenJDK (at least version 7; JDK 8 is recommended)
+ - Java JDK, either Oracle or OpenJDK (at least version 8)
  - Maven 3
  - [Node.js](https://nodejs.org/en/download/) (at least version 4; LTS or Stable versions are recommended) and npm (at least version 2)
 
  1. Retrieve the full source code from this repository: `git clone https://github.com/bioinformatics-ua/dicoogle.git`
  2. Navigate to the project's base directory, and build the parent Maven project by calling `mvn install`.
-    - Note: if you want, you can skip the npm part: `mvn install -Dskip.npm`
+    - Note: if you want, you can skip the npm part: `mvn install -Dskip.npm`; or/and to skip node/npm install `mvn install -Dskip.installnodenpm`
  3. The resulting jar file can be found in "./dicoogle/target".
 
 
@@ -178,13 +177,14 @@ Maintainers:
 Contributors:
 
 * Renato Pinho (BMD software)
-* David Campos (BMD software)
-* Eriksson Monteiro (UA.PT Bioinformatics)
+* Eriksson Monteiro (BMD software)
 * Tiago Godinho (UA.PT Bioinformatics)
 * Jorge Miguel Silva (UA.PT Bioinformatics)
+* Rui Lebre (UA.PT Bioinformatics)
 
 Past developers:
 
+* David Campos
 * Samuel Campos
 * Carlos Ferreira
 * Luis Ribeiro

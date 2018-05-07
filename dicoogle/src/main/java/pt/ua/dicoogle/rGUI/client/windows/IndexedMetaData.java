@@ -199,7 +199,7 @@ public class IndexedMetaData extends javax.swing.JFrame
                 
 
                 if (resultList.size() > 0) {
-                    //DebugManager.getInstance().debug("Found results (In Meta)");
+                    //DebugManager.getSettings().debug("Found results (In Meta)");
                     
                     SearchResult r = (SearchResult) resultList.get(0);
                     resultFields = r.getExtraData();

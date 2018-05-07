@@ -29,6 +29,7 @@ import pt.ua.dicoogle.sdk.StorageInterface;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.datastructs.dim.DimLevel;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettingsReader;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
 

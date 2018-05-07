@@ -1,0 +1,51 @@
+language: java
+dist: trusty
+sudo: true
+
+before_cache:
+ - rm -rf $HOME/.m2/repository/pt/ua/ieeta/dicoogle*
+
+cache:
+  directories:
+    - $HOME/.m2
+
+matrix:
+  include:
+    - jdk: oraclejdk8
+      env: NODE_VERSION=6
+    - jdk: oraclejdk8
+      env: NODE_VERSION=lts/*
+    - jdk: oraclejdk8
+      env: NODE_VERSION=stable
+    - jdk: openjdk8
+      env: NODE_VERSION=lts/*
+    - jdk: oraclejdk9
+      env: NODE_VERSION=lts/*
+  allow_failures:
+    - jdk: oraclejdk9
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gcc-4.8
+      - g++-4.8
+
+before_install:
+  - wget https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.der;
+    sudo keytool -importcert -trustcacerts -alias lets-encrypt-x3-cross-signed -file lets-encrypt-x3-cross-signed.der -storepass changeit -keystore $JAVA_HOME/jre/lib/security/cacerts
+  - nvm install $NODE_VERSION
+  - if [ $TRAVIS_OS_NAME == "linux" ]; then
+      export CC="gcc-4.8";
+      export CXX="g++-4.8";
+      export LINK="gcc-4.8";
+      export LINKXX="g++-4.8";
+    fi
+  - gcc --version
+  - g++ --version
+
+install: true
+
+script:
+  - cd dicoogle/src/main/resources/webapp && npm install && cd ../../../../.. && mvn install -Dskip.installnodenpm -Dskip.npm -Dmaven.javadoc.skip=true -B -V

@@ -10,7 +10,7 @@
         <parent>
             <groupId>pt.ua.ieeta</groupId>
             <artifactId>dicoogle-all</artifactId>
-			<version>3.0.0-SNAPSHOT</version>
+            <version>3.0.0-SNAPSHOT</version>
             <relativePath>../pom.xml</relativePath>
         </parent>
 
@@ -81,8 +81,8 @@
 				<version>2.3.2</version>
 				<configuration>
 					<encoding>${project.build.sourceEncoding}</encoding>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>

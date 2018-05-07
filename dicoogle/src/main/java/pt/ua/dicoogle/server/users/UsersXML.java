@@ -115,7 +115,7 @@ public class UsersXML extends DefaultHandler
                 for (int i = 0; i<rolesTmp.length; i++)
                 {
                     Role role = RolesStruct.getInstance().getRole(rolesTmp[i]);
-                    u.addRole(role);
+                    if (role != null) u.addRole(role);
                 }
 
             }
@@ -140,7 +140,7 @@ public class UsersXML extends DefaultHandler
             
             if (xml == null)
             {
-                //DebugManager.getInstance().debug("Setting users default, writing a file with the default information!");
+                //DebugManager.getSettings().debug("Setting users default, writing a file with the default information!");
                 users.setDefaults();
                 printXML();
                 return users;

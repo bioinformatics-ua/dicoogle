@@ -101,11 +101,17 @@ public class RolesXML extends DefaultHandler
     public RolesStruct getXML()
     {
         roles.reset();
-        
-        try
-        {
 
-            FileInputStream fin = new FileInputStream("roles.xml");
+        FileInputStream fin;
+
+        try {
+            fin = new FileInputStream("roles.xml");
+        } catch(FileNotFoundException e){
+            printXML();
+            return roles;
+        }
+
+        try{
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             byte[] data = new byte[1024];
             int bytesRead;
@@ -194,7 +200,6 @@ public class RolesXML extends DefaultHandler
                 atts.clear();
                 hd.endElement("", "", "role");
             }
-            hd.endElement("", "", "Roles");
 
 
             hd.endDocument();
