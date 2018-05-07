@@ -24,8 +24,6 @@ import UserStore from './stores/userStore';
 
 require('core-js/shim');
 
-require('jquery-ui');
-
 window.jQuery = $; // Bootstrap won't work without this hack. browserify-shim didn't help either
 require('bootstrap');
 
@@ -65,6 +63,7 @@ class App extends React.Component {
 		});
 	}
 
+
   componentWillMount() {
     UserStore.listen(this.handleUserStoreUpdate);
 
@@ -84,11 +83,16 @@ class App extends React.Component {
       UserStore.loadLocalStore();
     }
 
-    $("#menu-toggle").click(function (e) {
+    if (this.props.location.pathname=='/')
+	{
+    	this.props.history.pushState(null, 'login');
+	}
+    /*$("#menu-toggle").click(function (e) {
       e.preventDefault();
       $("#wrapper").toggleClass("toggled");
-    });
+    });*/
   }
+
 
   handleUserStoreUpdate(data) {
     this.needsPluginUpdate = true;
@@ -136,7 +140,7 @@ class App extends React.Component {
 			}
 		});
 
-    // pre-fetch modules of other plugin types
+    	// pre-fetch modules of other plugin types
 		Webcore.fetchPlugins(['search', 'result-options', 'query', 'result'], (pkgs) => {
 			Webcore.fetchModules(pkgs);
 			k -= 1;
@@ -144,7 +148,12 @@ class App extends React.Component {
 				this.needsPluginUpdate = false;
 			}
 		})
-  }
+    }
+
+	onClickToggle(e) {
+		e.preventDefault();
+		document.getElementById("wrapper").classList.toggle("toggled");
+	}
 
   logout() {
     UserActions.logout();
@@ -161,7 +170,7 @@ class App extends React.Component {
 		return (
 		<div>
 			<div className="topbar">
-				<img className="btn_drawer" src="assets/drawer_menu.png" id="menu-toggle" />
+				<img className="btn_drawer" src="assets/drawer_menu.png" id="menu-toggle" onClick={this.onClickToggle} />
 				<a>Dicoogle</a>
         <div className="pull-right" bsStyle="padding:15px">
 

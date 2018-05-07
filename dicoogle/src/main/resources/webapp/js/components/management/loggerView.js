@@ -1,5 +1,4 @@
 import React from 'react';
-import $ from 'jquery';
 import {LoggerActions} from "../../actions/loggerActions";
 import {LoggerStore} from "../../stores/loggerStore";
 
@@ -9,17 +8,12 @@ const LoggerView = React.createClass({
     status: "loading"};
   },
   componentDidMount: function(){
-
     LoggerActions.get();
-    //$("#consolediv").scrollTop($("#consolediv")[0].scrollHeight);
    },
    componentDidUpdate: function(){
      console.log("logger update");
-     $("#consolediv").scrollTop($("#consolediv")[0].scrollHeight);
-     //$("#consolediv").scrollTop(1000000);
-     //var objDiv = document.getElementById("consolediv");
-     //objDiv.scrollTop = 1000000;
-
+     let consoleDiv = document.getElementById("consolediv");
+     consoleDiv.scrollTo(0, consoleDiv.scrollHeight);
    },
   componentWillMount: function() {
      // Subscribe to the store.

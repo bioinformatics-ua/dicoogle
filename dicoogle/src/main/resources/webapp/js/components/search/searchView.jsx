@@ -1,6 +1,6 @@
 
 import React, {PropTypes} from 'react';
-import $ from 'jquery';
+import Autosuggest from 'react-autosuggest';
 import {ActionCreators} from '../../actions/searchActions';
 import {ProvidersStore} from '../../stores/providersStore';
 import {ProvidersActions} from '../../actions/providersActions';
@@ -9,12 +9,8 @@ import {SearchResult} from '../search/searchResult';
 import {DimFields} from '../../constants/dimFields';
 import {getUrlVars} from '../../utils/url';
 import {SearchStore} from '../../stores/searchStore';
-
 import Select from 'react-select';
 
-
-// just a workaround
-var countGlobalEnter = 0;
 const Search = React.createClass({
     propTypes: {
       params: PropTypes.object.isRequired,
@@ -23,12 +19,15 @@ const Search = React.createClass({
 
     getInitialState: function (){
         this.keyHash = getUrlVars()['_k'];
+        let fields = DimFields.map(field => ({value: field, label: field}));
         return {
           label: 'login',
           searchState: "simple",
           providers: [],
           selectedProviders: [],
           queryText: '',
+          querySuggestions: [],
+          fields: fields,
           requestedQuery: null,
           error: null,
           data: null
@@ -42,17 +41,12 @@ const Search = React.createClass({
     },
 
     componentDidMount: function(){
-
-      this.enableAutocomplete();
-      this.enableEnterKey();
-
       if(getUrlVars()['query']) {
         this.onSearchByUrl();
       }
       ProvidersActions.get();
     },
     componentWillUnmount: function(){
-      $( "#free_text" ).unbind();
       this.unsubscribe();
     },
     componentWillUpdate: function() {
@@ -105,17 +99,32 @@ const Search = React.createClass({
       );
 
       let simpleSearchInstance = (
-            <div className="row space_up" id="main-search">
-                    <div className="col-xs-8 col-sm-10">
-                        <input id="free_text" type="text" className="form-control" placeholder="Free text or advanced query"
-                               onChange={this.handleQueryTextChanged} value={this.state.queryText} />
-                    </div>
-                    <div className="col-xs-4 col-sm-2">
-                        <button type="button" className="btn btn_dicoogle" id="search-btn"
-                                onClick={this.onSearchClicked}> <i className="fa fa-search"/> &nbsp; Search</button>
-                    </div>
-                </div>
-            );
+        <div className="row space_up" id="main-search">
+          <form onSubmit={this.onSearchClicked}>
+            <div className="col-xs-8 col-sm-10">
+              <Autosuggest
+                suggestions={this.state.querySuggestions}
+                onSuggestionSelected={this.onSuggestionSelected}
+                onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+                onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+                getSuggestionValue={(suggestion) => (suggestion)}
+                renderSuggestion={(suggestion) => (<span>{suggestion}</span>)}
+                inputProps={{
+                  placeholder: "Free text or advanced query",
+                  value: this.state.queryText,
+                  autoFocus: true,
+                  onChange: this.onQueryChange,
+                  onKeyDown: this.onKeyDown
+                }} />
+            </div>
+            <div className="col-xs-4 col-sm-2">
+              <button type="submit" className="btn btn_dicoogle" id="search-btn">
+                <i className="fa fa-search"/> &nbsp; Search
+              </button>
+            </div>
+          </form>
+        </div>
+      );
 
        // if there are already results, we need to add a new component 
        let resultComponent = false;
@@ -142,6 +151,49 @@ const Search = React.createClass({
             </div>);
        }
     },
+
+    onSuggestionsFetchRequested: function(value) {
+      // get the last term for the query
+      let lastTerm = value.value.split(" AND ").pop().trim().toLowerCase();
+      let suggestions = DimFields.filter(field => (field.toLowerCase().substr(0, lastTerm.length) === lastTerm));
+
+      this.setState({
+        querySuggestions: suggestions
+      });
+    },
+
+    onSuggestionsClearRequested: function() {
+      this.setState({
+        querySuggestions: []
+      });
+    },
+  
+    onSuggestionSelected: function (event, {method}) {
+      // prevent search when selecting a suggestion
+      if (method === 'enter') {
+        event.preventDefault();
+      }
+    },
+
+    onQueryChange: function(event, { newValue, method }) {
+      let queryText;
+
+      if (method === 'type') {
+        queryText = newValue;
+      } else if (method === 'escape') {
+        queryText = this.state.queryText;
+      } else {
+        // get the last term (that will be the new term) and the remaining query
+        let newTerm = newValue.split(" AND ").pop().trim() + ':';
+        let prefix = this.state.queryText.match(/(.*) AND/);
+        queryText = prefix ? prefix[0] + ' ' + newTerm : newTerm;
+      }
+
+      this.setState({
+        queryText: queryText
+      });
+    },
+
     _onProvidersChange: function(data) {
       this.setState({providers: data.data});
     },
@@ -180,15 +232,15 @@ const Search = React.createClass({
         requestedQuery: params
       });
     },
-    handleQueryTextChanged(e) {
-      this.setState({queryText: e.target.value});
-    },
     handleProviderSelect(providers) {
       this.setState({
         selectedProviders: providers.map((e) => e.value)
       });
     },
-    onSearchClicked: function() {
+    onSearchClicked: function(event) {
+        // see https://github.com/react-bootstrap/react-bootstrap/issues/1510
+        event.preventDefault();
+
         const text = this.state.queryText;
         const provider = this.state.selectedProviders;
         const params = {text, provider};
@@ -202,87 +254,8 @@ const Search = React.createClass({
         });
       ActionCreators.search(params);
     },
-    isAutocompletOpened: function(){
-      if($('.ui-autocomplete').css('display') === 'none'){return false;}
-      return true;
-    },
-
-    enableAutocomplete: function(){
-      function split( val ) {
-        return val.split( /\sAND\s/ );
-      }
-      function extractLast( term ) {
-        return split( term ).pop();
-      }
-
-    $( "#free_text" )
-      // don't navigate away from the field on tab when selecting an item
-      .bind( "keydown", function( event ) {
-      /*  if ( event.keyCode === $.ui.keyCode.TAB &&
-            $( this ).autocomplete( "instance" ).menu.active ) {
-          event.preventDefault();
-        }*/
-        if(event.keyCode === 13){
-          //event.preventDefault();
-          event.stopPropagation();
-        }
-      })
-      .autocomplete({
-        minLength: 0,
-        source: function( request, response ) {
-          // delegate back to autocomplete, but extract the last term
-          response( $.ui.autocomplete.filter(
-            DimFields, extractLast( request.term ) ) );
-
-        },
-        focus: function() {
-          // prevent value inserted on focus
-          return false;
-        },
-        select: function( event, ui ) {
-          var terms = split( this.value );
-          console.log(terms);
-          // remove the current input
-          terms.pop();
-          //if(terms.lenght >1)
-          //terms.join(" AND ");
-          // add the selected item
-          console.log(terms.length);
-          var termtrick = ((terms.length >= 1) ? " AND " : "") + ui.item.value;
-          terms.push(termtrick);
-          // add placeholder to get the colon at the end
-          terms.push( "" );
-          this.value = (terms.join( "" ) + ":");
-
-          return false;
-        }
-      });
-    },
-    
-
-    enableEnterKey: function(){
-      /*$('#free_text').keyup(function(e){
-        if(e.keyCode == 13)
-          {
-            //self.onSearchClicked();
-            console.log("OPENED: ",self.isAutocompletOpened());
-          }
-        });
-        */
-        //
-        //Trick to not search when press enter on autocomplete
-        //
-        
-        $("#free_text").keypress((e) => {
-        if (e.keyCode === 13) {
-            if (++countGlobalEnter >= 1) {
-                console.log("Count: " + countGlobalEnter);
-                this.onSearchClicked();
-                countGlobalEnter = 0;
-                 e.stopPropagation();
-            }
-        }
-    });
+    isKeyword: function(freetext) {
+      return !!freetext.match(/[^\s\\]:\S/);
     }
 });
 

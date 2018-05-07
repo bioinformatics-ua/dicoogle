@@ -1,9 +1,9 @@
 import React from 'react';
-import $ from 'jquery';
 
 import {IndexerStore} from '../../stores/indexerStore';
 import {IndexerActions} from '../../actions/indexerActions';
 import {saveIndexOptions} from '../../handlers/requestHandler';
+import {ToastView} from "../mixins/toastView";
 
 const ConfigurationEntry = React.createClass({
   render() {
@@ -30,7 +30,8 @@ const IndexerView = React.createClass({
             effort: 0,
             thumbnail: false,
             thumbnailSize: 0,
-            watcher: false
+            watcher: false,
+            showSaved: false
           },
           status: "loading",
           currentWatch: false
@@ -98,7 +99,7 @@ const IndexerView = React.createClass({
                                   <button className="btn btn_dicoogle" onClick={this.onSaveClicked}>
                                     Save
                                   </button>
-                                  <div className="toast">Saved</div>
+                                  <ToastView show={this.state.showSaved} />
                                 </div>
                               </div>
                           </div>
@@ -118,7 +119,6 @@ const IndexerView = React.createClass({
         //console.log(document.getElementById(id).value);
       },
       onSaveClicked() {
-        $('.toast').stop().fadeIn(400).delay(3000).fadeOut(400); //fade out after 3 seconds
         console.log("onSaveClicked");
         saveIndexOptions(
           document.getElementById("mon_path").value,
@@ -128,6 +128,11 @@ const IndexerView = React.createClass({
           document.getElementById("effort_range").value,
           document.getElementById("tsize").value
         );
+
+        this.setState({ showSaved: true });
+        setTimeout(() => {
+          this.setState({ showSaved: false });
+        }, 3000);
       }
     });
 
