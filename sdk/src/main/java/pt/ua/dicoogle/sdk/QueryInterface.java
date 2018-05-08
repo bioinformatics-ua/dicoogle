@@ -19,6 +19,9 @@
 package pt.ua.dicoogle.sdk;
 
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
+import pt.ua.dicoogle.sdk.utils.QueryException;
+import pt.ua.dicoogle.sdk.utils.QueryParseException;
+import pt.ua.dicoogle.sdk.utils.RetrievalException;
 
 /**
  * Query Interface Plugin. Query plugins provide a means of handling queries and obtaining search results.
@@ -41,7 +44,10 @@ public interface QueryInterface extends DicooglePlugin
      * @param parameters A variable list of parameters of the query. The plugin can use them to establish
      * their own API's, which may require more complex data structures (e.g. images).
      * 
-     * @return the results of the query as a (possibly lazy) iterable
+     * @return the results of the query as a (possibly lazy) iterable. The consumption of its iterator can
+     * result in a {@link RetrievalException} being throw in the event of a failure in the retrieval process.
+     * @throws QueryException if the provider could not perform the query. An example of this is when the
+     * query text parser encountered a syntax error (see {@link QueryParseException}).
      */
-    public Iterable<SearchResult> query(String query, Object ... parameters);
+    public Iterable<SearchResult> query(String query, Object ... parameters) throws QueryException;
 }
