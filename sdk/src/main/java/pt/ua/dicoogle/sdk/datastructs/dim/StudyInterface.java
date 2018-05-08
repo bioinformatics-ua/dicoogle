@@ -28,7 +28,7 @@ public interface StudyInterface {
     /**
      * Get the Patient parent of the study
      *
-     * @return the Patient parent 
+     * @return the Patient parent
      */
     public PatientInterface getPatient();
 }
