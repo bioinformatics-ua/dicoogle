@@ -382,8 +382,8 @@ public class Result2Tree extends Observable
             //System.out.println("Chegou ao fim");
         } else if (level == 3)
         {
-            // Serie
-            //DebugManager.getSettings().debug("Serie");
+            // Series
+            //DebugManager.getSettings().debug("Series");
             //System.out.println("Study Date:" + evt.getWatchDirectory().getPathComponent(2));
             LoggerFactory.getLogger(Result2Tree.class).trace("completeTree - level 3");
             DefaultMutableTreeNode study_date = (DefaultMutableTreeNode) evt.getPath().getPathComponent(2);

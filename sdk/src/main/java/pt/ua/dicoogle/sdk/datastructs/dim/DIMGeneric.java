@@ -262,29 +262,29 @@ public class DIMGeneric {
             s.setOperatorsName(operatorsName);
             s.setRequestingPhysician(RequestingPhysician);
 
-            Serie serie = new Serie(s, serieUID, modality);
+            Series series = new Series(s, serieUID, modality);
             try {
                 if (serieNumber != null) {
-                    serie.setSerieNumber((int) Float.parseFloat(serieNumber));
+                    series.setSerieNumber((int) Float.parseFloat(serieNumber));
                 }
             } catch (Exception ex) {
                 // nothing to do anyway
             }
-            serie.setSeriesDescription(serieDescription);
-            serie.setSeriesDescription(serieDescription);
-            serie.setProtocolName(ProtocolName);
-            serie.setSeriesDate(SeriesDate);
-            serie.setBodyPartThickness(BodyPartThickness);
-            serie.setViewPosition(ViewPosition);
-            serie.setImageLaterality(ImageLaterality);
-            serie.setAcquisitionDeviceProcessingDescription(AcquisitionDeviceProcessingDescription);
-            serie.setViewCodeSequence_CodeMeaning(ViewCodeSequence_CodeMeaning);
-            serie.setViewCodeSequence_CodeValue(ViewCodeSequence_CodeValue);
-            serie.setViewCodeSequence_CodingSchemeDesignator(ViewCodeSequence_CodingSchemeDesignator);
-            serie.setViewCodeSequence_CodingSchemeVersion(ViewCodeSequence_CodingSchemeVersion);
+            series.setSeriesDescription(serieDescription);
+            series.setSeriesDescription(serieDescription);
+            series.setProtocolName(ProtocolName);
+            series.setSeriesDate(SeriesDate);
+            series.setBodyPartThickness(BodyPartThickness);
+            series.setViewPosition(ViewPosition);
+            series.setImageLaterality(ImageLaterality);
+            series.setAcquisitionDeviceProcessingDescription(AcquisitionDeviceProcessingDescription);
+            series.setViewCodeSequence_CodeMeaning(ViewCodeSequence_CodeMeaning);
+            series.setViewCodeSequence_CodeValue(ViewCodeSequence_CodeValue);
+            series.setViewCodeSequence_CodingSchemeDesignator(ViewCodeSequence_CodingSchemeDesignator);
+            series.setViewCodeSequence_CodingSchemeVersion(ViewCodeSequence_CodingSchemeVersion);
 
-            serie.addImage(uri, sopInstUID);
-            s.addSerie(serie);
+            series.addImage(uri, sopInstUID);
+            s.addSerie(series);
             p.addStudy(s);
 
         } else {
@@ -314,24 +314,24 @@ public class DIMGeneric {
             /**
              * Create Series
              */
-            Serie serie = new Serie(s, serieUID, modality);
+            Series series = new Series(s, serieUID, modality);
             if (serieNumber != null && !serieNumber.equals("")) {
-                serie.setSerieNumber((int) Float.parseFloat(serieNumber));
+                series.setSerieNumber((int) Float.parseFloat(serieNumber));
             }
-            serie.setSeriesDescription(serieDescription);
-            serie.setProtocolName(ProtocolName);
+            series.setSeriesDescription(serieDescription);
+            series.setProtocolName(ProtocolName);
 
-            serie.setSeriesDate(SeriesDate);
-            serie.setViewPosition(ViewPosition);
-            serie.setImageLaterality(ImageLaterality);
-            serie.setAcquisitionDeviceProcessingDescription(AcquisitionDeviceProcessingDescription);
-            serie.setViewCodeSequence_CodeMeaning(ViewCodeSequence_CodeMeaning);
-            serie.setViewCodeSequence_CodeValue(ViewCodeSequence_CodeValue);
-            serie.setViewCodeSequence_CodingSchemeDesignator(ViewCodeSequence_CodingSchemeDesignator);
-            serie.setViewCodeSequence_CodingSchemeVersion(ViewCodeSequence_CodingSchemeVersion);
+            series.setSeriesDate(SeriesDate);
+            series.setViewPosition(ViewPosition);
+            series.setImageLaterality(ImageLaterality);
+            series.setAcquisitionDeviceProcessingDescription(AcquisitionDeviceProcessingDescription);
+            series.setViewCodeSequence_CodeMeaning(ViewCodeSequence_CodeMeaning);
+            series.setViewCodeSequence_CodeValue(ViewCodeSequence_CodeValue);
+            series.setViewCodeSequence_CodingSchemeDesignator(ViewCodeSequence_CodingSchemeDesignator);
+            series.setViewCodeSequence_CodingSchemeVersion(ViewCodeSequence_CodingSchemeVersion);
 
-            serie.addImage(uri, sopInstUID);
-            s.addSerie(serie);
+            series.addImage(uri, sopInstUID);
+            s.addSerie(series);
             this.patients.add(p);
             this.patientsHash.put(patientIdentifier, p);
         }
@@ -361,7 +361,7 @@ public class DIMGeneric {
                 JSONArray series = new JSONArray();
 
                 Set<String> modalitiesSet = new HashSet<>();
-                for (Serie serie : s.getSeries()) {
+                for (Series serie : s.getSeries()) {
                     modalitiesSet.add(serie.getModality());
                     modalities.add(serie.getModality());
 
@@ -440,15 +440,15 @@ public class DIMGeneric {
 
                     hd.startElement("", "", "Study", atts);
 
-                    for (Serie serie : s.getSeries()) {
+                    for (Series series : s.getSeries()) {
                         atts.clear();
-                        atts.addAttribute("", "", "modality", "", serie.getModality().trim());
-                        atts.addAttribute("", "", "id", "", serie.getSerieInstanceUID().trim());
+                        atts.addAttribute("", "", "modality", "", series.getModality().trim());
+                        atts.addAttribute("", "", "id", "", series.getSerieInstanceUID().trim());
 
-                        hd.startElement("", "", "Serie", atts);
+                        hd.startElement("", "", "Series", atts);
 
-                        ArrayList<URI> img = serie.getImageList();
-                        ArrayList<String> uid = serie.getSOPInstanceUIDList();
+                        ArrayList<URI> img = series.getImageList();
+                        ArrayList<String> uid = series.getSOPInstanceUIDList();
                         int size = img.size();
                         for (int i = 0; i < size; i++) {
                             atts.clear();
@@ -458,7 +458,7 @@ public class DIMGeneric {
                             hd.startElement("", "", "Image", atts);
                             hd.endElement("", "", "Image");
                         }
-                        hd.endElement("", "", "Serie");
+                        hd.endElement("", "", "Series");
                     }
                     hd.endElement("", "", "Study");
                 }

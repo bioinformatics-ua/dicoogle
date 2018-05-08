@@ -28,7 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import pt.ua.dicoogle.sdk.datastructs.dim.DIMGeneric;
 import pt.ua.dicoogle.sdk.datastructs.dim.Patient;
-import pt.ua.dicoogle.sdk.datastructs.dim.Serie;
+import pt.ua.dicoogle.sdk.datastructs.dim.Series;
 import pt.ua.dicoogle.sdk.datastructs.dim.Study;
 
 /**
@@ -103,7 +103,7 @@ public class DIM2JSONConverter {
 		obj.put("iname", StringUtils.trimToNull(study.getInstitutuionName()));
 		
 		JSONArray series = new JSONArray();
-		for(Serie serie : study.getSeries()){
+		for(Series serie : study.getSeries()){
 			series.add(convertToJSON(serie));
 		}
 		obj.put("series", series);
@@ -114,21 +114,21 @@ public class DIM2JSONConverter {
 	/**
 	 * Converts a Series Model to JSON. 
 	 * 
-	 * @param serie The DICOM Series model
-	 * @return The resulting JSON object, or null if serie is null.
+	 * @param series The DICOM Series model
+	 * @return The resulting JSON object, or null if series is null.
 	 */
-	private static JSONObject convertToJSON(Serie serie) {
+	private static JSONObject convertToJSON(Series series) {
 		
 		JSONObject obj = new JSONObject();
 		
-		obj.put("uid", StringUtils.trimToNull(serie.getSerieInstanceUID()));
-		obj.put("mod", StringUtils.trimToNull(serie.getModality()));
-		obj.put("number", serie.getSerieNumber());
-		obj.put("descr", StringUtils.trimToNull(serie.getSeriesDescription()));
+		obj.put("uid", StringUtils.trimToNull(series.getSerieInstanceUID()));
+		obj.put("mod", StringUtils.trimToNull(series.getModality()));
+		obj.put("number", series.getSerieNumber());
+		obj.put("descr", StringUtils.trimToNull(series.getSeriesDescription()));
 	
 		JSONArray images = new JSONArray();
-		Iterator<String> itUID = serie.getSOPInstanceUIDList().iterator();
-		Iterator<URI> itURI = serie.getImageList().iterator();
+		Iterator<String> itUID = series.getSOPInstanceUIDList().iterator();
+		Iterator<URI> itURI = series.getImageList().iterator();
 		while(itUID.hasNext() && itURI.hasNext()){
 			String uid = itUID.next();
 			URI uri = itURI.next();

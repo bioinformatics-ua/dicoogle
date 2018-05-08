@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 /**
+ * This class is a simple implementation of Study that will be returned in DIM.
  *
  * @author Luís A. Bastião Silva <bastiao@bmd-software.com>
  */
@@ -45,8 +46,8 @@ public class Study implements StudyInterface{
     private String patientName;
 
 
-    private ArrayList<Serie> series = new ArrayList<Serie>() ;
-    private Hashtable<String, Serie> seriesHash = new Hashtable<String, Serie>();
+    private ArrayList<Series> series = new ArrayList<Series>() ;
+    private Hashtable<String, Series> seriesHash = new Hashtable<String, Series>();
 
     public Study(Patient patient, String StudyInstanceUID, String StudyDate)
     {
@@ -96,16 +97,16 @@ public class Study implements StudyInterface{
 
 
 
-    public void addSerie(Serie s){
+    public void addSerie(Series s){
         if (this.seriesHash.containsKey(s.getSerieInstanceUID())){
 
-            Serie existSerie = this.seriesHash.get(s.getSerieInstanceUID());
+            Series existSeries = this.seriesHash.get(s.getSerieInstanceUID());
             ArrayList<URI> img = s.getImageList();
             ArrayList<String> uid = s.getSOPInstanceUIDList();
 
             int size = img.size();
             for (int i=0;i<size;i++){
-                existSerie.addImage(img.get(i),uid.get(i));
+                existSeries.addImage(img.get(i),uid.get(i));
             }
         }
         else
@@ -119,18 +120,18 @@ public class Study implements StudyInterface{
     /**
      * @return the series
      */
-    public ArrayList<Serie> getSeries() {
+    public ArrayList<Series> getSeries() {
         return series;
     }
 
-    public Serie getSeries(String seriesInstanceUID) {
+    public Series getSeries(String seriesInstanceUID) {
         return this.seriesHash.get(seriesInstanceUID);
     }
 
     /**
      * @param series the series to set
      */
-    public void setSeries(ArrayList<Serie> series) {
+    public void setSeries(ArrayList<Series> series) {
         this.series = series;
     }
 

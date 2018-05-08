@@ -19,9 +19,11 @@
 package pt.ua.dicoogle.sdk.datastructs.dim;
 
 /**
+ * This interface defines what is the minimium method that an Instance should return in DIM.
+ *
  * Created by bastiao on 02-02-2017.
  */
 public interface InstanceInterface {
 
-    public SerieInterface getSerie();
+    public SeriesInterface getSerie();
 }

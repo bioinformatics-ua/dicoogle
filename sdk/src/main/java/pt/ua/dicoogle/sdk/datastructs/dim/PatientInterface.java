@@ -19,6 +19,9 @@
 package pt.ua.dicoogle.sdk.datastructs.dim;
 
 /**
+ *
+ * Interface to be returned as a Patient interface - DIM.
+ *
  * Created by bastiao on 02-02-2017.
  */
 public interface PatientInterface {

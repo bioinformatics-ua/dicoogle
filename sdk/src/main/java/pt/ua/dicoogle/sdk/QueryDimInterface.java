@@ -20,7 +20,7 @@ package pt.ua.dicoogle.sdk;
 
 
 import pt.ua.dicoogle.sdk.datastructs.dim.Patient;
-import pt.ua.dicoogle.sdk.datastructs.dim.Serie;
+import pt.ua.dicoogle.sdk.datastructs.dim.Series;
 import pt.ua.dicoogle.sdk.datastructs.dim.Study;
 
 /**
@@ -70,6 +70,6 @@ public interface QueryDimInterface extends QueryInterface {
      * @param parameters
      * @return the results of the query as a (possibly lazy) iterable with <b>Series</b>
      */
-    public Iterable<Serie> querySeries(String query, Object ... parameters);
+    public Iterable<Series> querySeries(String query, Object ... parameters);
     
 }

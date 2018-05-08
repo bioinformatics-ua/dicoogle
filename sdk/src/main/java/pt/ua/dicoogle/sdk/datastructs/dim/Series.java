@@ -22,10 +22,11 @@ import java.net.URI;
 import java.util.ArrayList;
 
 /**
+ * This class is a simple implementation of Series that will be returned in DIM.
  *
  * @author Luís A. Bastião Silva <bastiao@bmd-software.com>
  */
-public class Serie implements SerieInterface
+public class Series implements SeriesInterface
 {
 
     private Study parent;
@@ -55,7 +56,7 @@ public class Serie implements SerieInterface
     private ArrayList<URI> imageList = new ArrayList<>();
     private ArrayList<String> UIDList = new ArrayList<>();
 
-    public Serie(Study study, String SerieInstanceUID, String modality)
+    public Series(Study study, String SerieInstanceUID, String modality)
     {
         this.parent = study;
         this.Modality = modality;
@@ -63,7 +64,7 @@ public class Serie implements SerieInterface
         
     }
 
-    public Serie(Study study, String SerieInstanceUID, int SerieNumber)
+    public Series(Study study, String SerieInstanceUID, int SerieNumber)
     {
         this.parent = study;
         this.SerieInstanceUID = SerieInstanceUID ;

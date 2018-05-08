@@ -20,12 +20,12 @@ package pt.ua.dicoogle.sdk.datastructs.dim;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 
 /**
+ * This class is a simple implementation of Patient that will be returned in DIM.
  *
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@bmd-software.com>
  */
 public class Patient implements PatientInterface
 {
@@ -64,7 +64,7 @@ public class Patient implements PatientInterface
 
             Study es = this.studiesHash.get(s.getStudyInstanceUID()) ;
             es.setStudyDescription(s.getStudyDescription());
-            for (Serie e: s.getSeries())
+            for (Series e: s.getSeries())
             {
                 es.addSerie(e);
             }
