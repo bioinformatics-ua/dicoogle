@@ -31,6 +31,8 @@ import java.util.Scanner;
 
 
 /**
+ * Auxiliar class to cancat tags.
+ * For instance, when Study Description are empty we can add there the BodyPartExamined.
  *
  * @author bastiao
  */

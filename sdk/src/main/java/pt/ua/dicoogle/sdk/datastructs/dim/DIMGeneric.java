@@ -42,6 +42,10 @@ import org.xml.sax.helpers.AttributesImpl;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 
 /**
+ * This class is responsible to transform a list of SearchResult in a DIM model.
+ * Historically, this class take times to render in large amounts of image has a linear complexity.
+ * This also implemented in a type that we mainly focus in an archive image oriented.
+ *
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Frederico Silva <fredericosilva@ua.pt>
@@ -49,6 +53,7 @@ import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 public class DIMGeneric {
 
     /**
+     *
      * There are double space to save the results but it decrease the search
      * time and it is important because a querySearch should be little enough.
      */

@@ -25,5 +25,10 @@ package pt.ua.dicoogle.sdk.datastructs.dim;
  */
 public interface StudyInterface {
 
+    /**
+     * Get the Patient parent of the study
+     *
+     * @return the Patient parent 
+     */
     public PatientInterface getPatient();
 }

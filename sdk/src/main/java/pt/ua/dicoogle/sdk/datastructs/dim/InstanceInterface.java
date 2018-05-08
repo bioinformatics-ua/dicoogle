@@ -25,5 +25,11 @@ package pt.ua.dicoogle.sdk.datastructs.dim;
  */
 public interface InstanceInterface {
 
-    public SeriesInterface getSerie();
+    /**
+     *
+     * Get the parent series
+     *
+     * @return the Series parent of this instance
+     */
+    public SeriesInterface getSeries();
 }

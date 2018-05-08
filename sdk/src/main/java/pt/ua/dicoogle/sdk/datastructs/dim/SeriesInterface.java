@@ -25,5 +25,11 @@ package pt.ua.dicoogle.sdk.datastructs.dim;
  */
 public interface SeriesInterface {
 
+
+    /**
+     * Get the parent Study of this Series
+     *
+     * @return the Study parent
+     */
     public StudyInterface getStudy();
 }
