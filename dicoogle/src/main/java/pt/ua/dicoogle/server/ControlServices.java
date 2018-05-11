@@ -26,9 +26,7 @@ import pt.ua.dicoogle.server.queryretrieve.QueryRetrieve;
 
 import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.core.settings.ServerSettingsManager;
-import pt.ua.dicoogle.rGUI.server.controllers.Logs;
 import pt.ua.dicoogle.server.web.DicoogleWeb;
-import pt.ua.dicoogle.taskManager.TaskManager;
 
 /**
  *
@@ -144,8 +142,7 @@ public class ControlServices
             storage = new RSIStorage(keys, list);
             storage.start();
 
-            //DebugManager.getSettings().debug("Starting DICOM Storage SCP");
-            Logs.getInstance().addServerLog("Starting DICOM Storage SCP");
+            logger.info("Starting DICOM Storage SCP");
 
             return 0;
         }
@@ -159,8 +156,7 @@ public class ControlServices
         {
             storage.stop();
             storage = null;
-            //DebugManager.getSettings().debug("Stopping DICOM Storage SCP");
-            Logs.getInstance().addServerLog("Stopping DICOM Storage SCP");
+            logger.info("Stopping DICOM Storage SCP");
         }
     }
 
@@ -175,8 +171,8 @@ public class ControlServices
         {
             retrieve = new QueryRetrieve();
             retrieve.startListening();
-            //DebugManager.getSettings().debug("Starting DICOM QueryRetrive");
-            Logs.getInstance().addServerLog("Starting DICOM QueryRetrive");
+            //DebugManager.getInstance().debug("Starting DICOM QueryRetrive");
+            logger.info("Starting DICOM QueryRetrieve");
         }
     }
 
@@ -186,8 +182,7 @@ public class ControlServices
         {
             retrieve.stopListening();
             retrieve = null;
-            //DebugManager.getSettings().debug("Stopping DICOM QueryRetrive");
-            Logs.getInstance().addServerLog("Stopping DICOM QueryRetrive");
+            logger.info("Stopping DICOM QueryRetrieve");
         }
     }
 

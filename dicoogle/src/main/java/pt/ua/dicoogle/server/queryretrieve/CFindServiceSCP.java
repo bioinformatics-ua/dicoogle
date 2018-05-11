@@ -18,26 +18,31 @@
  */
 package pt.ua.dicoogle.server.queryretrieve;
 
-import aclmanager.core.LuceneQueryACLManager;
-import org.dcm4che2.data.*;
-import org.dcm4che2.net.Association;
-import org.dcm4che2.net.DicomServiceException;
-import org.dcm4che2.net.DimseRSP;
-import org.dcm4che2.net.service.CFindService;
-import pt.ua.dicoogle.DicomLog.LogDICOM;
-import pt.ua.dicoogle.DicomLog.LogLine;
-import pt.ua.dicoogle.DicomLog.LogXML;
-import pt.ua.dicoogle.core.settings.ServerSettingsManager;
-import pt.ua.dicoogle.rGUI.server.controllers.Logs;
-import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
-import pt.ua.dicoogle.server.DicomNetwork;
-
-import javax.xml.transform.TransformerConfigurationException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.concurrent.Executor;
+
+import javax.xml.transform.TransformerConfigurationException;
+
+import org.dcm4che2.data.DicomElement;
+import org.dcm4che2.data.DicomObject;
+import org.dcm4che2.data.ElementDictionary;
+import org.dcm4che2.data.SpecificCharacterSet;
+import org.dcm4che2.data.Tag;
+import org.dcm4che2.net.Association;
+import org.dcm4che2.net.DicomServiceException;
+import org.dcm4che2.net.DimseRSP;
+import org.dcm4che2.net.service.CFindService;
+
+import aclmanager.core.LuceneQueryACLManager;
+import pt.ua.dicoogle.DicomLog.LogDICOM;
+import pt.ua.dicoogle.DicomLog.LogLine;
+import pt.ua.dicoogle.DicomLog.LogXML;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
+import pt.ua.dicoogle.server.DicomNetwork;
 
 /**
  *
@@ -75,12 +80,6 @@ public class CFindServiceSCP extends CFindService {
 
         DimseRSP replay = null;
 
-        /**
-         * ///  How create a new Connection? Detect new connections..
-        if (MainWindow.getMw() != null) {
-        MainWindow.getMw().newClientConnection(as);
-        }
-         */
         /**
          * Verify Permited AETs
          */
@@ -155,9 +154,6 @@ public class CFindServiceSCP extends CFindService {
             }
 
         }
-        //Logs.getInstance().addLog(ll);
-
-
         return replay;
     }
 

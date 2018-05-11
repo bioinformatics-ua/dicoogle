@@ -25,6 +25,7 @@ import pt.ua.dicoogle.sdk.StorageInterface;
 import pt.ua.dicoogle.sdk.core.DicooglePlatformInterface;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
+import pt.ua.dicoogle.sdk.datastructs.dim.DimLevel;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettingsReader;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
@@ -34,6 +35,8 @@ import java.util.Collection;
 import java.util.List;
 
 public class PlatformInterfaceMock implements DicooglePlatformInterface {
+
+
     @Override
     public IndexerInterface requestIndexPlugin(String name) {
         return null;
@@ -85,7 +88,23 @@ public class PlatformInterfaceMock implements DicooglePlatformInterface {
     }
 
     @Override
+    public JointQueryTask queryAll(JointQueryTask holder, String query, DimLevel level, Object... parameters) {
+        return null;
+    }
+
+
+    @Override
+    public JointQueryTask query(JointQueryTask holder, List<String> querySources, DimLevel level, String query, Object... parameters) {
+        return null;
+    }
+    @Override
     public Task<Iterable<SearchResult>> query(String querySource, String query, Object... parameters) {
+        return null;
+    }
+
+
+    @Override
+    public Task<Iterable<SearchResult>> query(String querySource, DimLevel level, String query, Object... parameters) {
         return null;
     }
 

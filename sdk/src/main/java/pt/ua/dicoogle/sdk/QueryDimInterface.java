@@ -18,24 +18,25 @@
  */
 package pt.ua.dicoogle.sdk;
 
-import pt.ua.dicoogle.sdk.datastructs.SearchResult;
-import pt.ua.dicoogle.sdk.utils.QueryException;
-import pt.ua.dicoogle.sdk.utils.QueryParseException;
-import pt.ua.dicoogle.sdk.utils.RetrievalException;
-import pt.ua.dicoogle.sdk.datastructs.dim.DimLevel;
+
+import pt.ua.dicoogle.sdk.datastructs.dim.Patient;
+import pt.ua.dicoogle.sdk.datastructs.dim.Series;
+import pt.ua.dicoogle.sdk.datastructs.dim.Study;
 
 /**
- * Query Interface Plugin. Query plugins provide a means of handling queries and obtaining search results.
- * They will usually rely on indices created by an indexer plugin.
  *
- * @author Luís A. Bastião Silva <bastiao@bmd-software.com>
- * @author fmvalente
+ * Query Interface provides methods to query at different levels in DICOM Information Model.
+ *
+ * Created by bastiao on 02-02-2017.
  */
-public interface QueryInterface extends DicooglePlugin 
-{
+public interface QueryDimInterface extends QueryInterface {
+
+
+
+
     /**
      * Performs a search on the database.
-     * 
+     *
      * The consumer of the results would either request an iterator or use a for-each loop. The underlying
      * iterator implementation can be redefined to wait for more results at the caller. Furthermore, the
      * resulting iterable is expected to be traversed only once.
@@ -44,25 +45,31 @@ public interface QueryInterface extends DicooglePlugin
      * query format, but only those based on Lucene with work with the search user interface.
      * @param parameters A variable list of parameters of the query. The plugin can use them to establish
      * their own API's, which may require more complex data structures (e.g. images).
-     * 
-     * @return the results of the query as a (possibly lazy) iterable. The consumption of its iterator can
-     * result in a {@link RetrievalException} being throw in the event of a failure in the retrieval process.
-     * @throws QueryException if the provider could not perform the query. An example of this is when the
-     * query text parser encountered a syntax error (see {@link QueryParseException}).
+     *
+     * @return the results of the query as a (possibly lazy) iterable with <b>Patient</b>
      */
-
-    public Iterable<SearchResult> query(String query, Object ... parameters) throws QueryException;;
+    public Iterable<Patient> queryPatient(String query, Object ... parameters);
 
     /**
      *
      * Performs a search on the database.
      *
      * @param query a string describing the query. The underlying plugin is currently free to follow any
-     * query format.
-     * @param level a level of the query, for instance, Patient, Study, Series or Instance
-     * @param parameters A variable list of parameters of the query. The plugin can use them to establish
-     * their own API's, which may require more complex data structures (e.g. images).
-     * @return the results of the query as a (possibly lazy) iterable
+     *      * query format
+     * @param parameters
+     * @return the results of the query as a (possibly lazy) iterable with <b>Study</b>
      */
-    public Iterable<SearchResult> query(String query, DimLevel level, Object ... parameters) throws QueryException;;
+    public Iterable<Study> queryStudy(String query, Object ... parameters);
+
+    /**
+     *
+     * Performs a search on the database.
+     *
+     * @param query a string describing the query. The underlying plugin is currently free to follow any
+     *      * query format, but only those based on Lucene with work with the search user interface.
+     * @param parameters
+     * @return the results of the query as a (possibly lazy) iterable with <b>Series</b>
+     */
+    public Iterable<Series> querySeries(String query, Object ... parameters);
+    
 }
