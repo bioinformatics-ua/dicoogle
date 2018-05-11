@@ -124,7 +124,10 @@ public class SearchDicomResult implements Iterator<DicomObject>
 
 			}
 		};
-		holder = PluginController.getInstance().queryAll(holder, searchQuery,
+
+		// The method will retrieve all DICOM active query plugins (with empty list at argument)
+        List<String> dicomQueryProviders = PluginController.getInstance().filterDicomQueryProviders(new ArrayList<>());
+		holder = PluginController.getInstance().query(holder, dicomQueryProviders, searchQuery,
 				extraFields);
 
 		try {
