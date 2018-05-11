@@ -50,8 +50,9 @@ import pt.ua.dicoogle.server.web.servlets.management.ServerStorageServlet;
 import pt.ua.dicoogle.server.web.servlets.management.ServicesServlet;
 import pt.ua.dicoogle.server.web.servlets.management.TransferOptionsServlet;
 
-import java.io.File;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.EnumSet;
 
 import org.eclipse.jetty.server.Handler;
@@ -140,7 +141,7 @@ public class DicoogleWeb {
 
         // setup the Export to CSV Servlet
         final ServletContextHandler csvServletHolder = createServletHandler(new ExportToCSVServlet(), "/export");
-        File tempDir = new File(ServerSettings.getInstance().getPath());
+        Path tempDir = Files.createTempDirectory("dicoogle");
         csvServletHolder.addServlet(new ServletHolder(new ExportCSVToFILEServlet(tempDir)), "/exportFile");
 
         // setup the search (DIMSE-service-user C-FIND ?!?) servlet

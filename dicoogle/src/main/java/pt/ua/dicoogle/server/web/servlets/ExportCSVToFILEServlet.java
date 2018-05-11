@@ -24,8 +24,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -46,8 +46,8 @@ import pt.ua.dicoogle.plugins.PluginController;
 public class ExportCSVToFILEServlet extends HttpServlet {
 	private static final Logger logger = LoggerFactory.getLogger(ExportCSVToFILEServlet.class);
 
-	private File tempDirectory;
-	public ExportCSVToFILEServlet(File tempDirectory) {
+	private final Path tempDirectory;
+	public ExportCSVToFILEServlet(Path tempDirectory) {
 		super();
 		this.tempDirectory = tempDirectory;
 	}
@@ -63,7 +63,7 @@ public class ExportCSVToFILEServlet extends HttpServlet {
 			return;
 		}
 		
-		File tmpFile = new File(tempDirectory, "QueryResultsExport-"+uid);
+		File tmpFile = this.getCsvFile(uid);
 		if(!tmpFile.exists()){
 			resp.sendError(402, "The file for the given uid was not found. Please try again...");
 			return; 
@@ -128,29 +128,29 @@ public class ExportCSVToFILEServlet extends HttpServlet {
 
 		String uid = UUID.randomUUID().toString();
 		//File tempFile = File.createTempFile("QueryResultsExport-", uid, tempDirectory);
-		File tempFile = new File(tempDirectory, "QueryResultsExport-"+uid);
+		
+		File tempFile = this.getCsvFile(uid);
 		tempFile.deleteOnExit();
 		logger.debug("UID: {}", uid);
 		logger.debug("FilePath: {}", tempFile.getAbsolutePath());
 		
-		FileOutputStream outStream = new FileOutputStream(tempFile);
-		BufferedOutputStream bos = new BufferedOutputStream(outStream);
-		
-		ExportToCSVQueryTask task = new ExportToCSVQueryTask(orderedFields,
-				bos);
-		
-		if (arr == null || arr.length ==0) {
-			PluginController.getInstance().queryAll(task, queryString, fields);
-		} else {
-			List<String> providers = new ArrayList<>();
-			for (Object f : arr) {
-				providers.add(f.toString());
+		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tempFile))) {
+			ExportToCSVQueryTask task = new ExportToCSVQueryTask(orderedFields,
+					bos);
+			
+			if (arr == null || arr.length ==0) {
+				PluginController.getInstance().queryAll(task, queryString, fields);
+			} else {
+				List<String> providers = new ArrayList<>();
+				for (Object f : arr) {
+					providers.add(f.toString());
+				}
+				PluginController.getInstance().query(task, providers, queryString,
+						fields);
 			}
-			PluginController.getInstance().query(task, providers, queryString,
-					fields);
-		}
 
-		task.await();
+			task.await();
+		}
 		
 		JSONObject obj = new JSONObject();
 		obj.put("uid", uid);
@@ -158,4 +158,7 @@ public class ExportCSVToFILEServlet extends HttpServlet {
 		resp.getWriter().flush();
 	}
 
+	private File getCsvFile(String uid) {
+		return this.tempDirectory.resolve("QueryResultsExport-" + uid).toFile();
+	}
 }
