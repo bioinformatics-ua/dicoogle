@@ -1,14 +1,14 @@
 /**
  * Copyright (C) 2014  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
  *
- * This file is part of Dicoogle/dicoogle.
+ * This file is part of Dicoogle/dicoogle-sdk.
  *
- * Dicoogle/dicoogle is free software: you can redistribute it and/or modify
+ * Dicoogle/dicoogle-sdk is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Dicoogle/dicoogle is distributed in the hope that it will be useful,
+ * Dicoogle/dicoogle-sdk is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -16,17 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.core.dim;
+package pt.ua.dicoogle.sdk.datastructs.dim;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
 /**
+ * This class is a simple implementation of Study that will be returned in DIM.
  *
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@bmd-software.com>
  */
-public class Study {
+public class Study implements StudyInterface{
 
     private Patient parent;
     private String StudyInstanceUID ;
@@ -45,8 +46,8 @@ public class Study {
     private String patientName;
 
 
-    private ArrayList<Serie> series = new ArrayList<Serie>() ;
-    private Hashtable<String, Serie> seriesHash = new Hashtable<String, Serie>();
+    private ArrayList<Series> series = new ArrayList<Series>() ;
+    private Hashtable<String, Series> seriesHash = new Hashtable<String, Series>();
 
     public Study(Patient patient, String StudyInstanceUID, String StudyDate)
     {
@@ -96,16 +97,16 @@ public class Study {
 
 
 
-    public void addSerie(Serie s){
+    public void addSerie(Series s){
         if (this.seriesHash.containsKey(s.getSerieInstanceUID())){
 
-            Serie existSerie = this.seriesHash.get(s.getSerieInstanceUID());
+            Series existSeries = this.seriesHash.get(s.getSerieInstanceUID());
             ArrayList<URI> img = s.getImageList();
             ArrayList<String> uid = s.getSOPInstanceUIDList();
 
             int size = img.size();
             for (int i=0;i<size;i++){
-                existSerie.addImage(img.get(i),uid.get(i));
+                existSeries.addImage(img.get(i),uid.get(i));
             }
         }
         else
@@ -119,18 +120,18 @@ public class Study {
     /**
      * @return the series
      */
-    public ArrayList<Serie> getSeries() {
+    public ArrayList<Series> getSeries() {
         return series;
     }
 
-    public Serie getSeries(String seriesInstanceUID) {
+    public Series getSeries(String seriesInstanceUID) {
         return this.seriesHash.get(seriesInstanceUID);
     }
 
     /**
      * @param series the series to set
      */
-    public void setSeries(ArrayList<Serie> series) {
+    public void setSeries(ArrayList<Series> series) {
         this.series = series;
     }
 
@@ -240,5 +241,9 @@ public class Study {
         this.RequestingPhysician = RequestingPhysician;
     }
 
-    
+
+    @Override
+    public PatientInterface getPatient() {
+        return this.parent;
+    }
 }
