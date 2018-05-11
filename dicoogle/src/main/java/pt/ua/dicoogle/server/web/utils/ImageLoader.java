@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import org.dcm4che2.imageio.plugins.dcm.DicomImageReadParam;
@@ -64,7 +65,7 @@ public class ImageLoader {
             ImageReader reader = readers.next();
             reader.setInput(imageInputStream, false);
             if (reader.getFormatName().equalsIgnoreCase("DICOM")) {
-                DicomImageReadParam param = (DicomImageReadParam) reader.getDefaultReadParam();
+                ImageReadParam param = reader.getDefaultReadParam();
                 image = reader.read(0, param);
             } else {
                 image = reader.read(0);
@@ -101,7 +102,7 @@ public class ImageLoader {
                 = ImageIO.createImageInputStream(inputStream)) {
             Iterator<ImageReader> iter = ImageIO.getImageReadersByFormatName("DICOM");
             ImageReader reader = iter.next();
-            DicomImageReadParam param = (DicomImageReadParam) reader.getDefaultReadParam();
+            ImageReadParam param = reader.getDefaultReadParam();
             reader.setInput(imageInputStream, false);
             BufferedImage img = reader.read(0, param);
             return img;

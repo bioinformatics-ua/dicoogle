@@ -1,14 +1,14 @@
 /**
  * Copyright (C) 2014  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
  *
- * This file is part of Dicoogle/dicoogle.
+ * This file is part of Dicoogle/dicoogle-sdk.
  *
- * Dicoogle/dicoogle is free software: you can redistribute it and/or modify
+ * Dicoogle/dicoogle-sdk is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Dicoogle/dicoogle is distributed in the hope that it will be useful,
+ * Dicoogle/dicoogle-sdk is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -16,16 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.core.dim;
+package pt.ua.dicoogle.sdk.datastructs.dim;
 
 import java.net.URI;
 import java.util.ArrayList;
 
 /**
+ * This class is a simple implementation of Series that will be returned in DIM.
  *
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@bmd-software.com>
  */
-public class Serie
+public class Series implements SeriesInterface
 {
 
     private Study parent;
@@ -55,7 +56,7 @@ public class Serie
     private ArrayList<URI> imageList = new ArrayList<>();
     private ArrayList<String> UIDList = new ArrayList<>();
 
-    public Serie(Study study, String SerieInstanceUID, String modality)
+    public Series(Study study, String SerieInstanceUID, String modality)
     {
         this.parent = study;
         this.Modality = modality;
@@ -63,7 +64,7 @@ public class Serie
         
     }
 
-    public Serie(Study study, String SerieInstanceUID, int SerieNumber)
+    public Series(Study study, String SerieInstanceUID, int SerieNumber)
     {
         this.parent = study;
         this.SerieInstanceUID = SerieInstanceUID ;
@@ -369,6 +370,10 @@ public class Serie
         return result;
         
     }
-    
 
+
+    @Override
+    public StudyInterface getStudy() {
+        return this.parent;
+    }
 }

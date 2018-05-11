@@ -1,17 +1,21 @@
 import Reflux from 'reflux';
 import {TransferActions} from '../actions/transferActions';
-import {Endpoints} from '../constants/endpoints';
-import {request} from '../handlers/requestHandler';
-import $ from 'jquery';
+import {getTransferSettings} from '../handlers/requestHandler';
+
+import dicoogleClient from 'dicoogle-client';
 
 const TransferStore = Reflux.createStore({
     listenables: TransferActions,
     init: function () {
-       this._contents = {};
+      this._contents = {};
+
+      this.dicoogle = dicoogleClient();
     },
+
     getSizeOptions: function() {
         return Object.keys(this._contents).length;
     },
+
     onGet: function() {
       console.log("onGet");
       //Check if store is a non-empty object
@@ -22,28 +26,29 @@ const TransferStore = Reflux.createStore({
         });
         return;
       }
-      let url = Endpoints.base + "/management/settings/transfer";
-      request(url, (data) => {
-          //SUCCESS
-          console.log("success", data);
-          this._contents = data;
 
+      getTransferSettings((error, data) => {
+        if (error) {
           this.trigger({
-            data: this._contents,
-            success: true
+            success: false,
+            status: error.status
           });
-        }, (xhr) => {
-          //FAILURE
-          this.trigger({
-              success: false,
-              status: xhr.status
-            });
+          return;
+        }
+
+        console.log("success", data);
+        this._contents = data;
+        this.trigger({
+          data: this._contents,
+          success: true
         });
+      });
     },
 
     onSelectAll() {
         this.select(true);
     },
+
     onUnSelectAll() {
         this.select(false);
     },
@@ -63,20 +68,17 @@ const TransferStore = Reflux.createStore({
         });
 
     },
-    request(uid, id, value) {
 
-        $.post(Endpoints.base + "/management/settings/transfer", {
-            uid: uid,
-            option: id,
-            value: value
-        }, (data, status) => {
-            //Response
-            console.log("Data: " + data + "\nStatus: " + status);
-        });
+    request(uid, id, value) {
+      this.dicoogle.setTransferSyntaxOption(uid, id, value, (error) => {
+        if (error) {
+          console.error("Dicoogle service error", error);
+        }
+      });
     },
 
-
-    onSet: function(index, indexOption, value){
+    onSet(index, indexOption, uid, id, value) {
+      this.request(uid, id, value);
       this._contents[index].options[indexOption].value = value;
       this.trigger({
         data: this._contents,

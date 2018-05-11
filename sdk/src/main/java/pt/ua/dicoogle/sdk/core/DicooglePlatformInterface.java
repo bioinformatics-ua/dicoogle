@@ -28,6 +28,7 @@ import pt.ua.dicoogle.sdk.StorageInputStream;
 import pt.ua.dicoogle.sdk.StorageInterface;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
+import pt.ua.dicoogle.sdk.datastructs.dim.DimLevel;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettingsReader;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
@@ -146,6 +147,17 @@ public interface DicooglePlatformInterface {
 	public JointQueryTask queryAll(JointQueryTask holder, String query,
 			Object... parameters) ;
 
+    /**
+     * Easily performs a query over all query providers. This operation is asynchronous and returns immediately.
+     * @param holder a query task holder containing callback methods
+     * @param query a string describing the query
+     * @param level level of the query
+     * @param parameters a variable list of extra parameters for the query
+     * @return a join query task
+     */
+    public JointQueryTask queryAll(JointQueryTask holder, String query, DimLevel level,
+                                   Object... parameters) ;
+
     /** Easily performs a query over a specific provider. This operation is asynchronous and returns immediately.
      * 
      * @param querySource the name of the query provider to issue
@@ -155,6 +167,17 @@ public interface DicooglePlatformInterface {
      */
 	public Task<Iterable<SearchResult>> query(String querySource, String query,
 			Object... parameters);
+
+    /** Easily performs a query over a specific provider. This operation is asynchronous and returns immediately.
+     *
+     * @param querySource the name of the query provider to issue
+     * @param query a string describing the query
+     * @param level level of the query
+     * @param parameters a variable list of extra parameters for the query
+     * @return an asynchronous task containing the results
+     */
+    public Task<Iterable<SearchResult>> query(String querySource, DimLevel level, String query,
+                                              Object... parameters);
 
     /** Easily performs a query over multiple providers. This operation is asynchronous and returns immediately.
      * 
@@ -166,6 +189,19 @@ public interface DicooglePlatformInterface {
      */
 	public JointQueryTask query(JointQueryTask holder,
 			List<String> querySources, String query, Object... parameters);
+
+    /** Easily performs a query over multiple providers. This operation is asynchronous and returns immediately.
+     *
+     * @param holder a query task holder containing callback methods
+     * @param querySources a list of names of query providers to issue
+     * @param level level of the query
+     * @param query a string describing the query
+     * @param parameters a variable list of extra parameters for the query
+     * @return an asynchronous task containing the results
+     */
+    public JointQueryTask query(JointQueryTask holder,
+                                List<String> querySources, DimLevel level, String query, Object... parameters);
+
 
     /** Easily performs an indexation procedure over all active indexers. This operation is asynchronous
      * and returns immediately.

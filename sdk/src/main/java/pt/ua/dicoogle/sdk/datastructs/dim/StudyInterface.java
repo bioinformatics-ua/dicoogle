@@ -16,28 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package pt.ua.dicoogle.sdk;
-
-import java.util.ArrayList;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
+package pt.ua.dicoogle.sdk.datastructs.dim;
 
 /**
- * This interface exposes the GUI of Dicoogle in a controlled way.
- * Plugins implementing this interface should override this methods
- * If some of the functionality is not required (for instance, if there is
- * no need for a top icon), the respective methods overloads should return null
+ * Interface to be returned as a Study interface - DIM.
  *
- * @author Frederico Valente
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
- * 
- * @deprecated The remote Swing-based GUI is outdated and is no longer supported.
+ * Created by bastiao on 02-02-2017.
  */
-@Deprecated
-public interface GraphicalInterface extends DicooglePlugin
-{
-    public ArrayList<JMenuItem> getRightButtonItems();
-    public ArrayList<JPanel> getTopIcons();
-    public ArrayList<JPanel> getTabPanels();
-    public ArrayList<JMenuItem> getMenuItems();
+public interface StudyInterface {
+
+    /**
+     * Get the Patient parent of the study
+     *
+     * @return the Patient parent
+     */
+    public PatientInterface getPatient();
 }

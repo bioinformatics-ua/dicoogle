@@ -16,8 +16,10 @@ const LoginView = React.createClass({
     };
   },
   componentWillMount: function() {
-    UserStore.listen(this._onChange);
-
+    this.unsubscribe = UserStore.listen(this._onChange);
+  },
+  componentWillUnmount() {
+    this.unsubscribe();
   },
   _onChange: function(data){
     console.log(data);
@@ -28,8 +30,7 @@ const LoginView = React.createClass({
       return;
     }
 
-    if(data.isLoggedIn && this.isMounted())
-    {
+    if(data.isLoggedIn) {
       router.replace('search');
     }
   },

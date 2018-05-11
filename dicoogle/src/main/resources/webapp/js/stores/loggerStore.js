@@ -1,41 +1,33 @@
 'use strict';
 
 import Reflux from 'reflux';
-import $ from 'jquery';
 import {LoggerActions} from '../actions/loggerActions';
-import {Endpoints} from '../constants/endpoints';
+
+import dicoogleClient from 'dicoogle-client';
 
 const LoggerStore = Reflux.createStore({
     listenables: LoggerActions,
     init: function () {
-       this._contents = {};
+      this._contents = {};
+
+      this.dicoogle = dicoogleClient();
     },
 
-    onGet: function(data){
-      var self = this;
-
-      $.ajax({
-
-        url: Endpoints.base + "/logger",
-        dataType: 'text',
-        success: function(data) {
-          self._contents = data;
-
-          self.trigger({
-            data: self._contents,
-            success: true
+    onGet: function() {
+      this.dicoogle.getRawLog((error, log) => {
+        if (error) {
+          this.trigger({
+            success: false,
+            status: error.status
           });
-
-        },
-        error: function(xhr, status, err) {
-          //FAILURE
-          self.trigger({
-              success: false,
-              status: xhr.status
-            });
         }
-      });
 
+        this._contents = log;
+        this.trigger({
+          data: log,
+          success: true
+        });
+      });
     }
 });
 

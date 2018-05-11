@@ -40,7 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.core.QueryExpressionBuilder;
-import pt.ua.dicoogle.core.dim.DIMGeneric;
+import pt.ua.dicoogle.sdk.datastructs.dim.DIMGeneric;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.utils.DictionaryAccess;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;

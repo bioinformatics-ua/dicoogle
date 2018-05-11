@@ -1,6 +1,6 @@
 import React from 'react';
 import {TransferOptionsView} from '../management/transferOptionsView';
-import {ServicesView} from '../management/servicesView';
+import {ServicesAndPluginsView} from '../management/servicesAndPluginsView';
 import {LoggerView} from '../management/loggerView';
 import {IndexerView} from '../management/indexerView';
 import {StorageView} from '../management/storageView';
@@ -12,7 +12,7 @@ const ManagementView = React.createClass({
     render: function() {
       var views = [(<IndexerView/>),
       (<TransferOptionsView/>),
-      (<ServicesView/>),
+      (<ServicesAndPluginsView/>),
       (<StorageView/>),
       (<LoggerView/>)];
       return (
