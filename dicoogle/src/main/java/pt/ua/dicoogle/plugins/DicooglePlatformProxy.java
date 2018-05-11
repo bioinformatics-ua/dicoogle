@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 
+
 import pt.ua.dicoogle.sdk.IndexerInterface;
 import pt.ua.dicoogle.sdk.QueryInterface;
 import pt.ua.dicoogle.sdk.StorageInputStream;
@@ -30,6 +31,7 @@ import pt.ua.dicoogle.sdk.StorageInterface;
 import pt.ua.dicoogle.sdk.core.DicooglePlatformInterface;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
+import pt.ua.dicoogle.sdk.datastructs.dim.DimLevel;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettingsReader;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
@@ -38,7 +40,7 @@ import pt.ua.dicoogle.sdk.task.Task;
  * A proxy to the implementations of Plugin Controller.
  * 
  * @author psytek
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@bmd-software.com>
  */
 public class DicooglePlatformProxy implements DicooglePlatformInterface {
 
@@ -121,20 +123,35 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
     @Override
 	public JointQueryTask queryAll(JointQueryTask holder, String query,
 			Object... parameters) {
-		return pluginController.queryAll(holder, query, parameters);
+		return pluginController.queryAll(holder, query, DimLevel.INSTANCE, parameters);
 	}
+
+    @Override
+    public JointQueryTask queryAll(JointQueryTask holder, String query, DimLevel level, Object... parameters) {
+        return pluginController.queryAll(holder, query, level, parameters);
+    }
 
     @Override
 	public Task<Iterable<SearchResult>> query(String querySource, String query,
 			Object... parameters) {
-		return pluginController.query(querySource, query, parameters);
+		return pluginController.query(querySource, query, DimLevel.INSTANCE, parameters);
 	}
+
+    @Override
+    public Task<Iterable<SearchResult>> query(String querySource, DimLevel level, String query, Object... parameters) {
+        return pluginController.query(querySource, query, level, parameters);
+    }
 
     @Override
 	public JointQueryTask query(JointQueryTask holder,
 			List<String> querySources, String query, Object... parameters) {
-		return pluginController.query(holder, querySources, query, parameters);
+		return pluginController.query(holder, querySources, query, DimLevel.INSTANCE, parameters);
 	}
+
+    @Override
+    public JointQueryTask query(JointQueryTask holder, List<String> querySources, DimLevel level, String query, Object... parameters) {
+        return pluginController.query(holder, querySources, query, level, parameters);
+    }
 
     @Override
 	public List<Task<Report>> index(URI path) {

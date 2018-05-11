@@ -29,6 +29,8 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
+import com.google.common.collect.ImmutableList;
+import jdk.nashorn.internal.ir.annotations.Immutable;
 import net.sf.json.JSONArray;
 import org.apache.commons.collections.ArrayStack;
 import org.json.JSONException;
@@ -41,7 +43,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 
 import pt.ua.dicoogle.core.QueryExpressionBuilder;
-import pt.ua.dicoogle.core.dim.DIMGeneric;
+import pt.ua.dicoogle.sdk.datastructs.dim.DIMGeneric;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
@@ -81,14 +83,15 @@ public class SearchServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         /*
-         Example: http://localhost:8080/search?query=wrix&keyword=false&provider=lucene&psize=10&offset=10
+         Example: http://localhost:8080/search?query=wrix&provider=lucene&psize=10&offset=10
          */
         response.setContentType("application/json");
 
         String query = request.getParameter("query");
-        String providers[] = request.getParameterValues("provider");
-        boolean keyword = Boolean.parseBoolean(request.getParameter("keyword"));
+        String[] providers = request.getParameterValues("provider");
         String[] fields = request.getParameterValues("field");
+        String pExpand = request.getParameter("expand");
+        boolean expand = pExpand != null && (pExpand.isEmpty() || Boolean.parseBoolean(pExpand));
 
         final int psize;
         final int offset;
@@ -129,7 +132,7 @@ public class SearchServlet extends HttpServlet {
         }
 
         // retrieve desired fields
-        Set<String> actualFields;
+        final Set<String> actualFields;
         if (fields == null || fields.length == 0) {
             actualFields = null;
         } else {
@@ -140,18 +143,49 @@ public class SearchServlet extends HttpServlet {
             sendError(response, 400, "No query supplied!");
             return;
         }
-        
-        if (!keyword) {
+
+        if (expand) {
             QueryExpressionBuilder q = new QueryExpressionBuilder(query);
             query = q.getQueryString();
         }
 
         List<String> providerList = providers != null ? Arrays.asList(providers) : new ArrayList<>();
         providerList = PluginController.getInstance().filterDicomQueryProviders(providerList);
-
         if (providerList.size() == 0) {
             sendError(response, 400, "No valid DIM providers supplied.");
             return;
+        }
+        List<String> knownProviders = null;
+        
+        boolean queryAllProviders = false;
+        if (providers == null || providers.length == 0) {
+            queryAllProviders = true;
+        } else {
+            providerList = Arrays.asList(providers);
+            if (providerList.isEmpty()) {
+                queryAllProviders = true;
+            }
+        }
+
+        if (!queryAllProviders) 
+        {
+            knownProviders = new ArrayList<>();
+            List<String> activeProviders = PluginController.getInstance().getQueryProvidersName(true);
+            for (String p : providers)
+            {
+                if (activeProviders.contains(p)) 
+                {
+                    knownProviders.add(p);
+                }
+                else
+                {
+                    response.setStatus(400);
+                    JSONObject obj = new JSONObject();
+                    obj.put("error", p.toString() + " is not a valid query provider");
+                    response.getWriter().append(obj.toString());
+                    return;
+                }
+            }
         }
 
         HashMap<String, String> extraFields = new HashMap<>();
@@ -184,9 +218,10 @@ public class SearchServlet extends HttpServlet {
 
             if (this.searchType == SearchType.PATIENT) {
                 try {
-                    DIMGeneric dimModel = new DIMGeneric(results, depth);
+                    DIMGeneric dimModel = new DIMGeneric(ImmutableList.copyOf(results));
                     elapsedTime = System.currentTimeMillis() - elapsedTime;
-                    dimModel.writeJSON(response.getWriter(), elapsedTime, depth, offset, psize);
+                    response.getWriter().write(dimModel.getJSON());
+                    //dimModel.writeJSON(response.getWriter(), elapsedTime, depth, offset, psize);
                 } catch (Exception e) {
                     logger.warn("Failed to get DIM", e);
                 }

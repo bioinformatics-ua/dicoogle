@@ -1,5 +1,7 @@
 # <img src="https://user-images.githubusercontent.com/4738426/33545371-e652d482-d8d5-11e7-9ea5-c676d9313378.png" height="50"/>
 
+[![Build Status](https://travis-ci.org/bioinformatics-ua/dicoogle.svg?branch=dev)](https://travis-ci.org/bioinformatics-ua/dicoogle)
+
 Dicoogle is an extensible, platform-independent and open-source PACS archive software that replaces the traditional centralized database with a more agile indexing and retrieval mechanism. It was designed to support automatic extraction, indexing and storage of all meta-data detected in medical images, including private DICOM attribute tags, without re-engineering or reconfiguration requirements.
 
 The architecture of Dicoogle is described in the following article:
@@ -144,7 +146,7 @@ We also have programmatic APIs for interfacing with Dicoogle in [JavaScript](htt
 
 Before building, please make sure that your system contains the following tools:
 
- - Java JDK, either Oracle or OpenJDK (at least version 7; JDK 8 is recommended)
+ - Java JDK, either Oracle or OpenJDK (at least version 8)
  - Maven 3
  - [Node.js](https://nodejs.org/en/download/) (at least version 4; LTS or Stable versions are recommended) and npm (at least version 2)
 

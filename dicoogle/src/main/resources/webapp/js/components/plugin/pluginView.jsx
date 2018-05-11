@@ -1,6 +1,6 @@
 import React from 'react';
 
-class PluginView extends React.Component {
+export default class PluginView extends React.Component {
 
   static get propTypes() {
     return {
@@ -15,7 +15,8 @@ class PluginView extends React.Component {
 
   static get defaultProps() {
     return {
-      slotId: 'menu'
+      slotId: 'menu',
+      data: {}
     };
   }
 
@@ -37,6 +38,7 @@ class PluginView extends React.Component {
           this.handleLoaded(e.detail);
         }
       });
+      node.data = this.props.data;
     }
   }
 
@@ -72,5 +74,3 @@ class PluginView extends React.Component {
     );
   }
 }
-
-export default PluginView;

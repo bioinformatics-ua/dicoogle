@@ -1,5 +1,4 @@
 import React from 'react';
-import $ from 'jquery';
 import {LoggerActions} from "../../actions/loggerActions";
 import {LoggerStore} from "../../stores/loggerStore";
 
@@ -9,28 +8,23 @@ const LoggerView = React.createClass({
     status: "loading"};
   },
   componentDidMount: function(){
-
     LoggerActions.get();
-    //$("#consolediv").scrollTop($("#consolediv")[0].scrollHeight);
    },
    componentDidUpdate: function(){
      console.log("logger update");
-     $("#consolediv").scrollTop($("#consolediv")[0].scrollHeight);
-     //$("#consolediv").scrollTop(1000000);
-     //var objDiv = document.getElementById("consolediv");
-     //objDiv.scrollTop = 1000000;
-
+     let consoleDiv = document.getElementById("consolediv");
+     consoleDiv.scrollTo(0, consoleDiv.scrollHeight);
    },
   componentWillMount: function() {
      // Subscribe to the store.
      console.log("subscribe listener");
-     LoggerStore.listen(this._onChange);
+     this.unsubscribe = LoggerStore.listen(this._onChange);
    },
+  componentWillUnmount() {
+    this.unsubscribe();
+  },
   _onChange: function(data){
-    if (this.isMounted()){
-
-      this.setState({data: data.data, status: "done"});
-    }
+    this.setState({data: data.data, status: "done"});
   },
       render: function() {
         if(this.state.status === "loading"){

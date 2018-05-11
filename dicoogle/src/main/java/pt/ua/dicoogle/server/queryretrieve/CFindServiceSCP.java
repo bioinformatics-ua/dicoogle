@@ -120,26 +120,27 @@ public class CFindServiceSCP extends CFindService {
         replay = new FindRSP(keys, rsp,  as.getCallingAET(), luke);
 
 
-        DicomElement e = keys.get(Tag.PatientName);
-        String add = "";
-        if (e != null) {
-            add = new String(e.getBytes());
-        }
-
-        String queryParams = "";
-
-        for (Iterator<DicomElement> iterator = keys.iterator(); iterator.hasNext();)
-        {
-            DicomElement element = iterator.next();
-
-            if (!element.isEmpty())
-            {
-                if (!ElementDictionary.getDictionary().nameOf(element.tag()).contains("Sequence"))
-                    queryParams += ElementDictionary.getDictionary().nameOf(element.tag()) + " - " + element.getValueAsString(new SpecificCharacterSet("UTF-8"), 0) + " ";
-            }
-        }
         if (!superSpeed)
         {
+            DicomElement e = keys.get(Tag.PatientName);
+            String add = "";
+            if (e != null) {
+                add = new String(e.getBytes());
+            }
+
+            String queryParams = "";
+
+            for (Iterator<DicomElement> iterator = keys.iterator(); iterator.hasNext();)
+            {
+                DicomElement element = iterator.next();
+
+                if (!element.isEmpty())
+                {
+                    if (!ElementDictionary.getDictionary().nameOf(element.tag()).contains("Sequence"))
+                        queryParams += ElementDictionary.getDictionary().nameOf(element.tag()) + " - " + element.getValueAsString(new SpecificCharacterSet("UTF-8"), 0) + " ";
+                }
+            }
+
             LogLine ll = new LogLine("cfind", getDateTime(), as.getCallingAET(),
                     as.toString() + " -- " + add, queryParams);
             LogDICOM.getInstance().addLine(ll);

@@ -152,10 +152,10 @@ public class DicomSend extends javax.swing.JFrame {
             while (itStudy.hasNext()) {
                 Study study = itStudy.next();
 
-                Iterator<Serie> itSerie = study.getSeries().iterator();
+                Iterator<Series> itSerie = study.getSeries().iterator();
 
                 while (itSerie.hasNext()) {
-                    Serie serie = itSerie.next();
+                    Series serie = itSerie.next();
 
                     images.addAll(serie.getImageList());
                 }

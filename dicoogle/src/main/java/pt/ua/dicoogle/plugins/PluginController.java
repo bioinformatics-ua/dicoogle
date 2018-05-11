@@ -32,6 +32,7 @@ import pt.ua.dicoogle.sdk.Utils.TaskRequest;
 import pt.ua.dicoogle.sdk.core.PlatformCommunicatorInterface;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
+import pt.ua.dicoogle.sdk.datastructs.dim.DimLevel;
 import pt.ua.dicoogle.sdk.settings.ConfigurationHolder;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
@@ -80,8 +81,9 @@ public class PluginController{
     private final Collection<DeadPlugin> deadPluginSets;
     private File pluginFolder;
     private TaskQueue tasks = null;
-
-	private PluginSet remoteQueryPlugins = null;
+    private final PluginPreparer preparer;
+    
+    private PluginSet remoteQueryPlugins = null;
     private final WebUIPluginManager webUI;
     private final DicooglePlatformProxy proxy;
     private TaskManager taskManager = new TaskManager(Integer.parseInt(System.getProperty("dicoogle.taskManager.nThreads", "4")));
@@ -114,6 +116,7 @@ public class PluginController{
         logger.info("Added default storage plugin");
         
         this.proxy = new DicooglePlatformProxy(this);
+        this.preparer = new PluginPreparer(this.proxy);
         
         initializePlugins(pluginSets);
         initRestInterface(pluginSets);
@@ -193,22 +196,18 @@ public class PluginController{
                     set.getJettyPlugins(),
                     set.getRestPlugins()
             );
-            for (Collection interfaces : all) {
+            for (Collection<?> interfaces : all) {
                 if (interfaces == null) {
                     logger.debug("Plugin set {} provided a null collection!");
                     continue;
                 }
                 for (Object o : interfaces) {
-                    if (o instanceof PlatformCommunicatorInterface) {
-                        ((PlatformCommunicatorInterface)o).setPlatformProxy(proxy);
-                    }
+                    this.preparer.injectPlatform(o);
                 }
             }
 
             // and to the set itself
-            if (set instanceof PlatformCommunicatorInterface) {
-                ((PlatformCommunicatorInterface) set).setPlatformProxy(proxy);
-            }
+            this.preparer.setup(set);
         }
     }
     
@@ -468,7 +467,7 @@ public class PluginController{
     			return p;
     		}
     	}
-    	logger.error("Could not retrive query provider {} for onlyEnabled = {}", name, onlyEnabled);
+    	logger.debug("Could not retrieve query provider {} for onlyEnabled = {}", name, onlyEnabled);
     	return null;
     }
 
@@ -502,33 +501,74 @@ public class PluginController{
     			return p;
     		}
     	}
-    	logger.error("No indexer matching name {} for onlyEnabled = {}", name, onlyEnabled);
+    	logger.debug("No indexer matching name {} for onlyEnabled = {}", name, onlyEnabled);
     	return null;
     }
+
+
+    public JettyPluginInterface getServletByName(String name, boolean onlyEnabled){
+        Collection<JettyPluginInterface> plugins = getServletPlugins(onlyEnabled);
+        for(JettyPluginInterface p : plugins){
+            if(p.getName().equalsIgnoreCase(name)){
+                //logger.info("Retrived Query Provider: "+name);
+                return p;
+            }
+        }
+        logger.debug("No indexer matching name {} for onlyEnabled = {}", name, onlyEnabled);
+        return null;
+    }
+
+    public StorageInterface getStorageByName(String name, boolean onlyEnabled){
+        Collection<StorageInterface> plugins = getStoragePlugins(onlyEnabled);
+        for(StorageInterface p : plugins){
+            if(p.getName().equalsIgnoreCase(name)){
+                //logger.info("Retrived Query Provider: "+name);
+                return p;
+            }
+        }
+        logger.debug("No indexer matching name {} for onlyEnabled = {}", name, onlyEnabled);
+        return null;
+    }
     
+
     public JointQueryTask queryAll(JointQueryTask holder, final String query, final Object ... parameters)
+    {
+        return queryAll(holder, query, DimLevel.INSTANCE, parameters);
+    }
+
+    public JointQueryTask queryAll(JointQueryTask holder, final String query, final DimLevel level, final Object ... parameters)
     {
     	//logger.info("Querying all providers");
     	List<String> providers = this.getQueryProvidersName(true);
-    	
-    	return query(holder, providers, query, parameters);        
+    	return query(holder, providers, query, level, parameters);
     }
-    
-    public Task<Iterable<SearchResult>> query(String querySource, final String query, final Object ... parameters){
-        Task<Iterable<SearchResult>> t = getTaskForQuery(querySource, query, parameters);       
+
+    public Task<Iterable<SearchResult>> query(String querySource, final String query,
+                                                final Object ... parameters){
+        return this.query(querySource, query, DimLevel.INSTANCE, parameters);
+    }
+
+
+    public Task<Iterable<SearchResult>> query(String querySource, final String query, final DimLevel level, final Object ... parameters){
+        Task<Iterable<SearchResult>> t = getTaskForQuery(querySource, query, level, parameters);
         taskManager.dispatch(t);
         //logger.info("Fired Query Task: "+querySource +" QueryString:"+query);
         
         return t;//returns the handler to obtain the computation results
     }
-    
+
     public JointQueryTask query(JointQueryTask holder, List<String> querySources, final String query, final Object ... parameters){
+        return query(holder, querySources, query, DimLevel.INSTANCE, parameters);
+    }
+
+    public JointQueryTask query(JointQueryTask holder, List<String> querySources, final String query,
+                                final DimLevel level, final Object ... parameters){
         if(holder == null)
         	return null;
     	
     	List<Task<Iterable<SearchResult>>> tasks = new ArrayList<>();
         for(String p : querySources){
-        	Task<Iterable<SearchResult>> task = getTaskForQuery(p, query, parameters);
+        	Task<Iterable<SearchResult>> task = getTaskForQuery(p, query, level, parameters);
         	tasks.add(task);
         	holder.addTask(task);
         }
@@ -541,7 +581,10 @@ public class PluginController{
         return holder;//returns the handler to obtain the computation results
     }
     
-    private Task<Iterable<SearchResult>> getTaskForQuery(String querySource, final String query, final Object ... parameters){
+
+    private Task<Iterable<SearchResult>> getTaskForQuery(final String querySource, final String query,
+                                                         final DimLevel level, final Object ... parameters){
+
     	final QueryInterface queryEngine = getQueryProviderByName(querySource, true);
     	//returns a tasks that runs the query from the selected query engine
         String uid = UUID.randomUUID().toString();
@@ -549,7 +592,13 @@ public class PluginController{
             new Callable<Iterable<SearchResult>>(){
             @Override public Iterable<SearchResult> call() throws Exception {
                 if(queryEngine == null) return Collections.emptyList();
-                return queryEngine.query(query, parameters);
+                try {
+                    return queryEngine.query(query, level, parameters);
+                } catch (RuntimeException ex) {
+                    logger.warn("Query plugin {} failed unexpectedly", querySource, ex);
+                    return Collections.EMPTY_LIST;
+                }
+
             }
         });
         //logger.info("Prepared Query Task: QueryString");
@@ -712,28 +761,6 @@ public class PluginController{
         logger.info("Finished indexing {}", path);
         
         return reports;
-    }
-
-    //METHODs FOR PluginController4Users
-    // which are obsolete and no longer supported
- 
-    @Deprecated
-	public List<JMenuItem> getRightButtonItems() {
-        logger.info("getRightButtonItems()");
-        return Collections.EMPTY_LIST;
-    }
-
-    //returns a list of tabs from all plugins
-    @Deprecated
-    public List<JPanel> getTabItems() {
-        logger.info("getTabItems");
-        return Collections.EMPTY_LIST;
-    }
-
-    @Deprecated
-    public List<JMenuItem> getMenuItems() {
-        logger.info("getMenuItems");
-        return Collections.EMPTY_LIST;
     }
     
     // Methods for Web UI 

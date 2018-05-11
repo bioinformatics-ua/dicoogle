@@ -119,16 +119,4 @@ public interface PluginSet extends Plugin {
     public default void shutdown() {
         // do nothing
     }
-
-    /**
-     * Gets the graphical plugins enclosed in this plugin set.
-     * This collection must be immutable.
-     * @return
-     * @deprecated the Swing-based remote user interface is no longer available
-     */
-    @Deprecated
-    public default Collection<? extends GraphicalInterface> getGraphicalPlugins() {
-        return Collections.EMPTY_LIST;
-    }
-
 }

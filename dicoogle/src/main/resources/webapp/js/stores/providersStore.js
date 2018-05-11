@@ -2,13 +2,15 @@
 
 import Reflux from 'reflux';
 import {ProvidersActions} from '../actions/providersActions';
-import {Endpoints} from '../constants/endpoints';
-import {request} from '../handlers/requestHandler';
+
+import dicoogleClient from 'dicoogle-client';
 
 const ProvidersStore = Reflux.createStore({
     listenables: ProvidersActions,
     init: function () {
-       this._providers = [];
+      this._providers = [];
+
+      this.dicoogle = dicoogleClient();
     },
 
     onGet: function(data){
@@ -22,24 +24,23 @@ const ProvidersStore = Reflux.createStore({
         return;
       }
 
-      request(Endpoints.base + "/providers",
-        function(data){
-          //SUCCESS
-          console.log("success", data);
-          self._providers = data;
-          self.trigger({
-            data: self._providers,
-            success: true
+      this.dicoogle.getQueryProviders((error, providers) => {
+        if (error) {
+          this.trigger({
+            success: false,
+            status: error.status,
+            error
           });
-        },
-        function(xhr){
-          //FAILURE
-          self.trigger({
-              success: false,
-              status: xhr.status
-            });
+          return;
         }
-      );
+
+        console.log("success", providers);
+        this._providers = providers;
+        this.trigger({
+          data: this._providers,
+          success: true
+        });
+      });
     }
 });
 

@@ -29,7 +29,7 @@ import org.dcm4che2.data.Tag;
 
 /**
  *
- * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@bmd-software.com>
  */
 public class DictionaryAccess
 {
