@@ -199,7 +199,6 @@ public class QueryRetrieve extends DicomNetwork
                 this.verifService.start();
             } catch (Exception ex) {
             ex.printStackTrace();
-                 //MainWindow.getMw().add2ServerLogln(ex.getMessage(), LOG_MODES.ERROR);
                  return false;
             }
             this.started = true;

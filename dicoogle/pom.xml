@@ -323,7 +323,6 @@
             <artifactId>dicoogle-sdk-ext</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
@@ -355,13 +354,6 @@
             <artifactId>commons-codec</artifactId>
             <version>1.8</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>jdom2</artifactId>
-            <version>2.0.4</version>
-        </dependency>
-
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
