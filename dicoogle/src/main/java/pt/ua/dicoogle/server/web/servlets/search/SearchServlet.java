@@ -149,7 +149,14 @@ public class SearchServlet extends HttpServlet {
             query = q.getQueryString();
         }
 
-        List<String> providerList;
+        List<String> providerList = providers != null ? Arrays.asList(providers) : new ArrayList<>();
+        providerList = PluginController.getInstance().filterDicomQueryProviders(providerList);
+        if (providerList.size() == 0) {
+            sendError(response, 400, "No valid DIM providers supplied.");
+            return;
+        }
+        List<String> knownProviders = null;
+        
         boolean queryAllProviders = false;
         if (providers == null || providers.length == 0) {
             queryAllProviders = true;
@@ -160,7 +167,6 @@ public class SearchServlet extends HttpServlet {
             }
         }
 
-        List<String> knownProviders = null;
         if (!queryAllProviders) 
         {
             knownProviders = new ArrayList<>();
@@ -181,7 +187,7 @@ public class SearchServlet extends HttpServlet {
                 }
             }
         }
-        
+
         HashMap<String, String> extraFields = new HashMap<>();
         if (actualFields == null) {
             
@@ -208,14 +214,7 @@ public class SearchServlet extends HttpServlet {
 
         try {
             long elapsedTime = System.currentTimeMillis();
-            Iterable<SearchResult> results;
-            if (queryAllProviders) {
-                results = PluginController.getInstance().queryAll(queryTaskHolder, query, extraFields).get();
-            }
-            
-            else {
-                results = PluginController.getInstance().query(queryTaskHolder, knownProviders, query, extraFields).get();
-            }
+            Iterable<SearchResult> results = PluginController.getInstance().query(queryTaskHolder, providerList, query, extraFields).get();
 
             if (this.searchType == SearchType.PATIENT) {
                 try {
