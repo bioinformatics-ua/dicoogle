@@ -49,6 +49,7 @@ import java.net.URI;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
 /**
@@ -468,6 +469,27 @@ public class PluginController{
     	}
     	logger.debug("Could not retrieve query provider {} for onlyEnabled = {}", name, onlyEnabled);
     	return null;
+    }
+
+    /**
+     * Filter a list of query providers, returning the ones that are DICOM and active.
+     * If the list to filter is empty, return all the active DICOM query providers.
+     * If there are no DICOM query providers specified in the settings, filter across all the active query providers.
+     *
+     * @param providers a list of query providers
+     * @return the filtered list of active DICOM query providers
+     */
+    public List<String> filterDicomQueryProviders(List<String> providers) {
+        List<String> baseProviders = ServerSettingsManager.getSettings()
+                .getArchiveSettings().getDIMProviders();
+
+        if (baseProviders.isEmpty()) {
+            baseProviders = PluginController.getInstance().getQueryProvidersName(true);
+        }
+
+        return baseProviders.stream()
+                .filter(p -> providers.isEmpty() || providers.contains(p))
+                .collect(Collectors.toList());
     }
     
     //TODO: CONVENIENCE METHOD

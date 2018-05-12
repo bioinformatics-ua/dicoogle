@@ -20,12 +20,9 @@ package pt.ua.dicoogle.core.settings.part;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -62,39 +59,13 @@ public class ArchiveImpl implements ServerSettings.Archive {
     @JsonProperty("indexer-effort")
     private int indexerEffort;
 
-    @JacksonXmlElementWrapper(useWrapping = false, localName = "dim-provider")
+    @JsonProperty("dim-provider")
+    @JacksonXmlElementWrapper(localName = "dim-providers")
     private List<String> dimProviders;
 
-    @JsonSetter("dim-provider")
-    protected void setDIMProviders_(Object o) {
-        if (o == null) {
-            this.dimProviders = Collections.EMPTY_LIST;
-        } else if (o instanceof Collection) {
-            this.dimProviders = new ArrayList<>();
-            for (Object e : (Collection) o) {
-                this.dimProviders.add(e.toString());
-            }
-        } else {
-            this.dimProviders = Collections.singletonList(o.toString());
-        }
-    }
-
-    @JacksonXmlElementWrapper(useWrapping = false, localName = "default-storage")
+    @JsonProperty("default-storage")
+    @JacksonXmlElementWrapper(localName = "default-storages")
     private List<String> defaultStorage;
-
-    @JsonSetter("default-storage")
-    protected void setDefaultStorage_(Object o) {
-        if (o == null) {
-            this.defaultStorage = Collections.EMPTY_LIST;
-        } else if (o instanceof Collection) {
-            this.defaultStorage = new ArrayList<>();
-            for (Object e : (Collection)o) {
-                this.defaultStorage.add(e.toString());
-            }
-        } else {
-            this.defaultStorage = Collections.singletonList(o.toString());
-        }
-    }
 
     @JsonProperty(value = "enable-watch-directory", defaultValue = "false")
     private boolean dirWatcherEnabled;

@@ -42,11 +42,13 @@ import static org.junit.Assert.*;
 public class ServerSettingsTest {
 
     private URL testConfig;
+    private URL testConfigDIM;
     private URL legacyConfig;
 
     @Before
     public void init() {
         this.testConfig = this.getClass().getResource("test-config-new.xml");
+        this.testConfigDIM = this.getClass().getResource("test-config-multi-dim.xml");
         this.legacyConfig = this.getClass().getResource("test-config.xml");
     }
 
@@ -300,10 +302,22 @@ public class ServerSettingsTest {
         Files.delete(newconf);
     }
 
-    private static void assertSameContent(Collection o1, Collection o2) {
+    @Test
+    public void testMultiDim() throws IOException {
+        // read the settings from our test config file
+        ServerSettings settings = ServerSettingsManager.loadSettingsAt(this.testConfigDIM);
+        final ServerSettings.Archive ar = settings.getArchiveSettings();
+        assertTrue(settings instanceof ServerSettingsImpl);
+        // assertions follow
+        assertEquals("/opt/mydata", ar.getMainDirectory());
+        assertEquals(Arrays.asList("lucene", "postgres"), ar.getDIMProviders());
+        assertEquals(Arrays.asList("filestorage", "s3"), ar.getDefaultStorage());
+    }
+
+    private static void assertSameContent(Collection<?> o1, Collection<?> o2) {
         assertNotNull("left-hand collection is null", o1);
         assertNotNull("right-hand collection is null", o2);
-        assertEquals(o1.size(), o2.size());
+        assertEquals("Collection sizes do not match", o1.size(), o2.size());
         for (Object o : o1) {
             if (!o2.contains(o)) {
                 throw new ComparisonFailure("collection contents do not match", String.valueOf(o1), String.valueOf(o2));
