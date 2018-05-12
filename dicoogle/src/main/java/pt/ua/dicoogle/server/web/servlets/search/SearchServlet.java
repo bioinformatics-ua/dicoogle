@@ -48,6 +48,7 @@ import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
+import pt.ua.dicoogle.sdk.utils.QueryParseException;
 
 /**
  * Search the DICOM metadata, perform queries on images. Returns the data in JSON.
@@ -230,6 +231,9 @@ public class SearchServlet extends HttpServlet {
                 this.writeResponse(response, results, elapsedTime, offset, psize);
             }
 
+        } catch (QueryParseException ex) {
+            sendError(response, 400, ex.getMessage());
+            return;
         } catch (InterruptedException | ExecutionException | RuntimeException ex) {
             logger.error("Failed to retrieve results", ex);
             sendError(response, 500, "Could not generate results");

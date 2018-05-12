@@ -48,9 +48,11 @@ import pt.ua.dicoogle.sdk.StorageInterface;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
+import pt.ua.dicoogle.sdk.utils.QueryParseException;
 import pt.ua.dicoogle.server.web.dicom.Convert2PNG;
 import pt.ua.dicoogle.server.web.dicom.Information;
 import pt.ua.dicoogle.server.web.utils.LocalImageCache;
+import pt.ua.dicoogle.server.web.utils.ResponseUtil;
 
 /**
  * Handles the requests for DICOM frames, returning them as PNG images.
@@ -109,11 +111,16 @@ public class ImageServlet extends HttpServlet
         
         StorageInputStream imgFile;
         if (sopInstanceUID != null) {
-            // get the image file for that SOP Instance UID
-            imgFile = getFileFromSOPInstanceUID(sopInstanceUID, providers);
+            try {
+                // get the image file for that SOP Instance UID
+                imgFile = getFileFromSOPInstanceUID(sopInstanceUID, providers);
+            } catch (QueryParseException ex) {
+                ResponseUtil.sendError(response, 400, "Failed to parse the query: " + ex.getMessage());
+                return;
+            }
             // if no .dcm file was found tell the client
             if (imgFile == null) {
-                response.sendError(404, "No image file for supplied SOP Instance UID!");
+                ResponseUtil.sendError(response, 404, "No image file for supplied SOP Instance UID");
                 return;
             }
         } else {
@@ -124,13 +131,13 @@ public class ImageServlet extends HttpServlet
                 Iterator<StorageInputStream> storages = storageInt.at(imgUri).iterator();
                 // take the first valid storage
                 if (!storages.hasNext()) {
-                    response.sendError(404, "No image file for supplied URI!");
+                    ResponseUtil.sendError(response, 404, "No image file for supplied URI");
                     return;
                 }
                 imgFile = storages.next();
                  
             } catch (URISyntaxException ex) {
-                response.sendError(400, "Bad URI syntax");
+                ResponseUtil.sendError(response, 400, "Bad URI syntax");
                 return;
             }
         }
@@ -146,10 +153,10 @@ public class ImageServlet extends HttpServlet
                 }
             } catch (IOException ex) {
                 logger.warn("Could not convert the image", ex);
-                response.sendError(500);
+                ResponseUtil.sendError(response, 500, "Failed to convert the image");
             } catch (RuntimeException ex) {
                 logger.error("Unexpected exception", ex);
-                response.sendError(500);
+                ResponseUtil.sendError(response, 500, "Unexpected internal server error");
             }
             
         } else {
@@ -164,7 +171,7 @@ public class ImageServlet extends HttpServlet
                 }
             } catch (IOException ex) {
                 logger.warn("Could not convert the image", ex);
-                response.sendError(500, "Could not convert the image");
+                ResponseUtil.sendError(response, 500, "Failed to convert the image");
             }
         }
     }
@@ -243,7 +250,6 @@ public class ImageServlet extends HttpServlet
             return store.next();
         } catch (InterruptedException | ExecutionException ex) {
             throw new IOException(ex);
-        }
-        
+        }        
     }
 }

@@ -22,6 +22,7 @@ package pt.ua.dicoogle.sdk;
 import pt.ua.dicoogle.sdk.datastructs.dim.Patient;
 import pt.ua.dicoogle.sdk.datastructs.dim.Series;
 import pt.ua.dicoogle.sdk.datastructs.dim.Study;
+import pt.ua.dicoogle.sdk.utils.QueryException;
 
 /**
  *
@@ -48,7 +49,7 @@ public interface QueryDimInterface extends QueryInterface {
      *
      * @return the results of the query as a (possibly lazy) iterable with <b>Patient</b>
      */
-    public Iterable<Patient> queryPatient(String query, Object ... parameters);
+    public Iterable<Patient> queryPatient(String query, Object ... parameters) throws QueryException;
 
     /**
      *
@@ -59,7 +60,7 @@ public interface QueryDimInterface extends QueryInterface {
      * @param parameters
      * @return the results of the query as a (possibly lazy) iterable with <b>Study</b>
      */
-    public Iterable<Study> queryStudy(String query, Object ... parameters);
+    public Iterable<Study> queryStudy(String query, Object ... parameters) throws QueryException;
 
     /**
      *
@@ -70,6 +71,6 @@ public interface QueryDimInterface extends QueryInterface {
      * @param parameters
      * @return the results of the query as a (possibly lazy) iterable with <b>Series</b>
      */
-    public Iterable<Series> querySeries(String query, Object ... parameters);
+    public Iterable<Series> querySeries(String query, Object ... parameters) throws QueryException;
     
 }
