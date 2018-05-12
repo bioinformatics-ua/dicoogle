@@ -6,13 +6,15 @@
     <archive>
         <save-thumbnails>true</save-thumbnails>
         <thumbnail-size>128</thumbnail-size>
-        <main-directory>/opt/my-data</main-directory>
+        <main-directory>/opt/mydata</main-directory>
         <indexer-effort>98</indexer-effort>
         <dim-providers>
             <dim-provider>lucene</dim-provider>
+            <dim-provider>postgres</dim-provider>
         </dim-providers>
         <default-storages>
             <default-storage>filestorage</default-storage>
+            <default-storage>s3</default-storage>
         </default-storages>
         <enable-watch-directory>true</enable-watch-directory>
         <watch-directory>/opt/my-data/watched</watch-directory>
