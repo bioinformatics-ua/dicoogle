@@ -51,7 +51,7 @@ public interface QueryInterface extends DicooglePlugin
      * query text parser encountered a syntax error (see {@link QueryParseException}).
      */
 
-    public Iterable<SearchResult> query(String query, Object ... parameters) throws QueryException;;
+    public Iterable<SearchResult> query(String query, Object ... parameters) throws QueryException;
 
     /**
      *
@@ -64,5 +64,5 @@ public interface QueryInterface extends DicooglePlugin
      * their own API's, which may require more complex data structures (e.g. images).
      * @return the results of the query as a (possibly lazy) iterable
      */
-    public Iterable<SearchResult> query(String query, DimLevel level, Object ... parameters) throws QueryException;;
+    public Iterable<SearchResult> query(String query, DimLevel level, Object ... parameters) throws QueryException;
 }
