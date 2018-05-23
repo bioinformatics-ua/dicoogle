@@ -1,11 +1,10 @@
-import React from 'react';
+import React from "react";
 import * as PluginActions from "../../actions/pluginActions";
 import PluginStore from "../../stores/pluginStore";
-import $ from 'jquery';
+import $ from "jquery";
 
 const PluginsView = React.createClass({
-
-  getInitialState () {
+  getInitialState() {
     return {
       plugins: {},
       currentlyLoading: 4,
@@ -14,16 +13,16 @@ const PluginsView = React.createClass({
     };
   },
 
-  componentWillMount () {
+  componentWillMount() {
     this.unsubscribe = PluginStore.listen(this._onPluginsChange);
   },
 
-  componentDidMount: function(){
+  componentDidMount: function() {
     const pluginTypes = ["query", "index", "storage", "servlet"];
     pluginTypes.map(type => PluginActions.get(type));
   },
 
-  componentWillUnmount: function(){
+  componentWillUnmount: function() {
     this.unsubscribe();
   },
 
@@ -38,7 +37,12 @@ const PluginsView = React.createClass({
       });
 
       let toastMessage = this.state.error ? this.state.error : "Saved.";
-      $('.toast').stop().text(toastMessage).fadeIn(400).delay(3000).fadeOut(400); // fade out after 3 seconds
+      $(".toast")
+        .stop()
+        .text(toastMessage)
+        .fadeIn(400)
+        .delay(3000)
+        .fadeOut(400); // fade out after 3 seconds
     }
 
     if (!data.success) {
@@ -80,51 +84,75 @@ const PluginsView = React.createClass({
     });
   },
 
-  render () {
-    if(this.state.status === "loading"){
-      return (<div className="loader-inner ball-pulse">
-        <div/><div/><div/>
-        </div>);
+  render() {
+    if (this.state.status === "loading") {
+      return (
+        <div className="loader-inner ball-pulse">
+          <div />
+          <div />
+          <div />
+        </div>
+      );
     }
 
     let collapseId = 1;
     const ignoreFieldList = ["name", "type", "enabled"];
-    const pluginPanels = Object.keys(this.state.plugins).sort().map(type => {
-      return (
-        <div className="col-lg-3 col-md-6 col-sm-12">
-          <p>{type.charAt(0).toUpperCase() + type.slice(1)}</p>
-          {this.state.plugins[type].map(plugin => (
-            <div className="panel panel-default">
-              <div className="panel-heading panel-heading-toggle">
-                <h4 className="panel-title">
-                  <a className="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion"
-                     href={"#collapse" + collapseId}>{plugin.name}</a>
-                </h4>
-              </div>
-              <div id={"collapse" + collapseId++} className="panel-collapse collapse">
-                <div className="panel-body">
-                  <button type="button"
-                          className={(plugin.enabled ? "btn btn-danger" : "btn btn-success") + " pull-right"}
-                          onClick={this._onActionClicked.bind(
-                            this,
-                            type,
-                            plugin.name,
-                            (plugin.enabled ? "disable" : "enable"))}>
-                    {plugin.enabled ? "Disable" : "Enable"}
-                  </button>
-                  {
-                    Object.keys(plugin)
+    const pluginPanels = Object.keys(this.state.plugins)
+      .sort()
+      .map(type => {
+        return (
+          <div className="col-lg-3 col-md-6 col-sm-12">
+            <p>{type.charAt(0).toUpperCase() + type.slice(1)}</p>
+            {this.state.plugins[type].map(plugin => (
+              <div className="panel panel-default">
+                <div className="panel-heading panel-heading-toggle">
+                  <h4 className="panel-title">
+                    <a
+                      className="accordion-toggle collapsed"
+                      data-toggle="collapse"
+                      data-parent="#accordion"
+                      href={"#collapse" + collapseId}
+                    >
+                      {plugin.name}
+                    </a>
+                  </h4>
+                </div>
+                <div
+                  id={"collapse" + collapseId++}
+                  className="panel-collapse collapse"
+                >
+                  <div className="panel-body">
+                    <button
+                      type="button"
+                      className={
+                        (plugin.enabled
+                          ? "btn btn-danger"
+                          : "btn btn-success") + " pull-right"
+                      }
+                      onClick={this._onActionClicked.bind(
+                        this,
+                        type,
+                        plugin.name,
+                        plugin.enabled ? "disable" : "enable"
+                      )}
+                    >
+                      {plugin.enabled ? "Disable" : "Enable"}
+                    </button>
+                    {Object.keys(plugin)
                       .filter(field => ignoreFieldList.indexOf(field) < 0)
                       .filter(field => plugin[field] !== null)
-                      .map(field => (<p><b>{field}:</b> {plugin[field].toString()}</p>))
-                  }
+                      .map(field => (
+                        <p>
+                          <b>{field}:</b> {plugin[field].toString()}
+                        </p>
+                      ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )
-    });
+            ))}
+          </div>
+        );
+      });
 
     return (
       <div className="panel panel-primary topMargin">
@@ -132,9 +160,7 @@ const PluginsView = React.createClass({
           <h3 className="panel-title">Plugins</h3>
         </div>
         <div className="panel-body">
-          <div className="row">
-            {pluginPanels}
-          </div>
+          <div className="row">{pluginPanels}</div>
         </div>
         <div className="toast">Saved</div>
       </div>
@@ -142,4 +168,4 @@ const PluginsView = React.createClass({
   }
 });
 
-export {PluginsView};
+export { PluginsView };

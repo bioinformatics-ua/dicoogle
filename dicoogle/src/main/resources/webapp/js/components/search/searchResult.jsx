@@ -1,17 +1,16 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from "react";
 
-import {PatientView} from './result/patientView';
-import {StudyView} from './result/studyView';
-import {SeriesView} from './result/serieView';
-import {ImageView} from './result/imageView';
-import {ExportView} from './exportView';
-import Webcore from 'dicoogle-webcore';
-import PluginForm from '../plugin/pluginForm.jsx';
-import {DefaultOptions} from '../../constants/defaultOptions';
-import {SearchStore} from '../../stores/searchStore';
+import { PatientView } from "./result/patientView";
+import { StudyView } from "./result/studyView";
+import { SeriesView } from "./result/serieView";
+import { ImageView } from "./result/imageView";
+import { ExportView } from "./exportView";
+import Webcore from "dicoogle-webcore";
+import PluginForm from "../plugin/pluginForm.jsx";
+import { DefaultOptions } from "../../constants/defaultOptions";
+import { SearchStore } from "../../stores/searchStore";
 
 const SearchResult = React.createClass({
-
   propTypes: {
     requestedQuery: PropTypes.shape({
       text: PropTypes.string,
@@ -35,7 +34,7 @@ const SearchResult = React.createClass({
   getDefaultProps() {
     return {
       onReturn: null
-    }
+    };
   },
 
   getInitialState: function() {
@@ -49,12 +48,14 @@ const SearchResult = React.createClass({
   },
 
   componentWillMount: function() {
-    Webcore.fetchPlugins('result-batch', (packages) => {
+    Webcore.fetchPlugins("result-batch", packages => {
       Webcore.fetchModules(packages);
-      this.setState({batchPlugins: packages.map(pkg => ({
-        name: pkg.name,
-        caption: pkg.dicoogle.caption || pkg.name
-      }))});
+      this.setState({
+        batchPlugins: packages.map(pkg => ({
+          name: pkg.name,
+          caption: pkg.dicoogle.caption || pkg.name
+        }))
+      });
     });
     this.unsubscribe = SearchStore.listen(this._onSearchResult);
   },
@@ -64,30 +65,28 @@ const SearchResult = React.createClass({
   },
 
   componentWillUpdate(nextProps) {
-
     if (this.props.requestedQuery.text !== nextProps.requestedQuery.text) {
       //init StepView
-      if(!this.state.current)
-        this.onStepClicked(0);
+      if (!this.state.current) this.onStepClicked(0);
     }
   },
   _onSearchResult: function(outcome) {
     this.onStepClicked(0);
   },
   handleClickExport() {
-    this.setState({showExport: true, currentPlugin: null});
+    this.setState({ showExport: true, currentPlugin: null });
   },
 
   handleClickBatchPluginButton(plugin) {
-    this.setState({currentPlugin: plugin, showExport: false});
+    this.setState({ currentPlugin: plugin, showExport: false });
   },
 
   handleHideExport() {
-    this.setState({showExport: false});
+    this.setState({ showExport: false });
   },
 
   handleHideBatchForm() {
-    this.setState({currentPlugin: null});
+    this.setState({ currentPlugin: null });
   },
 
   isLoading() {
@@ -99,43 +98,49 @@ const SearchResult = React.createClass({
   },
 
   render: function() {
-    const {searchOutcome} = this.props;
+    const { searchOutcome } = this.props;
 
-		if (this.isLoading()){
+    if (this.isLoading()) {
       //loading animation
-      return (<div className="loader-inner ball-pulse">
-        <div/>
-        <div/>
-        <div/>
-      </div>);
-		}
+      return (
+        <div className="loader-inner ball-pulse">
+          <div />
+          <div />
+          <div />
+        </div>
+      );
+    }
 
     //Check if search failed
-    if(this.getError()) {
+    if (this.getError()) {
       return (
         <div>
           <p>{this.getError()}</p>
         </div>
-        );
+      );
     }
     //Check if search return no results
-    if(searchOutcome.data && searchOutcome.data.numResults === 0)
-    {
+    if (searchOutcome.data && searchOutcome.data.numResults === 0) {
       return (
         <div>
           <p>No results for that query</p>
         </div>
-        );
+      );
     }
 
-    const pluginButtons = this.state.batchPlugins.map(plugin =>(
-              <button key={plugin.name} className="btn btn_dicoogle fa dicoogle-webcore-result-batch-button"
-                      onClick={this.handleClickBatchPluginButton.bind(this, plugin)}>
-                {plugin.caption}
-              </button>)
-    );
+    const pluginButtons = this.state.batchPlugins.map(plugin => (
+      <button
+        key={plugin.name}
+        className="btn btn_dicoogle fa dicoogle-webcore-result-batch-button"
+        onClick={this.handleClickBatchPluginButton.bind(this, plugin)}
+      >
+        {plugin.caption}
+      </button>
+    ));
 
-    let toggleModalClassNames = this.state.showDangerousOptions ? "fa fa-toggle-on" : "fa fa-toggle-off";
+    let toggleModalClassNames = this.state.showDangerousOptions
+      ? "fa fa-toggle-on"
+      : "fa fa-toggle-off";
 
     let counters = [];
     if (this.props.searchOutcome.data) {
@@ -151,67 +156,100 @@ const SearchResult = React.createClass({
       counters.push(this.state.serie.images.length);
     }
 
-    return (<div className="container-fluid">
+    return (
+      <div className="container-fluid">
         <div className="row">
-          <Step current={this.state.current} counters={counters} onClick={this.onStepClicked}/>
+          <Step
+            current={this.state.current}
+            counters={counters}
+            onClick={this.onStepClicked}
+          />
         </div>
-        <div id="step-container">
-          {this.getCurrentView()}
-        </div>
-        <button className="btn btn_dicoogle" onClick={this.handleClickExport}><i className="fa fa-download"/> Export</button>
-        <button className="btn btn_dicoogle" onClick={this.toggleAdvOpt}><i className={toggleModalClassNames}/> Advanced Options </button>
+        <div id="step-container">{this.getCurrentView()}</div>
+        <button className="btn btn_dicoogle" onClick={this.handleClickExport}>
+          <i className="fa fa-download" /> Export
+        </button>
+        <button className="btn btn_dicoogle" onClick={this.toggleAdvOpt}>
+          <i className={toggleModalClassNames} /> Advanced Options{" "}
+        </button>
         {pluginButtons}
-        <ExportView show={this.state.showExport} onHide={this.handleHideExport} query={this.props.requestedQuery}/>
-        <PluginForm show={!!this.state.currentPlugin} slotId="result-batch"
-                    plugin={this.state.currentPlugin} onHide={this.handleHideBatchForm}
-                    data={{
-                      query: this.props.requestedQuery.text,
-                      queryProvider: this.props.requestedQuery.provider,
-                      results: this.props.searchOutcome.data.results}} />
-      </div>);
-	},
+        <ExportView
+          show={this.state.showExport}
+          onHide={this.handleHideExport}
+          query={this.props.requestedQuery}
+        />
+        <PluginForm
+          show={!!this.state.currentPlugin}
+          slotId="result-batch"
+          plugin={this.state.currentPlugin}
+          onHide={this.handleHideBatchForm}
+          data={{
+            query: this.props.requestedQuery.text,
+            queryProvider: this.props.requestedQuery.provider,
+            results: this.props.searchOutcome.data.results
+          }}
+        />
+      </div>
+    );
+  },
 
   getCurrentView() {
     let view;
     switch (this.state.current) {
       case 0:
-        view = ( <PatientView items={this.props.searchOutcome.data}
-                              provider={this.props.requestedQuery.provider}
-                              enableAdvancedSearch={this.state.showDangerousOptions}
-                              onItemClick={this.onPatientClicked}/>);
+        view = (
+          <PatientView
+            items={this.props.searchOutcome.data}
+            provider={this.props.requestedQuery.provider}
+            enableAdvancedSearch={this.state.showDangerousOptions}
+            onItemClick={this.onPatientClicked}
+          />
+        );
         break;
       case 1:
-        view = ( <StudyView patient={this.state.patient}
-                            enableAdvancedSearch={this.state.showDangerousOptions}
-                            onItemClick={this.onStudyClicked}/>);
+        view = (
+          <StudyView
+            patient={this.state.patient}
+            enableAdvancedSearch={this.state.showDangerousOptions}
+            onItemClick={this.onStudyClicked}
+          />
+        );
         break;
       case 2:
-        view = ( <SeriesView study={this.state.study}
-                             enableAdvancedSearch={this.state.showDangerousOptions}
-                             onItemClick={this.onSeriesClicked}/>);
+        view = (
+          <SeriesView
+            study={this.state.study}
+            enableAdvancedSearch={this.state.showDangerousOptions}
+            onItemClick={this.onSeriesClicked}
+          />
+        );
         break;
       case 3:
-        view = ( <ImageView serie={this.state.serie}
-                            enableAdvancedSearch={this.state.showDangerousOptions}/>);
+        view = (
+          <ImageView
+            serie={this.state.serie}
+            enableAdvancedSearch={this.state.showDangerousOptions}
+          />
+        );
         break;
     }
     return view;
   },
 
-  onStepClicked: function(stepComponent){
-    this.setState({current: stepComponent});
+  onStepClicked: function(stepComponent) {
+    this.setState({ current: stepComponent });
   },
-  onPatientClicked: function(patient){
-    this.setState({current: 1, patient, study: null, serie: null});
+  onPatientClicked: function(patient) {
+    this.setState({ current: 1, patient, study: null, serie: null });
   },
-  onStudyClicked: function(study){
-    this.setState({current: 2, study, serie: null});
+  onStudyClicked: function(study) {
+    this.setState({ current: 2, study, serie: null });
   },
-  onSeriesClicked: function(serie){
-    this.setState({current: 3, serie});
+  onSeriesClicked: function(serie) {
+    this.setState({ current: 3, serie });
   },
-  toggleAdvOpt: function(){
-    this.setState({showDangerousOptions: !this.state.showDangerousOptions});
+  toggleAdvOpt: function() {
+    this.setState({ showDangerousOptions: !this.state.showDangerousOptions });
   }
 });
 
@@ -221,49 +259,76 @@ const Step = React.createClass({
     counters: PropTypes.arrayOf(PropTypes.number).isRequired
   },
   render: function() {
-    const {current, counters: [nPatients, nStudies, nSeries, nImages]} = this.props;
+    const {
+      current,
+      counters: [nPatients, nStudies, nSeries, nImages]
+    } = this.props;
 
     return (
-        <div className="wizardbar">
-          <div onClick={this.onStepClicked.bind(this, 0)} className={this.getStep(current, 0)}>
-            <div>
-              {nPatients !== undefined && <span className="label label-pill label-primary label-as-badge label-border">{nPatients}</span>}
-              &nbsp; Patient
-            </div>
-          </div>
-          <div onClick={this.onStepClicked.bind(this, 1)} className={this.getStep(current, 1)}>
-            <div>
-              {nStudies !== undefined && <span className="label label-pill label-primary label-as-badge label-border">{nStudies}</span>}
-              &nbsp; Study
-            </div>
-          </div>
-          <div onClick={this.onStepClicked.bind(this, 2)} className={this.getStep(current, 2)}>
-            <div>
-              {nSeries !== undefined && <span className="label label-pill label-primary label-as-badge label-border">{nSeries}</span>}
-              &nbsp; Series
-            </div>
-          </div>
-          <div onClick={this.onStepClicked.bind(this, 3)} className={this.getStep(current, 3)}>
-            <div>
-              {nImages !== undefined && <span className="label label-pill label-primary label-as-badge label-border">{nImages}</span>}
-              &nbsp; Image
-            </div>
+      <div className="wizardbar">
+        <div
+          onClick={this.onStepClicked.bind(this, 0)}
+          className={this.getStep(current, 0)}
+        >
+          <div>
+            {nPatients !== undefined && (
+              <span className="label label-pill label-primary label-as-badge label-border">
+                {nPatients}
+              </span>
+            )}
+            &nbsp; Patient
           </div>
         </div>
-      );
+        <div
+          onClick={this.onStepClicked.bind(this, 1)}
+          className={this.getStep(current, 1)}
+        >
+          <div>
+            {nStudies !== undefined && (
+              <span className="label label-pill label-primary label-as-badge label-border">
+                {nStudies}
+              </span>
+            )}
+            &nbsp; Study
+          </div>
+        </div>
+        <div
+          onClick={this.onStepClicked.bind(this, 2)}
+          className={this.getStep(current, 2)}
+        >
+          <div>
+            {nSeries !== undefined && (
+              <span className="label label-pill label-primary label-as-badge label-border">
+                {nSeries}
+              </span>
+            )}
+            &nbsp; Series
+          </div>
+        </div>
+        <div
+          onClick={this.onStepClicked.bind(this, 3)}
+          className={this.getStep(current, 3)}
+        >
+          <div>
+            {nImages !== undefined && (
+              <span className="label label-pill label-primary label-as-badge label-border">
+                {nImages}
+              </span>
+            )}
+            &nbsp; Image
+          </div>
+        </div>
+      </div>
+    );
   },
   getStep: function(current, step) {
-    if(step === current)
-      return "col-xs-3 wizardbar-item current";
-    else if(step > current)
-      return "col-xs-3 wizardbar-item disabled";
-    else if(step < current)
-      return "col-xs-3 wizardbar-item completed";
+    if (step === current) return "col-xs-3 wizardbar-item current";
+    else if (step > current) return "col-xs-3 wizardbar-item disabled";
+    else if (step < current) return "col-xs-3 wizardbar-item completed";
   },
   onStepClicked: function(current) {
-      this.props.onClick(current);
+    this.props.onClick(current);
   }
-
 });
 
-export {SearchResult};
+export { SearchResult };

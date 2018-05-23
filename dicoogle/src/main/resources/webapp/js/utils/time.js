@@ -1,4 +1,3 @@
-
 /** Split a duration into human-readable parts.
  *
  * @param {number} time a number representing the number of milliseconds
@@ -8,25 +7,25 @@
  * have at least one element).
  */
 export function splitTime(time) {
-    const o = [];
-    o.push(time % 1000); // ms
-    time = (time / 1000) | 0;
-    if (time === 0) return o;
+  const o = [];
+  o.push(time % 1000); // ms
+  time = (time / 1000) | 0;
+  if (time === 0) return o;
 
-    o.push(time % 60) // s
-    time = (time / 60) | 0;
-    if (time === 0) return o;
+  o.push(time % 60); // s
+  time = (time / 60) | 0;
+  if (time === 0) return o;
 
-    o.push(time % 60); // m
-    time = (time / 60) | 0;
-    if (time === 0) return o;
+  o.push(time % 60); // m
+  time = (time / 60) | 0;
+  if (time === 0) return o;
 
-    o.push(time % 24); // h
-    time = (time / 24) | 0;
-    if (time === 0) return o;
+  o.push(time % 24); // h
+  time = (time / 24) | 0;
+  if (time === 0) return o;
 
-    o.push(time); // d
-    return o;
+  o.push(time); // d
+  return o;
 }
 
 /** Convert a duration into human-readable text
@@ -34,11 +33,11 @@ export function splitTime(time) {
  * @return {string} a text representing the duration. Example: "2h 17m 20s 837ms"
  */
 export function toHumanReadable(timeValue) {
-    const suffix = ['ms', 's', 'm', 'h', 'd'];
+  const suffix = ["ms", "s", "m", "h", "d"];
 
-    const parts = splitTime(timeValue);
+  const parts = splitTime(timeValue);
 
-    return parts.map((v, i) =>
-      v + suffix[i]
-    ).reduceRight((pval, cval) => pval + ' ' + cval);
+  return parts
+    .map((v, i) => v + suffix[i])
+    .reduceRight((pval, cval) => pval + " " + cval);
 }

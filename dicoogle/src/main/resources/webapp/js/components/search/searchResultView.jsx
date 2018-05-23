@@ -1,20 +1,17 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from "react";
 
-import {SearchStore} from '../../stores/searchStore';
-import {ActionCreators} from '../../actions/searchActions';
+import { SearchStore } from "../../stores/searchStore";
+import { ActionCreators } from "../../actions/searchActions";
 
-import Webcore from 'dicoogle-webcore';
-import {DefaultOptions} from '../../constants/defaultOptions';
-import {SearchResult} from './searchResult';
-
-
+import Webcore from "dicoogle-webcore";
+import { DefaultOptions } from "../../constants/defaultOptions";
+import { SearchResult } from "./searchResult";
 
 /**
  * This class is not used anymore.
- * Deprecated. 
+ * Deprecated.
  */
 const SearchResultView = React.createClass({
-
   propTypes: {
     items: PropTypes.shape({
       text: PropTypes.string,
@@ -43,12 +40,14 @@ const SearchResultView = React.createClass({
 
   componentWillMount: function() {
     this.unsubscribe = SearchStore.listen(this._onChange);
-    Webcore.fetchPlugins('result-batch', (packages) => {
+    Webcore.fetchPlugins("result-batch", packages => {
       Webcore.fetchModules(packages);
-      this.setState({batchPlugins: packages.map(pkg => ({
-        name: pkg.name,
-        caption: pkg.dicoogle.caption || pkg.name
-      }))});
+      this.setState({
+        batchPlugins: packages.map(pkg => ({
+          name: pkg.name,
+          caption: pkg.dicoogle.caption || pkg.name
+        }))
+      });
     });
   },
 
@@ -56,28 +55,30 @@ const SearchResultView = React.createClass({
     this.unsubscribe();
   },
 
-	initSearch: function(props){
+  initSearch: function(props) {
     ActionCreators.search(props);
-	},
+  },
 
   render: function() {
     const sOut = {
       data: this.state.data,
-      error: !this.state.success && 'An error occurred. Please contact your system administrator.'
+      error:
+        !this.state.success &&
+        "An error occurred. Please contact your system administrator."
     };
     const rq = this.props.items;
-    return (<SearchResult requestedQuery={rq} searchOutcome={sOut} />);
-	},
+    return <SearchResult requestedQuery={rq} searchOutcome={sOut} />;
+  },
 
   _onChange: function(outcome) {
-      console.log('outcome:', outcome);
+    console.log("outcome:", outcome);
 
-      this.setState({
-        data: outcome.data,
-        status: "stopped",
-        success: outcome.success
-      });
+    this.setState({
+      data: outcome.data,
+      status: "stopped",
+      success: outcome.success
+    });
   }
 });
 
-export {SearchResultView};
+export { SearchResultView };

@@ -1,10 +1,9 @@
-import React, {PropTypes} from 'react';
-import {ResultsSelected} from '../../stores/resultSelected';
-import dicoogleClient from 'dicoogle-client';
+import React, { PropTypes } from "react";
+import { ResultsSelected } from "../../stores/resultSelected";
+import dicoogleClient from "dicoogle-client";
 const Dicoogle = dicoogleClient();
 
 export default class PluginForm extends React.Component {
-
   static get propTypes() {
     return {
       slotId: PropTypes.string.isRequired,
@@ -37,25 +36,40 @@ export default class PluginForm extends React.Component {
     if (component) {
       const node = component;
       node.data = this.props.data;
-      node.addEventListener('hide', this.handleHideSignal);
-      Dicoogle.emitSlotSignal(node, 'result-selection-ready', ResultsSelected.get());
+      node.addEventListener("hide", this.handleHideSignal);
+      Dicoogle.emitSlotSignal(
+        node,
+        "result-selection-ready",
+        ResultsSelected.get()
+      );
     }
   }
 
-  handleHideSignal({target}) {
-      console.log('Plugin requested to hide');
-      target.removeEventListener('hide', this.handleHideSignal);
-      this.props.onHide();
+  handleHideSignal({ target }) {
+    console.log("Plugin requested to hide");
+    target.removeEventListener("hide", this.handleHideSignal);
+    this.props.onHide();
   }
 
   render() {
-    const {plugin} = this.props;
-    return (plugin &&
-      <dicoogle-slot {...this.props.data} ref={this.handleMounted} data-slot-id={this.props.slotId} data-plugin-name={plugin.name}>
-        {plugin.name && <div className="loader-inner ball-pulse">
-          <div/><div/><div/>
-        </div>}
-      </dicoogle-slot>
+    const { plugin } = this.props;
+    return (
+      plugin && (
+        <dicoogle-slot
+          {...this.props.data}
+          ref={this.handleMounted}
+          data-slot-id={this.props.slotId}
+          data-plugin-name={plugin.name}
+        >
+          {plugin.name && (
+            <div className="loader-inner ball-pulse">
+              <div />
+              <div />
+              <div />
+            </div>
+          )}
+        </dicoogle-slot>
+      )
     );
   }
 }
