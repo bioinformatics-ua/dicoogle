@@ -108,6 +108,10 @@
       "prettier --write js/**/*.{js,jsx}",
       "git add"
     ],
+    "gulpfile.js": [
+      "prettier --write gulpfile.js",
+      "git add"
+    ],
     "sass/*.scss": [
       "prettier --write sass/**/*.scss",
       "git add"
