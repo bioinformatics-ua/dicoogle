@@ -63,7 +63,7 @@ import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
  * @author Marco Pereira
  */
 
-public class RSIStorage extends StorageService {
+public class DicomStorage extends StorageService {
 
     private SOPList list;
     private ServerSettings settings;
@@ -92,7 +92,7 @@ public class RSIStorage extends StorageService {
      * @param l list of Supported SOPClasses with supported Transfer Syntax
      */
 
-    public RSIStorage(String[] Services, SOPList l) {
+    public DicomStorage(String[] Services, SOPList l) {
         //just because the call to super must be the first instruction
         super(Services);
 
@@ -109,7 +109,7 @@ public class RSIStorage extends StorageService {
         }
 
         this.priorityAETs = new HashSet<>(settings.getDicomServicesSettings().getPriorityAETitles());
-        LoggerFactory.getLogger(RSIStorage.class).debug("Priority C-STORE: " + this.priorityAETs);
+        LoggerFactory.getLogger(DicomStorage.class).debug("Priority C-STORE: " + this.priorityAETs);
 
         device.setNetworkApplicationEntity(nae);
 
@@ -343,7 +343,7 @@ public class RSIStorage extends StorageService {
                         List<Report> reports = PluginController.getInstance().indexBlocking(exam);
                     }
                 } catch (InterruptedException ex) {
-                    LoggerFactory.getLogger(RSIStorage.class).error(ex.getMessage(), ex);
+                    LoggerFactory.getLogger(DicomStorage.class).error(ex.getMessage(), ex);
                 }
 
             }
@@ -460,7 +460,7 @@ public class RSIStorage extends StorageService {
         try {
             pool.awaitTermination(6, TimeUnit.DAYS);
         } catch (InterruptedException ex) {
-            LoggerFactory.getLogger(RSIStorage.class).error(ex.getMessage(), ex);
+            LoggerFactory.getLogger(DicomStorage.class).error(ex.getMessage(), ex);
         }
         device.stopListening();
 
