@@ -53,16 +53,4 @@ public interface QueryInterface extends DicooglePlugin
 
     public Iterable<SearchResult> query(String query, Object ... parameters) throws QueryException;
 
-    /**
-     *
-     * Performs a search on the database.
-     *
-     * @param query a string describing the query. The underlying plugin is currently free to follow any
-     * query format.
-     * @param level a level of the query, for instance, Patient, Study, Series or Instance
-     * @param parameters A variable list of parameters of the query. The plugin can use them to establish
-     * their own API's, which may require more complex data structures (e.g. images).
-     * @return the results of the query as a (possibly lazy) iterable
-     */
-    public Iterable<SearchResult> query(String query, DimLevel level, Object ... parameters) throws QueryException;
 }
