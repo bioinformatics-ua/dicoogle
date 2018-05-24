@@ -19,6 +19,7 @@
 package pt.ua.dicoogle.sdk;
 
 
+import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.datastructs.dim.*;
 import pt.ua.dicoogle.sdk.utils.QueryException;
 
@@ -70,5 +71,18 @@ public interface QueryDimInterface extends QueryInterface {
      * @return the results of the query as a (possibly lazy) iterable with <b>Series</b>
      */
     public Iterable<? extends SeriesInterface> querySeries(String query, Object ... parameters) throws QueryException;
+
+    /**
+     *
+     * Performs a search on the database.
+     *
+     * @param query a string describing the query. The underlying plugin is currently free to follow any
+     * query format.
+     * @param level a level of the query, for instance, Patient, Study, Series or Instance
+     * @param parameters A variable list of parameters of the query. The plugin can use them to establish
+     * their own API's, which may require more complex data structures (e.g. images).
+     * @return the results of the query as a (possibly lazy) iterable
+     */
+    public Iterable<SearchResult> query(String query, DimLevel level, Object ... parameters) throws QueryException;
     
 }
