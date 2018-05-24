@@ -58,26 +58,25 @@ import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
 /**
  * DICOM Storage Service is provided by this class
+ *
+ * @author Luís Bastião Silva <bastiao@bmd-softwre.com>
  * @author Marco Pereira
  */
 
-public class RSIStorage extends StorageService
-{
-    
+public class RSIStorage extends StorageService {
+
     private SOPList list;
     private ServerSettings settings;
-        
-    private Executor executor = new NewThreadExecutor("RSIStorage");
-    private Device device = new Device("RSIStorage");
+
+    private Executor executor = new NewThreadExecutor("DicoogleStorage");
+    private Device device = new Device("DicoogleStorage");
     private NetworkApplicationEntity nae = new NetworkApplicationEntity();
     private NetworkConnection nc = new NetworkConnection();
-    
+
     private String path;
-    private DicomDirCreator dirc;
-    
-    private int fileBufferSize = 256;
+
     private int threadPoolSize = 10;
-    
+
     private ExecutorService pool = Executors.newFixedThreadPool(threadPoolSize);
 
     private Set<String> alternativeAETs = new HashSet<>();
@@ -86,165 +85,156 @@ public class RSIStorage extends StorageService
     // Changed to support priority queue.
     private BlockingQueue<ImageElement> queue = new PriorityBlockingQueue<ImageElement>();
     private NetworkApplicationEntity[] naeArr = null;
-    
+
     /**
-     * 
+     *
      * @param Services List of supported SOP Classes
      * @param l list of Supported SOPClasses with supported Transfer Syntax
      */
-    
-    public RSIStorage(String [] Services, SOPList l)
-    {
+
+    public RSIStorage(String[] Services, SOPList l) {
         //just because the call to super must be the first instruction
-        super(Services); 
-        
-            //our configuration format
-            list = l;
-            settings = ServerSettingsManager.getSettings();
+        super(Services);
 
-            // Added default alternative AETitle.
-            //alternativeAETs.add(ServerSettingsManager.getSettings().getNodeName());
+        //our configuration format
+        list = l;
+        settings = ServerSettingsManager.getSettings();
 
-            path = settings.getArchiveSettings().getMainDirectory();
-            if (path == null) {
-                path = "/dev/null";
-            }
+        // Added default alternative AETitle.
+        //alternativeAETs.add(ServerSettingsManager.getSettings().getNodeName());
 
-            this.priorityAETs = new HashSet<>(settings.getDicomServicesSettings().getPriorityAETitles());
-            LoggerFactory.getLogger(RSIStorage.class).debug("Priority C-STORE: " + this.priorityAETs);
+        path = settings.getArchiveSettings().getMainDirectory();
+        if (path == null) {
+            path = "/dev/null";
+        }
 
-            device.setNetworkApplicationEntity(nae);
+        this.priorityAETs = new HashSet<>(settings.getDicomServicesSettings().getPriorityAETitles());
+        LoggerFactory.getLogger(RSIStorage.class).debug("Priority C-STORE: " + this.priorityAETs);
 
-            device.setNetworkConnection(nc);
-            nae.setNetworkConnection(nc);
+        device.setNetworkApplicationEntity(nae);
 
+        device.setNetworkConnection(nc);
+        nae.setNetworkConnection(nc);
+
+        //we accept assoociations, this is a server
+        nae.setAssociationAcceptor(true);
+        //we support the VerificationServiceSOP
+        nae.register(new VerificationService());
+        //and the StorageServiceSOP
+        nae.register(this);
+
+        nae.setAETitle(settings.getDicomServicesSettings().getAETitle());
+
+
+        nc.setPort(settings.getDicomServicesSettings().getStorageSettings().getPort());
+
+
+        this.nae.setInstalled(true);
+        this.nae.setAssociationAcceptor(true);
+        this.nae.setAssociationInitiator(false);
+
+        int maxPDULengthReceive = settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthReceive();
+        int maxPDULengthSend = settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthSend();
+
+        ServerSettings s = ServerSettingsManager.getSettings();
+        this.nae.setDimseRspTimeout(60000 * 300);
+        this.nae.setIdleTimeout(60000 * 300);
+        this.nae.setMaxPDULengthReceive(maxPDULengthReceive + 1000);
+        this.nae.setMaxPDULengthSend(maxPDULengthSend + 1000);
+        this.nae.setRetrieveRspTimeout(60000 * 300);
+
+
+        // Added alternative AETitles.
+
+        naeArr = new NetworkApplicationEntity[alternativeAETs.size() + 1];
+        // Just adding the first AETitle
+        naeArr[0] = nae;
+
+        int k = 1;
+
+        for (String alternativeAET : alternativeAETs) {
+            NetworkApplicationEntity nae2 = new NetworkApplicationEntity();
+            nae2.setNetworkConnection(nc);
+            nae2.setDimseRspTimeout(60000 * 300);
+            nae2.setIdleTimeout(60000 * 300);
+            nae2.setMaxPDULengthReceive(maxPDULengthReceive + 1000);
+            nae2.setMaxPDULengthSend(maxPDULengthSend + 1000);
+            nae2.setRetrieveRspTimeout(60000 * 300);
             //we accept assoociations, this is a server
-            nae.setAssociationAcceptor(true);
+            nae2.setAssociationAcceptor(true);
             //we support the VerificationServiceSOP
-            nae.register(new VerificationService());
+            nae2.register(new VerificationService());
             //and the StorageServiceSOP
-            nae.register(this);
-
-            nae.setAETitle(settings.getDicomServicesSettings().getAETitle());
-
-
-            nc.setPort(settings.getDicomServicesSettings().getStorageSettings().getPort());
-            
-            
-            this.nae.setInstalled(true);
-            this.nae.setAssociationAcceptor(true);
-            this.nae.setAssociationInitiator(false);
-            
-            int maxPDULengthReceive = settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthReceive();
-            int maxPDULengthSend = settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthSend();
-
-            ServerSettings s  = ServerSettingsManager.getSettings();
-            this.nae.setDimseRspTimeout(60000*300);
-            this.nae.setIdleTimeout(60000*300);
-            this.nae.setMaxPDULengthReceive(maxPDULengthReceive+1000);
-            this.nae.setMaxPDULengthSend(maxPDULengthSend+1000);
-            this.nae.setRetrieveRspTimeout(60000*300);
-
-
-            // Added alternative AETitles.
-
-            naeArr = new NetworkApplicationEntity[alternativeAETs.size()+1];
-            // Just adding the first AETitle
-            naeArr[0] = nae;
-            
-            int k = 1 ; 
-            
-            for (String alternativeAET: alternativeAETs)
-            {
-                NetworkApplicationEntity nae2 = new NetworkApplicationEntity();
-                nae2.setNetworkConnection(nc);
-                nae2.setDimseRspTimeout(60000*300);
-                nae2.setIdleTimeout(60000*300);
-                nae2.setMaxPDULengthReceive(maxPDULengthReceive+1000);
-                nae2.setMaxPDULengthSend(maxPDULengthSend+1000);
-                nae2.setRetrieveRspTimeout(60000*300);
-                //we accept assoociations, this is a server
-                nae2.setAssociationAcceptor(true);
-                //we support the VerificationServiceSOP
-                nae2.register(new VerificationService());
-                //and the StorageServiceSOP
-                nae2.register(this);
-                nae2.setAETitle(alternativeAET);
-                ServerSettings settings = ServerSettingsManager.getSettings();
-                Collection<String> caet = settings.getDicomServicesSettings().getAllowedAETitles();
-                if (!caet.isEmpty()) {
-                    String[] array = new String[caet.size()];
-                    caet.toArray(array);
-                    nae2.setPreferredCallingAETitle(array);
-                }
-                naeArr[k] = nae2;
-                k++;
-                
+            nae2.register(this);
+            nae2.setAETitle(alternativeAET);
+            ServerSettings settings = ServerSettingsManager.getSettings();
+            Collection<String> caet = settings.getDicomServicesSettings().getAllowedAETitles();
+            if (!caet.isEmpty()) {
+                String[] array = new String[caet.size()];
+                caet.toArray(array);
+                nae2.setPreferredCallingAETitle(array);
             }
+            naeArr[k] = nae2;
+            k++;
 
-            // Just set the Network Application Entity array - which accepts a set of AEs.
-            device.setNetworkApplicationEntity(naeArr);
+        }
 
-            
+        // Just set the Network Application Entity array - which accepts a set of AEs.
+        device.setNetworkApplicationEntity(naeArr);
 
-            initTS(Services);
+
+        initTS(Services);
     }
+
     /**
      *  Sets the tranfer capability for this execution of the storage service
      *  @param Services Services to be supported
      */
-    private void initTS(String [] Services)
-    {
+    private void initTS(String[] Services) {
         int count = list.getAccepted();
         //System.out.println(count);
         TransferCapability[] tc = new TransferCapability[count + 1];
-        String [] Verification = {UID.ImplicitVRLittleEndian, UID.ExplicitVRLittleEndian, UID.ExplicitVRBigEndian};
-        String [] TS;
-        TransfersStorage local;        
+        String[] Verification = {UID.ImplicitVRLittleEndian, UID.ExplicitVRLittleEndian, UID.ExplicitVRBigEndian};
+        String[] TS;
+        TransfersStorage local;
 
         tc[0] = new TransferCapability(UID.VerificationSOPClass, Verification, TransferCapability.SCP);
         int j = 0;
-        for (int i = 0; i < Services.length; i++)
-        {
+        for (int i = 0; i < Services.length; i++) {
             count = 0;
-            local = list.getTS(Services[i]);  
-            if (local.getAccepted())
-            {
+            local = list.getTS(Services[i]);
+            if (local.getAccepted()) {
                 TS = local.getVerboseTS();
-                if(TS != null)
-                {                
+                if (TS != null) {
 
-                    tc[j+1] = new TransferCapability(Services[i], TS, TransferCapability.SCP);
+                    tc[j + 1] = new TransferCapability(Services[i], TS, TransferCapability.SCP);
                     j++;
-                }                        
+                }
             }
         }
-        
+
         // Setting the TS in all NetworkApplicationEntitys 
-        for (int i = 0 ; i<naeArr.length;i++)
-        {
+        for (int i = 0; i < naeArr.length; i++) {
 
             naeArr[i].setTransferCapability(tc);
         }
         nae.setTransferCapability(tc);
     }
-      
+
     @Override
     /**
      * Called when a C-Store Request has been accepted
      * Parameters defined by dcm4che2
      */
-    public void cstore(final Association as, final int pcid, DicomObject rq, PDVInputStream dataStream, String tsuid) throws DicomServiceException, IOException
-    {
+    public void cstore(final Association as, final int pcid, DicomObject rq, PDVInputStream dataStream, String tsuid) throws DicomServiceException, IOException {
         //DebugManager.getSettings().debug(":: Verify Permited AETs @??C-Store Request ");
 
         boolean permited = false;
         Collection<String> allowedAETitles = ServerSettingsManager.getSettings()
                 .getDicomServicesSettings().getAllowedAETitles();
-        if(allowedAETitles.isEmpty()){
+        if (allowedAETitles.isEmpty()) {
             permited = true;
-        }
-        else {
+        } else {
             permited = allowedAETitles.contains(as.getCallingAET());
         }
 
@@ -252,7 +242,7 @@ public class RSIStorage extends StorageService
             //DebugManager.getSettings().debug("Client association NOT permited: " + as.getCallingAET() + "!");
             System.err.println("Client association NOT permited: " + as.getCallingAET() + "!");
             as.abort();
-            
+
             return;
         } else {
             //DebugManager.getSettings().debug("Client association permited: " + as.getCallingAET() + "!");
@@ -261,35 +251,32 @@ public class RSIStorage extends StorageService
 
         final DicomObject rsp = CommandUtils.mkRSP(rq, CommandUtils.SUCCESS);
         onCStoreRQ(as, pcid, rq, dataStream, tsuid, rsp);
-        as.writeDimseRSP(pcid, rsp);       
+        as.writeDimseRSP(pcid, rsp);
         //onCStoreRSP(as, pcid, rq, dataStream, tsuid, rsp);
     }
-    
+
     @Override
     /**
      * Actually do the job of saving received file on disk
      * on this server with extras such as Lucene indexing
      * and DICOMDIR update
      */
-    protected void onCStoreRQ(Association as, int pcid, DicomObject rq, PDVInputStream dataStream, String tsuid, DicomObject rsp) throws IOException, DicomServiceException 
-    {  
-        try
-        {
+    protected void onCStoreRQ(Association as, int pcid, DicomObject rq, PDVInputStream dataStream, String tsuid, DicomObject rsp) throws IOException, DicomServiceException {
+        try {
 
             String cuid = rq.getString(Tag.AffectedSOPClassUID);
             String iuid = rq.getString(Tag.AffectedSOPInstanceUID);
 
             DicomObject d = dataStream.readDataset();
-            
+
             d.initFileMetaInformation(cuid, iuid, tsuid);
-            
-            Iterable <StorageInterface> plugins = PluginController.getInstance().getStoragePlugins(true);
+
+            Iterable<StorageInterface> plugins = PluginController.getInstance().getStoragePlugins(true);
 
             URI uri = null;
-            for (StorageInterface storage : plugins)
-            {
+            for (StorageInterface storage : plugins) {
                 uri = storage.store(d);
-                if(uri != null) {
+                if (uri != null) {
                     // queue to index
                     ImageElement element = new ImageElement();
                     element.setCallingAET(as.getCallingAET());
@@ -299,8 +286,8 @@ public class RSIStorage extends StorageService
             }
 
         } catch (IOException e) {
-           throw new DicomServiceException(rq, Status.ProcessingFailure, e.getMessage());          
-         }
+            throw new DicomServiceException(rq, Status.ProcessingFailure, e.getMessage());
+        }
     }
 
     /**
@@ -312,7 +299,7 @@ public class RSIStorage extends StorageService
      * @param <E>
      */
     class ImageElement<E extends Comparable<? super E>>
-            implements Comparable<ImageElement<E>>{
+            implements Comparable<ImageElement<E>> {
         private URI uri;
         private String callingAET;
 
@@ -335,79 +322,68 @@ public class RSIStorage extends StorageService
         @Override
         public int compareTo(ImageElement<E> o1) {
             if (o1.getCallingAET().equals(this.getCallingAET()))
-                return 0 ;
+                return 0;
             else if (priorityAETs.contains(this.getCallingAET()))
                 return -1;
             else return 1;
         }
     }
 
-    
-    class Indexer extends Thread
-    {
+
+    class Indexer extends Thread {
         public Collection<IndexerInterface> plugins;
-        
-        public void run()
-        {
-            while (true)
-            {
-                try 
-                {
+
+        public void run() {
+            while (true) {
+                try {
                     // Fetch an element by the queue taking into account the priorities.
                     ImageElement element = queue.take();
                     URI exam = element.getUri();
-                    if(exam != null)
-                    {
-                        List <Report> reports = PluginController.getInstance().indexBlocking(exam);
+                    if (exam != null) {
+                        List<Report> reports = PluginController.getInstance().indexBlocking(exam);
                     }
                 } catch (InterruptedException ex) {
                     LoggerFactory.getLogger(RSIStorage.class).error(ex.getMessage(), ex);
                 }
-                 
+
             }
-            
+
         }
     }
-    
-    
-    private String getFullPath(DicomObject d)
-    {
-    
+
+
+    private String getFullPath(DicomObject d) {
+
         return getDirectory(d) + File.separator + getBaseName(d);
-    
+
     }
-    
-    
-    private String getFullPathCache(String dir, DicomObject d)
-    {    
+
+
+    private String getFullPathCache(String dir, DicomObject d) {
         return dir + File.separator + getBaseName(d);
- 
+
     }
-    
-    
-    
-    private String getBaseName(DicomObject d)
-    {
+
+
+    private String getBaseName(DicomObject d) {
         String result = "UNKNOWN.dcm";
         String sopInstanceUID = d.getString(Tag.SOPInstanceUID);
-        return sopInstanceUID+".dcm";
+        return sopInstanceUID + ".dcm";
     }
-    
-    
-    private String getDirectory(DicomObject d)
-    {
-    
+
+
+    private String getDirectory(DicomObject d) {
+
         String result = "UN";
-        
+
         String institutionName = d.getString(Tag.InstitutionName);
         String modality = d.getString(Tag.Modality);
         String studyDate = d.getString(Tag.StudyDate);
         String accessionNumber = d.getString(Tag.AccessionNumber);
         String studyInstanceUID = d.getString(Tag.StudyInstanceUID);
         String patientName = d.getString(Tag.PatientName);
-        
-        if (institutionName==null || institutionName.equals(""))
-        {
+
+        if (institutionName == null || institutionName.equals("")) {
             institutionName = "UN_IN";
         }
         institutionName = institutionName.trim();
@@ -415,85 +391,71 @@ public class RSIStorage extends StorageService
         institutionName = institutionName.replace(".", "");
         institutionName = institutionName.replace("&", "");
 
-        
-        if (modality == null || modality.equals(""))
-        {
+
+        if (modality == null || modality.equals("")) {
             modality = "UN_MODALITY";
         }
-        
-        if (studyDate == null || studyDate.equals(""))
-        {
+
+        if (studyDate == null || studyDate.equals("")) {
             studyDate = "UN_DATE";
-        }
-        else
-        {
-            try
-            {
+        } else {
+            try {
                 String year = studyDate.substring(0, 4);
-                String month =  studyDate.substring(4, 6);
-                String day =  studyDate.substring(6, 8);
-                
+                String month = studyDate.substring(4, 6);
+                String day = studyDate.substring(6, 8);
+
                 studyDate = year + File.separator + month + File.separator + day;
-                
-            }
-            catch(Exception e)
-            {
+
+            } catch (Exception e) {
                 e.printStackTrace();
                 studyDate = "UN_DATE";
             }
         }
-        
-        if (accessionNumber == null || accessionNumber.equals(""))
-        {
+
+        if (accessionNumber == null || accessionNumber.equals("")) {
             patientName = patientName.trim();
             patientName = patientName.replace(" ", "");
             patientName = patientName.replace(".", "");
             patientName = patientName.replace("&", "");
-            
-            if (patientName == null || patientName.equals(""))
-            {
-                if (studyInstanceUID == null || studyInstanceUID.equals(""))
-                {
+
+            if (patientName == null || patientName.equals("")) {
+                if (studyInstanceUID == null || studyInstanceUID.equals("")) {
                     accessionNumber = "UN_ACC";
-                }
-                else
-                {
+                } else {
                     accessionNumber = studyInstanceUID;
                 }
-            }
-            else
-            {
+            } else {
                 accessionNumber = patientName;
-                
+
             }
-            
+
         }
-        
-        result = path+File.separator+institutionName+File.separator+modality+File.separator+studyDate+File.separator+accessionNumber;
-        
+
+        result = path + File.separator + institutionName + File.separator + modality + File.separator + studyDate + File.separator + accessionNumber;
+
         return result;
-        
+
     }
+
     private Indexer indexer = new Indexer();
+
     /*
-     * Start the Storage Service 
+     * Start the Storage Service
      * @throws java.io.IOException
      */
-    public void start() throws IOException
-    {       
+    public void start() throws IOException {
         //dirc = new DicomDirCreator(path, "Dicoogle");
         pool = Executors.newFixedThreadPool(threadPoolSize);
-        device.startListening(executor); 
+        device.startListening(executor);
         indexer.start();
-        
 
-    } 
-    
+
+    }
+
     /**
      * Stop the storage service 
      */
-    public void stop()
-    {
+    public void stop() {
         this.pool.shutdown();
         try {
             pool.awaitTermination(6, TimeUnit.DAYS);
@@ -501,7 +463,7 @@ public class RSIStorage extends StorageService
             LoggerFactory.getLogger(RSIStorage.class).error(ex.getMessage(), ex);
         }
         device.stopListening();
-        
+
         //dirc.dicomdir_close();
-    }   
+    }
 }

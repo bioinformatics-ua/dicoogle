@@ -30,6 +30,9 @@ import java.util.*;
 
 /**
  * Support class for keeping SOPClass/TransferSyntax association
+ *
+ *
+ * @author Luís Bastião Silva <bastiao@bmd-softwre.com>
  * @author Marco Pereira
  */
 
