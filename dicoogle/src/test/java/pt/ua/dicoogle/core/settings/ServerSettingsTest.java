@@ -33,6 +33,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -315,18 +316,11 @@ public class ServerSettingsTest {
                 new SOPClass("1.2.840.10008.5.1.1.30", Arrays.asList(
                         "1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.50"
                 )));
-        Collection<SOPClass> sopClassesFromSettings = settings.getDicomServicesSettings().getSOPClasses();
 
-        Iterator<SOPClass> it = sopClassesFromSettings.iterator();
-        while(it.hasNext())
-        {
-            SOPClass c = it.next();
-            if (c.getTransferSyntaxes().isEmpty())
-            {
-
-                it.remove();
-            }
-        }
+        Collection<SOPClass> sopClassesFromSettings = settings.getDicomServicesSettings().getSOPClasses()
+                .stream()
+                .filter(c -> !c.getTransferSyntaxes().isEmpty())
+                .collect(Collectors.toList());
 
         assertSameContent(sopClasses, sopClassesFromSettings);
 
