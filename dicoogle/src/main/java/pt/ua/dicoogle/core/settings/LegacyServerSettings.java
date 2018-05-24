@@ -45,7 +45,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /** Legacy implementation of server settings.
  *
  * @author Marco Pereira
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@bmd-software.com>
  * @author António Novo <antonio.novo@ua.pt>
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  * @see XMLSupport

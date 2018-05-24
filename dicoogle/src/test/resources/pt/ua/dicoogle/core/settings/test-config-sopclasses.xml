@@ -43,9 +43,17 @@
             </sop-class>
             <sop-class>
                 <uid>1.2.840.10008.5.1.4.1.1.77.1.1</uid>
+                <transfer-syntaxes>
+                    <ts>1.2.840.10008.1.2</ts>
+                </transfer-syntaxes>
             </sop-class>
             <sop-class>
                 <uid>1.2.840.10008.5.1.4.1.1.12.1.1</uid>
+                <transfer-syntaxes>
+                    <ts>1.2.840.10008.1.2</ts>
+                    <ts>1.2.840.10008.1.2.1</ts>
+                    <ts>1.2.840.10008.1.2.5</ts>
+                </transfer-syntaxes>
 
             </sop-class>
         </sop-classes>

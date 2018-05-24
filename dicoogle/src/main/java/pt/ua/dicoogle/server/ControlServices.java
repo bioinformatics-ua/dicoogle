@@ -30,6 +30,7 @@ import pt.ua.dicoogle.server.web.DicoogleWeb;
 
 /**
  *
+ * @author Luís Bastião Silva <bastiao@bmd-softwre.com>
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
 public class ControlServices
@@ -38,7 +39,7 @@ public class ControlServices
     
     private static ControlServices instance = null;
     // Services vars
-    private RSIStorage storage = null;
+    private DicomStorage storage = null;
     private boolean webServicesRunning = false;
     private boolean webServerRunning = false;
     private QueryRetrieve retrieve = null;
@@ -139,7 +140,7 @@ public class ControlServices
             {
                 keys[i] = (String) l.get(i);
             }
-            storage = new RSIStorage(keys, list);
+            storage = new DicomStorage(keys, list);
             storage.start();
 
             logger.info("Starting DICOM Storage SCP");
