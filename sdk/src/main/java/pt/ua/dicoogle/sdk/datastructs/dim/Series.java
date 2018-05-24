@@ -33,7 +33,7 @@ public class Series implements SeriesInterface
     private String SerieInstanceUID ;
     private String SeriesDescription;
 
-    private int SerieNumber ;
+    private int SeriesNumber ;
     private String Modality ;
     private String SeriesDate = "";
     private String ProtocolName = "";
@@ -64,11 +64,11 @@ public class Series implements SeriesInterface
         
     }
 
-    public Series(Study study, String SerieInstanceUID, int SerieNumber)
+    public Series(Study study, String SerieInstanceUID, int SeriesNumber)
     {
         this.parent = study;
         this.SerieInstanceUID = SerieInstanceUID ;
-        this.SerieNumber = SerieNumber ; 
+        this.SeriesNumber = SeriesNumber ;
         
     }
 
@@ -98,17 +98,17 @@ public class Series implements SeriesInterface
     }
 
     /**
-     * @return the SerieNumber
+     * @return the SeriesNumber
      */
-    public int getSerieNumber() {
-        return SerieNumber;
+    public int getSeriesNumber() {
+        return SeriesNumber;
     }
 
     /**
-     * @param SerieNumber the SerieNumber to set
+     * @param SeriesNumber the SerieNumber to set
      */
-    public void setSerieNumber(int SerieNumber) {
-        this.SerieNumber = SerieNumber;
+    public void setSeriesNumber(int SeriesNumber) {
+        this.SeriesNumber = SeriesNumber;
     }
 
     /**
@@ -365,7 +365,7 @@ public class Series implements SeriesInterface
         String result = "";
         result += "SeriesInstanceUID:" + SerieInstanceUID + "\n";
         result += "SeriesDescription:" + SeriesDescription + "\n";
-        result += "SerieNumber:" + SerieNumber + "\n";
+        result += "SeriesNumber:" + SeriesNumber + "\n";
         result += "Modality:" + Modality + "\n";
         return result;
         

@@ -31,4 +31,14 @@ public interface StudyInterface {
      * @return the Patient parent
      */
     public PatientInterface getPatient();
+
+
+    /**
+     * Get the Study Instance UID
+     *
+     * @return the Study Instance UID
+     */
+    public String getStudyInstanceUID();
+
+
 }
