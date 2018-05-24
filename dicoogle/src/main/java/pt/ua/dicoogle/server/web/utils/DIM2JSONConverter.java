@@ -121,9 +121,9 @@ public class DIM2JSONConverter {
 		
 		JSONObject obj = new JSONObject();
 		
-		obj.put("uid", StringUtils.trimToNull(series.getSerieInstanceUID()));
+		obj.put("uid", StringUtils.trimToNull(series.getSeriesInstanceUID()));
 		obj.put("mod", StringUtils.trimToNull(series.getModality()));
-		obj.put("number", series.getSerieNumber());
+		obj.put("number", series.getSeriesNumber());
 		obj.put("descr", StringUtils.trimToNull(series.getSeriesDescription()));
 	
 		JSONArray images = new JSONArray();

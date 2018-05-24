@@ -270,7 +270,7 @@ public class DIMGeneric {
             Series series = new Series(s, serieUID, modality);
             try {
                 if (serieNumber != null) {
-                    series.setSerieNumber((int) Float.parseFloat(serieNumber));
+                    series.setSeriesNumber((int) Float.parseFloat(serieNumber));
                 }
             } catch (Exception ex) {
                 // nothing to do anyway
@@ -321,7 +321,7 @@ public class DIMGeneric {
              */
             Series series = new Series(s, serieUID, modality);
             if (serieNumber != null && !serieNumber.equals("")) {
-                series.setSerieNumber((int) Float.parseFloat(serieNumber));
+                series.setSeriesNumber((int) Float.parseFloat(serieNumber));
             }
             series.setSeriesDescription(serieDescription);
             series.setProtocolName(ProtocolName);
@@ -371,8 +371,8 @@ public class DIMGeneric {
                     modalities.add(serie.getModality());
 
                     JSONObject _serie = new JSONObject();
-                    _serie.put("serieNumber", serie.getSerieNumber());
-                    _serie.put("serieInstanceUID", serie.getSerieInstanceUID());
+                    _serie.put("serieNumber", serie.getSeriesNumber());
+                    _serie.put("serieInstanceUID", serie.getSeriesInstanceUID());
                     _serie.put("serieDescription", serie.getSeriesDescription());
                     _serie.put("serieModality", serie.getModality());
 
@@ -448,7 +448,7 @@ public class DIMGeneric {
                     for (Series series : s.getSeries()) {
                         atts.clear();
                         atts.addAttribute("", "", "modality", "", series.getModality().trim());
-                        atts.addAttribute("", "", "id", "", series.getSerieInstanceUID().trim());
+                        atts.addAttribute("", "", "id", "", series.getSeriesInstanceUID().trim());
 
                         hd.startElement("", "", "Series", atts);
 

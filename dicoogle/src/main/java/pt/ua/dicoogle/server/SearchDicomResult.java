@@ -356,14 +356,14 @@ public class SearchDicomResult implements Iterator<DicomObject>
                 result.putString(Tag.InstitutionName, VR.CS, seriesTmp.getParent().getInstitutuionName());
                 
                 result.putString(Tag.StudyInstanceUID, VR.UI, seriesTmp.getParent().getStudyInstanceUID());
-                result.putString(Tag.SeriesInstanceUID, VR.UI, seriesTmp.getSerieInstanceUID());
+                result.putString(Tag.SeriesInstanceUID, VR.UI, seriesTmp.getSeriesInstanceUID());
                 result.putString(Tag.SeriesDescription, VR.LO, seriesTmp.getSeriesDescription());
                 result.putString(Tag.SeriesDate, VR.TM, seriesTmp.getSeriesDate());
                 result.putString(Tag.QueryRetrieveLevel, VR.LO, "SERIES");
                 String modality = seriesTmp.getModality(); // Point of Failure, fix me
                 result.putString(Tag.Modality, VR.CS,modality);
                 
-                result.putString(Tag.SeriesNumber, VR.IS, "" + seriesTmp.getSerieNumber());
+                result.putString(Tag.SeriesNumber, VR.IS, "" + seriesTmp.getSeriesNumber());
 
 
                 result.putString(Tag.Modality, VR.CS,modality);
@@ -387,7 +387,7 @@ public class SearchDicomResult implements Iterator<DicomObject>
                 result.putString(Tag.NumberOfSeriesRelatedInstances, VR.IS,""+ seriesTmp.getImageList().size());
 
 
-                result.putString(Tag.SeriesNumber, VR.IS, "" + seriesTmp.getSerieNumber());
+                result.putString(Tag.SeriesNumber, VR.IS, "" + seriesTmp.getSeriesNumber());
                 result.putString(Tag.ProtocolName, VR.LO, "" + seriesTmp.getProtocolName());
                 result.putString(Tag.BodyPartThickness, VR.LO, "" + seriesTmp.getBodyPartThickness());
 

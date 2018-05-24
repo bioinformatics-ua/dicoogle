@@ -98,9 +98,9 @@ public class Study implements StudyInterface{
 
 
     public void addSerie(Series s){
-        if (this.seriesHash.containsKey(s.getSerieInstanceUID())){
+        if (this.seriesHash.containsKey(s.getSeriesInstanceUID())){
 
-            Series existSeries = this.seriesHash.get(s.getSerieInstanceUID());
+            Series existSeries = this.seriesHash.get(s.getSeriesInstanceUID());
             ArrayList<URI> img = s.getImageList();
             ArrayList<String> uid = s.getSOPInstanceUIDList();
 
@@ -112,7 +112,7 @@ public class Study implements StudyInterface{
         else
         {
             this.series.add(s);
-            this.seriesHash.put(s.getSerieInstanceUID(), s) ;
+            this.seriesHash.put(s.getSeriesInstanceUID(), s) ;
         }
 
     }
