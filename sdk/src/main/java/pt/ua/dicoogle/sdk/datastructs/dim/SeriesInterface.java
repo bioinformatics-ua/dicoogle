@@ -39,7 +39,7 @@ public interface SeriesInterface {
      *
      * @return the Series Instance UID
      */
-    public String getSerieInstanceUID();
+    public String getSeriesInstanceUID();
 
     /**
      * @return the SeriesNumber
