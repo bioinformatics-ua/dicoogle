@@ -38,17 +38,20 @@ import static org.junit.Assert.*;
 
 /**
  * @author Eduardo Pinho <eduardopinho@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@bmd-software.com>
  */
 public class ServerSettingsTest {
 
     private URL testConfig;
     private URL testConfigDIM;
+    private URL testConfigSopClasses;
     private URL legacyConfig;
 
     @Before
     public void init() {
         this.testConfig = this.getClass().getResource("test-config-new.xml");
         this.testConfigDIM = this.getClass().getResource("test-config-multi-dim.xml");
+        this.testConfigSopClasses = this.getClass().getResource("test-config-sopclasses.xml");
         this.legacyConfig = this.getClass().getResource("test-config.xml");
     }
 
@@ -298,6 +301,35 @@ public class ServerSettingsTest {
         assertEquals(8484, web.getPort());
         assertEquals("test.dicoogle.com", web.getAllowedOrigins());
 
+
+        // SOP Classes
+
+
+        Collection<SOPClass> sopClasses = Arrays.asList(
+                new SOPClass("1.2.840.10008.5.1.4.1.1.88.40", Arrays.asList(
+                        "1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.50"
+                )),
+                new SOPClass("1.2.840.10008.5.1.4.1.1.77.1.1", Arrays.asList(
+                        "1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.50"
+                )),
+                new SOPClass("1.2.840.10008.5.1.1.30", Arrays.asList(
+                        "1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.50"
+                )));
+        Collection<SOPClass> sopClassesFromSettings = settings.getDicomServicesSettings().getSOPClasses();
+
+        Iterator<SOPClass> it = sopClassesFromSettings.iterator();
+        while(it.hasNext())
+        {
+            SOPClass c = it.next();
+            if (c.getTransferSyntaxes().isEmpty())
+            {
+
+                it.remove();
+            }
+        }
+
+        assertSameContent(sopClasses, sopClassesFromSettings);
+
         // clean up
         Files.delete(newconf);
     }
@@ -313,6 +345,25 @@ public class ServerSettingsTest {
         assertEquals(Arrays.asList("lucene", "postgres"), ar.getDIMProviders());
         assertEquals(Arrays.asList("filestorage", "s3"), ar.getDefaultStorage());
     }
+
+
+    @Test
+    public void testSopClasses() throws IOException {
+        // read the settings from our test config file
+        ServerSettings settings = ServerSettingsManager.loadSettingsAt(this.testConfigSopClasses);
+        final ServerSettings.DicomServices ds = settings.getDicomServicesSettings();
+        assertTrue(settings instanceof ServerSettingsImpl);
+        // assertions follow
+
+        Collection<String> defaultTS = Arrays.asList(
+                "1.2.840.10008.1.2", "1.2.840.10008.1.2.1",
+                "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.50"
+                );
+        assertSameContent(defaultTS, ((DicomServicesImpl)ds).getDefaultTransferSyntaxes());
+
+
+    }
+
 
     private static void assertSameContent(Collection<?> o1, Collection<?> o2) {
         assertNotNull("left-hand collection is null", o1);

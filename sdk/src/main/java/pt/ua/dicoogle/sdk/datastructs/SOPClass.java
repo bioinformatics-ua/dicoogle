@@ -24,10 +24,12 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 /**
  * @author Eduardo Pinho <eduardopinho@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@bmd-software.com>
  */
 @JsonRootName("sop-class")
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
@@ -36,9 +38,11 @@ public final class SOPClass {
     @JsonProperty("uid")
     private final String uid;
 
-    @JacksonXmlElementWrapper(useWrapping = false, localName = "ts")
-    @JacksonXmlProperty(localName = "ts")
+    @JsonProperty("ts")
+    @JacksonXmlProperty(localName = "transfer-syntaxes")
     private final Collection<String> ts;
+
+
 
     public SOPClass(String uid) {
         this.uid = uid;
@@ -46,7 +50,7 @@ public final class SOPClass {
     }
 
     @JsonCreator
-    public SOPClass(@JsonProperty("uid")String uid, @JsonProperty("ts") Collection<String> ts) {
+    public SOPClass(@JsonProperty("uid")String uid, @JsonProperty("transfer-syntaxes") Collection<String> ts) {
         this.uid = uid;
         this.ts = ts != null ? ts : Collections.EMPTY_LIST;
     }
