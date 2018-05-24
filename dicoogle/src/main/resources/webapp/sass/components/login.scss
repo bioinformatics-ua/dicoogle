@@ -1,4 +1,4 @@
-.logincontainer{
+.logincontainer {
   max-width: 750px;
   display: block;
   margin-left: auto;
@@ -7,52 +7,60 @@
   margin-bottom: 20px;
   margin-bottom: 20px;
 
-  background-color:rgba(0,0,0,0.2);
-  padding:20px;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 20px;
   -webkit-box-shadow: 5px 5px 5px 0px rgba(50, 50, 50, 0.75);
-  -moz-box-shadow:    5px 5px 5px 0px rgba(50, 50, 50, 0.75);
-  box-shadow:         5px 5px 5px 0px rgba(50, 50, 50, 0.75);
+  -moz-box-shadow: 5px 5px 5px 0px rgba(50, 50, 50, 0.75);
+  box-shadow: 5px 5px 5px 0px rgba(50, 50, 50, 0.75);
 }
 
-.loginlogo{
-  display:block;margin-left: auto; margin-right: auto; margin-top: 30px;
-  width:220px;
+.loginlogo {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 30px;
+  width: 220px;
 }
 
-.loginA{
-  display:block;
-  width:40%;
+.loginA {
+  display: block;
+  width: 40%;
   margin: 0 auto;
   text-align: center;
   margin-top: 40px;
 }
 
-.loginTextA{
-  text-align: left; width: 100%;margin-left: 5px;color: black;
+.loginTextA {
+  text-align: left;
+  width: 100%;
+  margin-left: 5px;
+  color: black;
+}
+.loginInputUsername {
+  width: 100%;
+  margin: 5px;
+  margin-top: 0px;
+}
+.loginInputPassword {
+  width: 100%;
+  margin: 5px;
+}
 
-}
-.loginInputUsername{
-  width: 100%;margin: 5px;margin-top: 0px;
-}
-.loginInputPassword{
-  width: 100%; margin: 5px;
-}
-
-.loginbody{
-  height:100%;
-  padding-top:60px;
+.loginbody {
+  height: 100%;
+  padding-top: 60px;
   padding-right: 20px;
   padding-left: 20px;
-  padding-bottom:60px;
+  padding-bottom: 60px;
   display: flex;
   flex-direction: column;
-  overflow-y:scroll;
+  overflow-y: scroll;
   //background: url(/assets/login_bg.png) no-repeat center center fixed;
   background-color: $main_color;
   background-size: cover;
 }
 #filler {
-  flex:1;
+  flex: 1;
 }
 #footer {
   width: 100%;
@@ -62,13 +70,13 @@
   left: 0;
   bottom: 0;
 }
-.footercontainer{
-  max-width:90%;
+.footercontainer {
+  max-width: 90%;
   display: block;
   margin-left: auto;
   margin-right: auto;
 }
-#loginwrapper{
+#loginwrapper {
   position: fixed;
   top: 0;
   left: 0;
@@ -77,8 +85,10 @@
   z-index: 10000;
 }
 
-.loginloader{
-  display: block;margin-left: auto;margin-right: auto;
+.loginloader {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
   width: 0px;
   margin-top: 30px;
 }

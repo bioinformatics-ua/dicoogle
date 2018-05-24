@@ -1,4 +1,4 @@
 const DefaultOptions = {
-    showSearchOptions: false
+  showSearchOptions: false
 };
-export {DefaultOptions};
+export { DefaultOptions };

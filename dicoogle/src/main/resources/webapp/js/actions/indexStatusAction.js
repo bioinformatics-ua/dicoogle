@@ -1,4 +1,4 @@
-import Reflux from 'reflux';
+import Reflux from "reflux";
 const IndexStatusActions = exports;
 IndexStatusActions.get = Reflux.createAction();
 IndexStatusActions.start = Reflux.createAction();

@@ -1,4 +1,4 @@
-import Reflux from 'reflux';
+import Reflux from "reflux";
 const ActionCreators = exports;
 ActionCreators.search = Reflux.createAction();
 ActionCreators.unindex = Reflux.createAction();

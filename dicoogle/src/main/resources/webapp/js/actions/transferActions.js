@@ -1,4 +1,4 @@
-import Reflux from 'reflux';
+import Reflux from "reflux";
 export const TransferActions = {
   get: Reflux.createAction(),
   set: Reflux.createAction(),

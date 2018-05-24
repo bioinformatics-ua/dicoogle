@@ -34,6 +34,7 @@
     "index.html"
   ],
   "engines": {
+    "node": ">=6",
     "npm": ">=2.0.0"
   },
   "dependencies": {
@@ -78,6 +79,9 @@
     "gulp-sourcemaps": "^1.6.0",
     "gulp-uglify": "^1.5.1",
     "gulp-util": "^3.0.7",
+    "husky": "^0.14.3",
+    "lint-staged": "^7.1.2",
+    "prettier": "1.12.1",
     "react-addons-update": "^0.14.8",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
@@ -95,7 +99,23 @@
     "html-debug": "gulp html-debug",
     "css:watch": "gulp css:watch",
     "js:watch": "gulp js:watch",
-    "clean": "gulp clean"
+    "clean": "gulp clean",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "js/*.{js,jsx}": [
+      "eslint --fix js",
+      "prettier --write js/**/*.{js,jsx}",
+      "git add"
+    ],
+    "gulpfile.js": [
+      "prettier --write gulpfile.js",
+      "git add"
+    ],
+    "sass/*.scss": [
+      "prettier --write sass/**/*.scss",
+      "git add"
+    ]
   },
   "browser": {
     "bootstrap": "./node_modules/bootstrap/dist/js/bootstrap.js"

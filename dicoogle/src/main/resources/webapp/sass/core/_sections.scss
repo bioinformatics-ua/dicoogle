@@ -1,17 +1,16 @@
 #container {
-    max-width: $app_content_max_width;
-    margin: auto;
-    display: flex;
-    padding: 20px;
-    padding-top: 70px;
-    justify-content: center;
+  max-width: $app_content_max_width;
+  margin: auto;
+  display: flex;
+  padding: 20px;
+  padding-top: 70px;
+  justify-content: center;
 }
 
-
-.dicoogle-webcore-result-options-instance{
-    display:inline-block;
+.dicoogle-webcore-result-options-instance {
+  display: inline-block;
 }
 
-.dicoogle-webcore-result-options{
-    display:inline-block;
+.dicoogle-webcore-result-options {
+  display: inline-block;
 }
