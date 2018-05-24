@@ -87,16 +87,13 @@ public class ServerSettingsTest {
         assertSameContent(defaultTS, ((DicomServicesImpl)dcm).getDefaultTransferSyntaxes());
 
         Collection<SOPClass> sopClasses = Arrays.asList(
-                new SOPClass("1.2.840.10008.5.1.4.1.1.88.40", Arrays.asList(
-                        "1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.50"
-                )),
-                new SOPClass("1.2.840.10008.5.1.4.1.1.77.1.1", Arrays.asList(
-                        "1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.50"
-                )),
+                new SOPClass("1.2.840.10008.5.1.4.1.1.88.40", Collections.EMPTY_LIST),
+                new SOPClass("1.2.840.10008.5.1.4.1.1.77.1.1",Collections.EMPTY_LIST),
                 new SOPClass("1.2.840.10008.5.1.4.1.1.12.1.1", Arrays.asList(
                         "1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.5"
                 )));
-        assertSameContent(sopClasses, dcm.getSOPClasses());
+        Collection<SOPClass> sopClassesFromSettings = ((DicomServicesImpl) dcm).getRawSOPClasses();
+        assertSameContent(sopClasses, sopClassesFromSettings);
 
         // QR settings
         assertFalse(qr.isAutostart());
