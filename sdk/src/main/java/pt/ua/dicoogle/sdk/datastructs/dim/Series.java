@@ -30,10 +30,10 @@ public class Series implements SeriesInterface
 {
 
     private Study parent;
-    private String SerieInstanceUID ;
+    private String SeriesInstanceUID ;
     private String SeriesDescription;
 
-    private int SerieNumber ;
+    private int SeriesNumber ;
     private String Modality ;
     private String SeriesDate = "";
     private String ProtocolName = "";
@@ -56,19 +56,19 @@ public class Series implements SeriesInterface
     private ArrayList<URI> imageList = new ArrayList<>();
     private ArrayList<String> UIDList = new ArrayList<>();
 
-    public Series(Study study, String SerieInstanceUID, String modality)
+    public Series(Study study, String SeriesInstanceUID, String modality)
     {
         this.parent = study;
         this.Modality = modality;
-        this.SerieInstanceUID = SerieInstanceUID ; 
+        this.SeriesInstanceUID = SeriesInstanceUID ;
         
     }
 
-    public Series(Study study, String SerieInstanceUID, int SerieNumber)
+    public Series(Study study, String SeriesInstanceUID, int SeriesNumber)
     {
         this.parent = study;
-        this.SerieInstanceUID = SerieInstanceUID ;
-        this.SerieNumber = SerieNumber ; 
+        this.SeriesInstanceUID = SeriesInstanceUID ;
+        this.SeriesNumber = SeriesNumber ;
         
     }
 
@@ -86,29 +86,29 @@ public class Series implements SeriesInterface
     /**
      * @return the SerieInstanceUID
      */
-    public String getSerieInstanceUID(){
-        return SerieInstanceUID;
+    public String getSeriesInstanceUID(){
+        return SeriesInstanceUID;
     }
 
     /**
-     * @param SerieInstanceUID the SerieInstanceUID to set
+     * @param SeriesInstanceUID the SerieInstanceUID to set
      */
-    public void setSerieInstanceUID(String SerieInstanceUID) {
-        this.SerieInstanceUID = SerieInstanceUID;
+    public void setSeriesInstanceUID(String SeriesInstanceUID) {
+        this.SeriesInstanceUID = SeriesInstanceUID;
     }
 
     /**
-     * @return the SerieNumber
+     * @return the SeriesNumber
      */
-    public int getSerieNumber() {
-        return SerieNumber;
+    public int getSeriesNumber() {
+        return SeriesNumber;
     }
 
     /**
-     * @param SerieNumber the SerieNumber to set
+     * @param SeriesNumber the SerieNumber to set
      */
-    public void setSerieNumber(int SerieNumber) {
-        this.SerieNumber = SerieNumber;
+    public void setSeriesNumber(int SeriesNumber) {
+        this.SeriesNumber = SeriesNumber;
     }
 
     /**
@@ -363,9 +363,9 @@ public class Series implements SeriesInterface
     
         
         String result = "";
-        result += "SeriesInstanceUID:" + SerieInstanceUID + "\n";
+        result += "SeriesInstanceUID:" + SeriesInstanceUID + "\n";
         result += "SeriesDescription:" + SeriesDescription + "\n";
-        result += "SerieNumber:" + SerieNumber + "\n";
+        result += "SeriesNumber:" + SeriesNumber + "\n";
         result += "Modality:" + Modality + "\n";
         return result;
         

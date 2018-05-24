@@ -32,4 +32,17 @@ public interface SeriesInterface {
      * @return the Study parent
      */
     public StudyInterface getStudy();
+
+
+    /**
+     * Get the Series Instance UID
+     *
+     * @return the Series Instance UID
+     */
+    public String getSeriesInstanceUID();
+
+    /**
+     * @return the SeriesNumber
+     */
+    public int getSeriesNumber();
 }
