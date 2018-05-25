@@ -21,6 +21,7 @@ package pt.ua.dicoogle.server;
 import java.io.IOException;
 import java.util.List;
 import org.slf4j.Logger;
+import pt.ua.dicoogle.sdk.datastructs.SOPClass;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 import pt.ua.dicoogle.server.queryretrieve.QueryRetrieve;
 
@@ -129,7 +130,12 @@ public class ControlServices
             ServerSettings settings = ServerSettingsManager.getSettings();
 
             SOPList list = SOPList.getInstance();
-            //list.setDefaultSettings();
+            settings.getDicomServicesSettings().getSOPClasses().forEach(
+                    sopClass ->  sopClass.getTransferSyntaxes()
+                            .forEach(ts -> list.updateTSField(
+                                    sopClass.getUID(), ts, true))
+            );
+
 
             int i;
 

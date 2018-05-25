@@ -218,7 +218,7 @@ public class SOPList {
      * @return -1 if something went wrong, 1 otherwise
      */
     public synchronized int updateTSField(String UID, String name, boolean value) {
-        logger.debug("UID: {}, name: {}, value: {}", UID, name, value);
+        logger.info("UID: {}, name: {}, value: {}", UID, name, value);
 
         TransfersStorage TS;
         TS = table.get(UID);
@@ -232,6 +232,8 @@ public class SOPList {
 		}
         if(TS !=null && index != -1)
         {
+            TS.setAccepted(value);
+            //TS.setDefaultSettings();
         	if(TS.setTS(value, index) != 0)
         	{
         		return -1;
