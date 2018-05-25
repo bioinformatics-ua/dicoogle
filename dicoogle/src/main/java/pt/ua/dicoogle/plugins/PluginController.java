@@ -483,7 +483,7 @@ public class PluginController{
         List<String> baseProviders = ServerSettingsManager.getSettings()
                 .getArchiveSettings().getDIMProviders();
 
-        if (baseProviders.isEmpty()) {
+        if (baseProviders==null || baseProviders.isEmpty()) {
             baseProviders = PluginController.getInstance().getQueryProvidersName(true);
         }
 
@@ -533,7 +533,7 @@ public class PluginController{
 
     public JointQueryTask queryAll(JointQueryTask holder, final String query, final Object ... parameters)
     {
-        return queryAll(holder, query, DimLevel.INSTANCE, parameters);
+        return queryAll(holder, query, parameters);
     }
 
     public JointQueryTask queryAll(JointQueryTask holder, final String query, final DimLevel level, final Object ... parameters)
@@ -545,30 +545,49 @@ public class PluginController{
 
     public Task<Iterable<SearchResult>> query(String querySource, final String query,
                                                 final Object ... parameters){
-        return this.query(querySource, query, DimLevel.INSTANCE, parameters);
+        Task<Iterable<SearchResult>> t = getTaskForQuery(querySource, query, parameters);
+        taskManager.dispatch(t);
+        return t;
+
     }
 
 
     public Task<Iterable<SearchResult>> query(String querySource, final String query, final DimLevel level, final Object ... parameters){
-        Task<Iterable<SearchResult>> t = getTaskForQuery(querySource, query, level, parameters);
+        Task<Iterable<SearchResult>> t = getTaskForQueryDim(querySource, query, level, parameters);
         taskManager.dispatch(t);
         //logger.info("Fired Query Task: "+querySource +" QueryString:"+query);
         
         return t;//returns the handler to obtain the computation results
     }
 
-    public JointQueryTask query(JointQueryTask holder, List<String> querySources, final String query, final Object ... parameters){
-        return query(holder, querySources, query, DimLevel.INSTANCE, parameters);
+    public JointQueryTask query(JointQueryTask holder, List<String> querySources, final String query,
+                                final Object ... parameters){
+        if(holder == null)
+            return null;
+
+        List<Task<Iterable<SearchResult>>> tasks = new ArrayList<>();
+        for(String p : querySources){
+            Task<Iterable<SearchResult>> task = getTaskForQuery(p, query, parameters);
+            tasks.add(task);
+            holder.addTask(task);
+        }
+
+        //and executes said task asynchronously
+        for(Task<?> t : tasks)
+            taskManager.dispatch(t);
+
+        //logger.info("Fired Query Tasks: "+Arrays.toString(querySources.toArray()) +" QueryString:"+query);
+        return holder;//returns the handler to obtain the computation results
     }
 
     public JointQueryTask query(JointQueryTask holder, List<String> querySources, final String query,
                                 final DimLevel level, final Object ... parameters){
         if(holder == null)
         	return null;
-    	
+
     	List<Task<Iterable<SearchResult>>> tasks = new ArrayList<>();
         for(String p : querySources){
-        	Task<Iterable<SearchResult>> task = getTaskForQuery(p, query, level, parameters);
+        	Task<Iterable<SearchResult>> task = getTaskForQueryDim(p, query, level, parameters);
         	tasks.add(task);
         	holder.addTask(task);
         }
@@ -583,7 +602,7 @@ public class PluginController{
     
 
     private Task<Iterable<SearchResult>> getTaskForQuery(final String querySource, final String query,
-                                                         final DimLevel level, final Object ... parameters){
+                                                         final Object ... parameters){
 
     	final QueryInterface queryEngine = getQueryProviderByName(querySource, true);
     	//returns a tasks that runs the query from the selected query engine
@@ -593,7 +612,7 @@ public class PluginController{
             @Override public Iterable<SearchResult> call() throws Exception {
                 if(queryEngine == null) return Collections.emptyList();
                 try {
-                    return queryEngine.query(query, level, parameters);
+                    return queryEngine.query(query, parameters);
                 } catch (RuntimeException ex) {
                     logger.warn("Query plugin {} failed unexpectedly", querySource, ex);
                     return Collections.EMPTY_LIST;
@@ -603,8 +622,35 @@ public class PluginController{
         });
         //logger.info("Prepared Query Task: QueryString");
         return queryTask;
-    }        
- 
+    }
+
+
+    private Task<Iterable<SearchResult>> getTaskForQueryDim(final String querySource, final String query,
+                                                         final DimLevel level, final Object ... parameters){
+
+        final QueryInterface queryEngine = getQueryProviderByName(querySource, true);
+        //returns a tasks that runs the query from the selected query engine
+        String uid = UUID.randomUUID().toString();
+        Task<Iterable<SearchResult>> queryTask = new Task<>(uid, querySource,
+                new Callable<Iterable<SearchResult>>(){
+                    @Override public Iterable<SearchResult> call() throws Exception {
+                        if(queryEngine == null || !(queryEngine instanceof QueryDimInterface)) return Collections.emptyList();
+                        try {
+                            return queryEngine.query(query, level, parameters);
+                        } catch (RuntimeException ex) {
+                            logger.warn("Query plugin {} failed unexpectedly", querySource, ex);
+                            return Collections.EMPTY_LIST;
+                        }
+
+                    }
+                });
+        //logger.info("Prepared Query Task: QueryString");
+        return queryTask;
+    }
+
+
+
+
     /*
      * Given an URI (which may be a path to a dir or file, a web resource or whatever)
      * this method creates a task that
