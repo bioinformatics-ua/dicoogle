@@ -225,7 +225,7 @@ public class SOPList {
      * @return -1 if something went wrong, 1 otherwise
      */
     public synchronized int updateTSField(String UID, String name, boolean value) {
-        logger.info("UID: {}, name: {}, value: {}", UID, name, value);
+        logger.debug("UID: {}, name: {}, value: {}", UID, name, value);
 
         TransfersStorage TS;
         TS = table.get(UID);
