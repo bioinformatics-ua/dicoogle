@@ -47,6 +47,7 @@ public class TransfersStorage {
      */
     
     public static final Map<Integer, String> globalTransferMap;
+    public static final Map<String, String> globalTransferUIDsMap;
     static {
         Map<Integer, String> aMap = new HashMap<>();
         aMap.put(0, "ImplicitVRLittleEndian");
@@ -64,6 +65,24 @@ public class TransfersStorage {
         aMap.put(12, "RLELossless");
         aMap.put(13, "MPEG2");
         globalTransferMap = Collections.unmodifiableMap(aMap);
+        Map<String, String> uidsNameMapping = new HashMap<>();
+
+        uidsNameMapping.put(UID.ImplicitVRLittleEndian, "ImplicitVRLittleEndian");
+        uidsNameMapping.put(UID.ExplicitVRLittleEndian, "ExplicitVRLittleEndian");
+        uidsNameMapping.put(UID.DeflatedExplicitVRLittleEndian, "DeflatedExplicitVRLittleEndian");
+        uidsNameMapping.put(UID.ExplicitVRBigEndian, "ExplicitVRBigEndian");
+        uidsNameMapping.put(UID.JPEGLossless, "JPEGLossless");
+        uidsNameMapping.put(UID.JPEGLSLossless, "JPEGLSLossless");
+        uidsNameMapping.put(UID.JPEGLosslessNonHierarchical14, "JPEGLosslessNonHierarchical14");
+        uidsNameMapping.put(UID.JPEG2000LosslessOnly, "JPEG2000LosslessOnly");
+        uidsNameMapping.put(UID.JPEGBaseline1, "JPEGBaseline1");
+        uidsNameMapping.put(UID.JPEGExtended24, "JPEGExtended24");
+        uidsNameMapping.put(UID.JPEGLSLossyNearLossless, "JPEGLSLossyNearLossless");
+        uidsNameMapping.put(UID.JPEG2000, "JPEG2000");
+        uidsNameMapping.put(UID.RLELossless, "RLELossless");
+        uidsNameMapping.put(UID.MPEG2, "MPEG2");
+        globalTransferUIDsMap = Collections.unmodifiableMap(uidsNameMapping);
+
     }
     public TransfersStorage()
     {

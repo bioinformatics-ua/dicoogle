@@ -209,7 +209,14 @@ public class SOPList {
             TS.setAccepted(a);
         }        
         return 0;    
-    }   
+    }
+
+
+    public int updateTSFieldByTsUID(String sopUID, String tsUID, boolean value){
+        return updateTSField(sopUID, TransfersStorage.globalTransferUIDsMap.get(tsUID), value);
+    }
+
+
     /**
      * Updates a given SOP Class accepted Tranfer Syntaxes
      * @param UID SOP Class
@@ -232,6 +239,8 @@ public class SOPList {
 		}
         if(TS !=null && index != -1)
         {
+            TS.setAccepted(value);
+            //TS.setDefaultSettings();
         	if(TS.setTS(value, index) != 0)
         	{
         		return -1;
