@@ -60,6 +60,7 @@ public class ResponseUtil {
      * @throws IOException if an I/O error occurs
      */
     public static void sendError(HttpServletResponse resp, int code, String message) throws IOException {
+        resp.setContentType("application/json");
         resp.setStatus(code);
         JSONObject obj = new JSONObject();
         obj.put("error", message);

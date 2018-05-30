@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.core.QueryExpressionBuilder;
 import pt.ua.dicoogle.core.query.ExportToCSVQueryTask;
 import pt.ua.dicoogle.plugins.PluginController;
+import pt.ua.dicoogle.server.web.utils.ResponseUtil;
 
 public class ExportCSVToFILEServlet extends HttpServlet {
 	private static final Logger logger = LoggerFactory.getLogger(ExportCSVToFILEServlet.class);
@@ -59,13 +60,22 @@ public class ExportCSVToFILEServlet extends HttpServlet {
 			throws ServletException, IOException {
 		String uid = req.getParameter("UID");
 		if(uid == null){
-			resp.sendError(401, "No Query UID Supplied: Please fill the field \"UID\"");
+			ResponseUtil.sendError(resp, 400, "No query UID Supplied: Please provide the field \"UID\"");
 			return;
 		}
-		
+
+		// validate UUID
+		try {
+			UUID.fromString(uid);
+		} catch (IllegalArgumentException ex) {
+			ResponseUtil.sendError(resp, 400, "Illegal UUID supplied");
+			return;
+		}	
+
 		File tmpFile = new File(tempDirectory, "QueryResultsExport-"+uid);
-		if(!tmpFile.exists()){
-			resp.sendError(402, "The file for the given uid was not found. Please try again...");
+		logger.debug("Reading temporary CSV file: {}", tmpFile);
+		if(!tmpFile.exists()) {
+			ResponseUtil.sendError(resp, 404, "The file for the given UID was not found.");
 			return; 
 		}
 		
@@ -96,15 +106,15 @@ public class ExportCSVToFILEServlet extends HttpServlet {
 		try {
 			queryString = req.getParameter("query");
 			if (queryString == null) {
-				resp.sendError(402,
+				ResponseUtil.sendError(resp, 400,
 						"QueryString not supplied: Please fill the field \"query\"");
 				return;
 			}
 
-			System.out.println(req.getParameter("fields"));
-			JSONArray jsonObj = new JSONArray().fromObject(req.getParameter("fields"));
+			logger.debug("{}", req.getParameter("fields"));
+			JSONArray jsonObj = JSONArray.fromObject(req.getParameter("fields"));
 			if (jsonObj.size()== 0) {
-				resp.sendError(403,
+				ResponseUtil.sendError(resp, 400,
 						"No fields supplied: Please fill the field \"extraFields\" in \"JSON\"");
 				return;
 			}
@@ -117,7 +127,7 @@ public class ExportCSVToFILEServlet extends HttpServlet {
 
 			arr = req.getParameterValues("providers");
 		} catch (JSONException ex) {
-			resp.sendError(400, "Invalid JSON content");
+			ResponseUtil.sendError(resp, 400, "Invalid JSON content");
 			return;
 		}
 		
