@@ -31,6 +31,7 @@
       color: $blue1;
       &:hover {
         background: $hover_color;
+        color: #ffffff;
       }
     }
   }
@@ -47,7 +48,7 @@
 
 .panel-primary {
   .panel-heading {
-    background-color: $hover_color;
+    background-color: $blue1;
     background-image: none;
   }
 
@@ -58,7 +59,7 @@
 }
 
 .panel-title {
-  color: $blue1;
+  color: white;
 }
 
 .topMargin {
