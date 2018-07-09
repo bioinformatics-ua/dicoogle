@@ -18,7 +18,7 @@ const AdvancedSearch = React.createClass({
       <div>
         <div id="filter-group">
           <div className="row space_up">
-            <div className="col-xs-12 col-sm-8">
+            <div className="row col-sm-6">
               <div className="globalmargin">
                 <div className="subject_text">Patient Name</div>
                 <input
@@ -39,15 +39,34 @@ const AdvancedSearch = React.createClass({
               </div>
               <div className="globalmargin">
                 <div className="subject_text">Patient Gender</div>
-                <div className="inline_block">
-                  All
-                  <input id="gender_all" type="radio" name="genderRadio" />Male
-                  <input
-                    id="gender_male"
-                    type="radio"
-                    name="genderRadio"
-                  />Female
-                  <input id="gender_female" type="radio" name="genderRadio" />
+                <div>
+                  <div className="col-md-2 row">
+                    All{" "}
+                    <input
+                      className="space_left"
+                      id="gender_all"
+                      type="radio"
+                      name="genderRadio"
+                    />
+                  </div>
+                  <div className="col-md-2 row">
+                    Male{" "}
+                    <input
+                      className="space_left"
+                      id="gender_male"
+                      type="radio"
+                      name="genderRadio"
+                    />
+                  </div>
+                  <div className="col-md-2 row">
+                    Female{" "}
+                    <input
+                      className="space_left"
+                      id="gender_female"
+                      type="radio"
+                      name="genderRadio"
+                    />
+                  </div>
                 </div>
               </div>
               <div className="globalmargin">
@@ -78,55 +97,84 @@ const AdvancedSearch = React.createClass({
                 />
               </div>
             </div>
-            <div className="col-xs-12 col-sm-4">
-              <div className="subject_text space_up">Modality</div>
-              <div className="modalities">
-                <label htmlFor="modCR">CR</label>
-                <input id="modCR" type="checkbox" name="CR" />
+            <div className="row col-sm-6">
+              <div className="globalmargin col-xs-12">
+                <div className="subject_text space_up">Modality</div>
+                <div className="modalities">
+                  <div className="col-xs-4">
+                    <label htmlFor="modCR">CR</label>
+                    <input id="modCR" type="checkbox" name="CR" />
+                  </div>
+                  <div className="col-xs-4">
+                    <label htmlFor="modMG">MG</label>
+                    <input id="modMG" type="checkbox" name="MG" />
+                  </div>
 
-                <label htmlFor="modMG">MG</label>
-                <input id="modMG" type="checkbox" name="MG" />
+                  <div className="col-xs-4">
+                    <label htmlFor="modPT">PT</label>
+                    <input id="modPT" type="checkbox" name="PT" />
+                  </div>
 
-                <label htmlFor="modPT">PT</label>
-                <input id="modPT" type="checkbox" name="PT" />
+                  <div className="col-xs-4">
+                    <label htmlFor="modXA">XA</label>
+                    <input id="modXA" type="checkbox" name="XA" />
+                  </div>
 
-                <label htmlFor="modXA">XA</label>
-                <input id="modXA" type="checkbox" name="XA" />
+                  <div className="col-xs-4">
+                    <label htmlFor="modES">ES</label>
+                    <input id="modES" type="checkbox" name="ES" />
+                  </div>
 
-                <label htmlFor="modES">ES</label>
-                <input id="modES" type="checkbox" name="ES" />
+                  <div className="col-xs-4">
+                    <label htmlFor="modCT">CT</label>
+                    <input id="modCT" type="checkbox" name="CT" />
+                  </div>
 
-                <label htmlFor="modCT">CT</label>
-                <input id="modCT" type="checkbox" name="CT" />
+                  <div className="col-xs-4">
+                    <label htmlFor="modMR">MR</label>
+                    <input id="modMR" type="checkbox" name="MR" />
+                  </div>
 
-                <label htmlFor="modMR">MR</label>
-                <input id="modMR" type="checkbox" name="MR" />
+                  <div className="col-xs-4">
+                    <label htmlFor="modRF">RF</label>
+                    <input id="modRF" type="checkbox" name="RF" />
+                  </div>
 
-                <label htmlFor="modRF">RF</label>
-                <input id="modRF" type="checkbox" name="RF" />
+                  <div className="col-xs-4">
+                    <label htmlFor="modUS">US</label>
+                    <input id="modUS" type="checkbox" name="US" />
+                  </div>
 
-                <label htmlFor="modUS">US</label>
-                <input id="modUS" type="checkbox" name="US" />
+                  <div className="col-xs-4">
+                    <label htmlFor="modDX">DX</label>
+                    <input id="modDX" type="checkbox" name="DX" />
+                  </div>
 
-                <label htmlFor="modDX">DX</label>
-                <input id="modDX" type="checkbox" name="DX" />
+                  <div className="col-xs-4">
+                    <label htmlFor="modNM">NM</label>
+                    <input id="modNM" type="checkbox" name="NM" />
+                  </div>
 
-                <label htmlFor="modNM">NM</label>
-                <input id="modNM" type="checkbox" name="NM" />
+                  <div className="col-xs-4">
+                    <label htmlFor="modSC">SC</label>
+                    <input id="modSC" type="checkbox" name="SC" />
+                  </div>
 
-                <label htmlFor="modSC">SC</label>
-                <input id="modSC" type="checkbox" name="SC" />
-
-                <label htmlFor="modOT">OT</label>
-                <input id="modOT" type="checkbox" name="OT" />
+                  <div className="col-xs-4">
+                    <label htmlFor="modOT">OT</label>
+                    <input id="modOT" type="checkbox" name="OT" />
+                  </div>
+                </div>
               </div>
-              <div className="subject_text space_up">Date</div>
-              <input type="text" id="datepicker" placeholder={"YYYYMMDD"} />
+              <div className="globalmargin col-xs-12">
+                <div className="subject_text space_up">Date</div>
+                <input type="text" id="datepicker" placeholder={"YYYYMMDD"} />
+              </div>
             </div>
           </div>
           <button
             type="button"
-            className="btn btn_dicoogle centerDivH"
+            className="btn btn_dicoogle"
             onClick={this.onSearchClicked}
           >
             Search
