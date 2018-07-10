@@ -1,12 +1,12 @@
 .btn_dicoogle {
   background-color: $blue1;
-  color: #ffffff;
+  color: $button_color;
   margin-right: 5px;
   &:hover {
     background-color: $blue4;
-    color: #ffffff;
+    color: $button_color;
   }
   a {
-    color: #ffffff;
+    color: $button_color;
   }
 }
