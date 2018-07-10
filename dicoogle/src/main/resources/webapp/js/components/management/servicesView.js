@@ -94,7 +94,7 @@ const ServicesView = React.createClass({
     const extraQRSettings = (
       <button
         type="button"
-        className="btn btn-default"
+        className="btn btn_dicoogle"
         style={{ marginTop: 20, float: "right" }}
         onClick={this.showAdvanced}
       >
