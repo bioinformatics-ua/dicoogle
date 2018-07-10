@@ -6,6 +6,11 @@
     background-color: $blue4;
     color: $button_color;
   }
+  &:focus {
+    color: $button_color;
+    text-decoration: none;
+  }
+
   a {
     color: $button_color;
   }

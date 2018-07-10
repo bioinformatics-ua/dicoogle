@@ -21,7 +21,7 @@
 .topbar {
   a {
     height: 50px;
-    color: $button_color;
+    color: $blue6;
     font-size: 30px;
     vertical-align: middle;
   }
@@ -33,4 +33,8 @@
 
 .buttonLogin {
   padding-right: 10px;
+}
+
+.logo-image {
+    max-height: 60%;
 }
