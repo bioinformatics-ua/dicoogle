@@ -98,77 +98,129 @@ const AdvancedSearch = React.createClass({
               </div>
             </div>
             <div className="row col-sm-6">
-              <div className="globalmargin col-xs-12">
+              <div className="globalmargin row">
                 <div className="subject_text space_up">Modality</div>
-                <div className="modalities">
-                  <div className="col-xs-4">
-                    <label htmlFor="modCR">CR</label>
-                    <input id="modCR" type="checkbox" name="CR" />
+                <div className="row">
+                  <div className="col-md-4">
+                    <div className="row col-xs-8">
+                      <label htmlFor="modCR">CR</label>
+                    </div>
+                    <div className="row col-xs-4">
+                      <input id="modCR" type="checkbox" name="CR" />
+                    </div>
                   </div>
-                  <div className="col-xs-4">
-                    <label htmlFor="modMG">MG</label>
-                    <input id="modMG" type="checkbox" name="MG" />
-                  </div>
-
-                  <div className="col-xs-4">
-                    <label htmlFor="modPT">PT</label>
-                    <input id="modPT" type="checkbox" name="PT" />
-                  </div>
-
-                  <div className="col-xs-4">
-                    <label htmlFor="modXA">XA</label>
-                    <input id="modXA" type="checkbox" name="XA" />
+                  <div className="col-md-4">
+                    <div className="row col-xs-8">
+                      <label htmlFor="modMG">MG</label>
+                    </div>
+                    <div className="row col-xs-4">
+                      <input id="modMG" type="checkbox" name="MG" />
+                    </div>
                   </div>
 
-                  <div className="col-xs-4">
-                    <label htmlFor="modES">ES</label>
-                    <input id="modES" type="checkbox" name="ES" />
+                  <div className="col-md-4">
+                    <div className="row col-xs-8">
+                      <label htmlFor="modPT">PT</label>
+                    </div>
+                    <div className="row col-xs-4">
+                      <input id="modPT" type="checkbox" name="PT" />
+                    </div>
                   </div>
 
-                  <div className="col-xs-4">
-                    <label htmlFor="modCT">CT</label>
-                    <input id="modCT" type="checkbox" name="CT" />
+                  <div className="col-md-4">
+                    <div className="row col-xs-8">
+                      <label htmlFor="modXA">XA</label>
+                    </div>
+                    <div className="row col-xs-4">
+                      <input id="modXA" type="checkbox" name="XA" />
+                    </div>
                   </div>
 
-                  <div className="col-xs-4">
-                    <label htmlFor="modMR">MR</label>
-                    <input id="modMR" type="checkbox" name="MR" />
+                  <div className="col-md-4">
+                    <div className="row col-xs-8">
+                      <label htmlFor="modES">ES</label>
+                    </div>
+                    <div className="row col-xs-4">
+                      <input id="modES" type="checkbox" name="ES" />
+                    </div>
                   </div>
 
-                  <div className="col-xs-4">
-                    <label htmlFor="modRF">RF</label>
-                    <input id="modRF" type="checkbox" name="RF" />
+                  <div className="col-md-4">
+                    <div className="row col-xs-8">
+                      <label htmlFor="modCT">CT</label>
+                    </div>
+                    <div className="row col-xs-4">
+                      <input id="modCT" type="checkbox" name="CT" />
+                    </div>
                   </div>
 
-                  <div className="col-xs-4">
-                    <label htmlFor="modUS">US</label>
-                    <input id="modUS" type="checkbox" name="US" />
+                  <div className="col-md-4">
+                    <div className="row col-xs-8">
+                      <label htmlFor="modMR">MR</label>
+                    </div>
+                    <div className="row col-xs-4">
+                      <input id="modMR" type="checkbox" name="MR" />
+                    </div>
                   </div>
 
-                  <div className="col-xs-4">
-                    <label htmlFor="modDX">DX</label>
-                    <input id="modDX" type="checkbox" name="DX" />
+                  <div className="col-md-4">
+                    <div className="row col-xs-8">
+                      <label htmlFor="modRF">RF</label>
+                    </div>
+                    <div className="row col-xs-4">
+                      <input id="modRF" type="checkbox" name="RF" />
+                    </div>
                   </div>
 
-                  <div className="col-xs-4">
-                    <label htmlFor="modNM">NM</label>
-                    <input id="modNM" type="checkbox" name="NM" />
+                  <div className="col-md-4">
+                    <div className="row col-xs-8">
+                      <label htmlFor="modUS">US</label>
+                    </div>
+                    <div className="row col-xs-4">
+                      <input id="modUS" type="checkbox" name="US" />
+                    </div>
                   </div>
 
-                  <div className="col-xs-4">
-                    <label htmlFor="modSC">SC</label>
-                    <input id="modSC" type="checkbox" name="SC" />
+                  <div className="col-md-4">
+                    <div className="row col-xs-8">
+                      <label htmlFor="modDX">DX</label>
+                    </div>
+                    <div className="row col-xs-4">
+                      <input id="modDX" type="checkbox" name="DX" />
+                    </div>
                   </div>
 
-                  <div className="col-xs-4">
-                    <label htmlFor="modOT">OT</label>
-                    <input id="modOT" type="checkbox" name="OT" />
+                  <div className="col-md-4">
+                    <div className="row col-xs-8">
+                      <label htmlFor="modNM">NM</label>
+                    </div>
+                    <div className="row col-xs-4">
+                      <input id="modNM" type="checkbox" name="NM" />
+                    </div>
+                  </div>
+
+                  <div className="col-md-4">
+                    <div className="row col-xs-8">
+                      <label htmlFor="modSC">SC</label>
+                    </div>
+                    <div className="row col-xs-4">
+                      <input id="modSC" type="checkbox" name="SC" />
+                    </div>
+                  </div>
+
+                  <div className="col-md-4">
+                    <div className="row col-xs-8">
+                      <label htmlFor="modOT">OT</label>
+                    </div>
+                    <div className="row col-xs-4">
+                      <input id="modOT" type="checkbox" name="OT" />
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="globalmargin col-xs-12">
+              <div className="globalmargin row">
                 <div className="subject_text space_up">Date</div>
-                <input type="text" id="datepicker" placeholder={"YYYYMMDD"} />
+                <input type="text" id="datepicker" className="form-control form-control-date" placeholder={"YYYYMMDD"} />
               </div>
             </div>
           </div>
