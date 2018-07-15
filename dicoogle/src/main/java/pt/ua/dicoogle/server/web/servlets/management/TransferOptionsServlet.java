@@ -44,7 +44,7 @@ public class TransferOptionsServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String uid = req.getParameter("uid");
-		
+
         resp.setContentType("application/json");
 		String soplist = SOPList.getInstance().getSOPList();
 		resp.getWriter().write(soplist);
@@ -53,11 +53,27 @@ public class TransferOptionsServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		
+
 		String UID = req.getParameter("uid");
 		String option = req.getParameter("option");
 		String valueS = req.getParameter("value");
-		boolean value = Boolean.parseBoolean(req.getParameter("value"));
+
+		if (UID == null) {
+            ResponseUtil.sendError(resp, 400, "No query UID Supplied: Please provide the field \"uid\"");
+            return;
+        }
+
+        if (option == null) {
+            ResponseUtil.sendError(resp, 400, "No query option Supplied: Please provide the field \"option\"");
+            return;
+        }
+
+        if (valueS == null) {
+            ResponseUtil.sendError(resp, 400, "No query value Supplied: Please provide the field \"value\"");
+            return;
+        }
+
+		boolean value = Boolean.parseBoolean(valueS);
 
 		SOPList.getInstance().updateTSField(UID, option, value);
         ServerSettingsManager.saveSettings();
@@ -88,7 +104,7 @@ public class TransferOptionsServlet extends HttpServlet {
             }
             return tor;
         }
-        
+
         public static String getJSON(boolean[] tsList) {
             TransferenceOptionsResponse tor = fromBooleanList(tsList);
             return JSONSerializer.toJSON(tor).toString();
