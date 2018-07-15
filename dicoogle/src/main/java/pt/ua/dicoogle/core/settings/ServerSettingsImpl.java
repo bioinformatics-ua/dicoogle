@@ -21,6 +21,7 @@ package pt.ua.dicoogle.core.settings;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
 import pt.ua.dicoogle.core.settings.part.ArchiveImpl;
 import pt.ua.dicoogle.core.settings.part.DicomServicesImpl;
 import pt.ua.dicoogle.core.settings.part.WebServerImpl;
@@ -32,6 +33,7 @@ import java.util.Objects;
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonRootName("config")
 public class ServerSettingsImpl implements ServerSettings {
 
     public ServerSettingsImpl() {
