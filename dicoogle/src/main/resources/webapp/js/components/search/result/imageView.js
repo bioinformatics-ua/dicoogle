@@ -447,7 +447,7 @@ var PopOverView = React.createClass({
           </BootstrapTable>
         </div>
         <div className="modal-footer">
-          <Button onClick={this.props.onHide}>Close</Button>
+          <Button bsClass="btn btn_dicoogle" onClick={this.props.onHide}>Close</Button>
         </div>
       </Modal>
     );
@@ -479,7 +479,7 @@ var PopOverImageViewer = React.createClass({
           </ImageLoader>
         </div>
         <div className="modal-footer">
-          <Button onClick={this.props.onHide}>Close</Button>
+          <Button bsClass="btn btn_dicoogle" onClick={this.props.onHide}>Close</Button>
         </div>
       </Modal>
     );

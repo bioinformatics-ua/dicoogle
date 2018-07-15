@@ -116,7 +116,6 @@ $currentBGColor: $blue6;
 $currentFontColor: #3a87ad;
 $disableBGColor: #eeeeee;
 $disableFontColor: #999999;
-$completedFontColor: #468847;
 
 $paddingVert: 0.5em; /*don't use more decimals, as it makes browser round errors more likely, make heights unmatching
 -also watch using decimals at all at low wizardSize font sizes!*/
@@ -198,7 +197,7 @@ $borderRadiusVal: 0.25em;
 
 .completed.wizardbar-item {
   background-color: $wizardBGColor;
-  color: $completedFontColor;
+  color: $blue4;
   cursor: pointer;
 }
 .completed.wizardbar-item:after {

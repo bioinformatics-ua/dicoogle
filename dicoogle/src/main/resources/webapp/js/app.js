@@ -178,11 +178,15 @@ class App extends React.Component {
         <div className="topbar">
           <img
             className="btn_drawer"
-            src="assets/drawer_menu.png"
+            src="assets/drawer_menu_light_blue.png"
             id="menu-toggle"
             onClick={this.onClickToggle}
           />
-          <a>Dicoogle</a>
+          <img
+            className="logo-image"
+            src="assets/logo-light-blue.png"
+            id="webapp-logo-light"
+          />
           <div className="pull-right" bsStyle="padding:15px">
             <span
               className="user-name usernameLogin"
