@@ -24,10 +24,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import metal.utils.fileiterator.FileIterator;
 
@@ -44,7 +48,7 @@ public class DefaultFileStoragePlugin extends PluginBase implements StorageInter
 
 	private static final Logger logger = LoggerFactory.getLogger(DefaultFileStoragePlugin.class);
 	
-	private String defaultScheme = "file";
+	private final String defaultScheme = "file";
 	
 	public DefaultFileStoragePlugin() {
 		super();
@@ -127,6 +131,16 @@ public class DefaultFileStoragePlugin extends PluginBase implements StorageInter
 		if (f.exists()) {
 			f.delete();
 		}		
+	}
+
+	@Override
+	public Stream<URI> list(URI location) throws IOException {
+		if (!location.getScheme().equals(defaultScheme)) {
+			return Stream.empty();
+		}
+
+		Path base = Paths.get(location);
+		return Files.list(base).map(Path::toUri);
 	}
 
 	@Override
