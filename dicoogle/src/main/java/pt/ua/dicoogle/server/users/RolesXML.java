@@ -174,6 +174,7 @@ public class RolesXML extends DefaultHandler
                 hd.endElement("", "", "role");
             }
 
+            hd.endElement("", "", "Roles");
             hd.endDocument();
         } catch (TransformerConfigurationException|SAXException ex)
         {
