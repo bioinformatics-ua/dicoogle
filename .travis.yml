@@ -12,17 +12,20 @@ cache:
 matrix:
   include:
     - jdk: oraclejdk8
-      env: NODE_VERSION=6
+      env: NODE_VERSION=6 WEBAPP_ONLY=1
     - jdk: oraclejdk8
       env: NODE_VERSION=lts/*
     - jdk: oraclejdk8
-      env: NODE_VERSION=stable
+      env: NODE_VERSION=stable WEBAPP_ONLY=1
     - jdk: openjdk8
       env: NODE_VERSION=lts/*
     - jdk: oraclejdk9
       env: NODE_VERSION=lts/*
+    - jdk: oraclejdk10
+      env: NODE_VERSION=lts/*
   allow_failures:
     - jdk: oraclejdk9
+    - jdk: oraclejdk10
 
 addons:
   apt:
@@ -33,8 +36,10 @@ addons:
       - g++-4.8
 
 before_install:
-  - wget https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.der;
-    sudo keytool -importcert -trustcacerts -alias lets-encrypt-x3-cross-signed -file lets-encrypt-x3-cross-signed.der -storepass changeit -keystore $JAVA_HOME/jre/lib/security/cacerts
+  - if [ $TRAVIS_JDK_VERSION == "oraclejdk8" ] || [ $TRAVIS_JDK_VERSION == "openjdk8" ]; then
+      wget https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.der;
+      sudo keytool -importcert -trustcacerts -alias lets-encrypt-x3-cross-signed -file lets-encrypt-x3-cross-signed.der -storepass changeit -keystore $JAVA_HOME/jre/lib/security/cacerts;
+    fi
   - nvm install $NODE_VERSION
   - if [ $TRAVIS_OS_NAME == "linux" ]; then
       export CC="gcc-4.8";
@@ -48,4 +53,7 @@ before_install:
 install: true
 
 script:
-  - cd dicoogle/src/main/resources/webapp && npm install && cd ../../../../.. && mvn install -Dskip.installnodenpm -Dskip.npm -Dmaven.javadoc.skip=true -B -V
+  - cd dicoogle/src/main/resources/webapp && npm install 
+  - if [ -z "$WEBAPP_ONLY" ]; then
+      cd ../../../../.. && mvn install -Dskip.installnodenpm -Dskip.npm -Dmaven.javadoc.skip=true -B -V;
+    fi
