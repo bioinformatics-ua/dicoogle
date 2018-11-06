@@ -105,7 +105,7 @@ public interface StorageInterface extends DicooglePlugin {
      * objects.
      * 
      * The provided scheme is not relevant at this point, but the developer
-     * must avoid calling this method with a path of a different schema.
+     * must avoid calling this method with a path of a different scheme.
      * 
      * @param location the base storage location to list
      * 
