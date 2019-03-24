@@ -18,3 +18,16 @@ webcore/lib/
 .idea
 .vscode/
 *.iml
+
+
+#MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
