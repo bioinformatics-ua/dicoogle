@@ -43,8 +43,8 @@ import pt.ua.dicoogle.server.web.auth.Session;
 public class LoginServlet extends HttpServlet {
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //Try login
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        // Try login
         // Does not require admin rights.
         LoggedInStatus loginStatus = Session.webappLogin(req, resp, false);
         LoggedIn mLoggedIn = loginStatus.getLogin();

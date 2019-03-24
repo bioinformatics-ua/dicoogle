@@ -33,7 +33,7 @@ import pt.ua.dicoogle.server.web.utils.ResponseUtil;
  * @author Frederico Silva <fredericosilva@ua.pt>
  */
 public class LogoutServlet extends HttpServlet{
-    
+
     private static final String TOKEN_HEADERNAME = "Authorization";
 
     @Deprecated
@@ -43,7 +43,7 @@ public class LogoutServlet extends HttpServlet{
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         boolean logout = Session.logout(req);
         String token = req.getHeader(TOKEN_HEADERNAME);
         if (token != null && !token.equals("")) {
@@ -51,5 +51,5 @@ public class LogoutServlet extends HttpServlet{
         }
         ResponseUtil.simpleResponse(resp,"success", logout);
     }
-    
+
 }
