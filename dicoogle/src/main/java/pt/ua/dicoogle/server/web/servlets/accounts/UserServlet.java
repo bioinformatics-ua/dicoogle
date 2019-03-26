@@ -44,16 +44,21 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String regex = "/(.+?)/.+";       // matches and groups the word(s) between "/"
-        Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-        Matcher matcher = pattern.matcher(req.getPathInfo());
+        String pathInfo = req.getPathInfo();
 
-        String usernameToRemove = "";
-
-        if (matcher.find()) {
-            usernameToRemove = matcher.group(1);        // assigns first group of the match
+        if (pathInfo == null) {
+            ResponseUtil.sendError(resp, HttpServletResponse.SC_BAD_REQUEST, "Username not provided");
+            return;
         }
 
+        String[] params = pathInfo.replaceFirst("^/", "").split("/");
+
+        if (params.length < 1) {
+            ResponseUtil.sendError(resp, HttpServletResponse.SC_BAD_REQUEST, "Username not provided");
+            return;
+        }
+
+        String usernameToRemove = params[0];
         boolean isRemoved = false;
         if (usernameToRemove != null && !usernameToRemove.equals("")) {
             isRemoved = UsersStruct.getInstance().removeUser(usernameToRemove);
