@@ -188,7 +188,7 @@ public class DicoogleWeb {
             csvServletHolder,
             createServletHandler(new LoginServlet(), "/login"),
             createServletHandler(new LogoutServlet(), "/logout"),
-            createServletHandler(new UserServlet(), "/user"),
+            createServletHandler(new UserServlet(), "/user/*"),
             createServletHandler(new SearchServlet(), "/search"),
             createServletHandler(new SearchServlet(SearchType.PATIENT), "/searchDIM"),
             createServletHandler(new DumpServlet(), "/dump"),

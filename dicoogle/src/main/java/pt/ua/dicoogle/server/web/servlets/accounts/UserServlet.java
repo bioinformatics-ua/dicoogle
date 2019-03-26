@@ -21,6 +21,8 @@ package pt.ua.dicoogle.server.web.servlets.accounts;
 
 import java.io.IOException;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +44,15 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String usernameToRemove = req.getParameter("username");
+        String regex = "/(.+?)/.+";       // matches and groups the word(s) between "/"
+        Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+        Matcher matcher = pattern.matcher(req.getPathInfo());
+
+        String usernameToRemove = "";
+
+        if (matcher.find()) {
+            usernameToRemove = matcher.group(1);        // assigns first group of the match
+        }
 
         boolean isRemoved = false;
         if (usernameToRemove != null && !usernameToRemove.equals("")) {
