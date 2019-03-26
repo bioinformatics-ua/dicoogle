@@ -1,18 +1,18 @@
 /**
  * Copyright (C) 2014  Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
- * <p>
+ *
  * This file is part of Dicoogle/dicoogle.
- * <p>
+ *
  * Dicoogle/dicoogle is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * <p>
+ *
  * Dicoogle/dicoogle is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * <p>
+ *
  * You should have received a copy of the GNU General Public License
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -48,7 +48,7 @@ public class UsersStruct {
         reset();
 
         usersXML = new UsersXML();
-        List<User> userList = usersXML.getXML();
+        Collection<User> userList = usersXML.getXML();
 
         for (User user : userList) {
             users.put(user.getUsername(), user);
@@ -61,7 +61,7 @@ public class UsersStruct {
      * Insert one default user
      * Username: "dicoogle"
      * Password: "dicoogle" (hashed)
-     * <p>
+     *
      * This user is administrator
      */
     public static Collection<User> getDefaults() {
@@ -69,11 +69,10 @@ public class UsersStruct {
         boolean admin = true;
         String passPlainText = "dicoogle";
 
-        //String passHash = HashService.getSHA1Hash(passPlainText);             //password Hash
+        String passHash = HashService.getSHA1Hash(passPlainText);             //password Hash
+        String hash = HashService.getSHA1Hash(username + admin + passHash);   //user Hash
 
-        Collection<User> collection = new LinkedList<>();
-        collection.add(new User(username, passPlainText, admin));
-        return collection;
+        return Collections.singleton(new User(username, hash, admin));
     }
 
     /**
@@ -100,7 +99,7 @@ public class UsersStruct {
         if (user.isAdmin())
             numberOfAdmins++;
 
-        usersXML.printXML(users.values());
+        usersXML.printXML(this.getUsers());
         return true;
     }
 

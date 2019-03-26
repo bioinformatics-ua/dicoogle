@@ -52,7 +52,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
 public class UsersXML extends DefaultHandler {
-    List<User> users;
+    Collection<User> users;
     private boolean isUsers = false;
 
     private String username;
@@ -112,13 +112,15 @@ public class UsersXML extends DefaultHandler {
     }
 
 
-    public List<User> getXML() {
+    public Collection<User> getXML() {
         try {
             UserFileHandle file = new UserFileHandle();
             byte[] xml = file.getFileContent();
 
             if (xml == null) {
-                printXML(UsersStruct.getDefaults());
+                users = new LinkedList<>(UsersStruct.getDefaults());
+                printXML(users);
+
                 return users;
             }
 
