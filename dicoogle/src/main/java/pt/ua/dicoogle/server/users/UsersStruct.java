@@ -24,6 +24,7 @@ import java.util.*;
  * This class stores the list of users of Dicoogle
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
+ * @author Rui Lebre <ruilebre@ua.pt>
  */
 public class UsersStruct {
     private HashMap<String, User> users;
@@ -125,6 +126,8 @@ public class UsersStruct {
             numberOfAdmins--;
 
         users.remove(username);
+        usersXML.printXML(users.values());
+
         return true;
     }
 
