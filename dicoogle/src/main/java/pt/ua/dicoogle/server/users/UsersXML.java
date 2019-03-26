@@ -18,25 +18,9 @@
  */
 package pt.ua.dicoogle.server.users;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
-
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.stream.StreamResult;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -45,12 +29,28 @@ import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+
 /**
  * This class saves the list of users to XML
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
 public class UsersXML extends DefaultHandler {
+    private static Logger logger = LoggerFactory.getLogger(UsersXML.class);
     Collection<User> users;
     private boolean isUsers = false;
 
@@ -130,7 +130,7 @@ public class UsersXML extends DefaultHandler {
             r.parse(src);
             return users;
         } catch (SAXException | IOException ex) {
-            LoggerFactory.getLogger(UsersXML.class).error(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
         return null;
     }
@@ -149,7 +149,7 @@ public class UsersXML extends DefaultHandler {
         try {
             hd = tf.newTransformerHandler();
         } catch (TransformerConfigurationException ex) {
-            LoggerFactory.getLogger(UsersXML.class).error(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
 
         Transformer serializer = hd.getTransformer();
@@ -161,7 +161,7 @@ public class UsersXML extends DefaultHandler {
             hd.setResult(streamResult);
             hd.startDocument();
         } catch (SAXException ex) {
-            LoggerFactory.getLogger(UsersXML.class).error(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
 
         AttributesImpl atts = new AttributesImpl();
@@ -202,15 +202,15 @@ public class UsersXML extends DefaultHandler {
 
             hd.endDocument();
         } catch (SAXException ex) {
-            LoggerFactory.getLogger(UsersXML.class).error(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         } finally {
             try {
                 out.close();
 
                 UserFileHandle file = new UserFileHandle();
                 file.printFile(out.toByteArray());
-            } catch (Exception ex) {
-                LoggerFactory.getLogger(UsersXML.class).error(ex.getMessage(), ex);
+            } catch (IOException ex) {
+                logger.error("Failed to write user roles file", ex);
             }
         }
     }
