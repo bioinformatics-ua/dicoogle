@@ -50,7 +50,7 @@ import java.util.LinkedList;
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
 public class UsersXML extends DefaultHandler {
-    private static Logger logger = LoggerFactory.getLogger(UsersXML.class);
+    private static final Logger logger = LoggerFactory.getLogger(UsersXML.class);
     Collection<User> users;
     private boolean isUsers = false;
 

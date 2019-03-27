@@ -40,7 +40,7 @@ import java.security.SecureRandom;
  */
 public class UserFileHandle {
 
-    private static Logger logger = LoggerFactory.getLogger(UserFileHandle.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserFileHandle.class);
 
     private String filenamePath;
     private String filename;
