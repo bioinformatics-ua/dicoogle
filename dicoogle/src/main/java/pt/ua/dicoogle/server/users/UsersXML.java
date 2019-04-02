@@ -141,8 +141,6 @@ public class UsersXML extends DefaultHandler {
     public void printXML(Collection<User> users) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        PrintWriter pw = new PrintWriter(out);
-        StreamResult streamResult = new StreamResult(pw);
         SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
         //      SAX2.0 ContentHandler.
         TransformerHandler hd = null;
@@ -157,15 +155,13 @@ public class UsersXML extends DefaultHandler {
         serializer.setOutputProperty(OutputKeys.METHOD, "xml");
         serializer.setOutputProperty(OutputKeys.INDENT, "yes");
         serializer.setOutputProperty(OutputKeys.STANDALONE, "yes");
-        try {
+
+        try (PrintWriter pw = new PrintWriter(out)) {
+            StreamResult streamResult = new StreamResult(pw);
             hd.setResult(streamResult);
             hd.startDocument();
-        } catch (SAXException ex) {
-            logger.error(ex.getMessage(), ex);
-        }
 
-        AttributesImpl atts = new AttributesImpl();
-        try {
+            AttributesImpl atts = new AttributesImpl();
             //root element
             hd.startElement("", "", "Users", atts);
 
@@ -205,12 +201,10 @@ public class UsersXML extends DefaultHandler {
             logger.error(ex.getMessage(), ex);
         } finally {
             try {
-                out.close();
-
                 UserFileHandle file = new UserFileHandle();
                 file.printFile(out.toByteArray());
-            } catch (IOException ex) {
-                logger.error("Failed to write user roles file", ex);
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
             }
         }
     }

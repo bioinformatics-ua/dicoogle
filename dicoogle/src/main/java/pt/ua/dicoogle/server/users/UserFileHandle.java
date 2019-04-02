@@ -117,26 +117,25 @@ public class UserFileHandle {
      * @return a byte array, or null if the configuration file is not available or corrupted
      * @throws IOException on a failed attempt to read the file
      */
-    public byte[] getFileContent() throws IOException {
-        try {
-            try (FileInputStream fin = new FileInputStream(filename);
-                 ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-                byte[] data = new byte[1024];
-                int bytesRead;
+    public byte[] getFileContent() {
+        try (FileInputStream fin = new FileInputStream(filename);
+             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            byte[] data = new byte[1024];
+            int bytesRead;
 
-                while ((bytesRead = fin.read(data)) != -1) {
-                    out.write(data, 0, bytesRead);
-                    out.flush();
-                }
-
-                if (encrypt) {
-                    cipher.init(Cipher.DECRYPT_MODE, key);
-                    byte[] Bytes = cipher.doFinal(out.toByteArray());
-                    return Bytes;
-                }
-
-                return out.toByteArray();
+            while ((bytesRead = fin.read(data)) != -1) {
+                out.write(data, 0, bytesRead);
+                out.flush();
             }
+
+            if (encrypt) {
+                cipher.init(Cipher.DECRYPT_MODE, key);
+                byte[] Bytes = cipher.doFinal(out.toByteArray());
+                return Bytes;
+            }
+
+            return out.toByteArray();
+
         } catch (FileNotFoundException ex) {
             logger.info("No such users file \"{}\", will create one with default settings.", filename);
         } catch (IllegalBlockSizeException ex) {
@@ -147,7 +146,10 @@ public class UserFileHandle {
         } catch (BadPaddingException ex) {
             logger.error("Invalid Key to decrypt users file! Please contact your system administator.");
             System.exit(2); // FIXME this is too dangerous
+        } catch (IOException ex) {
+            logger.error("Error writing file \"{}\".", filename, ex);
         }
+
         return null;
     }
 
