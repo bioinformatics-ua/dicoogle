@@ -52,6 +52,9 @@ public class UsersStruct {
 
         for (User user : userList) {
             users.put(user.getUsername(), user);
+            if(user.isAdmin()) {
+                numberOfAdmins++;
+            }
         }
 
     }
