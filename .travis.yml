@@ -23,6 +23,8 @@ matrix:
       env: NODE_VERSION=lts/*
     - jdk: openjdk11
       env: NODE_VERSION=lts/*
+  allow_failures:
+    - jdk: openjdk11
 
 addons:
   apt:
