@@ -2,7 +2,7 @@
 
 ## Building
 
-`npm` version 2 or earlier is required. To build everything for production (ready to be bundled for when creating dicoogle.jar):
+`npm` version 4 or earlier is required. To build everything for production (ready to be bundled for when creating dicoogle.jar):
 
     npm install
 

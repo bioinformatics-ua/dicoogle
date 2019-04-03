@@ -146,9 +146,10 @@ We also have programmatic APIs for interfacing with Dicoogle in [JavaScript](htt
 
 Before building, please make sure that your system contains the following tools:
 
- - Java JDK, either Oracle or OpenJDK (at least version 8)
- - Maven 3
- - [Node.js](https://nodejs.org/en/download/) (at least version 4; LTS or Stable versions are recommended) and npm (at least version 2)
+ - Java JDK, either Oracle or OpenJDK (at least version 8);
+ - Maven 3;
+ - [Node.js](https://nodejs.org/en/download/) (at least version 6; latest LTS or Stable versions are recommended);
+ - npm (at least version 4; version 6 is recommended), often installed alongside Node.js.
 
  1. Retrieve the full source code from this repository: `git clone https://github.com/bioinformatics-ua/dicoogle.git`
  2. Navigate to the project's base directory, and build the parent Maven project by calling `mvn install`.
