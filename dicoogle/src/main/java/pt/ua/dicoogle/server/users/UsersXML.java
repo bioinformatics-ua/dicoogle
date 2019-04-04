@@ -43,6 +43,7 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 /**
  * This class saves the list of users to XML
@@ -178,12 +179,9 @@ public class UsersXML extends DefaultHandler {
                 if (user.isAdmin())
                     temp = "true";
                 if (user.getRoles() != null && user.getRoles().size() > 0) {
-                    String roles = "";
-                    for (Role r : user.getRoles()) {
-                        roles += r.getName() + ",";
-                    }
-                    StringUtils.removeEnd(roles, ",");
-
+                    String roles = user.getRoles().stream()
+                            .map(Role::getName)
+                            .collect(Collectors.joining(","));
 
                     atts.addAttribute("", "", "roles", "", roles);
                 }
