@@ -79,7 +79,7 @@ public class UserFileHandle {
             }
 
         } catch (NoSuchAlgorithmException | ClassNotFoundException | NoSuchPaddingException ex) {
-            logger.error(ex.getMessage(), ex);
+            logger.error("Failed to get encryption key.", ex);
         }
     }
 

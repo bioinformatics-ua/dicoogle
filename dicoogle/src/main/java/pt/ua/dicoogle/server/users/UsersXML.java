@@ -130,7 +130,7 @@ public class UsersXML extends DefaultHandler {
             r.parse(src);
             return users;
         } catch (SAXException | IOException ex) {
-            logger.error(ex.getMessage(), ex);
+            logger.error("Error reading users XML configuration file.", ex);
         }
         return null;
     }
@@ -147,7 +147,7 @@ public class UsersXML extends DefaultHandler {
         try {
             hd = tf.newTransformerHandler();
         } catch (TransformerConfigurationException ex) {
-            logger.error(ex.getMessage(), ex);
+            logger.error("Failed creating configuration object", ex);
         }
 
         Transformer serializer = hd.getTransformer();
@@ -198,13 +198,13 @@ public class UsersXML extends DefaultHandler {
 
             hd.endDocument();
         } catch (SAXException ex) {
-            logger.error(ex.getMessage(), ex);
+            logger.error("Failed to parse XML file", ex);
         } finally {
             try {
                 UserFileHandle file = new UserFileHandle();
                 file.printFile(out.toByteArray());
             } catch (IOException e) {
-                logger.error(e.getMessage(), e);
+                logger.error("Failed to write user roles file", e);
             }
         }
     }
