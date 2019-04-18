@@ -24,6 +24,8 @@ import pt.ua.dicoogle.server.users.*;
 import pt.ua.dicoogle.server.web.auth.Authentication;
 import pt.ua.dicoogle.server.web.auth.LoggedIn;
 
+import java.util.Collection;
+
 /**
  * Created by bastiao on 23/01/16.
  */
@@ -34,8 +36,6 @@ public class TestRoles {
     public void testRoles() {
 
         UsersStruct users = UsersStruct.getInstance();
-        UsersXML usersXML = new UsersXML();
-        users = usersXML.getXML();
         RolesXML rolesXML = new RolesXML();
         RolesStruct rolesStruct = rolesXML.getXML();
         System.out.println(rolesStruct.getRoles());
@@ -48,11 +48,11 @@ public class TestRoles {
         RolesXML rolesXML = new RolesXML();
         RolesStruct rolesStruct = rolesXML.getXML();
 
-        UsersStruct users = UsersStruct.getInstance();
-        UsersXML usersXML = new UsersXML();
-        users = usersXML.getXML();
+        UsersStruct usersStruct = UsersStruct.getInstance();
+        Collection<User> users = usersStruct.getUsers();
+
         System.out.println(rolesStruct.getRoles());
-        for (User u : users.getUsers())
+        for (User u : users)
         {
             System.out.println(u.getUsername());
             for (Role  r : u.getRoles())

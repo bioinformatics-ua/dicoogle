@@ -26,6 +26,8 @@ import pt.ua.dicoogle.server.users.UsersXML;
 import pt.ua.dicoogle.server.web.auth.Authentication;
 import pt.ua.dicoogle.server.web.auth.LoggedIn;
 
+import java.util.Collection;
+
 import static org.junit.Assert.assertEquals;
 import static pt.ua.dicoogle.server.web.servlets.webui.WebUIServlet.camelize;
 
@@ -51,10 +53,7 @@ public class TestUsers {
 
     //@Test
     public void testUsers() {
-
-        UsersStruct users = UsersStruct.getInstance();
-        UsersXML usersXML = new UsersXML();
-        users = usersXML.getXML();
+        UsersStruct usersStruct = UsersStruct.getInstance();
 
         String username = "nat";
         boolean admin = false;
@@ -64,12 +63,12 @@ public class TestUsers {
         System.out.println(hash);
         System.out.println(passHash);
         User u = new User("nat",hash, admin);
-        users.addUser(u);
+        usersStruct.addUser(u);
 
 
-        for (String uu : users.getUsernames())
+        for (String uu : usersStruct.getUsernames())
         {
-            System.out.println(users.getUser(uu));
+            System.out.println(usersStruct.getUser(uu));
         }
 
         Authentication auth = Authentication.getInstance();
