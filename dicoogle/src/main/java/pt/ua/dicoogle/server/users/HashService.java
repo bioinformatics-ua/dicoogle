@@ -27,20 +27,20 @@ import org.apache.commons.codec.binary.Base64;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class provides hashing service to passwords with SHA-1 algoritm
+ * This class provides hashing service to passwords with the SHA-256 algoritm
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
 public class HashService {
     /**
-     * Encrypt one password with SHA-1 algorithm
+     * Encrypt one password with the SHA-256 algorithm
      *
      * @param plaintext
      * @return the hash of the password
      */
-    public static String getSHA1Hash(String plaintext) {
+    public static String getSHA256Hash(String plaintext) {
         try {
-            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(plaintext.getBytes("UTF-8"));
             byte[] raw = md.digest();
             byte[] asbase64 = Base64.encodeBase64(raw);

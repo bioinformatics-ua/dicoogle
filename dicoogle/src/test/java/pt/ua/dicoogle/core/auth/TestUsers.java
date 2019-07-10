@@ -58,8 +58,8 @@ public class TestUsers {
         String username = "nat";
         boolean admin = false;
         String passPlainText = "123";
-        String passHash = HashService.getSHA1Hash(passPlainText);             //password Hash
-        String hash = HashService.getSHA1Hash(username + admin + passHash);
+        String passHash = HashService.getSHA256Hash(passPlainText);             //password Hash
+        String hash = HashService.getSHA256Hash(username + admin + passHash);
         System.out.println(hash);
         System.out.println(passHash);
         User u = new User("nat",hash, admin);

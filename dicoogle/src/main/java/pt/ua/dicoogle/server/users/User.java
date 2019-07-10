@@ -52,7 +52,7 @@ public class User implements UserRoleManager{
     }
 
     public boolean verifyPassword(String passwordHash){
-        String tempHash = HashService.getSHA1Hash(username + admin + passwordHash);
+        String tempHash = HashService.getSHA256Hash(username + admin + passwordHash);
 
         return this.hash.equals(tempHash);
     }
@@ -68,13 +68,13 @@ public class User implements UserRoleManager{
     }
 
     public boolean changePassword(String oldPassHash, String newPassHash){
-        String tempHash = HashService.getSHA1Hash(username + admin + oldPassHash);
+        String tempHash = HashService.getSHA256Hash(username + admin + oldPassHash);
 
         if(!hash.equals(tempHash))
             return false;
 
 
-        tempHash = HashService.getSHA1Hash(username + admin + newPassHash);
+        tempHash = HashService.getSHA256Hash(username + admin + newPassHash);
 
         hash = tempHash;
         return true;
@@ -88,7 +88,7 @@ public class User implements UserRoleManager{
         if(newPassHash == null || newPassHash.equals(""))
             return false;
 
-        String tempHash = HashService.getSHA1Hash(username + admin + newPassHash);
+        String tempHash = HashService.getSHA256Hash(username + admin + newPassHash);
 
         hash = tempHash;
 

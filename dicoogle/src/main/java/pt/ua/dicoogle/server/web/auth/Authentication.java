@@ -97,7 +97,7 @@ public class Authentication
 			return null;
 
 		// calculate the supplied passwords hash and see if it matches the users
-		String passwordHash = HashService.getSHA1Hash(password);
+		String passwordHash = HashService.getSHA256Hash(password);
 		if (! user.verifyPassword(passwordHash))
 			return null;
 		LoggedIn in = new LoggedIn(username, user.isAdmin());

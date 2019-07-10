@@ -246,7 +246,7 @@ public class LocalImageCache extends Thread implements ImageRetriever
     
     protected static String toFileName(String imageUri, int frameNumber, boolean thumbnail) {
         String filecode = imageUri + ':' + frameNumber + ':' + (thumbnail ? '1' : '0');
-        return DigestUtils.sha1Hex(filecode) + ".png";
+        return DigestUtils.sha256Hex(filecode) + ".png";
     }
     
     @Override
