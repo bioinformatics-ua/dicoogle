@@ -20,7 +20,6 @@ package pt.ua.dicoogle.server.users;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pt.ua.dicoogle.sdk.Utils.Platform;
 
 import javax.crypto.*;
 import java.io.*;
@@ -42,28 +41,21 @@ public class UserFileHandle {
 
     private static final Logger logger = LoggerFactory.getLogger(UserFileHandle.class);
 
-    private String filenamePath;
-    private String filename;
-    private String keyFile;
+    private final String filename;
+    private final String keyFile;
 
-    private Cipher cipher;
     private Key key;
-    private boolean encrypt;
+    private final boolean encrypt;
 
     public UserFileHandle() throws IOException {
         filename = "users.xml";
-        filenamePath = Platform.homePath() + filename;
+        keyFile = "users.key";
         encrypt = true; //ServerSettingsManager.getSettings().isEncryptUsersFile();
         try {
-
             if (encrypt) {
-                keyFile = "users.key";
 
-                try {
-                    ObjectInputStream in = new ObjectInputStream(new FileInputStream(keyFile));
+                try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(keyFile))) {
                     key = (Key) in.readObject();
-                    in.close();
-
                 } catch (FileNotFoundException ex) {
                     KeyGenerator gen = KeyGenerator.getInstance("AES");
 
@@ -75,10 +67,11 @@ public class UserFileHandle {
                     }
                 }
 
-                cipher = Cipher.getInstance("AES");
+            } else {
+                key = null;
             }
 
-        } catch (NoSuchAlgorithmException | ClassNotFoundException | NoSuchPaddingException ex) {
+        } catch (NoSuchAlgorithmException | ClassNotFoundException ex) {
             logger.error("Failed to get encryption key.", ex);
         }
     }
@@ -94,8 +87,8 @@ public class UserFileHandle {
             byte[] encryptedBytes = new byte[0];
 
             try {
+                Cipher cipher = Cipher.getInstance("AES");
                 cipher.init(Cipher.ENCRYPT_MODE, key);
-
                 encryptedBytes = cipher.doFinal(bytes);
             } catch (BadPaddingException e) {
                 logger.error("Invalid Key to decrypt users file.", e);
@@ -103,6 +96,8 @@ public class UserFileHandle {
                 logger.error("Users file \"{}\" is corrupted.", filename, e);
             } catch (InvalidKeyException e) {
                 logger.error("Invalid Key to decrypt users file.", e);
+            } catch (NoSuchAlgorithmException|NoSuchPaddingException e) {
+                throw new RuntimeException(e);
             }
 
             printFileAux(encryptedBytes);
@@ -119,7 +114,7 @@ public class UserFileHandle {
      */
     public byte[] getFileContent() {
         try (FileInputStream fin = new FileInputStream(filename);
-             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+                ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             byte[] data = new byte[1024];
             int bytesRead;
 
@@ -129,6 +124,7 @@ public class UserFileHandle {
             }
 
             if (encrypt) {
+                Cipher cipher = Cipher.getInstance("AES");
                 cipher.init(Cipher.DECRYPT_MODE, key);
                 byte[] Bytes = cipher.doFinal(out.toByteArray());
                 return Bytes;
@@ -142,10 +138,12 @@ public class UserFileHandle {
             logger.error("Users file \"{}\" is corrupted, will override it with default settings.", filename, ex);
         } catch (InvalidKeyException ex) {
             logger.error("Invalid Key to decrypt users file! Please contact your system administator.");
-            System.exit(1); // FIXME this is too dangerous
+            System.exit(1);
         } catch (BadPaddingException ex) {
             logger.error("Invalid Key to decrypt users file! Please contact your system administator.");
-            System.exit(2); // FIXME this is too dangerous
+            System.exit(2);
+        } catch (NoSuchAlgorithmException|NoSuchPaddingException e) {
+            throw new RuntimeException(e);
         } catch (IOException ex) {
             logger.error("Error writing file \"{}\".", filename, ex);
         }
