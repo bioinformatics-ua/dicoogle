@@ -12,17 +12,17 @@ cache:
 matrix:
   include:
     - jdk: oraclejdk8
-      env: NODE_VERSION=lts/boron WEBAPP_ONLY=1
+      env: NODE_VERSION=10 WEBAPP_ONLY=1
     - jdk: oraclejdk8
-      env: NODE_VERSION=lts/carbon WEBAPP_ONLY=1
+      env: NODE_VERSION=stable WEBAPP_ONLY=1
     - jdk: oraclejdk8
-      env: NODE_VERSION=lts/dubnium
+      env: NODE_VERSION=lts/*
     - jdk: openjdk8
-      env: NODE_VERSION=lts/dubnium
+      env: NODE_VERSION=lts/*
     - jdk: openjdk10
-      env: NODE_VERSION=lts/dubnium
+      env: NODE_VERSION=lts/*
     - jdk: openjdk11
-      env: NODE_VERSION=lts/dubnium
+      env: NODE_VERSION=lts/*
   allow_failures:
     - jdk: openjdk11
 
@@ -52,7 +52,7 @@ before_install:
 install: true
 
 script:
-  - cd dicoogle/src/main/resources/webapp && npm install 
+  - cd dicoogle/src/main/resources/webapp && npm install && npm run build
   - if [ -z "$WEBAPP_ONLY" ]; then
       cd ../../../../.. && mvn install -Dskip.installnodenpm -Dskip.npm -Dmaven.javadoc.skip=true -B -V;
     fi

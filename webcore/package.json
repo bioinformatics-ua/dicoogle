@@ -22,7 +22,7 @@
         "babelify",
         {
           "presets": [
-            "es2015"
+            "@babel/preset-env"
           ]
         }
       ]
@@ -36,14 +36,14 @@
   },
   "license": "GPL-3.0+",
   "devDependencies": {
-    "eslint": "^4.13.1",
-    "eslint-plugin-import": "^2.8.0"
-  },
-  "peerDependencies": {
-    "dicoogle-client": "^4.1.2"
+    "@babel/core": "^7.0.0-0",
+    "@babel/preset-env": "^7.5.5",
+    "babelify": "^10.0.0",
+    "eslint": "^6.1.0",
+    "eslint-plugin-import": "^2.18.2"
   },
   "dependencies": {
-    "document-register-element": "^0.5.4",
-    "events": "^1.1.0"
+    "dicoogle-client": "^4.1.2",
+    "events": "^3.0.0"
   }
 }

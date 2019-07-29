@@ -84,7 +84,7 @@
                     <include>webapp/bootstrap/fonts/*</include>
                     <include>webapp/fonts/**</include>
                     <include>webapp/css/**</include>
-                    <include>webapp/lib/**</include>
+                    <include>webapp/dist/**</include>
                     <include>webapp/index.html</include>
                 </includes>
                 <excludes>
@@ -238,8 +238,8 @@
 
                 </executions>
                 <configuration>
-                    <nodeVersion>v10.15.3</nodeVersion>
-                    <npmVersion>6.4.1</npmVersion>
+                    <nodeVersion>v12.12.0</nodeVersion>
+                    <npmVersion>6.11.3</npmVersion>
                     <installDirectory>target</installDirectory>
                     <!-- Defining webapp directory -->
                     <workingDirectory>src/main/resources/webapp</workingDirectory>

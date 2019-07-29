@@ -1,8 +1,8 @@
 import Reflux from "reflux";
-const IndexStatusActions = exports;
-IndexStatusActions.get = Reflux.createAction();
-IndexStatusActions.start = Reflux.createAction();
-IndexStatusActions.stop = Reflux.createAction();
-IndexStatusActions.close = Reflux.createAction();
-
+const IndexStatusActions = {
+  get: Reflux.createAction(),
+  start: Reflux.createAction(),
+  stop: Reflux.createAction(),
+  close: Reflux.createAction()
+};
 export { IndexStatusActions };

@@ -2,65 +2,30 @@
 
 ## Building
 
-`npm` version 4 or earlier is required. To build everything for production (ready to be bundled for when creating dicoogle.jar):
+The web application is built using Node.js, npm, and webpack (see [package.json](package.json)). To build everything for production (ready to be bundled for when creating dicoogle.jar):
 
-    npm install
+    npm install     # install npm dependencies
+    npm run build   # build everything for production
 
-To build all js and html resources:
+To build all js, styles and html resources:
 
-    npm run debug        # for development
     npm run build        # for production
+    npm run build-debug  # for development
 
-To build just the css files:
+To build and watch for changes, you can run the webpack development server via the `start` script:
 
-    npm run css
-
-To watch for changes in JavaScript resources (good for building while developing):
-
-    npm run js:watch
-
-To watch for changes in the SASS resources (thus building css):
-
-    npm run css:watch
-
-Everything is build for production (js, html and css) in the prepublish script (this is also run automatically for `npm install`):
-
-    npm run-script prepublish
-
-All of these npm scripts map directly to gulp tasks:
-
-```bash
-$ gulp --tasks
-
- ├── lint
- ├─┬ js
- │ └── lint
- ├─┬ js-debug
- │ └── lint
- ├── js:watch
- ├── html
- ├── html-debug
- ├── css
- ├── css-debug
- ├── css:watch
- ├─┬ production
- │ ├── js
- │ ├── html
- │ └── css
- ├─┬ development
- │ ├── js-debug
- │ ├── html-debug
- │ └── css
- ├── clean
- └─┬ default
-   └── production
-```
+    npm start
 
 ## Running as a standalone server
 
-We have included a script for running a static server containing the standalone webapp. If you already have Python installed, simply execute:
+We have included a script for running a static server containing the standalone webapp.
+If you already have Python installed, execute:
 
-    ./run_server
+```sh
+./run_server
+```
+
+But other static HTTP servers may be used as well.
 
 ## Debugging the webapp
 
@@ -72,8 +37,19 @@ The web application can be tested separately without having it embedded in a jar
 <server enable="true" port="8080" allowedOrigins="*" />
 ```
 
-2. Navigate to the webapp's source code. Define the URL to Dicoogle's base endpoint using the `DICOOGLE_BASE_URL` environment variable, and bundle the source code: `DICOOGLE_BASE_URL=http://localhost:8080 npm run debug`. See the **Building** section above for more scripts.
+2. Navigate to the webapp's source code. Define the URL to Dicoogle's base endpoint using the `DICOOGLE_BASE_URL` environment variable, and run the webpack development server:
 
-3. Start a static server on the web application's base folder. If you have Python, the `run_server` script will do.
+```
+DICOOGLE_BASE_URL=http://localhost:8080 npm start
+```
 
-4. Open your browser and navigate to the static server: http://localhost:9000
+This will deploy a server with automatic refresh on changes.
+
+You can also run one of the other scripts available and deploy a static server on the webapp's base folder:
+
+```
+DICOOGLE_BASE_URL=http://localhost:8080 npm run build-debug
+./run_server
+```
+
+See the **Building** section above for more scripts.
