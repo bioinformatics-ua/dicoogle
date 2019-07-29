@@ -1,4 +1,4 @@
-import $ from "jquery";
+import "../sass/dicoogle.scss";
 import React, { PropTypes } from "react";
 import ReactDOM from "react-dom";
 import Sidebar from "./components/sidebar";
@@ -22,10 +22,9 @@ import { hashHistory /*, browserHistory*/ } from "react-router";
 import * as UserActions from "./actions/userActions";
 import UserStore from "./stores/userStore";
 
-require("core-js/shim");
-
-window.jQuery = $; // Bootstrap won't work without this hack. browserify-shim didn't help either
-require("bootstrap");
+import "@ungap/custom-elements-builtin";
+import "core-js/shim";
+import "bootstrap";
 
 class App extends React.Component {
   static get contextTypes() {
