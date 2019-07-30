@@ -638,8 +638,9 @@ paths:
       tags:
         - index
       summary: >-
-        Request that the file at the given URI is unindexed in the specified
-        indexers
+        Request that a list of entries is unindexed in the specified
+        indexers, or all of them if left unspecified. Exactly one of the
+        fields `uri`, `SOPInstanceUID` and `SeriesInstanceUID` must be given.
       consumes:
         - application/json
       produces:
@@ -649,11 +650,32 @@ paths:
           name: uri
           description: >-
             a URI or array of URIs representing the root resource of the files
-            to be indexed
+            to be unindexed
           type: string
-          required: true
+          required: false
         - in: query
-          name: plugin
+          name: SOPInstanceUID
+          description: >-
+            a UID or list of UIDs representing the DICOM instances to be
+            unindexed
+          type: string
+          required: false
+        - in: query
+          name: SeriesInstanceUID
+          description: >-
+            a UID or list of UIDs representing the DICOM series to be
+            unindexed
+          type: string
+          required: false
+        - in: query
+          name: StudyInstanceUID
+          description: >-
+            a UID or list of UIDs representing the DICOM studies to be
+            unindexed
+          type: string
+          required: false
+        - in: query
+          name: provider
           description: a list of provider plugins
           type: string
           required: false
