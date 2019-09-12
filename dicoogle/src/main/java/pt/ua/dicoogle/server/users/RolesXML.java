@@ -18,6 +18,7 @@
  */
 package pt.ua.dicoogle.server.users;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -27,7 +28,6 @@ import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import javax.crypto.Cipher;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -36,6 +36,10 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Iterator;
 
 /**
@@ -45,6 +49,7 @@ import java.util.Iterator;
  */
 public class RolesXML extends DefaultHandler
 {
+    private static Logger logger = LoggerFactory.getLogger(RolesXML.class);
     private RolesStruct roles = RolesStruct.getInstance();
     private boolean isRoles = false ;
 
@@ -100,37 +105,13 @@ public class RolesXML extends DefaultHandler
 
     public RolesStruct getXML()
     {
-        roles.reset();
-
-        FileInputStream fin;
+        roles.reset();        
 
         try {
-            fin = new FileInputStream("roles.xml");
-        } catch(FileNotFoundException e){
-            printXML();
-            return roles;
-        }
-
-        try{
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            byte[] data = new byte[1024];
-            int bytesRead;
-
-            while ((bytesRead = fin.read(data)) != -1) {
-                out.write(data, 0, bytesRead);
-                out.flush();
-            }
-
+            Files.copy(Paths.get("roles.xml"), out);
             byte[] xml = out.toByteArray();
             
-            if (xml == null)
-            {
-
-                printXML();
-                return roles;
-            }
-
-
             // Never throws the exception cause file not exists so need try catch
             InputSource src = new InputSource( new ByteArrayInputStream(xml) );
             XMLReader r = XMLReaderFactory.createXMLReader();
@@ -138,11 +119,16 @@ public class RolesXML extends DefaultHandler
             r.parse(src);
             return roles;
         }
+        catch (NoSuchFileException e) {
+            logger.info("User roles file not found, a new empty list will be created.");
+            printXML();
+            return roles;
+        }
         catch (SAXException | IOException ex)
         {
-            LoggerFactory.getLogger(RolesXML.class).error(ex.getMessage(), ex);
+            logger.error("Failed to read user roles file", ex);
+            return null;
         }
-        return null;
     }
 
     /**
@@ -152,38 +138,25 @@ public class RolesXML extends DefaultHandler
     {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-       
-
-        PrintWriter pw = new PrintWriter(out);
-        StreamResult streamResult = new StreamResult(pw);
-        SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
-
-        TransformerHandler hd = null;
-        try
+        try (PrintWriter pw = new PrintWriter(out))
         {
+            StreamResult streamResult = new StreamResult(pw);
+
+            SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
+            TransformerHandler hd = null;
             hd = tf.newTransformerHandler();
-        } catch (TransformerConfigurationException ex)
-        {
-            LoggerFactory.getLogger(RolesXML.class).error(ex.getMessage(), ex);
-        }
-        
-        Transformer serializer = hd.getTransformer();
-        serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-        serializer.setOutputProperty(OutputKeys.METHOD, "xml");
-        serializer.setOutputProperty(OutputKeys.INDENT, "yes");
-        serializer.setOutputProperty(OutputKeys.STANDALONE, "yes");   
-        try
-        {
+    
+            Transformer serializer = hd.getTransformer();
+            serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            serializer.setOutputProperty(OutputKeys.METHOD, "xml");
+            serializer.setOutputProperty(OutputKeys.INDENT, "yes");
+            serializer.setOutputProperty(OutputKeys.STANDALONE, "yes");   
+
             hd.setResult(streamResult);
             hd.startDocument();
-        } catch (SAXException ex)
-        {
-            LoggerFactory.getLogger(RolesXML.class).error(ex.getMessage(), ex);
-        }
 
-        AttributesImpl atts = new AttributesImpl();
-        try
-        {
+            AttributesImpl atts = new AttributesImpl();
+
             //root element
             hd.startElement("", "", "Roles", atts);
 
@@ -201,48 +174,28 @@ public class RolesXML extends DefaultHandler
                 hd.endElement("", "", "role");
             }
 
-
+            hd.endElement("", "", "Roles");
             hd.endDocument();
-        } catch (SAXException ex)
+        } catch (TransformerConfigurationException|SAXException ex)
         {
-            LoggerFactory.getLogger(RolesXML.class).error(ex.getMessage(), ex);
+            logger.error("Failed to build user roles file", ex);
         }
-        finally {
-            try {
-                out.close();
+        
+        try {
+            printFile(out.toByteArray());
+        } catch (IOException ex) {
+            logger.error("Failed to write user roles file", ex);
 
-                printFile(out.toByteArray());
-
-            } catch (Exception ex) {
-                  LoggerFactory.getLogger(RolesXML.class).error(ex.getMessage(), ex);
-            }
         }
-
-
     }
     /**
      * Print one byte array in File
-     * Encrypt that file with the key
      * @param bytes
      */
-    public void printFile(byte[] bytes) throws Exception {
-        InputStream in;
-
-
-        in = new ByteArrayInputStream(bytes);
-
-        FileOutputStream out = new FileOutputStream("roles.xml");
-
-
-        byte[] input = new byte[1024];
-        int bytesRead;
-        while ((bytesRead = in.read(input)) != -1) {
-            out.write(input, 0, bytesRead);
-            out.flush();
+    private void printFile(byte[] bytes) throws IOException {
+        try (InputStream in = new ByteArrayInputStream(bytes)) {
+            Files.copy(in, Paths.get("roles.xml"), StandardCopyOption.REPLACE_EXISTING);
         }
-
-        out.close();
-        in.close();
     }
 
 }
