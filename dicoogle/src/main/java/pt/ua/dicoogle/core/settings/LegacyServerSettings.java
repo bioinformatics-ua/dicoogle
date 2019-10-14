@@ -379,6 +379,7 @@ public class LegacyServerSettings implements ServerSettings
         private boolean webServer = true;
         private int serverPort = 8080;
         private String accessControlAllowOrigins = "*";
+        private boolean disableEndpoints = false;
 
         @Deprecated @JsonIgnore
         private boolean webServices = false;
@@ -428,6 +429,11 @@ public class LegacyServerSettings implements ServerSettings
         @Override
         public void setAllowedOrigins(String origins) {
             this.accessControlAllowOrigins = origins;
+        }
+
+        @Override
+        public boolean getDisableEndpoints() {
+            return this.disableEndpoints;
         }
 
         @Deprecated

@@ -123,7 +123,7 @@ public class DicoogleWeb {
      * @param port the server port
      * @throws java.lang.Exception
      */
-    public DicoogleWeb(int port) throws Exception {
+    public DicoogleWeb(int port, boolean disableEndpoints) throws Exception {
         logger.info("Starting Web Services in DicoogleWeb. Port: {}", port);
         System.setProperty("org.apache.jasper.compiler.disablejsr199", "true");
         //System.setProperty("org.mortbay.jetty.webapp.parentLoaderPriority", "true");
@@ -134,19 +134,6 @@ public class DicoogleWeb {
         // "build" the input location, based on the www directory/.war chosen
         final URL warUrl = Thread.currentThread().getContextClassLoader().getResource(WEBAPPDIR);
         final String warUrlString = warUrl.toExternalForm();
-
-        //setup the DICOM to PNG image servlet, with a local cache
-        cache = new LocalImageCache("dic2png", 300, 900, new SimpleImageRetriever()); // pooling rate of 12/hr and max un-used cache age of 15 minutes
-        final ServletContextHandler dic2png = createServletHandler(new ImageServlet(cache), "/dic2png");
-        cache.start(); // start the caching system
-
-        // setup the DICOM to PNG image servlet
-        final ServletContextHandler dictags = createServletHandler(new TagsServlet(), "/dictags");
-
-        // setup the Export to CSV Servlet
-        final ServletContextHandler csvServletHolder = createServletHandler(new ExportToCSVServlet(), "/export");
-        File tempDir = Paths.get(System.getProperty("java.io.tmpdir")).toFile();
-        csvServletHolder.addServlet(new ServletHolder(new ExportCSVToFILEServlet(tempDir)), "/exportFile");
 
         // setup the search (DIMSE-service-user C-FIND ?!?) servlet
         //final ServletContextHandler search = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
@@ -176,52 +163,73 @@ public class DicoogleWeb {
         
         // Add Static RESTlet Plugins
         PluginRestletApplication.attachRestPlugin(new VersionResource());
-        
-        // list the all the handlers mounted above
-        Handler[] handlers = new Handler[]{
-            pluginHandler,
-            legacyHandler,
-            dic2png,
-            dictags,
-            createServletHandler(new IndexerServlet(), "/indexer"), // DEPRECATED
-            createServletHandler(new SettingsServlet(), "/settings"),
-            csvServletHolder,
-            createServletHandler(new LoginServlet(), "/login"),
-            createServletHandler(new LogoutServlet(), "/logout"),
-            createServletHandler(new UserServlet(), "/user/*"),
-            createServletHandler(new SearchServlet(), "/search"),
-            createServletHandler(new SearchServlet(SearchType.PATIENT), "/searchDIM"),
-            createServletHandler(new DumpServlet(), "/dump"),
-            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.path) , "/management/settings/index/path"),
-            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.zip), "/management/settings/index/zip"),
-            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.effort), "/management/settings/index/effort"),
-            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnail), "/management/settings/index/thumbnail"),
-            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.watcher), "/management/settings/index/watcher"),
-            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnailSize), "/management/settings/index/thumbnail/size"),
-            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.all), "/management/settings/index"),
-            createServletHandler(new TransferOptionsServlet(), "/management/settings/transfer"),
-            createServletHandler(new WadoServlet(), "/wado"),
-            createServletHandler(new ProvidersServlet(), "/providers"),
-            createServletHandler(new DicomQuerySettingsServlet(), "/management/settings/dicom/query"),
-            createServletHandler(new DimTagsServlet(TagsStruct.getInstance()), "/management/settings/dicom/tags"),
-            createServletHandler(new ForceIndexing(), "/management/tasks/index"),
-            createServletHandler(new UnindexServlet(), "/management/tasks/unindex"),
-            createServletHandler(new RemoveServlet(), "/management/tasks/remove"),
-            createServletHandler(new ServicesServlet(ServicesServlet.STORAGE), "/management/dicom/storage"),
-            createServletHandler(new ServicesServlet(ServicesServlet.QUERY), "/management/dicom/query"),
-            createServletHandler(new ServicesServlet(ServicesServlet.PLUGIN), "/management/plugins/"),
-            createServletHandler(new AETitleServlet(), "/management/settings/dicom"),
-            createServletHandler(new PluginsServlet(), "/plugins/*"),
-            createServletHandler(new PresetsServlet(), "/presets/*"),
-            createServletHandler(new WebUIServlet(), "/webui"),
-            createWebUIModuleServletHandler(),
-            createServletHandler(new LoggerServlet(), "/logger"),
-            createServletHandler(new RunningTasksServlet(), "/index/task"),
-            createServletHandler(new ExportServlet(ExportType.EXPORT_CVS), "/export/cvs"),
-            createServletHandler(new ExportServlet(ExportType.LIST), "/export/list"),
-            createServletHandler(new ServerStorageServlet(), "/management/settings/storage/dicom"),
-            webpages
-        };
+
+        Handler[] handlers;
+        if (disableEndpoints) {
+            handlers = new Handler[]{
+                    pluginHandler,
+                    legacyHandler
+            };
+        } else {
+            //setup the DICOM to PNG image servlet, with a local cache
+            cache = new LocalImageCache("dic2png", 300, 900, new SimpleImageRetriever()); // pooling rate of 12/hr and max un-used cache age of 15 minutes
+            final ServletContextHandler dic2png = createServletHandler(new ImageServlet(cache), "/dic2png");
+            cache.start(); // start the caching system
+
+            // setup the DICOM to PNG image servlet
+            final ServletContextHandler dictags = createServletHandler(new TagsServlet(), "/dictags");
+
+            // setup the Export to CSV Servlet
+            final ServletContextHandler csvServletHolder = createServletHandler(new ExportToCSVServlet(), "/export");
+            File tempDir = Paths.get(System.getProperty("java.io.tmpdir")).toFile();
+            csvServletHolder.addServlet(new ServletHolder(new ExportCSVToFILEServlet(tempDir)), "/exportFile");
+
+            // list the all the handlers mounted above
+            handlers = new Handler[]{
+                    pluginHandler,
+                    legacyHandler,
+                    dic2png,
+                    dictags,
+                    createServletHandler(new IndexerServlet(), "/indexer"), // DEPRECATED
+                    createServletHandler(new SettingsServlet(), "/settings"),
+                    csvServletHolder,
+                    createServletHandler(new LoginServlet(), "/login"),
+                    createServletHandler(new LogoutServlet(), "/logout"),
+                    createServletHandler(new UserServlet(), "/user/*"),
+                    createServletHandler(new SearchServlet(), "/search"),
+                    createServletHandler(new SearchServlet(SearchType.PATIENT), "/searchDIM"),
+                    createServletHandler(new DumpServlet(), "/dump"),
+                    createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.path), "/management/settings/index/path"),
+                    createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.zip), "/management/settings/index/zip"),
+                    createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.effort), "/management/settings/index/effort"),
+                    createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnail), "/management/settings/index/thumbnail"),
+                    createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.watcher), "/management/settings/index/watcher"),
+                    createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnailSize), "/management/settings/index/thumbnail/size"),
+                    createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.all), "/management/settings/index"),
+                    createServletHandler(new TransferOptionsServlet(), "/management/settings/transfer"),
+                    createServletHandler(new WadoServlet(), "/wado"),
+                    createServletHandler(new ProvidersServlet(), "/providers"),
+                    createServletHandler(new DicomQuerySettingsServlet(), "/management/settings/dicom/query"),
+                    createServletHandler(new DimTagsServlet(TagsStruct.getInstance()), "/management/settings/dicom/tags"),
+                    createServletHandler(new ForceIndexing(), "/management/tasks/index"),
+                    createServletHandler(new UnindexServlet(), "/management/tasks/unindex"),
+                    createServletHandler(new RemoveServlet(), "/management/tasks/remove"),
+                    createServletHandler(new ServicesServlet(ServicesServlet.STORAGE), "/management/dicom/storage"),
+                    createServletHandler(new ServicesServlet(ServicesServlet.QUERY), "/management/dicom/query"),
+                    createServletHandler(new ServicesServlet(ServicesServlet.PLUGIN), "/management/plugins/"),
+                    createServletHandler(new AETitleServlet(), "/management/settings/dicom"),
+                    createServletHandler(new PluginsServlet(), "/plugins/*"),
+                    createServletHandler(new PresetsServlet(), "/presets/*"),
+                    createServletHandler(new WebUIServlet(), "/webui"),
+                    createWebUIModuleServletHandler(),
+                    createServletHandler(new LoggerServlet(), "/logger"),
+                    createServletHandler(new RunningTasksServlet(), "/index/task"),
+                    createServletHandler(new ExportServlet(ExportType.EXPORT_CVS), "/export/cvs"),
+                    createServletHandler(new ExportServlet(ExportType.LIST), "/export/list"),
+                    createServletHandler(new ServerStorageServlet(), "/management/settings/storage/dicom"),
+                    webpages
+            };
+        }
 
         // setup the server
         server = new Server(port);

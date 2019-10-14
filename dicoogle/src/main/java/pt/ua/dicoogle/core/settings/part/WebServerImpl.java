@@ -34,18 +34,21 @@ public class WebServerImpl implements ServerSettings.WebServer {
     private boolean autostart;
     @JacksonXmlProperty(isAttribute = true, localName = "port")
     private int port;
+    @JacksonXmlProperty(isAttribute = true, localName = "disable-endpoints")
+    private boolean disableEndpoints;
 
     public WebServerImpl() {
     }
 
-    public WebServerImpl(boolean autostart, int port, String allowedOrigins) {
+    public WebServerImpl(boolean autostart, int port, String allowedOrigins, boolean disableEndpoints) {
         this.autostart = autostart;
         this.port = port;
         this.allowedOrigins = allowedOrigins;
+        this.disableEndpoints = disableEndpoints;
     }
 
     public static WebServerImpl createDefault() {
-        return new WebServerImpl(true, 8080, null);
+        return new WebServerImpl(true, 8080, null, false);
     }
 
     @JsonProperty("allowed-origins")
@@ -79,6 +82,11 @@ public class WebServerImpl implements ServerSettings.WebServer {
     @Override
     public String getAllowedOrigins() {
         return this.allowedOrigins;
+    }
+
+    @Override
+    public boolean getDisableEndpoints() {
+        return this.disableEndpoints;
     }
 
     @Override

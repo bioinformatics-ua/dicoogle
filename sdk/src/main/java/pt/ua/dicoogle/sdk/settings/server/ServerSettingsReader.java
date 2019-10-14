@@ -49,6 +49,9 @@ public interface ServerSettingsReader {
 
         @JsonGetter("allowed-origins")
         String getAllowedOrigins();
+
+        @JacksonXmlProperty(isAttribute = true, localName = "disable-endpoints")
+        boolean getDisableEndpoints();
     }
     @JsonGetter("web-server")
     WebServer getWebServerSettings();
