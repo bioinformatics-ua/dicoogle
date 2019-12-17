@@ -32,9 +32,7 @@ public class QueryResultRecord {
     private String FilePath;
     private byte[] Thumbnail;
 
-    public QueryResultRecord(String patientName, String PatientID, 
-                             String Modality, String StudyDate, 
-                             String FilePath, byte[] Thumbnail){
+    public QueryResultRecord(String patientName, String PatientID, String Modality, String StudyDate, String FilePath, byte[] Thumbnail) {
         this.patientName = patientName;
         this.PatientID = PatientID;
         this.Modality = Modality;
@@ -42,7 +40,7 @@ public class QueryResultRecord {
         this.FilePath = FilePath;
         this.Thumbnail = Thumbnail;
     }
-    
+
     public String getPatientName() {
         return patientName;
     }
@@ -86,5 +84,5 @@ public class QueryResultRecord {
     public byte[] getThumbnail() {
         return Thumbnail;
     }
-        
+
 }

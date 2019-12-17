@@ -36,80 +36,68 @@ import pt.ua.dicoogle.server.web.DicoogleWeb;
  * @author Luís Bastião Silva <bastiao@bmd-softwre.com>
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
-public class ControlServices
-{
+public class ControlServices {
     private static final Logger logger = LoggerFactory.getLogger(ControlServices.class);
-    
+
     private static ControlServices instance = null;
     // Services vars
     private DicomStorage storage = null;
     private boolean webServicesRunning = false;
     private boolean webServerRunning = false;
     private QueryRetrieve retrieve = null;
-    
+
     private DicoogleWeb webServices;
-    
-    private ControlServices()
-    {
+
+    private ControlServices() {
         startInicialServices();
     }
 
-    public static synchronized ControlServices getInstance()
-    {
-//      sem.acquire();
-        if (instance == null)
-        {
+    public static synchronized ControlServices getInstance() {
+        // sem.acquire();
+        if (instance == null) {
             instance = new ControlServices();
         }
-//      sem.release();
+        // sem.release();
         return instance;
     }
 
 
     /* Strats the inicial services based on ServerSettingsManager */
-    private void startInicialServices()
-    {
+    private void startInicialServices() {
         ServerSettings settings = ServerSettingsManager.getSettings();
 
-        try
-        {
-          /*  if (settings.isP2P())
+        try {
+            /*  if (settings.isP2P())
             {
                 startP2P();
             }*/
 
-            if (!this.storageIsRunning())
-            {
+            if (!this.storageIsRunning()) {
                 startStorage();
             }
 
-            if (!this.queryRetrieveIsRunning())
-            {
+            if (!this.queryRetrieveIsRunning()) {
                 startQueryRetrieve();
             }
 
-            if(!this.webServerIsRunning()){
-            	startWebServer();
+            if (!this.webServerIsRunning()) {
+                startWebServer();
             }
 
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         }
     }
 
     /* Stop all services that are running */
-    public boolean stopAllServices()
-    {
-        try
-        {
-        	//TODO: DELETED
-            //PluginController.getSettings().stopAll();
-           // stopP2P();
+    public boolean stopAllServices() {
+        try {
+            // TODO: DELETED
+            // PluginController.getSettings().stopAll();
+            // stopP2P();
             stopStorage();
             stopQueryRetrieve();
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
             return false;
         }
@@ -125,19 +113,14 @@ public class ControlServices
      * 
      * @throws IOException
      */
-    public int startStorage() throws IOException
-    {
-        if (storage == null)
-        {
+    public int startStorage() throws IOException {
+        if (storage == null) {
             ServerSettings settings = ServerSettingsManager.getSettings();
 
 
             SOPList list = SOPList.getInstance();
-            settings.getDicomServicesSettings().getSOPClasses().forEach(
-                    sopClass ->  sopClass.getTransferSyntaxes()
-                            .forEach(ts -> list.updateTSFieldByTsUID(
-                                    sopClass.getUID(), ts, true))
-            );
+            settings.getDicomServicesSettings().getSOPClasses()
+                    .forEach(sopClass -> sopClass.getTransferSyntaxes().forEach(ts -> list.updateTSFieldByTsUID(sopClass.getUID(), ts, true)));
 
 
             int i;
@@ -145,8 +128,7 @@ public class ControlServices
             List l = list.getKeys();
             String[] keys = new String[l.size()];
 
-            for (i = 0; i < l.size(); i++)
-            {
+            for (i = 0; i < l.size(); i++) {
                 keys[i] = (String) l.get(i);
             }
             storage = new DicomStorage(keys, list);
@@ -160,54 +142,45 @@ public class ControlServices
         return -2;
     }
 
-    public void stopStorage()
-    {
-        if (storage != null)
-        {
+    public void stopStorage() {
+        if (storage != null) {
             storage.stop();
             storage = null;
             logger.info("Stopping DICOM Storage SCP");
         }
     }
 
-    public boolean storageIsRunning()
-    {
+    public boolean storageIsRunning() {
         return storage != null;
     }
 
-    public void startQueryRetrieve()
-    {
-        if (retrieve == null)
-        {
+    public void startQueryRetrieve() {
+        if (retrieve == null) {
             retrieve = new QueryRetrieve();
             retrieve.startListening();
-            //DebugManager.getInstance().debug("Starting DICOM QueryRetrive");
+            // DebugManager.getInstance().debug("Starting DICOM QueryRetrive");
             logger.info("Starting DICOM QueryRetrieve");
         }
     }
 
-    public void stopQueryRetrieve()
-    {
-        if (retrieve != null)
-        {
+    public void stopQueryRetrieve() {
+        if (retrieve != null) {
             retrieve.stopListening();
             retrieve = null;
             logger.info("Stopping DICOM QueryRetrieve");
         }
     }
 
-    public boolean queryRetrieveIsRunning()
-    {
+    public boolean queryRetrieveIsRunning() {
         return retrieve != null;
     }
 
-    public boolean webServerIsRunning()
-    {
+    public boolean webServerIsRunning() {
         return webServerRunning;
     }
 
-    //TODO: Review those below!
-    public void startWebServer(){
+    // TODO: Review those below!
+    public void startWebServer() {
         logger.info("Starting WebServer");
 
         try {
@@ -220,19 +193,19 @@ public class ControlServices
         } catch (Exception ex) {
             logger.error("Failed to launch the web server", ex);
         }
-        
+
     }
 
-    public void stopWebServer(){
+    public void stopWebServer() {
         logger.info("Stopping Web Server");
-        
-        if(webServices != null){
-            try { 
+
+        if (webServices != null) {
+            try {
                 webServicesRunning = false;
                 webServerRunning = false;
-                
+
                 webServices.stop();
-                
+
                 webServices = null;
             } catch (Exception ex) {
                 logger.error(ex.getMessage(), ex);
@@ -240,9 +213,9 @@ public class ControlServices
         }
         logger.info("Stopping Dicoogle Web");
     }
-    
-    public DicoogleWeb getWebServicePlatform(){
-    	return webServices;
+
+    public DicoogleWeb getWebServicePlatform() {
+        return webServices;
     }
-    
+
 }

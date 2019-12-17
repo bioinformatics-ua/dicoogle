@@ -45,23 +45,19 @@ import pt.ua.dicoogle.sdk.p2p.Messages.MessageXML;
  * @author Carlos Ferreira
  * @author Pedro Bento
  */
-public class QueryHandler implements MessageHandler, Observer
-{
+public class QueryHandler implements MessageHandler, Observer {
 
     private int maxResultsPerMessage;
-    //private ListObservable<TaskRequest> tasks;
+    // private ListObservable<TaskRequest> tasks;
     private NetworkPluginAdapter plugin;
 
-    public QueryHandler(int maxResultsPerMessage, NetworkPluginAdapter plugin)
-    {
+    public QueryHandler(int maxResultsPerMessage, NetworkPluginAdapter plugin) {
         this.plugin = plugin;
         this.maxResultsPerMessage = maxResultsPerMessage;
     }
 
-    public void handleMessage(MessageI message, String sender)
-    {
-        if (!MessageXML.class.isInstance(message))
-        {
+    public void handleMessage(MessageI message, String sender) {
+        if (!MessageXML.class.isInstance(message)) {
             return;
         }
 
@@ -70,11 +66,9 @@ public class QueryHandler implements MessageHandler, Observer
         SAXReader saxReader = new SAXReader();
 
         Document document = null;
-        try
-        {
+        try {
             document = saxReader.read(new ByteArrayInputStream(msg));
-        } catch (DocumentException ex)
-        {
+        } catch (DocumentException ex) {
             ex.printStackTrace(System.out);
         }
 
@@ -90,18 +84,15 @@ public class QueryHandler implements MessageHandler, Observer
          * If the message has not the query element, then it is an invalid message
          * ignore it.
          */
-        if (queryE == null)
-        {
+        if (queryE == null) {
             return;
         }
         query = queryE.getText();
         List<Element> extrafields = root.elements(MessageFields.EXTRAFIELD);
-        if (extrafields == null)
-        {
+        if (extrafields == null) {
             extrafields = new ArrayList();
         }
-        for (Element extrafield : extrafields)
-        {
+        for (Element extrafield : extrafields) {
             extra.add(extrafield.getText());
         }
 
@@ -114,8 +105,7 @@ public class QueryHandler implements MessageHandler, Observer
         parameters.put(TaskRequestsConstants.P_REQUESTER_ADDRESS, sender);
         parameters.put(TaskRequestsConstants.P_QUERY_NUMBER, queryNumber.getText());
 
-        TaskRequest task = new TaskRequest(TaskRequestsConstants.T_QUERY_LOCALLY,
-                this.plugin.getName(), parameters);
+        TaskRequest task = new TaskRequest(TaskRequestsConstants.T_QUERY_LOCALLY, this.plugin.getName(), parameters);
         task.addObserver(this);
 
         this.plugin.getTaskRequestsList().addTask(task);
@@ -125,11 +115,9 @@ public class QueryHandler implements MessageHandler, Observer
         //
     }
 
-    public void update(Observable o, Object arg)
-    {
+    public void update(Observable o, Object arg) {
 
-        if (!TaskRequest.class.isInstance(o))
-        {
+        if (!TaskRequest.class.isInstance(o)) {
             return;
         }
 
@@ -138,8 +126,7 @@ public class QueryHandler implements MessageHandler, Observer
 
         Map<Integer, Object> res = task.getResults();
         Object SR = res.get(TaskRequestsConstants.R_SEARCH_RESULTS);
-        if ((SR == null) || (!ArrayList.class.isInstance(SR)))
-        {
+        if ((SR == null) || (!ArrayList.class.isInstance(SR))) {
             return;
         }
 
@@ -150,29 +137,25 @@ public class QueryHandler implements MessageHandler, Observer
          */
         MessageBuilder builder = new MessageBuilder();
         MessageI newMessage = null;
-        for (int i = 0; i < resultsAll.size(); i += maxResultsPerMessage)
-        {
+        for (int i = 0; i < resultsAll.size(); i += maxResultsPerMessage) {
             int size = maxResultsPerMessage;
-            if (i + maxResultsPerMessage > resultsAll.size())
-            {
+            if (i + maxResultsPerMessage > resultsAll.size()) {
                 size = resultsAll.size() - i;
             }
 
             results = resultsAll.subList(i, i + size);
-            try
-            {
-                newMessage = builder.buildQueryResponse(results, (String) task.getParameters().get(TaskRequestsConstants.P_QUERY_NUMBER), this.plugin.getName());
-            } catch (IOException ex)
-            {
+            try {
+                newMessage =
+                        builder.buildQueryResponse(results, (String) task.getParameters().get(TaskRequestsConstants.P_QUERY_NUMBER), this.plugin.getName());
+            } catch (IOException ex) {
                 LoggerFactory.getLogger(QueryHandler.class).error(ex.getMessage(), ex);
             }
 
             /**
              * Sending the response
              */
-            if (newMessage != null)
-            {
-                
+            if (newMessage != null) {
+
                 this.plugin.send(newMessage, (String) task.getParameters().get(TaskRequestsConstants.P_REQUESTER_ADDRESS));
             }
         }

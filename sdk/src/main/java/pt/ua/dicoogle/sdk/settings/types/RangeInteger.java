@@ -25,73 +25,65 @@ import java.util.HashMap;
  *
  * @author António Novo <antonio.novo@ua.pt>
  */
-public class RangeInteger implements GenericSetting
-{
-	private int min;
-	private int max;
-	private int value;
+public class RangeInteger implements GenericSetting {
+    private int min;
+    private int max;
+    private int value;
 
-	public RangeInteger(int min, int max)
-	{
-		this.min = min;
-		this.max = max;
-		this.value = min;
-	}
+    public RangeInteger(int min, int max) {
+        this.min = min;
+        this.max = max;
+        this.value = min;
+    }
 
-	public RangeInteger(int min, int max, int value)
-	{
-		this.min = min;
-		this.max = max;
-		this.value = value;
-	}
+    public RangeInteger(int min, int max, int value) {
+        this.min = min;
+        this.max = max;
+        this.value = value;
+    }
 
-	/**
-	 * @return the min
-	 */
-	public int getMin()
-	{
-		return min;
-	}
+    /**
+     * @return the min
+     */
+    public int getMin() {
+        return min;
+    }
 
-	/**
-	 * @return the max
-	 */
-	public int getMax()
-	{
-		return max;
-	}
+    /**
+     * @return the max
+     */
+    public int getMax() {
+        return max;
+    }
 
-	/**
-	 * @return the value
-	 */
-	public int getValue()
-	{
-		return value;
-	}
+    /**
+     * @return the value
+     */
+    public int getValue() {
+        return value;
+    }
 
-	/**
-	 * @param value the value to set
-	 */
-	public void setValue(int value)
-	{
-		this.value = value;
-	}
+    /**
+     * @param value the value to set
+     */
+    public void setValue(int value) {
+        this.value = value;
+    }
 
-	public String toHTMLString(String htmlElementID)
-	{
-		String result = "";
+    public String toHTMLString(String htmlElementID) {
+        String result = "";
 
-		result += "<input type=\"range\" id=\"" + htmlElementID + "\" name=\"" + htmlElementID + "\" value=\"" + value + "\" min=\"" + min + "\" max=\"" + max + "\" />";
+        result += "<input type=\"range\" id=\"" + htmlElementID + "\" name=\"" + htmlElementID + "\" value=\"" + value + "\" min=\"" + min + "\" max=\"" + max
+                + "\" />";
 
-		return result;
-	}
+        return result;
+    }
 
-	public RangeInteger fromHTTPParams(HashMap<String, String[]> params, int index, String htmlElementID)
-	{
-		RangeInteger result = new RangeInteger(this.min, this.max, this.value);
+    public RangeInteger fromHTTPParams(HashMap<String, String[]> params, int index, String htmlElementID) {
+        RangeInteger result = new RangeInteger(this.min, this.max, this.value);
 
-		result.setValue(Integer.parseInt(params.get(htmlElementID)[index]));
+        result.setValue(Integer.parseInt(params.get(htmlElementID)[index]));
 
-		return result;
-	}
+        return result;
+    }
 }

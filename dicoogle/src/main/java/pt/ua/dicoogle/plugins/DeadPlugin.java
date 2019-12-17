@@ -45,19 +45,17 @@ public final class DeadPlugin {
 
     @Override
     public String toString() {
-        return "DeadPlugin{" +
-                "name='" + name + '\'' +
-                ", cause=" + cause +
-                '}';
+        return "DeadPlugin{" + "name='" + name + '\'' + ", cause=" + cause + '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         DeadPlugin that = (DeadPlugin) o;
-        return Objects.equals(name, that.name) &&
-                Objects.equals(cause, that.cause);
+        return Objects.equals(name, that.name) && Objects.equals(cause, that.cause);
     }
 
     @Override

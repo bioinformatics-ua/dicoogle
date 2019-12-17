@@ -106,14 +106,14 @@ public class PresetsServlet extends HttpServlet {
 
         Map<String, String[]> presets = UserExportPresets.getPresets(username);
         JSONArray jsonPresets = new JSONArray();
-        for (String presetName: presets.keySet()) {
+        for (String presetName : presets.keySet()) {
             JSONObject jsonPreset = new JSONObject();
 
             jsonPreset.put("name", presetName);
 
             JSONArray jsonFields = new JSONArray();
             String[] fields = presets.get(presetName);
-            for (String field: fields) {
+            for (String field : fields) {
                 jsonFields.add(field);
             }
             jsonPreset.put("fields", jsonFields);

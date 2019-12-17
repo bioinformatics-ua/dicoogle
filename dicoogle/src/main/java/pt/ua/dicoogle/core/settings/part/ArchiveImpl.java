@@ -157,16 +157,8 @@ public class ArchiveImpl implements ServerSettings.Archive {
 
     @Override
     public String toString() {
-        return "ArchiveImpl{" +
-                "saveThumbnails=" + saveThumbnails +
-                ", thumbnailSize=" + thumbnailSize +
-                ", indexerEffort=" + indexerEffort +
-                ", dimProviders=" + dimProviders +
-                ", defaultStorage=" + defaultStorage +
-                ", dirWatcherEnabled=" + dirWatcherEnabled +
-                ", watchDirectory='" + watchDirectory + '\'' +
-                ", mainDirectory='" + mainDirectory + '\'' +
-                ", nodeName='" + nodeName + '\'' +
-                '}';
+        return "ArchiveImpl{" + "saveThumbnails=" + saveThumbnails + ", thumbnailSize=" + thumbnailSize + ", indexerEffort=" + indexerEffort + ", dimProviders="
+                + dimProviders + ", defaultStorage=" + defaultStorage + ", dirWatcherEnabled=" + dirWatcherEnabled + ", watchDirectory='" + watchDirectory
+                + '\'' + ", mainDirectory='" + mainDirectory + '\'' + ", nodeName='" + nodeName + '\'' + '}';
     }
 }

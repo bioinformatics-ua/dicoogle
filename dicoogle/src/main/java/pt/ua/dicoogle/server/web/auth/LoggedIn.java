@@ -23,39 +23,35 @@ package pt.ua.dicoogle.server.web.auth;
  *
  * @author António Novo <antonio.novo@ua.pt>
  */
-public class LoggedIn
-{
-	private String userName;
-	private boolean admin;
-	private String token;
+public class LoggedIn {
+    private String userName;
+    private boolean admin;
+    private String token;
 
-	public LoggedIn(String userName, boolean isAdmin)
-	{
-		this.userName = userName;
-		this.admin = isAdmin;
-	}
+    public LoggedIn(String userName, boolean isAdmin) {
+        this.userName = userName;
+        this.admin = isAdmin;
+    }
 
-	/**
-	 * @return the user name
-	 */
-	public String getUserName()
-	{
-		return userName;
-	}
+    /**
+     * @return the user name
+     */
+    public String getUserName() {
+        return userName;
+    }
 
-	/**
-	 * @return if this user is admin
-	 */
-	public boolean isAdmin()
-	{
-		return admin;
-	}
+    /**
+     * @return if this user is admin
+     */
+    public boolean isAdmin() {
+        return admin;
+    }
 
-	public String getToken() {
-		return token;
-	}
+    public String getToken() {
+        return token;
+    }
 
-	public void setToken(String token) {
-		this.token = token;
-	}
+    public void setToken(String token) {
+        this.token = token;
+    }
 }

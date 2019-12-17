@@ -33,35 +33,28 @@ import pt.ua.dicoogle.sdk.p2p.Messages.MessageI;
  *
  * @author Carlos Ferreira
  */
-public class FileResponseHandler implements MessageHandler
-{
+public class FileResponseHandler implements MessageHandler {
 
     private String DirectoryPath;
     private NetworkPluginAdapter NPA;
 
-    public FileResponseHandler(String DirectoryPath, NetworkPluginAdapter NPA)
-    {
+    public FileResponseHandler(String DirectoryPath, NetworkPluginAdapter NPA) {
         this.NPA = NPA;
         this.DirectoryPath = DirectoryPath;
         File directory = new File(this.DirectoryPath);
 
-        //System.out.println(directory.getAbsoluteFile());
-        if (!directory.exists())
-        {
+        // System.out.println(directory.getAbsoluteFile());
+        if (!directory.exists()) {
             directory.mkdir();
-        } else
-        {
-            if (!directory.isDirectory())
-            {
-                //   throw new BadMessage();
+        } else {
+            if (!directory.isDirectory()) {
+                // throw new BadMessage();
             }
         }
     }
 
-    public void handleMessage(MessageI message, String address)
-    {
-        if (!FileMessage.class.isInstance(message))
-        {
+    public void handleMessage(MessageI message, String address) {
+        if (!FileMessage.class.isInstance(message)) {
             return;
         }
         FileMessage fmessage = (FileMessage) message;
@@ -72,10 +65,8 @@ public class FileResponseHandler implements MessageHandler
          */
         String filePath = new String(fmessage.getMessage());
         List<FileObservable> filesRequested = this.NPA.getRequestedFiles();
-        for (FileObservable fo : filesRequested)
-        {
-            if ((fo.getFileOrigin().compareTo(address) == 0) && (fo.getFileName().compareTo(fmessage.getFilename()) == 0))
-            {
+        for (FileObservable fo : filesRequested) {
+            if ((fo.getFileOrigin().compareTo(address) == 0) && (fo.getFileName().compareTo(fmessage.getFilename()) == 0)) {
                 /**
                  * Request the local indexing of the new file
                  */
@@ -87,11 +78,9 @@ public class FileResponseHandler implements MessageHandler
                 /**
                  * TODO: This must be removed when the GUI is able to deal with the new files and show them
                  */
-                try
-                {
+                try {
                     Desktop.getDesktop().open(new File(filePath.replace('\\', '/')));
-                } catch (Exception e)
-                {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 fo.setFilePath(filePath);

@@ -36,38 +36,33 @@ import static pt.ua.dicoogle.server.web.servlets.webui.WebUIServlet.camelize;
  */
 public class TestUsers {
     @BeforeClass
-    public static void setUpClass() {
-    }
+    public static void setUpClass() {}
 
     @AfterClass
-    public static void tearDownClass() {
-    }
+    public static void tearDownClass() {}
 
     @Before
-    public void setUp() {
-    }
+    public void setUp() {}
 
     @After
-    public void tearDown() {
-    }
+    public void tearDown() {}
 
-    //@Test
+    // @Test
     public void testUsers() {
         UsersStruct usersStruct = UsersStruct.getInstance();
 
         String username = "nat";
         boolean admin = false;
         String passPlainText = "123";
-        String passHash = HashService.getSHA1Hash(passPlainText);             //password Hash
+        String passHash = HashService.getSHA1Hash(passPlainText); // password Hash
         String hash = HashService.getSHA1Hash(username + admin + passHash);
         System.out.println(hash);
         System.out.println(passHash);
-        User u = new User("nat",hash, admin);
+        User u = new User("nat", hash, admin);
         usersStruct.addUser(u);
 
 
-        for (String uu : usersStruct.getUsernames())
-        {
+        for (String uu : usersStruct.getUsernames()) {
             System.out.println(usersStruct.getUser(uu));
         }
 
@@ -76,9 +71,7 @@ public class TestUsers {
             LoggedIn loggedIn = auth.login("nat", "123");
             System.out.println(loggedIn.getUserName());
             System.out.println(loggedIn.isAdmin());
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             System.out.println("Error in the test");
         }
 

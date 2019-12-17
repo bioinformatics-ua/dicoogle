@@ -24,7 +24,7 @@ package pt.ua.dicoogle.sdk.utils;
 public class QueryException extends RuntimeException {
     private static final long serialVersionUID = 450205731642750093L;
 
-	public QueryException() {
+    public QueryException() {
         super();
     }
 

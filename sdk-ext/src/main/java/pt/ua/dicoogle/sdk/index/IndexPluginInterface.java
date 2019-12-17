@@ -30,15 +30,17 @@ import pt.ua.dicoogle.sdk.datastructs.SearchResult;
  * 
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public interface IndexPluginInterface extends GenericPluginInterface
-{
-    public  void index(IDoc doc);
+public interface IndexPluginInterface extends GenericPluginInterface {
+    public void index(IDoc doc);
+
     public void index(List<IDoc> docs);
+
     public void optimize();
-    
-    public List<SearchResult> searchSync(String query,  List<String> extrafields);
-    
+
+    public List<SearchResult> searchSync(String query, List<String> extrafields);
+
     public Set<String> enumField(String fieldName, boolean isFloat);
+
     public int countResults(String query);
 
 }

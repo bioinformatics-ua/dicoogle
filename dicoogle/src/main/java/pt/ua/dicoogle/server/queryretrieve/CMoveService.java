@@ -29,35 +29,31 @@ import org.dcm4che2.net.CommandUtils;
 import org.dcm4che2.net.DimseRSP;
 import org.dcm4che2.net.SingleDimseRSP;
 import org.dcm4che2.net.Status;
+
 /**
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class CMoveService extends DicomService implements CMoveSCP
-{
+public class CMoveService extends DicomService implements CMoveSCP {
 
 
     private final Executor executor;
 
-    public CMoveService(String[] sopClasses, Executor executor)
-    {
+    public CMoveService(String[] sopClasses, Executor executor) {
         super(sopClasses);
         this.executor = executor;
     }
 
-    public CMoveService(String sopClass, Executor executor)
-    {
+    public CMoveService(String sopClass, Executor executor) {
         super(sopClass);
         this.executor = executor;
     }
 
-@Override
-    public void cmove(Association as, int pcid, DicomObject rq,
-            DicomObject data) throws DicomServiceException, IOException
-    {
-                //DebugManager.getInstance().debug("just cmove");
+    @Override
+    public void cmove(Association as, int pcid, DicomObject rq, DicomObject data) throws DicomServiceException, IOException {
+        // DebugManager.getInstance().debug("just cmove");
 
-        //DebugManager.getInstance().debug(CommandUtils.toString(rq, pcid, "1.2.2.2.2.2.2.0"));
+        // DebugManager.getInstance().debug(CommandUtils.toString(rq, pcid, "1.2.2.2.2.2.2.0"));
         DicomObject cmdrsp = CommandUtils.mkRSP(rq, CommandUtils.SUCCESS);
         DimseRSP rsp = doCMove(as, pcid, rq, data, cmdrsp);
         try {
@@ -66,19 +62,15 @@ public class CMoveService extends DicomService implements CMoveSCP
             throw new DicomServiceException(rq, Status.ProcessingFailure);
         }
         cmdrsp = rsp.getCommand();
-        if (CommandUtils.isPending(cmdrsp))
-        {
+        if (CommandUtils.isPending(cmdrsp)) {
             as.registerCancelRQHandler(rq, rsp);
-            //executor.execute(new WriteMultiDimseRsp(as, pcid, rsp));
-        }
-        else
-        {
+            // executor.execute(new WriteMultiDimseRsp(as, pcid, rsp));
+        } else {
             as.writeDimseRSP(pcid, cmdrsp, rsp.getDataset());
         }
     }
-    protected DimseRSP doCMove(Association as, int pcid, DicomObject cmd,
-            DicomObject data, DicomObject rsp) throws DicomServiceException
-    {
+
+    protected DimseRSP doCMove(Association as, int pcid, DicomObject cmd, DicomObject data, DicomObject rsp) throws DicomServiceException {
         return new SingleDimseRSP(rsp);
     }
 

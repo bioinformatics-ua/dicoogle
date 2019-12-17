@@ -27,43 +27,36 @@ import java.util.Date;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class CPULoad
-{
+public class CPULoad {
 
 
-    public CPULoad()
-    {
+    public CPULoad() {
 
     }
 
-    public double cpuLoad()
-    {
+    public double cpuLoad() {
 
         ThreadMXBean TMB = ManagementFactory.getThreadMXBean();
         long time = new Date().getTime() * 1000000;
         long cput = 0;
         double cpuperc = -1;
 
-        //Begin loop.
+        // Begin loop.
 
-        if( TMB.isThreadCpuTimeSupported() )
-        {
-                if(new Date().getTime() * 1000000 - time > 1000000000) //Reset once per second
-                {
-                        time = new Date().getTime() * 1000000;
-                        cput = TMB.getCurrentThreadCpuTime();
-                }
-
-                if(!TMB.isThreadCpuTimeEnabled())
-                {
-                        TMB.setThreadCpuTimeEnabled(true);
-                }
-
-                if(new Date().getTime() * 1000000 - time != 0)
-                        cpuperc = (TMB.getCurrentThreadCpuTime() - cput) / (new Date().getTime() * 1000000.0 - time) * 100.0;
+        if (TMB.isThreadCpuTimeSupported()) {
+            if (new Date().getTime() * 1000000 - time > 1000000000) // Reset once per second
+            {
+                time = new Date().getTime() * 1000000;
+                cput = TMB.getCurrentThreadCpuTime();
             }
-        else
-        {
+
+            if (!TMB.isThreadCpuTimeEnabled()) {
+                TMB.setThreadCpuTimeEnabled(true);
+            }
+
+            if (new Date().getTime() * 1000000 - time != 0)
+                cpuperc = (TMB.getCurrentThreadCpuTime() - cput) / (new Date().getTime() * 1000000.0 - time) * 100.0;
+        } else {
             cpuperc = -2;
         }
 
@@ -71,18 +64,12 @@ public class CPULoad
 
     }
 
-    public static double getAvgCpu()
-    {
-        OperatingSystemMXBean osBean=ManagementFactory.getOperatingSystemMXBean();
+    public static double getAvgCpu() {
+        OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
         return osBean.getSystemLoadAverage();
     }
 
 
-
-    
-    
-
-    
 
 }
 

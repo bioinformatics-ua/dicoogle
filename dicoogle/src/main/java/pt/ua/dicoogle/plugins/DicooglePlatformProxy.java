@@ -45,16 +45,17 @@ import pt.ua.dicoogle.sdk.task.Task;
 public class DicooglePlatformProxy implements DicooglePlatformInterface {
 
     private final PluginController pluginController;
-    
-    public DicooglePlatformProxy(PluginController pluginController){
+
+    public DicooglePlatformProxy(PluginController pluginController) {
         this.pluginController = pluginController;
     }
-    
+
     @Override
     public IndexerInterface requestIndexPlugin(String name) {
         Collection<IndexerInterface> indexers = pluginController.getIndexingPlugins(true);
-        for(IndexerInterface index : indexers){
-            if(index.getName().equals(name)) return index;
+        for (IndexerInterface index : indexers) {
+            if (index.getName().equals(name))
+                return index;
         }
         return null;
     }
@@ -62,10 +63,11 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
     @Override
     public QueryInterface requestQueryPlugin(String name) {
         Collection<QueryInterface> queriers = pluginController.getQueryPlugins(true);
-        for(QueryInterface querier : queriers){
-            if(querier.getName().equals(name)) return querier;
+        for (QueryInterface querier : queriers) {
+            if (querier.getName().equals(name))
+                return querier;
         }
-        
+
         return null;
     }
 
@@ -90,41 +92,39 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
     }
 
     @Override
-    public Iterable<StorageInputStream> resolveURI(URI location, Object ...args) {
+    public Iterable<StorageInputStream> resolveURI(URI location, Object... args) {
         return pluginController.resolveURI(location, args);
     }
 
     @Override
-	public Collection<StorageInterface> getStoragePlugins(boolean onlyEnabled) {
-		return pluginController.getStoragePlugins(onlyEnabled);
-	}
+    public Collection<StorageInterface> getStoragePlugins(boolean onlyEnabled) {
+        return pluginController.getStoragePlugins(onlyEnabled);
+    }
 
     @Override
-	public StorageInterface getStorageForSchema(String schema) {
-		return pluginController.getStorageForSchema(schema);
-	}
+    public StorageInterface getStorageForSchema(String schema) {
+        return pluginController.getStorageForSchema(schema);
+    }
 
     @Override
-	public Collection<QueryInterface> getQueryPlugins(boolean onlyEnabled) {
-		return pluginController.getQueryPlugins(onlyEnabled);
-	}
+    public Collection<QueryInterface> getQueryPlugins(boolean onlyEnabled) {
+        return pluginController.getQueryPlugins(onlyEnabled);
+    }
 
     @Override
-	public List<String> getQueryProvidersName(boolean enabled) {
-		return pluginController.getQueryProvidersName(enabled);
-	}
+    public List<String> getQueryProvidersName(boolean enabled) {
+        return pluginController.getQueryProvidersName(enabled);
+    }
 
     @Override
-	public QueryInterface getQueryProviderByName(String name,
-			boolean onlyEnabled) {
-		return pluginController.getQueryProviderByName(name, onlyEnabled);
-	}
+    public QueryInterface getQueryProviderByName(String name, boolean onlyEnabled) {
+        return pluginController.getQueryProviderByName(name, onlyEnabled);
+    }
 
     @Override
-	public JointQueryTask queryAll(JointQueryTask holder, String query,
-			Object... parameters) {
-		return pluginController.queryAll(holder, query, DimLevel.INSTANCE, parameters);
-	}
+    public JointQueryTask queryAll(JointQueryTask holder, String query, Object... parameters) {
+        return pluginController.queryAll(holder, query, DimLevel.INSTANCE, parameters);
+    }
 
     @Override
     public JointQueryTask queryAll(JointQueryTask holder, String query, DimLevel level, Object... parameters) {
@@ -132,10 +132,9 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
     }
 
     @Override
-	public Task<Iterable<SearchResult>> query(String querySource, String query,
-			Object... parameters) {
-		return pluginController.query(querySource, query, DimLevel.INSTANCE, parameters);
-	}
+    public Task<Iterable<SearchResult>> query(String querySource, String query, Object... parameters) {
+        return pluginController.query(querySource, query, DimLevel.INSTANCE, parameters);
+    }
 
     @Override
     public Task<Iterable<SearchResult>> query(String querySource, DimLevel level, String query, Object... parameters) {
@@ -143,10 +142,9 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
     }
 
     @Override
-	public JointQueryTask query(JointQueryTask holder,
-			List<String> querySources, String query, Object... parameters) {
-		return pluginController.query(holder, querySources, query, DimLevel.INSTANCE, parameters);
-	}
+    public JointQueryTask query(JointQueryTask holder, List<String> querySources, String query, Object... parameters) {
+        return pluginController.query(holder, querySources, query, DimLevel.INSTANCE, parameters);
+    }
 
     @Override
     public JointQueryTask query(JointQueryTask holder, List<String> querySources, DimLevel level, String query, Object... parameters) {
@@ -154,18 +152,18 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
     }
 
     @Override
-	public List<Task<Report>> index(URI path) {
-		return pluginController.index(path);
-	}
+    public List<Task<Report>> index(URI path) {
+        return pluginController.index(path);
+    }
 
     @Override
-	public List<Report> indexBlocking(URI path) {
-		return pluginController.indexBlocking(path);
-	}
+    public List<Report> indexBlocking(URI path) {
+        return pluginController.indexBlocking(path);
+    }
 
     @Override
     public ServerSettingsReader getSettings() {
         return ServerSettingsManager.getSettings();
     }
-    
+
 }

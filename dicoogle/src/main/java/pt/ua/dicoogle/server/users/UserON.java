@@ -35,9 +35,9 @@ public class UserON implements Serializable {
 
     private Date loginTime;
 
-    //private User userfer;
+    // private User userfer;
 
-    public UserON(int userID, String username, String host){
+    public UserON(int userID, String username, String host) {
         this.userID = userID;
         this.username = username;
         this.host = host;
@@ -66,7 +66,7 @@ public class UserON implements Serializable {
         return host;
     }
 
-    public Date getLoginTime(){
+    public Date getLoginTime() {
         return loginTime;
     }
 
@@ -91,7 +91,7 @@ public class UserON implements Serializable {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         Calendar cal = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
         cal.setTime(loginTime);
@@ -108,7 +108,7 @@ public class UserON implements Serializable {
         diff = diff % (60 * 1000);
         long diffSeconds = diff / 1000;
 
-        return host + " - " + username + ", Login Time: " + diffHours + ":" + diffMinutes + ":" + diffSeconds ;
+        return host + " - " + username + ", Login Time: " + diffHours + ":" + diffMinutes + ":" + diffSeconds;
     }
-    
+
 }

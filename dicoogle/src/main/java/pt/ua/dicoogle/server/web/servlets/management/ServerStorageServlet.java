@@ -34,36 +34,34 @@ import pt.ua.dicoogle.server.web.utils.ResponseUtil;
  * 
  * @author Frederico Silva <fredericosilva@ua.pt>
  */
-public class ServerStorageServlet extends HttpServlet{
+public class ServerStorageServlet extends HttpServlet {
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
-		resp.getWriter().write(JSONSerializer.toJSON(ServerSettingsManager.getSettings().getDicomServicesSettings().getMoveDestinations()).toString());
-	}
+        resp.getWriter().write(JSONSerializer.toJSON(ServerSettingsManager.getSettings().getDicomServicesSettings().getMoveDestinations()).toString());
+    }
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		
-		String type = req.getParameter("type");
-		String ip = req.getParameter("ip");
-		String aetitle = req.getParameter("aetitle");
-		String port = req.getParameter("port");
-		int _port= Integer.parseInt(port);
-		
-		switch(type){
-		case "add":
-			ServerSettingsManager.getSettings().getDicomServicesSettings().addMoveDestination(new MoveDestination(aetitle, ip, _port));
-			ResponseUtil.simpleResponse(resp, "added", true);
-			break;
-		case "remove":
-			ResponseUtil.simpleResponse(resp, "removed", ServerSettingsManager.getSettings().getDicomServicesSettings().removeMoveDestination(aetitle));
-			break;
-		}
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-		ServerSettingsManager.saveSettings();
-	}
+        String type = req.getParameter("type");
+        String ip = req.getParameter("ip");
+        String aetitle = req.getParameter("aetitle");
+        String port = req.getParameter("port");
+        int _port = Integer.parseInt(port);
+
+        switch (type) {
+            case "add":
+                ServerSettingsManager.getSettings().getDicomServicesSettings().addMoveDestination(new MoveDestination(aetitle, ip, _port));
+                ResponseUtil.simpleResponse(resp, "added", true);
+                break;
+            case "remove":
+                ResponseUtil.simpleResponse(resp, "removed", ServerSettingsManager.getSettings().getDicomServicesSettings().removeMoveDestination(aetitle));
+                break;
+        }
+
+        ServerSettingsManager.saveSettings();
+    }
 
 }

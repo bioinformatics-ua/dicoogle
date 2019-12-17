@@ -27,13 +27,13 @@ import java.util.Hashtable;
  *
  * @author Luís A. Bastião Silva <bastiao@bmd-software.com>
  */
-public class Study implements StudyInterface{
+public class Study implements StudyInterface {
 
     private Patient parent;
-    private String StudyInstanceUID ;
+    private String StudyInstanceUID;
     private String StudyID;
-    private String StudyData ;
-    private String StudyTime ;
+    private String StudyData;
+    private String StudyTime;
     private String AccessionNumber;
     private String StudyDescription;
     private String InstitutuionName;
@@ -46,14 +46,13 @@ public class Study implements StudyInterface{
     private String patientName;
 
 
-    private ArrayList<Series> series = new ArrayList<Series>() ;
+    private ArrayList<Series> series = new ArrayList<Series>();
     private Hashtable<String, Series> seriesHash = new Hashtable<String, Series>();
 
-    public Study(Patient patient, String StudyInstanceUID, String StudyDate)
-    {
+    public Study(Patient patient, String StudyInstanceUID, String StudyDate) {
         this.parent = patient;
-        this.StudyInstanceUID = StudyInstanceUID ;
-        this.StudyData = StudyDate ;
+        this.StudyInstanceUID = StudyInstanceUID;
+        this.StudyData = StudyDate;
 
     }
 
@@ -97,22 +96,20 @@ public class Study implements StudyInterface{
 
 
 
-    public void addSerie(Series s){
-        if (this.seriesHash.containsKey(s.getSeriesInstanceUID())){
+    public void addSerie(Series s) {
+        if (this.seriesHash.containsKey(s.getSeriesInstanceUID())) {
 
             Series existSeries = this.seriesHash.get(s.getSeriesInstanceUID());
             ArrayList<URI> img = s.getImageList();
             ArrayList<String> uid = s.getSOPInstanceUIDList();
 
             int size = img.size();
-            for (int i=0;i<size;i++){
-                existSeries.addImage(img.get(i),uid.get(i));
+            for (int i = 0; i < size; i++) {
+                existSeries.addImage(img.get(i), uid.get(i));
             }
-        }
-        else
-        {
+        } else {
             this.series.add(s);
-            this.seriesHash.put(s.getSeriesInstanceUID(), s) ;
+            this.seriesHash.put(s.getSeriesInstanceUID(), s);
         }
 
     }

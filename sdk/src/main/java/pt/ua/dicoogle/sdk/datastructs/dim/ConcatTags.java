@@ -36,10 +36,9 @@ import java.util.Scanner;
  *
  * @author bastiao
  */
-public class ConcatTags
-{
+public class ConcatTags {
 
-    public static final String FILENAME=  "concatTags.conf";
+    public static final String FILENAME = "concatTags.conf";
     private static final Logger logger = LoggerFactory.getLogger(ConcatTags.class);
 
 
@@ -57,8 +56,7 @@ public class ConcatTags
         this.rules = rules;
     }
 
-    public class Rule
-    {
+    public class Rule {
 
         private String modality;
         private String tagToReplace;
@@ -96,26 +94,23 @@ public class ConcatTags
     private List<Rule> rules = new ArrayList<Rule>();
 
 
-    public void parseConfig(String file) throws FileNotFoundException
-    {
+    public void parseConfig(String file) throws FileNotFoundException {
 
-        //StringBuilder text = new StringBuilder();
-        //String NL = System.getProperty("line.separator");
+        // StringBuilder text = new StringBuilder();
+        // String NL = System.getProperty("line.separator");
         Scanner scanner = new Scanner(new FileInputStream(file));
         try {
-            while (scanner.hasNextLine()){
+            while (scanner.hasNextLine()) {
                 String text = scanner.nextLine();
                 logger.info("Rule for: " + text);
                 Rule r = parseLine(text);
                 logger.info("Rule for: " + r.getModality());
-                if (r!=null)
-                {
+                if (r != null) {
                     this.rules.add(r);
                     logger.info("Rule added: " + r.getModality());
                 }
             }
-        }
-        finally{
+        } finally {
             scanner.close();
         }
 
@@ -123,14 +118,13 @@ public class ConcatTags
 
     // Sample: CR;StudyDescription;EMPTY;AquisitionDeviceProcessionDescription;StudyDescription==staff
 
-    public Rule parseLine(String line)
-    {
+    public Rule parseLine(String line) {
         logger.info("Rule parse for: " + line);
-        if (line==null || line.equals(""))
+        if (line == null || line.equals(""))
             return null;
 
         Rule r = new Rule();
-        String [] tmp = line.split(";");
+        String[] tmp = line.split(";");
         String modality = tmp[0];
         String tag = tmp[3];
         r.setModality(modality);

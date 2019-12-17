@@ -37,32 +37,29 @@ import pt.ua.dicoogle.server.web.utils.ResponseUtil.Pair;
  * 
  * @author Frederico Silva <fredericosilva@ua.pt>
  */
-public class AETitleServlet extends HttpServlet{
+public class AETitleServlet extends HttpServlet {
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		List<Pair> mpairs = new ArrayList<>();
-		mpairs.add(new ResponseUtil.Pair("aetitle", ServerSettingsManager.getSettings().getDicomServicesSettings().getAETitle()));
-		
-		ResponseUtil.objectResponse(resp, mpairs);
-	}
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        List<Pair> mpairs = new ArrayList<>();
+        mpairs.add(new ResponseUtil.Pair("aetitle", ServerSettingsManager.getSettings().getDicomServicesSettings().getAETitle()));
 
-	@Override
-	protected void doPut(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		String aetitle = req.getParameter("aetitle");
-		
-		if(StringUtils.isEmpty(aetitle))
-		{
-			resp.sendError(402, "aetitle param not found");
-			return;
-		}
-		
-		ServerSettingsManager.getSettings().getDicomServicesSettings().setAETitle(aetitle);
-		
-		ResponseUtil.simpleResponse(resp, "success", true);
-		
-	}
+        ResponseUtil.objectResponse(resp, mpairs);
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String aetitle = req.getParameter("aetitle");
+
+        if (StringUtils.isEmpty(aetitle)) {
+            resp.sendError(402, "aetitle param not found");
+            return;
+        }
+
+        ServerSettingsManager.getSettings().getDicomServicesSettings().setAETitle(aetitle);
+
+        ResponseUtil.simpleResponse(resp, "success", true);
+
+    }
 
 }

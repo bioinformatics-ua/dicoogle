@@ -28,15 +28,13 @@ import java.net.URL;
  * Created by bastiao on 23/09/15.
  */
 public class Version {
-    
-    public Version()
-    {
-        
-        
+
+    public Version() {
+
+
     }
-    
-    public String getVersion()
-    {
+
+    public String getVersion() {
         String version = "dev";
         URL url = Resources.getResource("version.txt");
         try {

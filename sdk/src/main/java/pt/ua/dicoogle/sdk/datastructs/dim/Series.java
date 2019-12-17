@@ -26,15 +26,14 @@ import java.util.ArrayList;
  *
  * @author Luís A. Bastião Silva <bastiao@bmd-software.com>
  */
-public class Series implements SeriesInterface
-{
+public class Series implements SeriesInterface {
 
     private Study parent;
-    private String SeriesInstanceUID ;
+    private String SeriesInstanceUID;
     private String SeriesDescription;
 
-    private int SeriesNumber ;
-    private String Modality ;
+    private int SeriesNumber;
+    private String Modality;
     private String SeriesDate = "";
     private String ProtocolName = "";
 
@@ -51,34 +50,32 @@ public class Series implements SeriesInterface
     private String ViewPosition = "";
     private String ImageLaterality = "";
     private String AcquisitionDeviceProcessingDescription = "";
-    
-    
+
+
     private ArrayList<URI> imageList = new ArrayList<>();
     private ArrayList<String> UIDList = new ArrayList<>();
 
-    public Series(Study study, String SeriesInstanceUID, String modality)
-    {
+    public Series(Study study, String SeriesInstanceUID, String modality) {
         this.parent = study;
         this.Modality = modality;
-        this.SeriesInstanceUID = SeriesInstanceUID ;
-        
+        this.SeriesInstanceUID = SeriesInstanceUID;
+
     }
 
-    public Series(Study study, String SeriesInstanceUID, int SeriesNumber)
-    {
+    public Series(Study study, String SeriesInstanceUID, int SeriesNumber) {
         this.parent = study;
-        this.SeriesInstanceUID = SeriesInstanceUID ;
-        this.SeriesNumber = SeriesNumber ;
-        
+        this.SeriesInstanceUID = SeriesInstanceUID;
+        this.SeriesNumber = SeriesNumber;
+
     }
 
 
-    public void addImage(URI ImagePath, String sopUid){
+    public void addImage(URI ImagePath, String sopUid) {
         this.imageList.add(ImagePath);
         this.UIDList.add(sopUid);
     }
 
-    public void removeImage(URI imagePath){
+    public void removeImage(URI imagePath) {
         this.imageList.remove(imagePath);
     }
 
@@ -86,7 +83,7 @@ public class Series implements SeriesInterface
     /**
      * @return the SerieInstanceUID
      */
-    public String getSeriesInstanceUID(){
+    public String getSeriesInstanceUID() {
         return SeriesInstanceUID;
     }
 
@@ -118,7 +115,7 @@ public class Series implements SeriesInterface
         return imageList;
     }
 
-    public ArrayList<String> getSOPInstanceUIDList(){
+    public ArrayList<String> getSOPInstanceUIDList() {
         return UIDList;
     }
 
@@ -357,18 +354,17 @@ public class Series implements SeriesInterface
     public void setAcquisitionDeviceProcessingDescription(String AcquisitionDeviceProcessingDescription) {
         this.AcquisitionDeviceProcessingDescription = AcquisitionDeviceProcessingDescription;
     }
-    
-    public String toString()
-    {
-    
-        
+
+    public String toString() {
+
+
         String result = "";
         result += "SeriesInstanceUID:" + SeriesInstanceUID + "\n";
         result += "SeriesDescription:" + SeriesDescription + "\n";
         result += "SeriesNumber:" + SeriesNumber + "\n";
         result += "Modality:" + Modality + "\n";
         return result;
-        
+
     }
 
 

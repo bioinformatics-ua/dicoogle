@@ -26,61 +26,58 @@ import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
 
 public class FirstResponserQueryHolder extends JointQueryTask {
-	
-	private Iterable<SearchResult> result;
 
-	@Override
-	public void onReceive(Task<Iterable<SearchResult>> e) {
-		try {
-			synchronized (this) {
-				if(result == null){
-					result = e.get();
-					stopAllTaks();
-				}
-			}
+    private Iterable<SearchResult> result;
 
-			notifyAll();
-			
-		} catch (InterruptedException | ExecutionException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-	}
+    @Override
+    public void onReceive(Task<Iterable<SearchResult>> e) {
+        try {
+            synchronized (this) {
+                if (result == null) {
+                    result = e.get();
+                    stopAllTaks();
+                }
+            }
 
-	public FirstResponserQueryHolder(CountDownLatch latch) {
-		super();
-	}
+            notifyAll();
 
-	private void stopAllTaks() {
-		this.cancel(true);
-	}
+        } catch (InterruptedException | ExecutionException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+    }
 
-	@Override
-	public void onCompletion() {
-		// TODO: MAY BE BUGGED
-		notifyAll();
-	}
-	
-	public Iterable<SearchResult> getResult() {
-		synchronized (this) {
-			while( !(this.isCancelled() || this.isDone())){
-				if(result != null)
-					return result;
-				
-				try {
-					wait();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-		return null;
-	}
+    public FirstResponserQueryHolder(CountDownLatch latch) {
+        super();
+    }
+
+    private void stopAllTaks() {
+        this.cancel(true);
+    }
+
+    @Override
+    public void onCompletion() {
+        // TODO: MAY BE BUGGED
+        notifyAll();
+    }
+
+    public Iterable<SearchResult> getResult() {
+        synchronized (this) {
+            while (!(this.isCancelled() || this.isDone())) {
+                if (result != null)
+                    return result;
+
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
 
 
-	
-	
 
-	
 }

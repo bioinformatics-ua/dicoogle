@@ -47,56 +47,44 @@ import java.net.UnknownHostException;
  * @author Samuel Campos <samuelcampos@ua.pt>
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
-public class Main
-{
+public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     /**
      * Starts the graphical user interface for Dicoogle
      * @param args the command line arguments
      */
-    public static void main(String[] args)
-    {
-    	//System.setProperty("log4j.configurationFile", "log4j-2.xml");
-        //PropertyConfigurator.configure("log4j.properties");
-        if (Platform.getMode() == Platform.MODE.BUNDLE)
-        {
+    public static void main(String[] args) {
+        // System.setProperty("log4j.configurationFile", "log4j-2.xml");
+        // PropertyConfigurator.configure("log4j.properties");
+        if (Platform.getMode() == Platform.MODE.BUNDLE) {
             File homeDir = new File(Platform.homePath());
-            if (!homeDir.exists())
-            {
+            if (!homeDir.exists()) {
                 homeDir.mkdir();
             }
         }
 
-        if (args.length == 0)
-        {
+        if (args.length == 0) {
             LaunchDicoogle();
             LaunchWebApplication();
         } else {
 
-            if (args[0].equals("-v"))
-            {
+            if (args[0].equals("-v")) {
                 LaunchDicoogle();
                 LaunchWebApplication();
             }
-            if (args[0].equals("-s"))
-            {
+            if (args[0].equals("-s")) {
                 LaunchDicoogle();
-            }
-            else if (args[0].equals("-w") || args[0].equals("--web") || args[0].equals("--webapp")) {
+            } else if (args[0].equals("-w") || args[0].equals("--web") || args[0].equals("--webapp")) {
                 // open browser
                 LaunchDicoogle();
                 LaunchWebApplication();
-            }
-            else if (args[0].equals("-h") || args[0].equals("--h") || args[0].equals("-help") || args[0].equals("--help"))
-            {
+            } else if (args[0].equals("-h") || args[0].equals("--h") || args[0].equals("-help") || args[0].equals("--help")) {
                 System.out.println("Dicoogle PACS");
                 System.out.println();
                 System.out.println(" -s : Start the server");
                 System.out.println(" -w : Start the server and load web application in default browser (default)");
-            }
-            else
-            {
+            } else {
                 System.out.println("Wrong arguments!");
                 System.out.println();
                 System.out.println("Dicoogle PACS");
@@ -107,11 +95,10 @@ public class Main
         /** Register System Exceptions Hook */
         ExceptionHandler.registerExceptionHandler();
     }
-    
+
     private static boolean LaunchWebApplication() {
         if (!Desktop.isDesktopSupported() || !Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-            logger.warn("Desktop browsing is not supported in this machine! "
-                    + "Request to open web application ignored.");
+            logger.warn("Desktop browsing is not supported in this machine! " + "Request to open web application ignored.");
             return false;
         } else {
             try {
@@ -126,8 +113,7 @@ public class Main
         }
     }
 
-    private static void LaunchDicoogle()
-    {
+    private static void LaunchDicoogle() {
         logger.debug("Starting Dicoogle");
         logger.debug("Loading configuration file: {}", Platform.homePath());
 
@@ -143,7 +129,7 @@ public class Main
         try {
             TagsStruct _tags = new TagsXML().getXML();
 
-            //load DICOM Services Log
+            // load DICOM Services Log
             LogDICOM ll = new LogXML().getXML();
 
         } catch (SAXException | IOException ex) {
@@ -151,25 +137,19 @@ public class Main
         }
 
         /** Verify if it have a defined node */
-        if (settings.getArchiveSettings().getNodeName() == null)
-        {
+        if (settings.getArchiveSettings().getNodeName() == null) {
             String hostname = "Dicoogle";
 
-            try
-            {
+            try {
                 InetAddress addr = InetAddress.getLocalHost();
 
                 // Get hostname
                 hostname = addr.getHostName();
-            } catch (UnknownHostException e) {
-            }
+            } catch (UnknownHostException e) {}
 
             if (Desktop.isDesktopSupported()) {
-                String response = (String) JOptionPane.showInputDialog(null,
-                        "What is the name of the machine?",
-                        "Enter Node name",
-                        JOptionPane.QUESTION_MESSAGE, null, null,
-                        hostname);
+                String response = (String) JOptionPane.showInputDialog(null, "What is the name of the machine?", "Enter Node name",
+                        JOptionPane.QUESTION_MESSAGE, null, null, hostname);
 
                 settings.getArchiveSettings().setNodeName(response);
             }
@@ -178,9 +158,9 @@ public class Main
             ServerSettingsManager.saveSettings();
         }
 
-        TransferSyntax.add(new TransferSyntax("1.2.826.0.1.3680043.2.682.1.40", false,false, false, true));
-        TransferSyntax.add(new TransferSyntax("1.2.840.10008.1.2.4.70", true,false, false, true));
-        TransferSyntax.add(new TransferSyntax("1.2.840.10008.1.2.5.50", false,false, false, true));    
+        TransferSyntax.add(new TransferSyntax("1.2.826.0.1.3680043.2.682.1.40", false, false, false, true));
+        TransferSyntax.add(new TransferSyntax("1.2.840.10008.1.2.4.70", true, false, false, true));
+        TransferSyntax.add(new TransferSyntax("1.2.840.10008.1.2.5.50", false, false, false, true));
 
         PluginController.getInstance();
 
@@ -195,8 +175,7 @@ public class Main
         }
     }
 
-    private static void LaunchGUIClient()
-    {
+    private static void LaunchGUIClient() {
         logger.error("Remote GUI is no longer supported: please enter the Dicoogle web application");
         System.exit(-1);
     }

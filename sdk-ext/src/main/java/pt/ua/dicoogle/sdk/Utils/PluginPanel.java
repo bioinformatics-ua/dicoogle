@@ -26,9 +26,10 @@ import net.xeoh.plugins.base.Plugin;
  *
  * @author Carlos Ferreira
  */
-public interface PluginPanel extends Plugin
-{
+public interface PluginPanel extends Plugin {
     public void initialize(ArrayList<Object> params);
+
     public ArrayList<Object> getProperties();
+
     public String getPluginName();
 }

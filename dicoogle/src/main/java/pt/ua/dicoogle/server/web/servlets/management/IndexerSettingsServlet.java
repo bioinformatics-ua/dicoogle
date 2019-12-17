@@ -40,8 +40,9 @@ public class IndexerSettingsServlet extends HttpServlet {
 
     public enum SettingsType {
 
-        all,path, zip, effort, thumbnail,thumbnailSize, watcher;
+        all, path, zip, effort, thumbnail, thumbnailSize, watcher;
     }
+
     private final SettingsType type;
 
     public IndexerSettingsServlet(SettingsType type) {
@@ -50,27 +51,25 @@ public class IndexerSettingsServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    	
-    	String param = null;
-    	String path = null;
-    	boolean watcher=false, saveT = false;
-    	int ieffort = 0;
-    	int thumbnailSize = -1;
-    	if(type != SettingsType.all)
-    	{
-    		param = req.getParameter(type.toString());
-    	
-    		if (StringUtils.isEmpty(param)) {
+
+        String param = null;
+        String path = null;
+        boolean watcher = false, saveT = false;
+        int ieffort = 0;
+        int thumbnailSize = -1;
+        if (type != SettingsType.all) {
+            param = req.getParameter(type.toString());
+
+            if (StringUtils.isEmpty(param)) {
                 resp.sendError(400, "Invalid " + type.toString());
             }
-    	}
-    	else{
-    		path = req.getParameter("path");
-    		watcher = Boolean.parseBoolean(req.getParameter("watcher"));
-    		saveT = Boolean.parseBoolean(req.getParameter("saveThumbnail"));
-    		ieffort = Integer.parseInt(req.getParameter("effort"));
-    		thumbnailSize = Integer.parseInt(req.getParameter("thumbnailSize"));
-    	}
+        } else {
+            path = req.getParameter("path");
+            watcher = Boolean.parseBoolean(req.getParameter("watcher"));
+            saveT = Boolean.parseBoolean(req.getParameter("saveThumbnail"));
+            ieffort = Integer.parseInt(req.getParameter("effort"));
+            thumbnailSize = Integer.parseInt(req.getParameter("thumbnailSize"));
+        }
 
         switch (type) {
             case path:
@@ -81,35 +80,35 @@ public class IndexerSettingsServlet extends HttpServlet {
                 resp.getWriter().append("indexZipFiles is no longer supported");
                 break;
             case effort:
-                //TODO: CHECK ACCPTABLE RANGE
+                // TODO: CHECK ACCPTABLE RANGE
                 int effort = Integer.parseInt(param);
                 ServerSettingsManager.getSettings().getArchiveSettings().setIndexerEffort(effort);
                 resp.getWriter().append("index effort set to: " + effort);
                 break;
             case thumbnail:
-            	boolean saveThumbanail = Boolean.parseBoolean(param);
-            	ServerSettingsManager.getSettings().getArchiveSettings().setSaveThumbnails(saveThumbanail);
-            	break;
+                boolean saveThumbanail = Boolean.parseBoolean(param);
+                ServerSettingsManager.getSettings().getArchiveSettings().setSaveThumbnails(saveThumbanail);
+                break;
             case thumbnailSize:
-            	//TODO: Should be a int
-            	//int thumbSize = Integer.parseInt(param);
-            	ServerSettingsManager.getSettings().getArchiveSettings().setThumbnailSize(Integer.parseInt(param));
-            	break;
+                // TODO: Should be a int
+                // int thumbSize = Integer.parseInt(param);
+                ServerSettingsManager.getSettings().getArchiveSettings().setThumbnailSize(Integer.parseInt(param));
+                break;
             case watcher:
-            	ServerSettingsManager.getSettings().getArchiveSettings().setDirectoryWatcherEnabled(Boolean.parseBoolean(param));
-            	break;
+                ServerSettingsManager.getSettings().getArchiveSettings().setDirectoryWatcherEnabled(Boolean.parseBoolean(param));
+                break;
             case all:
-            	 ServerSettingsManager.getSettings().getArchiveSettings().setWatchDirectory(path);
-                 if (ieffort > 0 && ieffort <= 100) {
-                     ServerSettingsManager.getSettings().getArchiveSettings().setIndexerEffort(ieffort);
-                 }
-            	 ServerSettingsManager.getSettings().getArchiveSettings().setSaveThumbnails(saveT);
-                 if (thumbnailSize > 0) {
-                     ServerSettingsManager.getSettings().getArchiveSettings().setThumbnailSize(thumbnailSize);
-                 }
-            	 ServerSettingsManager.getSettings().getArchiveSettings().setDirectoryWatcherEnabled(watcher);
-            	break;
-            	
+                ServerSettingsManager.getSettings().getArchiveSettings().setWatchDirectory(path);
+                if (ieffort > 0 && ieffort <= 100) {
+                    ServerSettingsManager.getSettings().getArchiveSettings().setIndexerEffort(ieffort);
+                }
+                ServerSettingsManager.getSettings().getArchiveSettings().setSaveThumbnails(saveT);
+                if (thumbnailSize > 0) {
+                    ServerSettingsManager.getSettings().getArchiveSettings().setThumbnailSize(thumbnailSize);
+                }
+                ServerSettingsManager.getSettings().getArchiveSettings().setDirectoryWatcherEnabled(watcher);
+                break;
+
         }
         ServerSettingsManager.saveSettings();
     }
@@ -129,25 +128,25 @@ public class IndexerSettingsServlet extends HttpServlet {
                 result = String.valueOf(ServerSettingsManager.getSettings().getArchiveSettings().getIndexerEffort());
                 break;
             case thumbnail:
-            	result = String.valueOf(ServerSettingsManager.getSettings().getArchiveSettings().getSaveThumbnails());
-            	break;
+                result = String.valueOf(ServerSettingsManager.getSettings().getArchiveSettings().getSaveThumbnails());
+                break;
             case thumbnailSize:
-            	result = String.valueOf(ServerSettingsManager.getSettings().getArchiveSettings().getThumbnailSize());
-            	break;
+                result = String.valueOf(ServerSettingsManager.getSettings().getArchiveSettings().getThumbnailSize());
+                break;
             case watcher:
-            	result = String.valueOf(ServerSettingsManager.getSettings().getArchiveSettings().isDirectoryWatcherEnabled());
-            	break;
+                result = String.valueOf(ServerSettingsManager.getSettings().getArchiveSettings().isDirectoryWatcherEnabled());
+                break;
             case all:
-            	JSONObject allresponse = new JSONObject();
-            	allresponse.put("path", ServerSettingsManager.getSettings().getArchiveSettings().getMainDirectory());
-            	allresponse.put("zip", "false"); // ServerSettingsManager.getSettings().isGzipStorage());
-            	allresponse.put("effort", String.valueOf(ServerSettingsManager.getSettings().getArchiveSettings().getIndexerEffort()));
-            	allresponse.put("thumbnail", ServerSettingsManager.getSettings().getArchiveSettings().getSaveThumbnails());
-            	allresponse.put("thumbnailSize", String.valueOf(ServerSettingsManager.getSettings().getArchiveSettings().getThumbnailSize()));
-            	allresponse.put("watcher", ServerSettingsManager.getSettings().getArchiveSettings().isDirectoryWatcherEnabled());
-            	
-            	resp.getWriter().write(allresponse.toString());
-            	break;
+                JSONObject allresponse = new JSONObject();
+                allresponse.put("path", ServerSettingsManager.getSettings().getArchiveSettings().getMainDirectory());
+                allresponse.put("zip", "false"); // ServerSettingsManager.getSettings().isGzipStorage());
+                allresponse.put("effort", String.valueOf(ServerSettingsManager.getSettings().getArchiveSettings().getIndexerEffort()));
+                allresponse.put("thumbnail", ServerSettingsManager.getSettings().getArchiveSettings().getSaveThumbnails());
+                allresponse.put("thumbnailSize", String.valueOf(ServerSettingsManager.getSettings().getArchiveSettings().getThumbnailSize()));
+                allresponse.put("watcher", ServerSettingsManager.getSettings().getArchiveSettings().isDirectoryWatcherEnabled());
+
+                resp.getWriter().write(allresponse.toString());
+                break;
         }
 
         resp.setContentType("application/json");

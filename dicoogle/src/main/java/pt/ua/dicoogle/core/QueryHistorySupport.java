@@ -36,28 +36,27 @@ import pt.ua.dicoogle.sdk.Utils.Platform;
  */
 public class QueryHistorySupport extends Observable {
 
-    //consider replacing this data type "ArrayList<SimpleEntry<String, Boolean>>"
+    // consider replacing this data type "ArrayList<SimpleEntry<String, Boolean>>"
     private ArrayList<QueryHistoryEntry<String, Boolean>> queryHistory;
 
     private static String fileName = Platform.homePath() + "QueryHistory.ser";
 
     private static QueryHistorySupport instance = null;
 
-    public static synchronized QueryHistorySupport getInstance()
-    {
+    public static synchronized QueryHistorySupport getInstance() {
         if (instance == null) {
             instance = new QueryHistorySupport();
         }
         return instance;
     }
 
-    private QueryHistorySupport(){
-        if(!loadQueryHistory())
+    private QueryHistorySupport() {
+        if (!loadQueryHistory())
             queryHistory = new ArrayList<QueryHistoryEntry<String, Boolean>>();
 
     }
 
-    private boolean loadQueryHistory(){
+    private boolean loadQueryHistory() {
         try {
             ObjectInput in = new ObjectInputStream(new FileInputStream(fileName));
             queryHistory = (ArrayList<QueryHistoryEntry<String, Boolean>>) in.readObject();
@@ -69,11 +68,11 @@ public class QueryHistorySupport extends Observable {
         }
     }
 
-    public Iterator<QueryHistoryEntry<String, Boolean>> getQueryHistory(){
+    public Iterator<QueryHistoryEntry<String, Boolean>> getQueryHistory() {
         return queryHistory.iterator();
     }
 
-    public boolean saveQueryHistory(){
+    public boolean saveQueryHistory() {
         try {
             ObjectOutput out = new ObjectOutputStream(new FileOutputStream(fileName));
             out.writeObject(queryHistory);
@@ -85,26 +84,26 @@ public class QueryHistorySupport extends Observable {
         }
     }
 
-    public void addQuery(String query, boolean keywords){
+    public void addQuery(String query, boolean keywords) {
         QueryHistoryEntry<String, Boolean> entry = new QueryHistoryEntry<String, Boolean>(query, keywords);
 
-        if(!queryHistory.contains(entry))
+        if (!queryHistory.contains(entry))
             queryHistory.add(entry);
-        
+
         setChanged();
         notifyObservers();
     }
 
-    public boolean deleteQuery(QueryHistoryEntry<String, Boolean> entry){
+    public boolean deleteQuery(QueryHistoryEntry<String, Boolean> entry) {
         boolean result = queryHistory.remove(entry);
-        
+
         setChanged();
         notifyObservers();
 
         return result;
     }
 
-    public void deleteAll(){
+    public void deleteAll() {
         queryHistory.clear();
 
         setChanged();

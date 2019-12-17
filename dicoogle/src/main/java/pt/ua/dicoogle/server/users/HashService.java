@@ -47,7 +47,7 @@ public class HashService {
             String hash = new String(asbase64, Charset.forName("UTF-8"));
             return hash;
 
-        } catch (UnsupportedEncodingException|NoSuchAlgorithmException ex) {
+        } catch (UnsupportedEncodingException | NoSuchAlgorithmException ex) {
             LoggerFactory.getLogger(HashService.class).error("Failed to encode text", ex);
         }
 

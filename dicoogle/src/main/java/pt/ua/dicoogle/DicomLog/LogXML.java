@@ -44,10 +44,9 @@ import org.xml.sax.XMLReader;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class LogXML extends DefaultHandler
-{
+public class LogXML extends DefaultHandler {
 
-    //private final String filename = Platform.homePath() + "DICOM_Services_Log.xml";
+    // private final String filename = Platform.homePath() + "DICOM_Services_Log.xml";
     private final String filename = "./DICOM_Services_Log.xml";
 
     private LogDICOM logs = null;
@@ -58,22 +57,17 @@ public class LogXML extends DefaultHandler
     private String add = "";
     private String params = "";
 
-    public LogXML()
-    {
+    public LogXML() {
         logs = LogDICOM.getInstance();
 
     }
 
     @Override
-    public void startElement(String uri, String localName, String qName,
-            Attributes attr)
-    {
-        if (localName.equals("log"))
-        {
+    public void startElement(String uri, String localName, String qName, Attributes attr) {
+        if (localName.equals("log")) {
             this.logOn = true;
-        } else if (this.logOn && !localName.equals(""))
-        {
-            //...
+        } else if (this.logOn && !localName.equals("")) {
+            // ...
             this.type = localName;
             this.ae = this.resolveAttrib("ae", attr, localName);
             this.date = this.resolveAttrib("date", attr, localName);
@@ -82,67 +76,51 @@ public class LogXML extends DefaultHandler
     }
 
     @Override
-    public void endElement(String uri, String localName, String qName)
-    {
+    public void endElement(String uri, String localName, String qName) {
 
-        if (localName.equals("log"))
-        {
+        if (localName.equals("log")) {
             this.logOn = false;
-        } else if (!localName.equals(""))
-        {
+        } else if (!localName.equals("")) {
             logs.addLine(new LogLine(type, date, ae, add, params));
         }
     }
 
-    private String resolveAttrib(String attr, Attributes attribs, String defaultValue)
-    {
+    private String resolveAttrib(String attr, Attributes attribs, String defaultValue) {
         String tmp = attribs.getValue(attr);
         return (tmp != null) ? (tmp) : (defaultValue);
     }
 
-    public LogDICOM getXML()
-    {
-        try
-        {
+    public LogDICOM getXML() {
+        try {
             File file = new File(filename);
-            if (!file.exists())
-            {
+            if (!file.exists()) {
 
                 return logs;
             }
 
             InputSource src = new InputSource(new FileInputStream(file));
             XMLReader r = null;
-            try
-            {
+            try {
                 r = XMLReaderFactory.createXMLReader();
-            } catch (SAXException ex)
-            {
-            }
+            } catch (SAXException ex) {}
             r.setContentHandler(this);
             r.parse(src);
             return logs;
-        } catch (IOException ex)
-        {
-        } catch (SAXException ex)
-        {
-        }
+        } catch (IOException ex) {} catch (SAXException ex) {}
         return null;
     }
 
-    public void printXML() throws TransformerConfigurationException
-    {
+    public void printXML() throws TransformerConfigurationException {
 
 
         FileOutputStream out = null;
 
-        try
-        {
+        try {
             out = new FileOutputStream(filename);
             PrintWriter pw = new PrintWriter(out);
             StreamResult streamResult = new StreamResult(pw);
             SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
-            //      SAX2.0 ContentHandler.
+            // SAX2.0 ContentHandler.
             TransformerHandler hd = tf.newTransformerHandler();
             Transformer serializer = hd.getTransformer();
             serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
@@ -152,22 +130,21 @@ public class LogXML extends DefaultHandler
             hd.setResult(streamResult);
             hd.startDocument();
 
-            //Get a processing instruction
-            //hd.processingInstruction("xml-stylesheet", "type=\"text/xsl\" href=\"mystyle.xsl\"");
+            // Get a processing instruction
+            // hd.processingInstruction("xml-stylesheet", "type=\"text/xsl\" href=\"mystyle.xsl\"");
             AttributesImpl atts = new AttributesImpl();
 
 
-            //root element
+            // root element
             hd.startElement("", "", "log", atts);
 
             ArrayList<LogLine> list = logs.getLl();
             atts.clear();
-            for (LogLine l : list)
-            {
+            for (LogLine l : list) {
                 atts.addAttribute("", "", "date", "", l.getDate());
                 atts.addAttribute("", "", "ae", "", l.getAe());
                 atts.addAttribute("", "", "add", "", l.getAdd());
-                atts.addAttribute("","","params","",l.getParams());
+                atts.addAttribute("", "", "params", "", l.getParams());
 
                 hd.startElement("", "", l.getType(), atts);
                 atts.clear();
@@ -179,20 +156,10 @@ public class LogXML extends DefaultHandler
 
             hd.endDocument();
 
-        } catch (TransformerConfigurationException ex)
-        {
-        } catch (SAXException ex)
-        {
-        } catch (FileNotFoundException ex)
-        {
-        } finally
-        {
-            try
-            {
+        } catch (TransformerConfigurationException ex) {} catch (SAXException ex) {} catch (FileNotFoundException ex) {} finally {
+            try {
                 out.close();
-            } catch (IOException ex)
-            {
-            }
+            } catch (IOException ex) {}
         }
 
     }

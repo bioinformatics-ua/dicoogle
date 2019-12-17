@@ -42,20 +42,16 @@ import pt.ua.dicoogle.sdk.p2p.Messages.MessageI;
  *
  * @author Carlos Ferreira
  */
-public class FileRequestHandler implements MessageHandler, Observer
-{
+public class FileRequestHandler implements MessageHandler, Observer {
 
     private NetworkPluginAdapter NPA;
 
-    public FileRequestHandler(NetworkPluginAdapter NPA)
-    {
+    public FileRequestHandler(NetworkPluginAdapter NPA) {
         this.NPA = NPA;
     }
 
-    public void handleMessage(MessageI message, String address)
-    {
-        if (!MessageXML.class.isInstance(message))
-        {
+    public void handleMessage(MessageI message, String address) {
+        if (!MessageXML.class.isInstance(message)) {
             return;
         }
         byte[] msg = (byte[]) message.getMessage();
@@ -63,23 +59,19 @@ public class FileRequestHandler implements MessageHandler, Observer
         SAXReader saxReader = new SAXReader();
 
         Document document = null;
-        try
-        {
+        try {
             document = saxReader.read(new ByteArrayInputStream(msg));
-        } catch (DocumentException ex)
-        {
+        } catch (DocumentException ex) {
             ex.printStackTrace(System.out);
         }
 
         Element root = document.getRootElement();
-        if (root == null)
-        {
+        if (root == null) {
             return;
         }
 
         Element tmp = root.element(MessageFields.FILE_REQUESTED);
-        if (tmp == null)
-        {
+        if (tmp == null) {
             return;
         }
         Element temp2 = tmp.element(SearchResultFields.FILE_NAME);
@@ -87,19 +79,19 @@ public class FileRequestHandler implements MessageHandler, Observer
         temp2 = tmp.element(SearchResultFields.FILE_HASH);
         String Filehash = temp2.getText();
 
-        //public TaskRequest(int Task, String RequesterPlugin, Map<Integer , Object> Parameters)
+        // public TaskRequest(int Task, String RequesterPlugin, Map<Integer , Object> Parameters)
         HashMap<Integer, Object> parameters = new HashMap<Integer, Object>();
-        parameters.put(TaskRequestsConstants.P_QUERY, "FileHash:" + Filehash + " AND FileName:\"" + Filename+"\"");
+        parameters.put(TaskRequestsConstants.P_QUERY, "FileHash:" + Filehash + " AND FileName:\"" + Filename + "\"");
         parameters.put(TaskRequestsConstants.P_EXTRAFIELDS, new ArrayList<String>());
         parameters.put(TaskRequestsConstants.P_REQUESTER_ADDRESS, address);
 
         TaskRequest task = new TaskRequest(TaskRequestsConstants.T_QUERY_LOCALLY, this.NPA.getName(), parameters);
         task.addObserver(this);
         this.NPA.getTaskRequestsList().addTask(task);
-        //System.out.println("handle message do FileRequestHandler....\n The query is: " + "FileHash:" + Filehash + " and FileName:" + Filename);
+        // System.out.println("handle message do FileRequestHandler....\n The query is: " + "FileHash:" + Filehash + " and FileName:" + Filename);
 
-        //List<SearchResult> sr = IndexEngine.getInstance().search("FileHash:"+Filehash+" and FileName:"+Filename, null);
-        //String filepath = new String(Base64.decodeBase64(tmp.getText().getBytes()));
+        // List<SearchResult> sr = IndexEngine.getInstance().search("FileHash:"+Filehash+" and FileName:"+Filename, null);
+        // String filepath = new String(Base64.decodeBase64(tmp.getText().getBytes()));
 
     }
 
@@ -123,35 +115,30 @@ public class FileRequestHandler implements MessageHandler, Observer
     this.NPA.sendFile(sr.get(0).getOrigin(), this.NPA.getName());
     }
     }*/
-    public void update(Observable o, Object arg)
-    {
-        //System.out.println("Update do FileRequestHandler.........");
-        if (TaskRequest.class.isInstance(o))
-        {
-            //System.out.println("Update do FileRequestHandler -> 1");
+    public void update(Observable o, Object arg) {
+        // System.out.println("Update do FileRequestHandler.........");
+        if (TaskRequest.class.isInstance(o)) {
+            // System.out.println("Update do FileRequestHandler -> 1");
             TaskRequest tr = (TaskRequest) o;
-            if (tr.getTask() != TaskRequestsConstants.T_QUERY_LOCALLY)
-            {
-                //System.out.println("Update do FileRequestHandler -> 2");
+            if (tr.getTask() != TaskRequestsConstants.T_QUERY_LOCALLY) {
+                // System.out.println("Update do FileRequestHandler -> 2");
                 return;
             }
-            //System.out.println("Update do FileRequestHandler -> 3");
+            // System.out.println("Update do FileRequestHandler -> 3");
             Map<Integer, Object> parameters = tr.getParameters();
             Map<Integer, Object> results = tr.getResults();
             if ((parameters.get(TaskRequestsConstants.P_REQUESTER_ADDRESS) != null) && (results.get(TaskRequestsConstants.R_SEARCH_RESULTS) != null)
-                    && List.class.isInstance(results.get(TaskRequestsConstants.R_SEARCH_RESULTS)))
-            {
-                //System.out.println("Update do FileRequestHandler -> 4");
+                    && List.class.isInstance(results.get(TaskRequestsConstants.R_SEARCH_RESULTS))) {
+                // System.out.println("Update do FileRequestHandler -> 4");
                 List srList = (List) results.get(TaskRequestsConstants.R_SEARCH_RESULTS);
-                if (srList.isEmpty() || (!SearchResult.class.isInstance(srList.get(0))))
-                {
-                    //System.out.println("The list has " + srList.size() + " elements");
+                if (srList.isEmpty() || (!SearchResult.class.isInstance(srList.get(0)))) {
+                    // System.out.println("The list has " + srList.size() + " elements");
                     return;
                 }
                 SearchResult sr = (SearchResult) srList.get(0);
 
                 NPA.sendFile(sr.getURI().toString(), (String) parameters.get(TaskRequestsConstants.P_REQUESTER_ADDRESS));
-                //System.out.println("Message Sent?");
+                // System.out.println("Message Sent?");
             }
         }
     }

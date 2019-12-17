@@ -39,44 +39,44 @@ import java.util.concurrent.ExecutionException;
  */
 public class RunningIndexTasks {
     private static final Logger logger = LoggerFactory.getLogger(RunningIndexTasks.class);
-    
-	public static RunningIndexTasks instance;
 
-	private final Map<String, Task<Report>> taskRunningList;
+    public static RunningIndexTasks instance;
 
-	public static RunningIndexTasks getInstance() {
-		if (instance == null)
-			instance = new RunningIndexTasks();
+    private final Map<String, Task<Report>> taskRunningList;
 
-		return instance;
-	}
+    public static RunningIndexTasks getInstance() {
+        if (instance == null)
+            instance = new RunningIndexTasks();
 
-	public RunningIndexTasks() {
-		taskRunningList = new HashMap<>();
-	}
+        return instance;
+    }
 
-	public void addTask(Task<Report> task) {
-		taskRunningList.put(task.getUid(), task);
-	}
+    public RunningIndexTasks() {
+        taskRunningList = new HashMap<>();
+    }
 
-	public boolean removeTask(String taskUid) {
-		return taskRunningList.remove(taskUid) != null;
-	}
+    public void addTask(Task<Report> task) {
+        taskRunningList.put(task.getUid(), task);
+    }
 
-	public boolean stopTask(String taskUid) {
-		Task<Report> task = taskRunningList.get(taskUid);
-		if (task != null) {
-			return task.cancel(true);
-		} else {
-			logger.info("Attempt to stop unexistent task {}, ignoring", taskUid);
-		}
+    public boolean removeTask(String taskUid) {
+        return taskRunningList.remove(taskUid) != null;
+    }
 
-		return false;
-	}
+    public boolean stopTask(String taskUid) {
+        Task<Report> task = taskRunningList.get(taskUid);
+        if (task != null) {
+            return task.cancel(true);
+        } else {
+            logger.info("Attempt to stop unexistent task {}, ignoring", taskUid);
+        }
 
-	public Map<String, Task<Report>> getRunningTasks() {
-		return Collections.unmodifiableMap(taskRunningList);
-	}
+        return false;
+    }
+
+    public Map<String, Task<Report>> getRunningTasks() {
+        return Collections.unmodifiableMap(taskRunningList);
+    }
 
     public String toJson() {
         JSONObject object = new JSONObject();
@@ -84,7 +84,7 @@ public class RunningIndexTasks {
 
         int countComplete = 0;
         int countCancelled = 0;
-        for (Task<Report> task: taskRunningList.values()) {
+        for (Task<Report> task : taskRunningList.values()) {
             JSONObject entry = asJSON(task);
             if (task.isDone() && !task.isCancelled()) {
                 countComplete += 1;
@@ -110,9 +110,9 @@ public class RunningIndexTasks {
             try {
                 Report r = task.get();
                 if (r instanceof IndexReport) {
-                    entry.put("elapsedTime", ((IndexReport)r).getElapsedTime());
-                    entry.put("nIndexed", ((IndexReport)r).getNIndexed());
-                    entry.put("nErrors", ((IndexReport)r).getNErrors());
+                    entry.put("elapsedTime", ((IndexReport) r).getElapsedTime());
+                    entry.put("nIndexed", ((IndexReport) r).getNIndexed());
+                    entry.put("nErrors", ((IndexReport) r).getNErrors());
                 }
             } catch (InterruptedException | ExecutionException ex) {
                 logger.warn("Could not retrieve task result, ignoring", ex);

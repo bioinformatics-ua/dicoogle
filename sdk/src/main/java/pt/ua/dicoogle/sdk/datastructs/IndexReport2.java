@@ -20,76 +20,75 @@ package pt.ua.dicoogle.sdk.datastructs;
 
 public class IndexReport2 extends IndexReport {
 
-	private int nIndexedFiles;
-	private int nErrors;
-	private long elapsedTime;
-	
-	public IndexReport2(int nIndexedFiles, int nErrors, long elapsedTime) {
-		super();
-		this.nIndexedFiles = nIndexedFiles;
-		this.nErrors = nErrors;
-		this.elapsedTime = elapsedTime;
-	}
-	
-	public IndexReport2(int nIndexedFiles, int nErrors) {
-		this(nIndexedFiles, nErrors, 0);
-	}
-	
-	public IndexReport2(int nIndexedFiles) {
-		this(nIndexedFiles, 0, 0);
-	}
-	
-	public IndexReport2() {
-		this(0,0,0);
-	}
+    private int nIndexedFiles;
+    private int nErrors;
+    private long elapsedTime;
 
-	public long getElapsedTime() {
-		return elapsedTime;
-	}
+    public IndexReport2(int nIndexedFiles, int nErrors, long elapsedTime) {
+        super();
+        this.nIndexedFiles = nIndexedFiles;
+        this.nErrors = nErrors;
+        this.elapsedTime = elapsedTime;
+    }
 
-	@Override
-	public String toString() {
-		return "IndexReport [nIndexedFiles=" + nIndexedFiles + ", nErrors="
-				+ nErrors + ", elapsedTime=" + elapsedTime + "]";
-	}
+    public IndexReport2(int nIndexedFiles, int nErrors) {
+        this(nIndexedFiles, nErrors, 0);
+    }
 
-	public void setnIndexedFiles(int nIndexedFiles) {
-		this.nIndexedFiles = nIndexedFiles;
-	}
+    public IndexReport2(int nIndexedFiles) {
+        this(nIndexedFiles, 0, 0);
+    }
 
-	public void setnErrors(int nErrors) {
-		this.nErrors = nErrors;
-	}
+    public IndexReport2() {
+        this(0, 0, 0);
+    }
 
-	public void setElapsedTime(long elapsedTime) {
-		this.elapsedTime = elapsedTime;
-	}
-	
-	public void addIndexFile(){
-		this.nIndexedFiles++;
-	}
-	
-	public void addError(){
-		this.nErrors++;
-	}
-	
-	public void started(){
-		this.elapsedTime = System.currentTimeMillis();
-	}
-	
-	public void finished(){
-		this.elapsedTime = System.currentTimeMillis() - elapsedTime;
-	}
+    public long getElapsedTime() {
+        return elapsedTime;
+    }
 
-	@Override
-	public int getNErrors() {
-		return nErrors;
-	}
+    @Override
+    public String toString() {
+        return "IndexReport [nIndexedFiles=" + nIndexedFiles + ", nErrors=" + nErrors + ", elapsedTime=" + elapsedTime + "]";
+    }
 
-	@Override
-	public int getNIndexed() {
-		return nIndexedFiles;
-	}
-	
+    public void setnIndexedFiles(int nIndexedFiles) {
+        this.nIndexedFiles = nIndexedFiles;
+    }
+
+    public void setnErrors(int nErrors) {
+        this.nErrors = nErrors;
+    }
+
+    public void setElapsedTime(long elapsedTime) {
+        this.elapsedTime = elapsedTime;
+    }
+
+    public void addIndexFile() {
+        this.nIndexedFiles++;
+    }
+
+    public void addError() {
+        this.nErrors++;
+    }
+
+    public void started() {
+        this.elapsedTime = System.currentTimeMillis();
+    }
+
+    public void finished() {
+        this.elapsedTime = System.currentTimeMillis() - elapsedTime;
+    }
+
+    @Override
+    public int getNErrors() {
+        return nErrors;
+    }
+
+    @Override
+    public int getNIndexed() {
+        return nIndexedFiles;
+    }
+
 
 }

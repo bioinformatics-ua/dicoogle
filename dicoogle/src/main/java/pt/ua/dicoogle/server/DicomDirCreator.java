@@ -41,13 +41,13 @@ import org.dcm4che2.media.FileSetInformation;
  * @author Marco
  */
 public class DicomDirCreator {
-    
+
     private String Path;
     private String id;
     private DicomDirReader dicomdir;
     private FileSetInformation fsinfo = null;
     private ApplicationProfile ap = new BasicApplicationProfile();
-    
+
     /**
      * Creates a new DicomDirCreator object.
      * If the DICOMDIR file doesn't exist it creates a new one,
@@ -55,20 +55,16 @@ public class DicomDirCreator {
      * @param P Path to where the DICOMDIR file is going to be created.
      * @param I FilesetID
      */
-    public DicomDirCreator(String P, String I)
-    {
+    public DicomDirCreator(String P, String I) {
         Path = P;
         id = I;
-        File file = new File(Path+File.separator+"DICOMDIR");
-        if (!file.exists())
-        {           
+        File file = new File(Path + File.separator + "DICOMDIR");
+        if (!file.exists()) {
             try {
                 fsinfo = new FileSetInformation();
-                fsinfo.init();                
-                if(id != null)
-                {
-                    if(!id.isEmpty())
-                    {
+                fsinfo.init();
+                if (id != null) {
+                    if (!id.isEmpty()) {
                         fsinfo.setFileSetID(id);
                     }
                 }
@@ -76,9 +72,7 @@ public class DicomDirCreator {
             } catch (IOException ex) {
                 LoggerFactory.getLogger(DicomDirCreator.class).error(ex.getMessage(), ex);
             }
-        }
-        else
-        {
+        } else {
             try {
                 dicomdir = new DicomDirWriter(file);
                 fsinfo = dicomdir.getFileSetInformation();
@@ -86,30 +80,26 @@ public class DicomDirCreator {
                 LoggerFactory.getLogger(DicomDirCreator.class).error(ex.getMessage(), ex);
             }
         }
-     }
-    
+    }
+
     /**
      * Updates the DICOMDIR file with a new entry
      * @param f File to be added to DICOMDIR
      */
-    public synchronized void updateDicomDir(File f)
-    {
+    public synchronized void updateDicomDir(File f) {
         // Severe dcm4che bug fix; it had a problem building dicom directories with files / folders beginning with a dot
-        if (f != null && !f.getName().startsWith("."))
-        {
-            if(f.isDirectory())
-            {
+        if (f != null && !f.getName().startsWith(".")) {
+            if (f.isDirectory()) {
                 File[] fs = f.listFiles();
-                
+
                 for (int i = 0; i < fs.length; i++)
                     updateDicomDir(fs[i]);
-               
+
                 return;
             }
-            
+
             // Only dcm files will be listed in the dicom directory
-            if (f.getName().endsWith(".dcm"))
-            {
+            if (f.getName().endsWith(".dcm")) {
                 DicomInputStream dis = null;
                 try {
                     dis = new DicomInputStream(f);
@@ -136,46 +126,42 @@ public class DicomDirCreator {
                 }
             }
         }
-   }
-    
-     /**
-     * Rebuilds the DICOMDIR file, by rescanning the storage path.
-     * To avoid conflicts should only be called when the server is not running.
-     */
-    public synchronized void dicomdir_rebuild()
-    {
+    }
+
+    /**
+    * Rebuilds the DICOMDIR file, by rescanning the storage path.
+    * To avoid conflicts should only be called when the server is not running.
+    */
+    public synchronized void dicomdir_rebuild() {
         try {
             dicomdir.close();
             File file = new File(Path + File.separator + "DICOMDIR");
             file.delete();
-            File f = new File(Path);            
+            File f = new File(Path);
             fsinfo = new FileSetInformation();
-                fsinfo.init();                
-                if(id != null)
-                {
-                    if(!id.isEmpty())
-                    {
-                        fsinfo.setFileSetID(id);
-                    }
+            fsinfo.init();
+            if (id != null) {
+                if (!id.isEmpty()) {
+                    fsinfo.setFileSetID(id);
                 }
-                dicomdir = new DicomDirWriter(file, fsinfo);                
-                updateDicomDir(f);                                 
+            }
+            dicomdir = new DicomDirWriter(file, fsinfo);
+            updateDicomDir(f);
         } catch (IOException ex) {
             LoggerFactory.getLogger(DicomDirCreator.class).error(ex.getMessage(), ex);
         }
     }
-    
+
     /**
      * Closes the DICOMDIR Reader/Writer     
      */
-    public void dicomdir_close()
-    {
+    public void dicomdir_close() {
         try {
             dicomdir.close();
         } catch (IOException ex) {
             LoggerFactory.getLogger(DicomDirCreator.class).error(ex.getMessage(), ex);
         }
     }
-    
-    
+
+
 }

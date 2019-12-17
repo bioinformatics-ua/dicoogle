@@ -26,8 +26,5 @@ package pt.ua.dicoogle.sdk.datastructs.dim;
  * Created by bastiao on 01-02-2017.
  */
 public enum DimLevel {
-    PATIENT,
-    STUDY,
-    SERIES,
-    INSTANCE
+    PATIENT, STUDY, SERIES, INSTANCE
 }

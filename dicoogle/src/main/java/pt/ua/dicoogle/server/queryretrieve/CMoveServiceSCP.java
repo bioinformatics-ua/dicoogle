@@ -58,45 +58,42 @@ public class CMoveServiceSCP extends CMoveService {
 
     public CMoveServiceSCP(String[] sopClasses, Executor executor, LuceneQueryACLManager luke) {
         super(sopClasses, executor);
-         this.luke = luke;
+        this.luke = luke;
     }
 
     public CMoveServiceSCP(String sopClass, Executor executor) {
         super(sopClass, executor);
         this.luke = null;
     }
-    
-    
+
+
     @Override
-    protected DimseRSP doCMove(Association as, int pcid, DicomObject cmd,
-            DicomObject data, DicomObject rsp) throws DicomServiceException {
-        //DebugManager.getSettings().debug("doCMove");
-        //DebugManager.getSettings().debug("DoCmove");
+    protected DimseRSP doCMove(Association as, int pcid, DicomObject cmd, DicomObject data, DicomObject rsp) throws DicomServiceException {
+        // DebugManager.getSettings().debug("doCMove");
+        // DebugManager.getSettings().debug("DoCmove");
 
         DimseRSP replay = null;
 
         /**
          * Verify Permited AETs
          */
-        //DebugManager.getSettings().debug(":: Verify Permited AETs @??C-MOVE Action ");
+        // DebugManager.getSettings().debug(":: Verify Permited AETs @??C-MOVE Action ");
 
         boolean permited = false;
 
         if (ServerSettingsManager.getSettings().getDicomServicesSettings().getAllowedAETitles().isEmpty()) {
             permited = true;
-        } else 
-        {
-            permited = ServerSettingsManager.getSettings().getDicomServicesSettings().getAllowedAETitles()
-                    .contains(as.getCallingAET());
+        } else {
+            permited = ServerSettingsManager.getSettings().getDicomServicesSettings().getAllowedAETitles().contains(as.getCallingAET());
         }
 
         if (!permited) {
-            //DebugManager.getSettings().debug("Client association NOT permited: " + as.getCallingAET() + "!");
+            // DebugManager.getSettings().debug("Client association NOT permited: " + as.getCallingAET() + "!");
             as.abort();
 
             return new MoveRSP(data, rsp);
         } else {
-            //DebugManager.getSettings().debug("Client association permited: " + as.getCallingAET() + "!");
+            // DebugManager.getSettings().debug("Client association permited: " + as.getCallingAET() + "!");
         }
 
         /** FIXME: Write wait by rspreplay */
@@ -121,15 +118,14 @@ public class CMoveServiceSCP extends CMoveService {
         int portAddr = as.getSocket().getPort();
 
         String destination = cmd.getString(org.dcm4che2.data.Tag.MoveDestination);
-        //DebugManager.getSettings().debug("A Move was required to <ip:port> : <"
-        //        + ip.getHostAddress() + ":" + portAddr + ">" + " to --> " + destination);
+        // DebugManager.getSettings().debug("A Move was required to <ip:port> : <"
+        // + ip.getHostAddress() + ":" + portAddr + ">" + " to --> " + destination);
 
 
 
         /** Verify if it have the field destination */
         if (destination == null) {
-            throw new DicomServiceException(cmd, Status.UnrecognizedOperation,
-                    "Missing Move Destination");
+            throw new DicomServiceException(cmd, Status.UnrecognizedOperation, "Missing Move Destination");
         }
 
         /*DebugManager.getSettings().debug("-- Objects containing the data requested by C-MOVE");
@@ -139,7 +135,7 @@ public class CMoveServiceSCP extends CMoveService {
         String SOPUID = new String(data.get(Integer.parseInt("0020000D", 16)).getBytes());
         String CMoveID = cmd.getString(org.dcm4che2.data.Tag.MessageID);
         System.out.println("C-MOVE ID REQUEST: " + CMoveID);
-        
+
         /**
          * Get object to search
          */
@@ -152,7 +148,7 @@ public class CMoveServiceSCP extends CMoveService {
         extrafields.add("StudyDate");
         extrafields.add("Thumbnail");
         extrafields.add("StudyInstanceUID");
-        
+
         SearchDicomResult.QUERYLEVEL level = null;
         if (CFindBuilder.isPatientRoot(rsp)) {
             level = SearchDicomResult.QUERYLEVEL.PATIENT;
@@ -167,23 +163,21 @@ public class CMoveServiceSCP extends CMoveService {
             ex.printStackTrace();
         }
         String query = cfind.getQueryString();
-               
-        if(luke != null){
+
+        if (luke != null) {
             String filterQuery = luke.produceQueryFilter(new Principal("AETitle", as.getCallingAET()));
-            if(query.length() > 0 )
-                 query += filterQuery;
+            if (query.length() > 0)
+                query += filterQuery;
         }
-        //TODO: FIlter Query;
-        SearchDicomResult search = new SearchDicomResult(query,
-                true, extrafields, SearchDicomResult.QUERYLEVEL.IMAGE);
+        // TODO: FIlter Query;
+        SearchDicomResult search = new SearchDicomResult(query, true, extrafields, SearchDicomResult.QUERYLEVEL.IMAGE);
         ArrayList<URI> files = new ArrayList<URI>();
 
 
 
-
         if (search == null) {
-            //DebugManager.getSettings().debug(">> Search is null, so"
-            //        + " somethig is wrong ");
+            // DebugManager.getSettings().debug(">> Search is null, so"
+            // + " somethig is wrong ");
         } else {
 
             while (search.hasNext()) {
@@ -194,13 +188,13 @@ public class CMoveServiceSCP extends CMoveService {
                     tmp = new String(e.getBytes());
                 }
                 if (SOPUID != null && tmp != null) {
-                    //files.add(new File(search.getCurrentFile()));
+                    // files.add(new File(search.getCurrentFile()));
                     String uriString = search.getCurrentFile();
-                     
+
                     try {
                         URI nURI = new URI(uriString);
-                        
-                           files.add(nURI);
+
+                        files.add(nURI);
                     } catch (URISyntaxException ex) {
                         LoggerFactory.getLogger(CMoveServiceSCP.class).error(ex.getMessage(), ex);
                     }
@@ -208,8 +202,6 @@ public class CMoveServiceSCP extends CMoveService {
 
             }
         }
-
-
 
 
 
@@ -230,8 +222,8 @@ public class CMoveServiceSCP extends CMoveService {
 
 
 
-            LogLine ll = new LogLine("cmove", LogLine.getDateTime(), destination,
-                    "Files: " + files.size() + " -- (" + hostDest + ":" + portAddr + ")","studyUID="+data.getString(Tag.StudyInstanceUID));
+            LogLine ll = new LogLine("cmove", LogLine.getDateTime(), destination, "Files: " + files.size() + " -- (" + hostDest + ":" + portAddr + ")",
+                    "studyUID=" + data.getString(Tag.StudyInstanceUID));
             LogDICOM.getInstance().addLine(ll);
 
             synchronized (LogDICOM.getInstance()) {
@@ -243,16 +235,13 @@ public class CMoveServiceSCP extends CMoveService {
                 }
             }
 
-            if (CMoveID==null||CMoveID.equals(""))
-            {
+            if (CMoveID == null || CMoveID.equals("")) {
                 return null;
             }
-            try
-            {
+            try {
                 System.out.println("Destination: " + destination);
                 new CallDCMSend(files, portAddr, hostDest, destination, CMoveID);
-            } catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }

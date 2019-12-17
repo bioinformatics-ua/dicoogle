@@ -29,48 +29,46 @@ import java.util.Objects;
  * @author Samuel Campos <samuelcampos@ua.pt>
  * @author Luís Bastião Silva <bastiao@bmd-software.com>
  */
-public class User implements UserRoleManager{
+public class User implements UserRoleManager {
 
     private final String username;
-    private String hash;        //stores the Hash of this user (username + admin + passwordHash)
+    private String hash; // stores the Hash of this user (username + admin + passwordHash)
     private final boolean admin;
 
     private List<Role> roles = new ArrayList<>();
 
-    public User(String username, String Hash, boolean admin){
+    public User(String username, String Hash, boolean admin) {
         this.username = username;
         this.admin = admin;
         this.hash = Hash;
     }
 
-    public String getUsername(){
+    public String getUsername() {
         return username;
     }
 
-    public boolean isAdmin(){
+    public boolean isAdmin() {
         return admin;
     }
 
-    public boolean verifyPassword(String passwordHash){
+    public boolean verifyPassword(String passwordHash) {
         String tempHash = HashService.getSHA1Hash(username + admin + passwordHash);
 
         return this.hash.equals(tempHash);
     }
 
-    public void addRole(Role r)
-    {
+    public void addRole(Role r) {
         this.roles.add(r);
     }
 
-    public boolean hasRole(Role r)
-    {
+    public boolean hasRole(Role r) {
         return this.roles.contains(r);
     }
 
-    public boolean changePassword(String oldPassHash, String newPassHash){
+    public boolean changePassword(String oldPassHash, String newPassHash) {
         String tempHash = HashService.getSHA1Hash(username + admin + oldPassHash);
 
-        if(!hash.equals(tempHash))
+        if (!hash.equals(tempHash))
             return false;
 
 
@@ -80,12 +78,12 @@ public class User implements UserRoleManager{
         return true;
     }
 
-    protected String getPasswordHash(){
+    protected String getPasswordHash() {
         return hash;
     }
 
-    public boolean resetPassword(String newPassHash){
-        if(newPassHash == null || newPassHash.equals(""))
+    public boolean resetPassword(String newPassHash) {
+        if (newPassHash == null || newPassHash.equals(""))
             return false;
 
         String tempHash = HashService.getSHA1Hash(username + admin + newPassHash);
@@ -107,8 +105,7 @@ public class User implements UserRoleManager{
 
         User tmp = (User) other;
 
-        if (username.equals(tmp.username) && hash.equals(tmp.hash)
-                && admin == tmp.admin) {
+        if (username.equals(tmp.username) && hash.equals(tmp.hash) && admin == tmp.admin) {
             return true;
         }
 

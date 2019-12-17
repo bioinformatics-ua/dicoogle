@@ -30,7 +30,6 @@ package pt.ua.dicoogle.sdk.core;
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @see DicooglePlatformInterface
  */
-public interface PlatformCommunicatorInterface 
-{
+public interface PlatformCommunicatorInterface {
     void setPlatformProxy(DicooglePlatformInterface core);
 }

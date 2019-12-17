@@ -30,10 +30,10 @@ import pt.ua.dicoogle.sdk.datastructs.SearchResult;
  */
 public interface ForEachAdapter {
 
-	/**
-	 * This method is executed each time an SearchResult is available.
-	 * @param rs The return result.
-	 */
-	public abstract void forEach(SearchResult rs);
-	
+    /**
+     * This method is executed each time an SearchResult is available.
+     * @param rs The return result.
+     */
+    public abstract void forEach(SearchResult rs);
+
 }

@@ -52,11 +52,9 @@ public class TestRoles {
         Collection<User> users = usersStruct.getUsers();
 
         System.out.println(rolesStruct.getRoles());
-        for (User u : users)
-        {
+        for (User u : users) {
             System.out.println(u.getUsername());
-            for (Role  r : u.getRoles())
-            {
+            for (Role r : u.getRoles()) {
                 System.out.println(r);
             }
         }

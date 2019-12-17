@@ -23,39 +23,36 @@ package pt.ua.dicoogle.server.web.utils;
  *
  * @author Antonio
  */
-public class Query
-{
-	/**
-	 * For an input query adds the extra param to it, correctly.
-	 *
-	 * @param query the "up-to-now" query that we want to add the extra param to.
-	 * @param param the param to add to the query.
-	 * @param operator the logical operator to add between params.
-	 * @return the new query that has the new/extra param on it.
-	 */
-	public static String addExtraQueryParam(String query, String param, String operator)
-	{
-		String result = query;
+public class Query {
+    /**
+     * For an input query adds the extra param to it, correctly.
+     *
+     * @param query the "up-to-now" query that we want to add the extra param to.
+     * @param param the param to add to the query.
+     * @param operator the logical operator to add between params.
+     * @return the new query that has the new/extra param on it.
+     */
+    public static String addExtraQueryParam(String query, String param, String operator) {
+        String result = query;
 
-		// check if this is not the only param in the query
-		if (! result.isEmpty())
-			result += " " + operator + " ";
+        // check if this is not the only param in the query
+        if (!result.isEmpty())
+            result += " " + operator + " ";
 
-		// add the extra param
-		result += param;
+        // add the extra param
+        result += param;
 
-		return result;
-	}
+        return result;
+    }
 
-	/**
-	 * Same as the overloaded version, but the operator is AND.
-	 *
-	 * @param query the "up-to-now" query that we want to add the extra param to.
-	 * @param param the param to add to the query.
-	 * @return the new query that has the new/extra param on it.
-	 */
-	public static String addExtraQueryParam(String query, String param)
-	{
-		return addExtraQueryParam(query, param, "AND");
-	}
+    /**
+     * Same as the overloaded version, but the operator is AND.
+     *
+     * @param query the "up-to-now" query that we want to add the extra param to.
+     * @param param the param to add to the query.
+     * @return the new query that has the new/extra param on it.
+     */
+    public static String addExtraQueryParam(String query, String param) {
+        return addExtraQueryParam(query, param, "AND");
+    }
 }

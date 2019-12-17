@@ -26,8 +26,7 @@ package pt.ua.dicoogle.sdk.settings;
  * </p>
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public interface CoreSettings
-{
+public interface CoreSettings {
     /**
      * This option is related with the de-identification of the patient data
      * If this option is enable the documents will be indexed and shown in an
@@ -35,13 +34,14 @@ public interface CoreSettings
      * @return boolean true if anonymize is enable, false otherwise. 
      */
     public boolean isIndexAnonymous();
-    
+
     /**
      * If this option is enable, the database will store a thumbnail of each 
      * image 
      * @return boolean true if is necessary to create thumbnail, false otherwise
      */
     public boolean isThumbnails();
+
     /**
      * Get the matrix size of the thumbnail
      * 
@@ -49,5 +49,5 @@ public interface CoreSettings
      * 8x8 or 16x16 pixels 
      */
     public String getThumbnailsMatrix();
-    
+
 }

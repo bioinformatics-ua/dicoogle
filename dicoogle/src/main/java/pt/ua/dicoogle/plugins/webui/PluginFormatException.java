@@ -24,8 +24,7 @@ package pt.ua.dicoogle.plugins.webui;
  */
 public class PluginFormatException extends Exception {
 
-    public PluginFormatException() {
-    }
+    public PluginFormatException() {}
 
     public PluginFormatException(String string) {
         super(string);

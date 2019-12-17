@@ -71,7 +71,7 @@ public class LegacyServerSettingsTest {
         assertEquals(50, settings.getDicomServicesSettings().getQueryRetrieveSettings().getIdleTimeout());
         assertEquals(50, settings.getDicomServicesSettings().getQueryRetrieveSettings().getAcceptTimeout());
         assertEquals(50, settings.getDicomServicesSettings().getQueryRetrieveSettings().getConnectionTimeout());
-        //assertEquals("1.2.840.10008.5.1.4.1.2.1.1", settings.getSOPClasses());
+        // assertEquals("1.2.840.10008.5.1.4.1.2.1.1", settings.getSOPClasses());
         assertEquals(22, settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxClientAssoc());
         assertEquals(16360, settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthSend());
         assertEquals(16360, settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthReceive());
@@ -86,22 +86,19 @@ public class LegacyServerSettingsTest {
         assertEquals(8484, web.getPort());
         assertEquals("test.dicoogle.com", web.getAllowedOrigins());
 
-        List<MoveDestination> destinations = Arrays.asList(
-                new MoveDestination("ADESTINATION", "192.168.42.42", 4444, true, "Our test destination"));
+        List<MoveDestination> destinations = Arrays.asList(new MoveDestination("ADESTINATION", "192.168.42.42", 4444, true, "Our test destination"));
         assertSameContent(destinations, settings.getDicomServicesSettings().getMoveDestinations());
     }
 
     private static void assertSameContent(Collection o1, Collection o2) {
         for (Object o : o1) {
             if (!o2.contains(o)) {
-                throw new ComparisonFailure("Collections do not have the same content",
-                        String.valueOf(o1), String.valueOf(o2));
+                throw new ComparisonFailure("Collections do not have the same content", String.valueOf(o1), String.valueOf(o2));
             }
         }
         for (Object o : o2) {
             if (!o1.contains(o)) {
-                throw new ComparisonFailure("Collections do not have the same content",
-                        String.valueOf(o1), String.valueOf(o2));
+                throw new ComparisonFailure("Collections do not have the same content", String.valueOf(o1), String.valueOf(o2));
             }
         }
     }

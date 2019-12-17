@@ -44,67 +44,64 @@ import pt.ua.dicoogle.server.web.utils.DIM2JSONConverter;
  * @author Tiago Godinho.
  *
  */
-public class SearchHolderServlet extends HttpServlet
-{
-	private static final long serialVersionUID = 1L;
-	
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-	{
-		HttpSession session = request.getSession(true);
-		if(session == null){
-			response.sendError(401, "ERROR: NO SESSION FOUND");
-			return;
-		}
-		SearchHolder holder = (SearchHolder) session.getAttribute("dicoogle.web.queryHolder");
-		if(holder == null){
-			response.sendError(402, "ERROR: NO SEARCH SESSION FOUND");
-			return;
-		}
-		int id = Integer.parseInt(request.getParameter("id"));
+public class SearchHolderServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
 
-		response.setHeader("pragma", "no-cache,no-store"); 
-		response.setHeader("cache-control", "no-cache,no-store,max-age=0,max-stale=0"); 
-		response.setHeader("connection", "keep-alive");
-		response.setContentType("text/event-stream"); 		
-		response.setCharacterEncoding("UTF-8"); // set the apropriate encoding type
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(true);
+        if (session == null) {
+            response.sendError(401, "ERROR: NO SESSION FOUND");
+            return;
+        }
+        SearchHolder holder = (SearchHolder) session.getAttribute("dicoogle.web.queryHolder");
+        if (holder == null) {
+            response.sendError(402, "ERROR: NO SEARCH SESSION FOUND");
+            return;
+        }
+        int id = Integer.parseInt(request.getParameter("id"));
 
-		PrintWriter wr = response.getWriter();
+        response.setHeader("pragma", "no-cache,no-store");
+        response.setHeader("cache-control", "no-cache,no-store,max-age=0,max-stale=0");
+        response.setHeader("connection", "keep-alive");
+        response.setContentType("text/event-stream");
+        response.setCharacterEncoding("UTF-8"); // set the apropriate encoding type
 
-		Iterable<KeyValue> it = holder.retrieveQueryOutput(id);
+        PrintWriter wr = response.getWriter();
 
-		wr.print("data: \n\n"); 
-		wr.flush();
+        Iterable<KeyValue> it = holder.retrieveQueryOutput(id);
 
-		int eventID = 0;
-		for(KeyValue resp : it){
-			List<SearchResult> results = new ArrayList<>();
-			
-			String provider = resp.getKey().toString();
-			@SuppressWarnings("unchecked")
-			Iterable<SearchResult> result = (Iterable<SearchResult>) resp.getValue();
-			for(SearchResult r : result )
-				results.add(r);
-			
-			try {
-				DIMGeneric generic = new DIMGeneric(results);
-				
-				JSONObject obj = new JSONObject();
-				obj.put("provider", provider);
-				JSONArray arr = DIM2JSONConverter.convertToJSON(generic);		
-				obj.put("rsp", arr);
-				
-				wr.print("id: "+ (eventID++)+"\n");
-				wr.print("event: QueryResponse\n"); 
-				wr.print("data: "+obj.toString()+"\n\n"); 
-				wr.flush();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		wr.print("event: close\n");
-		wr.flush();
-		wr.close();
-	}
+        wr.print("data: \n\n");
+        wr.flush();
+
+        int eventID = 0;
+        for (KeyValue resp : it) {
+            List<SearchResult> results = new ArrayList<>();
+
+            String provider = resp.getKey().toString();
+            @SuppressWarnings("unchecked") Iterable<SearchResult> result = (Iterable<SearchResult>) resp.getValue();
+            for (SearchResult r : result)
+                results.add(r);
+
+            try {
+                DIMGeneric generic = new DIMGeneric(results);
+
+                JSONObject obj = new JSONObject();
+                obj.put("provider", provider);
+                JSONArray arr = DIM2JSONConverter.convertToJSON(generic);
+                obj.put("rsp", arr);
+
+                wr.print("id: " + (eventID++) + "\n");
+                wr.print("event: QueryResponse\n");
+                wr.print("data: " + obj.toString() + "\n\n");
+                wr.flush();
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        wr.print("event: close\n");
+        wr.flush();
+        wr.close();
+    }
 }

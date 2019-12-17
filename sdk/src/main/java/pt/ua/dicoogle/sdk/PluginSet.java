@@ -66,7 +66,7 @@ public interface PluginSet extends Plugin {
     public default Collection<? extends QueryInterface> getQueryPlugins() {
         return Collections.EMPTY_LIST;
     }
-    
+
     /**
      * Gets the storage plugins enclosed in this plugin set.
      * This collection must be immutable.
@@ -75,7 +75,7 @@ public interface PluginSet extends Plugin {
     public default Collection<? extends StorageInterface> getStoragePlugins() {
         return Collections.EMPTY_LIST;
     }
-    
+
     /**
      * Obtains a collection of access to the RESTful resources. These plugins will be installed to
      * the web service hierarchy according to a name defined by the object's {@code toString()} method.
@@ -86,7 +86,7 @@ public interface PluginSet extends Plugin {
     public default Collection<? extends ServerResource> getRestPlugins() {
         return Collections.EMPTY_LIST;
     }
-    
+
     /**
      * Obtains a collection of Jetty plugins, so as to implement web services via Dicoogle.
      * This collection must be immutable.
@@ -96,7 +96,7 @@ public interface PluginSet extends Plugin {
     public default Collection<? extends JettyPluginInterface> getJettyPlugins() {
         return Collections.EMPTY_LIST;
     }
-    
+
     /**
      * Defines the plugin's settings. This method will be called once after the plugin set was instantiated
      * with plugin-scoped settings. Dicoogle users can modify these settings by accessing the XML file with
@@ -105,7 +105,7 @@ public interface PluginSet extends Plugin {
      * @param xmlSettings an XML-based configuration holder
      */
     public void setSettings(ConfigurationHolder xmlSettings);
-    
+
     /**
      * Retrieves the plugin's settings.
      * @return an XML-based configuration holder

@@ -80,7 +80,7 @@ public class MappedDICOMObject extends DICOMObject {
 
         MappedDICOMObject current = this;
         String[] nodes = p.getNodes();
-        //System.out.println(Arrays.toString(nodes));
+        // System.out.println(Arrays.toString(nodes));
         int i;
         for (i = 0; i < nodes.length - 1; i++) {
             String node = nodes[i];
@@ -102,7 +102,7 @@ public class MappedDICOMObject extends DICOMObject {
 
         MappedDICOMObject current = this;
         String[] nodes = p.getNodes();
-        //System.out.println(Arrays.toString(nodes));
+        // System.out.println(Arrays.toString(nodes));
         int i;
         for (i = 0; i < nodes.length - 1; i++) {
             String node = nodes[i];
@@ -165,7 +165,7 @@ public class MappedDICOMObject extends DICOMObject {
 
         MappedDICOMObject current = this;
         String[] nodes = p.getNodes();
-        //System.out.println(Arrays.toString(nodes));
+        // System.out.println(Arrays.toString(nodes));
         int i;
         for (i = 0; i < nodes.length - 1; i++) {
             String node = nodes[i];

@@ -45,33 +45,31 @@ import org.dcm4che2.net.NetworkConnection;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public abstract class DicomNetwork
-{    
-    
+public abstract class DicomNetwork {
+
 
     private NetworkApplicationEntity remoteAE = new NetworkApplicationEntity();
     private NetworkConnection remoteConn = new NetworkConnection();
-    private Device device = null ;
+    private Device device = null;
     private NetworkApplicationEntity localAE = new NetworkApplicationEntity();
     private NetworkConnection localConn = new NetworkConnection();
 
 
     // AETitle of Service
-    private String AETitle = null ;
+    private String AETitle = null;
 
 
-    /** Event Interface Calls */ 
-    LogEvent eventService = null ;
-    LogEventBefore eventBefore = null ;
-    LogEventAfter eventAfter = null ;
+    /** Event Interface Calls */
+    LogEvent eventService = null;
+    LogEventBefore eventBefore = null;
+    LogEventAfter eventAfter = null;
 
-    private String deviceName = null ;
-    
-    public DicomNetwork(String DeviceName)
-    {
+    private String deviceName = null;
+
+    public DicomNetwork(String DeviceName) {
         // Starts Device
         device = new Device(DeviceName);
-        this.deviceName = DeviceName; 
+        this.deviceName = DeviceName;
     }
 
 
@@ -83,15 +81,13 @@ public abstract class DicomNetwork
      * @param e An class that implement methods to be call
      * @return a boolean to know if event will be triggered or not
      */
-    public boolean connectAfter(LogEventAfter e)
-    {
-        boolean result = false ;
-        if (e != null && e instanceof LogEventAfter  )
-        {
-            result = true ;
+    public boolean connectAfter(LogEventAfter e) {
+        boolean result = false;
+        if (e != null && e instanceof LogEventAfter) {
+            result = true;
         }
-        this.eventAfter = e ;
-        return result ; 
+        this.eventAfter = e;
+        return result;
     }
 
 
@@ -102,15 +98,13 @@ public abstract class DicomNetwork
      * @param e An class that implement methods to be call
      * @return a boolean to know if event will be triggered or not
      */
-    public boolean connectBefore(LogEventBefore e)
-    {
-        boolean result = false ;
-        if (e != null && e instanceof LogEventBefore  )
-        {
-            result = true ;
+    public boolean connectBefore(LogEventBefore e) {
+        boolean result = false;
+        if (e != null && e instanceof LogEventBefore) {
+            result = true;
         }
-        this.eventBefore = e ;
-        return result ;
+        this.eventBefore = e;
+        return result;
     }
 
     /**
@@ -120,47 +114,41 @@ public abstract class DicomNetwork
      * @return
      */
 
-    public boolean connectServices(LogEvent e)
-    {
-        boolean result = false ;
-        if (e != null && e instanceof LogEvent )
-        {
-            result = true ;
+    public boolean connectServices(LogEvent e) {
+        boolean result = false;
+        if (e != null && e instanceof LogEvent) {
+            result = true;
         }
-        this.eventService = e ;
-        return result ;
+        this.eventService = e;
+        return result;
     }
 
 
 
-
-    public boolean startListening()
-    {
+    public boolean startListening() {
         boolean result = false;
 
         result = doStartService();
-        if (this.eventService!=null)
-            this.eventService.startService(this.deviceName +  " was started " +
-                    "QueryRetrieve");
-        return result ; 
-          
+        if (this.eventService != null)
+            this.eventService.startService(this.deviceName + " was started " + "QueryRetrieve");
+        return result;
+
     }
 
 
-    public boolean stopListening()
-    {
+    public boolean stopListening() {
         boolean result = false;
 
         result = doStopService();
-        if (this.eventService!=null)
-            this.eventService.stopService(this.deviceName +  " was stoppped" +
-                    " QueryRetrieve");
-        return result ;
+        if (this.eventService != null)
+            this.eventService.stopService(this.deviceName + " was stoppped" + " QueryRetrieve");
+        return result;
     }
 
     public abstract boolean doStartService();
+
     public abstract boolean doStopService();
-    
+
 
 
     /**

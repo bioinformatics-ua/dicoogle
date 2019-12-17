@@ -29,43 +29,38 @@ import javax.swing.filechooser.FileSystemView;
  * Detect which platform is running
  * @author Lu??s A. Basti??o Silva <bastiao@ua.pt>
  */
-public class Platform
-{
+public class Platform {
 
-    public  enum MODE {PORTABLE, BUNDLE};
+    public enum MODE {
+        PORTABLE, BUNDLE
+    };
 
-    public static MODE getMode()
-    {
+    public static MODE getMode() {
         MODE mode = MODE.PORTABLE;
-        File currentDir = new File (".");
+        File currentDir = new File(".");
         File bundle = new File("BUNDLE.here");
         File windows = new File("Java Launcher.exe");
         File mac = new File("Dicoogle.app");
-        if (currentDir.getAbsolutePath().contains("Dicoogle.app")|| bundle.exists()||mac.exists()||windows.exists())
-        {
+        if (currentDir.getAbsolutePath().contains("Dicoogle.app") || bundle.exists() || mac.exists() || windows.exists()) {
             mode = MODE.BUNDLE;
         }
         return mode;
     }
 
-    public static String homePath()
-    {
+    public static String homePath() {
 
         String homePath = "";
         MODE mode = getMode();
-        if (mode==MODE.BUNDLE)
-        {
+        if (mode == MODE.BUNDLE) {
             homePath = getHomeDirectory().getAbsolutePath() + File.separator + ".dicoogle" + File.separator;
         }
         return homePath;
     }
 
-    public static File getHomeDirectory()
-    {
+    public static File getHomeDirectory() {
 
         File result = null;
-        if (System.getProperty("os.name").toUpperCase().indexOf("WINDOWS") != -1)
-        {
+        if (System.getProperty("os.name").toUpperCase().indexOf("WINDOWS") != -1) {
             try {
                 Process p = Runtime.getRuntime().exec("cmd /c echo %HOMEDRIVE%%HOMEPATH%");
                 BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -78,13 +73,11 @@ public class Platform
             } catch (IOException ex) {
                 LoggerFactory.getLogger(Platform.class.getName()).error(ex.getMessage(), ex);
             }
-        }
-        else
-        {
+        } else {
             result = FileSystemView.getFileSystemView().getHomeDirectory();
         }
-        return result ;
-	
+        return result;
+
     }
 
 

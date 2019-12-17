@@ -20,77 +20,77 @@ package pt.ua.dicoogle.sdk.datastructs;
 
 public class DocumentIndexReport extends IndexReport {
 
-	private Measurable retrieveObjectTime;
-	private Measurable assembleDocumentTIme;
-	private Measurable storeInDatabaseTime;
-	private final Measurable totalTime;
-	private boolean successfull;
-	private final String id;
-			
-	public DocumentIndexReport(String id) {
-		super();
-		this.id = id;
-		this.totalTime = new Measurable();
-		this.successfull = true;
-	}
-	
-	private static void lazyInit(Measurable obj){
-		if(obj == null)
-			obj = new Measurable();
-	}	
-	
-	public Measurable getRetrieveObjectTime() {
-		lazyInit(retrieveObjectTime);
-		return retrieveObjectTime;
-	}
+    private Measurable retrieveObjectTime;
+    private Measurable assembleDocumentTIme;
+    private Measurable storeInDatabaseTime;
+    private final Measurable totalTime;
+    private boolean successfull;
+    private final String id;
 
-	public Measurable getAssembleDocumentTIme() {
-		lazyInit(assembleDocumentTIme);
-		return assembleDocumentTIme;
-	}
+    public DocumentIndexReport(String id) {
+        super();
+        this.id = id;
+        this.totalTime = new Measurable();
+        this.successfull = true;
+    }
 
-	public Measurable getStoreInDatabaseTime() {
-		lazyInit(storeInDatabaseTime);
-		return storeInDatabaseTime;
-	}
-	
-	public boolean isSuccessfull() {
-		return successfull;
-	}
+    private static void lazyInit(Measurable obj) {
+        if (obj == null)
+            obj = new Measurable();
+    }
 
-	public void setSuccessfull(boolean successfull) {
-		this.successfull = successfull;
-	}
+    public Measurable getRetrieveObjectTime() {
+        lazyInit(retrieveObjectTime);
+        return retrieveObjectTime;
+    }
 
-	public String getId() {
-		return id;
-	}
-	
-	public void start() {
-		totalTime.start();
-	}
+    public Measurable getAssembleDocumentTIme() {
+        lazyInit(assembleDocumentTIme);
+        return assembleDocumentTIme;
+    }
 
-	public void stop() {
-		totalTime.stop();
-	}
+    public Measurable getStoreInDatabaseTime() {
+        lazyInit(storeInDatabaseTime);
+        return storeInDatabaseTime;
+    }
 
-	@Override
-	public long getElapsedTime() {
-		return totalTime.getTime();
-	}
+    public boolean isSuccessfull() {
+        return successfull;
+    }
 
-	@Override
-	public int getNErrors() {
-		if(isSuccessfull())
-			return 0;
-		return 1;
-	}
+    public void setSuccessfull(boolean successfull) {
+        this.successfull = successfull;
+    }
 
-	@Override
-	public int getNIndexed() {		
-		if(isSuccessfull())
-			return 1;
-		return 0;
-	}
+    public String getId() {
+        return id;
+    }
+
+    public void start() {
+        totalTime.start();
+    }
+
+    public void stop() {
+        totalTime.stop();
+    }
+
+    @Override
+    public long getElapsedTime() {
+        return totalTime.getTime();
+    }
+
+    @Override
+    public int getNErrors() {
+        if (isSuccessfull())
+            return 0;
+        return 1;
+    }
+
+    @Override
+    public int getNIndexed() {
+        if (isSuccessfull())
+            return 1;
+        return 0;
+    }
 
 }

@@ -27,29 +27,24 @@ import java.util.concurrent.LinkedBlockingQueue;
  *
  * @author Carlos Ferreira
  */
-public class TaskQueue extends Observable
-{
+public class TaskQueue extends Observable {
     private Queue<TaskRequest> tasks;
 
-    public TaskQueue()
-    {
+    public TaskQueue() {
         tasks = new LinkedBlockingQueue<TaskRequest>();
     }
 
-    public synchronized void addTask(TaskRequest newTask)
-    {
+    public synchronized void addTask(TaskRequest newTask) {
         this.tasks.add(newTask);
         this.setChanged();
         this.notifyObservers();
     }
 
-    public synchronized TaskRequest getNextTask()
-    {
+    public synchronized TaskRequest getNextTask() {
         return this.tasks.poll();
     }
 
-    public synchronized boolean isEmpty()
-    {
+    public synchronized boolean isEmpty() {
         return this.tasks.isEmpty();
     }
 }

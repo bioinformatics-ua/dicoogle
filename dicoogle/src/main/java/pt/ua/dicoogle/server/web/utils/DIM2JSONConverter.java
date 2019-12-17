@@ -41,106 +41,106 @@ import pt.ua.dicoogle.sdk.datastructs.dim.Study;
  *
  */
 public class DIM2JSONConverter {
-	
-	/**
-	 * Converts a DIMGeneric object to JSON.
-	 * 
-	 * @param dim DIM Object
-	 * @return The resulting JSON Objects, or null if dim is null.
-	 */
-	public static JSONArray convertToJSON(DIMGeneric dim){
-		JSONArray arr = new JSONArray();
-		
-		Iterator<Patient> it = dim.getPatients().iterator();
-		while(it.hasNext()){
-			Patient p = it.next();
-				
-			arr.add(convertToJSON(p));
-		}
-		
-		return arr;
-	}
-	
-	/**
-	 * Converts a Patient Object to JSON.
-	 * 
-	 * @param patient Patient to be Converted
-	 * @return The resulting JSON Object, or null if patient is null.
-	 */
-	public static JSONObject convertToJSON(Patient patient){
-		
-		JSONObject obj = new JSONObject();
-		
-		obj.put("id", StringUtils.trimToNull(patient.getPatientID()));
-		obj.put("name", StringUtils.trimToNull(patient.getPatientName()));
-		obj.put("sex", StringUtils.trimToNull(patient.getPatientSex()));
-		
-		JSONArray studies = new JSONArray();
-		for(Study s : patient.getStudies()){
-			studies.add(convertToJSON(s));
-		}
-		obj.put("studies", studies);
-		
-		return obj;		
-	}
 
-		
-	/**
-	 * Converts a Study Object to JSON.
-	 * 
-	 * @param study Study to be converted.
-	 * @return The resulting JSON Object, or null if study is null. 
-	 */
-	private static JSONObject convertToJSON(Study study) {
-		
-		JSONObject obj = new JSONObject();
-		
-		obj.put("id",StringUtils.trimToNull( study.getStudyID()));
-		obj.put("uid", StringUtils.trimToNull(study.getStudyInstanceUID()));
-		obj.put("data", StringUtils.trimToNull(study.getStudyData()));
-		obj.put("time", StringUtils.trimToNull(study.getStudyTime()));
-		obj.put("descr", StringUtils.trimToNull(study.getStudyDescription()));
-		obj.put("iname", StringUtils.trimToNull(study.getInstitutuionName()));
-		
-		JSONArray series = new JSONArray();
-		for(Series serie : study.getSeries()){
-			series.add(convertToJSON(serie));
-		}
-		obj.put("series", series);
-		
-		return obj;
-	}
-	
-	/**
-	 * Converts a Series Model to JSON. 
-	 * 
-	 * @param series The DICOM Series model
-	 * @return The resulting JSON object, or null if series is null.
-	 */
-	private static JSONObject convertToJSON(Series series) {
-		
-		JSONObject obj = new JSONObject();
-		
-		obj.put("uid", StringUtils.trimToNull(series.getSeriesInstanceUID()));
-		obj.put("mod", StringUtils.trimToNull(series.getModality()));
-		obj.put("number", series.getSeriesNumber());
-		obj.put("descr", StringUtils.trimToNull(series.getSeriesDescription()));
-	
-		JSONArray images = new JSONArray();
-		Iterator<String> itUID = series.getSOPInstanceUIDList().iterator();
-		Iterator<URI> itURI = series.getImageList().iterator();
-		while(itUID.hasNext() && itURI.hasNext()){
-			String uid = itUID.next();
-			URI uri = itURI.next();
-			
-			JSONObject imgObj = new JSONObject();
-			imgObj.put("uid", uid);
-			imgObj.put("uri", uri.toString());
-			
-			images.add(imgObj);
-		}
-		obj.put("images", images);
-		
-		return obj;
-	}
+    /**
+     * Converts a DIMGeneric object to JSON.
+     * 
+     * @param dim DIM Object
+     * @return The resulting JSON Objects, or null if dim is null.
+     */
+    public static JSONArray convertToJSON(DIMGeneric dim) {
+        JSONArray arr = new JSONArray();
+
+        Iterator<Patient> it = dim.getPatients().iterator();
+        while (it.hasNext()) {
+            Patient p = it.next();
+
+            arr.add(convertToJSON(p));
+        }
+
+        return arr;
+    }
+
+    /**
+     * Converts a Patient Object to JSON.
+     * 
+     * @param patient Patient to be Converted
+     * @return The resulting JSON Object, or null if patient is null.
+     */
+    public static JSONObject convertToJSON(Patient patient) {
+
+        JSONObject obj = new JSONObject();
+
+        obj.put("id", StringUtils.trimToNull(patient.getPatientID()));
+        obj.put("name", StringUtils.trimToNull(patient.getPatientName()));
+        obj.put("sex", StringUtils.trimToNull(patient.getPatientSex()));
+
+        JSONArray studies = new JSONArray();
+        for (Study s : patient.getStudies()) {
+            studies.add(convertToJSON(s));
+        }
+        obj.put("studies", studies);
+
+        return obj;
+    }
+
+
+    /**
+     * Converts a Study Object to JSON.
+     * 
+     * @param study Study to be converted.
+     * @return The resulting JSON Object, or null if study is null. 
+     */
+    private static JSONObject convertToJSON(Study study) {
+
+        JSONObject obj = new JSONObject();
+
+        obj.put("id", StringUtils.trimToNull(study.getStudyID()));
+        obj.put("uid", StringUtils.trimToNull(study.getStudyInstanceUID()));
+        obj.put("data", StringUtils.trimToNull(study.getStudyData()));
+        obj.put("time", StringUtils.trimToNull(study.getStudyTime()));
+        obj.put("descr", StringUtils.trimToNull(study.getStudyDescription()));
+        obj.put("iname", StringUtils.trimToNull(study.getInstitutuionName()));
+
+        JSONArray series = new JSONArray();
+        for (Series serie : study.getSeries()) {
+            series.add(convertToJSON(serie));
+        }
+        obj.put("series", series);
+
+        return obj;
+    }
+
+    /**
+     * Converts a Series Model to JSON. 
+     * 
+     * @param series The DICOM Series model
+     * @return The resulting JSON object, or null if series is null.
+     */
+    private static JSONObject convertToJSON(Series series) {
+
+        JSONObject obj = new JSONObject();
+
+        obj.put("uid", StringUtils.trimToNull(series.getSeriesInstanceUID()));
+        obj.put("mod", StringUtils.trimToNull(series.getModality()));
+        obj.put("number", series.getSeriesNumber());
+        obj.put("descr", StringUtils.trimToNull(series.getSeriesDescription()));
+
+        JSONArray images = new JSONArray();
+        Iterator<String> itUID = series.getSOPInstanceUIDList().iterator();
+        Iterator<URI> itURI = series.getImageList().iterator();
+        while (itUID.hasNext() && itURI.hasNext()) {
+            String uid = itUID.next();
+            URI uri = itURI.next();
+
+            JSONObject imgObj = new JSONObject();
+            imgObj.put("uid", uid);
+            imgObj.put("uri", uri.toString());
+
+            images.add(imgObj);
+        }
+        obj.put("images", images);
+
+        return obj;
+    }
 }

@@ -29,22 +29,22 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author samuelcampos
  */
-@XmlRootElement(name="List")
-public class JaxbStrList{
-    @XmlElement(name="Item")
+@XmlRootElement(name = "List")
+public class JaxbStrList {
+    @XmlElement(name = "Item")
     public List<String> list;
 
-    public JaxbStrList(){}
-    
-    public JaxbStrList(List<String> list){
-        this.list=list;
+    public JaxbStrList() {}
+
+    public JaxbStrList(List<String> list) {
+        this.list = list;
     }
-    
-    public JaxbStrList(Set<String> set){
-        
+
+    public JaxbStrList(Set<String> set) {
+
         this.list = new ArrayList<String>();
         this.list.addAll(set);
-        
+
         Collections.sort(list);
     }
 }

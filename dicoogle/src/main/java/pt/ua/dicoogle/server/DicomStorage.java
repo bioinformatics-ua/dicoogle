@@ -93,15 +93,15 @@ public class DicomStorage extends StorageService {
      */
 
     public DicomStorage(String[] Services, SOPList l) {
-        //just because the call to super must be the first instruction
+        // just because the call to super must be the first instruction
         super(Services);
 
-        //our configuration format
+        // our configuration format
         list = l;
         settings = ServerSettingsManager.getSettings();
 
         // Added default alternative AETitle.
-        //alternativeAETs.add(ServerSettingsManager.getSettings().getNodeName());
+        // alternativeAETs.add(ServerSettingsManager.getSettings().getNodeName());
 
         path = settings.getArchiveSettings().getMainDirectory();
         if (path == null) {
@@ -116,11 +116,11 @@ public class DicomStorage extends StorageService {
         device.setNetworkConnection(nc);
         nae.setNetworkConnection(nc);
 
-        //we accept assoociations, this is a server
+        // we accept assoociations, this is a server
         nae.setAssociationAcceptor(true);
-        //we support the VerificationServiceSOP
+        // we support the VerificationServiceSOP
         nae.register(new VerificationService());
-        //and the StorageServiceSOP
+        // and the StorageServiceSOP
         nae.register(this);
 
         nae.setAETitle(settings.getDicomServicesSettings().getAETitle());
@@ -160,11 +160,11 @@ public class DicomStorage extends StorageService {
             nae2.setMaxPDULengthReceive(maxPDULengthReceive + 1000);
             nae2.setMaxPDULengthSend(maxPDULengthSend + 1000);
             nae2.setRetrieveRspTimeout(60000 * 300);
-            //we accept assoociations, this is a server
+            // we accept assoociations, this is a server
             nae2.setAssociationAcceptor(true);
-            //we support the VerificationServiceSOP
+            // we support the VerificationServiceSOP
             nae2.register(new VerificationService());
-            //and the StorageServiceSOP
+            // and the StorageServiceSOP
             nae2.register(this);
             nae2.setAETitle(alternativeAET);
             ServerSettings settings = ServerSettingsManager.getSettings();
@@ -192,7 +192,7 @@ public class DicomStorage extends StorageService {
      */
     private void initTS(String[] Services) {
         int count = list.getAccepted();
-        //System.out.println(count);
+        // System.out.println(count);
         TransferCapability[] tc = new TransferCapability[count + 1];
         String[] Verification = {UID.ImplicitVRLittleEndian, UID.ExplicitVRLittleEndian, UID.ExplicitVRBigEndian};
         String[] TS;
@@ -213,7 +213,7 @@ public class DicomStorage extends StorageService {
             }
         }
 
-        // Setting the TS in all NetworkApplicationEntitys 
+        // Setting the TS in all NetworkApplicationEntitys
         for (int i = 0; i < naeArr.length; i++) {
 
             naeArr[i].setTransferCapability(tc);
@@ -226,12 +226,12 @@ public class DicomStorage extends StorageService {
      * Called when a C-Store Request has been accepted
      * Parameters defined by dcm4che2
      */
-    public void cstore(final Association as, final int pcid, DicomObject rq, PDVInputStream dataStream, String tsuid) throws DicomServiceException, IOException {
-        //DebugManager.getSettings().debug(":: Verify Permited AETs @??C-Store Request ");
+    public void cstore(final Association as, final int pcid, DicomObject rq, PDVInputStream dataStream, String tsuid)
+            throws DicomServiceException, IOException {
+        // DebugManager.getSettings().debug(":: Verify Permited AETs @??C-Store Request ");
 
         boolean permited = false;
-        Collection<String> allowedAETitles = ServerSettingsManager.getSettings()
-                .getDicomServicesSettings().getAllowedAETitles();
+        Collection<String> allowedAETitles = ServerSettingsManager.getSettings().getDicomServicesSettings().getAllowedAETitles();
         if (allowedAETitles.isEmpty()) {
             permited = true;
         } else {
@@ -239,20 +239,20 @@ public class DicomStorage extends StorageService {
         }
 
         if (!permited) {
-            //DebugManager.getSettings().debug("Client association NOT permited: " + as.getCallingAET() + "!");
+            // DebugManager.getSettings().debug("Client association NOT permited: " + as.getCallingAET() + "!");
             System.err.println("Client association NOT permited: " + as.getCallingAET() + "!");
             as.abort();
 
             return;
         } else {
-            //DebugManager.getSettings().debug("Client association permited: " + as.getCallingAET() + "!");
+            // DebugManager.getSettings().debug("Client association permited: " + as.getCallingAET() + "!");
             System.err.println("Client association permited: " + as.getCallingAET() + "!");
         }
 
         final DicomObject rsp = CommandUtils.mkRSP(rq, CommandUtils.SUCCESS);
         onCStoreRQ(as, pcid, rq, dataStream, tsuid, rsp);
         as.writeDimseRSP(pcid, rsp);
-        //onCStoreRSP(as, pcid, rq, dataStream, tsuid, rsp);
+        // onCStoreRSP(as, pcid, rq, dataStream, tsuid, rsp);
     }
 
     @Override
@@ -261,7 +261,8 @@ public class DicomStorage extends StorageService {
      * on this server with extras such as Lucene indexing
      * and DICOMDIR update
      */
-    protected void onCStoreRQ(Association as, int pcid, DicomObject rq, PDVInputStream dataStream, String tsuid, DicomObject rsp) throws IOException, DicomServiceException {
+    protected void onCStoreRQ(Association as, int pcid, DicomObject rq, PDVInputStream dataStream, String tsuid, DicomObject rsp)
+            throws IOException, DicomServiceException {
         try {
 
             String cuid = rq.getString(Tag.AffectedSOPClassUID);
@@ -298,8 +299,7 @@ public class DicomStorage extends StorageService {
      *
      * @param <E>
      */
-    class ImageElement<E extends Comparable<? super E>>
-            implements Comparable<ImageElement<E>> {
+    class ImageElement<E extends Comparable<? super E>> implements Comparable<ImageElement<E>> {
         private URI uri;
         private String callingAET;
 
@@ -325,7 +325,8 @@ public class DicomStorage extends StorageService {
                 return 0;
             else if (priorityAETs.contains(this.getCallingAET()))
                 return -1;
-            else return 1;
+            else
+                return 1;
         }
     }
 
@@ -444,7 +445,7 @@ public class DicomStorage extends StorageService {
      * @throws java.io.IOException
      */
     public void start() throws IOException {
-        //dirc = new DicomDirCreator(path, "Dicoogle");
+        // dirc = new DicomDirCreator(path, "Dicoogle");
         pool = Executors.newFixedThreadPool(threadPoolSize);
         device.startListening(executor);
         indexer.start();
@@ -464,6 +465,6 @@ public class DicomStorage extends StorageService {
         }
         device.stopListening();
 
-        //dirc.dicomdir_close();
+        // dirc.dicomdir_close();
     }
 }

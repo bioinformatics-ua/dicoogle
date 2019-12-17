@@ -35,100 +35,97 @@ import org.dcm4che2.imageio.plugins.dcm.DicomImageReadParam;
  * @author Carlos Costa
  */
 public class Dicom2JPEG {
-    
-    public static boolean convertDicom2Jpeg(File dcmFile, File jpgFile){
+
+    public static boolean convertDicom2Jpeg(File dcmFile, File jpgFile) {
         return convertDicom2Jpeg(dcmFile, jpgFile, 0);
     }
-    
-    public static boolean convertDicom2Jpeg(File dcmFile, File jpgFile, int scaleHeight){
+
+    public static boolean convertDicom2Jpeg(File dcmFile, File jpgFile, int scaleHeight) {
         try {
             return convertDicom2Jpeg(dcmFile, new BufferedOutputStream(new FileOutputStream(jpgFile)), scaleHeight);
         } catch (FileNotFoundException ex) {
-            System.out.println("\nError: can not write to JPG file!"+ ex.getMessage());
+            System.out.println("\nError: can not write to JPG file!" + ex.getMessage());
         }
-        
+
         return false;
     }
-    
-    public static boolean convertDicom2Jpeg(File dcmFile, OutputStream jpgStream){
+
+    public static boolean convertDicom2Jpeg(File dcmFile, OutputStream jpgStream) {
         return convertDicom2Jpeg(dcmFile, jpgStream, 0);
     }
-    
-    public static boolean convertDicom2Jpeg(File dcmFile, OutputStream jpgStream, int scaleHeight){
+
+    public static boolean convertDicom2Jpeg(File dcmFile, OutputStream jpgStream, int scaleHeight) {
         boolean result = false;
         ByteArrayOutputStream jpgMem = Dicom2MemJPEG(dcmFile, scaleHeight);
-        
-        if (jpgMem != null){
+
+        if (jpgMem != null) {
             try {
                 jpgMem.writeTo(jpgStream);
                 jpgStream.close();
                 result = true;
-            } 
-            catch(IOException e) {
-                System.out.println("\nError: can not write to JPG file!"+ e.getMessage());
+            } catch (IOException e) {
+                System.out.println("\nError: can not write to JPG file!" + e.getMessage());
             }
         }
-        
+
         return result;
     }
-    
-    
-    
-    public static ByteArrayOutputStream Dicom2MemJPEG(File dcmFile){
+
+
+
+    public static ByteArrayOutputStream Dicom2MemJPEG(File dcmFile) {
         return Dicom2MemJPEG(dcmFile, 0);
     }
-        
-    public static ByteArrayOutputStream Dicom2MemJPEG(File dcmFile, int scaleHeight){
-        //File myDicomFile = new File("c:/dicomImage.dcm");
+
+    public static ByteArrayOutputStream Dicom2MemJPEG(File dcmFile, int scaleHeight) {
+        // File myDicomFile = new File("c:/dicomImage.dcm");
         BufferedImage myJpegImage = null;
-        
-        // returns an Iterator containing all currently registered ImageReaders 
-        // that claim to be able to decode the named format 
+
+        // returns an Iterator containing all currently registered ImageReaders
+        // that claim to be able to decode the named format
         // (e.g., "DICOM", "jpeg", "tiff")
-        Iterator iter = ImageIO.getImageReadersByFormatName("DICOM");  
+        Iterator iter = ImageIO.getImageReadersByFormatName("DICOM");
         ImageReader reader = (ImageReader) iter.next();
         DicomImageReadParam param = (DicomImageReadParam) reader.getDefaultReadParam();
-        
+
         try {
             ImageInputStream iis = ImageIO.createImageInputStream(dcmFile);
-            reader.setInput(iis, false); 
-            myJpegImage = reader.read(0, param); 
+            reader.setInput(iis, false);
+            myJpegImage = reader.read(0, param);
             iis.close();
 
             if (myJpegImage == null) {
                 System.out.println("\nError: couldn't read dicom image!");
                 return null;
             }
-            
+
 
             // Resize Image -> Thumbnails....
-            if (scaleHeight > 0){
-                if (scaleHeight < 24) 
+            if (scaleHeight > 0) {
+                if (scaleHeight < 24)
                     scaleHeight = 24; // minimum
-                myJpegImage = getScaledImageWithHeight(myJpegImage, scaleHeight);           
+                myJpegImage = getScaledImageWithHeight(myJpegImage, scaleHeight);
             }
-                    
-            //OutputStream output = new BufferedOutputStream(new FileOutputStream(jpgFile));
+
+            // OutputStream output = new BufferedOutputStream(new FileOutputStream(jpgFile));
             ByteArrayOutputStream jpgArray = new ByteArrayOutputStream();
-            OutputStream output = new BufferedOutputStream(jpgArray); 
-            
-            //JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(output);
-            //encoder.encode(myJpegImage);
-            output.close();             // Has no effect to ByteArrayOutputStream
-            
+            OutputStream output = new BufferedOutputStream(jpgArray);
+
+            // JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(output);
+            // encoder.encode(myJpegImage);
+            output.close(); // Has no effect to ByteArrayOutputStream
+
             return jpgArray;
-        } 
-        catch(IOException e) {
-            System.out.println("\nError: couldn't read dicom image!"+ e.getMessage());
+        } catch (IOException e) {
+            System.out.println("\nError: couldn't read dicom image!" + e.getMessage());
             return null;
-        }
-        catch(Exception e) {
-            System.out.println("\nError: "+ e.getMessage());
+        } catch (Exception e) {
+            System.out.println("\nError: " + e.getMessage());
             return null;
         }
     }
-    
-    
+
+
     /**A method that scales a Buffered image and takes the required height as a refference point**/
     public static BufferedImage getScaledImageWithHeight(BufferedImage image, int height) throws java.lang.Exception {
         int width = (int) (((float) image.getWidth() / (float) image.getHeight()) * height);
@@ -140,5 +137,5 @@ public class Dicom2JPEG {
 
         return outImage;
     }
-    
+
 }

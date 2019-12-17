@@ -23,12 +23,11 @@ package pt.ua.dicoogle.sdk.index.handlers;
  * @author marco
  */
 public class DocumentHandlerException extends Exception {
-    
-	/**
-	 * Generic exception
-	 */
-    public DocumentHandlerException()
-    {
+
+    /**
+     * Generic exception
+     */
+    public DocumentHandlerException() {
         super();
     }
 }

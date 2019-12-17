@@ -38,8 +38,7 @@ import java.util.Objects;
 /**
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
-public class ServerSettingsManager
-{
+public class ServerSettingsManager {
     private static final Logger logger = LoggerFactory.getLogger(ServerSettingsManager.class);
 
     private static final Path MAIN_CONFIG_PATH = Paths.get(Platform.homePath(), "confs/server.xml");
@@ -66,7 +65,8 @@ public class ServerSettingsManager
      * @return a global instance of the server's settings
      */
     public static ServerSettings getSettings() {
-        if (inner == null) throw new IllegalStateException("Server settings not initialized");
+        if (inner == null)
+            throw new IllegalStateException("Server settings not initialized");
         return inner;
     }
 
@@ -159,7 +159,8 @@ public class ServerSettingsManager
     /** Save the global settings to a path in the file system.
      */
     public static void saveSettingsTo(Path path) throws IOException {
-        if (inner == null) throw new IllegalStateException("Server settings not initialized");
+        if (inner == null)
+            throw new IllegalStateException("Server settings not initialized");
         saveSettingsTo(inner, path);
     }
 

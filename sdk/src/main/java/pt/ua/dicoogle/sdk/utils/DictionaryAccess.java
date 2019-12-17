@@ -31,29 +31,25 @@ import org.dcm4che2.data.Tag;
  *
  * @author Luís A. Bastião Silva <bastiao@bmd-software.com>
  */
-public class DictionaryAccess
-{
+public class DictionaryAccess {
 
     private HashMap<String, Integer> tagList = new HashMap<String, Integer>();
     private HashMap<Integer, String> tagListByTag = new HashMap<Integer, String>();
 
-    
-    private static final DictionaryAccess instance =  new DictionaryAccess(); ;
 
-    public static DictionaryAccess getInstance()
-    {
+    private static final DictionaryAccess instance = new DictionaryAccess();;
+
+    public static DictionaryAccess getInstance() {
         return instance;
     }
 
-    private DictionaryAccess()
-    {
-    	
-        Field [] tags = Tag.class.getFields();
-        for (int i = 0 ; i<tags.length; i++)
-        {
+    private DictionaryAccess() {
+
+        Field[] tags = Tag.class.getFields();
+        for (int i = 0; i < tags.length; i++) {
             try {
                 tagList.put(tags[i].getName(), tags[i].getInt(null));
-                tagListByTag.put(tags[i].getInt(null),tags[i].getName());
+                tagListByTag.put(tags[i].getInt(null), tags[i].getName());
             } catch (IllegalArgumentException ex) {
                 LoggerFactory.getLogger(DictionaryAccess.class).error(ex.getMessage(), ex);
             } catch (IllegalAccessException ex) {
@@ -62,22 +58,18 @@ public class DictionaryAccess
         }
     }
 
-    public String tagName(int tag)
-    {
+    public String tagName(int tag) {
         return this.tagListByTag.get(tag);
     }
 
-    public String toString()
-    {
-        String str = "" ;
+    public String toString() {
+        String str = "";
         Iterator<String> it = (Iterator<String>) getTagList().keySet().iterator();
-        while(it.hasNext())
-        {
+        while (it.hasNext()) {
             String key = it.next();
-            str+="Name: " + key + " with value: " +
-                    Integer.toHexString( this.getTagList().get(key));
+            str += "Name: " + key + " with value: " + Integer.toHexString(this.getTagList().get(key));
         }
-        return str ;
+        return str;
     }
 
 

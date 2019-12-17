@@ -50,7 +50,7 @@ public final class SOPClass {
     }
 
     @JsonCreator
-    public SOPClass(@JsonProperty("uid")String uid, @JsonProperty("transfer-syntaxes") Collection<String> ts) {
+    public SOPClass(@JsonProperty("uid") String uid, @JsonProperty("transfer-syntaxes") Collection<String> ts) {
         this.uid = uid;
         this.ts = ts != null ? ts : Collections.EMPTY_LIST;
     }
@@ -78,11 +78,12 @@ public final class SOPClass {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         SOPClass sopClass = (SOPClass) o;
-        return Objects.equals(uid, sopClass.uid) &&
-                Objects.equals(ts, sopClass.ts);
+        return Objects.equals(uid, sopClass.uid) && Objects.equals(ts, sopClass.ts);
     }
 
     @Override
@@ -92,9 +93,6 @@ public final class SOPClass {
 
     @Override
     public String toString() {
-        return "SOPClass{" +
-                "uid='" + uid + '\'' +
-                ", ts=" + ts +
-                '}';
+        return "SOPClass{" + "uid='" + uid + '\'' + ", ts=" + ts + '}';
     }
 }

@@ -31,8 +31,7 @@ import java.util.Collection;
 /**
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY,
-        getterVisibility = JsonAutoDetect.Visibility.NONE,
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE,
         setterVisibility = JsonAutoDetect.Visibility.NONE)
 public class QueryRetrieveImpl implements ServerSettings.DicomServices.QueryRetrieve {
     @JacksonXmlProperty(isAttribute = true)
@@ -191,19 +190,9 @@ public class QueryRetrieveImpl implements ServerSettings.DicomServices.QueryRetr
 
     @Override
     public String toString() {
-        return "QueryRetrieveImpl{" +
-                "autostart=" + autostart +
-                ", port=" + port +
-                ", rspDelay=" + rspDelay +
-                ", dimseRspTimeout=" + dimseRspTimeout +
-                ", idleTimeout=" + idleTimeout +
-                ", acceptTimeout=" + acceptTimeout +
-                ", connectionTimeout=" + connectionTimeout +
-                ", transferCapabilities=" + transferCapabilities +
-                ", sopClasses=" + sopClasses +
-                ", maxClientAssocs=" + maxClientAssocs +
-                ", maxPduLengthReceive=" + maxPduLengthReceive +
-                ", maxPduLengthSend=" + maxPduLengthSend +
-                '}';
+        return "QueryRetrieveImpl{" + "autostart=" + autostart + ", port=" + port + ", rspDelay=" + rspDelay + ", dimseRspTimeout=" + dimseRspTimeout
+                + ", idleTimeout=" + idleTimeout + ", acceptTimeout=" + acceptTimeout + ", connectionTimeout=" + connectionTimeout + ", transferCapabilities="
+                + transferCapabilities + ", sopClasses=" + sopClasses + ", maxClientAssocs=" + maxClientAssocs + ", maxPduLengthReceive=" + maxPduLengthReceive
+                + ", maxPduLengthSend=" + maxPduLengthSend + '}';
     }
 }

@@ -35,8 +35,7 @@ public class WebServerImpl implements ServerSettings.WebServer {
     @JacksonXmlProperty(isAttribute = true, localName = "port")
     private int port;
 
-    public WebServerImpl() {
-    }
+    public WebServerImpl() {}
 
     public WebServerImpl(boolean autostart, int port, String allowedOrigins) {
         this.autostart = autostart;
@@ -83,12 +82,12 @@ public class WebServerImpl implements ServerSettings.WebServer {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         WebServerImpl webServer = (WebServerImpl) o;
-        return autostart == webServer.autostart &&
-                port == webServer.port &&
-                Objects.equals(allowedOrigins, webServer.allowedOrigins);
+        return autostart == webServer.autostart && port == webServer.port && Objects.equals(allowedOrigins, webServer.allowedOrigins);
     }
 
     @Override
@@ -98,10 +97,6 @@ public class WebServerImpl implements ServerSettings.WebServer {
 
     @Override
     public String toString() {
-        return "WebServerImpl{" +
-                "autostart=" + autostart +
-                ", port=" + port +
-                ", allowedOrigins='" + allowedOrigins + '\'' +
-                '}';
+        return "WebServerImpl{" + "autostart=" + autostart + ", port=" + port + ", allowedOrigins='" + allowedOrigins + '\'' + '}';
     }
 }

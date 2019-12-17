@@ -102,7 +102,7 @@ public class DIMGeneric {
      * @param arr
      * @param uri
      */
-    public DIMGeneric(Map<String, Object> arr,URI uri) throws Exception {
+    public DIMGeneric(Map<String, Object> arr, URI uri) throws Exception {
         fillWithMap(arr, uri);
     }
 
@@ -116,7 +116,7 @@ public class DIMGeneric {
             /**
              * Looking for SeachResults and put it in right side :)
              */
-            //SearchResult r = (SearchResult) arr.get(i);
+            // SearchResult r = (SearchResult) arr.get(i);
             HashMap<String, Object> extra = r.getExtraData();
             fillDim(extra, r.getURI());
 
@@ -159,7 +159,7 @@ public class DIMGeneric {
          */
         String serieUID = toTrimmedString(extra.get("SeriesInstanceUID"), false);
         String BodyPartThickness = (String) extra.get("BodyPartThickness");
-        //System.out.println("serieUID"+serieUID);
+        // System.out.println("serieUID"+serieUID);
         String serieNumber = toTrimmedString(extra.get("SeriesNumber"), true);
         String serieDescription = toTrimmedString(extra.get("SeriesDescription"), false);
         String modality = toTrimmedString(extra.get("Modality"), false);
@@ -187,8 +187,8 @@ public class DIMGeneric {
         /**
          * Get data to Image
          */
-        //TODO:Error checking here... but according to standard, all images
-        //must have one of these...
+        // TODO:Error checking here... but according to standard, all images
+        // must have one of these...
         String sopInstUID = toTrimmedString(extra.get("SOPInstanceUID"), true);
 
         if (sopInstUID == null) {
@@ -198,8 +198,7 @@ public class DIMGeneric {
         logger.debug("StudyDescription: " + StudyDescription);
 
         // This is a quick fix for changing the parameters for the query.
-        if ((StudyDescription == null || StudyDescription.equals("") || StudyDescription.toLowerCase().contains("fuji"))
-                && this.tags != null) {
+        if ((StudyDescription == null || StudyDescription.equals("") || StudyDescription.toLowerCase().contains("fuji")) && this.tags != null) {
             logger.debug("Checking if the Rule applies." + studyUID);
             String description = "";
 
@@ -413,7 +412,7 @@ public class DIMGeneric {
 
         StreamResult streamResult = new StreamResult(writer);
         SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
-        //      SAX2.0 ContentHandler.
+        // SAX2.0 ContentHandler.
         TransformerHandler hd = null;
         try {
             hd = tf.newTransformerHandler();

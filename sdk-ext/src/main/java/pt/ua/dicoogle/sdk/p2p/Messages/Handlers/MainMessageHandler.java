@@ -30,39 +30,31 @@ import pt.ua.dicoogle.sdk.p2p.Messages.MessageType;
  * @author Carlos Ferreira
  * @author Pedro Bento
  */
-public class MainMessageHandler implements MessageHandler
-{
+public class MainMessageHandler implements MessageHandler {
     private NetworkPluginAdapter NPA;
     private ListObservable<SearchResult> results = null;
 
-    public MainMessageHandler(NetworkPluginAdapter NPA)
-    {
+    public MainMessageHandler(NetworkPluginAdapter NPA) {
         this.NPA = NPA;
         results = NPA.getSearchResults();
     }
 
-    public void handleMessage(MessageI message, String address)
-    {
+    public void handleMessage(MessageI message, String address) {
         MessageHandler handler = null;
-        if (message.getType().equals(MessageType.QUERY))
-        {
-            if (address.equals(this.NPA.getLocalAddress()))
-            {
+        if (message.getType().equals(MessageType.QUERY)) {
+            if (address.equals(this.NPA.getLocalAddress())) {
                 return;
             }
             handler = new QueryHandler(1000, this.NPA);
         }
-        if (message.getType().equals(MessageType.QUERY_RESP))
-        {
+        if (message.getType().equals(MessageType.QUERY_RESP)) {
             handler = new QueryResponseHandler(this.NPA, this.results);
         }
 
-        if (message.getType().equals(MessageType.FILE_REQ))
-        {
+        if (message.getType().equals(MessageType.FILE_REQ)) {
             handler = new FileRequestHandler(this.NPA);
         }
-        if (message.getType().equals(MessageType.FILE_RESP))
-        {
+        if (message.getType().equals(MessageType.FILE_RESP)) {
             handler = new FileResponseHandler("received", this.NPA);
         }
         handler.handleMessage(message, address);

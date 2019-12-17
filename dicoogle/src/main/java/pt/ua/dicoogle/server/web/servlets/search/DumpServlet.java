@@ -65,25 +65,24 @@ public class DumpServlet extends HttpServlet {
         if (providers.size() == 0) {
             resp.sendError(400, "No valid DIM providers supplied.");
         }
-        
+
         String query = "SOPInstanceUID:" + uid;
-        
-        Set<TagValue> tags = TagsStruct.getInstance().getAllFields(); 
-        //TODO: PERHAPS REMOVE DICTIONARY ACCESS SINGLETON
-        
+
+        Set<TagValue> tags = TagsStruct.getInstance().getAllFields();
+        // TODO: PERHAPS REMOVE DICTIONARY ACCESS SINGLETON
+
         HashMap<String, String> extraFields = new HashMap<>();
         for (TagValue s : tags) {
-        	if(!s.getVR().equalsIgnoreCase("SQ"))
-        		extraFields.put(s.getAlias(), s.getAlias());
+            if (!s.getVR().equalsIgnoreCase("SQ"))
+                extraFields.put(s.getAlias(), s.getAlias());
         }
-        
+
         JointQueryTask queryTaskHolder = new JointQueryTask() {
             @Override
-            public void onCompletion() {
-            }
+            public void onCompletion() {}
+
             @Override
-            public void onReceive(Task<Iterable<SearchResult>> e) {
-            }
+            public void onReceive(Task<Iterable<SearchResult>> e) {}
         };
 
         long tick = System.currentTimeMillis();
@@ -96,7 +95,7 @@ public class DumpServlet extends HttpServlet {
             return;
         }
 
-        long time = System.currentTimeMillis()-tick;
+        long time = System.currentTimeMillis() - tick;
         String json = processJSON(results, time);
 
         resp.setContentType("application/json");
@@ -109,7 +108,7 @@ public class DumpServlet extends HttpServlet {
         JSONObject fields = new JSONObject();
         for (SearchResult r : results) {
             rj.put("uri", r.getURI().toString());
-            for (Map.Entry<String,Object> e : r.getExtraData().entrySet()) {
+            for (Map.Entry<String, Object> e : r.getExtraData().entrySet()) {
                 fields.put(e.getKey(), e.getValue());
             }
         }

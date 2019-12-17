@@ -29,8 +29,7 @@ import java.util.List;
  * Holds and provides information about the accepted SOP Classes and
  * Transfer Storages allowed within Dicoogle.
  */
-public class SOPClassSettings
-{
+public class SOPClassSettings {
     /**
      * Holds a pointer to the SOPList that holds the SOP Classes settings.
      */
@@ -54,8 +53,7 @@ public class SOPClassSettings
      */
     private static SOPClassSettings instance;
 
-    private SOPClassSettings()
-    {
+    private SOPClassSettings() {
         sopList = SOPList.getInstance();
 
         sopClasses = new HashMap<String, String>();
@@ -133,17 +131,17 @@ public class SOPClassSettings
         sopClasses.put(UID.ProcedureLogStorage, "ProcedureLogStorage");
         sopClasses.put(UID.MammographyCADSRStorage, "MammographyCADSR");
         sopClasses.put(UID.KeyObjectSelectionDocumentStorage, "KeyObjectSelectionDocument");
-        sopClasses.put(UID.ChestCADSRStorage,  "ChestCADSR");
+        sopClasses.put(UID.ChestCADSRStorage, "ChestCADSR");
         sopClasses.put(UID.StandaloneCurveStorageRetired, "StandaloneCurveStorage (Retired)");
         sopClasses.put(UID.GeneralECGWaveformStorage, "GeneralECGWaveformStorage");
-        sopClasses.put(UID.AmbulatoryECGWaveformStorage,  "AmbulatoryECGWaveformStorage");
+        sopClasses.put(UID.AmbulatoryECGWaveformStorage, "AmbulatoryECGWaveformStorage");
         sopClasses.put(UID.HemodynamicWaveformStorage, "HemodynamicWaveformStorage");
         sopClasses.put(UID.CardiacElectrophysiologyWaveformStorage, "CardiacElectrophysiologyWaveformStorage");
         sopClasses.put(UID.BasicVoiceAudioWaveformStorage, "BasicVoiceAudioWaveformStorage");
         sopClasses.put(UID.HangingProtocolStorage, "HangingProtocolStorage");
         sopClasses.put(UID.SiemensCSANonImageStorage, "SiemensCSANonImageStorage");
-sopClasses.put(UID.VLWholeSlideMicroscopyImageStorage, "VLWholeSlideMicroscopyImageStorage");
-sopClasses.put(UID.BreastTomosynthesisImageStorage, "BreastTomosynthesisImageStorage");
+        sopClasses.put(UID.VLWholeSlideMicroscopyImageStorage, "VLWholeSlideMicroscopyImageStorage");
+        sopClasses.put(UID.BreastTomosynthesisImageStorage, "BreastTomosynthesisImageStorage");
 
         transferSettings.put(UID.ImplicitVRLittleEndian, "ImplicitVRLittleEndian");
         transferSettings.put(UID.ExplicitVRLittleEndian, "ExplicitVRLittleEndian");
@@ -181,8 +179,7 @@ sopClasses.put(UID.BreastTomosynthesisImageStorage, "BreastTomosynthesisImageSto
      *
      * @return the SOP Classes UID and "regular" name translation list.
      */
-    public HashMap<String, String> getSOPClasses()
-    {
+    public HashMap<String, String> getSOPClasses() {
         return sopClasses;
     }
 
@@ -191,8 +188,7 @@ sopClasses.put(UID.BreastTomosynthesisImageStorage, "BreastTomosynthesisImageSto
      *
      * @return the TransferStorage UID and "regular" name translation list.
      */
-    public HashMap<String, String> getTransferSettings()
-    {
+    public HashMap<String, String> getTransferSettings() {
         return transferSettings;
     }
 
@@ -201,8 +197,7 @@ sopClasses.put(UID.BreastTomosynthesisImageStorage, "BreastTomosynthesisImageSto
      *
      * @return the TransferStorage UID and their index on the TS object translation list.
      */
-    public HashMap<String, Integer> getTransferSettingsIndex()
-    {
+    public HashMap<String, Integer> getTransferSettingsIndex() {
         return transferSettingsIndex;
     }
 
@@ -211,8 +206,7 @@ sopClasses.put(UID.BreastTomosynthesisImageStorage, "BreastTomosynthesisImageSto
      *
      * @return the current instance of this class.
      */
-    public static synchronized SOPClassSettings getInstance()
-    {
+    public static synchronized SOPClassSettings getInstance() {
         if (instance == null)
             instance = new SOPClassSettings();
 
@@ -225,8 +219,7 @@ sopClasses.put(UID.BreastTomosynthesisImageStorage, "BreastTomosynthesisImageSto
      * @param sopClassUID the SOP Class UID.
      * @return the TransferStorage settings fo a SOP Class UID.
      */
-    public synchronized TransfersStorage getSOPClassSettings(String sopClassUID)
-    {
+    public synchronized TransfersStorage getSOPClassSettings(String sopClassUID) {
         return sopList.getTS(sopClassUID);
     }
 
@@ -236,12 +229,10 @@ sopClasses.put(UID.BreastTomosynthesisImageStorage, "BreastTomosynthesisImageSto
      * @param accepted if this SOP Class is accepted. Can be null and if so, the target accepted value will remain the same.
      * @param allowedTransStore a HashMap indicating which TransferStore UIDs are accepted.
      */
-    public synchronized void setAllSOPClassesSettings(Boolean accepted, HashMap<String, Boolean> allowedTransStore)
-    {
+    public synchronized void setAllSOPClassesSettings(Boolean accepted, HashMap<String, Boolean> allowedTransStore) {
         // for all the sop classes
         List keys = sopList.getKeys();
-        for (int i = 0; i < keys.size(); i++)
-        {
+        for (int i = 0; i < keys.size(); i++) {
             // get the sop class uid
             String sopClassUID = (String) keys.get(i);
 
@@ -257,8 +248,7 @@ sopClasses.put(UID.BreastTomosynthesisImageStorage, "BreastTomosynthesisImageSto
      * @param accepted if this SOP Class is accepted. Can be null and if so, the target accepted value will remain the same.
      * @param allowedTransStore a HashMap indicating which TransferStore UIDs are accepted.
      */
-    public synchronized void setSOPClassSettings(String sopClassUID, Boolean accepted, HashMap<String, Boolean> allowedTransStore)
-    {
+    public synchronized void setSOPClassSettings(String sopClassUID, Boolean accepted, HashMap<String, Boolean> allowedTransStore) {
         // get the transfer storage object for this sop class uid
         TransfersStorage trans = sopList.getTS(sopClassUID);
 
@@ -273,16 +263,15 @@ sopClasses.put(UID.BreastTomosynthesisImageStorage, "BreastTomosynthesisImageSto
      * @param accepted if this SOP Class is accepted. Can be null and if so, the target accepted value will remain the same.
      * @param allowedTransStore a HashMap indicating which TransferStore UIDs are accepted.
      */
-    public synchronized void setTransferStorageSettings(TransfersStorage trans, Boolean accepted, HashMap<String, Boolean> allowedTransStore)
-    {
+    public synchronized void setTransferStorageSettings(TransfersStorage trans, Boolean accepted, HashMap<String, Boolean> allowedTransStore) {
         // accept this sop class, if necessary
         if (accepted != null)
             trans.setAccepted(accepted.booleanValue());
         // accept all the transfer storage settings
-        for (String transStoreUID : transferSettings.keySet())
-        {
-            // skip this transfer store uid if it is not referenced on the allowedTransStore // FIXME is this right, or should non-defined entries be set as false?!?
-            if (! allowedTransStore.containsKey(transStoreUID))
+        for (String transStoreUID : transferSettings.keySet()) {
+            // skip this transfer store uid if it is not referenced on the allowedTransStore // FIXME is this right, or should non-defined entries be set as
+            // false?!?
+            if (!allowedTransStore.containsKey(transStoreUID))
                 continue;
 
             trans.setTS(allowedTransStore.get(transStoreUID).booleanValue(), transferSettingsIndex.get(transStoreUID).intValue());

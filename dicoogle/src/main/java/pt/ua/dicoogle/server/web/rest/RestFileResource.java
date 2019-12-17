@@ -50,7 +50,7 @@ public class RestFileResource extends ServerResource {
     public RestFileResource() {
         this.core = PluginController.getInstance();
     }
-    
+
     @Get
     public StreamRepresentation represent() {
         String SOPInstanceUID = getRequest().getResourceRef().getQueryAsForm().getValues("uid");
@@ -82,31 +82,30 @@ public class RestFileResource extends ServerResource {
             } catch (Exception ex) {
                 LoggerFactory.getLogger(RestWADOResource.class).error(ex.getMessage(), ex);
             }
-
+        
         }*/
     }
-    
-     private static class MyHolder extends JointQueryTask {
-         
-        @Override
-        public void onCompletion() {
-        }
+
+    private static class MyHolder extends JointQueryTask {
 
         @Override
-        public void onReceive(Task<Iterable<SearchResult>> e) {
-        }
-    }    
-     
-     private static class MyOutput extends OutputRepresentation{
+        public void onCompletion() {}
 
-         private StorageInputStream stream;
+        @Override
+        public void onReceive(Task<Iterable<SearchResult>> e) {}
+    }
+
+    private static class MyOutput extends OutputRepresentation {
+
+        private StorageInputStream stream;
 
         public MyOutput(StorageInputStream stream, MediaType mediaType) {
             super(mediaType);
             this.stream = stream;
         }
+
         @Override
-        public void write(OutputStream out) throws IOException  {
+        public void write(OutputStream out) throws IOException {
             try {
                 IOUtils.copy(stream.getInputStream(), out);
             } catch (IOException ex) {
@@ -115,5 +114,5 @@ public class RestFileResource extends ServerResource {
                 throw ex;
             }
         }
-     }
+    }
 }

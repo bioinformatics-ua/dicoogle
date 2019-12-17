@@ -34,71 +34,71 @@ import pt.ua.dicoogle.sdk.datastructs.SearchResult;
  */
 public abstract class JointQueryTask {
 
-	private boolean cancelled;
-	private int numberOfCompletedTasks;
-	
-	private List<Task<Iterable<SearchResult>>> searchTasks;
-	
-	public JointQueryTask() {
-		this.searchTasks = new ArrayList<>();
-		this.numberOfCompletedTasks = 0;
-		this.cancelled = false;
-	}
+    private boolean cancelled;
+    private int numberOfCompletedTasks;
 
-	public boolean addTask(final Task<Iterable<SearchResult>> e) {
-		//Add hook
-		e.onCompletion( new Runnable() {
-			@Override
-			public void run() {
-				numberOfCompletedTasks++;
-				onReceive(e);
-				if(numberOfCompletedTasks == searchTasks.size())
-					onCompletion();
-			}
-		} );
-		
-		return searchTasks.add(e);
-	}
-	
-	public abstract void onCompletion();
+    private List<Task<Iterable<SearchResult>>> searchTasks;
 
-	public abstract void onReceive(Task<Iterable<SearchResult>> e);
-	
-	public Iterable<SearchResult> get() throws InterruptedException, ExecutionException{
-		List<SearchResult> list = new ArrayList<>();
-		
-		for(Task<Iterable<SearchResult>> task : searchTasks){
-			Iterable<SearchResult> res = task.get();
-			for(SearchResult i : res)
-				list.add(i);
-		}
-		return list;
-	}	
+    public JointQueryTask() {
+        this.searchTasks = new ArrayList<>();
+        this.numberOfCompletedTasks = 0;
+        this.cancelled = false;
+    }
 
-	public float getProgress() {
-		if(isCancelled())
-			return -1;
-		
-		if(isDone())
-			return 1;
-		
-		return numberOfCompletedTasks / searchTasks.size();
-	}
+    public boolean addTask(final Task<Iterable<SearchResult>> e) {
+        // Add hook
+        e.onCompletion(new Runnable() {
+            @Override
+            public void run() {
+                numberOfCompletedTasks++;
+                onReceive(e);
+                if (numberOfCompletedTasks == searchTasks.size())
+                    onCompletion();
+            }
+        });
 
-	public boolean isCancelled() {
-		return cancelled;
-	}
+        return searchTasks.add(e);
+    }
 
-	public boolean isDone() {
-		return numberOfCompletedTasks == searchTasks.size();
-	}
+    public abstract void onCompletion();
 
-	public boolean cancel(boolean mayInterruptIfRunning) {
-		boolean ret = true;
-		for(Task<Iterable<SearchResult>> t : searchTasks){
-			if(!t.isCancelled())
-				ret = t.cancel(mayInterruptIfRunning) && ret;
-		}
-		return ret;
-	}	
+    public abstract void onReceive(Task<Iterable<SearchResult>> e);
+
+    public Iterable<SearchResult> get() throws InterruptedException, ExecutionException {
+        List<SearchResult> list = new ArrayList<>();
+
+        for (Task<Iterable<SearchResult>> task : searchTasks) {
+            Iterable<SearchResult> res = task.get();
+            for (SearchResult i : res)
+                list.add(i);
+        }
+        return list;
+    }
+
+    public float getProgress() {
+        if (isCancelled())
+            return -1;
+
+        if (isDone())
+            return 1;
+
+        return numberOfCompletedTasks / searchTasks.size();
+    }
+
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    public boolean isDone() {
+        return numberOfCompletedTasks == searchTasks.size();
+    }
+
+    public boolean cancel(boolean mayInterruptIfRunning) {
+        boolean ret = true;
+        for (Task<Iterable<SearchResult>> t : searchTasks) {
+            if (!t.isCancelled())
+                ret = t.cancel(mayInterruptIfRunning) && ret;
+        }
+        return ret;
+    }
 }

@@ -46,22 +46,22 @@ public class LoggerServlet extends HttpServlet {
     private static final Logger classLogger = LoggerFactory.getLogger(LoggerServlet.class);
 
     private String logFilename = null;
-    
+
     protected String logFilename() {
         if (this.logFilename == null) {
             org.apache.logging.log4j.Logger logger = LogManager.getLogger();
             Map<String, Appender> appenderMap = ((org.apache.logging.log4j.core.Logger) logger).getAppenders();
-            for (Map.Entry<String,Appender> e : appenderMap.entrySet()) {
+            for (Map.Entry<String, Appender> e : appenderMap.entrySet()) {
                 String filename = null;
                 Appender appender = e.getValue();
                 if (appender instanceof FileAppender) {
-                    filename = ((FileAppender)appender).getFileName();
+                    filename = ((FileAppender) appender).getFileName();
                 } else if (appender instanceof RollingFileAppender) {
-                    filename = ((RollingFileAppender)appender).getFileName();
+                    filename = ((RollingFileAppender) appender).getFileName();
                 } else if (appender instanceof RandomAccessFileAppender) {
-                    filename = ((RandomAccessFileAppender)appender).getFileName();
+                    filename = ((RandomAccessFileAppender) appender).getFileName();
                 } else if (appender instanceof RollingRandomAccessFileAppender) {
-                    filename = ((RollingRandomAccessFileAppender)appender).getFileName();
+                    filename = ((RollingRandomAccessFileAppender) appender).getFileName();
                 }
                 if (filename != null) {
                     classLogger.debug("Using \"{}\" as the file for the server log.", filename);
@@ -76,15 +76,14 @@ public class LoggerServlet extends HttpServlet {
         return this.logFilename;
     }
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		try (BufferedReader fis = new BufferedReader(new FileReader(logFilename()))) {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try (BufferedReader fis = new BufferedReader(new FileReader(logFilename()))) {
             PrintWriter respWriter = resp.getWriter();
             String l;
             while ((l = fis.readLine()) != null) {
                 respWriter.println(l);
             }
         }
-	}
+    }
 }

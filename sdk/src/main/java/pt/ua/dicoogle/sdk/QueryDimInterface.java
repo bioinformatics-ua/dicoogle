@@ -33,7 +33,6 @@ public interface QueryDimInterface extends QueryInterface {
 
 
 
-
     /**
      * Performs a search on the database.
      *
@@ -48,7 +47,7 @@ public interface QueryDimInterface extends QueryInterface {
      *
      * @return the results of the query as a (possibly lazy) iterable with <b>Patient</b>
      */
-    public Iterable<? extends PatientInterface> queryPatient(String query, Object ... parameters) throws QueryException;
+    public Iterable<? extends PatientInterface> queryPatient(String query, Object... parameters) throws QueryException;
 
     /**
      *
@@ -59,7 +58,7 @@ public interface QueryDimInterface extends QueryInterface {
      * @param parameters
      * @return the results of the query as a (possibly lazy) iterable with <b>Study</b>
      */
-    public Iterable<? extends StudyInterface> queryStudy(String query, Object ... parameters) throws QueryException;
+    public Iterable<? extends StudyInterface> queryStudy(String query, Object... parameters) throws QueryException;
 
     /**
      *
@@ -70,7 +69,7 @@ public interface QueryDimInterface extends QueryInterface {
      * @param parameters
      * @return the results of the query as a (possibly lazy) iterable with <b>Series</b>
      */
-    public Iterable<? extends SeriesInterface> querySeries(String query, Object ... parameters) throws QueryException;
+    public Iterable<? extends SeriesInterface> querySeries(String query, Object... parameters) throws QueryException;
 
     /**
      *
@@ -83,6 +82,6 @@ public interface QueryDimInterface extends QueryInterface {
      * their own API's, which may require more complex data structures (e.g. images).
      * @return the results of the query as a (possibly lazy) iterable
      */
-    public Iterable<SearchResult> query(String query, DimLevel level, Object ... parameters) throws QueryException;
-    
+    public Iterable<SearchResult> query(String query, DimLevel level, Object... parameters) throws QueryException;
+
 }

@@ -37,21 +37,21 @@ import pt.ua.dicoogle.sdk.task.Task;
 public class TaskManager {
     ExecutorService taskExecutor;
     int nConcurrentThreads = 3;
-    
-    public TaskManager(){
+
+    public TaskManager() {
         taskExecutor = Executors.newFixedThreadPool(nConcurrentThreads);
     }
-    
-    public TaskManager(int nConcurrentThreads){
+
+    public TaskManager(int nConcurrentThreads) {
         this.nConcurrentThreads = nConcurrentThreads;
         taskExecutor = Executors.newFixedThreadPool(nConcurrentThreads);
     }
-    
+
     /**asynch execution of a task*/
-    public void dispatch(Task<?> t){
+    public void dispatch(Task<?> t) {
         taskExecutor.submit(t);
     }
-    
-    
+
+
 
 }

@@ -31,8 +31,7 @@ import pt.ua.dicoogle.sdk.datastructs.dim.DimLevel;
  * @author Luís A. Bastião Silva <bastiao@bmd-software.com>
  * @author fmvalente
  */
-public interface QueryInterface extends DicooglePlugin 
-{
+public interface QueryInterface extends DicooglePlugin {
     /**
      * Performs a search on the database.
      * 
@@ -51,6 +50,6 @@ public interface QueryInterface extends DicooglePlugin
      * query text parser encountered a syntax error (see {@link QueryParseException}).
      */
 
-    public Iterable<SearchResult> query(String query, Object ... parameters) throws QueryException;
+    public Iterable<SearchResult> query(String query, Object... parameters) throws QueryException;
 
 }

@@ -27,7 +27,7 @@ package pt.ua.dicoogle.sdk.utils;
 public class RetrievalException extends RuntimeException {
     private static final long serialVersionUID = -1186512939075390164L;
 
-	public RetrievalException() {
+    public RetrievalException() {
         super();
     }
 

@@ -27,8 +27,7 @@ package pt.ua.dicoogle.sdk.p2p.Messages;
  * @author Carlos Ferreira
  * @author Pedro Bento
  */
-public class MessageFields
-{
+public class MessageFields {
     /**
      * Root element of every xml messages
      */

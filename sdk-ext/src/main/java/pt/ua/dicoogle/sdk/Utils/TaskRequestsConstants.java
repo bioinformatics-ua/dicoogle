@@ -22,19 +22,18 @@ package pt.ua.dicoogle.sdk.Utils;
  *
  * @author Carlos Ferreira
  */
-public class TaskRequestsConstants
-{
-    //Task Types
+public class TaskRequestsConstants {
+    // Task Types
     public static final int T_QUERY_LOCALLY = 1;
     public static final int T_INDEX_FILE = 2;
-    //public static final int T_INDEX_UPDATE = 3;
+    // public static final int T_INDEX_UPDATE = 3;
     public static final int T_LOGGER_MESSAGE_ALREADY_INDEXED = 4;
     public static final int T_RESET_LOCAL_INDEX = 5;
     public static final int T_LOCAL_DELETE_FILE = 6;
     public static final int T_QUERY_PRUNE = 7;
     public static final int T_BLOCK_SIGNAL = 8;
-    
-    //Task Parameters
+
+    // Task Parameters
     public static final int P_QUERY = 1;
     public static final int P_EXTRAFIELDS = 2;
     public static final int P_REQUESTER_ADDRESS = 3;
@@ -42,9 +41,9 @@ public class TaskRequestsConstants
     public static final int P_FILE_PATH = 5;
     public static final int P_MESSAGE = 6;
     public static final int P_TO_REMOVE_FILE = 7;
-    
-    
-    
-    //Task Results
+
+
+
+    // Task Results
     public static final int R_SEARCH_RESULTS = 1;
 }

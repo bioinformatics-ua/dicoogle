@@ -53,7 +53,7 @@ public class UserFileHandle {
     public UserFileHandle() throws IOException {
         filename = "users.xml";
         filenamePath = Platform.homePath() + filename;
-        encrypt = true; //ServerSettingsManager.getSettings().isEncryptUsersFile();
+        encrypt = true; // ServerSettingsManager.getSettings().isEncryptUsersFile();
         try {
 
             if (encrypt) {
@@ -118,8 +118,7 @@ public class UserFileHandle {
      * @throws IOException on a failed attempt to read the file
      */
     public byte[] getFileContent() {
-        try (FileInputStream fin = new FileInputStream(filename);
-             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        try (FileInputStream fin = new FileInputStream(filename); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             byte[] data = new byte[1024];
             int bytesRead;
 
