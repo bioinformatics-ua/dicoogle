@@ -6,7 +6,7 @@
     <packaging>jar</packaging>
     <name>dicoogle</name>
     <url>http://www.dicoogle.com</url>
-    
+
     <parent>
         <groupId>pt.ua.ieeta</groupId>
         <artifactId>dicoogle-all</artifactId>
@@ -17,7 +17,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <log4j.version>2.2</log4j.version>
-
         <maven.build.timestamp.format>yyyyMMdd_HHmm</maven.build.timestamp.format>
         <buildNumber>${maven.build.timestamp}</buildNumber>
     </properties>
@@ -30,6 +29,7 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+
         <repository>
             <id>dcm4che</id>
             <url>http://www.dcm4che.org/maven2/</url>
@@ -65,7 +65,6 @@
             <name>Public online Restlet repository</name>
             <url>http://maven.restlet.org</url>
         </repository>
-
     </repositories>
 
     <build>
@@ -93,14 +92,15 @@
                     <exclude>META-INF/*.RSA</exclude>
                 </excludes>
             </resource>
-           <resource>
-               <directory>src/main/resources</directory>
-               <filtering>true</filtering>
-               <includes>
-                   <include>version.txt</include>
-               </includes>
+
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>version.txt</include>
+                </includes>
             </resource>
-         </resources>
+        </resources>
 
         <plugins>
             <plugin>
@@ -119,8 +119,8 @@
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>pt.ua.dicoogle.Main</mainClass>
                                     <manifestEntries>
-					    <Specification-Version>${project.version}</Specification-Version>
-					    <Implementation-Version>${project.version}</Implementation-Version>
+                                        <Specification-Version>${project.version}</Specification-Version>
+                                        <Implementation-Version>${project.version}</Implementation-Version>
                                         <Extension-Name>com.sun.media.imageio</Extension-Name>
                                         <Implementation-Vendor>BMD software/UA.PT Bioinformatics</Implementation-Vendor>
                                         <Specification-Vendor>BMD software/UA.PT Bioinformatics</Specification-Vendor>
@@ -155,6 +155,7 @@
                     <showDeprecation>true</showDeprecation>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -184,6 +185,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
@@ -207,8 +209,31 @@
                 </executions>
             </plugin>
 
-            <!-- Webapp -->
+            <plugin>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
+                <version>2.11.0</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/package-info.java</exclude>
+                    </excludes>
+                    <configFile>../formatter-config.xml</configFile>
+                </configuration>
 
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Webapp -->
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
@@ -245,7 +270,6 @@
                     <workingDirectory>src/main/resources/webapp</workingDirectory>
                 </configuration>
             </plugin>
-          
         </plugins>
     </build>
 
@@ -335,16 +359,19 @@
             <artifactId>dicoogle-sdk-ext</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
             <version>${jetty.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-webapp</artifactId>
             <version>${jetty.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlets</artifactId>
@@ -356,11 +383,13 @@
             <artifactId>org.restlet.ext.servlet</artifactId>
             <version>${restlet.version}</version>
         </dependency>
+
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>1.8</version>
         </dependency>
+
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>

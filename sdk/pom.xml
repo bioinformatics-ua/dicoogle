@@ -19,7 +19,6 @@
     </properties>
 
     <repositories>
-
         <repository>
             <id>mavencentral</id>
             <url>http://repo1.maven.org/maven2/</url>
@@ -27,6 +26,7 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+
         <repository>
             <id>mi</id>
             <url>http://bioinformatics.ua.pt/maven/content/repositories/mi</url>
@@ -34,18 +34,19 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+
         <repository>
             <id>maven-restlet</id>
             <name>Public online Restlet repository</name>
             <url>http://maven.restlet.org</url>
         </repository>
+
         <repository>
             <id>dcm4che</id>
             <url>http://www.dcm4che.org/maven2/</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
-            
         </repository>
     </repositories>
 
@@ -77,6 +78,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -87,6 +89,7 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -95,6 +98,7 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
@@ -107,12 +111,36 @@
                     <excludes>
                         <exclude>**/package-info.java</exclude>
                     </excludes>
-
                 </configuration>
+
                 <executions>
                     <execution>
                         <goals>
                             <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
+                <version>2.11.0</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/package-info.java</exclude>
+                    </excludes>
+                    <configFile>../formatter-config.xml</configFile>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>format</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -157,6 +185,7 @@
             <artifactId>jspf.core</artifactId>
             <version>1.0.2</version>
         </dependency>
+
         <dependency>
             <groupId>org.restlet.jse</groupId>
             <artifactId>org.restlet</artifactId>
@@ -168,11 +197,13 @@
             <artifactId>org.restlet.ext.json</artifactId>
             <version>${restlet.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
             <version>${jetty.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -184,7 +215,7 @@
             <artifactId>commons-collections4</artifactId>
             <version>4.0</version>
         </dependency>
-        
+
         <dependency>
             <groupId>net.sf.json-lib</groupId>
             <artifactId>json-lib</artifactId>
@@ -198,14 +229,13 @@
             <version>${slf4j.version}</version>
         </dependency>
     </dependencies>
-    <distributionManagement>
 
+    <distributionManagement>
         <!-- Versioned releases are published to the releases repository -->
         <repository>
             <id>mi</id>
             <url>http://bioinformatics.ua.pt/maven/content/repositories/mi</url>
         </repository>
-
 
         <!-- Snapshot releases are published to the snapshots repository -->
         <snapshotRepository>
@@ -213,6 +243,4 @@
             <url>http://bioinformatics.ua.pt/maven/content/repositories/mi-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
-
-
 </project>
