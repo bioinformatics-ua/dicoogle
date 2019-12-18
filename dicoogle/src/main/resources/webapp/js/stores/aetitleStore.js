@@ -12,43 +12,27 @@ const AETitleStore = Reflux.createStore({
   },
 
   onGetAETitle: function () {
-    console.log("aetitleStore - onGetAETitle");
-    return true;
-    // Dicoogle.request("GET", ["plugins", type], (error, data) => {
-    //   if (!error) {
-    //     self._contents[type] = data.plugins;
-    //     self.trigger({
-    //       data: self._contents[type],
-    //       success: true
-    //     });
-    //   } else {
-    //     self.trigger({
-    //       success: false,
-    //       status: error.status
-    //     });
-    //   }
-    // });
+    const self = this;
+
+    Dicoogle.getAETitle((err, data) => {
+      if (err) {
+        console.error("Service failure", err);
+        return;
+      }
+
+      self.trigger({
+        aetitle: data
+      });
+    });
   },
 
   onSetAETitle: function (name) {
-    console.log("aetitleStore - onSetAETitle -> " + name);
-    return true;
-    // Dicoogle.request("POST", ["plugins", type, name, action], (error, data) => {
-    //   if (!error) {
-    //     self._contents[type].find(plugin => plugin.name === name).enabled =
-    //       action === "enable";
-    //     self.trigger({
-    //       data: self._contents[type],
-    //       success: true
-    //     });
-    //   } else {
-    //     self.trigger({
-    //       success: false,
-    //       status: error.status,
-    //       error: "Could not " + action + " the plugin."
-    //     });
-    //   }
-    // });
+    Dicoogle.setAETitle(name, (err) => {
+      if (err) {
+        console.error("Service failure", err);
+        return;
+      }
+    });
   }
 });
 
