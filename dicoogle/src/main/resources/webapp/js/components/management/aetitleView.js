@@ -2,7 +2,6 @@ import React from "react";
 import AETitleForm from "./aetitleForm";
 import * as AETitleActions from "../../actions/aetitleActions";
 import AETitleStore from "../../stores/aetitleStore";
-import Webcore from "dicoogle-webcore";
 
 const AETitleView = React.createClass({
     getInitialState() {
@@ -23,12 +22,11 @@ const AETitleView = React.createClass({
 
     componentDidMount() {
         AETitleActions.getAETitle();
-        this.setState({ status: "done" });
     },
 
     _onChange(data) {
         this.setState({
-            aetitleText: data.aetitleText,
+            aetitleText: data.aetitle,
             status: "done"
         });
     },
