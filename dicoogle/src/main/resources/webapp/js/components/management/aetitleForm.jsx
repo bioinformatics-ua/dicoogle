@@ -48,7 +48,6 @@ export default class AETitleForm extends React.Component {
                 type="text"
                 value={this.props.aetitleText}
                 placeholder="Enter a valid AETitle"
-                disabled={this.props.disabledAETitle && "disabled"}
                 onChange={this.handleAETitleChange}
                 onKeyDown={this.handleAETitleKeyPress}
               />
