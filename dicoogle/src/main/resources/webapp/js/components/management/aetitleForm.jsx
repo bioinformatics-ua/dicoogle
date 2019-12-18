@@ -39,32 +39,27 @@ export default class AETitleForm extends React.Component {
   render() {
     return (
       <div className="row">
-        <div className="col-xs-4">
-          <p>AETitle</p>
-        </div>
-        <div className="col-xs-4">
+        <div className="col-xs-8">
           <div className="data-table">
-            <div className="inline_block" style={{ marginLeft: "1em" }}>
-              <FormGroup
-                validationState={this.isAETitleValid() ? "success" : "error"}
-              >
-                <FormControl
-                  type="text"
-                  value={this.props.aetitleText}
-                  placeholder="Enter a valid AETitle"
-                  disabled={this.props.disabledAETitle && "disabled"}
-                  onChange={this.handleAETitleChange}
-                  onKeyDown={this.handleAETitleKeyPress}
-                />
-                {this.props.dirtyValue && <FormControl.Feedback />}
-              </FormGroup>
-            </div>
+            <FormGroup
+              validationState={this.isAETitleValid() ? "success" : "error"}
+            >
+              <FormControl
+                type="text"
+                value={this.props.aetitleText}
+                placeholder="Enter a valid AETitle"
+                disabled={this.props.disabledAETitle && "disabled"}
+                onChange={this.handleAETitleChange}
+                onKeyDown={this.handleAETitleKeyPress}
+              />
+              {this.props.dirtyValue && <FormControl.Feedback />}
+            </FormGroup>
           </div>
         </div>
         <div className="col-xs-4">
           <button
             type="button"
-            className="btn btn-danger"
+            className="btn btn-success"
             onClick={this.props.onSubmitAETitle}
           >
             Save
