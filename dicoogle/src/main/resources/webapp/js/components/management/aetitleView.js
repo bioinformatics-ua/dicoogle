@@ -9,7 +9,7 @@ const AETitleView = React.createClass({
         return {
             aetitleText: "",
             dirtyValue: false,  // aetitle value has unsaved changes
-            status: "done"
+            status: "loading"
         };
     },
 
@@ -23,10 +23,10 @@ const AETitleView = React.createClass({
 
     componentDidMount() {
         AETitleActions.getAETitle();
+        this.setState({ status: "done" });
     },
 
     _onChange(data) {
-        console.log(data);
         this.setState({
             aetitleText: data.aetitleText,
             status: "done"
@@ -51,7 +51,7 @@ const AETitleView = React.createClass({
                 </div>
                 <div className="panel-body">
                     <AETitleForm
-                        aetitleText=""
+                        aetitleText={this.state.aetitleText}
                         onChangeAETitle={this.handleAETitleChange}
                         onSubmitAETitle={this.handleSubmitAETitle}
                         dirtyValue={this.state.dirtyValue}
@@ -62,20 +62,18 @@ const AETitleView = React.createClass({
     },
 
     handleAETitleChange(aetitle) {
-        console.log("handleAETitleChange");
         this.setState({
             aetitleText: aetitle,
             dirtyValue: true
         });
     },
 
-    handleSubmitAETitle(aetitle) {
-        console.log("handleSubmitAETitle", aetitle);
+    handleSubmitAETitle() {
         this.setState({
             dirtyValue: false
         });
 
-        AETitleActions.setAETitle(aetitle);
+        AETitleActions.setAETitle(this.state.aetitleText);
     }
 });
 

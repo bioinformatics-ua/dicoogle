@@ -5,7 +5,7 @@ export default class AETitleForm extends React.Component {
   static get propTypes() {
     return {
       aetitleText: PropTypes.string.isRequired,
-      dirtyValue: PropTypes.bool.isRequired,  // aetitle value has unsaved changes
+      dirtyValue: PropTypes.bool.isRequired, // aetitle value has unsaved changes
       onChangeAETitle: PropTypes.func.isRequired,
       onSubmitAETitle: PropTypes.func.isRequired
     };
@@ -26,19 +26,17 @@ export default class AETitleForm extends React.Component {
   }
 
   handleAETitleChange(e) {
-    console.log(e.target.value);
     this.props.onChangeAETitle(e.target.value);
   }
 
   handleAETitleKeyPress(e) {
-    console.log("handleAETitleKeyPress", e.target.value);
     if (e.keyCode === 13) {
       if (this.isAETitleValid()) {
         this.props.onSubmitAETitle(this.props.aetitleText);
       }
     }
   }
- render() {
+  render() {
     return (
       <div className="row">
         <div className="col-xs-4">
