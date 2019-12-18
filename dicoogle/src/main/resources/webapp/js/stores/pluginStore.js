@@ -12,19 +12,17 @@ const PluginStore = Reflux.createStore({
   },
 
   onGet: function (type) {
-    const self = this;
-
-    Dicoogle.request("GET", ["plugins", type]).end(function (error, data) {
+    Dicoogle.request("GET", ["plugins", type]).end((error, data) => {
       if (!error) {
         //console.log(data.body);
-        self._contents[type] = data.body.plugins;
-        self.trigger({
-          data: self._contents[type],
+        this._contents[type] = data.body.plugins;
+        this.trigger({
+          data: this._contents[type],
           success: true
         });
       } else {
         //console.log(error.body);
-        self.trigger({
+        this.trigger({
           success: false,
           status: error.body.status
         });
@@ -33,18 +31,16 @@ const PluginStore = Reflux.createStore({
   },
 
   onSetAction: function (type, name, action) {
-    const self = this;
-
-    Dicoogle.request("POST", ["plugins", type, name, action]).end(function (error, data) {
+    Dicoogle.request("POST", ["plugins", type, name, action]).end((error, data) => {
       if (!error) {
-        self._contents[type].find(plugin => plugin.name === name).enabled =
+        this._contents[type].find(plugin => plugin.name === name).enabled =
           action === "enable";
-        self.trigger({
-          data: self._contents[type],
+        this.trigger({
+          data: this._contents[type],
           success: true
         });
       } else {
-        self.trigger({
+        this.trigger({
           success: false,
           status: error.status,
           error: "Could not " + action + " the plugin."
