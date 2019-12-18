@@ -62,16 +62,13 @@ export default class AETitleForm extends React.Component {
           </div>
         </div>
         <div className="col-xs-4">
-          <div className="data-table">
-            <button
-              type="button"
-              className="btn btn-danger"
-              style={{ marginTop: 20 }}
-              onClick={this.props.onSubmitAETitle}
-            >
-              Change
-            </button>
-          </div>
+          <button
+            type="button"
+            className="btn btn-danger"
+            onClick={this.props.onSubmitAETitle}
+          >
+            Save
+          </button>
           <div
             className="loader-inner ball-pulse"
             style={{ visibility: this.props.onhold ? "visible" : "hidden" }}
