@@ -162,7 +162,7 @@ const PluginsView = React.createClass({
         <div className="panel-body">
           <div className="row">{pluginPanels}</div>
         </div>
-        <div className="toast" style={{ "display": "none" }}>Saved</div>
+        <div className="toast">Saved</div>
       </div>
     );
   }
