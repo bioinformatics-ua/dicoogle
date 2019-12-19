@@ -4,7 +4,7 @@ import { FormGroup, FormControl } from "react-bootstrap";
 export default class AETitleForm extends React.Component {
   static get propTypes() {
     return {
-      aetitleText: PropTypes.string.isRequired,
+      aetitleText: PropTypes.string,
       dirtyValue: PropTypes.bool.isRequired, // aetitle value has unsaved changes
       onChangeAETitle: PropTypes.func.isRequired,
       onSubmitAETitle: PropTypes.func.isRequired
