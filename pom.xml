@@ -46,6 +46,28 @@
 					</execution>
 				</executions>
 			</plugin>
+
+            <!-- Javadoc -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>aggregate</id>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                        <phase>install</phase>
+                        <configuration>
+                            <doclint>none</doclint>
+                            <show>public</show>
+                            <reportOutputDirectory>${project.basedir}/api/javadocs</reportOutputDirectory>
+                            <destDir>javadocs</destDir>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
