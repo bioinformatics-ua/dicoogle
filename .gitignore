@@ -31,3 +31,7 @@ webcore/lib/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Maven
+/target
+/dependency-reduced-pom.xml
