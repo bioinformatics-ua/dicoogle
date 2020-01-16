@@ -63,7 +63,7 @@
                         <configuration>
                             <doclint>none</doclint>
                             <show>public</show>
-                            <reportOutputDirectory>${project.basedir}/api/javadoc</reportOutputDirectory>
+                            <reportOutputDirectory>${project.basedir}/docs/javadoc</reportOutputDirectory>
                             <destDir>javadoc</destDir>
                         </configuration>
                     </execution>
