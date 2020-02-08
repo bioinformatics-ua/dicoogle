@@ -29,6 +29,7 @@ import pt.ua.dicoogle.server.web.auth.LoggedIn;
 import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static pt.ua.dicoogle.server.web.servlets.webui.WebUIServlet.camelize;
 
 /**
@@ -82,6 +83,21 @@ public class TestUsers {
             System.out.println("Error in the test");
         }
 
+    }
+
+    @Test
+    public void authentication() {
+        String passwd = "123";
+        User u = User.create("nat", false, passwd);
+        assertTrue(u.verifyPassword(passwd));
+        
+        passwd = "correctHorseBatteryStaple";
+        assertTrue(u.changePassword("123", passwd));
+        assertTrue(u.verifyPassword(passwd));
+
+        passwd = "VeryStrongPassword!!11";
+        assertTrue(u.resetPassword(passwd));
+        assertTrue(u.verifyPassword(passwd));
     }
 
 }
