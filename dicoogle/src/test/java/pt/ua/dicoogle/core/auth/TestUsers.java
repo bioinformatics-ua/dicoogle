@@ -52,39 +52,6 @@ public class TestUsers {
     public void tearDown() {
     }
 
-    //@Test
-    public void testUsers() {
-        UsersStruct usersStruct = UsersStruct.getInstance();
-
-        String username = "nat";
-        boolean admin = false;
-        String passPlainText = "123";
-        String passHash = HashService.hashPassword(passPlainText);             //password Hash
-        String hash = HashService.hashPassword(username + admin + passHash);
-        System.out.println(hash);
-        System.out.println(passHash);
-        User u = new User("nat",hash, admin);
-        usersStruct.addUser(u);
-
-
-        for (String uu : usersStruct.getUsernames())
-        {
-            System.out.println(usersStruct.getUser(uu));
-        }
-
-        Authentication auth = Authentication.getInstance();
-        try {
-            LoggedIn loggedIn = auth.login("nat", "123");
-            System.out.println(loggedIn.getUserName());
-            System.out.println(loggedIn.isAdmin());
-        }
-        catch(Exception e)
-        {
-            System.out.println("Error in the test");
-        }
-
-    }
-
     @Test
     public void authentication() {
         String passwd = "123";
