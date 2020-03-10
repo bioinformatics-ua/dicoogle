@@ -1,4 +1,5 @@
 import "../sass/dicoogle.scss";
+import $ from "jquery";
 import React, { PropTypes } from "react";
 import ReactDOM from "react-dom";
 import Sidebar from "./components/sidebar";
@@ -23,8 +24,10 @@ import * as UserActions from "./actions/userActions";
 import UserStore from "./stores/userStore";
 
 import "@ungap/custom-elements-builtin";
-import "core-js/shim";
-import "bootstrap";
+require("core-js/shim");
+
+window.jQuery = $; // Bootstrap won't work without this hack. browserify-shim didn't help either
+require("bootstrap");
 
 class App extends React.Component {
   static get contextTypes() {
@@ -235,6 +238,7 @@ ReactDOM.render(
     <Route path="/" component={App}>
       <IndexRoute component={LoadingView} />
       <Route path="search" component={Search} />
+      <Route path="management/:tab" component={ManagementView} />
       <Route path="management" component={ManagementView} />
       <Route path="results" component={SearchResultView} />
       <Route path="indexer" component={IndexStatusView} />

@@ -17,12 +17,12 @@ const EXTERNAL_MODULES = {
 };
 
 let outerRequire =
-  window.require ||
+  global.require ||
   function require_stub(name) {
     throw new Error(`Cannot resolve module '${name}'`);
   };
 
-window.require = function require(name) {
+global.require = function require(name) {
   let m = EXTERNAL_MODULES[name];
   return m || outerRequire(name);
 };

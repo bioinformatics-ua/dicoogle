@@ -13,7 +13,6 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
       "process.env.DICOOGLE_BASE_URL": JSON.stringify(
         process.env.DICOOGLE_BASE_URL
       )
@@ -21,11 +20,7 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: "dist/[name].css",
       chunkFilename: "dist/[id].css"
-    }),
-    new webpack.ProvidePlugin({
-      // required for Bootstrap to work
-      jQuery: 'jquery',
-    }),
+    })
   ],
   module: {
     rules: [

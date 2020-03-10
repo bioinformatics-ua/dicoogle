@@ -69,6 +69,7 @@
     "@babel/preset-react": "^7.8.3",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
+    "babel-preset-minify": "^0.5.1",
     "css-loader": "^3.4.2",
     "eslint": "^6.8.0",
     "eslint-loader": "^3.0.3",
@@ -89,6 +90,7 @@
     "webpack-merge": "^4.2.2"
   },
   "scripts": {
+    "preinstall": "cd ../../../../../webcore && npm install",
     "build": "webpack --config webpack.prod.js",
     "start": "webpack-dev-server --open --config webpack.dev.js",
     "precommit": "lint-staged",
@@ -102,8 +104,16 @@
       "prettier --write js/**/*.{js,jsx}",
       "git add"
     ],
-    "*.{js}": [
-      "prettier --write *.{js}",
+    "webpack.common.js": [
+      "prettier --write webpack.common.js",
+      "git add"
+    ],
+    "webpack.dev.js": [
+      "prettier --write webpack.dev.js",
+      "git add"
+    ],
+    "webpack.prod.js": [
+      "prettier --write webpack.prod.js",
       "git add"
     ],
     "sass/*.scss": [

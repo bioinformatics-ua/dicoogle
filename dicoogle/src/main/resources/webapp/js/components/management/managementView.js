@@ -5,11 +5,28 @@ import { LoggerView } from "../management/loggerView";
 import { IndexerView } from "../management/indexerView";
 import { StorageView } from "../management/storageView";
 
+function getIndex(tab) {
+  const states = ["index", "transfer", "services", "storage", "logs"];
+  var index = 0;
+  if (tab) {
+    index = states.findIndex(s => s === tab);
+    index = index === -1 ? 0 : index;
+  }
+  return index;
+}
+
 const ManagementView = React.createClass({
   getInitialState: function() {
-    return { selectedtab: 0 };
+    const index = getIndex(getIndex(this.props.params.tab));
+    return { selectedtab: index };
+  },
+  componentWillReceiveProps(nextProps) {
+    const index = getIndex(nextProps.params.tab);
+    this.changeView(index, false);
   },
   render: function() {
+    const index = getIndex(this.props.params.tab);
+
     var views = [
       <IndexerView />,
       <TransferOptionsView />,
@@ -17,54 +34,24 @@ const ManagementView = React.createClass({
       <StorageView />,
       <LoggerView />
     ];
+
+    const tabs = [
+      'Index Options',
+      'Transfer Options',
+      'Services and Plugins',
+      'Storage Servers',
+      'Logs'
+    ]
     return (
       <div className="container-fluid content">
         <ul className="nav nav-pills">
-          <li className="active" role="presentation">
-            <a
-              href="#indexer"
-              data-toggle="tab"
-              onClick={this.onTabClicked.bind(this, 0)}
-            >
-              Index Options
-            </a>
-          </li>
-          <li role="presentation">
-            <a
-              href="#transfer"
-              data-toggle="tab"
-              onClick={this.onTabClicked.bind(this, 1)}
-            >
-              Transfer Options
-            </a>
-          </li>
-          <li role="presentation">
-            <a
-              href="#services"
-              data-toggle="tab"
-              onClick={this.onTabClicked.bind(this, 2)}
-            >
-              Services and Plugins
-            </a>
-          </li>
-          <li role="presentation">
-            <a
-              href="#storage"
-              data-toggle="tab"
-              onClick={this.onTabClicked.bind(this, 3)}
-            >
-              Storage Servers
-            </a>
-          </li>
-          <li role="presentation">
-            <a
-              href="#logs"
-              data-toggle="tab"
-              onClick={this.onTabClicked.bind(this, 4)}
-            >
-              Logs
-            </a>
-          </li>
+          {tabs.map((tab, idx) => (
+            <li className={index === idx ? "active" : ""} role="presentation">
+              <a data-toggle="tab" onClick={this.changeView.bind(this, idx)}>
+                {tab}
+              </a>
+            </li>
+          ))}
         </ul>
         <div id="my-tab-content" className="tab-content">
           {views[this.state.selectedtab]}
@@ -72,9 +59,13 @@ const ManagementView = React.createClass({
       </div>
     );
   },
-  onTabClicked: function(index) {
-    console.log("tabSelected: ", index);
+  changeView: function(index, reRoute = true) {
+    const states = ["index", "transfer", "services", "storage", "logs"];
     this.setState({ selectedtab: index });
+
+    if (reRoute) {
+      this.props.router.push(`/management/${states[index]}`);
+    }
   }
 });
 

@@ -85,7 +85,15 @@ const PluginsView = React.createClass({
   },
 
   render() {
-    if (this.state.status === "loading") {
+   
+      setTimeout(() => {
+        if(this.state.status === "loading")
+          this.setState({
+            status: "failed"
+          });
+      },3000)
+      
+    if(this.state.status === "loading") {
       return (
         <div className="loader-inner ball-pulse">
           <div />
@@ -153,7 +161,9 @@ const PluginsView = React.createClass({
           </div>
         );
       });
-
+    if (pluginPanels.length == 0) {
+      return null;
+    }
     return (
       <div className="panel panel-primary topMargin">
         <div className="panel-heading">
