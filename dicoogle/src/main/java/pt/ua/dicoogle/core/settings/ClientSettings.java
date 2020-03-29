@@ -63,7 +63,7 @@ public class ClientSettings {
         defaultServerHost = "localhost";
         defaultServerPort = 9014;
         defaultUserName = "dicoogle";
-        defaultPassword = HashService.getSHA1Hash("dicoogle");
+        defaultPassword = HashService.hashPassword("dicoogle");
     }
 
     public void setExtV(String EV)

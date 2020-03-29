@@ -29,6 +29,7 @@ import pt.ua.dicoogle.server.web.auth.LoggedIn;
 import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static pt.ua.dicoogle.server.web.servlets.webui.WebUIServlet.camelize;
 
 /**
@@ -51,37 +52,19 @@ public class TestUsers {
     public void tearDown() {
     }
 
-    //@Test
-    public void testUsers() {
-        UsersStruct usersStruct = UsersStruct.getInstance();
+    @Test
+    public void authentication() {
+        String passwd = "123";
+        User u = User.create("nat", false, passwd);
+        assertTrue(u.verifyPassword(passwd));
+        
+        passwd = "correctHorseBatteryStaple";
+        assertTrue(u.changePassword("123", passwd));
+        assertTrue(u.verifyPassword(passwd));
 
-        String username = "nat";
-        boolean admin = false;
-        String passPlainText = "123";
-        String passHash = HashService.getSHA1Hash(passPlainText);             //password Hash
-        String hash = HashService.getSHA1Hash(username + admin + passHash);
-        System.out.println(hash);
-        System.out.println(passHash);
-        User u = new User("nat",hash, admin);
-        usersStruct.addUser(u);
-
-
-        for (String uu : usersStruct.getUsernames())
-        {
-            System.out.println(usersStruct.getUser(uu));
-        }
-
-        Authentication auth = Authentication.getInstance();
-        try {
-            LoggedIn loggedIn = auth.login("nat", "123");
-            System.out.println(loggedIn.getUserName());
-            System.out.println(loggedIn.isAdmin());
-        }
-        catch(Exception e)
-        {
-            System.out.println("Error in the test");
-        }
-
+        passwd = "VeryStrongPassword!!11";
+        assertTrue(u.resetPassword(passwd));
+        assertTrue(u.verifyPassword(passwd));
     }
 
 }

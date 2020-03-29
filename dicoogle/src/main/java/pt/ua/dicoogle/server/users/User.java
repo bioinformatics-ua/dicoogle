@@ -37,10 +37,21 @@ public class User implements UserRoleManager{
 
     private List<Role> roles = new ArrayList<>();
 
-    public User(String username, String Hash, boolean admin){
+    public User(String username, String hash, boolean admin){
         this.username = username;
         this.admin = admin;
-        this.hash = Hash;
+        this.hash = hash;
+    }
+
+    public static User create(String username, boolean admin, char[] password) {
+        return new User(
+            username,
+            HashService.hashPassword(password),
+            admin);
+    }
+
+    public static User create(String username, boolean admin, String password) {
+        return User.create(username, admin, password.toCharArray());
     }
 
     public String getUsername(){
@@ -51,10 +62,20 @@ public class User implements UserRoleManager{
         return admin;
     }
 
-    public boolean verifyPassword(String passwordHash){
-        String tempHash = HashService.getSHA1Hash(username + admin + passwordHash);
+    /** Verify the given password agains the user's  password hash.
+     * @param password the password in plain text, cleared automatically
+     * @return whether the password is verified successfully
+     */
+    public boolean verifyPassword(char[] password) {
+        return HashService.verifyPassword(this.hash, password);
+    }
 
-        return this.hash.equals(tempHash);
+    /** Verify the given password agains the user's  password hash.
+     * @param password the password in plain text
+     * @return whether the password is verified successfully
+     */
+    public boolean verifyPassword(String password) {
+        return this.verifyPassword(password.toCharArray());
     }
 
     public void addRole(Role r)
@@ -67,32 +88,53 @@ public class User implements UserRoleManager{
         return this.roles.contains(r);
     }
 
-    public boolean changePassword(String oldPassHash, String newPassHash){
-        String tempHash = HashService.getSHA1Hash(username + admin + oldPassHash);
-
-        if(!hash.equals(tempHash))
+    /** Verify the current password and assign a new password to this user.
+     * @param oldPassword the current password as plain text, automatically
+     * cleared
+     * @param newPasssword the new password as plain text, automatically
+     * cleared; must not be empty
+     * @return whether the password was changed successfully
+     */
+    public boolean changePassword(char[] oldPassword, char[] newPassword) {
+        if(!this.verifyPassword(oldPassword))
             return false;
 
-
-        tempHash = HashService.getSHA1Hash(username + admin + newPassHash);
-
-        hash = tempHash;
-        return true;
+        return this.resetPassword(newPassword);
     }
 
-    protected String getPasswordHash(){
+    protected String getPasswordHash() {
         return hash;
     }
 
-    public boolean resetPassword(String newPassHash){
-        if(newPassHash == null || newPassHash.equals(""))
+    /** Verify the current password and assign a new password to this user.
+     * @param oldPassword the current password as plain text, automatically
+     * cleared
+     * @param newPasssword the new password as plain text; must not be empty
+     * @return whether the password was changed successfully
+     */
+    public boolean changePassword(String oldPassword, String newPassword) {
+        return this.changePassword(oldPassword.toCharArray(), newPassword.toCharArray());
+    }
+
+    /** Assign a new password to this user.
+     * @param passsword the password as plain text, automatically cleared
+     * after the operation; must not be empty
+     * @return whether the password was changed successfully
+     */
+    public boolean resetPassword(char[] password){
+        if(password.length == 0)
             return false;
 
-        String tempHash = HashService.getSHA1Hash(username + admin + newPassHash);
-
-        hash = tempHash;
-
+        this.hash = HashService.hashPassword(password);
         return true;
+    }
+
+    /** Assign a new password to this user.
+     * @param passsword the password as plain text
+     * @return whether the password was changed successfully
+     */
+    public boolean resetPassword(String password) {
+        return this.resetPassword(password.toCharArray());
     }
 
     @Override

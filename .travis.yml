@@ -4,6 +4,7 @@ sudo: true
 
 before_cache:
  - rm -rf $HOME/.m2/repository/pt/ua/ieeta/dicoogle*
+ - rm -rf $HOME/.cache/JNA/temp/
 
 cache:
   directories:
@@ -26,28 +27,12 @@ matrix:
   allow_failures:
     - jdk: openjdk11
 
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - gcc-4.8
-      - g++-4.8
-
 before_install:
   - if [ $TRAVIS_JDK_VERSION == "oraclejdk8" ] || [ $TRAVIS_JDK_VERSION == "openjdk8" ]; then
       wget https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.der;
       sudo keytool -importcert -trustcacerts -alias lets-encrypt-x3-cross-signed -file lets-encrypt-x3-cross-signed.der -storepass changeit -keystore $JAVA_HOME/jre/lib/security/cacerts;
     fi
   - nvm install $NODE_VERSION
-  - if [ $TRAVIS_OS_NAME == "linux" ]; then
-      export CC="gcc-4.8";
-      export CXX="g++-4.8";
-      export LINK="gcc-4.8";
-      export LINKXX="g++-4.8";
-    fi
-  - gcc --version
-  - g++ --version
 
 install: true
 

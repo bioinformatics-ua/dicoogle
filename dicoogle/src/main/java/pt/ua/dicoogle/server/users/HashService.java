@@ -25,33 +25,75 @@ import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.LoggerFactory;
+import at.favre.lib.crypto.bcrypt.BCrypt;
+import at.favre.lib.crypto.bcrypt.LongPasswordStrategies;
 
 /**
- * This class provides hashing service to passwords with SHA-1 algoritm
- *
- * @author Samuel Campos <samuelcampos@ua.pt>
+ * This class provides a password hashing service.
  */
 public class HashService {
+
     /**
-     * Encrypt one password with SHA-1 algorithm
+     * Hardcoded cost for the password hashing algorithm.
+     */
+    private static final int HASH_STRENGTH = 10;
+
+    /**
+     * Hash a password.
      *
-     * @param plaintext
+     * @param password the password in plain text
      * @return the hash of the password
      */
-    public static String getSHA1Hash(String plaintext) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-1");
-            md.update(plaintext.getBytes("UTF-8"));
-            byte[] raw = md.digest();
-            byte[] asbase64 = Base64.encodeBase64(raw);
-            String hash = new String(asbase64, Charset.forName("UTF-8"));
-            return hash;
-
-        } catch (UnsupportedEncodingException|NoSuchAlgorithmException ex) {
-            LoggerFactory.getLogger(HashService.class).error("Failed to encode text", ex);
-        }
-
-        return null;
+    public static String hashPassword(String password) {
+        return hashPassword(password.toCharArray());
     }
 
+    /**
+     * Hash a password.
+     *
+     * @param password the password in plain text as an array of characters,
+     * filled with `'\0'`s automatically.
+     * @return the hash of the password
+     */
+    public static String hashPassword(char[] password) {
+        try {
+            return BCrypt
+                    .with(LongPasswordStrategies.hashSha512(BCrypt.Version.VERSION_2B))
+                    .hashToString(HASH_STRENGTH, password);
+        } finally {
+            for (int i = 0; i < password.length; i++) {
+                password[i] = '\0';
+            }
+        }
+    }
+
+    /**
+     * Verify whether the password matches the hash.
+     * 
+     * @param hash the stored password hash
+     * @param password the password in plain text
+     * @return true iff the password is successfully verified
+     */
+    public static boolean verifyPassword(String hash, String password) {
+        return verifyPassword(hash, password.toCharArray());
+    }
+
+    /**
+     * Verify whether the password matches the hash.
+     * 
+     * @param hash the stored password hash
+     * @param password the password in plain text as an array of characters,
+     * filled with `'\0'`s automatically.
+     * @return true iff the password is successfully verified
+     */
+    public static boolean verifyPassword(String hash, char[] password) {
+        try {
+            BCrypt.Result result = BCrypt.verifyer().verify(password, hash);
+            return result.verified;
+        } finally {
+            for (int i = 0; i < password.length; i++) {
+                password[i] = '\0';
+            }
+        }
+    }
 }
