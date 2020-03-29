@@ -72,13 +72,7 @@ public class UserServlet extends HttpServlet {
         String user = req.getParameter("username");
         String pass = req.getParameter("password");
         boolean admin = Boolean.parseBoolean(req.getParameter("admin"));
-
-        String passHash = HashService.hashPassword(pass);             //password Hash
-        String hash = HashService.hashPassword(user + admin + passHash);   //user Hash
-
-        boolean wasAdded = UsersStruct.getInstance().addUser(new User(user, hash, admin));
-
-
+        boolean wasAdded = UsersStruct.getInstance().addUser(User.create(user, admin, pass));
         ResponseUtil.simpleResponse(resp, "success", wasAdded);
     }
 
