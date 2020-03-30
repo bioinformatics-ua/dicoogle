@@ -96,16 +96,14 @@ public class Authentication
 		if (user == null)
 			return null;
 
-		// calculate the supplied passwords hash and see if it matches the users
-		String passwordHash = HashService.hashPassword(password);
-		if (! user.verifyPassword(passwordHash))
+		if (! user.verifyPassword(password))
 			return null;
 		LoggedIn in = new LoggedIn(username, user.isAdmin());
 		if (usersToken.containsKey(username))
 			in.setToken(usersToken.get(username));
 
 		else {
-			String token  =UUID.randomUUID().toString();
+			String token = UUID.randomUUID().toString();
 			usersToken.put(username, token);
 			tokenUsers.put(token, username);
 			in.setToken(usersToken.get(username));
