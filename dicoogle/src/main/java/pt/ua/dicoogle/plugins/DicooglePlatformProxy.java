@@ -52,21 +52,12 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
     
     @Override
     public IndexerInterface requestIndexPlugin(String name) {
-        Collection<IndexerInterface> indexers = pluginController.getIndexingPlugins(true);
-        for(IndexerInterface index : indexers){
-            if(index.getName().equals(name)) return index;
-        }
-        return null;
+        return pluginController.getIndexerByName(name, true);
     }
 
     @Override
     public QueryInterface requestQueryPlugin(String name) {
-        Collection<QueryInterface> queriers = pluginController.getQueryPlugins(true);
-        for(QueryInterface querier : queriers){
-            if(querier.getName().equals(name)) return querier;
-        }
-        
-        return null;
+        return pluginController.getQueryProviderByName(name, true);
     }
 
     @Override

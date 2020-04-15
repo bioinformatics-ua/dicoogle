@@ -29,7 +29,6 @@ import pt.ua.dicoogle.plugins.webui.WebUIPluginManager;
 import pt.ua.dicoogle.sdk.*;
 import pt.ua.dicoogle.sdk.Utils.TaskQueue;
 import pt.ua.dicoogle.sdk.Utils.TaskRequest;
-import pt.ua.dicoogle.sdk.core.PlatformCommunicatorInterface;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.datastructs.dim.DimLevel;
@@ -42,7 +41,6 @@ import pt.ua.dicoogle.server.web.DicoogleWeb;
 import pt.ua.dicoogle.taskManager.RunningIndexTasks;
 import pt.ua.dicoogle.taskManager.TaskManager;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -77,8 +75,16 @@ public class PluginController{
         }
         return instance;
     }
-    private final Collection<PluginSet> pluginSets;
+    private final Map<String, PluginSet> pluginSets;
     private final Collection<DeadPlugin> deadPluginSets;
+
+    // plugin interface indexing for quick look-up
+    // and duplicate detection
+    private final Map<String, QueryInterface> queryMap;
+    private final Map<String, IndexerInterface> indexerMap;
+    private final Map<String, StorageInterface> storageMap;
+    private final Map<String, JettyPluginInterface> servletMap;
+
     private File pluginFolder;
     private TaskQueue tasks = null;
     private final PluginPreparer preparer;
@@ -100,10 +106,34 @@ public class PluginController{
             pathToPluginDirectory.mkdirs();
         }
 
-        this.deadPluginSets = new ArrayList<>(4);
+        this.deadPluginSets = new ArrayList<>();
+
+        Collection<PluginSet> sets = PluginFactory.getPlugins(pathToPluginDirectory);
+
+        // detect duplicate sets
+        Set<String> setNames = new HashSet<>();
+        for (Iterator<PluginSet> it = sets.iterator(); it.hasNext();) {
+            PluginSet s = it.next();
+            if (setNames.contains(s.getName())) {
+                String location = s.getClass().getClassLoader().getResource(
+                    s.getClass().getName().replace('.', '/') + ".class").toString();
+                logger.warn("Duplicate plugin set '{}' found in {}.", s.getName(), location);
+                logger.warn("Plugin set '{}' has been discarded. Please inspect your Plugins folder.", s.getName());
+                this.deadPluginSets.add(new DeadPlugin(s.getName(), null));
+                it.remove();
+            }
+        }
 
         //loads the plugins
-        pluginSets = PluginFactory.getPlugins(pathToPluginDirectory);
+        this.pluginSets = sets.stream()
+            .collect(Collectors.toMap(plugin -> plugin.getName(), i -> i));
+        
+        this.queryMap = new HashMap<>();
+        this.indexerMap = new HashMap<>();
+        this.storageMap = new HashMap<>();
+        this.servletMap = new HashMap<>();
+        this.initProviderMaps();
+
         //load web UI plugins (they are not Java, so the process is delegated to another entity)
         this.webUI = new WebUIPluginManager();
         this.loadWebUIPlugins();
@@ -112,7 +142,8 @@ public class PluginController{
 
         this.configurePlugins();
 
-        pluginSets.add(new DefaultFileStoragePlugin());
+        PluginSet defaultFileStorage = new DefaultFileStoragePlugin();
+        pluginSets.put(defaultFileStorage.getName(), defaultFileStorage);
         logger.info("Added default storage plugin");
         
         this.proxy = new DicooglePlatformProxy(this);
@@ -122,6 +153,40 @@ public class PluginController{
         initRestInterface(pluginSets);
         initJettyInterface(pluginSets);
         logger.info("Initialized plugins");
+    }
+
+    /** Initialize plugin index maps. Plugin providers with the same name
+     * as a previously recorded plugin will be skipped with a warning.
+     */
+    private final void initProviderMaps() {
+
+        for (PluginSet pset: this.pluginSets.values()) {
+            String psetName = pset.getName();
+
+            // populate query providers
+            populateIndex("Query provider", this.queryMap, psetName, pset.getQueryPlugins());
+
+            // populate indexers
+            populateIndex("Indexer", this.indexerMap, psetName, pset.getIndexPlugins());
+
+            // populate storage providers
+            populateIndex("Storage provider", this.storageMap, psetName, pset.getStoragePlugins());
+
+            // populate servlet providers
+            populateIndex("Servlet provider", this.servletMap, psetName, pset.getJettyPlugins());
+        }
+    }
+
+    private static <T extends DicooglePlugin> void populateIndex(String kind, Map<String, T> index, String psetName, Collection<? extends T> plugins) {
+        for (T p: plugins) {
+            String name = p.getName().toLowerCase();
+            if (index.containsKey(name)) {
+                logger.warn("{} '{}' already exists! Ignoring duplicate from plugin set '{}'",
+                        kind, name, psetName);
+            } else {
+                index.put(name, p);
+            }
+        }
     }
 
     private void loadWebUIPlugins() {
@@ -147,7 +212,7 @@ public class PluginController{
             settingsFolder.mkdir();
         }
 
-        for (Iterator<PluginSet> it = pluginSets.iterator(); it.hasNext();) {
+        for (Iterator<PluginSet> it = pluginSets.values().iterator(); it.hasNext();) {
             PluginSet plugin = it.next();
             try {
                 final String name = plugin.getName();
@@ -184,8 +249,8 @@ public class PluginController{
         logger.debug("Settings pushed to web UI plugins");
     }
     
-    private void initializePlugins(Collection<PluginSet> plugins) {
-        for (PluginSet set : plugins) {
+    private void initializePlugins(Map<String, PluginSet> plugins) {
+        for (PluginSet set : plugins.values()) {
             logger.debug("SetPlugins: {}", set);
             
             // provide platform to each plugin interface
@@ -235,11 +300,11 @@ public class PluginController{
      * handle them. also we export them using common settings and security
      * profiles
      */
-    private void initRestInterface(Collection<PluginSet> plugins) {
+    private void initRestInterface(Map<String, PluginSet> plugins) {
         logger.info("Initializing plugin rest interfaces");
 
         ArrayList<ServerResource> restInterfaces = new ArrayList<>();
-        for (PluginSet set : plugins) {
+        for (PluginSet set : plugins.values()) {
             Collection<? extends ServerResource> restInterface = set.getRestPlugins();
             if (restInterface == null) {
                 continue;
@@ -253,11 +318,11 @@ public class PluginController{
         logger.info("Finished initializing rest interfaces");
     }
 
-    private void initJettyInterface(Collection<PluginSet> plugins) {
+    private void initJettyInterface(Map<String, PluginSet> plugins) {
         logger.info("Initializing jetty interface");
                 
          ArrayList<JettyPluginInterface> jettyInterfaces = new ArrayList<>();
-         for(PluginSet set : plugins){
+         for(PluginSet set : plugins.values()){
         	 Collection<? extends JettyPluginInterface> jettyInterface = set.getJettyPlugins();
         	 if(jettyInterface == null) continue;
         	 jettyInterfaces.addAll(jettyInterface);
@@ -273,7 +338,7 @@ public class PluginController{
      * Stops the plugins and saves the settings
      */
     public void shutdown() throws IOException {
-        for (PluginSet plugin : pluginSets) {
+        for (PluginSet plugin : pluginSets.values()) {
             //TODO: I Think it is better to enable auto-save settings
             /*Settings settings = plugin.getSettings();
             if (settings != null) {
@@ -286,78 +351,46 @@ public class PluginController{
     }
 
     /**
-     * stops a pluginset. this could be more efficient, however this is hardly a
-     * bottleneck TODO: needs more granularity, we should be able to stop only
+     * stops a pluginset.
+     * 
+     * TODO: needs more granularity, we should be able to stop only
      * the indexers or the queryers
      *
      * @param pluginName
      */
     public void stopPlugin(String pluginName) {
-        for (PluginSet pluginSet : pluginSets) {
-            if (pluginSet.getName().compareTo(pluginName) == 0) {
-                //pluginSet.stop();
-                return;
-            }
-        }
+        // TODO this is currently a no-op
+        // need to nail down the intended semantics of stopping and starting plugins
     }
 
     public void startPlugin(String pluginName) {
-        for (PluginSet pluginSet : pluginSets) {
-            if (pluginSet.getName().compareTo(pluginName) == 0) {
-                //pluginSet.stop();
-                return;
-            }
-        }
+        // TODO this is currently a no-op
+        // need to nail down the intended semantics of stopping and starting plugins
     }
 
     public Collection<IndexerInterface> getIndexingPlugins(boolean onlyEnabled) {
-        ArrayList<IndexerInterface> indexers = new ArrayList<>();
-        for (PluginSet pSet : pluginSets) {
-            for (IndexerInterface index : pSet.getIndexPlugins()) {
-                if (!index.isEnabled() && onlyEnabled) {
-                    continue;
-                }
-                indexers.add(index);
-            }
-        }
-        return indexers;
+        return this.indexerMap.values().stream()
+            .filter(p -> !onlyEnabled || p.isEnabled())
+            .collect(Collectors.toList());
     }
 
     public Collection<StorageInterface> getStoragePlugins(boolean onlyEnabled) {
-        ArrayList<StorageInterface> storagePlugins = new ArrayList<>();
-        for (PluginSet pSet : pluginSets) {
-            for (StorageInterface store : pSet.getStoragePlugins()) {
-                if (!store.isEnabled() && onlyEnabled) {
-                    continue;
-                }
-                storagePlugins.add(store);
-            }
-        }
-        return storagePlugins;
+        return this.storageMap.values().stream()
+            .filter(p -> !onlyEnabled || p.isEnabled())
+            .collect(Collectors.toList());
     }
 
     public Collection<JettyPluginInterface> getServletPlugins(boolean onlyEnabled) {
-        List<JettyPluginInterface> plugins = new ArrayList<>();
-        for (PluginSet pSet : pluginSets) {
-            for (JettyPluginInterface p : pSet.getJettyPlugins()) {
-                if (!p.isEnabled() && onlyEnabled) {
-                    continue;
-                }
-                plugins.add(p);
-            }
-        }
-        return plugins;
+        return this.servletMap.values().stream()
+            .filter(p -> !onlyEnabled || p.isEnabled())
+            .collect(Collectors.toList());
     }
     public Collection<JettyPluginInterface> getServletPlugins() {
         return this.getServletPlugins(true);
     }
 
     public Collection<String> getPluginSetNames() {
-        Collection<String> l = new ArrayList<>();
-        for (PluginSet s: this.pluginSets) {
-            l.add(s.getName());
-        }
-        return l;
+        return this.pluginSets.keySet();
     }
 
     public Collection<DeadPlugin> getDeadPluginSets() {
@@ -431,44 +464,35 @@ public class PluginController{
     }
 
     public Collection<QueryInterface> getQueryPlugins(boolean onlyEnabled) {
-        ArrayList<QueryInterface> queriers = new ArrayList<>();
-        for (PluginSet pSet : pluginSets) {
-            for (QueryInterface querier : pSet.getQueryPlugins()) {
-                if (!querier.isEnabled() && onlyEnabled) {
-                    continue;
-                }
-                queriers.add(querier);
-            }
-        }
-        return queriers;
+        return pluginSets.values().stream()
+            .flatMap(pset -> pset.getQueryPlugins().stream())
+            .filter(p -> !onlyEnabled || p.isEnabled())
+            .collect(Collectors.toList());
     }
 
     public void addTask(TaskRequest task) {
         this.tasks.addTask(task);
     }
-   
 
-    
-    public List<String> getQueryProvidersName(boolean enabled){
-    	Collection<QueryInterface> plugins = getQueryPlugins(enabled);
-    	List<String> names = new ArrayList<>(plugins.size());
-    	for(QueryInterface p : plugins){
-    		names.add(p.getName());
-    	}
-    	//logger.info("Query Providers: "+Arrays.toString(names.toArray()) );
-    	return names;
+    public List<String> getQueryProvidersName(boolean enabled) {
+        return pluginSets.values().stream()
+            .flatMap(pset -> pset.getQueryPlugins().stream())
+            .filter(p -> !enabled || p.isEnabled())
+            .map(QueryInterface::getName)
+            .collect(Collectors.toList());
     }
     
     public QueryInterface getQueryProviderByName(String name, boolean onlyEnabled){
-    	Collection<QueryInterface> plugins = getQueryPlugins(onlyEnabled);
-    	for(QueryInterface p : plugins){
-    		if(p.getName().equalsIgnoreCase(name)){
-    			//logger.info("Retrived Query Provider: "+name);
-    			return p;
-    		}
-    	}
-    	logger.debug("Could not retrieve query provider {} for onlyEnabled = {}", name, onlyEnabled);
-    	return null;
+        QueryInterface p = this.queryMap.get(name);
+        if (p == null) {
+            logger.debug("No query provider matching name {}", name);
+            return null;
+        }
+        if (onlyEnabled && !p.isEnabled()) {
+            logger.debug("Query provider matching name {} is disabled", name);
+            return null;
+        }
+        return p;
     }
 
     /**
@@ -492,42 +516,44 @@ public class PluginController{
                 .collect(Collectors.toList());
     }
     
-    //TODO: CONVENIENCE METHOD
     public IndexerInterface getIndexerByName(String name, boolean onlyEnabled){
-    	Collection<IndexerInterface> plugins = getIndexingPlugins(onlyEnabled);
-    	for(IndexerInterface p : plugins){
-    		if(p.getName().equalsIgnoreCase(name)){
-    			//logger.info("Retrived Query Provider: "+name);
-    			return p;
-    		}
-    	}
-    	logger.debug("No indexer matching name {} for onlyEnabled = {}", name, onlyEnabled);
-    	return null;
+        IndexerInterface p = this.indexerMap.get(name);
+        if (p == null) {
+            logger.debug("No indexer matching name {}", name);
+            return null;
+        }
+        if (onlyEnabled && !p.isEnabled()) {
+            logger.debug("Indexer matching name {} is disabled", name);
+            return null;
+        }
+        return p;
     }
 
 
     public JettyPluginInterface getServletByName(String name, boolean onlyEnabled){
-        Collection<JettyPluginInterface> plugins = getServletPlugins(onlyEnabled);
-        for(JettyPluginInterface p : plugins){
-            if(p.getName().equalsIgnoreCase(name)){
-                //logger.info("Retrived Query Provider: "+name);
-                return p;
-            }
+        JettyPluginInterface p = this.servletMap.get(name);
+        if (p == null) {
+            logger.debug("No servlet matching name {}", name);
+            return null;
         }
-        logger.debug("No indexer matching name {} for onlyEnabled = {}", name, onlyEnabled);
-        return null;
+        if (onlyEnabled && !p.isEnabled()) {
+            logger.debug("Servlet matching name {} is disabled", name);
+            return null;
+        }
+        return p;
     }
 
     public StorageInterface getStorageByName(String name, boolean onlyEnabled){
-        Collection<StorageInterface> plugins = getStoragePlugins(onlyEnabled);
-        for(StorageInterface p : plugins){
-            if(p.getName().equalsIgnoreCase(name)){
-                //logger.info("Retrived Query Provider: "+name);
-                return p;
-            }
+        StorageInterface p = this.storageMap.get(name);
+        if (p == null) {
+            logger.debug("No storage provider matching name {}", name);
+            return null;
         }
-        logger.debug("No indexer matching name {} for onlyEnabled = {}", name, onlyEnabled);
-        return null;
+        if (onlyEnabled && !p.isEnabled()) {
+            logger.debug("Storage provider matching name {} is disabled", name);
+            return null;
+        }
+        return p;
     }
     
 
