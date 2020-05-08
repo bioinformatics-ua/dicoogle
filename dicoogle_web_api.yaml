@@ -1,21 +1,40 @@
 openapi: 3.0.0
 info:
   description:
-    Documentation of the server API to the web services provided by Dicoogle,
-    the open-source PACS archive.
+    <p>Specification of the Dicoogle's PACS archive public API. This page describes all services available
+    by default to the common user of the Dicoogle open-source PACS archive.
+    In the given examples, the Demo website is used to try out the services. They may also be tried in
+    your local deploy of Dicoogle through the base path <a href="http://localhost:8080">http://localhost:8080</a>,
+    or another base path previously set. More information about Dicoogle configuration available in
+    <a href="https://bioinformatics-ua.github.io/dicoogle-learning-pack/">Dicoogle Learning Pack</a>.</p>
+
+    <p>Finally, the Dicoogle Team encourage you to try out the official Javascript client API,
+    dicoogle-client-js, available in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js">GitHub</a>
+    and documented in detail in <a href="https://bioinformatics-ua.github.io/dicoogle-client-js/">GitHub Pages</a>.</p>
+
+    <p>Useful external links:</p>
+    <p>- <a href="http://www.dicoogle.com">Dicoogle Website</a> </p>
+    <p>- <a href="https://github.com/bioinformatics-ua/dicoogle">Dicoogle GitHub</a> </p>
+    <p>- <a href="https://bioinformatics-ua.github.io/dicoogle-learning-pack/">Dicoogle Learning Pack</a> </p>
+    <p>- <a href="https://bioinformatics-ua.github.io/dicoogle-api/javadoc/">Dicoogle Javadoc</a> </p>
+    <p>- <a href="https://github.com/bioinformatics-ua/dicoogle-client-js">Dicoogle Javascript Client</a> </p>
+    <br>
   version: 3.0.0
   title: Dicoogle
   contact:
-    name: Dicoogle
+    name: Support
     url: http://dicoogle.com/about/
+    email: carlos.costa@ua.pt
   license:
     name: GNU General Public License v3.0
     url: https://www.gnu.org/licenses/gpl-3.0.en.html
 servers:
+  - url: http://demo.dicoogle.com/
+  - url: http://localhost:8080/
   - url: http://yourdicooglehost/
 externalDocs:
-  description: Dicoogle - GitHub
-  url: https://github.com/bioinformatics-ua/dicoogle
+  description: Dicoogle API
+  url: https://bioinformatics-ua.github.io/dicoogle-api/
 tags:
   - name: Authentication
     description: Authentication related services
