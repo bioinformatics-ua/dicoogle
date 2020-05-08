@@ -17,30 +17,31 @@ externalDocs:
   description: Dicoogle - GitHub
   url: 'https://github.com/bioinformatics-ua/dicoogle'
 tags:
-  - name: login
-    description: ''
-  - name: user
-    description: ''
-  - name: search
-    description: ''
-  - name: index
-    description: ''
-  - name: management
-    description: ''
-  - name: misc
-    description: ''
+  - name: Authentication
+    description: 'Authentication related services'
+  - name: User
+    description: 'User related services'
+  - name: Search
+    description: 'Search related services'
+  - name: Index
+    description: 'Index related services'
+  - name: Management
+    description: 'Management related services'
+  - name: Misc
+    description: 'Misc related services'
 schemes:
   - http
 paths:
   /login:
     post:
       tags:
-        - login
+        - Authentication
       summary: Log in to Dicoogle using the given credentials
       consumes:
         - application/json
       produces:
         - application/json
+      operationId: login
       parameters:
         - in: query
           name: username
@@ -61,8 +62,9 @@ paths:
           description: Wrong login credentials
     get:
       tags:
-        - login
+        - Authentication
       summary: Check if logged in
+      operationId: status
       consumes:
         - application/json
       produces:
@@ -78,8 +80,9 @@ paths:
   /logout:
     post:
       tags:
-        - login
+        - Authentication
       summary: Log out from the server
+      operationId: logout
       consumes:
         - application/json
       produces:
@@ -95,8 +98,9 @@ paths:
   /user:
     put:
       tags:
-        - user
+        - User
       summary: Create a user in the system
+      operationId: createUser
       consumes:
         - application/json
       produces:
@@ -124,8 +128,9 @@ paths:
             $ref: '#/definitions/Success'
     get:
       tags:
-        - user
+        - User
       summary: Get all the users in the system
+      operationId: getUsers
       consumes:
         - application/json
       produces:
@@ -137,8 +142,9 @@ paths:
             $ref: '#/definitions/Users'
     delete:
       tags:
-        - user
+        - User
       summary: Remove a user from the system
+      operationId: deleteUser
       consumes:
         - application/json
       produces:
@@ -157,8 +163,9 @@ paths:
   /search:
     get:
       tags:
-        - search
+        - Search
       summary: Perform a text query
+      operationId: search
       consumes:
         - application/json
       produces:
@@ -189,8 +196,9 @@ paths:
   /searchDIM:
     get:
       tags:
-        - search
+        - Search
       summary: Perform a text query with DIM-formatted outcome
+      operationId: searchDIM
       consumes:
         - application/json
       produces:
@@ -221,8 +229,9 @@ paths:
   /dump:
     get:
       tags:
-        - misc
+        - Misc
       summary: Retrieve an image's meta-data (perform an information dump)
+      operationId: dumpMetadata
       consumes:
         - application/json
       produces:
@@ -248,8 +257,9 @@ paths:
   /management/settings/index/path:
     get:
       tags:
-        - management
+        - Management
       summary: Get the current Dicoogle watcher directory
+      operationId: getWatchingDir
       consumes:
         - application/json
       produces:
@@ -261,8 +271,9 @@ paths:
             type: string
     post:
       tags:
-        - management
+        - Management
       summary: Set the current Dicoogle watcher directory
+      operationId: setWatchDir
       consumes:
         - application/json
       produces:
@@ -281,8 +292,9 @@ paths:
   /management/settings/index/effort:
     get:
       tags:
-        - management
+        - Management
       summary: Get the indexation effort
+      operationId: getIndexEffort
       consumes:
         - application/json
       produces:
@@ -294,8 +306,9 @@ paths:
             type: string
     post:
       tags:
-        - management
+        - Management
       summary: Set the indexation effort
+      operationId: setIndexEffort
       consumes:
         - application/json
       produces:
@@ -314,8 +327,9 @@ paths:
   /management/settings/index/thumbnail:
     get:
       tags:
-        - management
+        - Management
       summary: Check thumbnail indexation
+      operationId: getThumbnailIndex
       consumes:
         - application/json
       produces:
@@ -327,8 +341,9 @@ paths:
             type: string
     post:
       tags:
-        - management
+        - Management
       summary: Set thumbnail indexation
+      operationId: setThumbnailIndex
       consumes:
         - application/json
       produces:
@@ -347,8 +362,9 @@ paths:
   /management/settings/index/watcher:
     get:
       tags:
-        - management
+        - Management
       summary: Check if Dicoogle watcher directory is enabled
+      operationId: getWatchDirEnabled
       consumes:
         - application/json
       produces:
@@ -360,8 +376,9 @@ paths:
             type: string
     post:
       tags:
-        - management
+        - Management
       summary: Set if the watcher directory is enabled
+      operationId: setWatchDirEnabled
       consumes:
         - application/json
       produces:
@@ -380,8 +397,9 @@ paths:
   /management/settings/index/thumbnail/size:
     get:
       tags:
-        - management
+        - Management
       summary: Get the thumbnail size
+      operationId: getThumbnailSize
       consumes:
         - application/json
       produces:
@@ -393,8 +411,9 @@ paths:
             type: string
     post:
       tags:
-        - management
+        - Management
       summary: Set the thumbnail size
+      operationId: setThumbnailSize
       consumes:
         - application/json
       produces:
@@ -413,8 +432,9 @@ paths:
   /management/settings/index:
     get:
       tags:
-        - management
+        - Management
       summary: Get all of the current Indexer settings
+      operationId: getIndexSettings
       consumes:
         - application/json
       produces:
@@ -426,8 +446,9 @@ paths:
             $ref: '#/definitions/IndexSettings'
     post:
       tags:
-        - management
+        - Management
       summary: Set all the Indexer settings
+      operationId: setIndexSettings
       consumes:
         - application/json
       produces:
@@ -471,8 +492,9 @@ paths:
   /management/settings/transfer:
     get:
       tags:
-        - management
+        - Management
       summary: Get the list of current transfer syntax settings available
+      operationId: getAvailableTS
       consumes:
         - application/json
       produces:
@@ -484,8 +506,9 @@ paths:
             $ref: '#/definitions/TransferSyntaxSettingsList'
     post:
       tags:
-        - management
+        - Management
       summary: Set (or reset) an option of a particular transfer syntax
+      operationId: setOptionTS
       consumes:
         - application/json
       produces:
@@ -515,8 +538,9 @@ paths:
   /wado:
     get:
       tags:
-        - misc
+        - Misc
       summary: ''
+      operationId: wado
       consumes:
         - application/json
       produces:
@@ -529,8 +553,9 @@ paths:
   /providers:
     get:
       tags:
-        - index
+        - Index
       summary: Retrieve a list of index provider plugins
+      operationId: getIndexPlugins
       consumes:
         - application/json
       produces:
@@ -543,8 +568,9 @@ paths:
   /management/settings/dicom/query:
     get:
       tags:
-        - management
+        - Management
       summary: Get all of the current DICOM Query-Retrieve settings
+      operationId: getQueryRetrieveSettings
       consumes:
         - application/json
       produces:
@@ -556,8 +582,9 @@ paths:
             $ref: '#/definitions/QuerySettings'
     post:
       tags:
-        - management
+        - Management
       summary: Set a group of DICOM Query/Retrieve settings
+      operationId: setQueryRetrieveSettings
       consumes:
         - application/json
       produces:
@@ -604,8 +631,9 @@ paths:
   /management/tasks/index:
     post:
       tags:
-        - index
+        - Index
       summary: Request a new indexing task over a given URI (recursively)
+      operationId: addIndexTaskURI
       consumes:
         - application/json
       produces:
@@ -636,11 +664,12 @@ paths:
   /management/tasks/unindex:
     post:
       tags:
-        - index
+        - Index
       summary: >-
         Request that a list of entries is unindexed in the specified
         indexers, or all of them if left unspecified. Exactly one of the
         fields `uri`, `SOPInstanceUID` and `SeriesInstanceUID` must be given.
+      operationId: addUnindexTaskList
       consumes:
         - application/json
       produces:
@@ -687,8 +716,9 @@ paths:
   /management/tasks/remove:
     post:
       tags:
-        - index
+        - Index
       summary: Request that the file at the given URI is permanently removed
+      operationId: addUnindexTaskURI
       consumes:
         - application/json
       produces:
@@ -709,8 +739,9 @@ paths:
   /management/dicom/storage:
     get:
       tags:
-        - management
+        - Management
       summary: Check the storage's service status
+      operationId: getStorageStatus
       consumes:
         - application/json
       produces:
@@ -725,8 +756,9 @@ paths:
                 $ref: '#/definitions/ServiceStatus'
     post:
       tags:
-        - management
+        - Management
       summary: Change the storage's service status
+      operationId: setStorageStatus
       consumes:
         - application/json
       produces:
@@ -755,8 +787,9 @@ paths:
   /management/dicom/query:
     get:
       tags:
-        - management
+        - Management
       summary: Check the query's service status
+      operationId: getQueryStatus
       consumes:
         - application/json
       produces:
@@ -771,8 +804,9 @@ paths:
                 $ref: '#/definitions/ServiceStatus'
     post:
       tags:
-        - management
+        - Management
       summary: Change the query's service status
+      operationId: setQueryStatus
       consumes:
         - application/json
       produces:
@@ -801,8 +835,9 @@ paths:
   /management/settings/dicom:
     get:
       tags:
-        - management
+        - Management
       summary: Retrieve the AE title of the Dicoogle archive
+      operationId: getAETitle
       consumes:
         - application/json
       produces:
@@ -817,8 +852,9 @@ paths:
                 $ref: '#/definitions/AETitle'
     put:
       tags:
-        - management
+        - Management
       summary: Redefine the AE title of the Dicoogle archive
+      operationId: setAETitle
       consumes:
         - application/json
       produces:
@@ -839,8 +875,9 @@ paths:
   /plugins:
     get:
       tags:
-        - management
+        - Management
       summary: Retrieve the list of existing plugins
+      operationId: getPluginList
       consumes:
         - application/json
       produces:
@@ -856,8 +893,9 @@ paths:
   /logger:
     get:
       tags:
-        - misc
+        - Misc
       summary: Retrieve the Dicoogle server's log text
+      operationId: getLogText
       consumes:
         - application/json
       produces:
@@ -872,8 +910,9 @@ paths:
   /index/task:
     get:
       tags:
-        - index
+        - Index
       summary: Get indexing tasks
+      operationId: getIndexTasks
       consumes:
         - application/json
       produces:
@@ -887,8 +926,9 @@ paths:
           description: Invalid supplied parameters
     post:
       tags:
-        - index
+        - Index
       summary: Change an indexing task
+      operationId: setIndexTask
       consumes:
         - application/json
       produces:
@@ -912,8 +952,9 @@ paths:
   /export/cvs:
     get:
       tags:
-        - misc
+        - Misc
       summary: Request a CSV file export of the results
+      operationId: exportCSV
       consumes:
         - application/json
       produces:
@@ -949,8 +990,9 @@ paths:
   /export/list:
     get:
       tags:
-        - misc
+        - Misc
       summary: Get a list of known valid DICOM fields
+      operationId: getValidDicomFields
       consumes:
         - application/json
       produces:
@@ -965,8 +1007,9 @@ paths:
   /management/settings/storage/dicom:
     get:
       tags:
-        - management
+        - Management
       summary: Get the currently associated remote servers
+      operationId: getAssociatedServers
       consumes:
         - application/json
       produces:
@@ -980,8 +1023,9 @@ paths:
           description: Invalid supplied parameters
     post:
       tags:
-        - management
+        - Management
       summary: Associate or remove a remote server
+      operationId: setAssociatedServer
       consumes:
         - application/json
       produces:
@@ -1020,8 +1064,9 @@ paths:
   /ext/version:
     get:
       tags:
-        - misc
+        - Misc
       summary: Retrieve the running Dicoogle version
+      operationId: getVersion
       consumes:
         - application/json
       produces:
