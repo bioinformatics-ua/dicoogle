@@ -19,7 +19,6 @@
 
 import {EventEmitter} from 'events';
 import client from 'dicoogle-client';
-require('document-register-element');
 
 /** Dicoogle web application core.
  * This module provides support to web interface plugins.
@@ -506,43 +505,41 @@ export const webUISlot = m.webUISlot;
   }
 
   // custom element definitions
-  export const HTMLDicoogleSlotElement = document.registerElement('dicoogle-slot', {
-      prototype: Object.create(HTMLDivElement.prototype, {
-        slotId: {
-          get () {
+  export const HTMLDicoogleSlotElement = customElements.define('dicoogle-slot', class HTMLDicoogleSlotElement extends HTMLDivElement {
+        constructor() {
+          super();
+        }
+
+        get slotId() {
             return this.getAttribute('data-slot-id');
-          }
-        },
-        pluginName: {
-          get () {
+        }
+
+        get pluginName() {
             return this.getAttribute('data-plugin-name');
-          }
-        },
-        webUi: {
-          get () {
+        }
+
+        get webUi() {
             return this._webUi;
-          },
-          set (webUi) {
+        }
+      
+        set webUi(webUi) {
             this._webUi = webUi;
-          }
-        },
-        data: {
-          get () {
+        }
+
+        get data() {
             return this._data;
-          },
-          set (data) {
+        }
+        set data(data) {
             this._data = data;
             for (let i = 0; i < this.webUi.attachments.length; i++) {
               if (isFunction(this.webUi.attachments[i].onReceiveData)) {
                 this.webUi.attachments[i].onReceiveData(data);
               }
             }
-          }
-        },
-        createdCallback: { value () {
-        }},
-        attachedCallback: { value () {
-          console.log('[CALLBACK] Dicoogle slot attached: ', this);
+        }
+
+        connectedCallback() {
+          console.log('[CALLBACK] Dicoogle slot connected: ', this);
           const attSlotId = this.attributes['data-slot-id'];
           if (!attSlotId || !attSlotId.value || attSlotId === '') {
             console.error('Dicoogle slot contains illegal data-slot-id!');
@@ -555,8 +552,9 @@ export const webUISlot = m.webUISlot;
             });
           }
           //console.log('[CALLBACK] Dicoogle slot attached: ', this);
-        }},
-        detachedCallback: { value () {
+        }
+
+        disconnectedCallback() {
           //console.log('[CALLBACK] Dicoogle slot detached: ', this);
           const typedSlots = slots[this.slotId];
           for (let i = 0; i < typedSlots.length; i++) {
@@ -565,14 +563,14 @@ export const webUISlot = m.webUISlot;
                 break;
             }
           }
-        }},
-        attributeChangedCallback: { value (attrName) {
+        }
+
+        attributeChangedCallback(attrName, oldValue, newValue) {
           // console.log('[CALLBACK] Dicoogle attribute changed');
           if (attrName === 'data-slot-id' || attrName === 'data-plugin-name') {
             m.updateSlot(this);
           }
-        }}
-      })
+        }
     });
     console.log('Registered HTMLDicoogleSlotElement');
 
