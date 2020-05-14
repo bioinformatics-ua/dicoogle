@@ -17,12 +17,12 @@ const PluginsView = React.createClass({
     this.unsubscribe = PluginStore.listen(this._onPluginsChange);
   },
 
-  componentDidMount: function() {
+  componentDidMount: function () {
     const pluginTypes = ["query", "index", "storage", "servlet"];
     pluginTypes.map(type => PluginActions.get(type));
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount: function () {
     this.unsubscribe();
   },
 
@@ -62,7 +62,7 @@ const PluginsView = React.createClass({
     }
 
     // decrease loading plugins by one unit. When all the plugins are loaded, the status will be "done"
-    this.setState(function(previousState, currentProps) {
+    this.setState(function (previousState, currentProps) {
       let currentlyLoading = previousState.currentlyLoading - 1;
       let status = previousState.status;
 
@@ -99,12 +99,12 @@ const PluginsView = React.createClass({
     const ignoreFieldList = ["name", "type", "enabled"];
     const pluginPanels = Object.keys(this.state.plugins)
       .sort()
-      .map(type => {
+      .map((type, i) => {
         return (
-          <div className="col-lg-3 col-md-6 col-sm-12">
+          <div className="col-lg-3 col-md-6 col-sm-12" key={i}>
             <p>{type.charAt(0).toUpperCase() + type.slice(1)}</p>
-            {this.state.plugins[type].map(plugin => (
-              <div className="panel panel-default">
+            {this.state.plugins[type].map((plugin, i) => (
+              <div className="panel panel-default" key={i}>
                 <div className="panel-heading panel-heading-toggle">
                   <h4 className="panel-title">
                     <a
@@ -141,8 +141,8 @@ const PluginsView = React.createClass({
                     {Object.keys(plugin)
                       .filter(field => ignoreFieldList.indexOf(field) < 0)
                       .filter(field => plugin[field] !== null)
-                      .map(field => (
-                        <p>
+                      .map((field, i) => (
+                        <p key={i}>
                           <b>{field}:</b> {plugin[field].toString()}
                         </p>
                       ))}

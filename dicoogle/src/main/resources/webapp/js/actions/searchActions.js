@@ -1,7 +1,7 @@
 import Reflux from "reflux";
-const ActionCreators = exports;
-ActionCreators.search = Reflux.createAction();
-ActionCreators.unindex = Reflux.createAction();
-ActionCreators.remove = Reflux.createAction();
-//ActionCreators.advancedOptionsChange = Reflux.createAction();
+const ActionCreators = {
+  search: Reflux.createAction(),
+  unindex: Reflux.createAction(),
+  remove: Reflux.createAction()
+};
 export { ActionCreators };
