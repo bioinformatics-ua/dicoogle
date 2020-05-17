@@ -4,7 +4,7 @@ import { ActionCreators } from "../../../actions/searchActions";
 import { SearchStore } from "../../../stores/searchStore";
 import ConfirmModal from "./confirmModal";
 import PluginView from "../../plugin/pluginView.jsx";
-import { Input } from "react-bootstrap";
+import { Checkbox } from "react-bootstrap";
 import ResultSelectActions from "../../../actions/resultSelectAction";
 import UserStore from "../../../stores/userStore";
 
@@ -134,8 +134,7 @@ const PatientView = React.createClass({
     let classNameForIt = "advancedOptions " + id;
     return (
       <div className={classNameForIt}>
-        <Input
-          type="checkbox"
+        <Checkbox
           label=""
           onChange={this.handleSelect.bind(this, item)}
           ref={this.handleRefs.bind(this, id)}

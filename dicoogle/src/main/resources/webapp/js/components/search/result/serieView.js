@@ -4,7 +4,7 @@ import { SearchStore } from "../../../stores/searchStore";
 import { ActionCreators } from "../../../actions/searchActions";
 import ConfirmModal from "./confirmModal";
 import PluginView from "../../plugin/pluginView.jsx";
-import { Input } from "react-bootstrap";
+import { Checkbox } from "react-bootstrap";
 import ResultSelectActions from "../../../actions/resultSelectAction";
 import UserStore from "../../../stores/userStore";
 
@@ -133,8 +133,7 @@ const SeriesView = React.createClass({
     let classNameForIt = "advancedOptions " + serieInstanceUID;
     return (
       <div className={classNameForIt}>
-        <Input
-          type="checkbox"
+        <Checkbox
           label=""
           onChange={this.handleSelect.bind(this, item)}
           ref={this.handleRefs.bind(this, serieInstanceUID)}

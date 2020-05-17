@@ -9,7 +9,7 @@ import ImageLoader from "react-imageloader";
 import PluginView from "../../plugin/pluginView";
 import { DumpActions } from "../../../actions/dumpActions";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
-import { Input } from "react-bootstrap";
+import { Checkbox } from "react-bootstrap";
 import ResultSelectActions from "../../../actions/resultSelectAction";
 import UserStore from "../../../stores/userStore";
 
@@ -164,8 +164,7 @@ const ImageView = React.createClass({
     let classNameForIt = "advancedOptions " + sopInstanceUID;
     return (
       <div className={classNameForIt}>
-        <Input
-          type="checkbox"
+        <Checkbox
           label=""
           onChange={this.handleSelect.bind(this, item)}
           ref={this.handleRefs.bind(this, sopInstanceUID)}

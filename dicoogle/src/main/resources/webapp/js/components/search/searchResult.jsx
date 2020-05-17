@@ -27,7 +27,7 @@ const SearchResult = React.createClass({
         results: PropTypes.array
       }),
       error: PropTypes.any
-    }).isRequired,
+    }),
     onReturn: PropTypes.func
   },
 
@@ -256,7 +256,8 @@ const SearchResult = React.createClass({
 const Step = React.createClass({
   propTypes: {
     current: PropTypes.number,
-    counters: PropTypes.arrayOf(PropTypes.number).isRequired
+    counters: PropTypes.arrayOf(PropTypes.number).isRequired,
+    onClick: PropTypes.func.isRequired,
   },
   render: function() {
     const {
@@ -326,8 +327,10 @@ const Step = React.createClass({
     else if (step > current) return "col-xs-3 wizardbar-item disabled";
     else if (step < current) return "col-xs-3 wizardbar-item completed";
   },
-  onStepClicked: function(current) {
-    this.props.onClick(current);
+  onStepClicked: function(newStep) {
+    if (this.props.current > newStep) {
+      this.props.onClick(newStep);
+    }
   }
 });
 
