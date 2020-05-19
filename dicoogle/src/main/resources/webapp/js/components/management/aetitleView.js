@@ -9,10 +9,7 @@ const AETitleView = React.createClass({
         return {
             aetitleText: "",
             dirtyValue: false,  // aetitle value has unsaved changes
-            status: "loading",
-            showToast: false,
-            toastType: 'default',
-            toastMessage: {}
+            status: "loading"
         };
     },
 
@@ -29,45 +26,24 @@ const AETitleView = React.createClass({
     },
 
     _onChange(data) {
-        if (data.success) {
-            this.setState({
-                toastType: "default",
-                toastMessage: {
-                    title: "Saved"
-                }
-            });
-        } else {
-            this.setState({
-                toastType: "error",
-                toastMessage: {
-                    title: "Error",
-                    body: data.message
-                }
-            });
-        }
-
-        if (this.state.status === "done") {
-            this.setState(
-                { showToast: true },
-                () => setTimeout(() => this.setState({ showToast: false }), 3000)
-            );
-        }
-
-        if (!data.success) {
-            this.setState({
-                dirtyValue: true
-            });
-        } else {
+        if (data.success && this.state.status === "done") {
+            this.props.showToastMessage("success", { title: "Saved" });
+        } else if (data.success) {
             this.setState({
                 aetitleText: data.message,
                 status: "done"
             });
+
+        } else {
+            this.setState({
+                dirtyValue: true,
+            });
+
+            this.props.showToastMessage("error", { title: "Error", body: data.message });
         }
     },
 
     render() {
-        const { showToast, toastType, toastMessage } = this.state;
-
         if (this.state.status === "loading") {
             return (
                 <div className="loader-inner ball-pulse">
@@ -83,7 +59,7 @@ const AETitleView = React.createClass({
                 <div className="panel-heading">
                     <h3 className="panel-title">AETitle</h3>
                 </div>
-                
+
                 <div className="panel-body">
                     <AETitleForm
                         aetitleText={this.state.aetitleText}
@@ -92,8 +68,6 @@ const AETitleView = React.createClass({
                         dirtyValue={this.state.dirtyValue}
                     />
                 </div>
-
-                <ToastView show={showToast} message={toastMessage} toastType={toastType} />
             </div>
         );
     },

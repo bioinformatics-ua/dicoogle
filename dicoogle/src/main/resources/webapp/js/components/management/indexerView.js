@@ -29,7 +29,6 @@ const IndexerView = React.createClass({
         thumbnailSize: 0,
         watcher: false
       },
-      showSaved: false,
       status: "loading",
       currentWatch: false
     };
@@ -135,7 +134,6 @@ const IndexerView = React.createClass({
             <button className="btn btn_dicoogle" onClick={this.onSaveClicked}>
               Save
             </button>
-            <ToastView show={this.state.showSaved} message={{ title: "Saved" }} />
           </div>
         </div>
       </div>
@@ -164,10 +162,7 @@ const IndexerView = React.createClass({
       document.getElementById("tsize").value
     );
 
-    this.setState(
-      { showSaved: true },
-      () => setTimeout(() => this.setState({ showSaved: false }), 3000)
-    );
+    this.props.showToastMessage("success", { title: "Saved" });
   }
 });
 

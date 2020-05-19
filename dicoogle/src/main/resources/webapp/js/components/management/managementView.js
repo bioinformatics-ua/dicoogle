@@ -4,19 +4,38 @@ import { ServicesAndPluginsView } from "../management/servicesAndPluginsView";
 import { LoggerView } from "../management/loggerView";
 import { IndexerView } from "../management/indexerView";
 import { StorageView } from "../management/storageView";
+import { ToastView } from "../mixins/toastView";
 
 const ManagementView = React.createClass({
-  getInitialState: function() {
-    return { selectedtab: 0 };
+  getInitialState: function () {
+    return {
+      selectedtab: 0,
+      showToast: false,
+      toastType: 'default',
+      toastMessage: {}
+    };
   },
-  render: function() {
+
+  showToastMessage: function (toastType, toastMessage) {
+    this.setState({
+      showToast: true,
+      toastType,
+      toastMessage
+    },
+      () => setTimeout(() => this.setState({ showToast: false }), 3000));
+  },
+
+  render: function () {
     var views = [
-      <IndexerView />,
+      <IndexerView showToastMessage={this.showToastMessage} />,
       <TransferOptionsView />,
-      <ServicesAndPluginsView />,
+      <ServicesAndPluginsView showToastMessage={this.showToastMessage} />,
       <StorageView />,
       <LoggerView />
     ];
+
+    const { showToast, toastType, toastMessage } = this.state;
+
     return (
       <div className="container-fluid content">
         <ul className="nav nav-pills">
@@ -69,11 +88,12 @@ const ManagementView = React.createClass({
         <div id="my-tab-content" className="tab-content">
           {views[this.state.selectedtab]}
         </div>
+
+        <ToastView show={showToast} message={toastMessage} toastType={toastType} />
       </div>
     );
   },
-  onTabClicked: function(index) {
-    console.log("tabSelected: ", index);
+  onTabClicked: function (index) {
     this.setState({ selectedtab: index });
   }
 });
