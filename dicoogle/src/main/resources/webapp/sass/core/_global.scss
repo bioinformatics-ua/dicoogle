@@ -60,7 +60,6 @@ input {
   margin-left: -100px;
   bottom: 20px;
   color: $button_color;
-  font-size: 20px;
   padding: 10px;
   text-align: center;
   border-radius: 4px;
@@ -82,6 +81,12 @@ input {
 
   &-error {
     background-color: $error;
+  }
+
+  &-body {
+    border-top: 1px solid $button_color;
+    margin: 5px;
+    padding-top: 5px;
   }
 }
 

@@ -3,9 +3,11 @@ import { Transition } from "react-transition-group";
 
 const ToastView = React.createClass({
   render() {
-    const message = this.props.message ? this.props.message : "Saved.";
-    const duration = this.props.duration ? this.props.duration : 300;
-    const toastType = this.props.toastType ? this.props.toastType : "default";
+    let { message, duration, toastType } = this.props;
+
+    message = message && message.title ? message : { title: "Saved." };
+    duration = duration ? duration : 300;
+    toastType = toastType ? toastType : "default";
 
     const transitionStyles = {
       entering: {
@@ -28,7 +30,15 @@ const ToastView = React.createClass({
               ...transitionStyles[state]
             }}
           >
-            <div className={`toast toast-${toastType}`}>{message}</div>
+            <div className={`toast toast-${toastType}`}>
+              <h3 className="panel-title">{message.title}</h3>
+
+              {message.body &&
+                <div className="toast-body">
+                  {message.body}
+                </div>
+              }
+            </div>
           </div>
         )}
       </Transition>
