@@ -11,7 +11,6 @@ import {
 
 import { ExportActions } from "../../actions/exportActions";
 import { ExportStore } from "../../stores/exportStore";
-import $ from "jquery";
 import { ToastView } from "../mixins/toastView";
 
 const ExportView = React.createClass({
