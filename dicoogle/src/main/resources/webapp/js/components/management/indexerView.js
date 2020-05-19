@@ -27,9 +27,9 @@ const IndexerView = React.createClass({
         effort: 0,
         thumbnail: false,
         thumbnailSize: 0,
-        watcher: false,
-        showSaved: false
+        watcher: false
       },
+      showSaved: false,
       status: "loading",
       currentWatch: false
     };
@@ -135,7 +135,7 @@ const IndexerView = React.createClass({
             <button className="btn btn_dicoogle" onClick={this.onSaveClicked}>
               Save
             </button>
-            <ToastView show={this.state.showSaved} />
+            <ToastView show={this.state.showSaved} message={{ title: "Saved" }} />
           </div>
         </div>
       </div>
@@ -155,7 +155,6 @@ const IndexerView = React.createClass({
     //console.log(document.getElementById(id).value);
   },
   onSaveClicked() {
-    console.log("onSaveClicked");
     saveIndexOptions(
       document.getElementById("mon_path").value,
       document.getElementById("watcher").checked,
