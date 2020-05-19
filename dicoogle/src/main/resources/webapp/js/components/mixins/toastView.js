@@ -5,6 +5,7 @@ const ToastView = React.createClass({
   render() {
     const message = this.props.message ? this.props.message : "Saved.";
     const duration = this.props.duration ? this.props.duration : 300;
+    const toastType = this.props.toastType ? this.props.toastType : "default";
 
     const transitionStyles = {
       entering: {
@@ -27,7 +28,7 @@ const ToastView = React.createClass({
               ...transitionStyles[state]
             }}
           >
-            <div className="toast">{message}</div>
+            <div className={`toast toast-${toastType}`}>{message}</div>
           </div>
         )}
       </Transition>
