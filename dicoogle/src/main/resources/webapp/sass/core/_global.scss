@@ -53,7 +53,6 @@ input {
 }
 
 .toast {
-  display: none;
   min-width: 200px;
   height: auto;
   position: fixed;
@@ -69,9 +68,6 @@ input {
   -webkit-box-shadow: 0px 0px 24px -1px rgba(56, 56, 56, 1);
   -moz-box-shadow: 0px 0px 24px -1px rgba(56, 56, 56, 1);
   box-shadow: 0px 0px 24px -1px rgba(56, 56, 56, 1);
-}
-.testdapissa {
-  height: 400px;
 }
 
 .indexstatusprogress {

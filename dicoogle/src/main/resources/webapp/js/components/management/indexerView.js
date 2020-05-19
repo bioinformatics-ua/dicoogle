@@ -165,10 +165,10 @@ const IndexerView = React.createClass({
       document.getElementById("tsize").value
     );
 
-    this.setState({ showSaved: true });
-    setTimeout(() => {
-      this.setState({ showSaved: false });
-    }, 3000);
+    this.setState(
+      { showSaved: true },
+      () => setTimeout(() => this.setState({ showSaved: false }), 3000)
+    );
   }
 });
 
