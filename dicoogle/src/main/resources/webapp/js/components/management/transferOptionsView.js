@@ -2,7 +2,6 @@ import React from "react";
 
 import { TransferStore } from "../../stores/transferStore";
 import { TransferActions } from "../../actions/transferActions";
-import { Button } from "react-bootstrap";
 
 const TransferOptionsView = React.createClass({
   getInitialState() {
@@ -27,7 +26,13 @@ const TransferOptionsView = React.createClass({
     this.unsubscribe();
   },
   _onChange(data) {
-    console.log(data);
+    //console.log(data);
+    if (!data.success) {
+      this.props.showToastMessage("error", { title: "Error", body: data.status });
+    } else if (data.success && this.state.status === "done") {
+      this.props.showToastMessage("success", { title: "Saved" });
+    }
+
     this.setState({ data: data, status: "done" });
   },
   render() {
@@ -102,9 +107,9 @@ const TransferOptionsView = React.createClass({
                 </li>
               </ul>
               <div>
-                <Button bsStyle="primary" onClick={this.handleSelectAll}>
+                <button className="btn btn_dicoogle" onClick={this.handleSelectAll}>
                   {this.selectAllOn ? "Select all" : "Unselect all"}
-                </Button>
+                </button>
               </div>
             </div>
           </div>

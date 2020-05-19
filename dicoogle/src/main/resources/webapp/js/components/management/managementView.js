@@ -28,7 +28,7 @@ const ManagementView = React.createClass({
   render: function () {
     var views = [
       <IndexerView showToastMessage={this.showToastMessage} />,
-      <TransferOptionsView />,
+      <TransferOptionsView showToastMessage={this.showToastMessage} />,
       <ServicesAndPluginsView showToastMessage={this.showToastMessage} />,
       <StorageView />,
       <LoggerView />
