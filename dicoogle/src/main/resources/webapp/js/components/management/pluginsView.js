@@ -1,7 +1,6 @@
 import React from "react";
 import * as PluginActions from "../../actions/pluginActions";
 import PluginStore from "../../stores/pluginStore";
-import $ from "jquery";
 
 const PluginsView = React.createClass({
   getInitialState() {
@@ -36,13 +35,11 @@ const PluginsView = React.createClass({
         actionPerformed: false
       });
 
-      let toastMessage = this.state.error ? this.state.error : "Saved.";
-      $(".toast")
-        .stop()
-        .text(toastMessage)
-        .fadeIn(400)
-        .delay(3000)
-        .fadeOut(400); // fade out after 3 seconds
+      if (this.state.error) {
+        this.props.showToastMessage("error", { title: "Error", body: this.state.error });
+      } else {
+        this.props.showToastMessage("success", { title: "Saved" });
+      }
     }
 
     if (!data.success) {
@@ -162,7 +159,7 @@ const PluginsView = React.createClass({
         <div className="panel-body">
           <div className="row">{pluginPanels}</div>
         </div>
-        <div className="toast">Saved</div>
+        {/* <div className="toast">Saved</div> */}
       </div>
     );
   }
