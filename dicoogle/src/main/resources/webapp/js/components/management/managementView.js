@@ -30,7 +30,7 @@ const ManagementView = React.createClass({
       <IndexerView showToastMessage={this.showToastMessage} />,
       <TransferOptionsView showToastMessage={this.showToastMessage} />,
       <ServicesAndPluginsView showToastMessage={this.showToastMessage} />,
-      <StorageView />,
+      <StorageView showToastMessage={this.showToastMessage} />,
       <LoggerView />
     ];
 
