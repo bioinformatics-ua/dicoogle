@@ -5,7 +5,7 @@ const ToastView = React.createClass({
   render() {
     let { message, duration, toastType } = this.props;
 
-    message = message && message.title ? message : { title: "Saved." };
+    message = message && message.title ? message : { title: "Saved" };
     duration = duration ? duration : 300;
     toastType = toastType ? toastType : "default";
 

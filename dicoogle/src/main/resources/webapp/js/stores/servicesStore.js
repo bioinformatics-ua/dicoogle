@@ -39,7 +39,8 @@ const ServicesStore = Reflux.createStore({
   onGetStorage: function() {
     this.dicoogle.storage.getStatus((error, data) => {
       if (error) {
-        console.log("onGetStorage: failure", error);
+        console.error("onGetStorage: failure", error);
+        this.trigger({ error: "Dicoogle service error" });
         return;
       }
 
@@ -53,7 +54,8 @@ const ServicesStore = Reflux.createStore({
   onGetQuery: function() {
     this.dicoogle.queryRetrieve.getStatus((error, data) => {
       if (error) {
-        console.log("onGetQuery: failure");
+        console.error("onGetQuery: failure");
+        this.trigger({ error: "Dicoogle service error" });
         return;
       }
 
@@ -68,6 +70,7 @@ const ServicesStore = Reflux.createStore({
     const callback = error => {
       if (error) {
         console.error("Dicoogle service error", error);
+        this.trigger({ error: "Dicoogle service error" });
         return;
       }
 
@@ -86,6 +89,7 @@ const ServicesStore = Reflux.createStore({
     this.dicoogle.storage.configure({ autostart: enabled }, error => {
       if (error) {
         console.error("Dicoogle service error", error);
+        this.trigger({ error: "Dicoogle service error" });
         return;
       }
 
@@ -98,6 +102,7 @@ const ServicesStore = Reflux.createStore({
     this.dicoogle.storage.configure({ port }, error => {
       if (error) {
         console.error("Dicoogle service error", error);
+        this.trigger({ error: "Dicoogle service error" });
         return;
       }
 
@@ -110,6 +115,7 @@ const ServicesStore = Reflux.createStore({
     const callback = error => {
       if (error) {
         console.error("Dicoogle service error", error);
+        this.trigger({ error: "Dicoogle service error" });
         return;
       }
 
@@ -128,6 +134,7 @@ const ServicesStore = Reflux.createStore({
     this.dicoogle.queryRetrieve.configure({ autostart: enabled }, error => {
       if (error) {
         console.error("Dicoogle service error", error);
+        this.trigger({ error: "Dicoogle service error" });
         return;
       }
 
@@ -140,6 +147,7 @@ const ServicesStore = Reflux.createStore({
     this.dicoogle.queryRetrieve.configure({ port }, error => {
       if (error) {
         console.error("Dicoogle service error", error);
+        this.trigger({ error: "Dicoogle service error" });
         return;
       }
 
@@ -152,6 +160,7 @@ const ServicesStore = Reflux.createStore({
     this.dicoogle.queryRetrieve.getDicomQuerySettings((error, data) => {
       if (error) {
         console.error("Dicoogle service error", error);
+        this.trigger({ error: "Dicoogle service error" });
         return;
       }
 
@@ -182,7 +191,9 @@ const ServicesStore = Reflux.createStore({
       },
       (error, data) => {
         if (error) {
+          this.trigger({ error: "Dicoogle service error" });
           console.error("Dicoogle service error", error);
+          return;
         }
       }
     );
