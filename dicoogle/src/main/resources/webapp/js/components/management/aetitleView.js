@@ -2,14 +2,17 @@ import React from "react";
 import AETitleForm from "./aetitleForm";
 import * as AETitleActions from "../../actions/aetitleActions";
 import AETitleStore from "../../stores/aetitleStore";
-import $ from "jquery";
+import { ToastView } from "../mixins/toastView";
 
 const AETitleView = React.createClass({
     getInitialState() {
         return {
             aetitleText: "",
             dirtyValue: false,  // aetitle value has unsaved changes
-            status: "loading"
+            status: "loading",
+            showToast: false,
+            toastType: 'default',
+            toastMessage: {}
         };
     },
 
@@ -26,15 +29,28 @@ const AETitleView = React.createClass({
     },
 
     _onChange(data) {
-        let toastMessage = data.success ? "Saved." : data.message;
+        if (data.success) {
+            this.setState({
+                toastType: "default",
+                toastMessage: {
+                    title: "Saved"
+                }
+            });
+        } else {
+            this.setState({
+                toastType: "error",
+                toastMessage: {
+                    title: "Error",
+                    body: data.message
+                }
+            });
+        }
 
         if (this.state.status === "done") {
-            $(".toast")
-                .stop()
-                .text(toastMessage)
-                .fadeIn(400)
-                .delay(3000)
-                .fadeOut(400); // fade out after 3 seconds
+            this.setState(
+                { showToast: true },
+                () => setTimeout(() => this.setState({ showToast: false }), 3000)
+            );
         }
 
         if (!data.success) {
@@ -50,6 +66,8 @@ const AETitleView = React.createClass({
     },
 
     render() {
+        const { showToast, toastType, toastMessage } = this.state;
+
         if (this.state.status === "loading") {
             return (
                 <div className="loader-inner ball-pulse">
@@ -65,6 +83,7 @@ const AETitleView = React.createClass({
                 <div className="panel-heading">
                     <h3 className="panel-title">AETitle</h3>
                 </div>
+                
                 <div className="panel-body">
                     <AETitleForm
                         aetitleText={this.state.aetitleText}
@@ -73,9 +92,9 @@ const AETitleView = React.createClass({
                         dirtyValue={this.state.dirtyValue}
                     />
                 </div>
-                <div className="toast">Saved</div>
-            </div>
 
+                <ToastView show={showToast} message={toastMessage} toastType={toastType} />
+            </div>
         );
     },
 
