@@ -220,7 +220,12 @@ const AdvancedSearch = React.createClass({
               </div>
               <div className="globalmargin row">
                 <div className="subject_text space_up">Date</div>
-                <input type="text" id="datepicker" className="form-control form-control-date" placeholder={"YYYYMMDD"} />
+                <input
+                  type="text"
+                  id="datepicker"
+                  className="form-control form-control-date"
+                  placeholder={"YYYYMMDD"}
+                />
               </div>
             </div>
           </div>

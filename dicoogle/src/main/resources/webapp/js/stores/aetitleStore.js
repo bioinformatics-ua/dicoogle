@@ -7,11 +7,11 @@ const Dicoogle = dicoogleClient(Endpoints.base);
 
 const AETitleStore = Reflux.createStore({
   listenables: AETitleActions,
-  init: function () {
+  init: function() {
     this._contents = {};
   },
 
-  onGetAETitle: function () {
+  onGetAETitle: function() {
     const self = this;
 
     Dicoogle.getAETitle((err, data) => {
@@ -33,10 +33,10 @@ const AETitleStore = Reflux.createStore({
     });
   },
 
-  onSetAETitle: function (name) {
+  onSetAETitle: function(name) {
     const self = this;
 
-    if (! /^[ A-Za-z0-9_.+-]*$/.test(name)) {
+    if (!/^[ A-Za-z0-9_.+-]*$/.test(name)) {
       self.trigger({
         success: false,
         message: "Invalid AETitle provided"
@@ -44,7 +44,7 @@ const AETitleStore = Reflux.createStore({
       return;
     }
 
-    Dicoogle.setAETitle(name, (err) => {
+    Dicoogle.setAETitle(name, err => {
       if (err) {
         console.error("Service failure", err);
 

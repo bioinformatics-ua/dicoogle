@@ -17,12 +17,12 @@ const PluginsView = React.createClass({
     this.unsubscribe = PluginStore.listen(this._onPluginsChange);
   },
 
-  componentDidMount: function () {
+  componentDidMount: function() {
     const pluginTypes = ["query", "index", "storage", "servlet"];
     pluginTypes.map(type => PluginActions.get(type));
   },
 
-  componentWillUnmount: function () {
+  componentWillUnmount: function() {
     this.unsubscribe();
   },
 
@@ -62,7 +62,7 @@ const PluginsView = React.createClass({
     }
 
     // decrease loading plugins by one unit. When all the plugins are loaded, the status will be "done"
-    this.setState(function (previousState, currentProps) {
+    this.setState(function(previousState, currentProps) {
       let currentlyLoading = previousState.currentlyLoading - 1;
       let status = previousState.status;
 

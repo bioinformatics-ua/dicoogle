@@ -66,7 +66,7 @@ export default class AETitleForm extends React.Component {
           <div
             className="loader-inner ball-pulse"
             style={{ visibility: this.props.onhold ? "visible" : "hidden" }}
-          ></div>
+          />
         </div>
       </div>
     );

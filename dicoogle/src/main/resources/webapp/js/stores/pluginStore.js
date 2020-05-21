@@ -7,11 +7,11 @@ const Dicoogle = dicoogleClient(Endpoints.base);
 
 const PluginStore = Reflux.createStore({
   listenables: PluginActions,
-  init: function () {
+  init: function() {
     this._contents = {};
   },
 
-  onGet: function (type) {
+  onGet: function(type) {
     Dicoogle.request("GET", ["plugins", type]).end((error, data) => {
       if (!error) {
         //console.log(data.body);
@@ -30,23 +30,25 @@ const PluginStore = Reflux.createStore({
     });
   },
 
-  onSetAction: function (type, name, action) {
-    Dicoogle.request("POST", ["plugins", type, name, action]).end((error, data) => {
-      if (!error) {
-        this._contents[type].find(plugin => plugin.name === name).enabled =
-          action === "enable";
-        this.trigger({
-          data: this._contents[type],
-          success: true
-        });
-      } else {
-        this.trigger({
-          success: false,
-          status: error.status,
-          error: "Could not " + action + " the plugin."
-        });
+  onSetAction: function(type, name, action) {
+    Dicoogle.request("POST", ["plugins", type, name, action]).end(
+      (error, data) => {
+        if (!error) {
+          this._contents[type].find(plugin => plugin.name === name).enabled =
+            action === "enable";
+          this.trigger({
+            data: this._contents[type],
+            success: true
+          });
+        } else {
+          this.trigger({
+            success: false,
+            status: error.status,
+            error: "Could not " + action + " the plugin."
+          });
+        }
       }
-    });
+    );
   }
 });
 

@@ -41,7 +41,7 @@ const LoggerView = React.createClass({
     return (
       <div className="panel panel-primary topMargin">
         <div className="panel-heading">
-            <h3 className="panel-title">Server Log</h3>
+          <h3 className="panel-title">Server Log</h3>
         </div>
         <div id="consolediv" className="panel-body scrolldiv">
           {this.state.data}

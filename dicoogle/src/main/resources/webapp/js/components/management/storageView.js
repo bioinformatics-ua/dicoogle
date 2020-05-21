@@ -195,7 +195,7 @@ const StorageView = React.createClass({
     return (
       <div className="panel panel-primary topMargin">
         <div className="panel-heading">
-            <h3 className="panel-title">Storage Servers</h3>
+          <h3 className="panel-title">Storage Servers</h3>
         </div>
         <div className="panel-body">
           <select

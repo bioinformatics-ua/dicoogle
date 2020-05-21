@@ -24,8 +24,8 @@ module.exports = {
     }),
     new webpack.ProvidePlugin({
       // required for Bootstrap to work
-      jQuery: 'jquery',
-    }),
+      jQuery: "jquery"
+    })
   ],
   module: {
     rules: [
