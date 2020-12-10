@@ -31,19 +31,18 @@ public class VersionResource extends ServerResource {
 
     @Get("json")
     public JsonRepresentation represent() {
-        
+
         Version v = new Version();
-        JsonRepresentation sr = new JsonRepresentation("{\"version\":\""+v.getVersion()+
-                "\"}");
+        JsonRepresentation sr = new JsonRepresentation("{\"version\":\"" + v.getVersion() + "\"}");
 
         sr.setMediaType(MediaType.APPLICATION_JSON);
 
         return sr;
 
     }
-    
+
     @Override
-    public String toString(){
+    public String toString() {
         return "version";
     }
 }

@@ -50,18 +50,15 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  * @see XMLSupport
  */
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-        isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-        setterVisibility = JsonAutoDetect.Visibility.NONE,
-        fieldVisibility = JsonAutoDetect.Visibility.NONE,
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE, fieldVisibility = JsonAutoDetect.Visibility.NONE,
         creatorVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonRootName("config")
-public class LegacyServerSettings implements ServerSettings
-{
+public class LegacyServerSettings implements ServerSettings {
     private String AETitle;
 
-    //Access List Settings
-    private String [] CAETitle;
+    // Access List Settings
+    private String[] CAETitle;
     private boolean permitAllAETitles;
 
     private String Path;
@@ -73,12 +70,12 @@ public class LegacyServerSettings implements ServerSettings
     @Deprecated
     private String RGUIExternalIP;
 
-    //Dicoogle Settings
+    // Dicoogle Settings
     private String dicoogleDir;
     private boolean fullContentIndex;
     private boolean saveThumbnails;
     private int thumbnailsMatrix;
-    //private boolean P2P;
+    // private boolean P2P;
 
     private boolean storage;
     private boolean queryRetrieve;
@@ -135,51 +132,52 @@ public class LegacyServerSettings implements ServerSettings
     /**
      * The help for the Remote GUI External IP setting.
      */
-    public static final String RGUI_SETTING_EXTERNAL_IP_HELP = "If your Dicoogle GUI Server is running behind a router, you need to provide your external IP address to have access from outside of the router.\nBesides that, you need to configure your router to open the Remote GUI Port!";
+    public static final String RGUI_SETTING_EXTERNAL_IP_HELP =
+            "If your Dicoogle GUI Server is running behind a router, you need to provide your external IP address to have access from outside of the router.\nBesides that, you need to configure your router to open the Remote GUI Port!";
 
     /**
      * QueryRetrieve Server
      */
 
-    private boolean wlsOn = false ;
+    private boolean wlsOn = false;
 
     /* DEFAULT Brief class description */
-    private String deviceDescription ;
+    private String deviceDescription;
     /* DEFAULT Process Worklist Server AE Title */
-    private String localAETName ;
+    private String localAETName;
 
     /* DEFAULT ("any"->null)Permited local interfaces to incomming connection
      * ('null'->any interface; 'ethx'->only this interface |->separator */
-    private String permitedLocalInterfaces ;
+    private String permitedLocalInterfaces;
 
     /* DEFAULT ("any"->null)Permited remote host name connections
      * ('null'->any can connect; 'www.x.com'->only this can connect |->separator */
-    private String permitedRemoteHostnames ;
+    private String permitedRemoteHostnames;
 
     /* DEFAULT Dimse response timeout (in sec) */
-    private int DIMSERspTimeout ;
+    private int DIMSERspTimeout;
     // Connection settings
 
     /* DEFAULT Listening TCP port */
-    private int wlsPort ;
+    private int wlsPort;
     /* DEFAULT Response delay (in miliseconds) */
-    private int rspDelay ;
+    private int rspDelay;
     /* DEFAULT Idle timeout (in sec) */
-    private int idleTimeout ;
+    private int idleTimeout;
     /* DEFAULT Accept timeout (in sec) */
-    private int acceptTimeout ;
+    private int acceptTimeout;
     /* DEFAULT Connection timeout (in sec) */
-    private int connectionTimeout ;
+    private int connectionTimeout;
 
     private int maxMessages = 2000;
     private String sopClass;
-    private String transfCAP ;
+    private String transfCAP;
 
-     /* DEFAULT Max Client Associations */
-    private int maxClientAssocs  ;
+    /* DEFAULT Max Client Associations */
+    private int maxClientAssocs;
 
-    private int maxPDULengthReceive ;
-    private int maxPDULengthSend ;
+    private int maxPDULengthReceive;
+    private int maxPDULengthSend;
 
 
     HashMap<String, String> modalityFind = new HashMap<>();
@@ -200,13 +198,13 @@ public class LegacyServerSettings implements ServerSettings
 
     private String p2pLibrary = "JGroups";
     private String nodeName = "Dicoogle";
-    private boolean nodeNameDefined = false ;
+    private boolean nodeNameDefined = false;
 
-    private String networkInterfaceName ="";
+    private String networkInterfaceName = "";
 
     /** Indexer */
     private String indexer = "lucene2.2";
-    private int indexerEffort = 0 ;
+    private int indexerEffort = 0;
     private HashSet<String> extensionsAllowed = new HashSet<>();
 
     private boolean gzipStorage = false;
@@ -216,16 +214,14 @@ public class LegacyServerSettings implements ServerSettings
      * @return the web
      */
     @Override
-    public Web getWebServerSettings()
-    {
+    public Web getWebServerSettings() {
         return web;
     }
 
     /**
      * @param web the web to set
      */
-    public void setWeb(Web web)
-    {
+    public void setWeb(Web web) {
         this.web = web;
     }
 
@@ -285,13 +281,11 @@ public class LegacyServerSettings implements ServerSettings
         this.nodeNameDefined = nodeNameDefined;
     }
 
-    public String getNetworkInterfaceName()
-    {
+    public String getNetworkInterfaceName() {
         return networkInterfaceName;
     }
 
-    public void setNetworkInterfaceName(String interfaceName)
-    {
+    public void setNetworkInterfaceName(String interfaceName) {
         this.networkInterfaceName = interfaceName;
     }
 
@@ -374,19 +368,19 @@ public class LegacyServerSettings implements ServerSettings
      * Web (including web server, webservices, etc)
      */
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
-    public class Web implements ServerSettings.WebServer
-    {
+    public class Web implements ServerSettings.WebServer {
         private boolean webServer = true;
         private int serverPort = 8080;
         private String accessControlAllowOrigins = "*";
 
-        @Deprecated @JsonIgnore
+        @Deprecated
+        @JsonIgnore
         private boolean webServices = false;
-        @Deprecated @JsonIgnore
+        @Deprecated
+        @JsonIgnore
         private int servicePort = 6060;
 
-        public Web() {
-        }
+        public Web() {}
 
         /**
          * @return the webServer
@@ -454,10 +448,9 @@ public class LegacyServerSettings implements ServerSettings
     @JsonProperty("web-server")
     private Web web = new Web();
 
-	private boolean wanmode;
+    private boolean wanmode;
 
-    public LegacyServerSettings()
-    {
+    public LegacyServerSettings() {
         rGUIPort = 9014;
         storagePort = 104;
         AETitle = "DICOOGLE";
@@ -475,33 +468,32 @@ public class LegacyServerSettings implements ServerSettings
          * Set default values of QueryRetrieve Server
          */
 
-        this.deviceDescription = "Dicoogle - Server SCP" ;
-        this.localAETName  = "Dicoogle";
+        this.deviceDescription = "Dicoogle - Server SCP";
+        this.localAETName = "Dicoogle";
         this.permitedLocalInterfaces = "any";
         this.permitedRemoteHostnames = "any";
-        this.wlsPort = 1045 ;  // default: 104
-        this.idleTimeout = 60 ;
-        this.acceptTimeout = 60 ;
-        this.rspDelay = 0 ;
-        this.DIMSERspTimeout = 60 ;
-        this.connectionTimeout = 60 ;
-        
-        this.transfCAP = UID.ImplicitVRLittleEndian + "|" + UID.ExplicitVRBigEndian + "|" + UID.ExplicitVRLittleEndian;     
+        this.wlsPort = 1045; // default: 104
+        this.idleTimeout = 60;
+        this.acceptTimeout = 60;
+        this.rspDelay = 0;
+        this.DIMSERspTimeout = 60;
+        this.connectionTimeout = 60;
 
-        this.sopClass = UID.StudyRootQueryRetrieveInformationModelFIND
-        + "|" + UID.PatientRootQueryRetrieveInformationModelFIND;
-               
+        this.transfCAP = UID.ImplicitVRLittleEndian + "|" + UID.ExplicitVRBigEndian + "|" + UID.ExplicitVRLittleEndian;
+
+        this.sopClass =
+                UID.StudyRootQueryRetrieveInformationModelFIND + "|" + UID.PatientRootQueryRetrieveInformationModelFIND;
+
         fillModalityFindDefault();
-        this.maxClientAssocs = 20 ; 
-        this.maxPDULengthReceive = 16364 ; 
-        this.maxPDULengthSend = 16364 ;
+        this.maxClientAssocs = 20;
+        this.maxPDULengthReceive = 16364;
+        this.maxPDULengthSend = 16364;
 
         autoStartPlugin = new ConcurrentHashMap<>();
     }
 
     // Nasty bug fix; no thumbnails references here = null pointers
-    public void setDefaultSettings()
-    {
+    public void setDefaultSettings() {
         rGUIPort = 9014;
         storagePort = 6666;
         AETitle = "DICOOGLE-STORAGE";
@@ -517,28 +509,23 @@ public class LegacyServerSettings implements ServerSettings
         setEncryptUsersFile(false);
     }
 
-    public void setAETitle(String AE)
-    {
+    public void setAETitle(String AE) {
         AETitle = AE;
     }
 
-    public String getAETitle()
-    {
+    public String getAETitle() {
         return AETitle;
     }
 
-    public void setID(String I)
-    {
+    public void setID(String I) {
         ID = I;
     }
 
-    public String getID()
-    {
+    public String getID() {
         return ID;
     }
 
-    public void setAllowedAETitles(Collection<String> CAET)
-    {
+    public void setAllowedAETitles(Collection<String> CAET) {
         CAETitle = CAET.toArray(CAETitle);
     }
 
@@ -546,46 +533,41 @@ public class LegacyServerSettings implements ServerSettings
         return Arrays.asList(this.CAETitle);
     }
 
-    public String[] getCAET()
-    {
+    public String[] getCAET() {
         return CAETitle;
     }
 
-    public void setPermitAllAETitles(boolean value){
+    public void setPermitAllAETitles(boolean value) {
         permitAllAETitles = value;
     }
 
-    public boolean getPermitAllAETitles(){
+    public boolean getPermitAllAETitles() {
         return permitAllAETitles;
     }
 
-    public void setStoragePort(int p)
-    {
+    public void setStoragePort(int p) {
         storagePort = p;
     }
 
-    public void setPath(String p)
-    {
+    public void setPath(String p) {
         Path = p;
     }
 
-    public String getWatchDirectory()
-    {
+    public String getWatchDirectory() {
         return Path;
     }
 
-    public int getStoragePort()
-    {
+    public int getStoragePort() {
         return storagePort;
     }
 
     @Deprecated
-    public void setRemoteGUIPort(int port){
+    public void setRemoteGUIPort(int port) {
         rGUIPort = port;
     }
 
     @Deprecated
-    public int getRemoteGUIPort(){
+    public int getRemoteGUIPort() {
         return rGUIPort;
     }
 
@@ -620,7 +602,7 @@ public class LegacyServerSettings implements ServerSettings
     public void setSaveThumbnails(boolean saveThumbnails) {
         this.saveThumbnails = saveThumbnails;
     }
-    
+
     public int getThumbnailSize() {
         return thumbnailsMatrix;
     }
@@ -633,64 +615,53 @@ public class LegacyServerSettings implements ServerSettings
      * Query Retrieve Server
      */
 
-    public void setWlsPort(int port)
-    {
-        this.wlsPort = port ;
+    public void setWlsPort(int port) {
+        this.wlsPort = port;
     }
 
-    public int getWlsPort()
-    {
-        return this.wlsPort ;
+    public int getWlsPort() {
+        return this.wlsPort;
     }
 
-    public void setIdleTimeout(int timeout)
-    {
-        this.idleTimeout = timeout ;
+    public void setIdleTimeout(int timeout) {
+        this.idleTimeout = timeout;
     }
 
-    public int getIdleTimeout()
-    {
-        return this.idleTimeout ;
+    public int getIdleTimeout() {
+        return this.idleTimeout;
     }
 
-    public void setRspDelay(int delay)
-    {
-        this.rspDelay = delay ;
+    public void setRspDelay(int delay) {
+        this.rspDelay = delay;
     }
 
-    public int getRspDelay()
-    {
-        return this.rspDelay  ;
+    public int getRspDelay() {
+        return this.rspDelay;
     }
 
-    public void setAcceptTimeout(int timeout)
-    {
-        this.acceptTimeout = timeout ;
+    public void setAcceptTimeout(int timeout) {
+        this.acceptTimeout = timeout;
     }
-    public int getAcceptTimeout()
-    {
+
+    public int getAcceptTimeout() {
         return this.acceptTimeout;
     }
 
-    public void setConnectionTimeout(int timeout)
-    {
-        this.connectionTimeout = timeout; 
+    public void setConnectionTimeout(int timeout) {
+        this.connectionTimeout = timeout;
     }
-    public int getConnectionTimeout()
-    {
-        return this.connectionTimeout ;
+
+    public int getConnectionTimeout() {
+        return this.connectionTimeout;
     }
-    
-    public void setSOPClass(String SOPClass)
-    {
-        this.sopClass = SOPClass ;
+
+    public void setSOPClass(String SOPClass) {
+        this.sopClass = SOPClass;
     }
-    
+
     public List<String> getQRSOPClass() {
-        return Arrays.asList(
-            UID.StudyRootQueryRetrieveInformationModelFIND ,
-            UID.PatientRootQueryRetrieveInformationModelFIND
-        );
+        return Arrays.asList(UID.StudyRootQueryRetrieveInformationModelFIND,
+                UID.PatientRootQueryRetrieveInformationModelFIND);
     }
 
     public void setSOPClasses(Collection<SOPClass> classes) {
@@ -699,110 +670,95 @@ public class LegacyServerSettings implements ServerSettings
                 + " in legacy configuration file \"config.xml\". Please upgrade your server to use the latest format.");
     }
 
-    public List<SOPClass> getSOPClasses()
-    {
+    public List<SOPClass> getSOPClasses() {
         return SOPList.getInstance().asSOPClassList();
     }
-    public void setDIMSERspTimeout(int timeout)
-    {
-        this.DIMSERspTimeout = timeout ; 
+
+    public void setDIMSERspTimeout(int timeout) {
+        this.DIMSERspTimeout = timeout;
     }
 
-    public int getDIMSERspTimeout()
-    {
-        return this.DIMSERspTimeout ; 
+    public int getDIMSERspTimeout() {
+        return this.DIMSERspTimeout;
     }
-    public void setDeviceDescription(String desc)
-    {
-        this.deviceDescription = desc ; 
+
+    public void setDeviceDescription(String desc) {
+        this.deviceDescription = desc;
     }
-    
-    public String getDeviceDescription()
-    {
+
+    public String getDeviceDescription() {
         return this.deviceDescription;
     }
-    
-    public void setTransfCap(String transfCap)
-    {
+
+    public void setTransfCap(String transfCap) {
         this.transfCAP = transfCap;
     }
-        
-    public List<String> getTransferCapabilities()
-    {
+
+    public List<String> getTransferCapabilities() {
         return Arrays.asList(this.transfCAP.split("\\|"));
     }
 
-    public void setMaxClientAssoc(int maxClients)
-    {
-        this.maxClientAssocs = maxClients; 
-    }
-    
-    public int getMaxClientAssoc()
-    {
-        return this.maxClientAssocs; 
+    public void setMaxClientAssoc(int maxClients) {
+        this.maxClientAssocs = maxClients;
     }
 
-    public void setMaxPDULengthReceive(int len)
-    {
+    public int getMaxClientAssoc() {
+        return this.maxClientAssocs;
+    }
+
+    public void setMaxPDULengthReceive(int len) {
         this.maxPDULengthReceive = len;
     }
-    
-    public int getMaxPDULengthReceive()
-    {
-        return this.maxPDULengthReceive; 
+
+    public int getMaxPDULengthReceive() {
+        return this.maxPDULengthReceive;
     }
 
-    public void setMaxPDULengthSend(int len)
-    {
+    public void setMaxPDULengthSend(int len) {
         this.maxPDULengthSend = len;
     }
 
     public int getMaxPDULenghtSend() // FIXME typo
     {
-        return this.maxPDULengthSend; 
+        return this.maxPDULengthSend;
     }
-    
-    public void setLocalAETName(String name)
-    {
-        this.localAETName = name; 
+
+    public void setLocalAETName(String name) {
+        this.localAETName = name;
     }
-    public String getLocalAETName()
-    {
-        return this.localAETName; 
+
+    public String getLocalAETName() {
+        return this.localAETName;
     }
-    
-    public void setPermitedLocalInterfaces(String localInterfaces)
-    {
-        this.permitedLocalInterfaces  = localInterfaces; 
+
+    public void setPermitedLocalInterfaces(String localInterfaces) {
+        this.permitedLocalInterfaces = localInterfaces;
     }
 
     public void setAllowedLocalInterfaces(Collection<String> localInterfaces) {
         this.permitedLocalInterfaces = StringUtils.join(localInterfaces, '|');
     }
 
-    public List<String> getAllowedLocalInterfaces()
-    {
+    public List<String> getAllowedLocalInterfaces() {
         return Arrays.asList(this.permitedLocalInterfaces.split("\\|"));
     }
-    
-    public void setPermitedRemoteHostnames(String remoteHostnames)
-    {
-        this.permitedRemoteHostnames = remoteHostnames; 
+
+    public void setPermitedRemoteHostnames(String remoteHostnames) {
+        this.permitedRemoteHostnames = remoteHostnames;
     }
 
     public void setAllowedHostnames(Collection<String> hostnames) {
         this.permitedRemoteHostnames = StringUtils.join(hostnames, '|');
     }
 
-    public List<String> getAllowedHostnames()
-    {
+    public List<String> getAllowedHostnames() {
         return Arrays.asList(this.permitedRemoteHostnames.split("\\|"));
     }
 
     /**
      * @return the P2P
      */
-   /* public boolean isP2P() {
+    /* public boolean isP2P() {
         return P2P;
     }*/
 
@@ -816,34 +772,30 @@ public class LegacyServerSettings implements ServerSettings
         return queryRetrieve;
     }
 
-    public void addMoveDestination(MoveDestination m)
-    {
+    public void addMoveDestination(MoveDestination m) {
         this.dest.add(m);
     }
 
-    public boolean removeMoveDestination(String AETitle)
-    {
+    public boolean removeMoveDestination(String AETitle) {
         boolean removed = false;
         Iterator<MoveDestination> it = dest.iterator();
-    	while (it.hasNext()) {
-    		MoveDestination mv = it.next();
-    		if(mv.getAETitle().equals(AETitle))
-    		{
-    			it.remove();
-    			removed = true;
-    		}
-    			
-    	}
-    	return removed;
+        while (it.hasNext()) {
+            MoveDestination mv = it.next();
+            if (mv.getAETitle().equals(AETitle)) {
+                it.remove();
+                removed = true;
+            }
+
+        }
+        return removed;
     }
 
-    public boolean contains(MoveDestination m){
+    public boolean contains(MoveDestination m) {
         return this.dest.contains(m);
     }
 
-    public ArrayList<MoveDestination> getMoveDestinations()
-    {
-        return this.dest ;
+    public ArrayList<MoveDestination> getMoveDestinations() {
+        return this.dest;
     }
 
     public Set<String> getPriorityAETitles() {
@@ -854,38 +806,31 @@ public class LegacyServerSettings implements ServerSettings
         this.priorityAETitles = new HashSet<>(aeTitles);
     }
 
-    public void addPriorityAETitle(String aet)
-    {
+    public void addPriorityAETitle(String aet) {
         this.priorityAETitles.add(aet);
     }
-    public void removePriorityAETitle(String aet)
-    {
+
+    public void removePriorityAETitle(String aet) {
         this.priorityAETitles.remove(aet);
     }
 
-    public void setMoveDestinations(List<MoveDestination> moves)
-    {
-        if(moves != null) {
+    public void setMoveDestinations(List<MoveDestination> moves) {
+        if (moves != null) {
             this.dest = new ArrayList<>(moves);
         }
     }
 
-    private void fillModalityFindDefault()
-    {
-         addModalityFind("1.2.840.10008.5.1.4.1.2.2.1",
-                 "Study Root Query/Retrieve Information Model");
+    private void fillModalityFindDefault() {
+        addModalityFind("1.2.840.10008.5.1.4.1.2.2.1", "Study Root Query/Retrieve Information Model");
 
-         addModalityFind("1.2.840.10008.5.1.4.1.2.1.1",
-                    "Patient Root Query/Retrieve Information Model"
-                 );
+        addModalityFind("1.2.840.10008.5.1.4.1.2.1.1", "Patient Root Query/Retrieve Information Model");
 
     }
 
     /**
      * Set default values
      */
-    public void setDefaultsValues()
-    {
+    public void setDefaultsValues() {
         this.fillModalityFindDefault();
     }
 
@@ -894,8 +839,7 @@ public class LegacyServerSettings implements ServerSettings
      * @param sop Number like 1.2.3.5.6.7.32.1
      * @param description Description like "Modality Worklist Model"
      */
-    public void addModalityFind(String sop, String description)
-    {
+    public void addModalityFind(String sop, String description) {
         this.modalityFind.put(sop, description);
     }
 
@@ -903,8 +847,7 @@ public class LegacyServerSettings implements ServerSettings
      *
      * @return HashMap with Modalitys FIND
      */
-    public HashMap<String, String> getModalityFind()
-    {
+    public HashMap<String, String> getModalityFind() {
         return this.modalityFind;
     }
 
@@ -916,10 +859,9 @@ public class LegacyServerSettings implements ServerSettings
      * @param name the name of the plugin.
      * @param value true to auto start the plugin on server init.
      */
-    public void setAutoStartPlugin(String name, boolean value)
-    {
-    	// remove the previous setting, if there is one
-    	autoStartPlugin.remove(name);
+    public void setAutoStartPlugin(String name, boolean value) {
+        // remove the previous setting, if there is one
+        autoStartPlugin.remove(name);
 
         // insert the new setting
         autoStartPlugin.put(name, value);
@@ -933,291 +875,257 @@ public class LegacyServerSettings implements ServerSettings
      * @param name the name of the plugin.
      * @return true if the plugin is to be auto started on server init or false if it is not.
      */
-    public boolean getAutoStartPlugin(String name)
-    {
-    	Boolean result = autoStartPlugin.get(name);
+    public boolean getAutoStartPlugin(String name) {
+        Boolean result = autoStartPlugin.get(name);
 
         // if there is not such setting return the default value
-        if (result == null) return true; // by default start the plugin
+        if (result == null)
+            return true; // by default start the plugin
         return result.booleanValue();
     }
 
-	/**
-	 * Returns the current settings for plugin auto start on server init.
-	 *
-	 * @return the current settings for plugin auto start on server init.
-	 */
-	public ConcurrentHashMap<String, Boolean> getAutoStartPluginsSettings()
-	{
-		return autoStartPlugin;
-	}
+    /**
+     * Returns the current settings for plugin auto start on server init.
+     *
+     * @return the current settings for plugin auto start on server init.
+     */
+    public ConcurrentHashMap<String, Boolean> getAutoStartPluginsSettings() {
+        return autoStartPlugin;
+    }
 
-	/**
-	 * Returns the Remote GUI list of settings (name, value/type pairs).
-	 *
-	 * @return and HashMap containing the Remote GUI list of settings (name, value/type pairs).
-	 */
+    /**
+     * Returns the Remote GUI list of settings (name, value/type pairs).
+     *
+     * @return and HashMap containing the Remote GUI list of settings (name, value/type pairs).
+     */
     @Deprecated
-	public HashMap<String, Object> getRGUISettings()
-	{
-		HashMap<String, Object> result = new HashMap<String, Object>();
+    public HashMap<String, Object> getRGUISettings() {
+        HashMap<String, Object> result = new HashMap<String, Object>();
 
-		result.put(RGUI_SETTING_EXTERNAL_IP, getRGUIExternalIP());
+        result.put(RGUI_SETTING_EXTERNAL_IP, getRGUIExternalIP());
 
-		return result;
-	}
+        return result;
+    }
 
-	/**
-	 * Validates the new settings for the Remote GUI service.
-	 *
-	 * @param settings a HashMap containing the new setting values.
-	 * @return true if all the values are valid and can be applied, false otherwise.
-	 */
+    /**
+     * Validates the new settings for the Remote GUI service.
+     *
+     * @param settings a HashMap containing the new setting values.
+     * @return true if all the values are valid and can be applied, false otherwise.
+     */
     @Deprecated
-	public boolean tryRGUISettings(HashMap<String, Object> settings)
-	{
-		// TODO
-		return true;
-	}
+    public boolean tryRGUISettings(HashMap<String, Object> settings) {
+        // TODO
+        return true;
+    }
 
-	/**
-	 * Tries to apply the new settings for the Remote GUI service.
-	 *
-	 * @param settings a HashMap containing the new setting values.
-	 * @return true if all the values are valid and were applied successfully, false otherwise.
-	 */
+    /**
+     * Tries to apply the new settings for the Remote GUI service.
+     *
+     * @param settings a HashMap containing the new setting values.
+     * @return true if all the values are valid and were applied successfully, false otherwise.
+     */
     @Deprecated
-	public boolean setRGUISettings(HashMap<String, Object> settings)
-	{
-		if (! tryRGUISettings(settings))
-			return false;
+    public boolean setRGUISettings(HashMap<String, Object> settings) {
+        if (!tryRGUISettings(settings))
+            return false;
 
-		setRGUIExternalIP((String) settings.get(RGUI_SETTING_EXTERNAL_IP));
+        setRGUIExternalIP((String) settings.get(RGUI_SETTING_EXTERNAL_IP));
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * Returns the Remote GUI list of settings help (name,help pairs).
-	 *
-	 * @return and HashMap containing the Remote GUI list of settings help (name, help).
-	 */
-	public HashMap<String, String> getRGUISettingsHelp()
-	{
-		HashMap<String, String> result = new HashMap<String, String>();
-	
-		result.put(RGUI_SETTING_EXTERNAL_IP, RGUI_SETTING_EXTERNAL_IP_HELP);
+    /**
+     * Returns the Remote GUI list of settings help (name,help pairs).
+     *
+     * @return and HashMap containing the Remote GUI list of settings help (name, help).
+     */
+    public HashMap<String, String> getRGUISettingsHelp() {
+        HashMap<String, String> result = new HashMap<String, String>();
 
-		return result;
-	}
+        result.put(RGUI_SETTING_EXTERNAL_IP, RGUI_SETTING_EXTERNAL_IP_HELP);
 
-	/**
-	 * Returns the Query Retrieve list of settings (name, value/type pairs).
-	 *
-	 * @return and HashMap containing the Query Retrieve list of settings (name, value/type pairs).
-	 */
-	public HashMap<String, Object> getQueryRetrieveSettings_xml()
-	{
-		HashMap<String, Object> result = new HashMap<>();
+        return result;
+    }
 
-		result.put(QUERYRETRIEVE_MAX_ASSOCIATIONS, getMaxClientAssoc());
-		result.put(QUERYRETRIEVE_MAX_PDU_RECEIVE, getMaxPDULengthReceive());
-		result.put(QUERYRETRIEVE_MAX_PDU_SEND, getMaxPDULenghtSend());
-		result.put(QUERYRETRIEVE_IDLE_TIMEOUT, getIdleTimeout());
-		result.put(QUERYRETRIEVE_ACCEPT_TIMEOUT, getAcceptTimeout());
-		result.put(QUERYRETRIEVE_RESPONSE_TIMEOUT, getRspDelay());
-		result.put(QUERYRETRIEVE_CONNECTION_TIMEOUT, getConnectionTimeout());
+    /**
+     * Returns the Query Retrieve list of settings (name, value/type pairs).
+     *
+     * @return and HashMap containing the Query Retrieve list of settings (name, value/type pairs).
+     */
+    public HashMap<String, Object> getQueryRetrieveSettings_xml() {
+        HashMap<String, Object> result = new HashMap<>();
 
-		return result;
-	}
+        result.put(QUERYRETRIEVE_MAX_ASSOCIATIONS, getMaxClientAssoc());
+        result.put(QUERYRETRIEVE_MAX_PDU_RECEIVE, getMaxPDULengthReceive());
+        result.put(QUERYRETRIEVE_MAX_PDU_SEND, getMaxPDULenghtSend());
+        result.put(QUERYRETRIEVE_IDLE_TIMEOUT, getIdleTimeout());
+        result.put(QUERYRETRIEVE_ACCEPT_TIMEOUT, getAcceptTimeout());
+        result.put(QUERYRETRIEVE_RESPONSE_TIMEOUT, getRspDelay());
+        result.put(QUERYRETRIEVE_CONNECTION_TIMEOUT, getConnectionTimeout());
 
-	/**
-	 * Validates the new settings for the Query Retrieve service.
-	 *
-	 * @param settings a HashMap containing the new setting values.
-	 * @return true if all the values are valid and can be applied, false otherwise.
-	 */
-	public boolean tryQueryRetrieveSettings(HashMap<String, Object> settings)
-	{
-		// TODO
-		return true;
-	}
+        return result;
+    }
 
-	/**
-	 * Tries to apply the new settings for the Query Retrieve service.
-	 *
-	 * @param settings a HashMap containing the new setting values.
-	 * @return true if all the values are valid and were applied successfully, false otherwise.
-	 */
-	public boolean setQueryRetrieveSettings(HashMap<String, Object> settings)
-	{
-		if (! tryQueryRetrieveSettings(settings))
-			return false;
+    /**
+     * Validates the new settings for the Query Retrieve service.
+     *
+     * @param settings a HashMap containing the new setting values.
+     * @return true if all the values are valid and can be applied, false otherwise.
+     */
+    public boolean tryQueryRetrieveSettings(HashMap<String, Object> settings) {
+        // TODO
+        return true;
+    }
 
-		setMaxClientAssoc(((Integer) settings.get(QUERYRETRIEVE_MAX_ASSOCIATIONS)).intValue());
-		setMaxPDULengthReceive(((Integer) settings.get(QUERYRETRIEVE_MAX_PDU_RECEIVE)).intValue());
-		setMaxPDULengthSend(((Integer) settings.get(QUERYRETRIEVE_MAX_PDU_SEND)).intValue());
-		setIdleTimeout(((Integer) settings.get(QUERYRETRIEVE_IDLE_TIMEOUT)).intValue());
-		setAcceptTimeout(((Integer) settings.get(QUERYRETRIEVE_ACCEPT_TIMEOUT)).intValue());
-		setRspDelay(((Integer) settings.get(QUERYRETRIEVE_RESPONSE_TIMEOUT)).intValue());
-		setConnectionTimeout(((Integer) settings.get(QUERYRETRIEVE_CONNECTION_TIMEOUT)).intValue());
+    /**
+     * Tries to apply the new settings for the Query Retrieve service.
+     *
+     * @param settings a HashMap containing the new setting values.
+     * @return true if all the values are valid and were applied successfully, false otherwise.
+     */
+    public boolean setQueryRetrieveSettings(HashMap<String, Object> settings) {
+        if (!tryQueryRetrieveSettings(settings))
+            return false;
 
-		return true;
-	}
+        setMaxClientAssoc(((Integer) settings.get(QUERYRETRIEVE_MAX_ASSOCIATIONS)).intValue());
+        setMaxPDULengthReceive(((Integer) settings.get(QUERYRETRIEVE_MAX_PDU_RECEIVE)).intValue());
+        setMaxPDULengthSend(((Integer) settings.get(QUERYRETRIEVE_MAX_PDU_SEND)).intValue());
+        setIdleTimeout(((Integer) settings.get(QUERYRETRIEVE_IDLE_TIMEOUT)).intValue());
+        setAcceptTimeout(((Integer) settings.get(QUERYRETRIEVE_ACCEPT_TIMEOUT)).intValue());
+        setRspDelay(((Integer) settings.get(QUERYRETRIEVE_RESPONSE_TIMEOUT)).intValue());
+        setConnectionTimeout(((Integer) settings.get(QUERYRETRIEVE_CONNECTION_TIMEOUT)).intValue());
 
-	/**
-	 * Returns the Query Retrieve list of settings help (name,help pairs).
-	 *
-	 * @return and HashMap containing the Query Retrieve list of settings help (name, help).
-	 */
-	public HashMap<String, String> getQueryRetrieveSettingsHelp()
-	{
-		return null; // no help available
-	}
+        return true;
+    }
 
-	/**
-	 * Returns the Storage list of settings (name, value/type pairs).
-	 *
-	 * @return and HashMap containing the Storage list of settings (name, value/type pairs).
-	 */
-	public HashMap<String, Object> getStorageSettings_xml()
-	{
-		HashMap<String, Object> result = new HashMap<>();
+    /**
+     * Returns the Query Retrieve list of settings help (name,help pairs).
+     *
+     * @return and HashMap containing the Query Retrieve list of settings help (name, help).
+     */
+    public HashMap<String, String> getQueryRetrieveSettingsHelp() {
+        return null; // no help available
+    }
 
-		//result.put(STORAGE_SETTING_PATH, new ServerDirectoryPath(getWatchDirectory()));
-		// TODO move some of these new classes onto the SDK, so that plugins can also process option types/fields
-		int destCount = dest.size();
-		DataTable storageServers = new DataTable(3, destCount);
-		storageServers.setColumnName(0, "AETitle");
-		storageServers.setColumnName(1, "IP");
-		storageServers.setColumnName(2, "Port");
-		// if there are no rows, then add an empty one (for reference)
-		if (destCount < 1)
-		{
-			storageServers.addRow();
-			storageServers.setCellData(0, 0, "");
-			storageServers.setCellData(0, 1, "");
-			storageServers.setCellData(0, 2, "");
-		}
-		else
-			for (int i = 0; i < destCount; i++)
-			{
-				MoveDestination aDest = dest.get(i);
-				storageServers.setCellData(i, 0, aDest.getAETitle());
-				storageServers.setCellData(i, 1, aDest.getIpAddrs());
-				storageServers.setCellData(i, 2, "" + aDest.getPort());
-			}
-		result.put(STORAGE_SETTING_SERVERS_DESTINATIONS, storageServers);
+    /**
+     * Returns the Storage list of settings (name, value/type pairs).
+     *
+     * @return and HashMap containing the Storage list of settings (name, value/type pairs).
+     */
+    public HashMap<String, Object> getStorageSettings_xml() {
+        HashMap<String, Object> result = new HashMap<>();
 
-		return result;
-	}
+        // result.put(STORAGE_SETTING_PATH, new ServerDirectoryPath(getWatchDirectory()));
+        // TODO move some of these new classes onto the SDK, so that plugins can also process option types/fields
+        int destCount = dest.size();
+        DataTable storageServers = new DataTable(3, destCount);
+        storageServers.setColumnName(0, "AETitle");
+        storageServers.setColumnName(1, "IP");
+        storageServers.setColumnName(2, "Port");
+        // if there are no rows, then add an empty one (for reference)
+        if (destCount < 1) {
+            storageServers.addRow();
+            storageServers.setCellData(0, 0, "");
+            storageServers.setCellData(0, 1, "");
+            storageServers.setCellData(0, 2, "");
+        } else
+            for (int i = 0; i < destCount; i++) {
+                MoveDestination aDest = dest.get(i);
+                storageServers.setCellData(i, 0, aDest.getAETitle());
+                storageServers.setCellData(i, 1, aDest.getIpAddrs());
+                storageServers.setCellData(i, 2, "" + aDest.getPort());
+            }
+        result.put(STORAGE_SETTING_SERVERS_DESTINATIONS, storageServers);
 
-	/**
-	 * Validates the new settings for the Storage service.
-	 *
-	 * @param settings a HashMap containing the new setting values.
-	 * @return true if all the values are valid and can be applied, false otherwise.
-	 */
-	public boolean tryStorageSettings(HashMap<String, Object> settings)
-	{
-		// TODO
-		return true;
-	}
+        return result;
+    }
 
-	/**
-	 * Tries to apply the new settings for the Storage service.
-	 *
-	 * @param settings a HashMap containing the new setting values.
-	 * @return true if all the values are valid and were applied successfully, false otherwise.
-	 */
-	public boolean setStorageSettings(HashMap<String, Object> settings)
-	{
-		if (! tryStorageSettings(settings))
-			return false;
+    /**
+     * Validates the new settings for the Storage service.
+     *
+     * @param settings a HashMap containing the new setting values.
+     * @return true if all the values are valid and can be applied, false otherwise.
+     */
+    public boolean tryStorageSettings(HashMap<String, Object> settings) {
+        // TODO
+        return true;
+    }
 
-		//setPath(((ServerDirectoryPath) settings.get(STORAGE_SETTING_PATH)).getWatchDirectory());
-		// TODO set the query retrieve options
+    /**
+     * Tries to apply the new settings for the Storage service.
+     *
+     * @param settings a HashMap containing the new setting values.
+     * @return true if all the values are valid and were applied successfully, false otherwise.
+     */
+    public boolean setStorageSettings(HashMap<String, Object> settings) {
+        if (!tryStorageSettings(settings))
+            return false;
 
-		return true;
-	}
+        // setPath(((ServerDirectoryPath) settings.get(STORAGE_SETTING_PATH)).getWatchDirectory());
+        // TODO set the query retrieve options
 
-	/**
-	 * Returns the Storage list of settings help (name,help pairs).
-	 *
-	 * @return and HashMap containing the Storage list of settings help (name, help).
-	 */
-	public HashMap<String, String> getStorageSettingsHelp()
-	{
-		return null; // no help available
-	}
+        return true;
+    }
 
-    public void setStorageAutostart(boolean storage)
-    {
+    /**
+     * Returns the Storage list of settings help (name,help pairs).
+     *
+     * @return and HashMap containing the Storage list of settings help (name, help).
+     */
+    public HashMap<String, String> getStorageSettingsHelp() {
+        return null; // no help available
+    }
+
+    public void setStorageAutostart(boolean storage) {
         this.storage = storage;
     }
 
-    public void setQueryRetrieveAutostart(boolean queryRetrieve)
-    {
+    public void setQueryRetrieveAutostart(boolean queryRetrieve) {
         this.queryRetrieve = queryRetrieve;
     }
 
-    public ArrayList<String> getNetworkInterfacesNames()
-    {
+    public ArrayList<String> getNetworkInterfacesNames() {
         ArrayList<String> interfaces = new ArrayList<String>();
         Enumeration<NetworkInterface> nets = null;
-        try
-        {
+        try {
             nets = NetworkInterface.getNetworkInterfaces();
-        } catch (SocketException ex)
-        {
+        } catch (SocketException ex) {
             ex.printStackTrace();
         }
 
-        
-        for (NetworkInterface netint : Collections.list(nets))
-        {
-            try
-            {
-                if (!netint.isLoopback())
-                {
+
+        for (NetworkInterface netint : Collections.list(nets)) {
+            try {
+                if (!netint.isLoopback()) {
                     Enumeration<InetAddress> addresses = netint.getInetAddresses();
-                    while (addresses.hasMoreElements())
-                    {
-                        if (Inet4Address.class.isInstance(addresses.nextElement()))
-                        {
+                    while (addresses.hasMoreElements()) {
+                        if (Inet4Address.class.isInstance(addresses.nextElement())) {
                             interfaces.add(netint.getDisplayName());
                         }
                     }
                 }
-            } catch (SocketException ex)
-            {
+            } catch (SocketException ex) {
                 LoggerFactory.getLogger(LegacyServerSettings.class).error(ex.getMessage(), ex);
             }
         }
         return interfaces;
     }
 
-    public String getNetworkInterfaceAddress()
-    {
+    public String getNetworkInterfaceAddress() {
         Enumeration<NetworkInterface> nets = null;
-        try
-        {
+        try {
             nets = NetworkInterface.getNetworkInterfaces();
-        } catch (SocketException ex)
-        {
+        } catch (SocketException ex) {
             ex.printStackTrace();
         }
 
-        for(NetworkInterface netint : Collections.list(nets))
-        {
-            if(netint.getDisplayName().compareTo(this.networkInterfaceName) == 0)
-            {
+        for (NetworkInterface netint : Collections.list(nets)) {
+            if (netint.getDisplayName().compareTo(this.networkInterfaceName) == 0) {
                 Enumeration<InetAddress> addresses = netint.getInetAddresses();
-                while(addresses.hasMoreElements())
-                {
+                while (addresses.hasMoreElements()) {
                     InetAddress address = addresses.nextElement();
-                    if(Inet4Address.class.isInstance(address))
-                    {
+                    if (Inet4Address.class.isInstance(address)) {
                         return address.getHostAddress();
                     }
                 }
@@ -1227,8 +1135,7 @@ public class LegacyServerSettings implements ServerSettings
         return null;
     }
 
-    public HashSet<String> getExtensionsAllowed()
-    {
+    public HashSet<String> getExtensionsAllowed() {
         return extensionsAllowed;
     }
 
@@ -1246,20 +1153,19 @@ public class LegacyServerSettings implements ServerSettings
         this.maxMessages = maxMessages;
     }
 
-	public boolean isWANModeEnabled() {
-		return wanmode;
-	}
+    public boolean isWANModeEnabled() {
+        return wanmode;
+    }
 
-	public void setWanmode(boolean wanmode) {
-		this.wanmode = wanmode;
-	}
+    public void setWanmode(boolean wanmode) {
+        this.wanmode = wanmode;
+    }
 
 
-	// --------- additional fields methods for compatibility with main API (will not persist though) -----------
+    // --------- additional fields methods for compatibility with main API (will not persist though) -----------
 
     @JsonAutoDetect(isGetterVisibility = JsonAutoDetect.Visibility.ANY,
-    getterVisibility = JsonAutoDetect.Visibility.ANY,
-    setterVisibility = JsonAutoDetect.Visibility.ANY)
+            getterVisibility = JsonAutoDetect.Visibility.ANY, setterVisibility = JsonAutoDetect.Visibility.ANY)
     protected class StubArchive implements Archive {
         @Override
         public void setSaveThumbnails(boolean saveThumbnails) {
@@ -1368,8 +1274,7 @@ public class LegacyServerSettings implements ServerSettings
     }
 
     @JsonAutoDetect(isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-            getterVisibility = JsonAutoDetect.Visibility.NONE,
-            setterVisibility = JsonAutoDetect.Visibility.NONE)
+            getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
     protected class StubDicomServices implements DicomServices {
         @Override
         public void setAETitle(String aetitle) {
@@ -1481,13 +1386,18 @@ public class LegacyServerSettings implements ServerSettings
     private List<String> ds = Collections.EMPTY_LIST;
     private List<String> dp = Collections.EMPTY_LIST;
 
-    public List<String> getDefaultStorage() { return ds; }
+    public List<String> getDefaultStorage() {
+        return ds;
+    }
 
-    public List<String> getDIMProviders() { return dp; }
+    public List<String> getDIMProviders() {
+        return dp;
+    }
 
     public void setDefaultStorage(List<String> storages) {
         ds = storages;
     }
+
     public void setDIMProviders(List<String> providers) {
         dp = providers;
     }

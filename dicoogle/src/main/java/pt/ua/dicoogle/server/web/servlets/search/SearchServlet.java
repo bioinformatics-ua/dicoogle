@@ -60,29 +60,31 @@ public class SearchServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(SearchServlet.class);
 
     private static final long serialVersionUID = 1L;
-  
-    private final Collection<String> DEFAULT_FIELDS = Arrays.asList(
-            "SOPInstanceUID", "StudyInstanceUID", "SeriesInstanceUID", "PatientID",
-            "PatientName",    "PatientSex",       "Modality",          "StudyDate",
-            "StudyID",        "StudyDescription", "SeriesNumber",      "SeriesDescription",
-            "InstitutionName", "uri");
-  
-  	public enum SearchType {
-      ALL, PATIENT;
-  	}
-  	private final SearchType searchType;
-  	public SearchServlet(){
-  		searchType = SearchType.ALL;
-  	}
-  	public SearchServlet(SearchType stype){
-  		if(stype == null)
-  			searchType = SearchType.ALL;
-  		else
-  		searchType = stype;
-  	}
+
+    private final Collection<String> DEFAULT_FIELDS = Arrays.asList("SOPInstanceUID", "StudyInstanceUID",
+            "SeriesInstanceUID", "PatientID", "PatientName", "PatientSex", "Modality", "StudyDate", "StudyID",
+            "StudyDescription", "SeriesNumber", "SeriesDescription", "InstitutionName", "uri");
+
+    public enum SearchType {
+        ALL, PATIENT;
+    }
+
+    private final SearchType searchType;
+
+    public SearchServlet() {
+        searchType = SearchType.ALL;
+    }
+
+    public SearchServlet(SearchType stype) {
+        if (stype == null)
+            searchType = SearchType.ALL;
+        else
+            searchType = stype;
+    }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         /*
          Example: http://localhost:8080/search?query=wrix&provider=lucene&psize=10&offset=10
          */
@@ -99,14 +101,16 @@ public class SearchServlet extends HttpServlet {
         final int depth;
         try {
             psize = getReqParameter(request, "psize", Integer.MAX_VALUE);
-            if (psize < 0) throw new NumberFormatException();
+            if (psize < 0)
+                throw new NumberFormatException();
         } catch (NumberFormatException e) {
             sendError(response, 400, "Invalid parameter psize: must be a non-negative integer");
             return;
         }
         try {
             offset = getReqParameter(request, "offset", 0);
-            if (offset < 0) throw new NumberFormatException();
+            if (offset < 0)
+                throw new NumberFormatException();
         } catch (NumberFormatException e) {
             sendError(response, 400, "Invalid parameter offset: must be a non-negative integer");
             return;
@@ -118,15 +122,25 @@ public class SearchServlet extends HttpServlet {
                 return;
             }
             switch (paramDepth.toLowerCase()) {
-                case "none": depth = 0; break;
-                case "patient": depth = 1; break;
-                case "study": depth = 2; break;
-                case "series": depth = 3; break;
-                case "image": depth = 4; break;
+                case "none":
+                    depth = 0;
+                    break;
+                case "patient":
+                    depth = 1;
+                    break;
+                case "study":
+                    depth = 2;
+                    break;
+                case "series":
+                    depth = 3;
+                    break;
+                case "image":
+                    depth = 4;
+                    break;
                 default:
-                sendError(response, 400, "Invalid parameter depth: must be a valid level: "
-                        + "'none', 'patient', 'study', 'series' or 'image'");
-                return;
+                    sendError(response, 400, "Invalid parameter depth: must be a valid level: "
+                            + "'none', 'patient', 'study', 'series' or 'image'");
+                    return;
             }
         } else {
             depth = 4;
@@ -157,7 +171,7 @@ public class SearchServlet extends HttpServlet {
             return;
         }
         List<String> knownProviders = null;
-        
+
         boolean queryAllProviders = false;
         if (providers == null || providers.length == 0) {
             queryAllProviders = true;
@@ -168,18 +182,13 @@ public class SearchServlet extends HttpServlet {
             }
         }
 
-        if (!queryAllProviders) 
-        {
+        if (!queryAllProviders) {
             knownProviders = new ArrayList<>();
             List<String> activeProviders = PluginController.getInstance().getQueryProvidersName(true);
-            for (String p : providers)
-            {
-                if (activeProviders.contains(p)) 
-                {
+            for (String p : providers) {
+                if (activeProviders.contains(p)) {
                     knownProviders.add(p);
-                }
-                else
-                {
+                } else {
                     response.setStatus(400);
                     JSONObject obj = new JSONObject();
                     obj.put("error", p.toString() + " is not a valid query provider");
@@ -191,8 +200,8 @@ public class SearchServlet extends HttpServlet {
 
         HashMap<String, String> extraFields = new HashMap<>();
         if (actualFields == null) {
-            
-            //attaches the required extrafields
+
+            // attaches the required extrafields
             for (String field : DEFAULT_FIELDS) {
                 extraFields.put(field, field);
             }
@@ -201,28 +210,27 @@ public class SearchServlet extends HttpServlet {
                 extraFields.put(f, f);
             }
         }
-        
+
         JointQueryTask queryTaskHolder = new JointQueryTask() {
 
             @Override
-            public void onCompletion() {
-            }
+            public void onCompletion() {}
 
             @Override
-            public void onReceive(Task<Iterable<SearchResult>> e) {
-            }
+            public void onReceive(Task<Iterable<SearchResult>> e) {}
         };
 
         try {
             long elapsedTime = System.currentTimeMillis();
-            Iterable<SearchResult> results = PluginController.getInstance().query(queryTaskHolder, providerList, query, extraFields).get();
+            Iterable<SearchResult> results =
+                    PluginController.getInstance().query(queryTaskHolder, providerList, query, extraFields).get();
 
             if (this.searchType == SearchType.PATIENT) {
                 try {
                     DIMGeneric dimModel = new DIMGeneric(ImmutableList.copyOf(results));
                     elapsedTime = System.currentTimeMillis() - elapsedTime;
                     response.getWriter().write(dimModel.getJSON());
-                    //dimModel.writeJSON(response.getWriter(), elapsedTime, depth, offset, psize);
+                    // dimModel.writeJSON(response.getWriter(), elapsedTime, depth, offset, psize);
                 } catch (Exception e) {
                     logger.warn("Failed to get DIM", e);
                 }
@@ -244,18 +252,19 @@ public class SearchServlet extends HttpServlet {
         }
     }
 
-    private void writeResponse(HttpServletResponse resp, Iterable<SearchResult> results, long elapsedTime, int offset, int psize) throws IOException, JSONException {
+    private void writeResponse(HttpServletResponse resp, Iterable<SearchResult> results, long elapsedTime, int offset,
+            int psize) throws IOException, JSONException {
         JSONWriter writer = new JSONWriter(resp.getWriter());
-        writer.object(); //begin output
+        writer.object(); // begin output
         // results
         writer.key("results").array(); // begin results
         int count = 0;
         for (Iterator<SearchResult> it = results.iterator(); it.hasNext(); ++count) {
             SearchResult res = it.next();
-            if (count < offset || count >= offset + psize) continue;
+            if (count < offset || count >= offset + psize)
+                continue;
             writer.object() // begin result
-                    .key("uri").value(res.getURI().toString())
-                    .key("fields").object();
+                    .key("uri").value(res.getURI().toString()).key("fields").object();
             for (Map.Entry<String, Object> e : res.getExtraData().entrySet()) {
                 writer.key(e.getKey()).value(String.valueOf(e.getValue()).trim());
             }
@@ -263,8 +272,7 @@ public class SearchServlet extends HttpServlet {
         }
         // other fields
         writer.endArray() // end results
-                .key("elapsedTime").value(elapsedTime)
-                .key("numResults").value(count);
+                .key("elapsedTime").value(elapsedTime).key("numResults").value(count);
         writer.endObject(); // end output
     }
 

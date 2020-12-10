@@ -56,8 +56,7 @@ public class InjectionTest {
         }
 
         @Override
-        public void setSettings(ConfigurationHolder settings) {
-        }
+        public void setSettings(ConfigurationHolder settings) {}
 
         @Override
         public ConfigurationHolder getSettings() {

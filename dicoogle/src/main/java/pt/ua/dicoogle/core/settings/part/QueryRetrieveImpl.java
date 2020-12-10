@@ -31,8 +31,7 @@ import java.util.Collection;
 /**
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY,
-        getterVisibility = JsonAutoDetect.Visibility.NONE,
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE,
         setterVisibility = JsonAutoDetect.Visibility.NONE)
 public class QueryRetrieveImpl implements ServerSettings.DicomServices.QueryRetrieve {
     @JacksonXmlProperty(isAttribute = true)
@@ -52,8 +51,10 @@ public class QueryRetrieveImpl implements ServerSettings.DicomServices.QueryRetr
         qr.idleTimeout = 60;
         qr.acceptTimeout = 60;
         qr.connectionTimeout = 60;
-        qr.transferCapabilities = Arrays.asList(UID.ImplicitVRLittleEndian, UID.ExplicitVRLittleEndian, UID.ExplicitVRBigEndian);
-        qr.sopClasses = Arrays.asList(UID.StudyRootQueryRetrieveInformationModelFIND, UID.PatientRootQueryRetrieveInformationModelFIND);
+        qr.transferCapabilities =
+                Arrays.asList(UID.ImplicitVRLittleEndian, UID.ExplicitVRLittleEndian, UID.ExplicitVRBigEndian);
+        qr.sopClasses = Arrays.asList(UID.StudyRootQueryRetrieveInformationModelFIND,
+                UID.PatientRootQueryRetrieveInformationModelFIND);
         qr.maxClientAssocs = 20;
         qr.maxPduLengthReceive = 16364;
         qr.maxPduLengthSend = 16364;
@@ -191,19 +192,10 @@ public class QueryRetrieveImpl implements ServerSettings.DicomServices.QueryRetr
 
     @Override
     public String toString() {
-        return "QueryRetrieveImpl{" +
-                "autostart=" + autostart +
-                ", port=" + port +
-                ", rspDelay=" + rspDelay +
-                ", dimseRspTimeout=" + dimseRspTimeout +
-                ", idleTimeout=" + idleTimeout +
-                ", acceptTimeout=" + acceptTimeout +
-                ", connectionTimeout=" + connectionTimeout +
-                ", transferCapabilities=" + transferCapabilities +
-                ", sopClasses=" + sopClasses +
-                ", maxClientAssocs=" + maxClientAssocs +
-                ", maxPduLengthReceive=" + maxPduLengthReceive +
-                ", maxPduLengthSend=" + maxPduLengthSend +
-                '}';
+        return "QueryRetrieveImpl{" + "autostart=" + autostart + ", port=" + port + ", rspDelay=" + rspDelay
+                + ", dimseRspTimeout=" + dimseRspTimeout + ", idleTimeout=" + idleTimeout + ", acceptTimeout="
+                + acceptTimeout + ", connectionTimeout=" + connectionTimeout + ", transferCapabilities="
+                + transferCapabilities + ", sopClasses=" + sopClasses + ", maxClientAssocs=" + maxClientAssocs
+                + ", maxPduLengthReceive=" + maxPduLengthReceive + ", maxPduLengthSend=" + maxPduLengthSend + '}';
     }
 }

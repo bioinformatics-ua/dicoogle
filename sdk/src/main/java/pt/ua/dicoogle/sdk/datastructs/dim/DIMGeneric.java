@@ -102,7 +102,7 @@ public class DIMGeneric {
      * @param arr
      * @param uri
      */
-    public DIMGeneric(Map<String, Object> arr,URI uri) throws Exception {
+    public DIMGeneric(Map<String, Object> arr, URI uri) throws Exception {
         fillWithMap(arr, uri);
     }
 
@@ -116,7 +116,7 @@ public class DIMGeneric {
             /**
              * Looking for SeachResults and put it in right side :)
              */
-            //SearchResult r = (SearchResult) arr.get(i);
+            // SearchResult r = (SearchResult) arr.get(i);
             HashMap<String, Object> extra = r.getExtraData();
             fillDim(extra, r.getURI());
 
@@ -159,7 +159,7 @@ public class DIMGeneric {
          */
         String serieUID = toTrimmedString(extra.get("SeriesInstanceUID"), false);
         String BodyPartThickness = (String) extra.get("BodyPartThickness");
-        //System.out.println("serieUID"+serieUID);
+        // System.out.println("serieUID"+serieUID);
         String serieNumber = toTrimmedString(extra.get("SeriesNumber"), true);
         String serieDescription = toTrimmedString(extra.get("SeriesDescription"), false);
         String modality = toTrimmedString(extra.get("Modality"), false);
@@ -167,11 +167,14 @@ public class DIMGeneric {
 
         String ViewPosition = toTrimmedString(extra.get("ViewPosition"), false);
         String ImageLaterality = toTrimmedString(extra.get("ImageLaterality"), false);
-        String AcquisitionDeviceProcessingDescription = toTrimmedString(extra.get("AcquisitionDeviceProcessingDescription"), false);
+        String AcquisitionDeviceProcessingDescription =
+                toTrimmedString(extra.get("AcquisitionDeviceProcessingDescription"), false);
 
         String ViewCodeSequence_CodeValue = toTrimmedString(extra.get("ViewCodeSequence_CodeValue"), false);
-        String ViewCodeSequence_CodingSchemeDesignator = toTrimmedString(extra.get("ViewCodeSequence_CodingSchemeDesignator"), false);
-        String ViewCodeSequence_CodingSchemeVersion = toTrimmedString(extra.get("ViewCodeSequence_CodingSchemeVersion"), false);
+        String ViewCodeSequence_CodingSchemeDesignator =
+                toTrimmedString(extra.get("ViewCodeSequence_CodingSchemeDesignator"), false);
+        String ViewCodeSequence_CodingSchemeVersion =
+                toTrimmedString(extra.get("ViewCodeSequence_CodingSchemeVersion"), false);
         String ViewCodeSequence_CodeMeaning = toTrimmedString(extra.get("ViewCodeSequence_CodeMeaning"), false);
 
 
@@ -187,8 +190,8 @@ public class DIMGeneric {
         /**
          * Get data to Image
          */
-        //TODO:Error checking here... but according to standard, all images
-        //must have one of these...
+        // TODO:Error checking here... but according to standard, all images
+        // must have one of these...
         String sopInstUID = toTrimmedString(extra.get("SOPInstanceUID"), true);
 
         if (sopInstUID == null) {
@@ -413,7 +416,7 @@ public class DIMGeneric {
 
         StreamResult streamResult = new StreamResult(writer);
         SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
-        //      SAX2.0 ContentHandler.
+        // SAX2.0 ContentHandler.
         TransformerHandler hd = null;
         try {
             hd = tf.newTransformerHandler();

@@ -28,101 +28,88 @@ import org.apache.commons.lang3.StringEscapeUtils;
  *
  * @author António Novo <antonio.novo@ua.pt>
  */
-public class ComboBox implements GenericSetting
-{
-	private HashMap<String, String> elements;
-	private String current;
+public class ComboBox implements GenericSetting {
+    private HashMap<String, String> elements;
+    private String current;
 
-	public ComboBox()
-	{
-		elements = new LinkedHashMap<String, String>();
-		current = "";
-	}
+    public ComboBox() {
+        elements = new LinkedHashMap<String, String>();
+        current = "";
+    }
 
-	public synchronized void addElement(String name, String value)
-	{
-		elements.put(name, value);
-	}
+    public synchronized void addElement(String name, String value) {
+        elements.put(name, value);
+    }
 
-	public synchronized void setCurrent(String name)
-	{
-		current = name;
-	}
+    public synchronized void setCurrent(String name) {
+        current = name;
+    }
 
-	public String getCurrent()
-	{
-		return current;
-	}
+    public String getCurrent() {
+        return current;
+    }
 
-	/**
-	 * Returns the value of the currently selected element.
-	 *
-	 * @return the value of the currently selected element, null if the
-	 * element is invalid or no element is currently selected.
-	 */
-	public String getCurrentValue()
-	{
-		for (Map.Entry<String, String> elem : elements.entrySet())
-		{
-			if (current.equalsIgnoreCase(elem.getKey()))
-				return elem.getValue();
-		}
+    /**
+     * Returns the value of the currently selected element.
+     *
+     * @return the value of the currently selected element, null if the
+     * element is invalid or no element is currently selected.
+     */
+    public String getCurrentValue() {
+        for (Map.Entry<String, String> elem : elements.entrySet()) {
+            if (current.equalsIgnoreCase(elem.getKey()))
+                return elem.getValue();
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public void setCurrentByValue(String value)
-	{
-		if (value == null)
-			current = "";
+    public void setCurrentByValue(String value) {
+        if (value == null)
+            current = "";
 
-		for (Map.Entry<String, String> elem : elements.entrySet())
-		{
-			if (value.equalsIgnoreCase(elem.getValue()))
-			{
-				current = elem.getKey();
-				return;
-			}
-		}
+        for (Map.Entry<String, String> elem : elements.entrySet()) {
+            if (value.equalsIgnoreCase(elem.getValue())) {
+                current = elem.getKey();
+                return;
+            }
+        }
 
-		// if value not found, no change is made
-	}
+        // if value not found, no change is made
+    }
 
-	public String toHTMLString(String htmlElementID)
-	{
-		String result = "";
+    public String toHTMLString(String htmlElementID) {
+        String result = "";
 
-		result += "<select id=\"" + htmlElementID + "\" name=\"" + htmlElementID + "\">";
-		for (Map.Entry<String, String> elem : elements.entrySet())
-		{
-			result += "<option value=\"" + StringEscapeUtils.escapeHtml4(elem.getValue()) + "\" "+ ((current.equalsIgnoreCase(elem.getKey())) ? "selected=\"selected\"" : "" ) + ">";
-			result += StringEscapeUtils.escapeHtml4(elem.getKey());
-			result += "</option>";
-		}
-		result += "</select>";
+        result += "<select id=\"" + htmlElementID + "\" name=\"" + htmlElementID + "\">";
+        for (Map.Entry<String, String> elem : elements.entrySet()) {
+            result += "<option value=\"" + StringEscapeUtils.escapeHtml4(elem.getValue()) + "\" "
+                    + ((current.equalsIgnoreCase(elem.getKey())) ? "selected=\"selected\"" : "") + ">";
+            result += StringEscapeUtils.escapeHtml4(elem.getKey());
+            result += "</option>";
+        }
+        result += "</select>";
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public synchronized Object clone()
-	{
-		ComboBox result = new ComboBox();
+    @Override
+    public synchronized Object clone() {
+        ComboBox result = new ComboBox();
 
-		result.current = this.current;
-		result.elements.putAll(this.elements);
+        result.current = this.current;
+        result.elements.putAll(this.elements);
 
-		return result;
-	}
+        return result;
+    }
 
-	public ComboBox fromHTTPParams(HashMap<String, String[]> params, int index, String htmlElementID)
-	{
-		ComboBox result = (ComboBox) this.clone();
+    public ComboBox fromHTTPParams(HashMap<String, String[]> params, int index, String htmlElementID) {
+        ComboBox result = (ComboBox) this.clone();
 
-		String[] values = params.get(htmlElementID);
-		if ((values != null) && (values.length > index))
-			result.setCurrentByValue(values[index]);
+        String[] values = params.get(htmlElementID);
+        if ((values != null) && (values.length > index))
+            result.setCurrentByValue(values[index]);
 
-		return result;
-	}
+        return result;
+    }
 }

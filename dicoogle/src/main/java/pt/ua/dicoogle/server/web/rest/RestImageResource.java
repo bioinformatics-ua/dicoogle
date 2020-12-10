@@ -44,80 +44,80 @@ public class RestImageResource extends ServerResource {
 
     @Get
     public Representation represent() {/*
-        String SOPInstanceUID = getRequest().getResourceRef().getQueryAsForm().getValues("uid");
-        if (SOPInstanceUID == null) {
-            return null;
-        }
-
-        String heightString = getRequest().getResourceRef().getQueryAsForm().getValues("height");
-        int height = 0;
-
-        if (heightString != null) {
-            try {
-                height = Integer.valueOf(heightString);
-            } catch (NumberFormatException ex) {
-            };
-        }
-
-        IndexEngine core = IndexEngine.getInstance();
-        ArrayList<String> extra = new ArrayList<String>();
-        extra.add("SOPInstanceUID");
-        String query = "SOPInstanceUID:" + SOPInstanceUID;
-        List<SearchResult> queryResultList = core.search(query, extra);
-        if (queryResultList.size() < 1) {
-            return null;//TODO:Throw exception
-        }
-        for (SearchResult r : queryResultList) {
-            LoggerFactory.getLogger(RestDimResource.class.getName()).error(r.getOrigin());
-        }
-        File file = new File(queryResultList.get(0).getOrigin());
-
-        return new DynamicFileRepresentation(MediaType.IMAGE_JPEG, file, height);
+                                       String SOPInstanceUID = getRequest().getResourceRef().getQueryAsForm().getValues("uid");
+                                       if (SOPInstanceUID == null) {
+                                       return null;
+                                       }
+                                       
+                                       String heightString = getRequest().getResourceRef().getQueryAsForm().getValues("height");
+                                       int height = 0;
+                                       
+                                       if (heightString != null) {
+                                       try {
+                                       height = Integer.valueOf(heightString);
+                                       } catch (NumberFormatException ex) {
+                                       };
+                                       }
+                                       
+                                       IndexEngine core = IndexEngine.getInstance();
+                                       ArrayList<String> extra = new ArrayList<String>();
+                                       extra.add("SOPInstanceUID");
+                                       String query = "SOPInstanceUID:" + SOPInstanceUID;
+                                       List<SearchResult> queryResultList = core.search(query, extra);
+                                       if (queryResultList.size() < 1) {
+                                       return null;//TODO:Throw exception
+                                       }
+                                       for (SearchResult r : queryResultList) {
+                                       LoggerFactory.getLogger(RestDimResource.class.getName()).error(r.getOrigin());
+                                       }
+                                       File file = new File(queryResultList.get(0).getOrigin());
+                                       
+                                       return new DynamicFileRepresentation(MediaType.IMAGE_JPEG, file, height);
+                                       }
+                                       
+                                       public class DynamicFileRepresentation extends OutputRepresentation {
+                                       
+                                       private File dicomImage;
+                                       private int height;
+                                       
+                                       public DynamicFileRepresentation(MediaType mediaType, File dicomImage, int height) {
+                                       super(mediaType);
+                                       
+                                       this.dicomImage = dicomImage;
+                                       this.height = height;
+                                       
+                                       
+                                       
+                                       if (dicomImage.getAbsolutePath().endsWith(".gz"))
+                                       {
+                                       File temp = null;
+                                       try {
+                                       temp = File.createTempFile(dicomImage.getName(), Platform.homePath() + ".dcm");
+                                       } catch (IOException ex) {
+                                       LoggerFactory.getLogger(RestWADOResource.class).error(ex.getMessage(), ex);
+                                       }
+                                       temp.deleteOnExit();
+                                       FileOutputStream fos;
+                                       try {
+                                       fos = new FileOutputStream(temp);
+                                       BufferedOutputStream bos = new BufferedOutputStream(fos, 256);
+                                       GZIPInputStream gz = new GZIPInputStream(new BufferedInputStream(new FileInputStream(dicomImage), 256));
+                                       int byte_;
+                                       while ((byte_ = gz.read()) != -1)
+                                       bos.write(byte_);
+                                       bos.close();
+                                       gz.close();
+                                       } catch (Exception ex) {
+                                       LoggerFactory.getLogger(RestWADOResource.class).error(ex.getMessage(), ex);
+                                       }
+                                       dicomImage = temp;
+                                       }*/
+        throw new UnsupportedOperationException();
     }
 
-    public class DynamicFileRepresentation extends OutputRepresentation {
-
-        private File dicomImage;
-        private int height;
-
-        public DynamicFileRepresentation(MediaType mediaType, File dicomImage, int height) {
-            super(mediaType);
-            
-            this.dicomImage = dicomImage;
-            this.height = height;
-            
-            
-            
-            if (dicomImage.getAbsolutePath().endsWith(".gz"))
-            {
-                File temp = null;
-                try {
-                    temp = File.createTempFile(dicomImage.getName(), Platform.homePath() + ".dcm");
-                } catch (IOException ex) {
-                    LoggerFactory.getLogger(RestWADOResource.class).error(ex.getMessage(), ex);
-                }
-                temp.deleteOnExit();
-                FileOutputStream fos;
-                try {
-                    fos = new FileOutputStream(temp);
-                    BufferedOutputStream bos = new BufferedOutputStream(fos, 256);
-                    GZIPInputStream gz = new GZIPInputStream(new BufferedInputStream(new FileInputStream(dicomImage), 256));
-                    int byte_;
-                    while ((byte_ = gz.read()) != -1)
-                        bos.write(byte_);
-                    bos.close();
-                    gz.close();
-                } catch (Exception ex) {
-                    LoggerFactory.getLogger(RestWADOResource.class).error(ex.getMessage(), ex);
-                }
-                dicomImage = temp;
-            }*/
-        throw new UnsupportedOperationException();
-        }
-
-        /*@Override
-        public void write(OutputStream outputStream) throws IOException {
-            Dicom2JPEG.convertDicom2Jpeg(dicomImage, outputStream, height);
-        }*/
-    //}
+    /*@Override
+    public void write(OutputStream outputStream) throws IOException {
+        Dicom2JPEG.convertDicom2Jpeg(dicomImage, outputStream, height);
+    }*/
+    // }
 }

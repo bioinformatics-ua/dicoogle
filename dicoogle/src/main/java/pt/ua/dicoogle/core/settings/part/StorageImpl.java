@@ -40,7 +40,7 @@ public class StorageImpl implements ServerSettings.ServiceBase {
 
     @JsonCreator
     public StorageImpl(@JacksonXmlProperty(localName = "autostart") boolean autostart,
-                       @JacksonXmlProperty(localName = "port") int port) {
+            @JacksonXmlProperty(localName = "port") int port) {
         this.autostart = autostart;
         this.port = port;
     }
@@ -71,19 +71,17 @@ public class StorageImpl implements ServerSettings.ServiceBase {
 
     @Override
     public String toString() {
-        return "StorageImpl{" +
-                "autostart=" + autostart +
-                ", port=" + port +
-                '}';
+        return "StorageImpl{" + "autostart=" + autostart + ", port=" + port + '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         StorageImpl storage = (StorageImpl) o;
-        return autostart == storage.autostart &&
-                port == storage.port;
+        return autostart == storage.autostart && port == storage.port;
     }
 
     @Override

@@ -100,7 +100,8 @@ public class UsersXML extends DefaultHandler {
                 String[] rolesTmp = roles.split(",");
                 for (int i = 0; i < rolesTmp.length; i++) {
                     Role role = RolesStruct.getInstance().getRole(rolesTmp[i]);
-                    if (role != null) u.addRole(role);
+                    if (role != null)
+                        u.addRole(role);
                 }
             }
         }
@@ -143,7 +144,7 @@ public class UsersXML extends DefaultHandler {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
-        //      SAX2.0 ContentHandler.
+        // SAX2.0 ContentHandler.
         TransformerHandler hd = null;
         try {
             hd = tf.newTransformerHandler();
@@ -163,7 +164,7 @@ public class UsersXML extends DefaultHandler {
             hd.startDocument();
 
             AttributesImpl atts = new AttributesImpl();
-            //root element
+            // root element
             hd.startElement("", "", "Users", atts);
 
             Iterator<User> us = users.iterator();
@@ -179,9 +180,7 @@ public class UsersXML extends DefaultHandler {
                 if (user.isAdmin())
                     temp = "true";
                 if (user.getRoles() != null && user.getRoles().size() > 0) {
-                    String roles = user.getRoles().stream()
-                            .map(Role::getName)
-                            .collect(Collectors.joining(","));
+                    String roles = user.getRoles().stream().map(Role::getName).collect(Collectors.joining(","));
 
                     atts.addAttribute("", "", "roles", "", roles);
                 }

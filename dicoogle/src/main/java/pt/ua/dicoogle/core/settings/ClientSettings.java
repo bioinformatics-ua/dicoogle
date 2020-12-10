@@ -36,11 +36,10 @@ public class ClientSettings {
     private String defaultUserName;
     private String defaultPassword;
     private boolean autoConnect;
-    
+
     private static ClientSettings instance = null;
 
-    public static synchronized ClientSettings getInstance()
-    {
+    public static synchronized ClientSettings getInstance() {
         if (instance == null) {
             instance = new ClientSettings();
         }
@@ -56,8 +55,7 @@ public class ClientSettings {
         defaultPassword = "";
     }
 
-    public void setDefaultSettings()
-    {
+    public void setDefaultSettings() {
         tempFilesDir = System.getProperty("java.io.tmpdir");
         externalViewer = "";
         defaultServerHost = "localhost";
@@ -66,13 +64,11 @@ public class ClientSettings {
         defaultPassword = HashService.hashPassword("dicoogle");
     }
 
-    public void setExtV(String EV)
-    {
+    public void setExtV(String EV) {
         externalViewer = EV;
     }
 
-    public String getExtV()
-    {
+    public String getExtV() {
         return externalViewer;
     }
 
@@ -136,23 +132,23 @@ public class ClientSettings {
      *
      * @return the default password
      */
-    public String getDefaultPassword(){
-       return defaultPassword;
+    public String getDefaultPassword() {
+        return defaultPassword;
     }
 
     /**
      *
      * @param passHash - new default password
      */
-    public void setDefaultPassword(String passHash){
+    public void setDefaultPassword(String passHash) {
         defaultPassword = passHash;
     }
 
-    public boolean getAutoConnect(){
+    public boolean getAutoConnect() {
         return autoConnect;
     }
 
-    public void setAutoConnect(boolean value){
+    public void setAutoConnect(boolean value) {
         autoConnect = value;
     }
 

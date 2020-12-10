@@ -40,22 +40,18 @@ import pt.ua.dicoogle.sdk.datastructs.SearchResult;
  * @author Carlos Ferreira
  * @author Pedro Bento
  */
-public class QueryResponseHandler implements MessageHandler
-{
+public class QueryResponseHandler implements MessageHandler {
 
     private NetworkPluginAdapter NPA;
     private ListObservable<SearchResult> results;
 
-    public QueryResponseHandler(NetworkPluginAdapter NPA, ListObservable<SearchResult> results)
-    {
+    public QueryResponseHandler(NetworkPluginAdapter NPA, ListObservable<SearchResult> results) {
         this.NPA = NPA;
         this.results = results;
     }
 
-    public void handleMessage(MessageI message, String sender)
-    {
-        if (!MessageXML.class.isInstance(message))
-        {
+    public void handleMessage(MessageI message, String sender) {
+        if (!MessageXML.class.isInstance(message)) {
             return;
         }
 
@@ -68,11 +64,9 @@ public class QueryResponseHandler implements MessageHandler
         SAXReader saxReader = new SAXReader();
 
         Document document = null;
-        try
-        {
+        try {
             document = saxReader.read(new ByteArrayInputStream(xml));
-        } catch (DocumentException ex)
-        {
+        } catch (DocumentException ex) {
             ex.printStackTrace(System.out);
         }
 
@@ -81,23 +75,19 @@ public class QueryResponseHandler implements MessageHandler
         /**
          * Verification of the validity of the message
          */
-        if (!root.getName().equals(MessageFields.MESSAGE))
-        {
+        if (!root.getName().equals(MessageFields.MESSAGE)) {
             return;
         }
 
         Element tmp = root.element(MessageFields.QUERY_NUMBER);
-        if (tmp == null)
-        {
+        if (tmp == null) {
             return;
         }
 
         Integer queryNumber = null;
-        try
-        {
+        try {
             queryNumber = Integer.parseInt(tmp.getText());
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
             return;
         }
 
@@ -107,8 +97,7 @@ public class QueryResponseHandler implements MessageHandler
          * This will be checked again, nevertheless here it is checked to save time 
          * with avoidable XML processing in case of the deprecation of the message received
          */
-        if (queryNumber != QueryNumber.getInstance().getQueryNumber())
-        {
+        if (queryNumber != QueryNumber.getInstance().getQueryNumber()) {
             return;
         }
 
@@ -116,54 +105,47 @@ public class QueryResponseHandler implements MessageHandler
         List<Element> Results = tmp.elements(MessageFields.SEARCH_RESULT);
         List<SearchResult> res = new ArrayList<SearchResult>();
         Element tmp2;
-        for (Element result : Results)
-        {
+        for (Element result : Results) {
             String Filename = null, FileHash = null, FileSize = null;
             tmp2 = result.element(SearchResultFields.FILE_NAME);
-            if (tmp2 == null)
-            {
+            if (tmp2 == null) {
                 return;
             }
             Filename = tmp2.getText();
 
             tmp2 = result.element(SearchResultFields.FILE_HASH);
-            if (tmp2 == null)
-            {
+            if (tmp2 == null) {
                 return;
             }
             FileHash = tmp2.getText();
 
             tmp2 = result.element(SearchResultFields.FILE_SIZE);
-            if (tmp2 == null)
-            {
+            if (tmp2 == null) {
                 return;
             }
             FileSize = tmp2.getText();
 
             tmp2 = result.element(SearchResultFields.EXTRAFIELDS);
-            if (tmp2 == null)
-            {
+            if (tmp2 == null) {
                 return;
             }
             List<Element> fields = tmp2.elements();
             HashMap<String, Object> Extrafields = new HashMap();
-            for (Element field : fields)
-            {
+            for (Element field : fields) {
                 Extrafields.put(field.getName(), field.getText());
             }
-            //res.add(new SearchResult(FileHash, Filename, sender, FileSize, Extrafields, this.NPA.getName()));
+            // res.add(new SearchResult(FileHash, Filename, sender, FileSize, Extrafields, this.NPA.getName()));
             throw new UnsupportedOperationException("FIX THIS!!!: qwe123");
         }
         synchronized (this.results) // monitor to queryNumber
         {
-            if (queryNumber != QueryNumber.getInstance().getQueryNumber())
-            {
-                //System.out.println("different QueryNumber");
+            if (queryNumber != QueryNumber.getInstance().getQueryNumber()) {
+                // System.out.println("different QueryNumber");
                 return;
             }
             this.results.resetArray();
             this.results.addAll(res);
-            //System.out.println(this.results.getArray().size() + "results added to the observable");
+            // System.out.println(this.results.getArray().size() + "results added to the observable");
         }
 
     }

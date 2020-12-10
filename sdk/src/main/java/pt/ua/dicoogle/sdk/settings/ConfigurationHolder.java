@@ -29,25 +29,25 @@ import org.apache.commons.configuration.XMLConfiguration;
  */
 public class ConfigurationHolder {
     private XMLConfiguration cnf;
-    
-    public ConfigurationHolder(File settingsFile) throws ConfigurationException{        
+
+    public ConfigurationHolder(File settingsFile) throws ConfigurationException {
         this(settingsFile, true);
     }
-    
-    public ConfigurationHolder(File settingsFile, boolean autosave) throws ConfigurationException{        
 
-    	if(!settingsFile.exists()){
-    		cnf = new XMLConfiguration();
-    		cnf.setFile(settingsFile);
-    		cnf.save();
-    		cnf.setAutoSave(true);
-    	}else{
-    		cnf = new XMLConfiguration(settingsFile);
-	        cnf.setAutoSave(autosave); 
-	    }
+    public ConfigurationHolder(File settingsFile, boolean autosave) throws ConfigurationException {
+
+        if (!settingsFile.exists()) {
+            cnf = new XMLConfiguration();
+            cnf.setFile(settingsFile);
+            cnf.save();
+            cnf.setAutoSave(true);
+        } else {
+            cnf = new XMLConfiguration(settingsFile);
+            cnf.setAutoSave(autosave);
+        }
     }
 
-	public XMLConfiguration getConfiguration() {
-		return cnf;
-	}    
+    public XMLConfiguration getConfiguration() {
+        return cnf;
+    }
 }

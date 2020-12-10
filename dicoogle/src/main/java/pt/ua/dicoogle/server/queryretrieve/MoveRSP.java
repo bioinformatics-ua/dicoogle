@@ -38,70 +38,62 @@ import pt.ua.dicoogle.server.SearchDicomResult;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class MoveRSP  implements DimseRSP 
-{
-    DicomObject rsp = null ;
-    DicomObject keys = null ;
+public class MoveRSP implements DimseRSP {
+    DicomObject rsp = null;
+    DicomObject keys = null;
 
-    DicomObject current = null ;
-    SearchDicomResult search = null ; 
+    DicomObject current = null;
+    SearchDicomResult search = null;
 
 
-    public MoveRSP(DicomObject keys, DicomObject rsp)
-    {
+    public MoveRSP(DicomObject keys, DicomObject rsp) {
         /* Save args */
-        this.rsp = rsp ;
-        this.keys = keys ;
-        this.current = rsp ; 
-        
+        this.rsp = rsp;
+        this.keys = keys;
+        this.current = rsp;
 
-       // DebugManager.getInstance().debug("--> Creating MoveRSP");
-        
+
+        // DebugManager.getInstance().debug("--> Creating MoveRSP");
+
 
 
         /** Debug - show keys, rsp, index */
-        if (keys!=null)
-        {
-            //DebugManager.getInstance().debug("keys object: ");
-            //DebugManager.getInstance().debug(keys.toString());
+        if (keys != null) {
+            // DebugManager.getInstance().debug("keys object: ");
+            // DebugManager.getInstance().debug(keys.toString());
         }
-        if (rsp!=null)
-        {
-            //DebugManager.getInstance().debug("Rsp object");
-            //DebugManager.getInstance().debug(rsp.toString());
+        if (rsp != null) {
+            // DebugManager.getInstance().debug("Rsp object");
+            // DebugManager.getInstance().debug(rsp.toString());
         }
 
-          this.rsp.putInt(Tag.Status, VR.US, Status.Success);
-            
-    }
-
-    @Override
-    public boolean next() throws IOException, InterruptedException
-    {
-  
-            /** Sucess */
-            this.rsp.putInt(Tag.Status, VR.US, Status.Success);
-            /** Clean pointers */
-            this.current = null;
-            return true ;
+        this.rsp.putInt(Tag.Status, VR.US, Status.Success);
 
     }
 
     @Override
-    public DicomObject getCommand()
-    {
-        return this.rsp ; 
+    public boolean next() throws IOException, InterruptedException {
+
+        /** Sucess */
+        this.rsp.putInt(Tag.Status, VR.US, Status.Success);
+        /** Clean pointers */
+        this.current = null;
+        return true;
+
     }
 
     @Override
-    public DicomObject getDataset()
-    {
-         return  this.current != null ? this.current.subSet(this.keys) : null;
+    public DicomObject getCommand() {
+        return this.rsp;
     }
 
     @Override
-    public void cancel(Association arg0) throws IOException
-    {
+    public DicomObject getDataset() {
+        return this.current != null ? this.current.subSet(this.keys) : null;
+    }
+
+    @Override
+    public void cancel(Association arg0) throws IOException {
         // TODO
     }
 

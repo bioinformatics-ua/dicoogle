@@ -38,144 +38,143 @@ import pt.ua.dicoogle.sdk.task.Task;
 
 public class SearchHolder {
 
-	@SuppressWarnings("unused") //TODO: IMPLEMENT THIS
-	private static int maxNumberOfTasks = 3;
-	private Map<Integer, QueryHandler> tasks;
-	
-	public SearchHolder() {
-		tasks = new HashMap<Integer, SearchHolder.QueryHandler>();
-	}
+    @SuppressWarnings("unused") // TODO: IMPLEMENT THIS
+    private static int maxNumberOfTasks = 3;
+    private Map<Integer, QueryHandler> tasks;
 
-	public synchronized int registerNewQuery(List<String> providers, String query, Object searchParam){
-		QueryHandler task = new QueryHandler();
-		
-		task = (QueryHandler) PluginController.getInstance().query(task, providers, query, searchParam);
-		if(task == null)
-			return -1;
-		
-		tasks.put(task.hashCode(), task);
-		return task.hashCode();
-	}
-	
-	public synchronized void removeQuery(int id){
-		tasks.remove(id);
-	}
-	
-	public  synchronized Iterable<KeyValue> retrieveQueryOutput(int id){
-		QueryHandler task = tasks.get(id);
-	
-		if(task == null)
-			return null;
-		
-		return task;
-	}
-	
-	private class QueryHandler extends JointQueryTask implements Iterable<KeyValue>{
+    public SearchHolder() {
+        tasks = new HashMap<Integer, SearchHolder.QueryHandler>();
+    }
 
-		private StringBuffer buffer;	
-		private List<KeyValue> tempResults;
-		private List<InnerIterator> currentIterators;
-		
-		public QueryHandler() {
-			super();
-			buffer = new StringBuffer();
-			currentIterators = new ArrayList<InnerIterator>();
-			tempResults = new ArrayList<>();
-		}
+    public synchronized int registerNewQuery(List<String> providers, String query, Object searchParam) {
+        QueryHandler task = new QueryHandler();
 
-		@Override
-		public void onCompletion() {
-			// TODO Auto-generated method stub
-			System.out.println("Completed Query");
-		}
+        task = (QueryHandler) PluginController.getInstance().query(task, providers, query, searchParam);
+        if (task == null)
+            return -1;
 
-		@Override
-		public void onReceive(Task<Iterable<SearchResult>> e) {
-			// TODO Auto-generated method stub
-			try {
-				System.out.println("RECEIVED NEW ITERATION: ");
-				
-				Iterable<SearchResult> results = e.get();
-				DefaultKeyValue keyValue = new DefaultKeyValue(e.getName(), results);
-				
-				appendResult(keyValue);
-				
-				/*for(SearchResult res : results ){
-					
-				}*/	
-			} catch (InterruptedException | ExecutionException e1) {
-				// TODO Auto-generated catch block
-				//e1.printStackTrace();
-			}
-			
-			buffer.append("Received Query: "+e.getName());
-		}
+        tasks.put(task.hashCode(), task);
+        return task.hashCode();
+    }
 
-		@SuppressWarnings("unchecked")
-		private synchronized void appendResult(DefaultKeyValue keyValue) {
-			tempResults.add(keyValue);
-			
-			for(InnerIterator it : currentIterators){
-				it.resultBuffer.add(keyValue);				
-			}
-		}
-		
-		private synchronized InnerIterator createIterator(){
-			InnerIterator it = new InnerIterator(tempResults);
-			currentIterators.add(it);
-			
-			return it; 
-		}
+    public synchronized void removeQuery(int id) {
+        tasks.remove(id);
+    }
 
-		@Override
-		public Iterator<KeyValue> iterator() {
-			if(isDone() || isCancelled())
-				return tempResults.iterator();
-			
-			return createIterator();
-		}
-		
-		private class InnerIterator implements Iterator<KeyValue>{
+    public synchronized Iterable<KeyValue> retrieveQueryOutput(int id) {
+        QueryHandler task = tasks.get(id);
 
-			private Buffer resultBuffer;
-			
-			@SuppressWarnings("unchecked")
-			public InnerIterator(List<KeyValue> tempResults) {
-				int size = tempResults.size();
-				if(size <= 0)
-					size = 1;
-				resultBuffer = BufferUtils.blockingBuffer( new UnboundedFifoBuffer(size) );
-				resultBuffer.addAll(tempResults);
-			}
+        if (task == null)
+            return null;
 
-			@Override
-			public boolean hasNext() {
-				if(!(isCancelled() || isDone()))
-					return true;
-				
-				return !resultBuffer.isEmpty();
-			}
+        return task;
+    }
 
-			@Override
-			public KeyValue next() {
-				return (KeyValue) resultBuffer.remove();
-			}
+    private class QueryHandler extends JointQueryTask implements Iterable<KeyValue> {
 
-			@Override
-			public void remove() {				
-			}
-			
-		}
-		
-	}
+        private StringBuffer buffer;
+        private List<KeyValue> tempResults;
+        private List<InnerIterator> currentIterators;
 
-	public boolean isDone(int id) {
-		QueryHandler task = tasks.get(id);
-		
-		if(task == null)
-			return true;
-		
-		return task.isDone() || task.isCancelled();
-	}
-		
+        public QueryHandler() {
+            super();
+            buffer = new StringBuffer();
+            currentIterators = new ArrayList<InnerIterator>();
+            tempResults = new ArrayList<>();
+        }
+
+        @Override
+        public void onCompletion() {
+            // TODO Auto-generated method stub
+            System.out.println("Completed Query");
+        }
+
+        @Override
+        public void onReceive(Task<Iterable<SearchResult>> e) {
+            // TODO Auto-generated method stub
+            try {
+                System.out.println("RECEIVED NEW ITERATION: ");
+
+                Iterable<SearchResult> results = e.get();
+                DefaultKeyValue keyValue = new DefaultKeyValue(e.getName(), results);
+
+                appendResult(keyValue);
+
+                /*for(SearchResult res : results ){
+                	
+                }*/
+            } catch (InterruptedException | ExecutionException e1) {
+                // TODO Auto-generated catch block
+                // e1.printStackTrace();
+            }
+
+            buffer.append("Received Query: " + e.getName());
+        }
+
+        @SuppressWarnings("unchecked")
+        private synchronized void appendResult(DefaultKeyValue keyValue) {
+            tempResults.add(keyValue);
+
+            for (InnerIterator it : currentIterators) {
+                it.resultBuffer.add(keyValue);
+            }
+        }
+
+        private synchronized InnerIterator createIterator() {
+            InnerIterator it = new InnerIterator(tempResults);
+            currentIterators.add(it);
+
+            return it;
+        }
+
+        @Override
+        public Iterator<KeyValue> iterator() {
+            if (isDone() || isCancelled())
+                return tempResults.iterator();
+
+            return createIterator();
+        }
+
+        private class InnerIterator implements Iterator<KeyValue> {
+
+            private Buffer resultBuffer;
+
+            @SuppressWarnings("unchecked")
+            public InnerIterator(List<KeyValue> tempResults) {
+                int size = tempResults.size();
+                if (size <= 0)
+                    size = 1;
+                resultBuffer = BufferUtils.blockingBuffer(new UnboundedFifoBuffer(size));
+                resultBuffer.addAll(tempResults);
+            }
+
+            @Override
+            public boolean hasNext() {
+                if (!(isCancelled() || isDone()))
+                    return true;
+
+                return !resultBuffer.isEmpty();
+            }
+
+            @Override
+            public KeyValue next() {
+                return (KeyValue) resultBuffer.remove();
+            }
+
+            @Override
+            public void remove() {}
+
+        }
+
+    }
+
+    public boolean isDone(int id) {
+        QueryHandler task = tasks.get(id);
+
+        if (task == null)
+            return true;
+
+        return task.isDone() || task.isCancelled();
+    }
+
 }

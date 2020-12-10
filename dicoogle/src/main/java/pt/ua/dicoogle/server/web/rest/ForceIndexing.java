@@ -37,55 +37,55 @@ import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.task.Task;
 
-public class ForceIndexing extends ServerResource{
-    
-	private static final Logger log = LoggerFactory.getLogger(ForceIndexing.class);	
-	
+public class ForceIndexing extends ServerResource {
+
+    private static final Logger log = LoggerFactory.getLogger(ForceIndexing.class);
+
     @Get
-    public Representation represent(){
-    	
+    public Representation represent() {
+
         Form queryForm = getRequest().getResourceRef().getQueryAsForm();
-        //System.out.println("Fetching Data");
+        // System.out.println("Fetching Data");
         String[] uris = queryForm.getValuesArray("uri");
         String pluginName = queryForm.getValues("plugin");
-        
+
         PluginController pc = PluginController.getInstance();
-        //System.out.println("Generating Tasks");
-        List<Task<Report>> reports  = new ArrayList<>(uris.length);
-        for(String uriString : uris) {
+        // System.out.println("Generating Tasks");
+        List<Task<Report>> reports = new ArrayList<>(uris.length);
+        for (String uriString : uris) {
             URI u = null;
             try {
-                u = new URI(uriString.replaceAll(" ","%20"));
+                u = new URI(uriString.replaceAll(" ", "%20"));
             } catch (URISyntaxException ex) {
-            	log.error("Could not create URI", ex);
+                log.error("Could not create URI", ex);
                 ex.printStackTrace();
-            } 
-            if(u != null){
-            	log.info("Sent Index Request: {}, {}",pluginName, u.toString());
-            	if(pluginName == null)
-            		reports.addAll(pc.index(u));
-            	else
-            		reports.addAll(pc.index(pluginName,u));
+            }
+            if (u != null) {
+                log.info("Sent Index Request: {}, {}", pluginName, u.toString());
+                if (pluginName == null)
+                    reports.addAll(pc.index(u));
+                else
+                    reports.addAll(pc.index(pluginName, u));
             }
         }
-        
-        //System.out.println("Waiting for Results");
+
+        // System.out.println("Waiting for Results");
         List<Report> done = new ArrayList<>(reports.size());
         StringBuilder builder = new StringBuilder();
-        for(Task<Report> t : reports){
+        for (Task<Report> t : reports) {
             try {
-            	Report r = t.get();
+                Report r = t.get();
                 done.add(r);
                 builder.append(r).append("\n");
-            }catch(InterruptedException | ExecutionException ex){
-            	log.error("UNKNOW ERROR", ex);
-            	ex.printStackTrace();
+            } catch (InterruptedException | ExecutionException ex) {
+                log.error("UNKNOW ERROR", ex);
+                ex.printStackTrace();
             }
         }
-        //System.out.println("Exporting Results");
-        
+        // System.out.println("Exporting Results");
+
         log.info("Finished forced indexing procedure: {}", reports.size());
-        
+
         return new StringRepresentation(builder.toString(), MediaType.TEXT_PLAIN);
     }
 }

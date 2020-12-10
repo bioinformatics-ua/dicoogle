@@ -44,7 +44,7 @@ import java.util.*;
  */
 public class PluginsServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(PluginsServlet.class);
-    
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
@@ -123,13 +123,9 @@ public class PluginsServlet extends HttpServlet {
             if (all || "dead".equals(type)) {
                 writer.key("dead").array(); // begin dead plugins
                 for (DeadPlugin p : pc.getDeadPluginSets()) {
-                    writer.object()
-                          .key("name").value(p.getName())
-                          .key("cause").object()
-                            .key("class").value(p.getCause().getClass().getSimpleName())
-                            .key("message").value(p.getCause().getMessage())
-                            .endObject()
-                          .endObject();
+                    writer.object().key("name").value(p.getName()).key("cause").object().key("class")
+                            .value(p.getCause().getClass().getSimpleName()).key("message")
+                            .value(p.getCause().getMessage()).endObject().endObject();
                 }
                 writer.endArray(); // end dead plugins
             }
@@ -199,7 +195,8 @@ public class PluginsServlet extends HttpServlet {
             @Override
             public int compare(DicooglePlugin p1, DicooglePlugin p2) {
                 int c1 = Boolean.compare(p1.isEnabled(), p2.isEnabled());
-                if (c1 != 0) return c1;
+                if (c1 != 0)
+                    return c1;
                 return p1.getName().compareTo(p2.getName());
             }
         };
@@ -208,35 +205,27 @@ public class PluginsServlet extends HttpServlet {
         return l;
     }
 
-    private static JSONWriter writeBaseProps(JSONWriter writer, DicooglePlugin plugin, String type) throws JSONException {
-        return writer.key("name").value(plugin.getName())
-                .key("type").value(type)
-                .key("enabled").value(plugin.isEnabled());
+    private static JSONWriter writeBaseProps(JSONWriter writer, DicooglePlugin plugin, String type)
+            throws JSONException {
+        return writer.key("name").value(plugin.getName()).key("type").value(type).key("enabled")
+                .value(plugin.isEnabled());
     }
 
     private static JSONWriter writeQueryPlugin(JSONWriter writer, QueryInterface plugin) throws JSONException {
-        return writeBaseProps(writer.object(), plugin, "query")
-                .key("dim").value(null)
-                .endObject();
+        return writeBaseProps(writer.object(), plugin, "query").key("dim").value(null).endObject();
     }
 
     private static JSONWriter writeIndexPlugin(JSONWriter writer, IndexerInterface plugin) throws JSONException {
-        return writeBaseProps(writer.object(), plugin, "index")
-                .key("dim").value(null)
-                .endObject();
+        return writeBaseProps(writer.object(), plugin, "index").key("dim").value(null).endObject();
     }
 
     private static JSONWriter writeStoragePlugin(JSONWriter writer, StorageInterface plugin) throws JSONException {
-        return writeBaseProps(writer.object(), plugin, "storage")
-                .key("scheme").value(plugin.getScheme())
-                .key("default").value(null)
-                .endObject();
+        return writeBaseProps(writer.object(), plugin, "storage").key("scheme").value(plugin.getScheme()).key("default")
+                .value(null).endObject();
     }
 
     private static JSONWriter writeServletPlugin(JSONWriter writer, JettyPluginInterface plugin) throws JSONException {
-        return writeBaseProps(writer.object(), plugin, "servlet")
-                .key("endpoints").value(null)
-                .endObject();
+        return writeBaseProps(writer.object(), plugin, "servlet").key("endpoints").value(null).endObject();
     }
 
     private List<String> sanitizedSubpathParts(HttpServletRequest req) {

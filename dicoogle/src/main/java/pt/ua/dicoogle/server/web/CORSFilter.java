@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 public class CORSFilter implements Filter {
-    
+
     public static String ACCESS_CONTROL_ALLOW_ORIGIN_HEADER = "Access-Control-Allow-Origin";
     public static String ACCESS_CONTROL_ALLOW_HEADERS_HEADER = "Access-Control-Allow-Headers";
     public static String ACCESS_CONTROL_ALLOW_METHODS_HEADER = "Access-Control-Allow-Methods";
@@ -69,21 +69,22 @@ public class CORSFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest sreq, ServletResponse sresp, FilterChain fc) throws IOException, ServletException {
+    public void doFilter(ServletRequest sreq, ServletResponse sresp, FilterChain fc)
+            throws IOException, ServletException {
         if (sresp instanceof HttpServletResponse) {
             HttpServletResponse resp = (HttpServletResponse) sresp;
             if (allowedOrigins != null) {
                 resp.addHeader(ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, allowedOrigins);
             }
-            if (allowedHeaders!= null) {
+            if (allowedHeaders != null) {
                 resp.addHeader(ACCESS_CONTROL_ALLOW_HEADERS_HEADER, allowedHeaders);
             }
-            if (allowedAuthorization!=null)
+            if (allowedAuthorization != null)
                 resp.addHeader(ACCESS_CONTROL_ALLOW_AUTHORIZATION_HEADER, allowedAuthorization);
             resp.addHeader(ACCESS_CONTROL_ALLOW_METHODS_HEADER, allowedMethods);
         }
         if (sreq instanceof HttpServletRequest) {
-            HttpServletRequest req = (HttpServletRequest)sreq;
+            HttpServletRequest req = (HttpServletRequest) sreq;
             if (req.getMethod().equalsIgnoreCase("OPTIONS")) {
                 return;
             }
@@ -92,7 +93,6 @@ public class CORSFilter implements Filter {
     }
 
     @Override
-    public void destroy() {
-    }
+    public void destroy() {}
 
 }

@@ -42,8 +42,7 @@ import pt.ua.dicoogle.sdk.p2p.Messages.MessageI;
  *
  * @author Carlos Ferreira
  */
-public abstract class NetworkPluginAdapter implements GenericPluginInterface, Observer
-{
+public abstract class NetworkPluginAdapter implements GenericPluginInterface, Observer {
 
     private boolean isRunning = false;
     protected MainMessageHandler MMH;
@@ -77,25 +76,20 @@ public abstract class NetworkPluginAdapter implements GenericPluginInterface, Ob
 
     protected abstract MessageObservable getLastmessage();
 
-    public List<FileObservable> getRequestedFiles()
-    {
+    public List<FileObservable> getRequestedFiles() {
         return this.requestedFiles;
     }
 
-    public TaskQueue getTaskRequestsList()
-    {
+    public TaskQueue getTaskRequestsList() {
         return TaskRequestsList;
     }
 
     @Override
-    public void attendTask(TaskRequest task)
-    {
-    }
+    public void attendTask(TaskRequest task) {}
 
     @Override
-    public void initialize(TaskQueue tasks)
-    {
-        //System.out.println("NetworkPluginAdapter initialize");
+    public void initialize(TaskQueue tasks) {
+        // System.out.println("NetworkPluginAdapter initialize");
         this.isRunning = true;
         this.TaskRequestsList = tasks;
         mo = getInstance().initialize();
@@ -104,29 +98,24 @@ public abstract class NetworkPluginAdapter implements GenericPluginInterface, Ob
     }
 
     @Override
-    public void Stop()
-    {
+    public void Stop() {
         mo.deleteObserver(getInstance());
         this.isRunning = false;
         this.disconnect();
     }
 
     @Override
-    public ListObservableSearch<SearchResult> search(String query, Collection<String> extrafields)
-    {
+    public ListObservableSearch<SearchResult> search(String query, Collection<String> extrafields) {
         MessageBuilder mb = new MessageBuilder();
         MessageI message = null;
-        try
-        {
+        try {
             Integer qNumber;
-            synchronized (this.searchResults)
-            {
+            synchronized (this.searchResults) {
                 qNumber = QueryNumber.getInstance().getNewQueryNumber();
                 this.searchResults.resetArray();
             }
             message = mb.buildQueryMessage(query, extrafields, this.getName(), qNumber);
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             LoggerFactory.getLogger(NetworkPluginAdapter.class).error(ex.getMessage(), ex);
             return null;
         }
@@ -136,21 +125,17 @@ public abstract class NetworkPluginAdapter implements GenericPluginInterface, Ob
     }
 
     @Override
-    public ListObservableSearch<SearchResult> searchOne(String query, Collection<String> Extrafields, String address)
-    {
+    public ListObservableSearch<SearchResult> searchOne(String query, Collection<String> Extrafields, String address) {
         MessageBuilder mb = new MessageBuilder();
         MessageI message = null;
-        try
-        {
+        try {
             Integer qNumber;
-            synchronized (this.searchResults)
-            {
+            synchronized (this.searchResults) {
                 qNumber = QueryNumber.getInstance().getNewQueryNumber();
                 this.searchResults.resetArray();
             }
             message = mb.buildQueryMessage(query, Extrafields, this.getName(), qNumber);
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             LoggerFactory.getLogger(NetworkPluginAdapter.class).error(ex.getMessage(), ex);
             return null;
         }
@@ -160,15 +145,12 @@ public abstract class NetworkPluginAdapter implements GenericPluginInterface, Ob
     }
 
     @Override
-    public FileObservable requestFile(String address, String name, String hash)
-    {
+    public FileObservable requestFile(String address, String name, String hash) {
         MessageBuilder mb = new MessageBuilder();
         MessageI message = null;
-        try
-        {
+        try {
             message = mb.buildFileRequest(name, hash, this.getName());
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             LoggerFactory.getLogger(NetworkPluginAdapter.class).error(ex.getMessage(), ex);
             return null;
         }
@@ -179,34 +161,29 @@ public abstract class NetworkPluginAdapter implements GenericPluginInterface, Ob
     }
 
     @Override
-    public boolean isLocalPlugin()
-    {
+    public boolean isLocalPlugin() {
         return false;
     }
 
     @Override
-    public boolean isRunning()
-    {
+    public boolean isRunning() {
         return this.isRunning;
     }
 
     @Override
-    public void update(Observable o, Object arg)
-    {
-        //System.out.println("NetworkPluginPanel....some message received..."+ o.toString());
-        if (MessageObservable.class.isInstance(o))
-        {
+    public void update(Observable o, Object arg) {
+        // System.out.println("NetworkPluginPanel....some message received..."+ o.toString());
+        if (MessageObservable.class.isInstance(o)) {
             MessageObservable message = (MessageObservable) o;
-            //System.out.println("NPA....received the message:\n"+ message);
+            // System.out.println("NPA....received the message:\n"+ message);
             this.MMH.handleMessage((MessageI) message.getMessage(), message.getAddress());
-            
+
         }
     }
 
-    public ListObservable<SearchResult> getSearchResults()
-    {
+    public ListObservable<SearchResult> getSearchResults() {
         return searchResults;
     }
-    
-    
+
+
 }

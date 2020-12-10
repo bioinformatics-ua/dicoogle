@@ -53,15 +53,12 @@ import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
  */
 public class DicomEchoReply extends VerificationService {
 
-    
-    /** Settings */         
+
+    /** Settings */
     ServerSettings s = ServerSettingsManager.getSettings();
-    
-    private static final String[] TRANSF_CAP = {
-        UID.ImplicitVRLittleEndian,
-        UID.ExplicitVRBigEndian,
-        UID.ExplicitVRLittleEndian
-    };
+
+    private static final String[] TRANSF_CAP =
+            {UID.ImplicitVRLittleEndian, UID.ExplicitVRBigEndian, UID.ExplicitVRLittleEndian};
 
     /* Implemented SOP Class */
     private static final String SOP_CLASS = UID.VerificationSOPClass;
@@ -73,19 +70,23 @@ public class DicomEchoReply extends VerificationService {
 
     /**** Class Atributes ****/
 
-    private static final String MODULE_NAME = "DICOMWLS_EchoReply";                     /* DEFAULT Implemented module name */
-    private final NetworkApplicationEntity remoteAE = new NetworkApplicationEntity();   /* Remote Application Entity (client) */
-    private final NetworkConnection remoteConn = new NetworkConnection();               /* Remote connection associated with remoteAE */
-    private final Device device = new Device(MODULE_NAME);                              /* Module device */
-    private final NetworkApplicationEntity localAE = new NetworkApplicationEntity();    /* Local Application Entity (this server) 'ea' */
-    private final NetworkConnection localConn = new NetworkConnection();                /* Local connection associated with localAE 'conn' */
-    private boolean started = false;                                                    /* True if server is allready started */
+    private static final String MODULE_NAME = "DICOMWLS_EchoReply"; /* DEFAULT Implemented module name */
+    private final NetworkApplicationEntity remoteAE =
+            new NetworkApplicationEntity(); /* Remote Application Entity (client) */
+    private final NetworkConnection remoteConn =
+            new NetworkConnection(); /* Remote connection associated with remoteAE */
+    private final Device device = new Device(MODULE_NAME); /* Module device */
+    private final NetworkApplicationEntity localAE =
+            new NetworkApplicationEntity(); /* Local Application Entity (this server) 'ea' */
+    private final NetworkConnection localConn =
+            new NetworkConnection(); /* Local connection associated with localAE 'conn' */
+    private boolean started = false; /* True if server is allready started */
     private int port = 0;
 
 
 
     /* Module executor */
-    private static final Executor executor = (Executor) new NewThreadExecutor(MODULE_NAME);        /* Server thread */
+    private static final Executor executor = (Executor) new NewThreadExecutor(MODULE_NAME); /* Server thread */
 
 
 
@@ -93,12 +94,12 @@ public class DicomEchoReply extends VerificationService {
 
         super();
 
-        this.port = s.getDicomServicesSettings().getQueryRetrieveSettings().getPort() + DicomEchoReply.PORT_OFFSET; ;
+        this.port = s.getDicomServicesSettings().getQueryRetrieveSettings().getPort() + DicomEchoReply.PORT_OFFSET;;
         /* clients */
         this.remoteAE.setInstalled(true);
         this.remoteAE.setAssociationInitiator(true);
         this.remoteAE.setNetworkConnection(this.remoteConn);
-        
+
 
 
         /* server */
@@ -106,17 +107,16 @@ public class DicomEchoReply extends VerificationService {
         this.localAE.setInstalled(true);
         this.localAE.setAssociationAcceptor(true);
         this.localAE.setAssociationInitiator(false);
-        this.localAE.setNetworkConnection(this.localConn );
+        this.localAE.setNetworkConnection(this.localConn);
         this.localAE.setAETitle(s.getDicomServicesSettings().getAETitle() + DicomEchoReply.SERVICE_LABEL);
         this.localAE.register(new VerificationService());
         this.localAE.register(this);
 
-        TransferCapability[] tc = { new TransferCapability( DicomEchoReply.SOP_CLASS,
-                                                            DicomEchoReply.TRANSF_CAP,
-                                                            TransferCapability.SCP) };
+        TransferCapability[] tc =
+                {new TransferCapability(DicomEchoReply.SOP_CLASS, DicomEchoReply.TRANSF_CAP, TransferCapability.SCP)};
         this.localAE.setTransferCapability(tc);
 
-/*        this.localAE.setDIMSERspTimeout(confs.getWlsConfigs().getDIMSE_RSP_TIMEOUT());
+        /*        this.localAE.setDIMSERspTimeout(confs.getWlsConfigs().getDIMSE_RSP_TIMEOUT());
         this.localAE.setIdleTimeout(confs.getWlsConfigs().getIDLE_TIMEOUT());*/
 
         /*this.localAE.setMaxPDULengthReceive(confs.getWlsConfigs().getMAX_PDU_LENGTH_RECEIVE());
@@ -125,13 +125,13 @@ public class DicomEchoReply extends VerificationService {
         this.localAE.setSupportedCharacterSet("CharacterSetSup");*/
 
         this.localConn.setPort(this.port);
-        //this.localConn.setMaxScpAssociations(confs.getWlsConfigs().getMAX_CLIENT_ASSOCS());
+        // this.localConn.setMaxScpAssociations(confs.getWlsConfigs().getMAX_CLIENT_ASSOCS());
         /*this.localConn.setHostname(DicomWLS.LOCAL_HOST_NAME);*/
-       // this.localConn.setAcceptTimeout(confs.getWlsConfigs().getACCEPT_TIMEOUT());
-        //this.localConn.setConnectTimeout(confs.getWlsConfigs().getCONNECTION_TIMEOUT());
+        // this.localConn.setAcceptTimeout(confs.getWlsConfigs().getACCEPT_TIMEOUT());
+        // this.localConn.setConnectTimeout(confs.getWlsConfigs().getCONNECTION_TIMEOUT());
 
 
-        //this.device.setDescription(confs.getWlsConfigs().getDEVICE_DESCRIPTION());
+        // this.device.setDescription(confs.getWlsConfigs().getDEVICE_DESCRIPTION());
         this.device.setNetworkApplicationEntity(this.localAE);
         this.device.setNetworkConnection(this.localConn);
         /*this.device.setDeviceName(DicomWLS.MODULE_NAME);*/
@@ -176,8 +176,8 @@ public class DicomEchoReply extends VerificationService {
      * @param port
      */
     public final void setLocalPort(int port) {
-         int tmp = (port >= 1 && port <= 0xffff) ? port : 105;
-         this.localConn.setPort(tmp);
+        int tmp = (port >= 1 && port <= 0xffff) ? port : 105;
+        this.localConn.setPort(tmp);
     }
 
     /**
@@ -345,9 +345,8 @@ public class DicomEchoReply extends VerificationService {
      * @param ts
      */
     public void setTransferSyntax(String[] ts) {
-        TransferCapability[] tc = { new TransferCapability(
-                UID.ModalityWorklistInformationModelFIND, ts,
-                TransferCapability.SCU) };
+        TransferCapability[] tc =
+                {new TransferCapability(UID.ModalityWorklistInformationModelFIND, ts, TransferCapability.SCU)};
         this.localAE.setTransferCapability(tc);
     }
 
@@ -375,7 +374,7 @@ public class DicomEchoReply extends VerificationService {
                 CommandUtils.setIncludeUIDinRSP(true);
                 this.device.startListening(DicomEchoReply.executor);
             } catch (Exception ex) {
-                 return false;
+                return false;
             }
             this.started = true;
             return true;
@@ -404,15 +403,12 @@ public class DicomEchoReply extends VerificationService {
 
     @Override
     public String toString() {
-        return( "[START INFO PRINT]" + "\n" +
-                    "\tModuleName = " + DicomEchoReply.MODULE_NAME + "\n" +
-                    "\tLocalAETitle = " + this.localAE.getAETitle() + "\n" +
-                    "\tPort = " + this.localConn.getPort() + "\n" +
-                    "\tTransfereCapabilities = " + strVectConcat(this.localAE.getTransferCapability()[0].getTransferSyntax(), "; ") + "\n" +
-                    "\tModality = " + DicomEchoReply.SOP_CLASS + "\n" +
-                    "\tStarted = " + this.started + "\n" +
-                "[END INFO PRINT]" + "\n"
-              );
+        return ("[START INFO PRINT]" + "\n" + "\tModuleName = " + DicomEchoReply.MODULE_NAME + "\n"
+                + "\tLocalAETitle = " + this.localAE.getAETitle() + "\n" + "\tPort = " + this.localConn.getPort() + "\n"
+                + "\tTransfereCapabilities = "
+                + strVectConcat(this.localAE.getTransferCapability()[0].getTransferSyntax(), "; ") + "\n"
+                + "\tModality = " + DicomEchoReply.SOP_CLASS + "\n" + "\tStarted = " + this.started + "\n"
+                + "[END INFO PRINT]" + "\n");
     }
 
     @Override
@@ -420,11 +416,12 @@ public class DicomEchoReply extends VerificationService {
         super.cecho(as, pcid, cmd);
 
     }
-    
+
 
     private static String strVectConcat(String[] stVectIN, String sep) {
 
-        if (stVectIN == null) return new String("[any]");
+        if (stVectIN == null)
+            return new String("[any]");
 
         String temp = new String("");
         for (int i = 0; i < stVectIN.length - 1; i++)

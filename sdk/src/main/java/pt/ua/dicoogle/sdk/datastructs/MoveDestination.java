@@ -30,10 +30,8 @@ import java.util.Objects;
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 @JsonRootName("move-destination")
-@JsonAutoDetect(isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-        getterVisibility = JsonAutoDetect.Visibility.NONE)
-public class MoveDestination implements Serializable
-{
+@JsonAutoDetect(isGetterVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE)
+public class MoveDestination implements Serializable {
     static final long serialVersionUID = 2L;
 
     @JsonProperty("aetitle")
@@ -50,8 +48,8 @@ public class MoveDestination implements Serializable
 
     @JsonCreator
     public MoveDestination(@JsonProperty("aetitle") String AETitle, @JsonProperty("address") String ipAddr,
-                           @JsonProperty("port") int port, @JsonProperty("public") boolean isPublic,
-                           @JsonProperty("description") String description) {
+            @JsonProperty("port") int port, @JsonProperty("public") boolean isPublic,
+            @JsonProperty("description") String description) {
         this.AETitle = AETitle;
         this.ipAddrs = ipAddr;
         this.port = port;
@@ -70,39 +68,34 @@ public class MoveDestination implements Serializable
     /**
      * @return the AETitle
      */
-    public String getAETitle()
-    {
+    public String getAETitle() {
         return AETitle;
     }
 
     /**
      * @return the ipAddrs
      */
-    public String getIpAddrs()
-    {
+    public String getIpAddrs() {
         return ipAddrs;
     }
 
     /**
      * @return the port
      */
-    public int getPort()
-    {
+    public int getPort() {
         return port;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         String result;
-        result = "MoveDestination AET: " + this.AETitle + " (" + this.ipAddrs + ":" +
-                String.valueOf(this.port) + ")";
+        result = "MoveDestination AET: " + this.AETitle + " (" + this.ipAddrs + ":" + String.valueOf(this.port) + ")";
         if (!description.isEmpty()) {
             result += " - " + this.description;
         }
         result += "(" + (isPublic ? "Public)" : "Private)");
-        
-        return result ;
+
+        return result;
     }
 
 
@@ -128,14 +121,13 @@ public class MoveDestination implements Serializable
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         MoveDestination that = (MoveDestination) o;
-        return port == that.port &&
-                isPublic == that.isPublic &&
-                Objects.equals(AETitle, that.AETitle) &&
-                Objects.equals(ipAddrs, that.ipAddrs) &&
-                Objects.equals(description, that.description);
+        return port == that.port && isPublic == that.isPublic && Objects.equals(AETitle, that.AETitle)
+                && Objects.equals(ipAddrs, that.ipAddrs) && Objects.equals(description, that.description);
     }
 
     @Override

@@ -81,17 +81,15 @@ public class ServerSettingsTest {
         // SOP Classes
 
         // default
-        Collection<String> defaultTS = Arrays.asList(
-                "1.2.840.10008.1.2", "1.2.840.10008.1.2.1",
+        Collection<String> defaultTS = Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1",
                 "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.50");
-        assertSameContent(defaultTS, ((DicomServicesImpl)dcm).getDefaultTransferSyntaxes());
+        assertSameContent(defaultTS, ((DicomServicesImpl) dcm).getDefaultTransferSyntaxes());
 
-        Collection<SOPClass> sopClasses = Arrays.asList(
-                new SOPClass("1.2.840.10008.5.1.4.1.1.88.40", Collections.EMPTY_LIST),
-                new SOPClass("1.2.840.10008.5.1.4.1.1.77.1.1",Collections.EMPTY_LIST),
-                new SOPClass("1.2.840.10008.5.1.4.1.1.12.1.1", Arrays.asList(
-                        "1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.5"
-                )));
+        Collection<SOPClass> sopClasses =
+                Arrays.asList(new SOPClass("1.2.840.10008.5.1.4.1.1.88.40", Collections.EMPTY_LIST),
+                        new SOPClass("1.2.840.10008.5.1.4.1.1.77.1.1", Collections.EMPTY_LIST),
+                        new SOPClass("1.2.840.10008.5.1.4.1.1.12.1.1",
+                                Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.5")));
         Collection<SOPClass> sopClassesFromSettings = ((DicomServicesImpl) dcm).getRawSOPClasses();
         assertSameContent(sopClasses, sopClassesFromSettings);
 
@@ -108,10 +106,8 @@ public class ServerSettingsTest {
         assertEquals(25, qr.getMaxClientAssoc());
         assertEquals(16374, qr.getMaxPDULengthSend());
         assertEquals(16374, qr.getMaxPDULengthReceive());
-        assertSameContent(Arrays.asList("1.2.840.10008.1.2.2", "1.2.840.10008.1.2.1"),
-                qr.getTransferCapabilities());
-        assertSameContent(Collections.singleton("1.2.840.10008.5.1.4.1.2.1.1"),
-                qr.getSOPClass());
+        assertSameContent(Arrays.asList("1.2.840.10008.1.2.2", "1.2.840.10008.1.2.1"), qr.getTransferCapabilities());
+        assertSameContent(Collections.singleton("1.2.840.10008.5.1.4.1.2.1.1"), qr.getSOPClass());
 
         // DICOM Storage settings
         assertTrue(dcm.getStorageSettings().isAutostart());
@@ -122,17 +118,16 @@ public class ServerSettingsTest {
         assertTrue(web.isAutostart());
         assertEquals(8282, web.getPort());
         assertEquals("test.dicoogle.com", web.getAllowedOrigins());
-    /*
+        /*
         Map<String, String> modalityCFind = new HashMap<>();
         modalityCFind.put("find", "Study Root Query/Retrieve Info Model");
         modalityCFind.put("1.2.840.10008.5.1.4.1.2.1.1", "Patient Root Query/Retrieve Info Model");
         modalityCFind.put("1.2.840.10008.5.1.4.1.2.2.1", "Study Root Query/Retrieve Info Model");
         assertEquals(modalityCFind, settings.getModalityFind());
-    */
+        */
         // complex stuff
         List<MoveDestination> destinations = Collections.singletonList(
-                new MoveDestination("ANOTHER-STORAGE", "192.168.42.42",
-                        6666, false, "Our test storage"));
+                new MoveDestination("ANOTHER-STORAGE", "192.168.42.42", 6666, false, "Our test storage"));
         assertSameContent(destinations, dcm.getMoveDestinations());
     }
 
@@ -156,18 +151,16 @@ public class ServerSettingsTest {
         assertEquals("DICOOGLE-STORAGE", dcm.getAETitle());
 
         // default
-        Collection<String> defaultTS = Arrays.asList(
-                "1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.2",
-                "1.2.840.10008.1.2.4.70", "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.57",
-                "1.2.840.10008.1.2.4.90", "1.2.840.10008.1.2.4.91", "1.2.840.10008.1.2.5",
-                "1.2.840.10008.1.2.4.100", "1.2.840.10008.1.2.4.51");
-        assertSameContent(defaultTS, ((DicomServicesImpl)dcm).getDefaultTransferSyntaxes());
+        Collection<String> defaultTS = Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.2",
+                "1.2.840.10008.1.2.4.70", "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.57", "1.2.840.10008.1.2.4.90",
+                "1.2.840.10008.1.2.4.91", "1.2.840.10008.1.2.5", "1.2.840.10008.1.2.4.100", "1.2.840.10008.1.2.4.51");
+        assertSameContent(defaultTS, ((DicomServicesImpl) dcm).getDefaultTransferSyntaxes());
 
         Collection<SOPClass> expectedRawSOP = SOPList.getInstance().asSOPClassList();
-        assertSameContent(expectedRawSOP, ((DicomServicesImpl)dcm).getRawSOPClasses());
+        assertSameContent(expectedRawSOP, ((DicomServicesImpl) dcm).getRawSOPClasses());
 
         Collection<SOPClass> expectedSOP = new ArrayList<>(expectedRawSOP.size());
-        for (SOPClass sop: expectedRawSOP) {
+        for (SOPClass sop : expectedRawSOP) {
             expectedSOP.add(sop.withDefaultTS(defaultTS));
         }
         assertSameContent(expectedSOP, dcm.getSOPClasses());
@@ -214,8 +207,7 @@ public class ServerSettingsTest {
 
         settings.getArchiveSettings().setNodeName("dicoogle17");
         settings.getArchiveSettings().setDefaultStorage(Arrays.asList("filestorage", "dropbox"));
-        MoveDestination md = new MoveDestination("MORE-TESTING", "192.168.0.55",
-                6060, true, "DESCRIPTION");
+        MoveDestination md = new MoveDestination("MORE-TESTING", "192.168.0.55", 6060, true, "DESCRIPTION");
         dcm.addMoveDestination(md);
         dcm.getStorageSettings().setPort(6767);
 
@@ -224,23 +216,20 @@ public class ServerSettingsTest {
         // read from file
         settings = ServerSettingsManager.loadSettingsAt(target);
         assertEquals("dicoogle17", settings.getArchiveSettings().getNodeName());
-        assertSameContent(Arrays.asList("filestorage", "dropbox"),
-                settings.getArchiveSettings().getDefaultStorage());
+        assertSameContent(Arrays.asList("filestorage", "dropbox"), settings.getArchiveSettings().getDefaultStorage());
         assertEquals(6767, dcm.getStorageSettings().getPort());
 
         Collection<MoveDestination> destinations = Collections.singleton(md);
         assertSameContent(destinations, dcm.getMoveDestinations());
 
         // default
-        Collection<String> defaultTS = Arrays.asList(
-                "1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.2",
-                "1.2.840.10008.1.2.4.70", "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.57",
-                "1.2.840.10008.1.2.4.90", "1.2.840.10008.1.2.4.91", "1.2.840.10008.1.2.5",
-                "1.2.840.10008.1.2.4.100", "1.2.840.10008.1.2.4.51");
-        assertSameContent(defaultTS, ((DicomServicesImpl)dcm).getDefaultTransferSyntaxes());
+        Collection<String> defaultTS = Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.2",
+                "1.2.840.10008.1.2.4.70", "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.57", "1.2.840.10008.1.2.4.90",
+                "1.2.840.10008.1.2.4.91", "1.2.840.10008.1.2.5", "1.2.840.10008.1.2.4.100", "1.2.840.10008.1.2.4.51");
+        assertSameContent(defaultTS, ((DicomServicesImpl) dcm).getDefaultTransferSyntaxes());
 
         Collection<SOPClass> expectedRawSOP = SOPList.getInstance().asSOPClassList();
-        assertSameContent(expectedRawSOP, ((DicomServicesImpl)dcm).getRawSOPClasses());
+        assertSameContent(expectedRawSOP, ((DicomServicesImpl) dcm).getRawSOPClasses());
 
         // test remove move destination
         boolean removed = settings.getDicomServicesSettings().removeMoveDestination(md.getAETitle());
@@ -277,14 +266,15 @@ public class ServerSettingsTest {
 
         // QR settings
         assertEquals(106, settings.getDicomServicesSettings().getQueryRetrieveSettings().getPort());
-        assertSameContent(Collections.singleton("any"), settings.getDicomServicesSettings().getAllowedLocalInterfaces());
+        assertSameContent(Collections.singleton("any"),
+                settings.getDicomServicesSettings().getAllowedLocalInterfaces());
         assertSameContent(Collections.singleton("any"), settings.getDicomServicesSettings().getAllowedHostnames());
         assertEquals(3, settings.getDicomServicesSettings().getQueryRetrieveSettings().getRspDelay());
         assertEquals(50, settings.getDicomServicesSettings().getQueryRetrieveSettings().getDIMSERspTimeout());
         assertEquals(50, settings.getDicomServicesSettings().getQueryRetrieveSettings().getIdleTimeout());
         assertEquals(50, settings.getDicomServicesSettings().getQueryRetrieveSettings().getAcceptTimeout());
         assertEquals(50, settings.getDicomServicesSettings().getQueryRetrieveSettings().getConnectionTimeout());
-        //assertEquals("1.2.840.10008.5.1.4.1.2.1.1", settings.getSOPClasses());
+        // assertEquals("1.2.840.10008.5.1.4.1.2.1.1", settings.getSOPClasses());
         assertEquals(22, settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxClientAssoc());
         assertEquals(16360, settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthSend());
         assertEquals(16360, settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthReceive());
@@ -304,20 +294,17 @@ public class ServerSettingsTest {
 
 
         Collection<SOPClass> sopClasses = Arrays.asList(
-                new SOPClass("1.2.840.10008.5.1.4.1.1.88.40", Arrays.asList(
-                        "1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.50"
-                )),
-                new SOPClass("1.2.840.10008.5.1.4.1.1.77.1.1", Arrays.asList(
-                        "1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.50"
-                )),
-                new SOPClass("1.2.840.10008.5.1.1.30", Arrays.asList(
-                        "1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.50"
-                )));
+                new SOPClass("1.2.840.10008.5.1.4.1.1.88.40",
+                        Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.4.80",
+                                "1.2.840.10008.1.2.4.50")),
+                new SOPClass("1.2.840.10008.5.1.4.1.1.77.1.1",
+                        Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.4.80",
+                                "1.2.840.10008.1.2.4.50")),
+                new SOPClass("1.2.840.10008.5.1.1.30", Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1",
+                        "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.50")));
 
-        Collection<SOPClass> sopClassesFromSettings = settings.getDicomServicesSettings().getSOPClasses()
-                .stream()
-                .filter(c -> !c.getTransferSyntaxes().isEmpty())
-                .collect(Collectors.toList());
+        Collection<SOPClass> sopClassesFromSettings = settings.getDicomServicesSettings().getSOPClasses().stream()
+                .filter(c -> !c.getTransferSyntaxes().isEmpty()).collect(Collectors.toList());
 
         assertSameContent(sopClasses, sopClassesFromSettings);
 
@@ -346,11 +333,9 @@ public class ServerSettingsTest {
         assertTrue(settings instanceof ServerSettingsImpl);
         // assertions follow
 
-        Collection<String> defaultTS = Arrays.asList(
-                "1.2.840.10008.1.2", "1.2.840.10008.1.2.1",
-                "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.50"
-                );
-        assertSameContent(defaultTS, ((DicomServicesImpl)ds).getDefaultTransferSyntaxes());
+        Collection<String> defaultTS = Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1",
+                "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.50");
+        assertSameContent(defaultTS, ((DicomServicesImpl) ds).getDefaultTransferSyntaxes());
 
 
     }

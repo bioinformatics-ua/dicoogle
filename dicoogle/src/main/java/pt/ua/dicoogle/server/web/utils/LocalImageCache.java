@@ -45,214 +45,200 @@ import pt.ua.dicoogle.server.web.dicom.Convert2PNG;
  *
  * @author António Novo <antonio.novo@ua.pt>
  */
-public class LocalImageCache extends Thread implements ImageRetriever
-{
-	/**
-	 * The number of milliseconds to wait between pool cache directory pooling.
-	 */
-	private volatile int interval;
-	/**
-	 * The number of milliseconds that a file can stay in the cache without being used/read.
-	 */
-	private volatile int maxAge;
+public class LocalImageCache extends Thread implements ImageRetriever {
+    /**
+     * The number of milliseconds to wait between pool cache directory pooling.
+     */
+    private volatile int interval;
+    /**
+     * The number of milliseconds that a file can stay in the cache without being used/read.
+     */
+    private volatile int maxAge;
 
-	private final File cacheFolder;
-	private volatile boolean running;
+    private final File cacheFolder;
+    private volatile boolean running;
 
-	private final ConcurrentMap<String,File> filesBeingWritten;
-    
+    private final ConcurrentMap<String, File> filesBeingWritten;
+
     private final ImageRetriever under;
 
-	/**
-	 * Creates a local image cache that pools its cache directory at interval rates and deletes files older than maxAge.
-	 *
-	 * @param name the name of the cache directory.
-	 * @param interval the number of seconds to wait between pool cache directory pooling.
-	 * @param maxAge the number of seconds that a file can stay in the cache without being used/read.
+    /**
+     * Creates a local image cache that pools its cache directory at interval rates and deletes files older than maxAge.
+     *
+     * @param name the name of the cache directory.
+     * @param interval the number of seconds to wait between pool cache directory pooling.
+     * @param maxAge the number of seconds that a file can stay in the cache without being used/read.
      * @param under the underlying image retriever
-	 */
-	public LocalImageCache(String name, int interval, int maxAge, ImageRetriever under)
-	{
+     */
+    public LocalImageCache(String name, int interval, int maxAge, ImageRetriever under) {
         super("cache-" + name);
         Objects.requireNonNull(under);
 
-		if (interval < 1) {
-			this.interval = 1;
-		} else {
-			this.interval = interval;
-		}
-		this.interval *= 1000;
+        if (interval < 1) {
+            this.interval = 1;
+        } else {
+            this.interval = interval;
+        }
+        this.interval *= 1000;
 
-		if (maxAge < 1) {
+        if (maxAge < 1) {
             throw new IllegalArgumentException("Illegal maxAge");
         }
         this.maxAge = maxAge * 1000;
 
-		filesBeingWritten = new ConcurrentSkipListMap<>();
-		running = false;
-        
+        filesBeingWritten = new ConcurrentSkipListMap<>();
+        running = false;
+
         this.setDaemon(true);
         this.under = under;
-        
-		// create the temporary directory
-		File sysTmpDir = new File(System.getProperty("java.io.tmpdir"));
-		cacheFolder = new File(sysTmpDir, name);
-	}
 
-	/**
-	 * Deletes a directory and all its contents.
-	 *
-	 * @param dir the directory to delete.
-	 */
-	private static void deleteDirectory(File dir)
-	{
-		if ((dir == null) || (! dir.exists())) {
-			return;
-		}
+        // create the temporary directory
+        File sysTmpDir = new File(System.getProperty("java.io.tmpdir"));
+        cacheFolder = new File(sysTmpDir, name);
+    }
 
-		// delete all the files and folders inside this folder
-		for (File f : dir.listFiles()) {
-			if (f.isDirectory()) {
-				// if it's a sub-directory then delete its content
-				deleteDirectory(f);
-			} else {
-				f.delete();
-			}
-		}
+    /**
+     * Deletes a directory and all its contents.
+     *
+     * @param dir the directory to delete.
+     */
+    private static void deleteDirectory(File dir) {
+        if ((dir == null) || (!dir.exists())) {
+            return;
+        }
 
-		// remove the folder
-		dir.delete();
-	}
+        // delete all the files and folders inside this folder
+        for (File f : dir.listFiles()) {
+            if (f.isDirectory()) {
+                // if it's a sub-directory then delete its content
+                deleteDirectory(f);
+            } else {
+                f.delete();
+            }
+        }
 
-	@Override
-	public void start()
-	{
-		// abort if we couldn't make the temp dir
-		if (cacheFolder == null)
-			return;
-		if (! cacheFolder.exists())
-			if (! cacheFolder.mkdirs())
-				return;
-		cacheFolder.deleteOnExit();
+        // remove the folder
+        dir.delete();
+    }
 
-		// start running
-		super.start();
-	}
+    @Override
+    public void start() {
+        // abort if we couldn't make the temp dir
+        if (cacheFolder == null)
+            return;
+        if (!cacheFolder.exists())
+            if (!cacheFolder.mkdirs())
+                return;
+        cacheFolder.deleteOnExit();
 
-	@Override
-	public void run()
-	{
-		// if the cache isn't setup abort
-		if (! cacheFolder.exists())
-			return;
+        // start running
+        super.start();
+    }
 
-		running = true;
-		do
-		{
-			// check if there are any files worh deleting and if so do it
-			checkAndRemoveOldFiles();
+    @Override
+    public void run() {
+        // if the cache isn't setup abort
+        if (!cacheFolder.exists())
+            return;
 
-			// wait for the defined interval to be over
-			try {
-				Thread.sleep(interval);
-			} catch (InterruptedException ex) {
-				// do nothing
-			}
-		}
-		while (isRunning());
-	}
+        running = true;
+        do {
+            // check if there are any files worh deleting and if so do it
+            checkAndRemoveOldFiles();
 
-	/**
-	 * Stop this cache from checking for old files.
-	 */
-	public synchronized void terminate()
-	{
-		this.running = false;
+            // wait for the defined interval to be over
+            try {
+                Thread.sleep(interval);
+            } catch (InterruptedException ex) {
+                // do nothing
+            }
+        } while (isRunning());
+    }
 
-		// if needed wake the thread from its sleeping state
-		this.interrupt();
+    /**
+     * Stop this cache from checking for old files.
+     */
+    public synchronized void terminate() {
+        this.running = false;
 
-		// clear and delete the temporary folder
-		deleteDirectory(cacheFolder);
-	}
+        // if needed wake the thread from its sleeping state
+        this.interrupt();
 
-	/**
-	 * Loops through the cache folder and tries to removes old/un-used files.
-	 */
-	private synchronized void checkAndRemoveOldFiles()
-	{
-		// if the cache isn't setup abort
-		if (! cacheFolder.exists())
-			return;
+        // clear and delete the temporary folder
+        deleteDirectory(cacheFolder);
+    }
 
-		long currentTime = System.currentTimeMillis();
+    /**
+     * Loops through the cache folder and tries to removes old/un-used files.
+     */
+    private synchronized void checkAndRemoveOldFiles() {
+        // if the cache isn't setup abort
+        if (!cacheFolder.exists())
+            return;
 
-		// go through all the files inside the temp folder and check their last access
-		File[] files = cacheFolder.listFiles();
-		if (files == null) {
-			cacheFolder.mkdirs();
-			return;
-		}
-		for (File f : files)
-		{
-			// skip if the current file is a folder
-			if (f.isDirectory())
-				continue;
+        long currentTime = System.currentTimeMillis();
 
-			// check the last access done to the file, and if it's "past its due" tries to delete it
-			if (currentTime - f.lastModified() > maxAge)
-				f.delete();
-		}
-	}
+        // go through all the files inside the temp folder and check their last access
+        File[] files = cacheFolder.listFiles();
+        if (files == null) {
+            cacheFolder.mkdirs();
+            return;
+        }
+        for (File f : files) {
+            // skip if the current file is a folder
+            if (f.isDirectory())
+                continue;
 
-	/**
-	 * @return the interval
-	 */
-	public int getInterval()
-	{
-		return interval;
-	}
+            // check the last access done to the file, and if it's "past its due" tries to delete it
+            if (currentTime - f.lastModified() > maxAge)
+                f.delete();
+        }
+    }
 
-	/**
-	 * @param interval the interval to set
-	 */
-	public void setInterval(int interval)
-	{
-		if (interval < 1) {
-			this.interval = 1;
-		} else {
-			this.interval = interval;
-		}
-		this.interval *= 1000;
-	}
+    /**
+     * @return the interval
+     */
+    public int getInterval() {
+        return interval;
+    }
 
-	/**
-	 * @return the maxAge
-	 */
-	public int getMaxAge()
-	{
-		return maxAge;
-	}
+    /**
+     * @param interval the interval to set
+     */
+    public void setInterval(int interval) {
+        if (interval < 1) {
+            this.interval = 1;
+        } else {
+            this.interval = interval;
+        }
+        this.interval *= 1000;
+    }
 
-	/**
-	 * @param maxAge the maxAge to set
-	 */
-	public void setMaxAge(int maxAge)
-	{
-		if (maxAge > 1) {
-			this.maxAge = maxAge;
-		}
-	}
-    
+    /**
+     * @return the maxAge
+     */
+    public int getMaxAge() {
+        return maxAge;
+    }
+
+    /**
+     * @param maxAge the maxAge to set
+     */
+    public void setMaxAge(int maxAge) {
+        if (maxAge > 1) {
+            this.maxAge = maxAge;
+        }
+    }
+
     protected static String toFileName(String imageUri, int frameNumber, boolean thumbnail) {
         String filecode = imageUri + ':' + frameNumber + ':' + (thumbnail ? '1' : '0');
         return DigestUtils.sha256Hex(filecode) + ".png";
     }
-    
+
     @Override
     public InputStream get(URI uri, final int frameNumber, final boolean thumbnail) throws IOException {
         File f = this.implGetFile(toFileName(uri.toString(), frameNumber, thumbnail));
-        synchronized(f) {
+        synchronized (f) {
             if (f.exists()) {
                 return new FileInputStream(f);
             }
@@ -270,35 +256,35 @@ public class LocalImageCache extends Thread implements ImageRetriever
             }
             filesBeingWritten.remove(f.getAbsolutePath());
         }
-        
+
         // and return it
         return new ByteArrayInputStream(imageArray);
     }
 
-	private File implGetFile(String fileName) throws IOException {
-		// check if the file is currently being written to
+    private File implGetFile(String fileName) throws IOException {
+        // check if the file is currently being written to
         String thatFilePath = new File(fileName).getAbsolutePath();
         File f = this.filesBeingWritten.get(thatFilePath);
         if (f == null) {
             f = new File(cacheFolder, fileName);
         }
         return f;
-	}
-    
+    }
+
     private File implCreateFile(File f) throws IOException {
-        //f.createNewFile();
+        // f.createNewFile();
         f.deleteOnExit();
-		// if it does not exist add it to the list of files being written (because new content is going to be written to it outside this class) and create the empty file
-		filesBeingWritten.put(f.getAbsolutePath(), f);
-		// return the common handle to the currently created and empty file
+        // if it does not exist add it to the list of files being written (because new content is going to be written to it outside this class) and create the
+        // empty file
+        filesBeingWritten.put(f.getAbsolutePath(), f);
+        // return the common handle to the currently created and empty file
         return f;
     }
 
-	/**
-	 * @return if the caching mechanism for checking and removing old/un-used cache files is still running
-	 */
-	public boolean isRunning()
-	{
-		return running;
-	}
+    /**
+     * @return if the caching mechanism for checking and removing old/un-used cache files is still running
+     */
+    public boolean isRunning() {
+        return running;
+    }
 }

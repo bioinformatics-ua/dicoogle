@@ -32,8 +32,7 @@ package pt.ua.dicoogle.server.queryretrieve;
  * @since Nov 21, 2008
  *
  */
-public class EchoReplyService extends Thread 
-{
+public class EchoReplyService extends Thread {
     private DicomEchoReply echoReply = null;
 
     public EchoReplyService() {
@@ -45,9 +44,7 @@ public class EchoReplyService extends Thread
     }
 
     @Override
-    public void run() {
-    }
+    public void run() {}
 
-    public void  stopService() {
-    }
+    public void stopService() {}
 }

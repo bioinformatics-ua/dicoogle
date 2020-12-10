@@ -48,53 +48,53 @@ import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
+
 /**
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @since 17 Fev 2009
  */
-public class SearchDicomResult implements Iterator<DicomObject>
-{
+public class SearchDicomResult implements Iterator<DicomObject> {
 
-    public enum QUERYLEVEL { PATIENT, STUDY, SERIE, IMAGE}
+    public enum QUERYLEVEL {
+        PATIENT, STUDY, SERIE, IMAGE
+    }
 
-    private final QUERYLEVEL queryLevel; 
+    private final QUERYLEVEL queryLevel;
 
 
     /**
     * Get IndexCore
     */
-    
-    Collection<SearchResult> list = null ;
+
+    Collection<SearchResult> list = null;
     List<Patient> patientList = new ArrayList<>();
     List<Study> studyList = new ArrayList<>();
     List<Series> seriesList = new ArrayList<>();
-    Iterator it = null ;
-    
-    String currentFile ;
+    Iterator it = null;
+
+    String currentFile;
 
 
 
     private static ConcatTags concatTags = null;
-    private static  boolean concatTagsCheck = true;
+    private static boolean concatTagsCheck = true;
 
 
     private static final Logger logger = LoggerFactory.getLogger(SearchDicomResult.class);
 
-    public SearchDicomResult(String searchQuery, boolean isNetwork,
-			ArrayList<String> extrafields, QUERYLEVEL level) {
+    public SearchDicomResult(String searchQuery, boolean isNetwork, ArrayList<String> extrafields, QUERYLEVEL level) {
 
-		queryLevel = level;
+        queryLevel = level;
 
-		/**
-		 * Get the array list of resulst match searchQuery
-		 */
+        /**
+         * Get the array list of resulst match searchQuery
+         */
 
         logger.info("QUERY: " + searchQuery);
         logger.info("QUERYLEVEL: " + queryLevel);
 
-        if (concatTags==null&& concatTagsCheck)
-        {
+        if (concatTags == null && concatTagsCheck) {
             concatTags = new ConcatTags();
             try {
                 concatTags.parseConfig(ConcatTags.FILENAME);
@@ -105,116 +105,104 @@ public class SearchDicomResult implements Iterator<DicomObject>
             }
         }
 
-		HashMap<String, String> extraFields = new HashMap<String, String>();
-		for (String s : extrafields) {
-			extraFields.put(s, s);
-		}
+        HashMap<String, String> extraFields = new HashMap<String, String>();
+        for (String s : extrafields) {
+            extraFields.put(s, s);
+        }
 
-		JointQueryTask holder = new JointQueryTask() {
+        JointQueryTask holder = new JointQueryTask() {
 
-			@Override
-			public void onReceive(Task<Iterable<SearchResult>> e) {
-				// TODO Auto-generated method stub
+            @Override
+            public void onReceive(Task<Iterable<SearchResult>> e) {
+                // TODO Auto-generated method stub
 
-			}
+            }
 
-			@Override
-			public void onCompletion() {
-				// TODO Auto-generated method stub
+            @Override
+            public void onCompletion() {
+                // TODO Auto-generated method stub
 
-			}
-		};
+            }
+        };
 
-		// The method will retrieve all DICOM active query plugins (with empty list at argument)
+        // The method will retrieve all DICOM active query plugins (with empty list at argument)
         List<String> dicomQueryProviders = PluginController.getInstance().filterDicomQueryProviders(new ArrayList<>());
-		holder = PluginController.getInstance().query(holder, dicomQueryProviders, searchQuery,
-				extraFields);
+        holder = PluginController.getInstance().query(holder, dicomQueryProviders, searchQuery, extraFields);
 
-		try {
-			it = holder.get().iterator();
-			
-			list = new ArrayList<SearchResult>();
-			while (it.hasNext()) {
-				list.add((SearchResult) it.next());
-			}
-		} catch (InterruptedException | ExecutionException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+        try {
+            it = holder.get().iterator();
 
-		if(list != null)
-			it = list.iterator();
-		
-		if (level == QUERYLEVEL.PATIENT || level == QUERYLEVEL.STUDY) {
-			DIMGeneric dimModel = null;
-            try
-            {
-                if (concatTags==null)
+            list = new ArrayList<SearchResult>();
+            while (it.hasNext()) {
+                list.add((SearchResult) it.next());
+            }
+        } catch (InterruptedException | ExecutionException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+
+        if (list != null)
+            it = list.iterator();
+
+        if (level == QUERYLEVEL.PATIENT || level == QUERYLEVEL.STUDY) {
+            DIMGeneric dimModel = null;
+            try {
+                if (concatTags == null)
                     dimModel = new DIMGeneric(list);
                 else
                     dimModel = new DIMGeneric(concatTags, list);
 
-            } catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
 
-			ArrayList<Patient> listPatients = dimModel.getPatients();
+            ArrayList<Patient> listPatients = dimModel.getPatients();
 
-			for (Patient p : listPatients) {
-				studyList.addAll(p.getStudies());
-			}
+            for (Patient p : listPatients) {
+                studyList.addAll(p.getStudies());
+            }
 
-			it = studyList.iterator();
+            it = studyList.iterator();
 
-		} else if (level == QUERYLEVEL.SERIE) {
+        } else if (level == QUERYLEVEL.SERIE) {
 
             DIMGeneric dimModel = null;
-            try
-            {
-                if (concatTags==null)
+            try {
+                if (concatTags == null)
                     dimModel = new DIMGeneric(list);
                 else
                     dimModel = new DIMGeneric(concatTags, list);
-            } catch (Exception ex)
-            {
+            } catch (Exception ex) {}
+
+
+            ArrayList<Patient> listPatients = dimModel.getPatients();
+            for (Patient p : listPatients) {
+                studyList.addAll(p.getStudies());
+                for (Study s : p.getStudies()) {
+                    seriesList.addAll(s.getSeries());
+                }
             }
-            
+            it = seriesList.iterator();
 
-			ArrayList<Patient> listPatients = dimModel.getPatients();
-			for (Patient p : listPatients) {
-				studyList.addAll(p.getStudies());
-				for (Study s : p.getStudies()) {
-					seriesList.addAll(s.getSeries());
-				}
-			}
-			it = seriesList.iterator();
+        }
 
-		}
-
-	}
-
-    @Override
-    public boolean hasNext()
-    {
-      if (it!=null)
-      {
-        return it.hasNext();
-      }
-      else
-      {
-        return false;
-      }
-    }
-
-    public String getCurrentFile()
-    {
-        return this.currentFile ; 
     }
 
     @Override
-    public DicomObject next()
-    {
+    public boolean hasNext() {
+        if (it != null) {
+            return it.hasNext();
+        } else {
+            return false;
+        }
+    }
+
+    public String getCurrentFile() {
+        return this.currentFile;
+    }
+
+    @Override
+    public DicomObject next() {
 
         // TODO: this code need to be refactored
         // C-FIND RSP should be builded based on Search Result,
@@ -225,20 +213,18 @@ public class SearchDicomResult implements Iterator<DicomObject>
          */
         String path = ServerSettingsManager.getSettings().getArchiveSettings().getMainDirectory();
 
-        //DebugManager.getSettings().debug("Path of DICOM: "+path);
+        // DebugManager.getSettings().debug("Path of DICOM: "+path);
 
 
-        if (it != null &&  it.hasNext())
-        {
+        if (it != null && it.hasNext()) {
             Object next = it.next();
-            if (queryLevel==QUERYLEVEL.IMAGE )
-            {
+            if (queryLevel == QUERYLEVEL.IMAGE) {
 
-                SearchResult sR = (SearchResult)next;
-                
+                SearchResult sR = (SearchResult) next;
+
                 path = sR.getURI().toString();
-                currentFile = path ;
-                //DebugManager.getSettings().debug("-> Next::: " + next.toString());
+                currentFile = path;
+                // DebugManager.getSettings().debug("-> Next::: " + next.toString());
                 DicomInputStream din = null;
                 /*try
                 {
@@ -270,7 +256,7 @@ public class SearchDicomResult implements Iterator<DicomObject>
                     LoggerFactory.getLogger(SearchDicomResult.class).error(ex.getMessage(), ex);
                 }
                 */
-                
+
                 /** This code is refactored in a experimental branch
                  * Building a BasicDicomObject based on Indexing
                  * It will increase the performace
@@ -280,34 +266,33 @@ public class SearchDicomResult implements Iterator<DicomObject>
                 // Fill fields of study now
 
 
-                //System.out.println("Series : "+ serieTmp);
-                result.putString(Tag.InstitutionName, VR.CS,(String)sR.get("InstitutionName"));
+                // System.out.println("Series : "+ serieTmp);
+                result.putString(Tag.InstitutionName, VR.CS, (String) sR.get("InstitutionName"));
 
-                result.putString(Tag.StudyInstanceUID, VR.UI, (String)sR.get("StudyInstanceUID"));
-                result.putString(Tag.SeriesInstanceUID, VR.UI, (String)sR.get("SeriesInstanceUID"));
-                result.putString(Tag.SOPInstanceUID, VR.UI, (String)sR.get("SOPInstanceUID"));
-                result.putString(Tag.SeriesDescription, VR.LO, (String)sR.get("SeriesDescription"));
-                result.putString(Tag.SeriesDate, VR.TM, (String)sR.get("SeriesDate"));
-                result.putString(Tag.SeriesTime, VR.TM, (String)sR.get("SeriesTime"));
+                result.putString(Tag.StudyInstanceUID, VR.UI, (String) sR.get("StudyInstanceUID"));
+                result.putString(Tag.SeriesInstanceUID, VR.UI, (String) sR.get("SeriesInstanceUID"));
+                result.putString(Tag.SOPInstanceUID, VR.UI, (String) sR.get("SOPInstanceUID"));
+                result.putString(Tag.SeriesDescription, VR.LO, (String) sR.get("SeriesDescription"));
+                result.putString(Tag.SeriesDate, VR.TM, (String) sR.get("SeriesDate"));
+                result.putString(Tag.SeriesTime, VR.TM, (String) sR.get("SeriesTime"));
                 result.putString(Tag.QueryRetrieveLevel, VR.LO, "IMAGE");
 
-                result.putString(Tag.Modality, VR.CS,(String)sR.get("Modality"));
+                result.putString(Tag.Modality, VR.CS, (String) sR.get("Modality"));
 
-                result.putString(Tag.SeriesNumber, VR.IS, "" + (String)sR.get("SeriesNumber"));
+                result.putString(Tag.SeriesNumber, VR.IS, "" + (String) sR.get("SeriesNumber"));
 
 
                 return result;
 
-            }
-            else if (queryLevel == QUERYLEVEL.STUDY||queryLevel == QUERYLEVEL.PATIENT)
-            {
+            } else if (queryLevel == QUERYLEVEL.STUDY || queryLevel == QUERYLEVEL.PATIENT) {
 
-                Study studyTmp = (Study)next;
+                Study studyTmp = (Study) next;
                 BasicDicomObject result = new BasicDicomObject();
-                String patientName =studyTmp.getParent().getPatientName() ;
-                
+                String patientName = studyTmp.getParent().getPatientName();
+
                 try {
-                    patientName = new String(studyTmp.getParent().getPatientName().getBytes("ISO-8859-1"), "ISO-8859-1");
+                    patientName =
+                            new String(studyTmp.getParent().getPatientName().getBytes("ISO-8859-1"), "ISO-8859-1");
                 } catch (Exception ex) {
                     LoggerFactory.getLogger(SearchDicomResult.class).error(ex.getMessage(), ex);
                 }
@@ -316,8 +301,8 @@ public class SearchDicomResult implements Iterator<DicomObject>
                 } catch (Exception ex) {
                     LoggerFactory.getLogger(SearchDicomResult.class).error(ex.getMessage(), ex);
                 }
-                
-                //System.out.println("PatientName:"+patientName);
+
+                // System.out.println("PatientName:"+patientName);
                 result.putString(Tag.SpecificCharacterSet, VR.CS, "ISO_IR 100");
                 result.putString(Tag.PatientSex, VR.LO, studyTmp.getParent().getPatientSex());
                 result.putString(Tag.PatientID, VR.LO, studyTmp.getParent().getPatientID());
@@ -329,62 +314,61 @@ public class SearchDicomResult implements Iterator<DicomObject>
                 result.putString(Tag.StudyInstanceUID, VR.UI, studyTmp.getStudyInstanceUID());
                 result.putString(Tag.StudyDescription, VR.LO, studyTmp.getStudyDescription());
                 String modality = studyTmp.getSeries().get(0).getModality(); // Point of Failure, fix me
-                result.putString(Tag.ModalitiesInStudy, VR.CS,modality);
-                result.putString(Tag.Modality, VR.CS,modality);
+                result.putString(Tag.ModalitiesInStudy, VR.CS, modality);
+                result.putString(Tag.Modality, VR.CS, modality);
                 result.putString(Tag.InstitutionName, VR.CS, studyTmp.getInstitutuionName());
 
                 int instances = 0;
-                for (Series seriesTmp : studyTmp.getSeries())
-                {
-                    instances+= seriesTmp.getImageList().size();
+                for (Series seriesTmp : studyTmp.getSeries()) {
+                    instances += seriesTmp.getImageList().size();
                 }
 
-                result.putString(Tag.NumberOfStudyRelatedInstances, VR.IS,""+instances);
-                result.putString(Tag.NumberOfSeriesRelatedInstances, VR.IS,""+studyTmp.getSeries().size());
+                result.putString(Tag.NumberOfStudyRelatedInstances, VR.IS, "" + instances);
+                result.putString(Tag.NumberOfSeriesRelatedInstances, VR.IS, "" + studyTmp.getSeries().size());
 
 
                 return result;
-                
-            }
-            else if (queryLevel == QUERYLEVEL.SERIE)
-            {
+
+            } else if (queryLevel == QUERYLEVEL.SERIE) {
                 // Series
 
-                Series seriesTmp = (Series)next;
+                Series seriesTmp = (Series) next;
                 BasicDicomObject result = new BasicDicomObject();
-                //System.out.println("Series : "+ seriesTmp);
+                // System.out.println("Series : "+ seriesTmp);
                 result.putString(Tag.InstitutionName, VR.CS, seriesTmp.getParent().getInstitutuionName());
-                
+
                 result.putString(Tag.StudyInstanceUID, VR.UI, seriesTmp.getParent().getStudyInstanceUID());
                 result.putString(Tag.SeriesInstanceUID, VR.UI, seriesTmp.getSeriesInstanceUID());
                 result.putString(Tag.SeriesDescription, VR.LO, seriesTmp.getSeriesDescription());
                 result.putString(Tag.SeriesDate, VR.TM, seriesTmp.getSeriesDate());
                 result.putString(Tag.QueryRetrieveLevel, VR.LO, "SERIES");
                 String modality = seriesTmp.getModality(); // Point of Failure, fix me
-                result.putString(Tag.Modality, VR.CS,modality);
-                
+                result.putString(Tag.Modality, VR.CS, modality);
+
                 result.putString(Tag.SeriesNumber, VR.IS, "" + seriesTmp.getSeriesNumber());
 
 
-                result.putString(Tag.Modality, VR.CS,modality);
-                if (seriesTmp.getModality().equals("MG")|| seriesTmp.getModality().equals("CR"))
-                {
+                result.putString(Tag.Modality, VR.CS, modality);
+                if (seriesTmp.getModality().equals("MG") || seriesTmp.getModality().equals("CR")) {
 
                     result.putString(Tag.ViewPosition, null, seriesTmp.getViewPosition());
                     result.putString(Tag.ImageLaterality, null, seriesTmp.getImageLaterality());
-                    result.putString(Tag.AcquisitionDeviceProcessingDescription, VR.AE, seriesTmp.getAcquisitionDeviceProcessingDescription());
+                    result.putString(Tag.AcquisitionDeviceProcessingDescription, VR.AE,
+                            seriesTmp.getAcquisitionDeviceProcessingDescription());
                     DicomElement viewCodeSequence = result.putSequence(Tag.ViewCodeSequence);
                     DicomObject viewCodeSequenceObj = new BasicDicomObject();
                     viewCodeSequenceObj.setParent(result);
                     viewCodeSequenceObj.putString(Tag.CodeValue, null, seriesTmp.getViewCodeSequence_CodeValue());
-                    viewCodeSequenceObj.putString(Tag.CodingSchemeDesignator, null, seriesTmp.getViewCodeSequence_CodingSchemeDesignator());
-                    viewCodeSequenceObj.putString(Tag.CodingSchemeVersion, null, seriesTmp.getViewCodeSequence_CodingSchemeVersion());
+                    viewCodeSequenceObj.putString(Tag.CodingSchemeDesignator, null,
+                            seriesTmp.getViewCodeSequence_CodingSchemeDesignator());
+                    viewCodeSequenceObj.putString(Tag.CodingSchemeVersion, null,
+                            seriesTmp.getViewCodeSequence_CodingSchemeVersion());
                     viewCodeSequenceObj.putString(Tag.CodeMeaning, null, seriesTmp.getViewCodeSequence_CodeMeaning());
 
                     viewCodeSequence.addDicomObject(viewCodeSequenceObj);
                     result.putNestedDicomObject(Tag.ViewCodeSequence, viewCodeSequenceObj);
                 }
-                result.putString(Tag.NumberOfSeriesRelatedInstances, VR.IS,""+ seriesTmp.getImageList().size());
+                result.putString(Tag.NumberOfSeriesRelatedInstances, VR.IS, "" + seriesTmp.getImageList().size());
 
 
                 result.putString(Tag.SeriesNumber, VR.IS, "" + seriesTmp.getSeriesNumber());
@@ -394,20 +378,17 @@ public class SearchDicomResult implements Iterator<DicomObject>
 
                 return result;
 
-            }
-            else
-            {
+            } else {
                 System.err.println("ERROR: WRONG QUERY LEVEL!");
             }
-            
 
-        }    
-        return null ; 
+
+        }
+        return null;
     }
 
     @Override
-    public void remove()
-    {
+    public void remove() {
         throw new UnsupportedOperationException("Not supported. Nobody use it.");
     }
 }

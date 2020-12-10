@@ -53,11 +53,11 @@ public class Task<Type> extends FutureTask<Type> {
         taskName = name;
         toRunWhenComplete = new ArrayList<>();
     }
-    
+
     @Override
-    protected void set(Type ret){
+    protected void set(Type ret) {
         super.set(ret);
-        for(Runnable r : toRunWhenComplete){
+        for (Runnable r : toRunWhenComplete) {
             r.run();
         }
     }
@@ -66,26 +66,30 @@ public class Task<Type> extends FutureTask<Type> {
         return uid;
     }
 
-    public void onCompletion(Runnable r){
+    public void onCompletion(Runnable r) {
         toRunWhenComplete.add(r);
     }
-    
+
     /** Gets the task's name
      * @return a task name, for presentation purposes
      */
-    public String getName(){return this.taskName;}
-    
+    public String getName() {
+        return this.taskName;
+    }
+
     /** Sets the task's name
      * @param name the new task's name, for presentation purposes
      */
-    public void setName(String name){this.taskName = name;}
-    
+    public void setName(String name) {
+        this.taskName = name;
+    }
+
     /** Gets the task's progress
      * @return the task's progress from 0 to 1, or -1 if the task is unbounded
      */
-    public float getProgress(){
-        if (callable instanceof ProgressCallable){
-            return ((ProgressCallable)this.callable).getProgress();
+    public float getProgress() {
+        if (callable instanceof ProgressCallable) {
+            return ((ProgressCallable) this.callable).getProgress();
         }
         return -1;
     }

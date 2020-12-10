@@ -25,40 +25,33 @@ import java.util.Observable;
  *
  * @author Carlos Ferreira
  */
-public class FileObservable extends Observable implements Serializable
-{
+public class FileObservable extends Observable implements Serializable {
     private String fileOrigin;
     private String fileName;
     private String filePath = null;
 
-    public FileObservable(String fileOrigin, String fileName)
-    {
+    public FileObservable(String fileOrigin, String fileName) {
         this.fileOrigin = fileOrigin;
         this.fileName = fileName;
     }
 
-    public String getFileName()
-    {
+    public String getFileName() {
         return fileName;
     }
 
-    public String getFileOrigin()
-    {
+    public String getFileOrigin() {
         return fileOrigin;
     }
 
-    public String getFilePath()
-    {
+    public String getFilePath() {
         return filePath;
     }
 
-    public boolean isCompleted()
-    {
+    public boolean isCompleted() {
         return (this.filePath != null);
     }
 
-    public void setFilePath(String filePath)
-    {
+    public void setFilePath(String filePath) {
         this.filePath = filePath;
         this.setChanged();
         this.notifyObservers();

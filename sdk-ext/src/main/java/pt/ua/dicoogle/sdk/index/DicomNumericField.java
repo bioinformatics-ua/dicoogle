@@ -22,21 +22,19 @@ package pt.ua.dicoogle.sdk.index;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class DicomNumericField implements IDicomField
-{
- 
+public class DicomNumericField implements IDicomField {
+
     private String name;
     private Float value;
-    
 
-    public DicomNumericField(String name, Float value)
-    {
+
+    public DicomNumericField(String name, Float value) {
         this.name = name;
         this.value = value;
-        
+
     }
-    
-    
+
+
     /**
      * @return the name
      */

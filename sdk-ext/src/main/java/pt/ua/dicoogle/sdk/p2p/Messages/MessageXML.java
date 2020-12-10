@@ -29,25 +29,20 @@ import org.dom4j.io.SAXReader;
  * @author Carlos Ferreira
  * @author Pedro Bento
  */
-public class MessageXML implements MessageI<byte[]>
-{
+public class MessageXML implements MessageI<byte[]> {
     private String Message;
 
-    public MessageXML(byte[] message)
-    {
+    public MessageXML(byte[] message) {
         this.Message = new String(message);
     }
 
-    public String getType()
-    {
+    public String getType() {
         SAXReader saxReader = new SAXReader();
         ByteArrayInputStream input = new ByteArrayInputStream(Message.getBytes());
         Document document = null;
-        try
-        {
+        try {
             document = saxReader.read(input);
-        } catch (DocumentException ex)
-        {
+        } catch (DocumentException ex) {
             ex.printStackTrace(System.out);
         }
         Element root = document.getRootElement();
@@ -55,14 +50,12 @@ public class MessageXML implements MessageI<byte[]>
         return tmp.getText();
     }
 
-    public byte[] getMessage()
-    {
+    public byte[] getMessage() {
         return this.Message.getBytes();
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return this.Message;
     }
 }

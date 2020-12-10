@@ -32,7 +32,7 @@ import pt.ua.dicoogle.server.web.utils.ResponseUtil;
  *
  * @author Frederico Silva <fredericosilva@ua.pt>
  */
-public class LogoutServlet extends HttpServlet{
+public class LogoutServlet extends HttpServlet {
 
     private static final String TOKEN_HEADERNAME = "Authorization";
 
@@ -49,7 +49,7 @@ public class LogoutServlet extends HttpServlet{
         if (token != null && !token.equals("")) {
             Authentication.getInstance().logout(token);
         }
-        ResponseUtil.simpleResponse(resp,"success", logout);
+        ResponseUtil.simpleResponse(resp, "success", logout);
     }
 
 }

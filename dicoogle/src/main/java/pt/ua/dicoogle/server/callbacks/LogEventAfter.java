@@ -22,7 +22,6 @@ package pt.ua.dicoogle.server.callbacks;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public interface LogEventAfter
-{
+public interface LogEventAfter {
     public void doAfter(Object o);
 }

@@ -39,56 +39,52 @@ import pt.ua.dicoogle.sdk.task.Task;
  * @author Frederico Silva <fredericosilva@ua.pt>
  * @todo
  */
-public class WadoServlet extends HttpServlet{
+public class WadoServlet extends HttpServlet {
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		
-		String uid = req.getParameter("uid");
-		if (StringUtils.isEmpty(uid)) {
-            resp.sendError(400, "No uid supplied!\n"
-            		+ "/wado?uid=UID");
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        String uid = req.getParameter("uid");
+        if (StringUtils.isEmpty(uid)) {
+            resp.sendError(400, "No uid supplied!\n" + "/wado?uid=UID");
             return;
         }
-		
-		String query = "SOPInstanceUID:" + uid;
-		
-		HashMap<String, String> extraFields = new HashMap<>();
+
+        String query = "SOPInstanceUID:" + uid;
+
+        HashMap<String, String> extraFields = new HashMap<>();
         extraFields.put("SOPInstanceUID", "SOPInstanceUID");
-		
-		PluginController pc = PluginController.getInstance();
+
+        PluginController pc = PluginController.getInstance();
         JointQueryTask task = new MyHolder();
-        
+
         Iterable<SearchResult> results = null;
         try {
-			results = pc.queryAll(task, query, extraFields).get();
-		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
-		}
-        
-        
-        String uri ="not";
-        
+            results = pc.queryAll(task, query, extraFields).get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+
+        String uri = "not";
+
         ArrayList<SearchResult> resultsArr = new ArrayList<>();
         for (SearchResult r : results) {
             resultsArr.add(r);
-            
+
             uri = r.getURI().toURL().toString();
         }
-        
-        resp.getWriter().print(uri);
-	}
-	
-	 private static class MyHolder extends JointQueryTask {
-         
-	        @Override
-	        public void onCompletion() {
-	        }
 
-	        @Override
-	        public void onReceive(Task<Iterable<SearchResult>> e) {
-	        }
-	    }    
+        resp.getWriter().print(uri);
+    }
+
+    private static class MyHolder extends JointQueryTask {
+
+        @Override
+        public void onCompletion() {}
+
+        @Override
+        public void onReceive(Task<Iterable<SearchResult>> e) {}
+    }
 
 }

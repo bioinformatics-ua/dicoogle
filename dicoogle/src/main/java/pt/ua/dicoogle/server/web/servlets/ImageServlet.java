@@ -61,8 +61,7 @@ import pt.ua.dicoogle.server.web.utils.ResponseUtil;
  * @author Antonio
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
-public class ImageServlet extends HttpServlet
-{
+public class ImageServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(ImageServlet.class);
     private static final long serialVersionUID = 1L;
 
@@ -78,10 +77,10 @@ public class ImageServlet extends HttpServlet
     public ImageServlet(LocalImageCache cache) {
         this.cache = cache;
     }
-    
+
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-    {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         String sopInstanceUID = request.getParameter("SOPInstanceUID");
         String uri = request.getParameter("uri");
         String qsThumbnail = request.getParameter("thumbnail");
@@ -108,7 +107,7 @@ public class ImageServlet extends HttpServlet
         } else {
             frame = Integer.parseInt(sFrame);
         }
-        
+
         StorageInputStream imgFile;
         if (sopInstanceUID != null) {
             try {
@@ -135,7 +134,7 @@ public class ImageServlet extends HttpServlet
                     return;
                 }
                 imgFile = storages.next();
-                 
+
             } catch (URISyntaxException ex) {
                 ResponseUtil.sendError(response, 400, "Bad URI syntax");
                 return;
@@ -148,7 +147,7 @@ public class ImageServlet extends HttpServlet
             try {
                 InputStream istream = cache.get(imgFile.getURI(), frame, thumbnail);
                 response.setContentType("image/png");
-                try(ServletOutputStream out = response.getOutputStream()) {
+                try (ServletOutputStream out = response.getOutputStream()) {
                     IOUtils.copy(istream, out);
                 }
             } catch (IOException ex) {
@@ -158,7 +157,7 @@ public class ImageServlet extends HttpServlet
                 logger.error("Unexpected exception", ex);
                 ResponseUtil.sendError(response, 500, "Unexpected internal server error");
             }
-            
+
         } else {
             // if the cache is invalid or not running convert the image and return it "on-the-fly"
             try {
@@ -175,8 +174,9 @@ public class ImageServlet extends HttpServlet
             }
         }
     }
-    
-    private ByteArrayOutputStream getPNGStream(StorageInputStream imgFile, int frame, boolean thumbnail) throws IOException {
+
+    private ByteArrayOutputStream getPNGStream(StorageInputStream imgFile, int frame, boolean thumbnail)
+            throws IOException {
         ByteArrayOutputStream pngStream;
         if (thumbnail) {
             // retrieve thumbnail dimension settings
@@ -188,46 +188,45 @@ public class ImageServlet extends HttpServlet
         return pngStream;
     }
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // TODO this service does not make sense as a POST.
         // either remove or relocate to another resource
-        
-		String sop = req.getParameter("SOPInstanceUID");
-		if(sop == null){
-			resp.sendError(500, "No SOPInstanceUID in Request");
-			return;
-		}
 
-		float frameRate = Information.getFrameRateFromImage(sop);
-		if(frameRate == -1){
-			resp.sendError(500, "Cannot Locate the image File.");
-			return;
-		}
-		
-		int nFrames = Information.getNumberOfFramesInFile(sop);
-		
-		JSONObject r = new JSONObject();
-		r.put("SOPInstanceUID", sop);
-		r.put("NumberOfFrames", nFrames);
-		r.put("FrameRate", frameRate);
-		
-		resp.setContentType("application/json");
-		
-		PrintWriter wr = resp.getWriter();
-		wr.print(r.toString());	
-	}
+        String sop = req.getParameter("SOPInstanceUID");
+        if (sop == null) {
+            resp.sendError(500, "No SOPInstanceUID in Request");
+            return;
+        }
 
-    private static StorageInputStream getFileFromSOPInstanceUID(String sopInstanceUID, List<String> providers) throws IOException {
+        float frameRate = Information.getFrameRateFromImage(sop);
+        if (frameRate == -1) {
+            resp.sendError(500, "Cannot Locate the image File.");
+            return;
+        }
+
+        int nFrames = Information.getNumberOfFramesInFile(sop);
+
+        JSONObject r = new JSONObject();
+        r.put("SOPInstanceUID", sop);
+        r.put("NumberOfFrames", nFrames);
+        r.put("FrameRate", frameRate);
+
+        resp.setContentType("application/json");
+
+        PrintWriter wr = resp.getWriter();
+        wr.print(r.toString());
+    }
+
+    private static StorageInputStream getFileFromSOPInstanceUID(String sopInstanceUID, List<String> providers)
+            throws IOException {
         // TODO use only DIM sources?
         JointQueryTask qt = new JointQueryTask() {
             @Override
-            public void onCompletion() {
-            }
+            public void onCompletion() {}
+
             @Override
-            public void onReceive(Task<Iterable<SearchResult>> e) {
-            }
+            public void onReceive(Task<Iterable<SearchResult>> e) {}
         };
         try {
             if (providers == null) {
@@ -250,6 +249,6 @@ public class ImageServlet extends HttpServlet
             return store.next();
         } catch (InterruptedException | ExecutionException ex) {
             throw new IOException(ex);
-        }        
+        }
     }
 }

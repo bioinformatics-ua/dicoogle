@@ -25,32 +25,26 @@ package pt.ua.dicoogle.sdk.Utils;
  * @author Carlos Ferreira
  * @author Pedro Bento
  */
-public class QueryNumber
-{
+public class QueryNumber {
     private static Integer queryNumber;
     private static QueryNumber instance = null;
 
-    public static QueryNumber getInstance()
-    {
-        if (instance == null)
-        {
+    public static QueryNumber getInstance() {
+        if (instance == null) {
             instance = new QueryNumber();
         }
         return instance;
     }
 
-    private QueryNumber()
-    {
+    private QueryNumber() {
         queryNumber = new Integer(0);
     }
 
-    public Integer getNewQueryNumber()
-    {
+    public Integer getNewQueryNumber() {
         return ++queryNumber;
     }
 
-    public Integer getQueryNumber()
-    {
+    public Integer getQueryNumber() {
         return queryNumber;
     }
 }

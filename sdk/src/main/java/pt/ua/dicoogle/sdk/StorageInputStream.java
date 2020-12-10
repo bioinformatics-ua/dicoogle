@@ -35,14 +35,14 @@ public interface StorageInputStream {
      * @return the URI path of the file
      */
     public URI getURI();
-    
+
     /** Obtains a new input stream for reading the file.
      * 
      * @return a new input stream
      * @throws IOException if an I/O error occurs
      */
     public InputStream getInputStream() throws IOException;
-    
+
     /** Obtains the file's size.
      * 
      * @return the storage element's size in byte

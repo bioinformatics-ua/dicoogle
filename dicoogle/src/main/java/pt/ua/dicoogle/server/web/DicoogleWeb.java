@@ -126,8 +126,8 @@ public class DicoogleWeb {
     public DicoogleWeb(int port) throws Exception {
         logger.info("Starting Web Services in DicoogleWeb. Port: {}", port);
         System.setProperty("org.apache.jasper.compiler.disablejsr199", "true");
-        //System.setProperty("org.mortbay.jetty.webapp.parentLoaderPriority", "true");
-        //System.setProperty("production.mode", "true");
+        // System.setProperty("org.mortbay.jetty.webapp.parentLoaderPriority", "true");
+        // System.setProperty("production.mode", "true");
 
         this.port = port;
 
@@ -135,7 +135,7 @@ public class DicoogleWeb {
         final URL warUrl = Thread.currentThread().getContextClassLoader().getResource(WEBAPPDIR);
         final String warUrlString = warUrl.toExternalForm();
 
-        //setup the DICOM to PNG image servlet, with a local cache
+        // setup the DICOM to PNG image servlet, with a local cache
         cache = new LocalImageCache("dic2png", 300, 900, new SimpleImageRetriever()); // pooling rate of 12/hr and max un-used cache age of 15 minutes
         final ServletContextHandler dic2png = createServletHandler(new ImageServlet(cache), "/dic2png");
         cache.start(); // start the caching system
@@ -149,9 +149,9 @@ public class DicoogleWeb {
         csvServletHolder.addServlet(new ServletHolder(new ExportCSVToFILEServlet(tempDir)), "/exportFile");
 
         // setup the search (DIMSE-service-user C-FIND ?!?) servlet
-        //final ServletContextHandler search = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
-        //search.setContextPath(CONTEXTPATH);
-        //search.addServlet(new ServletHolder(new SearchServlet()), "/search");
+        // final ServletContextHandler search = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
+        // search.setContextPath(CONTEXTPATH);
+        // search.addServlet(new ServletHolder(new SearchServlet()), "/search");
 
         /*hooks = getRegisteredHookActions();
          plugin.addServlet(new ServletHolder(new PluginsServlet(hooks)), "/plugin/*");
@@ -164,64 +164,63 @@ public class DicoogleWeb {
         webpages.setInitParameter("cacheControl", "public, max-age=2592000"); // cache for 30 days
         webpages.setInitParameter("etags", "true"); // generate and handle weak entity validation tags
         webpages.setDisplayName("webapp");
-        webpages.setWelcomeFiles(new String[]{"index.html"});
+        webpages.setWelcomeFiles(new String[] {"index.html"});
         webpages.addServlet(new ServletHolder(new SearchHolderServlet()), "/search/holders");
         webpages.addFilter(GzipFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
-        
+
         this.pluginApp = new PluginRestletApplication();
         this.pluginHandler = createServletHandler(new RestletHttpServlet(this.pluginApp), "/ext/*");
 
         this.legacyApp = new LegacyRestletApplication();
         this.legacyHandler = createServletHandler(new RestletHttpServlet(this.legacyApp), "/legacy/*");
-        
+
         // Add Static RESTlet Plugins
         PluginRestletApplication.attachRestPlugin(new VersionResource());
-        
+
         // list the all the handlers mounted above
-        Handler[] handlers = new Handler[]{
-            pluginHandler,
-            legacyHandler,
-            dic2png,
-            dictags,
-            createServletHandler(new IndexerServlet(), "/indexer"), // DEPRECATED
-            createServletHandler(new SettingsServlet(), "/settings"),
-            csvServletHolder,
-            createServletHandler(new LoginServlet(), "/login"),
-            createServletHandler(new LogoutServlet(), "/logout"),
-            createServletHandler(new UserServlet(), "/user/*"),
-            createServletHandler(new SearchServlet(), "/search"),
-            createServletHandler(new SearchServlet(SearchType.PATIENT), "/searchDIM"),
-            createServletHandler(new DumpServlet(), "/dump"),
-            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.path) , "/management/settings/index/path"),
-            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.zip), "/management/settings/index/zip"),
-            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.effort), "/management/settings/index/effort"),
-            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnail), "/management/settings/index/thumbnail"),
-            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.watcher), "/management/settings/index/watcher"),
-            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnailSize), "/management/settings/index/thumbnail/size"),
-            createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.all), "/management/settings/index"),
-            createServletHandler(new TransferOptionsServlet(), "/management/settings/transfer"),
-            createServletHandler(new WadoServlet(), "/wado"),
-            createServletHandler(new ProvidersServlet(), "/providers"),
-            createServletHandler(new DicomQuerySettingsServlet(), "/management/settings/dicom/query"),
-            createServletHandler(new DimTagsServlet(TagsStruct.getInstance()), "/management/settings/dicom/tags"),
-            createServletHandler(new ForceIndexing(), "/management/tasks/index"),
-            createServletHandler(new UnindexServlet(), "/management/tasks/unindex"),
-            createServletHandler(new RemoveServlet(), "/management/tasks/remove"),
-            createServletHandler(new ServicesServlet(ServicesServlet.STORAGE), "/management/dicom/storage"),
-            createServletHandler(new ServicesServlet(ServicesServlet.QUERY), "/management/dicom/query"),
-            createServletHandler(new ServicesServlet(ServicesServlet.PLUGIN), "/management/plugins/"),
-            createServletHandler(new AETitleServlet(), "/management/settings/dicom"),
-            createServletHandler(new PluginsServlet(), "/plugins/*"),
-            createServletHandler(new PresetsServlet(), "/presets/*"),
-            createServletHandler(new WebUIServlet(), "/webui"),
-            createWebUIModuleServletHandler(),
-            createServletHandler(new LoggerServlet(), "/logger"),
-            createServletHandler(new RunningTasksServlet(), "/index/task"),
-            createServletHandler(new ExportServlet(ExportType.EXPORT_CVS), "/export/cvs"),
-            createServletHandler(new ExportServlet(ExportType.LIST), "/export/list"),
-            createServletHandler(new ServerStorageServlet(), "/management/settings/storage/dicom"),
-            webpages
-        };
+        Handler[] handlers = new Handler[] {pluginHandler, legacyHandler, dic2png, dictags,
+                createServletHandler(new IndexerServlet(), "/indexer"), // DEPRECATED
+                createServletHandler(new SettingsServlet(), "/settings"), csvServletHolder,
+                createServletHandler(new LoginServlet(), "/login"),
+                createServletHandler(new LogoutServlet(), "/logout"),
+                createServletHandler(new UserServlet(), "/user/*"),
+                createServletHandler(new SearchServlet(), "/search"),
+                createServletHandler(new SearchServlet(SearchType.PATIENT), "/searchDIM"),
+                createServletHandler(new DumpServlet(), "/dump"),
+                createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.path),
+                        "/management/settings/index/path"),
+                createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.zip),
+                        "/management/settings/index/zip"),
+                createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.effort),
+                        "/management/settings/index/effort"),
+                createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnail),
+                        "/management/settings/index/thumbnail"),
+                createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.watcher),
+                        "/management/settings/index/watcher"),
+                createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.thumbnailSize),
+                        "/management/settings/index/thumbnail/size"),
+                createServletHandler(new IndexerSettingsServlet(IndexerSettingsServlet.SettingsType.all),
+                        "/management/settings/index"),
+                createServletHandler(new TransferOptionsServlet(), "/management/settings/transfer"),
+                createServletHandler(new WadoServlet(), "/wado"),
+                createServletHandler(new ProvidersServlet(), "/providers"),
+                createServletHandler(new DicomQuerySettingsServlet(), "/management/settings/dicom/query"),
+                createServletHandler(new DimTagsServlet(TagsStruct.getInstance()), "/management/settings/dicom/tags"),
+                createServletHandler(new ForceIndexing(), "/management/tasks/index"),
+                createServletHandler(new UnindexServlet(), "/management/tasks/unindex"),
+                createServletHandler(new RemoveServlet(), "/management/tasks/remove"),
+                createServletHandler(new ServicesServlet(ServicesServlet.STORAGE), "/management/dicom/storage"),
+                createServletHandler(new ServicesServlet(ServicesServlet.QUERY), "/management/dicom/query"),
+                createServletHandler(new ServicesServlet(ServicesServlet.PLUGIN), "/management/plugins/"),
+                createServletHandler(new AETitleServlet(), "/management/settings/dicom"),
+                createServletHandler(new PluginsServlet(), "/plugins/*"),
+                createServletHandler(new PresetsServlet(), "/presets/*"),
+                createServletHandler(new WebUIServlet(), "/webui"), createWebUIModuleServletHandler(),
+                createServletHandler(new LoggerServlet(), "/logger"),
+                createServletHandler(new RunningTasksServlet(), "/index/task"),
+                createServletHandler(new ExportServlet(ExportType.EXPORT_CVS), "/export/cvs"),
+                createServletHandler(new ExportServlet(ExportType.LIST), "/export/list"),
+                createServletHandler(new ServerStorageServlet(), "/management/settings/storage/dicom"), webpages};
 
         // setup the server
         server = new Server(port);
@@ -229,7 +228,7 @@ public class DicoogleWeb {
         this.contextHandlers = new ContextHandlerCollection();
         this.contextHandlers.setHandlers(handlers);
         server.setHandler(this.contextHandlers);
-        
+
         // and then start the server
         server.start();
     }
@@ -247,7 +246,8 @@ public class DicoogleWeb {
             protected String etag(HttpServletRequest req) {
                 String name = req.getRequestURI().substring("/webui/module/".length());
                 WebUIPlugin plugin = PluginController.getInstance().getWebUIPlugin(name);
-                if (plugin == null) return null;
+                if (plugin == null)
+                    return null;
                 if (WebUIModuleServlet.isPrerelease(plugin.getVersion())) {
                     // pre-release, use hash (to facilitate development)
                     String fingerprint = PluginController.getInstance().getWebUIModuleJS(name);
@@ -270,10 +270,10 @@ public class DicoogleWeb {
         return handler;
     }
 
-    private ServletContextHandler createServletHandler(HttpServlet servlet, String path){
+    private ServletContextHandler createServletHandler(HttpServlet servlet, String path) {
         ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
         handler.setContextPath(CONTEXTPATH);
-        
+
         // CORS support
         this.addCORSFilter(handler);
 
@@ -288,7 +288,8 @@ public class DicoogleWeb {
             FilterHolder corsHolder = new FilterHolder(CORSFilter.class);
             corsHolder.setInitParameter(CORSFilter.ALLOWED_ORIGINS_PARAM, origins);
             corsHolder.setInitParameter(CORSFilter.ALLOWED_METHODS_PARAM, "GET,POST,HEAD,PUT,DELETE");
-            corsHolder.setInitParameter(CORSFilter.ALLOWED_HEADERS_PARAM, "X-Requested-With,Content-Type,Accept,Origin,Authorization,Content-Length");
+            corsHolder.setInitParameter(CORSFilter.ALLOWED_HEADERS_PARAM,
+                    "X-Requested-With,Content-Type,Accept,Origin,Authorization,Content-Length");
             handler.addFilter(corsHolder, "/*", EnumSet.of(DispatcherType.REQUEST));
         }
     }
@@ -301,15 +302,15 @@ public class DicoogleWeb {
 
         logger.debug("Applying CORS filter to {}", handler);
         if (handler instanceof ServletContextHandler) {
-            ServletContextHandler svHandler = (ServletContextHandler)handler;
+            ServletContextHandler svHandler = (ServletContextHandler) handler;
             this.addCORSFilter(svHandler);
             logger.debug("Applied CORS filter to {}!", svHandler);
         } else if (handler instanceof HandlerWrapper) {
-            for (Handler h : ((HandlerWrapper)handler).getHandlers()) {
+            for (Handler h : ((HandlerWrapper) handler).getHandlers()) {
                 addCORSFilter(h);
             }
         } else if (handler instanceof HandlerCollection) {
-            for (Handler h : ((HandlerCollection)handler).getHandlers()) {
+            for (Handler h : ((HandlerCollection) handler).getHandlers()) {
                 addCORSFilter(h);
             }
         }
@@ -339,7 +340,7 @@ public class DicoogleWeb {
                 cache = null;
             }
         }
-        
+
         this.pluginHandler = null;
     }
 
@@ -347,7 +348,7 @@ public class DicoogleWeb {
         this.contextHandlers.addHandler(handler);
 
         this.addCORSFilter(handler);
-        //this.server.setHandler(this.contextHandlers);
+        // this.server.setHandler(this.contextHandlers);
     }
 
     public void stopPluginWebServices() {
@@ -355,7 +356,7 @@ public class DicoogleWeb {
             this.contextHandlers.removeHandler(this.pluginHandler);
         }
     }
- 
+
     public void stopLegacyWebServices() {
         if (this.legacyHandler != null) {
             this.contextHandlers.removeHandler(this.legacyHandler);

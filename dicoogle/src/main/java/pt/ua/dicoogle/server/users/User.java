@@ -29,36 +29,33 @@ import java.util.Objects;
  * @author Samuel Campos <samuelcampos@ua.pt>
  * @author Luís Bastião Silva <bastiao@bmd-software.com>
  */
-public class User implements UserRoleManager{
+public class User implements UserRoleManager {
 
     private final String username;
-    private String hash;        //stores the Hash of this user (username + admin + passwordHash)
+    private String hash; // stores the Hash of this user (username + admin + passwordHash)
     private final boolean admin;
 
     private List<Role> roles = new ArrayList<>();
 
-    public User(String username, String hash, boolean admin){
+    public User(String username, String hash, boolean admin) {
         this.username = username;
         this.admin = admin;
         this.hash = hash;
     }
 
     public static User create(String username, boolean admin, char[] password) {
-        return new User(
-            username,
-            HashService.hashPassword(password),
-            admin);
+        return new User(username, HashService.hashPassword(password), admin);
     }
 
     public static User create(String username, boolean admin, String password) {
         return User.create(username, admin, password.toCharArray());
     }
 
-    public String getUsername(){
+    public String getUsername() {
         return username;
     }
 
-    public boolean isAdmin(){
+    public boolean isAdmin() {
         return admin;
     }
 
@@ -78,13 +75,11 @@ public class User implements UserRoleManager{
         return this.verifyPassword(password.toCharArray());
     }
 
-    public void addRole(Role r)
-    {
+    public void addRole(Role r) {
         this.roles.add(r);
     }
 
-    public boolean hasRole(Role r)
-    {
+    public boolean hasRole(Role r) {
         return this.roles.contains(r);
     }
 
@@ -96,7 +91,7 @@ public class User implements UserRoleManager{
      * @return whether the password was changed successfully
      */
     public boolean changePassword(char[] oldPassword, char[] newPassword) {
-        if(!this.verifyPassword(oldPassword))
+        if (!this.verifyPassword(oldPassword))
             return false;
 
         return this.resetPassword(newPassword);
@@ -121,8 +116,8 @@ public class User implements UserRoleManager{
      * after the operation; must not be empty
      * @return whether the password was changed successfully
      */
-    public boolean resetPassword(char[] password){
-        if(password.length == 0)
+    public boolean resetPassword(char[] password) {
+        if (password.length == 0)
             return false;
 
         this.hash = HashService.hashPassword(password);
@@ -149,8 +144,7 @@ public class User implements UserRoleManager{
 
         User tmp = (User) other;
 
-        if (username.equals(tmp.username) && hash.equals(tmp.hash)
-                && admin == tmp.admin) {
+        if (username.equals(tmp.username) && hash.equals(tmp.hash) && admin == tmp.admin) {
             return true;
         }
 

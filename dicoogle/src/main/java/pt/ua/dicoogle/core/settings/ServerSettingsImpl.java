@@ -55,9 +55,7 @@ public class ServerSettingsImpl implements ServerSettings {
     /** Create a new server settings instance with default configurations.
      */
     public static ServerSettingsImpl createDefault() {
-        return new ServerSettingsImpl(
-                WebServerImpl.createDefault(),
-                ArchiveImpl.createDefault(),
+        return new ServerSettingsImpl(WebServerImpl.createDefault(), ArchiveImpl.createDefault(),
                 DicomServicesImpl.createDefault());
     }
 
@@ -87,10 +85,7 @@ public class ServerSettingsImpl implements ServerSettings {
 
     @Override
     public String toString() {
-        return "ServerSettingsImpl{" +
-                "webServer=" + webServer +
-                ", archive=" + archive +
-                ", dicomServices=" + dicomServices +
-                '}';
+        return "ServerSettingsImpl{" + "webServer=" + webServer + ", archive=" + archive + ", dicomServices="
+                + dicomServices + '}';
     }
 }

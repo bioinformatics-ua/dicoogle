@@ -37,8 +37,8 @@ import pt.ua.dicoogle.sdk.PluginSet;
 
 public class PluginFactory {
     private static final Logger logger = LoggerFactory.getLogger(PluginFactory.class);
-    
-    public static Collection<PluginSet> getPlugins(File pluginDirectory){
+
+    public static Collection<PluginSet> getPlugins(File pluginDirectory) {
         if (pluginDirectory == null) {
             throw new NullPointerException("pluginDirectory");
         }
@@ -51,8 +51,8 @@ public class PluginFactory {
         PluginManagerUtil pmu = new PluginManagerUtil(pm);
         return pmu.getPlugins(PluginSet.class);
     }
-    
-     public static Collection<PluginSet> getPlugins(){
+
+    public static Collection<PluginSet> getPlugins() {
         return getPlugins(new File("Plugins"));
     }
 }

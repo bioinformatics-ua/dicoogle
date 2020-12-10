@@ -30,27 +30,24 @@ import javax.swing.filechooser.FileSystemView;
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author psytek
  */
-public class SystemInfo{
+public class SystemInfo {
 
-    public static File getHomeDirectory(){
+    public static File getHomeDirectory() {
         File result = null;
-        if (System.getProperty("os.name").toUpperCase().indexOf("WINDOWS") != -1){
+        if (System.getProperty("os.name").toUpperCase().indexOf("WINDOWS") != -1) {
             try {
                 Process p = Runtime.getRuntime().exec("cmd /c echo %HOMEDRIVE%%HOMEPATH%");
                 BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                try{
+                try {
                     p.waitFor();
-                }
-                catch (InterruptedException e) {
+                } catch (InterruptedException e) {
                     throw new IOException("Interrupted: " + e.getMessage());
                 }
                 result = new File(reader.readLine());
-            }
-            catch (IOException ex) {
+            } catch (IOException ex) {
                 LoggerFactory.getLogger(SystemInfo.class.getName()).error(ex.getMessage(), ex);
             }
-        }
-        else{
+        } else {
             result = FileSystemView.getFileSystemView().getHomeDirectory();
         }
         return result;

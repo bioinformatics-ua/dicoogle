@@ -33,46 +33,43 @@ import pt.ua.dicoogle.server.web.dicom.Information;
  *
  * @author António Novo <antonio.novo@ua.pt>
  */
-public class TagsServlet extends HttpServlet
-{
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-	{
-		String sopInstanceUID = request.getParameter("SOPInstanceUID");
-		if (sopInstanceUID == null || sopInstanceUID.trim().isEmpty()) // make sure that the SOPInstanceUID param is supplied
-		{
-			response.sendError(400, "Invalid SOP Instance UID!");
-			return;
-		}
-        
+public class TagsServlet extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String sopInstanceUID = request.getParameter("SOPInstanceUID");
+        if (sopInstanceUID == null || sopInstanceUID.trim().isEmpty()) // make sure that the SOPInstanceUID param is supplied
+        {
+            response.sendError(400, "Invalid SOP Instance UID!");
+            return;
+        }
+
         String[] providerArray = request.getParameterValues("provider");
         List<String> providers = providerArray == null ? null : Arrays.asList(providerArray);
 
-		// get the XML document containing the tags for that SOP Instance UID file
-		String xml = Information.getXMLTagListFromFile(sopInstanceUID, providers);
+        // get the XML document containing the tags for that SOP Instance UID file
+        String xml = Information.getXMLTagListFromFile(sopInstanceUID, providers);
 
-		// if no xml was retrieved, tell the client
-		if (xml == null)
-		{
-			response.sendError(404, "SOP Instance UID not indexed/found!");
-			return;
-		}
+        // if no xml was retrieved, tell the client
+        if (xml == null) {
+            response.sendError(404, "SOP Instance UID not indexed/found!");
+            return;
+        }
 
-		// get the returned xml as a UTF-8 byte array
-		byte[] data = xml.getBytes("UTF-8");
-		if (data == null)
-		{
-			response.sendError(500, "Could generate the resulting XML document!");
-			return;
-		}
+        // get the returned xml as a UTF-8 byte array
+        byte[] data = xml.getBytes("UTF-8");
+        if (data == null) {
+            response.sendError(500, "Could generate the resulting XML document!");
+            return;
+        }
 
-		response.setContentType("application/xml"); // set the appropriate type for the XML file
-		response.setContentLength(data.length); // set the document size
-		//response.setCharacterEncoding("UTF-8"); // set the apropriate encoding type
+        response.setContentType("application/xml"); // set the appropriate type for the XML file
+        response.setContentLength(data.length); // set the document size
+        // response.setCharacterEncoding("UTF-8"); // set the apropriate encoding type
 
-		// write the XML data to the response output
-		ServletOutputStream out = response.getOutputStream();
-		out.write(data);
-		out.close();
-	}
+        // write the XML data to the response output
+        ServletOutputStream out = response.getOutputStream();
+        out.write(data);
+        out.close();
+    }
 }

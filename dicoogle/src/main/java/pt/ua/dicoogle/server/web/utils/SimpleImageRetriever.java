@@ -41,7 +41,7 @@ import pt.ua.dicoogle.server.web.dicom.Convert2PNG;
 public class SimpleImageRetriever implements ImageRetriever {
 
     private static final Logger logger = LoggerFactory.getLogger(SimpleImageRetriever.class);
-    
+
     @Override
     public ByteArrayInputStream get(URI uri, int frame, boolean thumbnail) throws IOException {
         return getPNGStream(fromURI(uri), frame, thumbnail);
@@ -56,7 +56,8 @@ public class SimpleImageRetriever implements ImageRetriever {
         return store.next();
     }
 
-    private static ByteArrayInputStream getPNGStream(StorageInputStream imgFile, int frame, boolean thumbnail) throws IOException {
+    private static ByteArrayInputStream getPNGStream(StorageInputStream imgFile, int frame, boolean thumbnail)
+            throws IOException {
         ByteArrayOutputStream pngStream;
         if (thumbnail) {
             // retrieve thumbnail dimension settings
@@ -66,4 +67,5 @@ public class SimpleImageRetriever implements ImageRetriever {
             pngStream = Convert2PNG.DICOM2PNGStream(imgFile, frame);
         }
         return new ByteArrayInputStream(pngStream.toByteArray());
-    }}
+    }
+}

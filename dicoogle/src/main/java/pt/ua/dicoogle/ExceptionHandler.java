@@ -31,50 +31,47 @@ import javax.swing.JOptionPane;
  */
 class ExceptionHandler implements Thread.UncaughtExceptionHandler {
 
-  public static String getStackTrace(Throwable throwable)
-  {
-    Writer writer = new StringWriter();
-    PrintWriter printWriter = new PrintWriter(writer);
-    throwable.printStackTrace(printWriter);
-    return writer.toString();
-  }
-
-
-  public void uncaughtException(Thread t, Throwable e) {
-    handle(e);
-  }
-
-  public void handle(Throwable throwable) {
-    try {
-        /**
-         * Here you can insert code to send exception to email etc.
-         */
-        if (/*DebugManager.getSettings().isDebug()*/true) {
-            throwable.printStackTrace();
-        } else {
-            String msg = getStackTrace(throwable);
-            //Anonymous.getSettings().stop();
-            if (msg.contains("heap"))
-            {
-                JOptionPane.showMessageDialog(null, "Generic Error, see log.txt.\n\nError: lack of memory. You should increase memory \n",
-                    "Exception Error", JOptionPane.INFORMATION_MESSAGE);
-            
-            }
-            else
-            {    
-                 JOptionPane.showMessageDialog(null, "Generic Error, see log.txt.\n\nError: \n" + msg,
-                    "Exception Error", JOptionPane.INFORMATION_MESSAGE);
-            }
-            //DebugManager.getSettings().log(getStackTrace(throwable)+"\n");
-            System.err.println(getStackTrace(throwable)+"\n");
-        }
-      } catch (Throwable t) {
-      // don't let the exception get thrown out, will cause infinite looping!
+    public static String getStackTrace(Throwable throwable) {
+        Writer writer = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(writer);
+        throwable.printStackTrace(printWriter);
+        return writer.toString();
     }
-  }
 
-  public static void registerExceptionHandler() {
-    Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
-    System.setProperty("sun.awt.exception.handler", ExceptionHandler.class.getName());
-  }
+
+    public void uncaughtException(Thread t, Throwable e) {
+        handle(e);
+    }
+
+    public void handle(Throwable throwable) {
+        try {
+            /**
+             * Here you can insert code to send exception to email etc.
+             */
+            if (/*DebugManager.getSettings().isDebug()*/true) {
+                throwable.printStackTrace();
+            } else {
+                String msg = getStackTrace(throwable);
+                // Anonymous.getSettings().stop();
+                if (msg.contains("heap")) {
+                    JOptionPane.showMessageDialog(null,
+                            "Generic Error, see log.txt.\n\nError: lack of memory. You should increase memory \n",
+                            "Exception Error", JOptionPane.INFORMATION_MESSAGE);
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "Generic Error, see log.txt.\n\nError: \n" + msg,
+                            "Exception Error", JOptionPane.INFORMATION_MESSAGE);
+                }
+                // DebugManager.getSettings().log(getStackTrace(throwable)+"\n");
+                System.err.println(getStackTrace(throwable) + "\n");
+            }
+        } catch (Throwable t) {
+            // don't let the exception get thrown out, will cause infinite looping!
+        }
+    }
+
+    public static void registerExceptionHandler() {
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
+        System.setProperty("sun.awt.exception.handler", ExceptionHandler.class.getName());
+    }
 }

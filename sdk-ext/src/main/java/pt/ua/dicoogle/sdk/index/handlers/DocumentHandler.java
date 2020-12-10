@@ -25,7 +25,6 @@ import pt.ua.dicoogle.sdk.index.IDoc;
  * General interface to return a Lucene Document
  * @author Marco
  */
-public interface DocumentHandler
-{
+public interface DocumentHandler {
     IDoc getDocument(File file) throws DocumentHandlerException, FileAlreadyExistsException;
 }

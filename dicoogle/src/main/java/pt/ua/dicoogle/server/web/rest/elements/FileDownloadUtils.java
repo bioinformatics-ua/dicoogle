@@ -51,13 +51,13 @@ import pt.ua.dicoogle.server.web.rest.RestFileResource;
  * @author tiago
  */
 public class FileDownloadUtils {
-    
+
     public static OutputRepresentation gerFileRepresentation(String SOPInstanceUID) {
         String query = "SOPInstanceUID:" + SOPInstanceUID;
-        
+
         HashMap<String, String> extraFields = new HashMap<>();
         extraFields.put("SOPInstanceUID", "SOPInstanceUID");
-        
+
         PluginController pc = PluginController.getInstance();
         JointQueryTask task = new MyHolder();
         pc.queryAll(task, query, extraFields);
@@ -68,10 +68,10 @@ public class FileDownloadUtils {
             LoggerFactory.getLogger(RestFileResource.class).error(ex.getMessage(), ex);
             return null;
         }
-        
-        if(!queryResults.iterator().hasNext())
+
+        if (!queryResults.iterator().hasNext())
             return null;
-        
+
         URI fileURI = null;
         for (SearchResult r : queryResults) {
             LoggerFactory.getLogger(RestDimResource.class).error(r.getURI().toString());
@@ -79,57 +79,55 @@ public class FileDownloadUtils {
         }
 
         Iterable<StorageInputStream> str = pc.resolveURI(fileURI);
-        if(!str.iterator().hasNext())
+        if (!str.iterator().hasNext())
             return null;
-        
-        for(StorageInputStream s : str){
-            MyOutput out = new MyOutput(s, MediaType.register("application/dicom", 
-          "dicom medical data file"));
-            
+
+        for (StorageInputStream s : str) {
+            MyOutput out = new MyOutput(s, MediaType.register("application/dicom", "dicom medical data file"));
+
             System.out.println("Setting File Type");
             Disposition d = new Disposition(Disposition.TYPE_ATTACHMENT);
             String name = FilenameUtils.getName(s.getURI().getPath());
-            if(name.isEmpty())
+            if (name.isEmpty())
                 name = "Downloaded.dcm";
             d.setFilename(name);
-            
-                
+
+
             out.setDisposition(d);
-            
+
             return out;
         }
         return null;
     }
-        
+
     private static class MyHolder extends JointQueryTask {
-         
-        @Override
-        public void onCompletion() {
-        }
 
         @Override
-        public void onReceive(Task<Iterable<SearchResult>> e) {
-        }
-    }    
-     
-     private static class MyOutput extends OutputRepresentation{
+        public void onCompletion() {}
 
-         private final StorageInputStream stream;
+        @Override
+        public void onReceive(Task<Iterable<SearchResult>> e) {}
+    }
+
+    private static class MyOutput extends OutputRepresentation {
+
+        private final StorageInputStream stream;
 
         public MyOutput(StorageInputStream stream, MediaType mediaType) {
             super(mediaType);
             this.stream = stream;
         }
+
         @Override
-        public void write(OutputStream out) throws IOException  {
-             try {
-                 IOUtils.copy(stream.getInputStream(), out);
-             } catch (IOException ex) {
-                 LoggerFactory.getLogger(RestFileResource.class).error(ex.getMessage(), ex);
-                 throw ex;
-             }
-           
+        public void write(OutputStream out) throws IOException {
+            try {
+                IOUtils.copy(stream.getInputStream(), out);
+            } catch (IOException ex) {
+                LoggerFactory.getLogger(RestFileResource.class).error(ex.getMessage(), ex);
+                throw ex;
+            }
+
         }
-     }
-    
+    }
+
 }

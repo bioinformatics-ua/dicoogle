@@ -62,7 +62,7 @@ public class PluginPreparer {
         // inject platform with annotations
         logger.debug("Looking for annotations");
         Field[] fields = FieldUtils.getFieldsWithAnnotation(o.getClass(), InjectPlatformProxy.class);
-        for (Field f: fields) {
+        for (Field f : fields) {
             try {
                 boolean a = f.isAccessible();
                 f.setAccessible(true);

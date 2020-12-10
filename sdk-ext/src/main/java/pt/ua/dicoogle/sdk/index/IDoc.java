@@ -24,11 +24,12 @@ import java.util.List;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public interface IDoc 
-{
+public interface IDoc {
     public void add(String name, String value);
+
     public void add(String name, Float value);
-    public void add(String name, byte [] value);
-    
+
+    public void add(String name, byte[] value);
+
     public List<IDicomField> getDicomFields();
 }

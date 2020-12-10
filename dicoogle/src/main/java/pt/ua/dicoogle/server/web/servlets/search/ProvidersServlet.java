@@ -37,15 +37,14 @@ import pt.ua.dicoogle.sdk.DicooglePlugin;
  *
  * @author Frederico Silva <fredericosilva@ua.pt>
  */
-public class ProvidersServlet extends HttpServlet{
+public class ProvidersServlet extends HttpServlet {
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String paramType = req.getParameter("type");
-        
+
         final String type = paramType != null ? paramType : "query";
-		Collection<String> activeProviders;
+        Collection<String> activeProviders;
         switch (type) {
             case "index":
                 activeProviders = getIndexerNames();
@@ -60,15 +59,15 @@ public class ProvidersServlet extends HttpServlet{
                 resp.sendError(400);
                 return;
         }
-		
+
         JSONArray json = new JSONArray();
         json.addAll(activeProviders);
-		
+
         resp.setContentType("application/json");
-		resp.getWriter().print(json.toString());
-			
-	}
-	
+        resp.getWriter().print(json.toString());
+
+    }
+
     private static Collection<String> getIndexerNames() {
         return getPluginNames(PluginController.getInstance().getIndexingPlugins(true));
     }
@@ -76,7 +75,7 @@ public class ProvidersServlet extends HttpServlet{
     private Collection<String> getStorageNames() {
         return getPluginNames(PluginController.getInstance().getStoragePlugins(true));
     }
-    
+
     private static Collection<String> getPluginNames(Collection<? extends DicooglePlugin> plugins) {
         Collection<String> c = new ArrayList<>(plugins.size());
         for (DicooglePlugin p : plugins) {

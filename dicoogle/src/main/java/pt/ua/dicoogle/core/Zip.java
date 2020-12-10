@@ -38,8 +38,7 @@ import java.util.zip.ZipOutputStream;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class Zip implements Closeable
-{
+public class Zip implements Closeable {
 
     static final int BUFFER = 2048;
 
@@ -50,76 +49,66 @@ public class Zip implements Closeable
 
     private boolean createFile = false;
 
-    public Zip(String  zipName)
-    {
+    public Zip(String zipName) {
         this.zipName = zipName;
     }
 
-    public void createZip()
-    {
+    public void createZip() {
 
         // just do it one-time.
         if (createFile)
             return;
 
-        ServerSettings ss = ServerSettingsManager.getSettings() ;
+        ServerSettings ss = ServerSettingsManager.getSettings();
 
-        try 
-        {
-            System.out.println("DIR: "+getZipName());
+        try {
+            System.out.println("DIR: " + getZipName());
             FileOutputStream dest = new FileOutputStream(getZipName());
-            
-             out = new ZipOutputStream(new 
-           BufferedOutputStream(dest));
+
+            out = new ZipOutputStream(new BufferedOutputStream(dest));
 
 
-            //out.setMethod(ZipOutputStream.DEFLATED);
+            // out.setMethod(ZipOutputStream.DEFLATED);
             byte data[] = new byte[BUFFER];
 
 
             createFile = true;
-            
-        
-        } 
-        catch (Exception e)
-        {
+
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
 
-    public void addFile(byte [] arr)
-    {
+    public void addFile(byte[] arr) {
 
-        
+
     }
 
 
 
-    public void addFile(String fullPath)
-    {
+    public void addFile(String fullPath) {
 
         File file = new File(fullPath);
         byte data[] = new byte[BUFFER];
         FileInputStream fi = null;
-        try
-        {
+        try {
             fi = new FileInputStream(file);
         } catch (FileNotFoundException ex) {
             LoggerFactory.getLogger(Zip.class).error(ex.getMessage(), ex);
         }
         origin = new BufferedInputStream(fi, BUFFER);
         ZipEntry entry = new ZipEntry(fullPath);
-        if (out==null)
+        if (out == null)
             System.err.println("OUT NULL");
 
 
-        if (entry==null)
+        if (entry == null)
             System.err.println("entry NULL");
 
-        try
-        {
+        try {
             out.putNextEntry(entry);
         } catch (IOException ex) {
             LoggerFactory.getLogger(Zip.class).error(ex.getMessage(), ex);
@@ -140,8 +129,7 @@ public class Zip implements Closeable
 
     }
 
-    public void close()
-    {
+    public void close() {
         try {
             out.close();
         } catch (IOException ex) {
@@ -178,34 +166,33 @@ public class Zip implements Closeable
         this.zipName = zipName;
     }
 
-    
-    
-    public static void main(String [] args)
-    {
-    
-    
+
+
+    public static void main(String[] args) {
+
+
         long timeEncryptStart = System.currentTimeMillis();
         Zip zip = new Zip("/Volumes/Extend/dataset/IM-0001-0001.zip");
         zip.createZip();
         zip.addFile("/Volumes/Extend/dataset/XABraga/IM-0001-0001.dcm");
-        
+
         zip.close();
-                  
-            
-            long timeEncryptEnd = System.currentTimeMillis() - timeEncryptStart;
-            System.out.println("Encrypted in " + timeEncryptEnd + " (ms)");
-            
-            timeEncryptStart = System.currentTimeMillis();
-            
-            UnZip unzip = new UnZip("/Volumes/Extend/dataset/IM-0001-0001.zip");
-            unzip.loadFile();
-            unzip.decompress();
-            
-            timeEncryptEnd = System.currentTimeMillis() - timeEncryptStart;
-            System.out.println("Encrypted in " + timeEncryptEnd + " (ms)");
-            
-            
+
+
+        long timeEncryptEnd = System.currentTimeMillis() - timeEncryptStart;
+        System.out.println("Encrypted in " + timeEncryptEnd + " (ms)");
+
+        timeEncryptStart = System.currentTimeMillis();
+
+        UnZip unzip = new UnZip("/Volumes/Extend/dataset/IM-0001-0001.zip");
+        unzip.loadFile();
+        unzip.decompress();
+
+        timeEncryptEnd = System.currentTimeMillis() - timeEncryptStart;
+        System.out.println("Encrypted in " + timeEncryptEnd + " (ms)");
+
+
     }
-    
-    
+
+
 }

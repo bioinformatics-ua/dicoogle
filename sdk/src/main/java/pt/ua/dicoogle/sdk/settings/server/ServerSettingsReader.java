@@ -50,6 +50,7 @@ public interface ServerSettingsReader {
         @JsonGetter("allowed-origins")
         String getAllowedOrigins();
     }
+
     @JsonGetter("web-server")
     WebServer getWebServerSettings();
 
@@ -84,6 +85,7 @@ public interface ServerSettingsReader {
         @JsonGetter("node-name")
         String getNodeName();
     }
+
     @JsonGetter("archive")
     Archive getArchiveSettings();
 
@@ -153,9 +155,11 @@ public interface ServerSettingsReader {
             @JsonGetter("max-pdu-length-send")
             int getMaxPDULengthSend();
         }
+
         @JsonGetter("query-retrieve")
         QueryRetrieve getQueryRetrieveSettings();
     }
+
     @JsonGetter("dicom-services")
     DicomServices getDicomServicesSettings();
 }

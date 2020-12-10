@@ -23,9 +23,9 @@ import java.util.*;
 /**
  * Created by bastiao on 23/01/16.
  */
-public class RolesStruct implements RoleManager{
+public class RolesStruct implements RoleManager {
 
-    private static RolesStruct instance = null ;
+    private static RolesStruct instance = null;
 
     private Set<Role> roles = new HashSet<>();
     private Map<String, Role> rolesMap = new HashMap<String, Role>();
@@ -37,17 +37,18 @@ public class RolesStruct implements RoleManager{
 
         return instance;
     }
-    private RolesStruct(){
+
+    private RolesStruct() {
         reset();
     }
 
-    public void reset(){
+    public void reset() {
         roles = new HashSet<>();
     }
 
     @Override
     public boolean hasRole(User user, Role r) {
-        if (user==null||r==null)
+        if (user == null || r == null)
             return false;
         return UsersStruct.getInstance().getUser(user.getUsername()).hasRole(r);
     }

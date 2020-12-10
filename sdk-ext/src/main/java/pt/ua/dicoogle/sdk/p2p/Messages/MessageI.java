@@ -26,8 +26,8 @@ import java.io.Serializable;
  * @author Carlos Ferreira
  * @author Pedro Bento
  */
-public interface MessageI<I> extends Serializable
-{
+public interface MessageI<I> extends Serializable {
     public I getMessage();
+
     public String getType();
 }

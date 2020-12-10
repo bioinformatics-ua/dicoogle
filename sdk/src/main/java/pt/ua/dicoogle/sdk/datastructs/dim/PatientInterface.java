@@ -28,8 +28,11 @@ public interface PatientInterface {
 
 
     public String getPatientID();
+
     public String getPatientName();
+
     public String getPatientSex();
+
     public String getPatientBirthDate();
 
 }

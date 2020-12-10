@@ -23,5 +23,5 @@ package pt.ua.dicoogle.sdk.datastructs;
  * @author psytek
  */
 public class Report {
-    
+
 }

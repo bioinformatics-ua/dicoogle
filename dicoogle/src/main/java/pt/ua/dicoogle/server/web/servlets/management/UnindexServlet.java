@@ -52,7 +52,7 @@ import pt.ua.dicoogle.sdk.task.Task;
 public class UnindexServlet extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(UnindexServlet.class);
-    
+
     /**
      */
     private static final long serialVersionUID = 1L;
@@ -69,18 +69,16 @@ public class UnindexServlet extends HttpServlet {
 
         List<String> providers = providerArr != null ? Arrays.asList(providerArr) : null;
 
-        int paramCount = (paramUri != null ? 1 : 0)
-            + (paramSop != null ? 1 : 0)
-            + (paramSeries != null ? 1 : 0)
-            + (paramStudy != null ? 1 : 0);
+        int paramCount = (paramUri != null ? 1 : 0) + (paramSop != null ? 1 : 0) + (paramSeries != null ? 1 : 0)
+                + (paramStudy != null ? 1 : 0);
 
         if (paramCount == 0) {
-            ResponseUtil.sendError(
-                resp, 400, "No arguments provided; must include either one of `uri`, `SOPInstanceUID`, `SeriesInstanceUID` or `StudyInstanceUID`");
+            ResponseUtil.sendError(resp, 400,
+                    "No arguments provided; must include either one of `uri`, `SOPInstanceUID`, `SeriesInstanceUID` or `StudyInstanceUID`");
             return;
         } else if (paramCount > 1) {
-            ResponseUtil.sendError(
-                resp, 400, "No arguments provided; must include either one of `uri`, `SOPInstanceUID`, `SeriesInstanceUID` or `StudyInstanceUID`");
+            ResponseUtil.sendError(resp, 400,
+                    "No arguments provided; must include either one of `uri`, `SOPInstanceUID`, `SeriesInstanceUID` or `StudyInstanceUID`");
             return;
         }
 
@@ -115,8 +113,9 @@ public class UnindexServlet extends HttpServlet {
         resp.getWriter().write(obj.toString());
     }
 
-    /// Convert the given parameters into a list of URIs 
-    private static Collection<String> resolveURIs(String[] paramUri, String[] paramSop, String[] paramSeries, String[] paramStudy) {
+    /// Convert the given parameters into a list of URIs
+    private static Collection<String> resolveURIs(String[] paramUri, String[] paramSop, String[] paramSeries,
+            String[] paramStudy) {
         if (paramUri != null) {
             return Arrays.asList(paramUri);
         }
@@ -132,35 +131,30 @@ public class UnindexServlet extends HttpServlet {
         final String dcmAttribute = attribute;
         List<String> dicomProviders = ServerSettingsManager.getSettings().getArchiveSettings().getDIMProviders();
         if (dicomProviders.isEmpty()) {
-            return Arrays.stream(paramSop)
-                .flatMap(uid -> {
-                    // translate to URIs
-                    JointQueryTask holder = new JointQueryTask(){
-                        @Override
-                        public void onReceive(Task<Iterable<SearchResult>> e) {}
-                        @Override
-                        public void onCompletion() {}
-                        };
-                        try {
-                            return StreamSupport.stream(PluginController.getInstance()
-                                    .queryAll(holder, dcmAttribute + ":" + uid).get().spliterator(), false);
-                        } catch (InterruptedException|ExecutionException ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    })
-                .map(r -> r.getURI().toString())
-                .collect(Collectors.toList());
+            return Arrays.stream(paramSop).flatMap(uid -> {
+                // translate to URIs
+                JointQueryTask holder = new JointQueryTask() {
+                    @Override
+                    public void onReceive(Task<Iterable<SearchResult>> e) {}
+
+                    @Override
+                    public void onCompletion() {}
+                };
+                try {
+                    return StreamSupport.stream(PluginController.getInstance()
+                            .queryAll(holder, dcmAttribute + ":" + uid).get().spliterator(), false);
+                } catch (InterruptedException | ExecutionException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }).map(r -> r.getURI().toString()).collect(Collectors.toList());
 
         }
         String dicomProvider = dicomProviders.iterator().next();
-        return Arrays.stream(paramSop)
-            .flatMap(uid -> {
-                // translate to URIs
-                QueryInterface dicom = PluginController.getInstance().getQueryProviderByName(dicomProvider, false);
-                
-                return StreamSupport.stream(dicom.query(dcmAttribute + ":" + uid).spliterator(), false);
-            })
-            .map(r -> r.getURI().toString())
-            .collect(Collectors.toList());
+        return Arrays.stream(paramSop).flatMap(uid -> {
+            // translate to URIs
+            QueryInterface dicom = PluginController.getInstance().getQueryProviderByName(dicomProvider, false);
+
+            return StreamSupport.stream(dicom.query(dcmAttribute + ":" + uid).spliterator(), false);
+        }).map(r -> r.getURI().toString()).collect(Collectors.toList());
     }
 }

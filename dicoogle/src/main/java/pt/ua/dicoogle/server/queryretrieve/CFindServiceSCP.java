@@ -51,31 +51,31 @@ import pt.ua.dicoogle.server.DicomNetwork;
 public class CFindServiceSCP extends CFindService {
 
     private ServerSettings s = ServerSettingsManager.getSettings();
-    private int rspdelay = ServerSettingsManager.getSettings().getDicomServicesSettings().getQueryRetrieveSettings().getRspDelay();
-    
+    private int rspdelay =
+            ServerSettingsManager.getSettings().getDicomServicesSettings().getQueryRetrieveSettings().getRspDelay();
+
     private DicomNetwork service = null;
     private LuceneQueryACLManager luke = null;
 
     private boolean superSpeed = false;
-    
+
 
     public CFindServiceSCP(String[] multiSop, Executor e) {
         super(multiSop, e);
-        this.luke = null;        
+        this.luke = null;
     }
 
     public CFindServiceSCP(String[] multiSop, Executor e, LuceneQueryACLManager luke) {
         super(multiSop, e);
-        this.luke = luke;        
+        this.luke = luke;
     }
-    
+
     /*** CFIND */
     @Override
-    protected synchronized DimseRSP doCFind(Association as, int pcid,
-            DicomObject cmd, DicomObject keys, DicomObject rsp)
-            throws DicomServiceException {
+    protected synchronized DimseRSP doCFind(Association as, int pcid, DicomObject cmd, DicomObject keys,
+            DicomObject rsp) throws DicomServiceException {
 
-        //DebugManager.getSettings().debug("doCFind? -- > working on it");
+        // DebugManager.getSettings().debug("doCFind? -- > working on it");
 
 
         DimseRSP replay = null;
@@ -83,7 +83,7 @@ public class CFindServiceSCP extends CFindService {
         /**
          * Verify Permited AETs
          */
-        //DebugManager.getSettings().debug(":: Verify Permited AETs @??C-FIND Action ");
+        // DebugManager.getSettings().debug(":: Verify Permited AETs @??C-FIND Action ");
         boolean permited = false;
 
         if (s.getDicomServicesSettings().getAllowedAETitles().isEmpty()) {
@@ -94,12 +94,12 @@ public class CFindServiceSCP extends CFindService {
 
 
         if (!permited) {
-            //DebugManager.getSettings().debug("Client association NOT permited: " + as.getCallingAET() + "!");
-            //as.abort();
+            // DebugManager.getSettings().debug("Client association NOT permited: " + as.getCallingAET() + "!");
+            // as.abort();
 
-            //return new FindRSP(keys, rsp, null);
+            // return new FindRSP(keys, rsp, null);
         } else {
-            //DebugManager.getSettings().debug("Client association permited: " + as.getCallingAET() + "!");
+            // DebugManager.getSettings().debug("Client association permited: " + as.getCallingAET() + "!");
         }
 
 
@@ -116,11 +116,10 @@ public class CFindServiceSCP extends CFindService {
          * Search information at Lucene Indexer
          * So the FindRSP will fill the DimRSP
          */
-        replay = new FindRSP(keys, rsp,  as.getCallingAET(), luke);
+        replay = new FindRSP(keys, rsp, as.getCallingAET(), luke);
 
 
-        if (!superSpeed)
-        {
+        if (!superSpeed) {
             DicomElement e = keys.get(Tag.PatientName);
             String add = "";
             if (e != null) {
@@ -129,19 +128,18 @@ public class CFindServiceSCP extends CFindService {
 
             String queryParams = "";
 
-            for (Iterator<DicomElement> iterator = keys.iterator(); iterator.hasNext();)
-            {
+            for (Iterator<DicomElement> iterator = keys.iterator(); iterator.hasNext();) {
                 DicomElement element = iterator.next();
 
-                if (!element.isEmpty())
-                {
+                if (!element.isEmpty()) {
                     if (!ElementDictionary.getDictionary().nameOf(element.tag()).contains("Sequence"))
-                        queryParams += ElementDictionary.getDictionary().nameOf(element.tag()) + " - " + element.getValueAsString(new SpecificCharacterSet("UTF-8"), 0) + " ";
+                        queryParams += ElementDictionary.getDictionary().nameOf(element.tag()) + " - "
+                                + element.getValueAsString(new SpecificCharacterSet("UTF-8"), 0) + " ";
                 }
             }
 
-            LogLine ll = new LogLine("cfind", getDateTime(), as.getCallingAET(),
-                    as.toString() + " -- " + add, queryParams);
+            LogLine ll =
+                    new LogLine("cfind", getDateTime(), as.getCallingAET(), as.toString() + " -- " + add, queryParams);
             LogDICOM.getInstance().addLine(ll);
 
             synchronized (LogDICOM.getInstance()) {

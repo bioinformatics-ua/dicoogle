@@ -73,7 +73,8 @@ public class UserFileHandle {
                     gen.init(128, new SecureRandom());
                     key = gen.generateKey();
 
-                    try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(keyFile, StandardOpenOption.CREATE_NEW))) {
+                    try (ObjectOutputStream out =
+                            new ObjectOutputStream(Files.newOutputStream(keyFile, StandardOpenOption.CREATE_NEW))) {
                         out.writeObject(key);
                     }
                     try {
@@ -81,9 +82,11 @@ public class UserFileHandle {
                         Set<PosixFilePermission> perms = Collections.singleton(PosixFilePermission.OWNER_READ);
                         Files.setPosixFilePermissions(keyFile, perms);
                     } catch (UnsupportedOperationException ex2) {
-                        logger.warn("Local file system does not support POSIX file attributes, leaving encryption key file with default permissions", ex2);
+                        logger.warn(
+                                "Local file system does not support POSIX file attributes, leaving encryption key file with default permissions",
+                                ex2);
                     }
-                    
+
                     // a new key was successfully created
                     doEncrypt = true;
                 }
@@ -115,7 +118,7 @@ public class UserFileHandle {
                 logger.error("Users file \"{}\" is corrupted.", filename, e);
             } catch (InvalidKeyException e) {
                 logger.error("Invalid Key to decrypt users file.", e);
-            } catch (NoSuchAlgorithmException|NoSuchPaddingException e) {
+            } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
                 throw new RuntimeException(e);
             }
 
@@ -153,7 +156,7 @@ public class UserFileHandle {
         } catch (BadPaddingException ex) {
             logger.error("Invalid Key to decrypt users file! Please contact your system administator.");
             System.exit(2);
-        } catch (NoSuchAlgorithmException|NoSuchPaddingException e) {
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             throw new RuntimeException(e);
         } catch (IOException ex) {
             logger.error("Error writing file \"{}\".", filename, ex);

@@ -40,25 +40,23 @@ import pt.ua.dicoogle.server.web.utils.ResponseUtil;
 */
 public class TransferOptionsServlet extends HttpServlet {
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		String uid = req.getParameter("uid");
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String uid = req.getParameter("uid");
 
         resp.setContentType("application/json");
-		String soplist = SOPList.getInstance().getSOPList();
-		resp.getWriter().write(soplist);
-	}
+        String soplist = SOPList.getInstance().getSOPList();
+        resp.getWriter().write(soplist);
+    }
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-		String UID = req.getParameter("uid");
-		String option = req.getParameter("option");
-		String valueS = req.getParameter("value");
+        String UID = req.getParameter("uid");
+        String option = req.getParameter("option");
+        String valueS = req.getParameter("value");
 
-		if (UID == null) {
+        if (UID == null) {
             ResponseUtil.sendError(resp, 400, "No query UID Supplied: Please provide the field \"uid\"");
             return;
         }
@@ -73,12 +71,12 @@ public class TransferOptionsServlet extends HttpServlet {
             return;
         }
 
-		boolean value = Boolean.parseBoolean(valueS);
+        boolean value = Boolean.parseBoolean(valueS);
 
-		SOPList.getInstance().updateTSField(UID, option, value);
+        SOPList.getInstance().updateTSField(UID, option, value);
         ServerSettingsManager.saveSettings();
-		ResponseUtil.simpleResponse(resp, "success", true);
-	}
+        ResponseUtil.simpleResponse(resp, "success", true);
+    }
 
     public static class TransferenceOptionsResponse {
         List<Option> options;
@@ -99,8 +97,7 @@ public class TransferOptionsServlet extends HttpServlet {
         public static TransferenceOptionsResponse fromBooleanList(boolean[] tsList) {
             TransferenceOptionsResponse tor = new TransferenceOptionsResponse();
             for (int i = 0; i < tsList.length; i++) {
-                tor.options.add(new Option(
-                        TransfersStorage.globalTransferMap.get(i), tsList[i]));
+                tor.options.add(new Option(TransfersStorage.globalTransferMap.get(i), tsList[i]));
             }
             return tor;
         }

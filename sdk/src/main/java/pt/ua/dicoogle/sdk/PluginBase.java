@@ -35,16 +35,16 @@ import pt.ua.dicoogle.sdk.core.PlatformCommunicatorInterface;
  * @author Luís S. Ribeiro
  */
 public abstract class PluginBase implements PluginSet, PlatformCommunicatorInterface {
-    
-	protected List<IndexerInterface> indexPlugins = new ArrayList<>();
+
+    protected List<IndexerInterface> indexPlugins = new ArrayList<>();
     protected List<QueryInterface> queryPlugins = new ArrayList<>();
     protected List<JettyPluginInterface> jettyPlugins = new ArrayList<>();
     protected List<StorageInterface> storagePlugins = new ArrayList<>();
     protected List<ServerResource> services = new ArrayList<>();
     protected ConfigurationHolder settings = null;
-    
+
     protected DicooglePlatformInterface platform;
-    
+
     @Override
     public List<IndexerInterface> getIndexPlugins() {
         return indexPlugins;
@@ -54,38 +54,37 @@ public abstract class PluginBase implements PluginSet, PlatformCommunicatorInter
     public List<QueryInterface> getQueryPlugins() {
         return queryPlugins;
     }
-   
+
     @Override
     public List<ServerResource> getRestPlugins() {
         return services;
     }
-    
+
     @Override
-    public List<JettyPluginInterface> getJettyPlugins(){
+    public List<JettyPluginInterface> getJettyPlugins() {
         return jettyPlugins;
     }
-      
+
     @Override
     public abstract String getName();
-    
+
     @Override
-    public ConfigurationHolder getSettings(){
+    public ConfigurationHolder getSettings() {
         return settings;
     }
-    
+
     @Override
-    public void setSettings(ConfigurationHolder xmlSettings){
+    public void setSettings(ConfigurationHolder xmlSettings) {
         settings = xmlSettings;
     }
 
     @Override
-    public Collection<StorageInterface> getStoragePlugins() 
-    {
+    public Collection<StorageInterface> getStoragePlugins() {
         return storagePlugins;
     }
-    
+
     @Override
-	public void setPlatformProxy(DicooglePlatformInterface core) {
-		this.platform = core;
-	}
+    public void setPlatformProxy(DicooglePlatformInterface core) {
+        this.platform = core;
+    }
 }

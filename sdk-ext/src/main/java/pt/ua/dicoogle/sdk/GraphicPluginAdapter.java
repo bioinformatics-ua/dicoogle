@@ -22,10 +22,8 @@ package pt.ua.dicoogle.sdk;
  *
  * @author bastiao
  */
-public interface GraphicPluginAdapter extends GenericPluginInterface
-{
-    
+public interface GraphicPluginAdapter extends GenericPluginInterface {
+
     public void initGUI();
-    
+
 }
-  

@@ -59,7 +59,7 @@ public class LoginServlet extends HttpServlet {
         json_resp.put("admin", mLoggedIn.isAdmin());
         User u = UsersStruct.getInstance().getUser(mLoggedIn.getUserName());
         JSONArray rolesObj = new JSONArray();
-        if (u!=null&&u.getRoles()!=null) {
+        if (u != null && u.getRoles() != null) {
             for (Role r : u.getRoles()) {
                 rolesObj.add(r.getName());
             }
@@ -68,21 +68,20 @@ public class LoginServlet extends HttpServlet {
         }
         json_resp.put("token", mLoggedIn.getToken());
 
-        //Set response content type
+        // Set response content type
         resp.setContentType("application/json");
 
-        //Write response
+        // Write response
         json_resp.write(resp.getWriter());
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         String token = req.getHeader("Authorization");
         User user = Authentication.getInstance().getUsername(token);
 
-        if(user == null) {
+        if (user == null) {
             resp.sendError(401);
             return;
         }
@@ -97,10 +96,10 @@ public class LoginServlet extends HttpServlet {
 
         json_resp.put("roles", rolesObj);
 
-        //Set response content type
+        // Set response content type
         resp.setContentType("application/json");
 
-        //Write response
+        // Write response
         json_resp.write(resp.getWriter());
     }
 }

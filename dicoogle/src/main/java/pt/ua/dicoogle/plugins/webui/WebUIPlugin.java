@@ -47,7 +47,7 @@ public class WebUIPlugin implements Cloneable {
 
     @Override
     protected WebUIPlugin clone() throws CloneNotSupportedException {
-        return (WebUIPlugin)super.clone();
+        return (WebUIPlugin) super.clone();
     }
 
     /** Make a copy of the descriptor.
@@ -82,8 +82,7 @@ public class WebUIPlugin implements Cloneable {
             plugin.slotId = objDicoogle.getString("slot-id");
             plugin.moduleFile = objDicoogle.optString("module-file", "module.js");
             plugin.caption = objDicoogle.optString("caption", null);
-            if (objDicoogle.containsKey("roles"))
-            {
+            if (objDicoogle.containsKey("roles")) {
                 JSONArray rolesArr = objDicoogle.getJSONArray("roles");
 
                 Set<String> roles = new HashSet<>();
@@ -96,7 +95,7 @@ public class WebUIPlugin implements Cloneable {
             }
 
             return plugin;
-        } catch(JSONException ex) {
+        } catch (JSONException ex) {
             throw new PluginFormatException(ex);
         }
     }
@@ -144,7 +143,7 @@ public class WebUIPlugin implements Cloneable {
     public void setSettings(JSONObject holder) {
         this.settings = holder;
     }
-    
+
     /** Getter for the plugin's settings.
      * 
      * @return a JSON object containing the settings, empty object if no settings are stored
@@ -160,12 +159,11 @@ public class WebUIPlugin implements Cloneable {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-        
+
     @Override
     public String toString() {
-        return "WebUIPlugin{" + "name=" + name + ", description=" + description
-                + ", version=" + version + ", slotId=" + slotId
-                + ", moduleFile=" + moduleFile + ", enabled=" + enabled + '}';
+        return "WebUIPlugin{" + "name=" + name + ", description=" + description + ", version=" + version + ", slotId="
+                + slotId + ", moduleFile=" + moduleFile + ", enabled=" + enabled + '}';
     }
 
     public String getCaption() {

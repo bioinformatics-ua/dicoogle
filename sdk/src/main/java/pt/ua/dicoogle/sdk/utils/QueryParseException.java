@@ -30,7 +30,7 @@ package pt.ua.dicoogle.sdk.utils;
 public class QueryParseException extends QueryException {
     private static final long serialVersionUID = 2082328278641651574L;
 
-	public QueryParseException() {
+    public QueryParseException() {
         super();
     }
 

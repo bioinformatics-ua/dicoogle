@@ -26,39 +26,33 @@ import java.util.*;
 import java.io.*;
 
 public abstract class FileWatcher extends TimerTask {
-  private long timeStamp;
-  private File file;
+    private long timeStamp;
+    private File file;
 
-  public FileWatcher( File file )
-  {
-    this.file = file;
-    this.timeStamp = file.lastModified();    
-  }
+    public FileWatcher(File file) {
+        this.file = file;
+        this.timeStamp = file.lastModified();
+    }
 
     @Override
-  public final void run()
-  { 
-    /* STUPID WINDOWS HACK
-     * 
-     * windows does NOT update the modified time
-     * of a file until it is closed (DOS Legacy code)
-     * 
-     */
-    
-    if (System.getProperty("os.name").toUpperCase().indexOf("WINDOWS") != -1)
-    {
-        onChange(file);
-    }
-    else
-    {
-        long localtimeStamp = file.lastModified();    
-        if( this.timeStamp != localtimeStamp ) 
-        {
-            this.timeStamp = localtimeStamp;
+    public final void run() {
+        /* STUPID WINDOWS HACK
+         * 
+         * windows does NOT update the modified time
+         * of a file until it is closed (DOS Legacy code)
+         * 
+         */
+
+        if (System.getProperty("os.name").toUpperCase().indexOf("WINDOWS") != -1) {
             onChange(file);
+        } else {
+            long localtimeStamp = file.lastModified();
+            if (this.timeStamp != localtimeStamp) {
+                this.timeStamp = localtimeStamp;
+                onChange(file);
+            }
         }
     }
-  }
 
-  protected abstract void onChange( File file );
+    protected abstract void onChange(File file);
 }

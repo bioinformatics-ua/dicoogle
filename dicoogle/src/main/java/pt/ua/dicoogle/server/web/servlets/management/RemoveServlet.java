@@ -40,7 +40,7 @@ import pt.ua.dicoogle.plugins.PluginController;
 public class RemoveServlet extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(RemoveServlet.class);
-    
+
     /**
      */
     private static final long serialVersionUID = 1L;
@@ -58,7 +58,7 @@ public class RemoveServlet extends HttpServlet {
 
         URI[] effUris = new URI[uris.length];
         try {
-            for (int i = 0 ; i < effUris.length ; i++) {
+            for (int i = 0; i < effUris.length; i++) {
                 effUris[i] = new URI(uris[i]);
             }
         } catch (URISyntaxException ex) {

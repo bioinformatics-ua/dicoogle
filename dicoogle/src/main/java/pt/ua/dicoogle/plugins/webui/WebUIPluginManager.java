@@ -46,7 +46,7 @@ import org.slf4j.Logger;
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 public class WebUIPluginManager {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(WebUIPluginManager.class);
 
     private static class WebUIEntry {
@@ -61,12 +61,15 @@ public class WebUIPluginManager {
             this.directory = directory;
             this.zipPath = zipPath;
         }
+
         public WebUIEntry(WebUIPlugin plugin, String directory) {
             this(plugin, directory, null);
         }
+
         public boolean isZipped() {
             return this.zipPath != null;
         }
+
         public InputStream readFile(String file) throws IOException {
             if (this.isZipped()) {
                 ZipFile zip = new ZipFile(this.zipPath);
@@ -78,15 +81,15 @@ public class WebUIPluginManager {
         }
 
     }
-    
+
     private final Map<String, WebUIEntry> plugins;
     private final Set<WebUIPlugin> justPlugins;
-    
+
     public WebUIPluginManager() {
         this.plugins = new HashMap<>();
         this.justPlugins = new HashSet<>();
     }
-    
+
     public void loadAll(File directory) {
         assert directory != null;
         if (!directory.exists()) {
@@ -97,9 +100,10 @@ public class WebUIPluginManager {
             logger.warn("Can't load web UI plugins, file {} is not a directory", directory);
             return;
         }
-        
+
         for (File f : directory.listFiles()) {
-            if (!f.isDirectory()) continue;
+            if (!f.isDirectory())
+                continue;
             try {
                 WebUIPlugin plugin = this.load(f);
                 logger.info("Loaded web plugin: {}", plugin.getName());
@@ -110,7 +114,7 @@ public class WebUIPluginManager {
             }
         }
     }
-    
+
     public WebUIPlugin load(File directory) throws IOException, PluginFormatException {
         assert directory != null;
         assert directory.isDirectory();
@@ -122,7 +126,7 @@ public class WebUIPluginManager {
             while ((line = reader.readLine()) != null) {
                 acc += line;
             }
-            WebUIPlugin plugin = WebUIPlugin.fromPackageJSON((JSONObject)JSONSerializer.toJSON(acc));
+            WebUIPlugin plugin = WebUIPlugin.fromPackageJSON((JSONObject) JSONSerializer.toJSON(acc));
             File moduleFile = new File(directory.getAbsolutePath() + File.separatorChar + plugin.getModuleFile());
             if (!moduleFile.canRead()) {
                 throw new IOException("Module file " + moduleFile.getName() + " cannot be read");
@@ -140,7 +144,8 @@ public class WebUIPluginManager {
     public void loadAllFromZip(ZipFile pluginZip) throws IOException {
         assert pluginZip != null;
         logger.trace("Discovering web UI plugins in {} ...", pluginZip.getName());
-        Pattern pckDescrMatcher = Pattern.compile("WebPlugins\\" + File.separatorChar + "(\\p{Alnum}|\\-|\\_)+\\" + File.separatorChar + "package.json");
+        Pattern pckDescrMatcher = Pattern.compile(
+                "WebPlugins\\" + File.separatorChar + "(\\p{Alnum}|\\-|\\_)+\\" + File.separatorChar + "package.json");
         Enumeration<? extends ZipEntry> entries = pluginZip.entries();
         final int DIRNAME_TAIL = "/package.json".length();
         while (entries.hasMoreElements()) {
@@ -154,7 +159,7 @@ public class WebUIPluginManager {
                     while ((line = reader.readLine()) != null) {
                         acc += line;
                     }
-                    WebUIPlugin plugin = WebUIPlugin.fromPackageJSON((JSONObject)JSONSerializer.toJSON(acc));
+                    WebUIPlugin plugin = WebUIPlugin.fromPackageJSON((JSONObject) JSONSerializer.toJSON(acc));
                     this.plugins.put(plugin.getName(), new WebUIEntry(plugin, dirname, pluginZip.getName()));
                     this.justPlugins.add(plugin);
                 } catch (PluginFormatException ex) {
@@ -163,7 +168,7 @@ public class WebUIPluginManager {
             }
         }
     }
-    
+
     /** Get the descriptor of a web UI plugin.
      * @param name the name of the plugin
      * @return a copy of the installed web UI plugin
@@ -172,7 +177,7 @@ public class WebUIPluginManager {
         WebUIPlugin plugin = this.plugins.get(name).plugin;
         return plugin == null ? null : plugin.copy();
     }
-    
+
     /** Retrieve and return the original JSON object of the plugin.
      * @param name the name of the plugin
      * @return a JSON object of the original "package.json"
@@ -181,7 +186,7 @@ public class WebUIPluginManager {
     public JSONObject retrieveJSON(String name) throws IOException {
         return retrieveJSON(readFile(name, "package.json"));
     }
-    
+
     /** Retrieve and return the original JSON object of the plugin.
      * @param reader a reader providing the JSON object
      * @return a JSON object of the original "package.json"
@@ -195,7 +200,7 @@ public class WebUIPluginManager {
                 acc += line;
             }
             try {
-                return (JSONObject)JSONSerializer.toJSON(acc);
+                return (JSONObject) JSONSerializer.toJSON(acc);
             } catch (ClassCastException ex) {
                 throw new IOException("Not a JSON object", ex);
             }
@@ -230,7 +235,8 @@ public class WebUIPluginManager {
     public void loadSettings(File settingsFolder) {
         for (WebUIPlugin plugin : pluginSet()) {
             try {
-                File pluginSettingsFile = new File(settingsFolder.getPath() + File.separatorChar + plugin.getName() + ".json");
+                File pluginSettingsFile =
+                        new File(settingsFolder.getPath() + File.separatorChar + plugin.getName() + ".json");
                 if (!pluginSettingsFile.exists()) {
                     logger.info("Web plugin {} has no settings file", plugin.getName());
                     continue;

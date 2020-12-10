@@ -25,17 +25,15 @@ import java.util.List;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class DicomDocument implements IDoc
-{
-    
+public class DicomDocument implements IDoc {
+
     private List<IDicomField> dicomFields = new ArrayList<IDicomField>();
 
-    public void add(String name, String value) 
-    {
+    public void add(String name, String value) {
         this.getDicomFields().add(new DicomTextField(name, value));
     }
 
-    
+
     public void add(String name, Float value) {
         this.getDicomFields().add(new DicomNumericField(name, value));
     }
@@ -43,7 +41,7 @@ public class DicomDocument implements IDoc
     public void add(String name, byte[] value) {
         this.getDicomFields().add(new DicomByteArrField(name, value));
     }
-    
+
     /**
      * @return the dicomFields
      */
@@ -59,5 +57,5 @@ public class DicomDocument implements IDoc
     }
 
 
-    
+
 }

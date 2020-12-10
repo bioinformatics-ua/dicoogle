@@ -40,28 +40,28 @@ public class RestTagsResource extends ServerResource {
     @Get
     public Representation representXML() {
         StringRepresentation sr;
-        
+
         HashMap<String, Integer> tagList = DictionaryAccess.getInstance().getTagList();
-        
+
         ArrayList<String> list = new ArrayList<String>();
         Element tags = new Element("tags");
-        for(String tag : tagList.keySet()){
-               int value = tagList.get(tag);
-               
-               Element e = new Element("tag");
-               e.setAttribute( "id", Integer.toString(value));
-               e.setAttribute("name", tag);
-               tags.addContent(e);
-        } 
-        
+        for (String tag : tagList.keySet()) {
+            int value = tagList.get(tag);
+
+            Element e = new Element("tag");
+            e.setAttribute("id", Integer.toString(value));
+            e.setAttribute("name", tag);
+            tags.addContent(e);
+        }
+
         tags.setAttribute("count", Integer.toString(tags.getChildren().size()));
         Document xmlDoc = new Document(tags);
-        
+
         XMLOutputter out = new XMLOutputter(Format.getCompactFormat());
         String str = out.outputString(xmlDoc);
-        
-        StringRepresentation rep = new StringRepresentation( str, MediaType.APPLICATION_XML);
-       
+
+        StringRepresentation rep = new StringRepresentation(str, MediaType.APPLICATION_XML);
+
         return rep;
     }
 }

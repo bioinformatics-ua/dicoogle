@@ -64,15 +64,16 @@ public class MappedDICOMObjectDecorator extends DICOMObject {
         while (!nodes.isEmpty()) {
             DICOMObject node = nodes.remove();
             Integer pid = aux.remove();
-            TreeSet<Map.Entry<String, Object>> children = new TreeSet<Map.Entry<String, Object>>(new Comparator<Map.Entry<String, Object>>() {
+            TreeSet<Map.Entry<String, Object>> children =
+                    new TreeSet<Map.Entry<String, Object>>(new Comparator<Map.Entry<String, Object>>() {
 
-                @Override
-                public int compare(java.util.Map.Entry<String, Object> o1,
-                                   java.util.Map.Entry<String, Object> o2) {
-                    // TODO Auto-generated method stub
-                    return o1.getKey().compareTo(o2.getKey());
-                }
-            });
+                        @Override
+                        public int compare(java.util.Map.Entry<String, Object> o1,
+                                java.util.Map.Entry<String, Object> o2) {
+                            // TODO Auto-generated method stub
+                            return o1.getKey().compareTo(o2.getKey());
+                        }
+                    });
             children.addAll(node.entrySet());
 
             int nn = StructuralIndex.children(pid, 0);
@@ -92,18 +93,18 @@ public class MappedDICOMObjectDecorator extends DICOMObject {
         HashMap<String, Object> map = new HashMap<>();
         String[] nodes = path.split("/");
 
-        //System.err.printf("NODES: %s\n", Arrays.toString(nodes));
+        // System.err.printf("NODES: %s\n", Arrays.toString(nodes));
 
         Collection<Integer> descriptorList = structuralIndex.getList("");
-        //System.err.printf("DESCRIPTOR: %s\n", Arrays.toString(descriptorList.toArray()));
+        // System.err.printf("DESCRIPTOR: %s\n", Arrays.toString(descriptorList.toArray()));
         for (int i = 0; i < nodes.length; i++) {
             descriptorList = ancestorDescendentJoin(descriptorList, structuralIndex.getList(nodes[i]));
 
-            //System.err.printf("DESCRIPTOR: %s\n", Arrays.toString(descriptorList.toArray()));
+            // System.err.printf("DESCRIPTOR: %s\n", Arrays.toString(descriptorList.toArray()));
         }
 
         if (descriptorList.size() > 1) {
-            //System.err.println("More than one record found!!");
+            // System.err.println("More than one record found!!");
             return null;
         }
 
@@ -119,15 +120,15 @@ public class MappedDICOMObjectDecorator extends DICOMObject {
         HashMap<String, Object> map = new HashMap<>();
         String[] nodes = path.substring(2).split("/");
 
-        //System.err.printf("NODES: %s\n", Arrays.toString(nodes));
+        // System.err.printf("NODES: %s\n", Arrays.toString(nodes));
 
         String cNode = nodes[0];
         Collection<Integer> descriptorList = structuralIndex.getList(cNode);
-        //System.err.printf("DESCRIPTOR: %s\n", Arrays.toString(descriptorList.toArray()));
+        // System.err.printf("DESCRIPTOR: %s\n", Arrays.toString(descriptorList.toArray()));
         for (int i = 1; i < nodes.length; i++) {
             descriptorList = ancestorDescendentJoin(descriptorList, structuralIndex.getList(nodes[i]));
 
-            //System.err.printf("DESCRIPTOR: %s\n", Arrays.toString(descriptorList.toArray()));
+            // System.err.printf("DESCRIPTOR: %s\n", Arrays.toString(descriptorList.toArray()));
         }
 
         for (Integer k : descriptorList) {
@@ -136,18 +137,19 @@ public class MappedDICOMObjectDecorator extends DICOMObject {
         }
         return map;
     }
-//  
-//  Path-join(Path):
-//    nodes[] <- Path.nodes
-//    Paths <- []
-//    for(node in nodes):
-//        a <- getLastNode(Path)
-//        d <- getStructuralIndex(node)
-//        r <- ancestor-descendent-join(a, d,node.mode)
-//        Paths <- join(Path, r)
-//    Return Paths
+    //
+    // Path-join(Path):
+    // nodes[] <- Path.nodes
+    // Paths <- []
+    // for(node in nodes):
+    // a <- getLastNode(Path)
+    // d <- getStructuralIndex(node)
+    // r <- ancestor-descendent-join(a, d,node.mode)
+    // Paths <- join(Path, r)
+    // Return Paths
 
-    private Collection<Integer> ancestorDescendentJoin(Collection<Integer> ancestorList, Collection<Integer> descendentList) {
+    private Collection<Integer> ancestorDescendentJoin(Collection<Integer> ancestorList,
+            Collection<Integer> descendentList) {
         Collection<Integer> ret = new TreeSet<Integer>();
         Iterator<Integer> it = descendentList.iterator();
         while (it.hasNext()) {
@@ -227,14 +229,14 @@ public class MappedDICOMObjectDecorator extends DICOMObject {
         return innerObject.toString();
     }
 
-//  Ancestor-descendent-join(ancestors, descendent,mode):
-//    Output <- []
-//    For(a in ancestors):
-//        Lvl <- getLevel(a)+1
-//        Depth <- if (mode) lvl | 6
-//        For(lvl to mode):
-//        min <- child(a.id,0)
-//        max <- min + attributesPerLevel(lvl)
-//        Output[a] <- searchRange(descendents, min, max))
-//    Return Output
+    // Ancestor-descendent-join(ancestors, descendent,mode):
+    // Output <- []
+    // For(a in ancestors):
+    // Lvl <- getLevel(a)+1
+    // Depth <- if (mode) lvl | 6
+    // For(lvl to mode):
+    // min <- child(a.id,0)
+    // max <- min + attributesPerLevel(lvl)
+    // Output[a] <- searchRange(descendents, min, max))
+    // Return Output
 }

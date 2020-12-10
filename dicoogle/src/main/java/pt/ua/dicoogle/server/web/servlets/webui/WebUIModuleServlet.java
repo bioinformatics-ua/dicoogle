@@ -42,7 +42,7 @@ import java.nio.ByteBuffer;
  */
 public class WebUIModuleServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(WebUIModuleServlet.class);
-    
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String name = req.getRequestURI().substring("/webui/module/".length());
@@ -72,10 +72,11 @@ public class WebUIModuleServlet extends HttpServlet {
      * @return a string in camelCase
      */
     public static String camelize(String s) {
-        String [] words = s.split("-");
-        if (words.length == 0) return "";
+        String[] words = s.split("-");
+        if (words.length == 0)
+            return "";
         String t = words[0];
-        for (int i = 1 ; i < words.length ; i++) {
+        for (int i = 1; i < words.length; i++) {
             if (!words[i].isEmpty()) {
                 t += Character.toUpperCase(words[i].charAt(0)) + words[i].substring(1);
             }
@@ -86,7 +87,7 @@ public class WebUIModuleServlet extends HttpServlet {
     public static boolean isPrerelease(String version) {
         return version.indexOf('-') != -1;
     }
-    
+
     public static void writeModule(Writer writer, String name, String module, boolean process) throws IOException {
         if (process) {
             writer.append("(function(r,f){\n");
@@ -97,11 +98,11 @@ public class WebUIModuleServlet extends HttpServlet {
             writer.append("f(c,m,m.exports);");
             writer.append("var o=m.exports.__esModule?m.exports.default:m.exports;");
             writer.append("w.constructors[\"");
-              writer.append(name);
-              writer.append("\"]=o;");
+            writer.append(name);
+            writer.append("\"]=o;");
             writer.append("w.onRegister(new o(),\"");
-              writer.append(name);
-              writer.append("\");");
+            writer.append(name);
+            writer.append("\");");
             writer.append("})(this,function(Dicoogle,module,exports){\n");
         }
         writer.append(module);

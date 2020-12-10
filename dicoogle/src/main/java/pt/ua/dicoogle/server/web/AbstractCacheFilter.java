@@ -32,7 +32,7 @@ import java.util.List;
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
 public abstract class AbstractCacheFilter implements Filter {
-    
+
     public static String CACHE_CONTROL_HEADER = "Cache-Control";
     public static String IF_NONE_MATCH_HEADER = "If-None-Match";
     public static String ETAG_HEADER = "ETag";
@@ -47,10 +47,11 @@ public abstract class AbstractCacheFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest sreq, ServletResponse sresp, FilterChain fc) throws IOException, ServletException {
+    public void doFilter(ServletRequest sreq, ServletResponse sresp, FilterChain fc)
+            throws IOException, ServletException {
         if (sresp instanceof HttpServletResponse && sreq instanceof HttpServletRequest) {
             HttpServletResponse resp = (HttpServletResponse) sresp;
-            HttpServletRequest req = (HttpServletRequest)sreq;
+            HttpServletRequest req = (HttpServletRequest) sreq;
 
             if (cacheControl != null) {
                 resp.addHeader(CACHE_CONTROL_HEADER, cacheControl);
@@ -75,6 +76,5 @@ public abstract class AbstractCacheFilter implements Filter {
     protected abstract String etag(HttpServletRequest req);
 
     @Override
-    public void destroy() {
-    }
+    public void destroy() {}
 }

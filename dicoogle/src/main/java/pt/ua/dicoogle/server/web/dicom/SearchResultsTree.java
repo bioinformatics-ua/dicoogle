@@ -22,7 +22,6 @@ package pt.ua.dicoogle.server.web.dicom;
  *
  * @author Antonio
  */
-public class SearchResultsTree
-{
+public class SearchResultsTree {
 
 }

@@ -38,84 +38,75 @@ import pt.ua.dicoogle.sdk.utils.TagsStruct;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class QueryExpressionBuilder
-{
+public class QueryExpressionBuilder {
 
-    private ArrayList <String> tokens = null ;
+    private ArrayList<String> tokens = null;
 
-    private ArrayList <String> tags = null ;
-
+    private ArrayList<String> tags = null;
 
 
-    public QueryExpressionBuilder(String text, ArrayList tags)
-    {
+
+    public QueryExpressionBuilder(String text, ArrayList tags) {
         this(text);
-        this.tags = tags ;
+        this.tags = tags;
     }
 
 
-    public QueryExpressionBuilder(String freetext)
-    {
+    public QueryExpressionBuilder(String freetext) {
 
-            setTokens(new ArrayList<String>());
+        setTokens(new ArrayList<String>());
 
-            freetext = freetext.replace("^", " ");
+        freetext = freetext.replace("^", " ");
 
-             StringTokenizer st = new StringTokenizer(freetext);
+        StringTokenizer st = new StringTokenizer(freetext);
 
-             /** XXX probably it can be improved, there're some strange charsets
-              * put it up set
-              */
+        /** XXX probably it can be improved, there're some strange charsets
+         * put it up set
+         */
 
-             while (st.hasMoreTokens())
-             {
-               String ss = st.nextToken();
-               if (ss.contains("^"))
-               {
-                    for (String newToken : ss.split("^"))
-                        tokens.add(newToken);
+        while (st.hasMoreTokens()) {
+            String ss = st.nextToken();
+            if (ss.contains("^")) {
+                for (String newToken : ss.split("^"))
+                    tokens.add(newToken);
 
-               }
-               else
+            } else
                 tokens.add(ss);
-             }
+        }
 
 
-             /**
-              * Get tags ;
-              * it it allocated in Run Time, so I have instance access to
-              * singletone
-              */
+        /**
+         * Get tags ;
+         * it it allocated in Run Time, so I have instance access to
+         * singletone
+         */
 
-             TagsStruct _tags = TagsStruct.getInstance();
+        TagsStruct _tags = TagsStruct.getInstance();
 
-             this.tags = _tags.getDIMAlias();
+        this.tags = _tags.getDIMAlias();
 
     }
 
     /**
      * @return the tokens
      */
-    public ArrayList<String> getTokens()
-    {
+    public ArrayList<String> getTokens() {
         return tokens;
     }
 
     /**
      * @param tokens the tokens to set
      */
-    public void setTokens(ArrayList<String> tokens)
-    {
+    public void setTokens(ArrayList<String> tokens) {
         this.tokens = tokens;
     }
 
 
-    public String getQueryString()
-    {
+    public String getQueryString() {
         /** It will be used to call the Lucene - Indexer
          * It crucial respect the BNF grammer able to search in library
          */
-        String queryString = "" ;
+        String queryString = "";
 
 
         /** Search in Lucene in freetext is non-Trivial
@@ -142,40 +133,36 @@ public class QueryExpressionBuilder
         Iterator<String> itTokens = tokens.iterator();
         Iterator<String> itTags;
 
-        String token = null ;
+        String token = null;
 
         /** Build the query string
          *
          * Iterating for each token
          */
-        while(itTokens.hasNext())
-        {
+        while (itTokens.hasNext()) {
             /**
              * Iterating each tags
              */
             queryString += "(";
-            String tag = null ;
+            String tag = null;
 
             token = itTokens.next();
             itTags = tags.iterator();
-            while (itTags.hasNext())
-            {
+            while (itTags.hasNext()) {
 
                 tag = itTags.next();
-                queryString += tag+":"+token ;
+                queryString += tag + ":" + token;
                 /**
                  * If it have next then the logical condition will continue
                  * in next iteration
                  */
-                if (itTags.hasNext())
-                {
+                if (itTags.hasNext()) {
                     queryString += " OR ";
                 }
             }
             queryString += "OR others:" + token + " )";
 
-            if (itTokens.hasNext())
-            {
+            if (itTokens.hasNext()) {
                 queryString += " AND ";
             }
 
@@ -187,16 +174,14 @@ public class QueryExpressionBuilder
     /**
      * @return the tags
      */
-    public ArrayList<String> getTags()
-    {
+    public ArrayList<String> getTags() {
         return tags;
     }
 
     /**
      * @param tags the tags to set
      */
-    public void setTags(ArrayList<String> tags)
-    {
+    public void setTags(ArrayList<String> tags) {
         this.tags = tags;
     }
 

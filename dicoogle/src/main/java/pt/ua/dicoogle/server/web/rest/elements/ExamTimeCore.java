@@ -55,56 +55,58 @@ public class ExamTimeCore {
             actualState = ExamTimeState.EMPTY;
         }
     }
-    
-    
-    public synchronized File getFile(){
-        if(actualState.equals(ExamTimeState.READY))
+
+
+    public synchronized File getFile() {
+        if (actualState.equals(ExamTimeState.READY))
             return file;
-        
+
         return null;
     }
-    
-    public synchronized void startThread(){
-        if(thread != null){
+
+    public synchronized void startThread() {
+        if (thread != null) {
             thread.stopThread();
         }
-        
+
         i = 0;
-        
+
         thread = new TExamTime(file);
-//        thread.setPriority(Thread.MIN_PRIORITY);
+        // thread.setPriority(Thread.MIN_PRIORITY);
         thread.start();
-        
+
         actualState = ExamTimeState.RUNNING;
     }
-    
-    public synchronized void stopThread(){
-        if(thread != null){
+
+    public synchronized void stopThread() {
+        if (thread != null) {
             thread.stopThread();
-            
+
             file.delete(); // Apaga o ficheiro pois ele não está acabado
         }
-        
+
         thread = null;
-        
+
         actualState = ExamTimeState.EMPTY;
     }
-    
-    protected synchronized void threadFinished(){        
+
+    protected synchronized void threadFinished() {
         thread = null;
         actualState = ExamTimeState.READY;
     }
-    
-    protected synchronized void setTotal(int total){
+
+    protected synchronized void setTotal(int total) {
         this.total = total;
     }
-    protected synchronized void increment(){
+
+    protected synchronized void increment() {
         i++;
     }
-    public synchronized float getPercentage(){
+
+    public synchronized float getPercentage() {
         return ((float) i) / ((float) total) * 100;
     }
-    
+
 
     public synchronized ExamTimeState getState() {
         return actualState;
@@ -112,8 +114,6 @@ public class ExamTimeCore {
 
     public enum ExamTimeState {
 
-        EMPTY,
-        RUNNING,
-        READY
+        EMPTY, RUNNING, READY
     }
 }

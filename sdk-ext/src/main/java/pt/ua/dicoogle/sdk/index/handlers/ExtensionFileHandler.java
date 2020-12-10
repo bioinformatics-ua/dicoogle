@@ -33,16 +33,15 @@ import pt.ua.dicoogle.sdk.index.IDoc;
 public class ExtensionFileHandler {
 
     private Properties handlerProps;
-    
+
     /**
      * Creates a new Extension File Handler
      * @param p Properties that allow the correct class to be called for each extension
      */
-    public ExtensionFileHandler(Properties p) throws IOException
-    {
+    public ExtensionFileHandler(Properties p) throws IOException {
         handlerProps = p;
     }
-    
+
     /**
      * Handle a file, obtaining a Lucene Document from it, if it
      * knows how to process this file type. Since we are interest in
@@ -54,36 +53,26 @@ public class ExtensionFileHandler {
         IDoc doc = null;
         String name = file.getName();
         String Error = "Cannot create instance of : ";
-        if (name.contains(".DS_Store"))
-        {
+        if (name.contains(".DS_Store")) {
             return null;
         }
-        try
-        {
+        try {
             Class handlerClass = Class.forName("pt.ua.dicoogle.core.index.LuceneSupport.DICOM.DicomDocumentNG");
             DocumentHandler handler = (DocumentHandler) handlerClass.newInstance();
             doc = handler.getDocument(file);
-        }
-        catch (DocumentHandlerException ex)
-        {
+        } catch (DocumentHandlerException ex) {
             throw new FileHandlerException(Error + "pt.ua.dicoogle.core.index.LuceneSupport.DICOM.DicomDocumentNG", ex);
         }
 
-        catch (FileAlreadyExistsException ex)
-        {
+        catch (FileAlreadyExistsException ex) {
             throw ex;
         }
 
-        catch (InstantiationException ex)
-        {
+        catch (InstantiationException ex) {
             throw new FileHandlerException(Error + "pt.ua.dicoogle.core.index.LuceneSupport.DICOM.DicomDocumentNG", ex);
-        }
-        catch (IllegalAccessException ex)
-        {
+        } catch (IllegalAccessException ex) {
             throw new FileHandlerException(Error + "pt.ua.dicoogle.core.index.LuceneSupport.DICOM.DicomDocumentNG", ex);
-        }
-        catch (ClassNotFoundException ex)
-        {
+        } catch (ClassNotFoundException ex) {
             throw new FileHandlerException(Error + "pt.ua.dicoogle.core.index.LuceneSupport.DICOM.DicomDocumentNG", ex);
         }
 

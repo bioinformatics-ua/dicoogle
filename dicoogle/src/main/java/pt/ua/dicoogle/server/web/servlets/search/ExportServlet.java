@@ -35,92 +35,90 @@ import pt.ua.dicoogle.core.query.ExportToCSVQueryTask;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.utils.DictionaryAccess;
 
-public class ExportServlet extends HttpServlet{
-	private static final Logger logger = LoggerFactory.getLogger(ExportServlet.class);
+public class ExportServlet extends HttpServlet {
+    private static final Logger logger = LoggerFactory.getLogger(ExportServlet.class);
 
-	public enum ExportType{
-		LIST, EXPORT_CVS;
-	}
-	private ExportType type;
-	
-	public ExportServlet(ExportType type) {
-		this.type = type;
-	}
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		switch(type){
-		case LIST:
-			doGetTagList(req, resp);
-			break;
-		case EXPORT_CVS:
-			doGetExportCvs(req, resp);
-			break;
-		}
-	}
-	
-	private void doGetTagList(HttpServletRequest req, HttpServletResponse resp) throws IOException{
-		HashMap< String, Integer> tagList = DictionaryAccess.getInstance().getTagList();
-		Iterator iterator = tagList.entrySet().iterator();
-		
-		JSONArray array = new JSONArray();
-		
-		while(iterator.hasNext())
-		{
-			Map.Entry<String, Integer> entry = (Entry<String, Integer>) iterator.next();
-			//JSONObject obj = new JSONObject();
-			//obj.put("key", entry.getKey());
-			//obj.put("value", entry.getValue());
-			
-			
-			array.add(entry.getKey());
-		}
-		
-		resp.getWriter().write(array.toString());
-	}
-	
-	private void doGetExportCvs(HttpServletRequest req, HttpServletResponse resp) throws IOException{
-		resp.setHeader("Content-disposition","attachment; filename=QueryResultsExport.csv");
-		String queryString = req.getParameter("query");
-		String[] fields = req.getParameterValues("fields");
-		String[] providers = req.getParameterValues("providers");
-		boolean keyword = Boolean.parseBoolean(req.getParameter("keyword"));
-		
-		logger.debug("queryString: {}", queryString);
-		logger.debug("fields: {}", Arrays.asList(fields));
-		logger.debug("keyword: {}", keyword);
-		
-		if(queryString == null)
-			resp.sendError(401, "Query Parameters not found");
-		
-		if(fields == null || fields.length==0)
-			resp.sendError(402, "Fields Parameters not found");
-		
-		if (!keyword) {
+    public enum ExportType {
+        LIST, EXPORT_CVS;
+    }
+
+    private ExportType type;
+
+    public ExportServlet(ExportType type) {
+        this.type = type;
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        switch (type) {
+            case LIST:
+                doGetTagList(req, resp);
+                break;
+            case EXPORT_CVS:
+                doGetExportCvs(req, resp);
+                break;
+        }
+    }
+
+    private void doGetTagList(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        HashMap<String, Integer> tagList = DictionaryAccess.getInstance().getTagList();
+        Iterator iterator = tagList.entrySet().iterator();
+
+        JSONArray array = new JSONArray();
+
+        while (iterator.hasNext()) {
+            Map.Entry<String, Integer> entry = (Entry<String, Integer>) iterator.next();
+            // JSONObject obj = new JSONObject();
+            // obj.put("key", entry.getKey());
+            // obj.put("value", entry.getValue());
+
+
+            array.add(entry.getKey());
+        }
+
+        resp.getWriter().write(array.toString());
+    }
+
+    private void doGetExportCvs(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.setHeader("Content-disposition", "attachment; filename=QueryResultsExport.csv");
+        String queryString = req.getParameter("query");
+        String[] fields = req.getParameterValues("fields");
+        String[] providers = req.getParameterValues("providers");
+        boolean keyword = Boolean.parseBoolean(req.getParameter("keyword"));
+
+        logger.debug("queryString: {}", queryString);
+        logger.debug("fields: {}", Arrays.asList(fields));
+        logger.debug("keyword: {}", keyword);
+
+        if (queryString == null)
+            resp.sendError(401, "Query Parameters not found");
+
+        if (fields == null || fields.length == 0)
+            resp.sendError(402, "Fields Parameters not found");
+
+        if (!keyword) {
             QueryExpressionBuilder q = new QueryExpressionBuilder(queryString);
             queryString = q.getQueryString();
         }
 
-						    	
-	    List<String> fieldList = Arrays.asList(fields);
-	    Map<String, String> fieldsMap = new HashMap<>();
-	    for(String f : fields){
-	    	fieldsMap.put(f, f);
-	    }
-	    	    	    
-    	ExportToCSVQueryTask task = new ExportToCSVQueryTask( fieldList,
-				resp.getOutputStream());
 
-    	if(providers == null || providers.length == 0) {
-			PluginController.getInstance().queryAll(task, queryString, fieldsMap);
-		} else {
-			List<String> providersList = Arrays.asList(providers);
-			PluginController.getInstance().query(task, providersList, queryString,
-					fieldsMap);
-		}
+        List<String> fieldList = Arrays.asList(fields);
+        Map<String, String> fieldsMap = new HashMap<>();
+        for (String f : fields) {
+            fieldsMap.put(f, f);
+        }
 
-		task.await();
-	}
+        ExportToCSVQueryTask task = new ExportToCSVQueryTask(fieldList, resp.getOutputStream());
 
-	
+        if (providers == null || providers.length == 0) {
+            PluginController.getInstance().queryAll(task, queryString, fieldsMap);
+        } else {
+            List<String> providersList = Arrays.asList(providers);
+            PluginController.getInstance().query(task, providersList, queryString, fieldsMap);
+        }
+
+        task.await();
+    }
+
+
 }

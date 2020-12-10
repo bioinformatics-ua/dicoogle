@@ -35,7 +35,7 @@ import pt.ua.dicoogle.server.web.rest.elements.FileDownloadUtils;
  *
  */
 public class RestWADOResource extends ServerResource {
-    
+
     @Get
     public OutputRepresentation represent() {
         String studyUID = getRequest().getResourceRef().getQueryAsForm().getValues("studyUID");
@@ -44,22 +44,21 @@ public class RestWADOResource extends ServerResource {
         String requestType = getRequest().getResourceRef().getQueryAsForm().getValues("requestType");
         String contentType = getRequest().getResourceRef().getQueryAsForm().getValues("contentType");
 
-        
 
-        setStatus( Status.SUCCESS_OK );
-        //lets make sure that all the REQUIRED (all caps, according to standard :)) are here
-        if(objectUID==null || objectUID.isEmpty())
-        {
+
+        setStatus(Status.SUCCESS_OK);
+        // lets make sure that all the REQUIRED (all caps, according to standard :)) are here
+        if (objectUID == null || objectUID.isEmpty()) {
             setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
-            //result = generateErrorRepresentation("Please enter a UID", "400");
-            //400 means bad request
+            // result = generateErrorRepresentation("Please enter a UID", "400");
+            // 400 means bad request
         }
 
-        //the standard also requires that the request type is present and == WADO
-        if(requestType == null || !requestType.equals("WADO")){
-                setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
+        // the standard also requires that the request type is present and == WADO
+        if (requestType == null || !requestType.equals("WADO")) {
+            setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
         }
-        
+
         return FileDownloadUtils.gerFileRepresentation(objectUID);
     }
 }

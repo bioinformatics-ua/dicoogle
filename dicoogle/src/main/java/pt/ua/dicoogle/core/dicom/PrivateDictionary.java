@@ -33,11 +33,9 @@ import pt.ua.dicoogle.sdk.utils.TagsStruct;
  *
  * @author bastiao
  */
-public class PrivateDictionary 
-{
+public class PrivateDictionary {
 
-    public void parse(String file)
-    {
+    public void parse(String file) {
         String NL = System.getProperty("line.separator");
         Scanner scanner = null;
         try {
@@ -48,62 +46,55 @@ public class PrivateDictionary
         try {
             while (scanner.hasNextLine()) {
                 String text = scanner.nextLine();
-                String tag = ""; 
-                    
+                String tag = "";
+
                 String type = "";
-                String name = ""; 
-                
-                
-                if (text.startsWith("(") )
-                {
+                String name = "";
+
+
+                if (text.startsWith("(")) {
                     String txt[] = text.split(" |\t");
 
-                    for (int i = 0; i< txt.length; i++)
-                    {
-                        if (txt[i].startsWith("("))
-                        {
-                            tag = txt[i] ;
-                        }
-                        else if (txt[i].length()==2)
-                        {
-                            type = txt[i] ;
-                            name = txt[i+1] ;
+                    for (int i = 0; i < txt.length; i++) {
+                        if (txt[i].startsWith("(")) {
+                            tag = txt[i];
+                        } else if (txt[i].length() == 2) {
+                            type = txt[i];
+                            name = txt[i + 1];
                         }
                     }
                 }
-                if (!tag.equals("")&&!type.equals("")&&!name.equals(""))
-                {
-                    //System.out.println("Tag: "+tag);
-                    //System.out.println("Type: "+type);
-                    //System.out.println("Name: "+name);
-                    
+                if (!tag.equals("") && !type.equals("") && !name.equals("")) {
+                    // System.out.println("Tag: "+tag);
+                    // System.out.println("Type: "+type);
+                    // System.out.println("Name: "+name);
+
                     TagsStruct tg = TagsStruct.getInstance();
                     tag = tag.replaceAll("\\(", "");
                     tag = tag.replaceAll("\\)", "");
                     tag = tag.replaceAll(" ", "");
                     tag = tag.replaceAll(",", "");
-                    //System.out.println("Tag: "+tag);
-                    //System.out.println("Type: "+type);
-                    //System.out.println("Name: "+name);
-                    
+                    // System.out.println("Tag: "+tag);
+                    // System.out.println("Type: "+type);
+                    // System.out.println("Name: "+name);
+
                     TagValue v = new TagValue(Integer.parseInt(tag, 16), name);
-                    
+
                     v.setVR(type);
                     tg.addPrivateField(v);
-                    
+
                 }
             }
         } finally {
             scanner.close();
         }
     }
-    
-    public static void main(String [] args)
-    {
+
+    public static void main(String[] args) {
         PrivateDictionary pd = new PrivateDictionary();
         pd.parse("/Users/bastiao/MAP-I/Code/dicomlamedictionaryanddicom/similarity.dic");
-        
-    
+
+
     }
-    
+
 }

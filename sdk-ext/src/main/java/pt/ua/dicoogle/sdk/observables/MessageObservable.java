@@ -25,9 +25,8 @@ import java.util.Observable;
  * @author Pedro Bento
  * @author Carlos Ferreira
  */
-public class MessageObservable<I> extends Observable
-{
-    //The last message received.
+public class MessageObservable<I> extends Observable {
+    // The last message received.
 
     private I Message;
     private String address = null;
@@ -35,8 +34,7 @@ public class MessageObservable<I> extends Observable
     /**
      * Constructor that just initialize the message.
      */
-    public MessageObservable()
-    {
+    public MessageObservable() {
         this.Message = null;
         this.address = null;
     }
@@ -45,19 +43,16 @@ public class MessageObservable<I> extends Observable
      * Getter of the message.
      * @return the last message received.
      */
-    public I getMessage()
-    {
+    public I getMessage() {
         return this.Message;
     }
 
-    public String getAddress()
-    {
+    public String getAddress() {
         return address;
     }
 
 
-    public I getObject()
-    {
+    public I getObject() {
         return this.Message;
     }
 
@@ -65,8 +60,7 @@ public class MessageObservable<I> extends Observable
      * Setter of the message and consequent notification of all observers.
      * @param Message New message of the observer.
      */
-    public void setMessage(I Message, String address)
-    {
+    public void setMessage(I Message, String address) {
         this.Message = Message;
         this.address = address;
         this.setChanged();

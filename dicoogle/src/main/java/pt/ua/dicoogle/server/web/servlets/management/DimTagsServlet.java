@@ -97,6 +97,7 @@ public class DimTagsServlet extends HttpServlet {
         }
         return array;
     }
+
     public static JSON serialize(TagValue tagValue) {
         JSONObject obj = new JSONObject();
         obj.element("id", tagValue.getTagID());

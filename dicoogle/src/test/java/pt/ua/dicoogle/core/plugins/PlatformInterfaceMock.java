@@ -94,9 +94,11 @@ public class PlatformInterfaceMock implements DicooglePlatformInterface {
 
 
     @Override
-    public JointQueryTask query(JointQueryTask holder, List<String> querySources, DimLevel level, String query, Object... parameters) {
+    public JointQueryTask query(JointQueryTask holder, List<String> querySources, DimLevel level, String query,
+            Object... parameters) {
         return null;
     }
+
     @Override
     public Task<Iterable<SearchResult>> query(String querySource, String query, Object... parameters) {
         return null;
@@ -128,18 +130,18 @@ public class PlatformInterfaceMock implements DicooglePlatformInterface {
         return null;
     }
 
-	@Override
-	public StorageInterface getStorageForSchema(URI location) {
-		return null;
-	}
+    @Override
+    public StorageInterface getStorageForSchema(URI location) {
+        return null;
+    }
 
-	@Override
-	public Iterable<StorageInputStream> resolveURI(URI location, Object... args) {
-		return null;
-	}
+    @Override
+    public Iterable<StorageInputStream> resolveURI(URI location, Object... args) {
+        return null;
+    }
 
-	@Override
-	public StorageInterface getStorageForSchema(String scheme) {
-		return null;
-	}
+    @Override
+    public StorageInterface getStorageForSchema(String scheme) {
+        return null;
+    }
 }

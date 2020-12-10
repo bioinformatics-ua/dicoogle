@@ -66,7 +66,7 @@ import java.util.zip.ZipFile;
  * @author Tiago Marques Godinho
  * @author Eduardo Pinho
  */
-public class PluginController{
+public class PluginController {
 
     private static final Logger logger = LoggerFactory.getLogger(PluginController.class);
     private static PluginController instance;
@@ -77,34 +77,36 @@ public class PluginController{
         }
         return instance;
     }
+
     private final Collection<PluginSet> pluginSets;
     private final Collection<DeadPlugin> deadPluginSets;
     private File pluginFolder;
     private TaskQueue tasks = null;
     private final PluginPreparer preparer;
-    
+
     private PluginSet remoteQueryPlugins = null;
     private final WebUIPluginManager webUI;
     private final DicooglePlatformProxy proxy;
-    private TaskManager taskManager = new TaskManager(Integer.parseInt(System.getProperty("dicoogle.taskManager.nThreads", "4")));
-    
+    private TaskManager taskManager =
+            new TaskManager(Integer.parseInt(System.getProperty("dicoogle.taskManager.nThreads", "4")));
+
     public PluginController(File pathToPluginDirectory) {
-    	logger.info("Creating PluginController Instance");
+        logger.info("Creating PluginController Instance");
         pluginFolder = pathToPluginDirectory;
 
         tasks = new TaskQueue();
 
-        //the plugin directory does not exist. lets create it
+        // the plugin directory does not exist. lets create it
         if (!pathToPluginDirectory.exists()) {
-        	logger.info("Creating new Plugin Folder");
+            logger.info("Creating new Plugin Folder");
             pathToPluginDirectory.mkdirs();
         }
 
         this.deadPluginSets = new ArrayList<>(4);
 
-        //loads the plugins
+        // loads the plugins
         pluginSets = PluginFactory.getPlugins(pathToPluginDirectory);
-        //load web UI plugins (they are not Java, so the process is delegated to another entity)
+        // load web UI plugins (they are not Java, so the process is delegated to another entity)
         this.webUI = new WebUIPluginManager();
         this.loadWebUIPlugins();
 
@@ -114,10 +116,10 @@ public class PluginController{
 
         pluginSets.add(new DefaultFileStoragePlugin());
         logger.info("Added default storage plugin");
-        
+
         this.proxy = new DicooglePlatformProxy(this);
         this.preparer = new PluginPreparer(this.proxy);
-        
+
         initializePlugins(pluginSets);
         initRestInterface(pluginSets);
         initJettyInterface(pluginSets);
@@ -129,7 +131,7 @@ public class PluginController{
         this.webUI.loadAll(new File("WebPlugins"));
 
         // go through each jar'd plugin and fetch their WebPlugins
-        for (File j : FileUtils.listFiles(pluginFolder, new String[]{"jar", "zip"}, false)) {
+        for (File j : FileUtils.listFiles(pluginFolder, new String[] {"jar", "zip"}, false)) {
             try {
                 this.webUI.loadAllFromZip(new ZipFile(j));
             } catch (IOException ex) {
@@ -140,7 +142,7 @@ public class PluginController{
     }
 
     private void configurePlugins() {
-        //loads plugins' settings and passes them to the plugin
+        // loads plugins' settings and passes them to the plugin
         File settingsFolder = new File(pluginFolder.getPath() + "/settings/");
         if (!settingsFolder.exists()) {
             logger.info("Creating Local Settings Folder");
@@ -154,19 +156,17 @@ public class PluginController{
                 logger.info("Loading plugin: {}", name);
                 File pluginSettingsFile = new File(settingsFolder + "/" + name.replace('/', '-') + ".xml");
                 ConfigurationHolder holder = new ConfigurationHolder(pluginSettingsFile);
-                if(plugin.getName().equals("RemotePluginSet")) {
-                	this.remoteQueryPlugins = plugin;
-                	//holder.getConfiguration().setProperty("NodeName", ServerSettingsManager.getSettings().getNodeName());
-    	        	//holder.getConfiguration().setProperty("TemporaryPath", ServerSettingsManager.getSettings().getPath());
-                	
-                	logger.info("Started Remote Communications Manager");
+                if (plugin.getName().equals("RemotePluginSet")) {
+                    this.remoteQueryPlugins = plugin;
+                    // holder.getConfiguration().setProperty("NodeName", ServerSettingsManager.getSettings().getNodeName());
+                    // holder.getConfiguration().setProperty("TemporaryPath", ServerSettingsManager.getSettings().getPath());
+
+                    logger.info("Started Remote Communications Manager");
                 }
                 applySettings(plugin, holder);
-            }
-            catch (ConfigurationException e){
+            } catch (ConfigurationException e) {
                 logger.error("Failed to create configuration holder", e);
-            }
-            catch (RuntimeException e) {
+            } catch (RuntimeException e) {
                 String name;
                 try {
                     name = plugin.getName();
@@ -183,19 +183,14 @@ public class PluginController{
         webUI.loadSettings(settingsFolder);
         logger.debug("Settings pushed to web UI plugins");
     }
-    
+
     private void initializePlugins(Collection<PluginSet> plugins) {
         for (PluginSet set : plugins) {
             logger.debug("SetPlugins: {}", set);
-            
+
             // provide platform to each plugin interface
-            final Collection<Collection<?>> all = Arrays.asList(
-                    set.getStoragePlugins(),
-                    set.getIndexPlugins(),
-                    set.getQueryPlugins(),
-                    set.getJettyPlugins(),
-                    set.getRestPlugins()
-            );
+            final Collection<Collection<?>> all = Arrays.asList(set.getStoragePlugins(), set.getIndexPlugins(),
+                    set.getQueryPlugins(), set.getJettyPlugins(), set.getRestPlugins());
             for (Collection<?> interfaces : all) {
                 if (interfaces == null) {
                     logger.debug("Plugin set {} provided a null collection!");
@@ -210,17 +205,14 @@ public class PluginController{
             this.preparer.setup(set);
         }
     }
-    
+
     private void applySettings(PluginSet set, ConfigurationHolder holder) {
         // provide platform to each plugin interface
-        final Collection<Collection<? extends DicooglePlugin>> all = Arrays.asList(
-                set.getStoragePlugins(),
-                set.getIndexPlugins(),
-                set.getQueryPlugins(),
-                set.getJettyPlugins()
-        );
+        final Collection<Collection<? extends DicooglePlugin>> all = Arrays.asList(set.getStoragePlugins(),
+                set.getIndexPlugins(), set.getQueryPlugins(), set.getJettyPlugins());
         for (Collection<? extends DicooglePlugin> interfaces : all) {
-            if (interfaces == null) continue;
+            if (interfaces == null)
+                continue;
             for (DicooglePlugin p : interfaces) {
                 p.setSettings(holder);
             }
@@ -228,7 +220,7 @@ public class PluginController{
         set.setSettings(holder);
 
     }
-    
+
     /**
      * Each pluginSet provides a collection of barebone rest interfaces Here we
      * check which interfaces are present and create a restlet component to
@@ -255,18 +247,19 @@ public class PluginController{
 
     private void initJettyInterface(Collection<PluginSet> plugins) {
         logger.info("Initializing jetty interface");
-                
-         ArrayList<JettyPluginInterface> jettyInterfaces = new ArrayList<>();
-         for(PluginSet set : plugins){
-        	 Collection<? extends JettyPluginInterface> jettyInterface = set.getJettyPlugins();
-        	 if(jettyInterface == null) continue;
-        	 jettyInterfaces.addAll(jettyInterface);
-         }
-         
-         DicoogleWeb jettyServer = ControlServices.getInstance().getWebServicePlatform();
-         for(JettyPluginInterface resource : jettyInterfaces){
-        	 jettyServer.addContextHandlers( resource.getJettyHandlers() );
-         }
+
+        ArrayList<JettyPluginInterface> jettyInterfaces = new ArrayList<>();
+        for (PluginSet set : plugins) {
+            Collection<? extends JettyPluginInterface> jettyInterface = set.getJettyPlugins();
+            if (jettyInterface == null)
+                continue;
+            jettyInterfaces.addAll(jettyInterface);
+        }
+
+        DicoogleWeb jettyServer = ControlServices.getInstance().getWebServicePlatform();
+        for (JettyPluginInterface resource : jettyInterfaces) {
+            jettyServer.addContextHandlers(resource.getJettyHandlers());
+        }
     }
 
     /**
@@ -274,13 +267,13 @@ public class PluginController{
      */
     public void shutdown() throws IOException {
         for (PluginSet plugin : pluginSets) {
-            //TODO: I Think it is better to enable auto-save settings
+            // TODO: I Think it is better to enable auto-save settings
             /*Settings settings = plugin.getSettings();
             if (settings != null) {
                 settings.save();
             }
-	*/
-            //lets the plugin know we are shutting down
+            */
+            // lets the plugin know we are shutting down
             plugin.shutdown();
         }
     }
@@ -295,7 +288,7 @@ public class PluginController{
     public void stopPlugin(String pluginName) {
         for (PluginSet pluginSet : pluginSets) {
             if (pluginSet.getName().compareTo(pluginName) == 0) {
-                //pluginSet.stop();
+                // pluginSet.stop();
                 return;
             }
         }
@@ -304,7 +297,7 @@ public class PluginController{
     public void startPlugin(String pluginName) {
         for (PluginSet pluginSet : pluginSets) {
             if (pluginSet.getName().compareTo(pluginName) == 0) {
-                //pluginSet.stop();
+                // pluginSet.stop();
                 return;
             }
         }
@@ -348,13 +341,14 @@ public class PluginController{
         }
         return plugins;
     }
+
     public Collection<JettyPluginInterface> getServletPlugins() {
         return this.getServletPlugins(true);
     }
 
     public Collection<String> getPluginSetNames() {
         Collection<String> l = new ArrayList<>();
-        for (PluginSet s: this.pluginSets) {
+        for (PluginSet s : this.pluginSets) {
             l.add(s.getName());
         }
         return l;
@@ -370,22 +364,20 @@ public class PluginController{
      * @param args
      * @return 
      */
-    public Iterable<StorageInputStream> resolveURI(URI location, Object ...args)
-    {
+    public Iterable<StorageInputStream> resolveURI(URI location, Object... args) {
         Collection<StorageInterface> storages = getStoragePlugins(true);
-        
+
         for (StorageInterface store : storages) {
-            if (store.handles(location)) 
-            {
-            	logger.debug("Resolving URI: {} Storage: {}", location, store.getName());
+            if (store.handles(location)) {
+                logger.debug("Resolving URI: {} Storage: {}", location, store.getName());
                 return store.at(location, args);
             }
         }
 
-    	logger.error("Could not resolve uri: {}", location);
-        return Collections.emptyList();    
+        logger.error("Could not resolve uri: {}", location);
+        return Collections.emptyList();
     }
-    
+
     /** Retrieve a storage interface capable of handling files on a given location.
      * 
      * TODO: this can be heavily improved if we keep a map of scheme->indexer
@@ -399,22 +391,22 @@ public class PluginController{
      * @return a storage interface capable of handling the location, null if no suitable plugin is found
      */
     public StorageInterface getStorageForSchema(URI location) {
-    	if(location == null){
+        if (location == null) {
             logger.warn("URI for retrieving storage interface is null, ignoring");
             return null;
-    	}
+        }
         Collection<StorageInterface> storages = getStoragePlugins(false);
-        
+
         for (StorageInterface store : storages) {
             if (store.handles(location)) {
-            	logger.debug("Retrieved storage for scheme: {}", location);
+                logger.debug("Retrieved storage for scheme: {}", location);
                 return store;
             }
         }
         logger.warn("Could not get storage for scheme: {}", location);
         return null;
     }
-    
+
     /** Retrieve a storage interface capable of handling files with the given scheme.
      * 
      * TODO: this can be heavily improved if we keep a map of scheme->indexer
@@ -446,29 +438,29 @@ public class PluginController{
     public void addTask(TaskRequest task) {
         this.tasks.addTask(task);
     }
-   
 
-    
-    public List<String> getQueryProvidersName(boolean enabled){
-    	Collection<QueryInterface> plugins = getQueryPlugins(enabled);
-    	List<String> names = new ArrayList<>(plugins.size());
-    	for(QueryInterface p : plugins){
-    		names.add(p.getName());
-    	}
-    	//logger.info("Query Providers: "+Arrays.toString(names.toArray()) );
-    	return names;
+
+
+    public List<String> getQueryProvidersName(boolean enabled) {
+        Collection<QueryInterface> plugins = getQueryPlugins(enabled);
+        List<String> names = new ArrayList<>(plugins.size());
+        for (QueryInterface p : plugins) {
+            names.add(p.getName());
+        }
+        // logger.info("Query Providers: "+Arrays.toString(names.toArray()) );
+        return names;
     }
-    
-    public QueryInterface getQueryProviderByName(String name, boolean onlyEnabled){
-    	Collection<QueryInterface> plugins = getQueryPlugins(onlyEnabled);
-    	for(QueryInterface p : plugins){
-    		if(p.getName().equalsIgnoreCase(name)){
-    			//logger.info("Retrived Query Provider: "+name);
-    			return p;
-    		}
-    	}
-    	logger.debug("Could not retrieve query provider {} for onlyEnabled = {}", name, onlyEnabled);
-    	return null;
+
+    public QueryInterface getQueryProviderByName(String name, boolean onlyEnabled) {
+        Collection<QueryInterface> plugins = getQueryPlugins(onlyEnabled);
+        for (QueryInterface p : plugins) {
+            if (p.getName().equalsIgnoreCase(name)) {
+                // logger.info("Retrived Query Provider: "+name);
+                return p;
+            }
+        }
+        logger.debug("Could not retrieve query provider {} for onlyEnabled = {}", name, onlyEnabled);
+        return null;
     }
 
     /**
@@ -480,37 +472,35 @@ public class PluginController{
      * @return the filtered list of active DICOM query providers
      */
     public List<String> filterDicomQueryProviders(List<String> providers) {
-        List<String> baseProviders = ServerSettingsManager.getSettings()
-                .getArchiveSettings().getDIMProviders();
+        List<String> baseProviders = ServerSettingsManager.getSettings().getArchiveSettings().getDIMProviders();
 
-        if (baseProviders==null || baseProviders.isEmpty()) {
+        if (baseProviders == null || baseProviders.isEmpty()) {
             baseProviders = PluginController.getInstance().getQueryProvidersName(true);
         }
 
-        return baseProviders.stream()
-                .filter(p -> providers.isEmpty() || providers.contains(p))
+        return baseProviders.stream().filter(p -> providers.isEmpty() || providers.contains(p))
                 .collect(Collectors.toList());
     }
-    
-    //TODO: CONVENIENCE METHOD
-    public IndexerInterface getIndexerByName(String name, boolean onlyEnabled){
-    	Collection<IndexerInterface> plugins = getIndexingPlugins(onlyEnabled);
-    	for(IndexerInterface p : plugins){
-    		if(p.getName().equalsIgnoreCase(name)){
-    			//logger.info("Retrived Query Provider: "+name);
-    			return p;
-    		}
-    	}
-    	logger.debug("No indexer matching name {} for onlyEnabled = {}", name, onlyEnabled);
-    	return null;
+
+    // TODO: CONVENIENCE METHOD
+    public IndexerInterface getIndexerByName(String name, boolean onlyEnabled) {
+        Collection<IndexerInterface> plugins = getIndexingPlugins(onlyEnabled);
+        for (IndexerInterface p : plugins) {
+            if (p.getName().equalsIgnoreCase(name)) {
+                // logger.info("Retrived Query Provider: "+name);
+                return p;
+            }
+        }
+        logger.debug("No indexer matching name {} for onlyEnabled = {}", name, onlyEnabled);
+        return null;
     }
 
 
-    public JettyPluginInterface getServletByName(String name, boolean onlyEnabled){
+    public JettyPluginInterface getServletByName(String name, boolean onlyEnabled) {
         Collection<JettyPluginInterface> plugins = getServletPlugins(onlyEnabled);
-        for(JettyPluginInterface p : plugins){
-            if(p.getName().equalsIgnoreCase(name)){
-                //logger.info("Retrived Query Provider: "+name);
+        for (JettyPluginInterface p : plugins) {
+            if (p.getName().equalsIgnoreCase(name)) {
+                // logger.info("Retrived Query Provider: "+name);
                 return p;
             }
         }
@@ -518,33 +508,31 @@ public class PluginController{
         return null;
     }
 
-    public StorageInterface getStorageByName(String name, boolean onlyEnabled){
+    public StorageInterface getStorageByName(String name, boolean onlyEnabled) {
         Collection<StorageInterface> plugins = getStoragePlugins(onlyEnabled);
-        for(StorageInterface p : plugins){
-            if(p.getName().equalsIgnoreCase(name)){
-                //logger.info("Retrived Query Provider: "+name);
+        for (StorageInterface p : plugins) {
+            if (p.getName().equalsIgnoreCase(name)) {
+                // logger.info("Retrived Query Provider: "+name);
                 return p;
             }
         }
         logger.debug("No indexer matching name {} for onlyEnabled = {}", name, onlyEnabled);
         return null;
     }
-    
 
-    public JointQueryTask queryAll(JointQueryTask holder, final String query, final Object ... parameters)
-    {
+
+    public JointQueryTask queryAll(JointQueryTask holder, final String query, final Object... parameters) {
         return queryAll(holder, query, parameters);
     }
 
-    public JointQueryTask queryAll(JointQueryTask holder, final String query, final DimLevel level, final Object ... parameters)
-    {
-    	//logger.info("Querying all providers");
-    	List<String> providers = this.getQueryProvidersName(true);
-    	return query(holder, providers, query, level, parameters);
+    public JointQueryTask queryAll(JointQueryTask holder, final String query, final DimLevel level,
+            final Object... parameters) {
+        // logger.info("Querying all providers");
+        List<String> providers = this.getQueryProvidersName(true);
+        return query(holder, providers, query, level, parameters);
     }
 
-    public Task<Iterable<SearchResult>> query(String querySource, final String query,
-                                                final Object ... parameters){
+    public Task<Iterable<SearchResult>> query(String querySource, final String query, final Object... parameters) {
         Task<Iterable<SearchResult>> t = getTaskForQuery(querySource, query, parameters);
         taskManager.dispatch(t);
         return t;
@@ -552,65 +540,67 @@ public class PluginController{
     }
 
 
-    public Task<Iterable<SearchResult>> query(String querySource, final String query, final DimLevel level, final Object ... parameters){
+    public Task<Iterable<SearchResult>> query(String querySource, final String query, final DimLevel level,
+            final Object... parameters) {
         Task<Iterable<SearchResult>> t = getTaskForQueryDim(querySource, query, level, parameters);
         taskManager.dispatch(t);
-        //logger.info("Fired Query Task: "+querySource +" QueryString:"+query);
-        
-        return t;//returns the handler to obtain the computation results
+        // logger.info("Fired Query Task: "+querySource +" QueryString:"+query);
+
+        return t;// returns the handler to obtain the computation results
     }
 
     public JointQueryTask query(JointQueryTask holder, List<String> querySources, final String query,
-                                final Object ... parameters){
-        if(holder == null)
+            final Object... parameters) {
+        if (holder == null)
             return null;
 
         List<Task<Iterable<SearchResult>>> tasks = new ArrayList<>();
-        for(String p : querySources){
+        for (String p : querySources) {
             Task<Iterable<SearchResult>> task = getTaskForQuery(p, query, parameters);
             tasks.add(task);
             holder.addTask(task);
         }
 
-        //and executes said task asynchronously
-        for(Task<?> t : tasks)
+        // and executes said task asynchronously
+        for (Task<?> t : tasks)
             taskManager.dispatch(t);
 
-        //logger.info("Fired Query Tasks: "+Arrays.toString(querySources.toArray()) +" QueryString:"+query);
-        return holder;//returns the handler to obtain the computation results
+        // logger.info("Fired Query Tasks: "+Arrays.toString(querySources.toArray()) +" QueryString:"+query);
+        return holder;// returns the handler to obtain the computation results
     }
 
     public JointQueryTask query(JointQueryTask holder, List<String> querySources, final String query,
-                                final DimLevel level, final Object ... parameters){
-        if(holder == null)
-        	return null;
+            final DimLevel level, final Object... parameters) {
+        if (holder == null)
+            return null;
 
-    	List<Task<Iterable<SearchResult>>> tasks = new ArrayList<>();
-        for(String p : querySources){
-        	Task<Iterable<SearchResult>> task = getTaskForQueryDim(p, query, level, parameters);
-        	tasks.add(task);
-        	holder.addTask(task);
+        List<Task<Iterable<SearchResult>>> tasks = new ArrayList<>();
+        for (String p : querySources) {
+            Task<Iterable<SearchResult>> task = getTaskForQueryDim(p, query, level, parameters);
+            tasks.add(task);
+            holder.addTask(task);
         }
 
-        //and executes said task asynchronously
-        for(Task<?> t : tasks)
-        	taskManager.dispatch(t);
+        // and executes said task asynchronously
+        for (Task<?> t : tasks)
+            taskManager.dispatch(t);
 
-        //logger.info("Fired Query Tasks: "+Arrays.toString(querySources.toArray()) +" QueryString:"+query);
-        return holder;//returns the handler to obtain the computation results
+        // logger.info("Fired Query Tasks: "+Arrays.toString(querySources.toArray()) +" QueryString:"+query);
+        return holder;// returns the handler to obtain the computation results
     }
-    
+
 
     private Task<Iterable<SearchResult>> getTaskForQuery(final String querySource, final String query,
-                                                         final Object ... parameters){
+            final Object... parameters) {
 
-    	final QueryInterface queryEngine = getQueryProviderByName(querySource, true);
-    	//returns a tasks that runs the query from the selected query engine
+        final QueryInterface queryEngine = getQueryProviderByName(querySource, true);
+        // returns a tasks that runs the query from the selected query engine
         String uid = UUID.randomUUID().toString();
-        Task<Iterable<SearchResult>> queryTask = new Task<>(uid, querySource,
-            new Callable<Iterable<SearchResult>>(){
-            @Override public Iterable<SearchResult> call() throws Exception {
-                if(queryEngine == null) return Collections.emptyList();
+        Task<Iterable<SearchResult>> queryTask = new Task<>(uid, querySource, new Callable<Iterable<SearchResult>>() {
+            @Override
+            public Iterable<SearchResult> call() throws Exception {
+                if (queryEngine == null)
+                    return Collections.emptyList();
                 try {
                     return queryEngine.query(query, parameters);
                 } catch (RuntimeException ex) {
@@ -620,34 +610,34 @@ public class PluginController{
 
             }
         });
-        //logger.info("Prepared Query Task: QueryString");
+        // logger.info("Prepared Query Task: QueryString");
         return queryTask;
     }
 
 
     private Task<Iterable<SearchResult>> getTaskForQueryDim(final String querySource, final String query,
-                                                         final DimLevel level, final Object ... parameters){
+            final DimLevel level, final Object... parameters) {
 
         final QueryInterface queryEngine = getQueryProviderByName(querySource, true);
-        //returns a tasks that runs the query from the selected query engine
+        // returns a tasks that runs the query from the selected query engine
         String uid = UUID.randomUUID().toString();
-        Task<Iterable<SearchResult>> queryTask = new Task<>(uid, querySource,
-                new Callable<Iterable<SearchResult>>(){
-                    @Override public Iterable<SearchResult> call() throws Exception {
-                        if(queryEngine == null || !(queryEngine instanceof QueryDimInterface)) return Collections.emptyList();
-                        try {
-                            return queryEngine.query(query, level, parameters);
-                        } catch (RuntimeException ex) {
-                            logger.warn("Query plugin {} failed unexpectedly", querySource, ex);
-                            return Collections.EMPTY_LIST;
-                        }
+        Task<Iterable<SearchResult>> queryTask = new Task<>(uid, querySource, new Callable<Iterable<SearchResult>>() {
+            @Override
+            public Iterable<SearchResult> call() throws Exception {
+                if (queryEngine == null || !(queryEngine instanceof QueryDimInterface))
+                    return Collections.emptyList();
+                try {
+                    return queryEngine.query(query, level, parameters);
+                } catch (RuntimeException ex) {
+                    logger.warn("Query plugin {} failed unexpectedly", querySource, ex);
+                    return Collections.EMPTY_LIST;
+                }
 
-                    }
-                });
-        //logger.info("Prepared Query Task: QueryString");
+            }
+        });
+        // logger.info("Prepared Query Task: QueryString");
         return queryTask;
     }
-
 
 
 
@@ -659,22 +649,23 @@ public class PluginController{
      * or in a blocking way by calling the get() method of the task
      */
     public List<Task<Report>> index(URI path) {
-    	logger.info("Starting Indexing procedure for {}", path.toString());
+        logger.info("Starting Indexing procedure for {}", path.toString());
         StorageInterface store = getStorageForSchema(path);
 
-        if(store==null){ 
+        if (store == null) {
             logger.error("No storage plugin detected");
-            return Collections.emptyList(); 
+            return Collections.emptyList();
         }
-        
-        Collection<IndexerInterface> indexers= getIndexingPlugins(true);
-        //Collection<IndexerInterface> indexers = getIndexingPluginsByMimeType(path);
+
+        Collection<IndexerInterface> indexers = getIndexingPlugins(true);
+        // Collection<IndexerInterface> indexers = getIndexingPluginsByMimeType(path);
         ArrayList<Task<Report>> rettasks = new ArrayList<>();
-        final  String pathF = path.toString();
-        for(IndexerInterface indexer : indexers){
+        final String pathF = path.toString();
+        for (IndexerInterface indexer : indexers) {
             try {
                 Task<Report> task = indexer.index(store.at(path));
-                if(task == null) continue;
+                if (task == null)
+                    continue;
                 final String taskUniqueID = UUID.randomUUID().toString();
                 task.setName(String.format("[%s]index %s", indexer.getName(), path));
                 task.onCompletion(new Runnable() {
@@ -692,24 +683,24 @@ public class PluginController{
             }
         }
         logger.info("Finished firing all indexing plugins for {}", path);
-        
-        return rettasks;    	
-    }     
-    
+
+        return rettasks;
+    }
+
     public List<Task<Report>> index(String pluginName, URI path) {
-    	logger.info("Starting Indexing procedure for {}", path);
+        logger.info("Starting Indexing procedure for {}", path);
         StorageInterface store = getStorageForSchema(path);
 
-        if(store==null){ 
-        	logger.error("No storage plugin detected");
-            return Collections.emptyList(); 
+        if (store == null) {
+            logger.error("No storage plugin detected");
+            return Collections.emptyList();
         }
-        
+
         final String taskUniqueID = UUID.randomUUID().toString();
-        
+
         IndexerInterface indexer = getIndexerByName(pluginName, true);
         ArrayList<Task<Report>> rettasks = new ArrayList<>();
-        final  String pathF = path.toString();
+        final String pathF = path.toString();
         try {
             Task<Report> task = indexer.index(store.at(path));
             if (task != null) {
@@ -731,12 +722,12 @@ public class PluginController{
         } catch (RuntimeException ex) {
             logger.warn("Indexer {} failed unexpectedly", indexer.getName(), ex);
         }
-        
-        return rettasks;    	
+
+        return rettasks;
     }
 
     public void unindex(URI path) {
-    	logger.info("Starting unindexing procedure for {}", path.toString());
+        logger.info("Starting unindexing procedure for {}", path.toString());
         this.doUnindex(path, this.getIndexingPlugins(true));
     }
 
@@ -746,8 +737,8 @@ public class PluginController{
      * @param indexProviders a collection of providers
      */
     public void unindex(URI path, Collection<String> indexProviders) {
-    	logger.info("Starting unindexing procedure for {}", path);
-        
+        logger.info("Starting unindexing procedure for {}", path);
+
         if (indexProviders != null) {
             List<IndexerInterface> indexers = new ArrayList<>();
             for (String provider : indexProviders) {
@@ -758,7 +749,7 @@ public class PluginController{
             this.doUnindex(path, this.getIndexingPlugins(true));
         }
     }
-    
+
     /** Issue an unindexation procedure to the given indexers.
      * 
      * @param path the URI of the directory or file to unindex
@@ -766,50 +757,50 @@ public class PluginController{
      */
     private void doUnindex(URI path, Collection<IndexerInterface> indexers) {
         for (IndexerInterface indexer : indexers) {
-        	indexer.unindex(path);
+            indexer.unindex(path);
         }
         logger.info("Finished unindexing {}", path);
     }
-    
-    public void remove(URI uri){
-      StorageInterface si = getStorageForSchema(uri);
-      if(si != null)
-        doRemove(uri, si);
-      else
-        logger.error("Could not find storage plugin to handle URI: {}", uri);      
+
+    public void remove(URI uri) {
+        StorageInterface si = getStorageForSchema(uri);
+        if (si != null)
+            doRemove(uri, si);
+        else
+            logger.error("Could not find storage plugin to handle URI: {}", uri);
     }
-    
+
     public void doRemove(URI uri, StorageInterface si) {
-        if(si.handles(uri)){
-            si.remove(uri); 
+        if (si.handles(uri)) {
+            si.remove(uri);
         } else {
             logger.warn("Storage Plugin does not handle URI: {},{}", uri, si);
         }
         logger.info("Finished removing {}", uri);
     }
+
     /*
      * Convinience method that calls index(URI) and runs the returned
      * tasks on the executing thread 
      */
     public List<Report> indexBlocking(URI path) {
-    	logger.info("Starting indexing blocking procedure for {}", path);
+        logger.info("Starting indexing blocking procedure for {}", path);
         List<Task<Report>> ret = index(path);
-        
+
         ArrayList<Report> reports = new ArrayList<>(ret.size());
-        for(Task<Report> t : ret){
-        	try {
-				reports.add(t.get());
-			}
-            catch (InterruptedException | ExecutionException e) {
+        for (Task<Report> t : ret) {
+            try {
+                reports.add(t.get());
+            } catch (InterruptedException | ExecutionException e) {
                 logger.error(e.getMessage(), e);
-			}
+            }
         }
         logger.info("Finished indexing {}", path);
-        
+
         return reports;
     }
-    
-    // Methods for Web UI 
+
+    // Methods for Web UI
 
     /** Retrieve all web UI plugin descriptors for the given slot id.
      * 
@@ -833,7 +824,7 @@ public class PluginController{
         }
         return plugins;
     }
-    
+
     /** Retrieve the web UI plugin descriptor of the plugin with the given name.
      * 
      * @param name the unique name of the plugin
@@ -842,8 +833,7 @@ public class PluginController{
     public WebUIPlugin getWebUIPlugin(String name) {
         logger.debug("getWebUIPlugin(name: {})", name);
         WebUIPlugin plugin = webUI.get(name);
-        return plugin == null ? null
-                : plugin.isEnabled() ? plugin : null;
+        return plugin == null ? null : plugin.isEnabled() ? plugin : null;
     }
 
     /** Retrieve the web UI plugin descriptor package.json.
@@ -855,9 +845,7 @@ public class PluginController{
         logger.debug("getWebUIPackageJSON(name: {})", name);
         try {
             Object o = webUI.retrieveJSON(name);
-            return (o != null)
-                    ? o.toString()
-                    : null;
+            return (o != null) ? o.toString() : null;
         } catch (IOException ex) {
             logger.error("Failed to retrieve package JSON", ex);
             return null;
@@ -879,7 +867,7 @@ public class PluginController{
         }
     }
 
-    //METHODS FOR SERVICE:JAVA
+    // METHODS FOR SERVICE:JAVA
     /**
      *
      * TODO: REVIEW! BELOW

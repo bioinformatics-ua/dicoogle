@@ -35,37 +35,33 @@ import pt.ua.dicoogle.taskManager.RunningIndexTasks;
 */
 public class RunningTasksServlet extends HttpServlet {
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		
-		resp.setContentType("application/json");
-		resp.getWriter().write(RunningIndexTasks.getInstance().toJson());
-	}
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		String action = req.getParameter("action");
-		
-		if(action != null && !action.equals("delete"))
-		{
-			resp.sendError(400, "action param needed: only delete is supported");
-		}
-		
-		String type = req.getParameter("type");
-		String taskUid = req.getParameter("uid");
-		if(type == null)
-		{
-			resp.sendError(400,"type param not existent");
-		}
-		if(type.equals("close"))
-			ResponseUtil.simpleResponse(resp, "removed", RunningIndexTasks.getInstance().removeTask(taskUid));
-		else if(type.equals("stop"))
-			ResponseUtil.simpleResponse(resp, "stopped", RunningIndexTasks.getInstance().stopTask(taskUid));
-		else
-			ResponseUtil.simpleResponse(resp, "error", true);
-	}
-	
+        resp.setContentType("application/json");
+        resp.getWriter().write(RunningIndexTasks.getInstance().toJson());
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String action = req.getParameter("action");
+
+        if (action != null && !action.equals("delete")) {
+            resp.sendError(400, "action param needed: only delete is supported");
+        }
+
+        String type = req.getParameter("type");
+        String taskUid = req.getParameter("uid");
+        if (type == null) {
+            resp.sendError(400, "type param not existent");
+        }
+        if (type.equals("close"))
+            ResponseUtil.simpleResponse(resp, "removed", RunningIndexTasks.getInstance().removeTask(taskUid));
+        else if (type.equals("stop"))
+            ResponseUtil.simpleResponse(resp, "stopped", RunningIndexTasks.getInstance().stopTask(taskUid));
+        else
+            ResponseUtil.simpleResponse(resp, "error", true);
+    }
+
 
 }

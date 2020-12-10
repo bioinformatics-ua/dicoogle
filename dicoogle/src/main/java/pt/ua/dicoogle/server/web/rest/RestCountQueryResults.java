@@ -32,33 +32,34 @@ import pt.ua.dicoogle.core.QueryExpressionBuilder;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
-public class RestCountQueryResults extends ServerResource{ 
-    
+public class RestCountQueryResults extends ServerResource {
+
     @Get
-    public Representation represent(){
-        
+    public Representation represent() {
+
         String search = getRequest().getResourceRef().getQueryAsForm().getValues("q");
         String advSearch = getRequest().getResourceRef().getQueryAsForm().getValues("advq");
 
-        if(advSearch == null){
-            //prepares query
-            if(search == null) search="";
-            else if(search.equals("null")) search = "";
+        if (advSearch == null) {
+            // prepares query
+            if (search == null)
+                search = "";
+            else if (search.equals("null"))
+                search = "";
 
             if (search.equals(""))
                 search = "*:*";
-            else{
+            else {
                 QueryExpressionBuilder q = new QueryExpressionBuilder(search);
                 search = q.getQueryString();
             }
-        }
-        else{
+        } else {
             search = advSearch;
         }
 
-        
+
         throw new NotImplementedException("Deprecated: RMI", null);
-        
-        //return new StringRepresentation("" + nResults, MediaType.TEXT_PLAIN);
+
+        // return new StringRepresentation("" + nResults, MediaType.TEXT_PLAIN);
     }
 }

@@ -31,8 +31,7 @@ import java.util.*;
 /**
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY,
-        getterVisibility = JsonAutoDetect.Visibility.NONE,
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE,
         setterVisibility = JsonAutoDetect.Visibility.NONE)
 public class DicomServicesImpl implements ServerSettings.DicomServices {
     public static DicomServicesImpl createDefault() {
@@ -43,11 +42,9 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
         s.allowedLocalInterfaces = Collections.singletonList("any");
         s.moveDestinations = new ArrayList<>();
 
-        s.defaultTS = Arrays.asList(
-                "1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.2",
-                "1.2.840.10008.1.2.4.70", "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.57",
-                "1.2.840.10008.1.2.4.90", "1.2.840.10008.1.2.4.91", "1.2.840.10008.1.2.5",
-                "1.2.840.10008.1.2.4.100", "1.2.840.10008.1.2.4.51");
+        s.defaultTS = Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.2",
+                "1.2.840.10008.1.2.4.70", "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.57", "1.2.840.10008.1.2.4.90",
+                "1.2.840.10008.1.2.4.91", "1.2.840.10008.1.2.5", "1.2.840.10008.1.2.4.100", "1.2.840.10008.1.2.4.51");
 
         s.sopClasses = SOPList.getInstance().asSOPClassList();
 
@@ -261,18 +258,10 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
 
     @Override
     public String toString() {
-        return "DicomServicesImpl{" +
-                "aetitle='" + aetitle + '\'' +
-                ", deviceDescription='" + deviceDescription + '\'' +
-                ", allowedAETitles=" + allowedAETitles +
-                ", priorityAETitles=" + priorityAETitles +
-                ", allowedLocalInterfaces=" + allowedLocalInterfaces +
-                ", allowedHosts=" + allowedHosts +
-                ", defaultTS=" + defaultTS +
-                ", sopClasses=" + sopClasses +
-                ", moveDestinations=" + moveDestinations +
-                ", storage=" + storage +
-                ", queryRetrieve=" + queryRetrieve +
-                '}';
+        return "DicomServicesImpl{" + "aetitle='" + aetitle + '\'' + ", deviceDescription='" + deviceDescription + '\''
+                + ", allowedAETitles=" + allowedAETitles + ", priorityAETitles=" + priorityAETitles
+                + ", allowedLocalInterfaces=" + allowedLocalInterfaces + ", allowedHosts=" + allowedHosts
+                + ", defaultTS=" + defaultTS + ", sopClasses=" + sopClasses + ", moveDestinations=" + moveDestinations
+                + ", storage=" + storage + ", queryRetrieve=" + queryRetrieve + '}';
     }
 }

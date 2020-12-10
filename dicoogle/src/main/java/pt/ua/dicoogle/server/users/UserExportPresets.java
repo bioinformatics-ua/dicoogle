@@ -51,7 +51,7 @@ public class UserExportPresets {
         File presetFile = new File(presetsDir + "/" + presetName + ".txt");
 
         try (Writer writer = new PrintWriter(presetFile)) {
-            for (String field: fields) {
+            for (String field : fields) {
                 writer.write(field);
                 writer.write('\n');
             }
@@ -74,7 +74,7 @@ public class UserExportPresets {
             return presets;
         }
 
-        for (File presetFile: presetsDir.listFiles()) {
+        for (File presetFile : presetsDir.listFiles()) {
             String[] fields = FileUtils.readFileToString(presetFile, "UTF-8").split("\n");
             presets.put(FilenameUtils.removeExtension(presetFile.getName()), fields);
         }

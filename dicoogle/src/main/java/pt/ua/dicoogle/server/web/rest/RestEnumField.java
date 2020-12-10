@@ -37,18 +37,18 @@ import pt.ua.dicoogle.server.web.rest.elements.JaxbStrList;
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
-public class RestEnumField extends ServerResource{
+public class RestEnumField extends ServerResource {
 
-    
-    
+
+
     @Get
-    public Representation represent(){
+    public Representation represent() {
         StringRepresentation sr;
         /*
         IndexEngine core = IndexEngine.getInstance();
         String field = getRequest().getResourceRef().getQueryAsForm().getValues("field");
         String type = getRequest().getResourceRef().getQueryAsForm().getValues("type");
-
+        
         if(field == null){
             return new StringRepresentation("", MediaType.APPLICATION_XML);
         }
@@ -65,26 +65,26 @@ public class RestEnumField extends ServerResource{
         else if(type.equalsIgnoreCase("float")){
             enumList = core.enumField(field, true);
         }
-
+        
         JaxbStrList jaxbList = new JaxbStrList(enumList);
-
+        
         StringWriter sw = new StringWriter();
-
+        
         try {
             JAXBContext context = JAXBContext.newInstance(JaxbStrList.class);
             Marshaller m = context.createMarshaller();
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
+        
             m.marshal(jaxbList, sw);
-
+        
             sr = new StringRepresentation(sw.toString(), MediaType.APPLICATION_XML);
-
+        
         } catch (Exception ex) {
             LoggerFactory.getLogger(RestTagsResource.class).error(ex.getMessage(), ex);
             
             sr = new StringRepresentation("", MediaType.APPLICATION_XML);
         }
-
+        
         return sr;*/
         throw new UnsupportedOperationException();
     }

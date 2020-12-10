@@ -27,25 +27,22 @@ import java.util.Map;
  *
  * @author Luís A. Bastião Silva <bastiao@bmd-software.com>
  */
-public class Patient implements PatientInterface
-{
+public class Patient implements PatientInterface {
     private String PatientID;
     private String PatientName;
     private String PatientSex;
     private String PatientBirthDate;
 
-    private ArrayList<Study> studies = new ArrayList<>() ;
+    private ArrayList<Study> studies = new ArrayList<>();
     private Map<String, Study> studiesHash = new HashMap<>();
     private int nStudyOverride = -1;
 
-    public Patient(String PatientID, String PatientName)
-    {
+    public Patient(String PatientID, String PatientName) {
         this.PatientName = PatientName;
         this.PatientID = PatientID;
     }
 
-    public Patient(String PatientID)
-    {
+    public Patient(String PatientID) {
         this.PatientID = PatientID;
     }
 
@@ -53,25 +50,20 @@ public class Patient implements PatientInterface
      * Add new Study to Patient
      * @param s
      */
-    public void addStudy(Study s)
-    {
+    public void addStudy(Study s) {
 
-        if (this.studiesHash.containsKey(s.getStudyInstanceUID()))
-        {
+        if (this.studiesHash.containsKey(s.getStudyInstanceUID())) {
             /** 
              * The study exists, so it will take the series and add the series
              */
 
-            Study es = this.studiesHash.get(s.getStudyInstanceUID()) ;
+            Study es = this.studiesHash.get(s.getStudyInstanceUID());
             es.setStudyDescription(s.getStudyDescription());
-            for (Series e: s.getSeries())
-            {
+            for (Series e : s.getSeries()) {
                 es.addSerie(e);
             }
-           
-        }
-        else
-        {
+
+        } else {
             this.getStudies().add(s);
             this.studiesHash.put(s.getStudyInstanceUID(), s);
         }
@@ -83,24 +75,22 @@ public class Patient implements PatientInterface
      * will be returned. Otherwise a null is returned
      * @return s Stydy Result
      */
-    public Study getStudy(String studyInstanceUID)
-    {
+    public Study getStudy(String studyInstanceUID) {
         return this.studiesHash.get(studyInstanceUID);
     }
 
 
-    public String toString()
-    {
+    public String toString() {
         String result = "";
-        result += "PatientID: " + this.getPatientID() ;
-        if (this.getPatientName()!=null)
+        result += "PatientID: " + this.getPatientID();
+        if (this.getPatientName() != null)
             result = "PatientName: " + this.getPatientName() + "\n";
         if (this.getPatientSex() != null)
             result = "PatientSax: " + this.getPatientSex() + "\n";
-        
-        // XXX Study + Series 
 
-        return result ; 
+        // XXX Study + Series
+
+        return result;
     }
 
     /**
