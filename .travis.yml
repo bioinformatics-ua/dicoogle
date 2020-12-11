@@ -24,6 +24,9 @@ matrix:
       env: NODE_VERSION=lts/*
     - jdk: openjdk11
       env: NODE_VERSION=lts/*
+  allow_failures:
+    - jdk: oraclejdk8
+      env: NODE_VERSION=stable WEBAPP_ONLY=1
 
 before_install:
   - if [ $TRAVIS_JDK_VERSION == "oraclejdk8" ] || [ $TRAVIS_JDK_VERSION == "openjdk8" ]; then
