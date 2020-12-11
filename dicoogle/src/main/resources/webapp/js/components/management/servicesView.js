@@ -47,7 +47,13 @@ const ServicesView = React.createClass({
   },
 
   _onChange(data) {
-    console.log(data);
+    if (data.error) {
+      this.props.showToastMessage("error", { title: "Error", body: data.error });
+      return;
+    } else if (!data.error && this.state.status === "done") {
+      this.props.showToastMessage("success", { title: "Success" });
+    }
+
     this.setState({
       storageRunning: data.storageRunning,
       storagePort: data.storagePort,

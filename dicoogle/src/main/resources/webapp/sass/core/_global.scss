@@ -53,25 +53,41 @@ input {
 }
 
 .toast {
-  display: none;
   min-width: 200px;
   height: auto;
   position: fixed;
   left: 50%;
   margin-left: -100px;
   bottom: 20px;
-  background-color: $blue5;
   color: $button_color;
-  font-size: 20px;
   padding: 10px;
   text-align: center;
-  border-radius: 2px;
-  -webkit-box-shadow: 0px 0px 24px -1px rgba(56, 56, 56, 1);
-  -moz-box-shadow: 0px 0px 24px -1px rgba(56, 56, 56, 1);
-  box-shadow: 0px 0px 24px -1px rgba(56, 56, 56, 1);
-}
-.testdapissa {
-  height: 400px;
+  border-radius: 4px;
+  -webkit-box-shadow: 0px 0px 10px -1px rgba(56, 56, 56, 1);
+  -moz-box-shadow: 0px 0px 10px -1px rgba(56, 56, 56, 1);
+  box-shadow: 0px 0px 10px -1px rgba(56, 56, 56, 1);
+
+  &-default {
+    background-color: $blue5;
+  }
+
+  &-success {
+    background-color: $success;
+  }
+
+  &-warning {
+    background-color: $danger;
+  }
+
+  &-error {
+    background-color: $error;
+  }
+
+  &-body {
+    border-top: 1px solid $button_color;
+    margin: 5px;
+    padding-top: 5px;
+  }
 }
 
 .indexstatusprogress {

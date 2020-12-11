@@ -2,7 +2,7 @@ import React from "react";
 import AETitleForm from "./aetitleForm";
 import * as AETitleActions from "../../actions/aetitleActions";
 import AETitleStore from "../../stores/aetitleStore";
-import $ from "jquery";
+import { ToastView } from "../mixins/toastView";
 
 const AETitleView = React.createClass({
   getInitialState() {
@@ -25,29 +25,25 @@ const AETitleView = React.createClass({
     AETitleActions.getAETitle();
   },
 
-  _onChange(data) {
-    let toastMessage = data.success ? "Saved." : data.message;
 
-    if (this.state.status === "done") {
-      $(".toast")
-        .stop()
-        .text(toastMessage)
-        .fadeIn(400)
-        .delay(3000)
-        .fadeOut(400); // fade out after 3 seconds
-    }
+    _onChange(data) {
+        if (data.success && this.state.status === "done") {
+            this.props.showToastMessage("success", { title: "Saved" });
+        } else if (data.success) {
+            this.setState({
+                aetitleText: data.message,
+                status: "done"
+            });
 
-    if (!data.success) {
-      this.setState({
-        dirtyValue: true
-      });
-    } else {
-      this.setState({
-        aetitleText: data.message,
-        status: "done"
-      });
-    }
-  },
+        } else {
+            this.setState({
+                dirtyValue: true,
+            });
+
+            this.props.showToastMessage("error", { title: "Error", body: data.message });
+        }
+    },
+
 
   render() {
     if (this.state.status === "loading") {
@@ -60,22 +56,22 @@ const AETitleView = React.createClass({
       );
     }
 
-    return (
-      <div className="panel panel-primary topMargin">
-        <div className="panel-heading">
-          <h3 className="panel-title">AETitle</h3>
-        </div>
-        <div className="panel-body">
-          <AETitleForm
-            aetitleText={this.state.aetitleText}
-            onChangeAETitle={this.handleAETitleChange}
-            onSubmitAETitle={this.handleSubmitAETitle}
-            dirtyValue={this.state.dirtyValue}
-          />
-        </div>
-        <div className="toast">Saved</div>
-      </div>
-    );
+      return (
+          <div className="panel panel-primary topMargin">
+              <div className="panel-heading">
+                  <h3 className="panel-title">AETitle</h3>
+              </div>
+
+              <div className="panel-body">
+                  <AETitleForm
+                      aetitleText={this.state.aetitleText}
+                      onChangeAETitle={this.handleAETitleChange}
+                      onSubmitAETitle={this.handleSubmitAETitle}
+                      dirtyValue={this.state.dirtyValue}
+                  />
+              </div>
+          </div>
+      );
   },
 
   handleAETitleChange(aetitle) {

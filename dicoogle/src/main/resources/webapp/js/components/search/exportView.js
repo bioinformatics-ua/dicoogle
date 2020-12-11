@@ -11,10 +11,10 @@ import {
 
 import { ExportActions } from "../../actions/exportActions";
 import { ExportStore } from "../../stores/exportStore";
-import $ from "jquery";
+import { ToastView } from "../mixins/toastView";
 
 const ExportView = React.createClass({
-  getInitialState: function() {
+  getInitialState: function () {
     return {
       fields: [],
       presets: [],
@@ -27,17 +27,21 @@ const ExportView = React.createClass({
 
       actionPerformed: false,
 
-      current: 0
+      current: 0,
+
+      showToast: false,
+      toastType: 'default',
+      toastMessage: {}
     };
   },
 
-  componentWillMount: function() {
+  componentWillMount: function () {
     // Subscribe to the store.
     console.log("subscribe listener");
     this.unsubscribe = ExportStore.listen(this._onChange);
   },
 
-  componentDidMount: function() {
+  componentDidMount: function () {
     ExportActions.getFieldList();
     ExportActions.getPresets();
   },
@@ -46,11 +50,21 @@ const ExportView = React.createClass({
     this.unsubscribe();
   },
 
-  _onChange: function(data) {
+  showToastMessage: function (toastType, toastMessage) {
+    this.setState({
+      showToast: true,
+      toastType,
+      toastMessage
+    },
+      () => setTimeout(() => this.setState({ showToast: false }), 3000));
+  },
+
+  _onChange: function (data) {
     if (!data.success) {
       this.setState({
         status: "failed"
       });
+      this.showToastMessage("error", { title: "Error" });
       return;
     }
 
@@ -75,13 +89,7 @@ const ExportView = React.createClass({
         actionPerformed: false
       });
 
-      let toastMessage = this.state.error ? this.state.error : "Saved.";
-      $(".toast")
-        .stop()
-        .text(toastMessage)
-        .fadeIn(400)
-        .delay(3000)
-        .fadeOut(400); // fade out after 3 seconds
+      this.showToastMessage("success", { title: "Success" });
     }
   },
 
@@ -91,90 +99,92 @@ const ExportView = React.createClass({
       label: preset.name
     }));
 
+    const { showToast, toastType, toastMessage } = this.state;
+
     return (
-      <Modal {...this.props} bsStyle="primary" animation>
-        <Modal.Header>
-          <Modal.Title>Export to CSV</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <FormGroup>
-            <ControlLabel>Preset (optional):</ControlLabel>
-            <Select
-              simpleValue
-              id="selected-preset"
-              value={this.state.selectedPresetName}
-              options={presetNames}
-              placeholder="Choose a preset"
-              onChange={this.handlePresetSelect}
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Fields to export:</ControlLabel>
-            <Select.AsyncCreatable
-              multi
-              id="selected-fields"
-              value={this.state.selectedFields}
-              loadOptions={this.loadOptionFields}
-              placeholder="Choose fields"
-              onChange={this.handleFieldSelect}
-            />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>Inline fields to export (optional):</ControlLabel>
-
-            <div className="modal-body">
-              <textarea
-                id="textFields"
-                placeholder="Paste export fields here (one per line)"
-                onChange={this.handleFieldSelectTextArea}
-                rows="10"
-                value={this.state.selectedFieldsAdditionals}
-                className="exportlist form-control"
+        <Modal {...this.props} bsStyle="primary" animation>
+          <Modal.Header>
+            <Modal.Title>Export to CSV</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <FormGroup>
+              <ControlLabel>Preset (optional):</ControlLabel>
+              <Select
+                simpleValue
+                id="selected-preset"
+                value={this.state.selectedPresetName}
+                options={presetNames}
+                placeholder="Choose a preset"
+                onChange={this.handlePresetSelect}
               />
-            </div>
-          </FormGroup>
-        </Modal.Body>
-        <Modal.Footer id="hacked-modal-footer-do-not-remove">
-          <Form inline>
-            <FormControl
-              type="text"
-              value={this.state.exportPresetName}
-              placeholder="Name the preset"
-              onChange={this.handlePresetNameChange}
-              maxLength="100"
-            />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Fields to export:</ControlLabel>
+              <Select.AsyncCreatable
+                multi
+                id="selected-fields"
+                value={this.state.selectedFields}
+                loadOptions={this.loadOptionFields}
+                placeholder="Choose fields"
+                onChange={this.handleFieldSelect}
+              />
+            </FormGroup>
+            <FormGroup>
+              <ControlLabel>Inline fields to export (optional):</ControlLabel>
 
-            <Button
-              bsStyle="default"
-              onClick={this.handleSavePresetClicked}
-              disabled={!this.canExport()}
-            >
-              Save Preset
-            </Button>
-            <Button
-              bsStyle="primary"
-              onClick={this.handleExportClicked}
-              disabled={!this.canSave()}
-            >
-              Export
-            </Button>
-          </Form>
-          <div className="toast">Saved</div>
-        </Modal.Footer>
-      </Modal>
+              <div className="modal-body">
+                <textarea
+                  id="textFields"
+                  placeholder="Paste export fields here (one per line)"
+                  onChange={this.handleFieldSelectTextArea}
+                  rows="10"
+                  value={this.state.selectedFieldsAdditionals}
+                  className="exportlist form-control"
+                />
+              </div>
+            </FormGroup>
+          </Modal.Body>
+          <Modal.Footer id="hacked-modal-footer-do-not-remove">
+            <Form inline>
+              <FormControl
+                type="text"
+                value={this.state.exportPresetName}
+                placeholder="Name the preset"
+                onChange={this.handlePresetNameChange}
+                maxLength="100"
+              />
+
+              <Button
+                bsStyle="default"
+                onClick={this.handleSavePresetClicked}
+                disabled={!this.canExport()}
+              >
+                Save Preset
+              </Button>
+              <Button
+                bsStyle="primary"
+                onClick={this.handleExportClicked}
+                disabled={!this.canSave()}
+              >
+                Export
+              </Button>
+            </Form>
+          </Modal.Footer>
+          <ToastView show={showToast} message={toastMessage} toastType={toastType} />
+        </Modal>
     );
   },
 
-  loadOptionFields: function(input, callback) {
+  loadOptionFields: function (input, callback) {
     // display no options if the input is empty
     let options =
       input.length === 0
         ? []
         : this.state.fields.filter(
-            i =>
-              i.value.toLowerCase().substr(0, input.length) ===
-              input.toLowerCase()
-          );
+          i =>
+            i.value.toLowerCase().substr(0, input.length) ===
+            input.toLowerCase()
+        );
 
     let data = {
       options: options,
@@ -184,19 +194,19 @@ const ExportView = React.createClass({
     callback(null, data);
   },
 
-  handleFieldSelectTextArea: function(event) {
+  handleFieldSelectTextArea: function (event) {
     this.setState({
       selectedFieldsAdditionals: event.target.value
     });
   },
 
-  handleFieldSelect: function(selectedFields) {
+  handleFieldSelect: function (selectedFields) {
     this.setState({
       selectedFields: selectedFields
     });
   },
 
-  handlePresetSelect: function(name) {
+  handlePresetSelect: function (name) {
     // default values if no preset is selected
     let selectedFields = [];
     let exportPresetName = "default";
@@ -216,12 +226,12 @@ const ExportView = React.createClass({
     });
   },
 
-  handlePresetNameChange: function(e) {
+  handlePresetNameChange: function (e) {
     this.setState({
       exportPresetName: e.target.value
     });
   },
-  __getSelectedFields: function() {
+  __getSelectedFields: function () {
     let fields = this.state.selectedFields.map(i => i.value);
     if (this.state.selectedFieldsAdditionals !== "") {
       let fieldsInline = this.state.selectedFieldsAdditionals.split("\n");
@@ -230,7 +240,7 @@ const ExportView = React.createClass({
 
     return fields;
   },
-  handleSavePresetClicked: function() {
+  handleSavePresetClicked: function () {
     let fields = this.__getSelectedFields();
     ExportActions.savePresets(this.state.exportPresetName, fields);
 
@@ -240,17 +250,17 @@ const ExportView = React.createClass({
     });
   },
 
-  handleExportClicked: function() {
+  handleExportClicked: function () {
     let fields = this.__getSelectedFields();
     let query = this.props.query;
     ExportActions.exportCSV(query, fields);
   },
 
-  canSave: function() {
+  canSave: function () {
     return this.__getSelectedFields().length !== 0;
   },
 
-  canExport: function() {
+  canExport: function () {
     return this.state.exportPresetName && this.canSave();
   }
 });
