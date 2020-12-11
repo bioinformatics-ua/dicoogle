@@ -4,10 +4,10 @@
   "private": true,
   "author": "Universidade de Aveiro, DETI/IEETA, Bioinformatics Group (http://bioinformatics.ua.pt/)",
   "maintainers": [
-    "Eduardo Pinho <eduardopinho@ua.pt>"
+    "Eduardo Pinho <eduardopinho@bmd-software.com>"
   ],
   "contributors": [
-    "Eduardo Pinho <eduardopinho@ua.pt>",
+    "Eduardo Pinho <eduardopinho@bmd-software.com>",
     "Luís Bastião Silva <bastiao@bmd-software.com>"
   ],
   "description": "Dicoogle Web Core for UI plugins",
