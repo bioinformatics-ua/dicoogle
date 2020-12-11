@@ -148,8 +148,8 @@ Before building, please make sure that your system contains the following tools:
 
  - Java JDK, either Oracle or OpenJDK (at least version 8);
  - Maven 3;
- - [Node.js](https://nodejs.org/en/download/) (at least version 10; latest LTS or Stable versions are recommended);
- - npm (at least version 5; version 6 is recommended), often installed alongside Node.js.
+ - [Node.js](https://nodejs.org/en/download/) (at least version 10; latest LTS version is recommended);
+ - npm (version 6 is recommended), often installed alongside Node.js.
 
  1. Retrieve the full source code from this repository: `git clone https://github.com/bioinformatics-ua/dicoogle.git`
  2. Navigate to the project's base directory, and build the parent Maven project by calling `mvn install`.
