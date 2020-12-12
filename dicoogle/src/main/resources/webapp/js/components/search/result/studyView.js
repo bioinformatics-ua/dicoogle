@@ -162,10 +162,11 @@ const StudyView = React.createClass({
         >
           <TableHeaderColumn
             dataAlign="right"
-            dataField="studyInstanceUID"
+            dataField="studyDate"
             isKey
             dataFormat={this.formatStudyDate}
             dataSort
+            width="16%"
           >
             Date
           </TableHeaderColumn>
@@ -178,7 +179,7 @@ const StudyView = React.createClass({
             Description
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataAlign="center"
+            dataAlign="left"
             dataField="institutionName"
             dataFormat={this.formatInstitutionName}
             dataSort
@@ -190,6 +191,7 @@ const StudyView = React.createClass({
             dataField="modalities"
             dataFormat={this.formatModalities}
             dataSort
+            width="15%"
           >
             Modality
           </TableHeaderColumn>
@@ -200,6 +202,7 @@ const StudyView = React.createClass({
             isKey={false}
             dataSort={false}
             dataFormat={this.formatOptions}
+            width="128"
           >
             Options
           </TableHeaderColumn>
@@ -209,6 +212,7 @@ const StudyView = React.createClass({
             dataField="Select"
             dataSort
             dataFormat={this.formatSelect}
+            width="48"
           >
             #S
           </TableHeaderColumn>

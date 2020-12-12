@@ -206,10 +206,11 @@ const ImageView = React.createClass({
         >
           <TableHeaderColumn
             dataAlign="left"
-            dataField="filename"
+            dataField="fileName"
             isKey
             dataFormat={this.formatFileName}
             dataSort
+            width="20%"
           >
             File Name
           </TableHeaderColumn>
@@ -225,16 +226,16 @@ const ImageView = React.createClass({
           <TableHeaderColumn
             dataAlign="center"
             dataFormat={this.formatViewOptions}
-            dataField="sopInstanceUID"
-            dataSort
+            dataField="View"
+            width="96"
           >
             View
           </TableHeaderColumn>
           <TableHeaderColumn
             dataAlign="center"
-            dataField="sopInstanceUID"
+            dataField="Thumbnail"
             dataFormat={this.formatThumbUrl}
-            dataSort
+            width="132"
           >
             Thumbnail
           </TableHeaderColumn>
@@ -242,18 +243,18 @@ const ImageView = React.createClass({
           <TableHeaderColumn
             hidden={!this.props.enableAdvancedSearch}
             dataAlign="center"
-            dataField="sopInstanceUID"
-            dataSort={false}
+            dataField="Opts"
             dataFormat={this.formatOptions}
+            width="128"
           >
             Options
           </TableHeaderColumn>
           <TableHeaderColumn
             hidden={!this.props.enableAdvancedSearch}
             dataAlign="center"
-            dataField="sopInstanceUID"
-            dataSort
+            dataField="Select"
             dataFormat={this.formatSelect}
+            width="48"
           >
             #S
           </TableHeaderColumn>
