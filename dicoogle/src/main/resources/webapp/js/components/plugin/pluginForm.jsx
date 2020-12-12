@@ -1,4 +1,5 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import * as PropTypes from "prop-types";
 import { ResultsSelected } from "../../stores/resultSelected";
 import dicoogleClient from "dicoogle-client";
 const Dicoogle = dicoogleClient();
@@ -11,7 +12,7 @@ export default class PluginForm extends React.Component {
         name: PropTypes.string.isRequired,
         caption: PropTypes.string
       }),
-      data: React.PropTypes.object,
+      data: PropTypes.object,
       onHide: PropTypes.func.isRequired
     };
   }

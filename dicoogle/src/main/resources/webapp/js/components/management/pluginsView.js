@@ -1,8 +1,9 @@
 import React from "react";
+import createReactClass from "create-react-class";
 import * as PluginActions from "../../actions/pluginActions";
 import PluginStore from "../../stores/pluginStore";
 
-const PluginsView = React.createClass({
+const PluginsView = createReactClass({
   getInitialState() {
     return {
       plugins: {},
@@ -36,7 +37,10 @@ const PluginsView = React.createClass({
       });
 
       if (this.state.error) {
-        this.props.showToastMessage("error", { title: "Error", body: this.state.error });
+        this.props.showToastMessage("error", {
+          title: "Error",
+          body: this.state.error
+        });
       } else {
         this.props.showToastMessage("success", { title: "Saved" });
       }

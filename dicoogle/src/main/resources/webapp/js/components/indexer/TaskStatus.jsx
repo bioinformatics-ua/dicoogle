@@ -1,5 +1,6 @@
-import React, { PropTypes } from "react";
+import React from "react";
 import { toHumanReadable } from "../../utils/time";
+import * as PropTypes from "prop-types";
 
 class TaskStatus extends React.Component {
   constructor(props) {

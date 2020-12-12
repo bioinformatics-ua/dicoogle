@@ -1,9 +1,10 @@
 import React from "react";
+import createReactClass from "create-react-class";
 
 import { TransferStore } from "../../stores/transferStore";
 import { TransferActions } from "../../actions/transferActions";
 
-const TransferOptionsView = React.createClass({
+const TransferOptionsView = createReactClass({
   getInitialState() {
     this.selectAllOn = true;
     return {
@@ -28,7 +29,10 @@ const TransferOptionsView = React.createClass({
   _onChange(data) {
     //console.log(data);
     if (!data.success) {
-      this.props.showToastMessage("error", { title: "Error", body: data.status });
+      this.props.showToastMessage("error", {
+        title: "Error",
+        body: data.status
+      });
     } else if (data.success && this.state.status === "done") {
       this.props.showToastMessage("success", { title: "Saved" });
     }
@@ -107,7 +111,10 @@ const TransferOptionsView = React.createClass({
                 </li>
               </ul>
               <div>
-                <button className="btn btn_dicoogle" onClick={this.handleSelectAll}>
+                <button
+                  className="btn btn_dicoogle"
+                  onClick={this.handleSelectAll}
+                >
                   {this.selectAllOn ? "Select all" : "Unselect all"}
                 </button>
               </div>

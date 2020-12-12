@@ -1,11 +1,13 @@
 import React from "react";
+import createReactClass from "create-react-class";
+import * as PropTypes from "prop-types";
 import * as UserActions from "../../actions/userActions";
 import UserStore from "../../stores/userStore";
 import {Panel} from "react-bootstrap";
 
-const LoginView = React.createClass({
+const LoginView = createReactClass({
   contextTypes: {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
   },
   getInitialState: function() {
     return {
@@ -54,7 +56,7 @@ const LoginView = React.createClass({
               alt="Smiley face"
             />
 
-            <div text-align="center">
+            <div>
               <h4 style={{ textAlign: "center" }}>
                 Improve your knowledge from your medical imaging repository.
               </h4>

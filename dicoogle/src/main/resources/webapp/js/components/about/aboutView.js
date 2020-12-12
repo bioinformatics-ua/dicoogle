@@ -1,10 +1,11 @@
 import React from "react";
+import createReactClass from "create-react-class";
 
 import { VersionStore } from "../../stores/versionStore";
 import { VersionActions } from "../../actions/versionAction";
 import { Panel, Grid, Row, Col } from "react-bootstrap";
 
-const AboutView = React.createClass({
+const AboutView = createReactClass({
   getInitialState: function() {
     return { version: "" };
   },

@@ -1,10 +1,11 @@
 import React from "react";
+import createReactClass from "create-react-class";
+
 import AETitleForm from "./aetitleForm";
 import * as AETitleActions from "../../actions/aetitleActions";
 import AETitleStore from "../../stores/aetitleStore";
-import { ToastView } from "../mixins/toastView";
 
-const AETitleView = React.createClass({
+const AETitleView = createReactClass({
   getInitialState() {
     return {
       aetitleText: "",
@@ -25,25 +26,25 @@ const AETitleView = React.createClass({
     AETitleActions.getAETitle();
   },
 
+  _onChange(data) {
+    if (data.success && this.state.status === "done") {
+      this.props.showToastMessage("success", { title: "Saved" });
+    } else if (data.success) {
+      this.setState({
+        aetitleText: data.message,
+        status: "done"
+      });
+    } else {
+      this.setState({
+        dirtyValue: true
+      });
 
-    _onChange(data) {
-        if (data.success && this.state.status === "done") {
-            this.props.showToastMessage("success", { title: "Saved" });
-        } else if (data.success) {
-            this.setState({
-                aetitleText: data.message,
-                status: "done"
-            });
-
-        } else {
-            this.setState({
-                dirtyValue: true,
-            });
-
-            this.props.showToastMessage("error", { title: "Error", body: data.message });
-        }
-    },
-
+      this.props.showToastMessage("error", {
+        title: "Error",
+        body: data.message
+      });
+    }
+  },
 
   render() {
     if (this.state.status === "loading") {
@@ -56,22 +57,22 @@ const AETitleView = React.createClass({
       );
     }
 
-      return (
-          <div className="panel panel-primary topMargin">
-              <div className="panel-heading">
-                  <h3 className="panel-title">AETitle</h3>
-              </div>
+    return (
+      <div className="panel panel-primary topMargin">
+        <div className="panel-heading">
+          <h3 className="panel-title">AETitle</h3>
+        </div>
 
-              <div className="panel-body">
-                  <AETitleForm
-                      aetitleText={this.state.aetitleText}
-                      onChangeAETitle={this.handleAETitleChange}
-                      onSubmitAETitle={this.handleSubmitAETitle}
-                      dirtyValue={this.state.dirtyValue}
-                  />
-              </div>
-          </div>
-      );
+        <div className="panel-body">
+          <AETitleForm
+            aetitleText={this.state.aetitleText}
+            onChangeAETitle={this.handleAETitleChange}
+            onSubmitAETitle={this.handleSubmitAETitle}
+            dirtyValue={this.state.dirtyValue}
+          />
+        </div>
+      </div>
+    );
   },
 
   handleAETitleChange(aetitle) {

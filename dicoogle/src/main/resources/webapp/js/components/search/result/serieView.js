@@ -1,4 +1,5 @@
 import React from "react";
+import createReactClass from "create-react-class";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import { SearchStore } from "../../../stores/searchStore";
 import { ActionCreators } from "../../../actions/searchActions";
@@ -8,7 +9,7 @@ import { Checkbox } from "react-bootstrap";
 import ResultSelectActions from "../../../actions/resultSelectAction";
 import UserStore from "../../../stores/userStore";
 
-const SeriesView = React.createClass({
+const SeriesView = createReactClass({
   getInitialState: function() {
     // We need this because refs are not updated in BootstrapTable.
     this.refsClone = {};

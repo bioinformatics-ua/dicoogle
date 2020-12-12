@@ -1,8 +1,9 @@
 import React from "react";
+import createReactClass from "create-react-class";
 import { LoggerActions } from "../../actions/loggerActions";
 import { LoggerStore } from "../../stores/loggerStore";
 
-const LoggerView = React.createClass({
+const LoggerView = createReactClass({
   getInitialState: function() {
     return {
       data: {},

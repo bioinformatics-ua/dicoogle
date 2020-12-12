@@ -1,4 +1,5 @@
 import React from "react";
+import createReactClass from "create-react-class";
 import { TransferOptionsView } from "../management/transferOptionsView";
 import { ServicesAndPluginsView } from "../management/servicesAndPluginsView";
 import { LoggerView } from "../management/loggerView";
@@ -6,26 +7,28 @@ import { IndexerView } from "../management/indexerView";
 import { StorageView } from "../management/storageView";
 import { ToastView } from "../mixins/toastView";
 
-const ManagementView = React.createClass({
-  getInitialState: function () {
+const ManagementView = createReactClass({
+  getInitialState: function() {
     return {
       selectedtab: 0,
       showToast: false,
-      toastType: 'default',
+      toastType: "default",
       toastMessage: {}
     };
   },
 
-  showToastMessage: function (toastType, toastMessage) {
-    this.setState({
-      showToast: true,
-      toastType,
-      toastMessage
-    },
-      () => setTimeout(() => this.setState({ showToast: false }), 3000));
+  showToastMessage: function(toastType, toastMessage) {
+    this.setState(
+      {
+        showToast: true,
+        toastType,
+        toastMessage
+      },
+      () => setTimeout(() => this.setState({ showToast: false }), 3000)
+    );
   },
 
-  render: function () {
+  render: function() {
     var views = [
       <IndexerView showToastMessage={this.showToastMessage} />,
       <TransferOptionsView showToastMessage={this.showToastMessage} />,
@@ -89,11 +92,15 @@ const ManagementView = React.createClass({
           {views[this.state.selectedtab]}
         </div>
 
-        <ToastView show={showToast} message={toastMessage} toastType={toastType} />
+        <ToastView
+          show={showToast}
+          message={toastMessage}
+          toastType={toastType}
+        />
       </div>
     );
   },
-  onTabClicked: function (index) {
+  onTabClicked: function(index) {
     this.setState({ selectedtab: index });
   }
 });

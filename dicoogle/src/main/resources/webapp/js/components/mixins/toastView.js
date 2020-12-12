@@ -1,7 +1,8 @@
 import React from "react";
+import createReactClass from "create-react-class";
 import { Transition } from "react-transition-group";
 
-const ToastView = React.createClass({
+const ToastView = createReactClass({
   render() {
     let { message, duration, toastType } = this.props;
 
@@ -11,7 +12,7 @@ const ToastView = React.createClass({
 
     const transitionStyles = {
       entering: {
-        transition: `opacity 400ms ease-in-out`,
+        transition: `opacity 400ms ease-in-out`
       },
       exiting: {
         transition: `opacity 400ms ease-in-out`,
@@ -24,7 +25,7 @@ const ToastView = React.createClass({
 
     return (
       <Transition in={this.props.show} timeout={duration}>
-        {(state) => (
+        {state => (
           <div
             style={{
               ...transitionStyles[state]
@@ -33,11 +34,7 @@ const ToastView = React.createClass({
             <div className={`toast toast-${toastType}`}>
               <h3 className="panel-title">{message.title}</h3>
 
-              {message.body &&
-                <div className="toast-body">
-                  {message.body}
-                </div>
-              }
+              {message.body && <div className="toast-body">{message.body}</div>}
             </div>
           </div>
         )}

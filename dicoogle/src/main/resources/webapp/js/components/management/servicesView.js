@@ -1,4 +1,5 @@
 import React from "react";
+import createReactClass from "create-react-class";
 import ServiceForm from "./serviceForm.jsx";
 import ServiceAction from "../../actions/servicesAction";
 import ServicesStore from "../../stores/servicesStore";
@@ -6,7 +7,7 @@ import QueryAdvancedOptionsModal from "./queryadvoptions";
 import Webcore from "dicoogle-webcore";
 import PluginView from "../plugin/pluginView";
 
-const ServicesView = React.createClass({
+const ServicesView = createReactClass({
   getInitialState() {
     return {
       storageRunning: false,
@@ -48,7 +49,10 @@ const ServicesView = React.createClass({
 
   _onChange(data) {
     if (data.error) {
-      this.props.showToastMessage("error", { title: "Error", body: data.error });
+      this.props.showToastMessage("error", {
+        title: "Error",
+        body: data.error
+      });
       return;
     } else if (!data.error && this.state.status === "done") {
       this.props.showToastMessage("success", { title: "Success" });

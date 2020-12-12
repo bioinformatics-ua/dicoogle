@@ -47,6 +47,10 @@ const UserStore = Reflux.createStore({
       );
     }
 
+    if (!this.dicoogle.isAuthenticated()) {
+      return;
+    }
+
     // check if session is still alive
     this.dicoogle.request("GET", "login").end((error, data) => {
       this._loginFailed = false;

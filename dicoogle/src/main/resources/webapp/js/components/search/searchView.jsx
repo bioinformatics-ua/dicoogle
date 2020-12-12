@@ -1,4 +1,7 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import createReactClass from "create-react-class";
+import * as PropTypes from "prop-types";
+
 import Autosuggest from "react-autosuggest";
 import { ActionCreators } from "../../actions/searchActions";
 import { ProvidersStore } from "../../stores/providersStore";
@@ -10,7 +13,7 @@ import { getUrlVars } from "../../utils/url";
 import { SearchStore } from "../../stores/searchStore";
 import Select from "react-select";
 
-const Search = React.createClass({
+const Search = createReactClass({
   propTypes: {
     params: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired
