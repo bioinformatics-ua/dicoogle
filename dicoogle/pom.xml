@@ -30,12 +30,28 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+        
         <repository>
             <id>dcm4che</id>
             <url>http://www.dcm4che.org/maven2/</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
+        </repository>
+
+        <repository>
+            <id>bmdsoftware-snapshots</id>
+            <name>BMD Software Snapshots</name>
+            <url>https://dev.bmd-software.com/nexus/content/repositories/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>bmdsoftware-releases</id>
+            <name>BMD Software releases</name>
+            <url>https://dev.bmd-software.com/nexus/content/repositories/releases/</url>
         </repository>
 
         <repository>

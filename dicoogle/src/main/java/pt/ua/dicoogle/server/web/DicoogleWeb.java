@@ -266,7 +266,9 @@ public class DicoogleWeb {
     private ServletContextHandler createServletHandler(HttpServlet servlet, String path){
         ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS); // servlet with session support enabled
         handler.setContextPath(CONTEXTPATH);
-        
+
+        handler.setMaxFormContentSize(3325000);
+
         // CORS support
         this.addCORSFilter(handler);
 
