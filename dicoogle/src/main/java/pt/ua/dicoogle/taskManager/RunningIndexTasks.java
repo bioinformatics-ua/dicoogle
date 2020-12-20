@@ -18,11 +18,14 @@
  */
 package pt.ua.dicoogle.taskManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
@@ -39,7 +42,9 @@ import pt.ua.dicoogle.sdk.task.Task;
  */
 public class RunningIndexTasks {
     private static final Logger logger = LoggerFactory.getLogger(RunningIndexTasks.class);
-    
+    private static Integer SOFT_MAX_RUNNINGTASKS = Integer.parseInt(System.getProperty("dicoogle.tasks.softRemoveTasks", "50000"));
+    private static Integer NUMBER_RUNNINGTASKS_TO_CLEAN = Integer.parseInt(System.getProperty("dicoogle.tasks.numberTaskClean", "2000"));
+    private static Boolean ENABLE_HOOK = Boolean.getBoolean(System.getProperty("dicoogle.tasks.removedCompleted", "true"));
 	public static RunningIndexTasks instance;
 
 	private final Map<String, Task<Report>> taskRunningList;
@@ -57,11 +62,30 @@ public class RunningIndexTasks {
 
 	public void addTask(String taskUid, Task<Report> task) {
 		taskRunningList.put(taskUid, task);
+		if (ENABLE_HOOK){
+            hookRemoveRunningTasks();
+        }
+
 	}
 
 	public boolean removeTask(String taskUid) {
 		return taskRunningList.remove(taskUid) != null;
 	}
+
+
+	public boolean hookRemoveRunningTasks(){
+	    if (this.taskRunningList.size()>SOFT_MAX_RUNNINGTASKS){
+	        int removedTasks = 0 ;
+	        for (String taskUid : this.taskRunningList.keySet()){
+                Task t = this.taskRunningList.get(taskUid);
+                if (removedTasks<NUMBER_RUNNINGTASKS_TO_CLEAN &&(t.isCancelled() || t.isDone())){
+                    this.removeTask(taskUid);
+                    removedTasks++;
+                }
+            }
+        }
+	    return true;
+    }
 
 	public boolean stopTask(String taskUid) {
 		Task<Report> task = taskRunningList.get(taskUid);
