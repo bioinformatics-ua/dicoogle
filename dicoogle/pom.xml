@@ -66,6 +66,12 @@
             <url>http://maven.restlet.org</url>
         </repository>
 
+        <repository>
+            <id>github-bmd</id>
+            <name>BMD GitHub Packages</name>
+            <url>https://maven.pkg.github.com/bmdsoftware/dicoogle</url>
+        </repository>
+
     </repositories>
 
     <build>
