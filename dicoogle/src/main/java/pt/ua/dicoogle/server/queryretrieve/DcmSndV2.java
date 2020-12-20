@@ -179,6 +179,9 @@ public class DcmSndV2 extends StorageCommitmentService {
 
     private DicomObject stgCmtResult;
 
+
+    private String[] suffixUID;
+
     private String keyStoreURL = "resource:tls/test_sys_1.p12";
 
     private char[] keyStorePassword = SECRET;
@@ -469,6 +472,62 @@ public class DcmSndV2 extends StorageCommitmentService {
         throw new RuntimeException();
     }
 
+
+
+
+    public synchronized void addFileSync(File f) {
+        if (f.isDirectory()) {
+            File[] fs = f.listFiles();
+            if (fs == null || fs.length == 0)
+                return;
+            for (int i = 0; i < fs.length; i++)
+                addFileSync(fs[i]);
+            return;
+        }
+
+        if(f.isHidden())
+            return;
+
+        FileInfo info = new FileInfo(f);
+        DicomObject dcmObj = new BasicDicomObject();
+        DicomInputStream in = null;
+        try {
+            in = new DicomInputStream(f);
+            in.setHandler(new StopTagInputHandler(Tag.StudyDate));
+            in.readDicomObject(dcmObj, PEEK_LEN);
+            info.tsuid = in.getTransferSyntax().uid();
+            info.fmiEndPos = in.getEndOfFileMetaInfoPosition();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("WARNING: Failed to parse " + f + " - skipped.");
+            System.out.print('F');
+            return;
+        } finally {
+            CloseUtils.safeClose(in);
+        }
+        info.cuid = dcmObj.getString(Tag.MediaStorageSOPClassUID,
+                dcmObj.getString(Tag.SOPClassUID));
+        if (info.cuid == null) {
+            System.err.println("WARNING: Missing SOP Class UID in " + f
+                    + " - skipped.");
+            System.out.print('F');
+            return;
+        }
+        info.iuid = dcmObj.getString(Tag.MediaStorageSOPInstanceUID,
+                dcmObj.getString(Tag.SOPInstanceUID));
+        if (info.iuid == null) {
+            System.err.println("WARNING: Missing SOP Instance UID in " + f
+                    + " - skipped.");
+            System.out.print('F');
+            return;
+        }
+        if (suffixUID != null)
+            info.iuid = info.iuid + suffixUID[0];
+        addTransferCapability(info.cuid, info.tsuid);
+        //LOGGER.info("CUID = " + info.cuid + ", TSUID: " +  info.tsuid);
+        files.add(info);
+
+    }
     public synchronized void addFile(ByteBuffer bb) {
       
         FileInfo info = new FileInfo(bb);
@@ -745,6 +804,7 @@ public class DcmSndV2 extends StorageCommitmentService {
     }
 
     public static final class FileInfo {
+        File f;
         ByteBuffer data;
 
         String cuid;
@@ -760,7 +820,10 @@ public class DcmSndV2 extends StorageCommitmentService {
         boolean transferred;
 
         int status;
-
+        public FileInfo(File f) {
+            this.f = f;
+            this.length = f.length();
+        }
         public FileInfo(ByteBuffer data) {
             this.data = data;
             this.length = data.array().length;
@@ -770,7 +833,7 @@ public class DcmSndV2 extends StorageCommitmentService {
             ByteArrayInputStream inStream = new ByteArrayInputStream(data.array());
             BufferedInputStream buff = new BufferedInputStream(inStream);
             return buff;                   
-    }
+        }
 
     }
     
