@@ -222,7 +222,10 @@ public class DicoogleWeb {
         this.contextHandlers = new ContextHandlerCollection();
         this.contextHandlers.setHandlers(handlers);
         server.setHandler(this.contextHandlers);
-        
+
+        // Increase maxFormContentSize to avoid issues with big forms
+        server.setAttribute("org.eclipse.jetty.server.Request.maxFormContentSize", 3325000);
+
         // and then start the server
         server.start();
     }
