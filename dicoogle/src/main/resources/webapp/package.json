@@ -53,7 +53,7 @@
     "react-addons-update": "^0.14.8",
     "react-autosuggest": "^9.4.3",
     "react-bootstrap": "^0.29.4",
-    "react-bootstrap-table": "^1.4.6",
+    "react-bootstrap-table": "^4.3.1",
     "react-dom": "^0.14.6",
     "react-font-awesome": "https://github.com/tkurki/react-font-awesome/tarball/master",
     "react-imageloader": "~2.0.0",

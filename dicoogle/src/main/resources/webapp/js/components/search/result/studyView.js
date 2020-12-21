@@ -5,7 +5,7 @@ import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import { ActionCreators } from "../../../actions/searchActions";
 import ConfirmModal from "./confirmModal";
 import PluginView from "../../plugin/pluginView.jsx";
-import { Input } from "react-bootstrap";
+import { Checkbox } from "react-bootstrap";
 import ResultSelectActions from "../../../actions/resultSelectAction";
 
 import UserStore from "../../../stores/userStore";
@@ -124,8 +124,7 @@ const StudyView = React.createClass({
     let classNameForIt = "advancedOptions " + studyInstanceUID;
     return (
       <div className={classNameForIt}>
-        <Input
-          type="checkbox"
+        <Checkbox
           label=""
           onChange={this.handleSelect.bind(this, item)}
           ref={this.handleRefs.bind(this, studyInstanceUID)}
@@ -163,10 +162,11 @@ const StudyView = React.createClass({
         >
           <TableHeaderColumn
             dataAlign="right"
-            dataField="studyInstanceUID"
+            dataField="studyDate"
             isKey
             dataFormat={this.formatStudyDate}
             dataSort
+            width="16%"
           >
             Date
           </TableHeaderColumn>
@@ -179,7 +179,7 @@ const StudyView = React.createClass({
             Description
           </TableHeaderColumn>
           <TableHeaderColumn
-            dataAlign="center"
+            dataAlign="left"
             dataField="institutionName"
             dataFormat={this.formatInstitutionName}
             dataSort
@@ -191,6 +191,7 @@ const StudyView = React.createClass({
             dataField="modalities"
             dataFormat={this.formatModalities}
             dataSort
+            width="15%"
           >
             Modality
           </TableHeaderColumn>
@@ -201,6 +202,7 @@ const StudyView = React.createClass({
             isKey={false}
             dataSort={false}
             dataFormat={this.formatOptions}
+            width="128"
           >
             Options
           </TableHeaderColumn>
@@ -210,6 +212,7 @@ const StudyView = React.createClass({
             dataField="Select"
             dataSort
             dataFormat={this.formatSelect}
+            width="48"
           >
             #S
           </TableHeaderColumn>

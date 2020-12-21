@@ -4,7 +4,7 @@ import { ActionCreators } from "../../../actions/searchActions";
 import { SearchStore } from "../../../stores/searchStore";
 import ConfirmModal from "./confirmModal";
 import PluginView from "../../plugin/pluginView.jsx";
-import { Input } from "react-bootstrap";
+import { Checkbox } from "react-bootstrap";
 import ResultSelectActions from "../../../actions/resultSelectAction";
 import UserStore from "../../../stores/userStore";
 
@@ -134,8 +134,7 @@ const PatientView = React.createClass({
     let classNameForIt = "advancedOptions " + id;
     return (
       <div className={classNameForIt}>
-        <Input
-          type="checkbox"
+        <Checkbox
           label=""
           onChange={this.handleSelect.bind(this, item)}
           ref={this.handleRefs.bind(this, id)}
@@ -153,7 +152,7 @@ const PatientView = React.createClass({
 
   onPageChange(page, sizePerPage) {},
   render: function() {
-    this.options = {
+    const options = {
       sortName: "id",
       sortOrder: "desc",
       sizePerPageList: [5, 10, 20, 50, 100, 200],
@@ -174,14 +173,14 @@ const PatientView = React.createClass({
     return (
       <div>
         <BootstrapTable
-          options={this.options}
+          options={options}
           data={resultArray}
           selectRow={selectRowProp}
           condensed
           pagination
           striped
           hover
-          width="100"
+          width="100%"
         >
           <TableHeaderColumn
             dataAlign="right"
@@ -189,8 +188,9 @@ const PatientView = React.createClass({
             isKey
             dataFormat={this.formatID}
             dataSort
+            width="25%"
           >
-            ID
+            Patient ID
           </TableHeaderColumn>
           <TableHeaderColumn
             dataAlign="left"
@@ -199,21 +199,23 @@ const PatientView = React.createClass({
             isKey={false}
             dataSort
           >
-            Name
+            Patient Name
           </TableHeaderColumn>
           <TableHeaderColumn
             dataAlign="center"
             dataField="gender"
             dataFormat={this.formatGender}
             dataSort
+            width="80"
           >
-            Gender
+            Sex
           </TableHeaderColumn>
           <TableHeaderColumn
             dataAlign="center"
             dataField="nStudies"
             dataFormat={this.formatNumberOfStudies}
             dataSort
+            width="12%"
           >
             #Studies
           </TableHeaderColumn>
@@ -223,6 +225,7 @@ const PatientView = React.createClass({
             dataField="Opts"
             dataSort={false}
             dataFormat={this.formatOptions}
+            width="128"
           >
             Options
           </TableHeaderColumn>
@@ -230,8 +233,8 @@ const PatientView = React.createClass({
             hidden={!this.props.enableAdvancedSearch}
             dataAlign="center"
             dataField="Select"
-            dataSort
             dataFormat={this.formatSelect}
+            width="48"
           >
             #S
           </TableHeaderColumn>

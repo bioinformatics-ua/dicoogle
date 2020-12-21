@@ -11,12 +11,16 @@ module.exports = {
       path.resolve(__dirname, "js/external-requires.js")
     ]
   },
+  node: {
+    global: false
+  },
   plugins: [
     new webpack.DefinePlugin({
       "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
       "process.env.DICOOGLE_BASE_URL": JSON.stringify(
         process.env.DICOOGLE_BASE_URL
-      )
+      ),
+      'global': 'window',
     }),
     new MiniCssExtractPlugin({
       filename: "dist/[name].css",
@@ -31,7 +35,7 @@ module.exports = {
     rules: [
       {
         enforce: "pre",
-        test: /\.js$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         loader: "eslint-loader",
         options: {

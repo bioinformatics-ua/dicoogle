@@ -4,7 +4,7 @@ import { SearchStore } from "../../../stores/searchStore";
 import { ActionCreators } from "../../../actions/searchActions";
 import ConfirmModal from "./confirmModal";
 import PluginView from "../../plugin/pluginView.jsx";
-import { Input } from "react-bootstrap";
+import { Checkbox } from "react-bootstrap";
 import ResultSelectActions from "../../../actions/resultSelectAction";
 import UserStore from "../../../stores/userStore";
 
@@ -63,7 +63,7 @@ const SeriesView = React.createClass({
   formatDescription: function(cell, item) {
     return this._wrapResult(this.formatGlobal(item.serieDescription, item));
   },
-  formaImages: function(cell, item) {
+  formatImages: function(cell, item) {
     return this._wrapResult(this.formatGlobal(item.images.length, item));
   },
 
@@ -133,8 +133,7 @@ const SeriesView = React.createClass({
     let classNameForIt = "advancedOptions " + serieInstanceUID;
     return (
       <div className={classNameForIt}>
-        <Input
-          type="checkbox"
+        <Checkbox
           label=""
           onChange={this.handleSelect.bind(this, item)}
           ref={this.handleRefs.bind(this, serieInstanceUID)}
@@ -180,19 +179,20 @@ const SeriesView = React.createClass({
         >
           <TableHeaderColumn
             dataAlign="right"
-            dataField="serieInstanceUID"
+            dataField="serieNumber"
             isKey
             dataFormat={this.formatNumber}
             dataSort
+            width="12%"
           >
-            Number
+            Series Number
           </TableHeaderColumn>
           <TableHeaderColumn
             dataAlign="left"
             dataField="serieModality"
             dataFormat={this.formatModality}
-            isKey={false}
             dataSort
+            width="128"
           >
             Modality
           </TableHeaderColumn>
@@ -206,28 +206,28 @@ const SeriesView = React.createClass({
           </TableHeaderColumn>
           <TableHeaderColumn
             dataAlign="center"
-            dataField="serieInstanceUID"
-            dataFormat={this.formaImages}
+            dataField="images.length"
+            dataFormat={this.formatImages}
             dataSort
+            width="15%"
           >
             #Images
           </TableHeaderColumn>
           <TableHeaderColumn
             hidden={!this.props.enableAdvancedSearch}
             dataAlign="center"
-            dataField="serieInstanceUID"
-            isKey={false}
-            dataSort={false}
+            dataField="Opts"
             dataFormat={this.formatOptions}
+            width="128"
           >
             Options
           </TableHeaderColumn>
           <TableHeaderColumn
             hidden={!this.props.enableAdvancedSearch}
             dataAlign="center"
-            dataField="serieInstanceUID"
-            dataSort
+            dataField="Select"
             dataFormat={this.formatSelect}
+            width="48"
           >
             #S
           </TableHeaderColumn>

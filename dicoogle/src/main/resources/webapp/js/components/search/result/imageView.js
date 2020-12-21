@@ -9,7 +9,7 @@ import ImageLoader from "react-imageloader";
 import PluginView from "../../plugin/pluginView";
 import { DumpActions } from "../../../actions/dumpActions";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
-import { Input } from "react-bootstrap";
+import { Checkbox } from "react-bootstrap";
 import ResultSelectActions from "../../../actions/resultSelectAction";
 import UserStore from "../../../stores/userStore";
 
@@ -164,8 +164,7 @@ const ImageView = React.createClass({
     let classNameForIt = "advancedOptions " + sopInstanceUID;
     return (
       <div className={classNameForIt}>
-        <Input
-          type="checkbox"
+        <Checkbox
           label=""
           onChange={this.handleSelect.bind(this, item)}
           ref={this.handleRefs.bind(this, sopInstanceUID)}
@@ -207,10 +206,11 @@ const ImageView = React.createClass({
         >
           <TableHeaderColumn
             dataAlign="left"
-            dataField="filename"
+            dataField="fileName"
             isKey
             dataFormat={this.formatFileName}
             dataSort
+            width="20%"
           >
             File Name
           </TableHeaderColumn>
@@ -226,16 +226,16 @@ const ImageView = React.createClass({
           <TableHeaderColumn
             dataAlign="center"
             dataFormat={this.formatViewOptions}
-            dataField="sopInstanceUID"
-            dataSort
+            dataField="View"
+            width="96"
           >
             View
           </TableHeaderColumn>
           <TableHeaderColumn
             dataAlign="center"
-            dataField="sopInstanceUID"
+            dataField="Thumbnail"
             dataFormat={this.formatThumbUrl}
-            dataSort
+            width="132"
           >
             Thumbnail
           </TableHeaderColumn>
@@ -243,18 +243,18 @@ const ImageView = React.createClass({
           <TableHeaderColumn
             hidden={!this.props.enableAdvancedSearch}
             dataAlign="center"
-            dataField="sopInstanceUID"
-            dataSort={false}
+            dataField="Opts"
             dataFormat={this.formatOptions}
+            width="128"
           >
             Options
           </TableHeaderColumn>
           <TableHeaderColumn
             hidden={!this.props.enableAdvancedSearch}
             dataAlign="center"
-            dataField="sopInstanceUID"
-            dataSort
+            dataField="Select"
             dataFormat={this.formatSelect}
+            width="48"
           >
             #S
           </TableHeaderColumn>
