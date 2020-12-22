@@ -27,6 +27,7 @@ import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.task.Task;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -72,10 +73,12 @@ public class RunningIndexTasks {
 	public boolean hookRemoveRunningTasks(){
 	    if (this.taskRunningList.size()>SOFT_MAX_RUNNINGTASKS){
 	        int removedTasks = 0 ;
-	        for (String taskUid : this.taskRunningList.keySet()){
-                Task t = this.taskRunningList.get(taskUid);
-                if (removedTasks<NUMBER_RUNNINGTASKS_TO_CLEAN &&(t.isCancelled() || t.isDone())){
-                    this.removeTask(taskUid);
+	        Iterator<String> iterator = this.taskRunningList.keySet().iterator();
+	        while(iterator.hasNext()&& removedTasks<NUMBER_RUNNINGTASKS_TO_CLEAN){
+	            String tId = iterator.next();
+                Task t =  this.taskRunningList.get(tId);
+                if (t.isCancelled() || t.isDone()){
+                    iterator.remove();
                     removedTasks++;
                 }
             }
