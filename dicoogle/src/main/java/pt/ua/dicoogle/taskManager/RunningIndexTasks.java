@@ -26,8 +26,8 @@ import pt.ua.dicoogle.sdk.datastructs.IndexReport;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.task.Task;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -54,7 +54,7 @@ public class RunningIndexTasks {
 	}
 
 	public RunningIndexTasks() {
-		taskRunningList = new HashMap<>();
+		taskRunningList = new LinkedHashMap<>();
 	}
 
 	public void addTask(String taskUid, Task<Report> task) {
