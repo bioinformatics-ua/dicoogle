@@ -40,7 +40,7 @@ public class RunningIndexTasks {
     private static final Logger logger = LoggerFactory.getLogger(RunningIndexTasks.class);
     private static Integer SOFT_MAX_RUNNINGTASKS = Integer.parseInt(System.getProperty("dicoogle.tasks.softRemoveTasks", "50000"));
     private static Integer NUMBER_RUNNINGTASKS_TO_CLEAN = Integer.parseInt(System.getProperty("dicoogle.tasks.numberTaskClean", "2000"));
-    private static Boolean ENABLE_HOOK = Boolean.getBoolean(System.getProperty("dicoogle.tasks.removedCompleted", "true"));
+    private static Boolean ENABLE_HOOK = Boolean.valueOf(System.getProperty("dicoogle.tasks.removedCompleted", "true"));
 	public static RunningIndexTasks instance;
 
 	private final Map<String, Task<Report>> taskRunningList;
