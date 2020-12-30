@@ -246,9 +246,6 @@ public class DicomStorage extends StorageService {
             as.abort();
 
             return;
-        } else {
-            // DebugManager.getSettings().debug("Client association permited: " + as.getCallingAET() + "!");
-            System.err.println("Client association permited: " + as.getCallingAET() + "!");
         }
 
         final DicomObject rsp = CommandUtils.mkRSP(rq, CommandUtils.SUCCESS);
