@@ -39,9 +39,9 @@ import java.util.concurrent.ExecutionException;
  */
 public class RunningIndexTasks {
     private static final Logger logger = LoggerFactory.getLogger(RunningIndexTasks.class);
-    private static Integer SOFT_MAX_RUNNINGTASKS = Integer.parseInt(System.getProperty("dicoogle.tasks.softRemoveTasks", "50000"));
-    private static Integer NUMBER_RUNNINGTASKS_TO_CLEAN = Integer.parseInt(System.getProperty("dicoogle.tasks.numberTaskClean", "2000"));
-    private static Boolean ENABLE_HOOK = Boolean.valueOf(System.getProperty("dicoogle.tasks.removedCompleted", "true"));
+    private static int SOFT_MAX_RUNNINGTASKS = Integer.parseInt(System.getProperty("dicoogle.tasks.softRemoveTasks", "50000"));
+    private static int NUMBER_RUNNINGTASKS_TO_CLEAN = Integer.parseInt(System.getProperty("dicoogle.tasks.numberTaskClean", "2000"));
+    private static boolean ENABLE_HOOK = Boolean.valueOf(System.getProperty("dicoogle.tasks.removedCompleted", "true"));
 	public static RunningIndexTasks instance;
 
 	private final Map<String, Task<Report>> taskRunningList;
@@ -60,9 +60,8 @@ public class RunningIndexTasks {
 	public void addTask(String taskUid, Task<Report> task) {
 		taskRunningList.put(taskUid, task);
 		if (ENABLE_HOOK){
-            hookRemoveRunningTasks();
-        }
-
+		    hookRemoveRunningTasks();
+		}
 	}
 
 	public boolean removeTask(String taskUid) {
@@ -70,20 +69,20 @@ public class RunningIndexTasks {
 	}
 
 
-	public boolean hookRemoveRunningTasks(){
+	public void hookRemoveRunningTasks(){
+
 	    if (this.taskRunningList.size()>SOFT_MAX_RUNNINGTASKS){
 	        int removedTasks = 0 ;
 	        Iterator<String> iterator = this.taskRunningList.keySet().iterator();
 	        while(iterator.hasNext()&& removedTasks<NUMBER_RUNNINGTASKS_TO_CLEAN){
 	            String tId = iterator.next();
-                Task t =  this.taskRunningList.get(tId);
+                Task<?> t =  this.taskRunningList.get(tId);
                 if (t.isCancelled() || t.isDone()){
                     iterator.remove();
                     removedTasks++;
                 }
             }
         }
-	    return true;
     }
 
 	public boolean stopTask(String taskUid) {
