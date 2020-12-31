@@ -24,72 +24,61 @@ package pt.ua.dicoogle.server.web.auth;
  *
  * @author António Novo <antonio.novo@ua.pt>
  */
-public class LoggedInStatus
-{
-	public static int S_NOINFORMATION = 0;
-	public static int S_INVALIDCREDENTIALS = 1;
-	public static int S_UNAUTHORIZEDACCESS = 2;
-	public static int S_ALREADYLOGGEDIN = 3;
-	public static int S_VALIDLOGIN = 4;
+public class LoggedInStatus {
+    public static int S_NOINFORMATION = 0;
+    public static int S_INVALIDCREDENTIALS = 1;
+    public static int S_UNAUTHORIZEDACCESS = 2;
+    public static int S_ALREADYLOGGEDIN = 3;
+    public static int S_VALIDLOGIN = 4;
 
-	private LoggedIn login;
-	private int status;
+    private LoggedIn login;
+    private int status;
 
-	public LoggedInStatus()
-	{
-		this.login = null;
-		this.status = S_NOINFORMATION;
-	}
+    public LoggedInStatus() {
+        this.login = null;
+        this.status = S_NOINFORMATION;
+    }
 
-	public LoggedInStatus(LoggedIn login, int status)
-	{
-		this.login = login;
-		this.status = status;
-	}
+    public LoggedInStatus(LoggedIn login, int status) {
+        this.login = login;
+        this.status = status;
+    }
 
-	/**
-	 * @return the login
-	 */
-	public LoggedIn getLogin()
-	{
-		return login;
-	}
+    /**
+     * @return the login
+     */
+    public LoggedIn getLogin() {
+        return login;
+    }
 
-	/**
-	 * @return the status
-	 */
-	public int getStatus()
-	{
-		return status;
-	}
+    /**
+     * @return the status
+     */
+    public int getStatus() {
+        return status;
+    }
 
-	public boolean wasAlreadyLoggedIn()
-	{
-		return (status == S_ALREADYLOGGEDIN);
-	}
+    public boolean wasAlreadyLoggedIn() {
+        return (status == S_ALREADYLOGGEDIN);
+    }
 
-	public boolean noInformationSupplied()
-	{
-		return (status == S_NOINFORMATION);
-	}
+    public boolean noInformationSupplied() {
+        return (status == S_NOINFORMATION);
+    }
 
-	public boolean invalidCredentialsSupplied()
-	{
-		return (status == S_INVALIDCREDENTIALS);
-	}
+    public boolean invalidCredentialsSupplied() {
+        return (status == S_INVALIDCREDENTIALS);
+    }
 
-	public boolean loggedInSuccessfully()
-	{
-		return (status == S_VALIDLOGIN);
-	}
+    public boolean loggedInSuccessfully() {
+        return (status == S_VALIDLOGIN);
+    }
 
-	public boolean unAuthorizedAccess()
-	{
-		return (status == S_UNAUTHORIZEDACCESS);
-	}
+    public boolean unAuthorizedAccess() {
+        return (status == S_UNAUTHORIZEDACCESS);
+    }
 
-	public boolean isCurrentlyLoggedIn()
-	{
-		return (((status == S_ALREADYLOGGEDIN) || (status == S_VALIDLOGIN)) && (login != null));
-	}
+    public boolean isCurrentlyLoggedIn() {
+        return (((status == S_ALREADYLOGGEDIN) || (status == S_VALIDLOGIN)) && (login != null));
+    }
 }

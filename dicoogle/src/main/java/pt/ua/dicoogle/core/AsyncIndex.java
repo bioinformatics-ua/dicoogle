@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 
 import org.slf4j.Logger;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.plugins.PluginController;
 
 
@@ -44,12 +45,10 @@ public class AsyncIndex {
     public AsyncIndex() {
 
         // path to watch
-        String path = ServerSettings.getInstance().getDicoogleDir();
-
+        String path = ServerSettingsManager.getSettings().getArchiveSettings().getWatchDirectory();
 
         FileAlterationObserver observer = new FileAlterationObserver(path);
-        FileAlterationMonitor monitor =
-                new FileAlterationMonitor(pollingInterval);
+        FileAlterationMonitor monitor = new FileAlterationMonitor(pollingInterval);
         FileAlterationListener listener = new FileAlterationListenerAdaptor() {
             // Is triggered when a file is created in the monitored folder
             @Override
@@ -66,16 +65,15 @@ public class AsyncIndex {
 
 
             }
+
             // Is triggered when a file is deleted from the monitored folder
             @Override
             public void onFileDelete(File file) {
                 try {
                     // "file" is the reference to the removed file
-                    System.out.println("File removed: "
-                            + file.getCanonicalPath());
+                    System.out.println("File removed: " + file.getCanonicalPath());
                     // "file" does not exists anymore in the location
-                    System.out.println("File still exists in location: "
-                            + file.exists());
+                    System.out.println("File still exists in location: " + file.exists());
 
                     logger.debug("deleted {} : {}", file.toPath(), file.toURI());
                     try {

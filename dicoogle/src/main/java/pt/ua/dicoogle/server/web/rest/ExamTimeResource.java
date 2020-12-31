@@ -50,7 +50,7 @@ public class ExamTimeResource extends ServerResource {
 
             return new StringRepresentation(state.name(), MediaType.TEXT_ALL);
         }
-        
+
         if (action.equalsIgnoreCase("percentage")) {
             return new StringRepresentation(examTime.getPercentage() + "", MediaType.TEXT_ALL);
         }
@@ -69,11 +69,11 @@ public class ExamTimeResource extends ServerResource {
 
         if (action.equalsIgnoreCase("download")) {
             File file = examTime.getFile();
-            
-            if(file == null){
+
+            if (file == null) {
                 return new StringRepresentation("ERROR", MediaType.TEXT_ALL);
             }
-            
+
             FileRepresentation FRepre = new FileRepresentation(file, MediaType.TEXT_CSV);
             FRepre.getDisposition().setType(Disposition.TYPE_ATTACHMENT);
             FRepre.getDisposition().setFilename(file.getName());

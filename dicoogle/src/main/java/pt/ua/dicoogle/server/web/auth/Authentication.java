@@ -29,90 +29,81 @@ import java.util.UUID;
  *
  * @author António Novo <antonio.novo@ua.pt>
  */
-public class Authentication
-{
-	private static Authentication instance = null;
-	private final UsersStruct users;
+public class Authentication {
+    private static Authentication instance = null;
+    private final UsersStruct users;
 
-	private final Map<String, String> usersToken = new HashMap<>();
-	private final Map<String, String> tokenUsers = new HashMap<>();
+    private final Map<String, String> usersToken = new HashMap<>();
+    private final Map<String, String> tokenUsers = new HashMap<>();
 
-	private Authentication()
-	{
-		RolesXML rolesXML = new RolesXML();
-		RolesStruct rolesStruct = rolesXML.getXML();
-		// init the user list, if it wasn't done yet
-		UsersXML usersXML = new UsersXML();
-		usersXML.getXML();
+    private Authentication() {
+        RolesXML rolesXML = new RolesXML();
+        RolesStruct rolesStruct = rolesXML.getXML();
+        // init the user list, if it wasn't done yet
 
-		// gets the instance of the user list
-		users = UsersStruct.getInstance();
-	}
+        // gets the instance of the user list
+        users = UsersStruct.getInstance();
+    }
 
-	/**
-	 * Returns the current instance of the authentication singleton.
-	 *
-	 * @return the current instance of the authentication singleton.
-	 */
-	public static synchronized Authentication getInstance()
-	{
-		if (instance == null)
-			instance = new Authentication();
+    /**
+     * Returns the current instance of the authentication singleton.
+     *
+     * @return the current instance of the authentication singleton.
+     */
+    public static synchronized Authentication getInstance() {
+        if (instance == null)
+            instance = new Authentication();
 
-		return instance;
-	}
+        return instance;
+    }
 
 
-	public User getUsername(String token)
-	{
-		String user = tokenUsers.get(token);
-		if (user==null)
-			return null;
-		return UsersStruct.getInstance().getUser(user);
+    public User getUsername(String token) {
+        String user = tokenUsers.get(token);
+        if (user == null)
+            return null;
+        return UsersStruct.getInstance().getUser(user);
 
-	}
+    }
 
-	public void logout(String token){
-		String user = tokenUsers.get(token);
-		String ntoken = usersToken.get(user);
-		tokenUsers.remove(ntoken);
-		usersToken.remove(user);
+    public void logout(String token) {
+        String user = tokenUsers.get(token);
+        String ntoken = usersToken.get(user);
+        tokenUsers.remove(ntoken);
+        usersToken.remove(user);
 
-	}
+    }
 
-	/**
-	 * Attempts to login on the platform.
-	 *
-	 * @param username the user name of the user to login.
-	 * @param password the clear text password of the user.
-	 * @return a Login object if successful login, null otherwise.
-	 */
-	public LoggedIn login(String username, String password)
-	{
-		// must have both username and password
-		if ((username == null) || (password == null))
-			return null;
+    /**
+     * Attempts to login on the platform.
+     *
+     * @param username the user name of the user to login.
+     * @param password the clear text password of the user.
+     * @return a LoggedIn object if successful login, null otherwise.
+     */
+    public LoggedIn login(String username, String password) {
+        // must have both username and password
+        if ((username == null) || (password == null))
+            return null;
 
-		// check if the user exists in the user list
-		User user = users.getUser(username);
-		if (user == null)
-			return null;
+        // check if the user exists in the user list
+        User user = users.getUser(username);
+        if (user == null)
+            return null;
 
-		// calculate the supplied passwords hash and see if it matches the users
-		String passwordHash = HashService.getSHA1Hash(password);
-		if (! user.verifyPassword(passwordHash))
-			return null;
-		LoggedIn in = new LoggedIn(username, user.isAdmin());
-		if (usersToken.containsKey(username))
-			in.setToken(usersToken.get(username));
+        if (!user.verifyPassword(password))
+            return null;
+        LoggedIn in = new LoggedIn(username, user.isAdmin());
+        if (usersToken.containsKey(username))
+            in.setToken(usersToken.get(username));
 
-		else {
-			String token  =UUID.randomUUID().toString();
-			usersToken.put(username, token);
-			tokenUsers.put(token, username);
-			in.setToken(usersToken.get(username));
-		}
-		// return a successfull login object
-		return in;
-	}
+        else {
+            String token = UUID.randomUUID().toString();
+            usersToken.put(username, token);
+            tokenUsers.put(token, username);
+            in.setToken(usersToken.get(username));
+        }
+        // return a successfull login object
+        return in;
+    }
 }

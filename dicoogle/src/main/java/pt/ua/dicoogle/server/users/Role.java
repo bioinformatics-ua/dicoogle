@@ -25,8 +25,8 @@ public class Role {
 
 
     private String name;
-    public Role(String name)
-    {
+
+    public Role(String name) {
         this.name = name;
 
     }
@@ -34,9 +34,7 @@ public class Role {
 
     @Override
     public String toString() {
-        return "Role{" +
-                "name='" + name + '\'' +
-                '}';
+        return "Role{" + "name='" + name + '\'' + '}';
     }
 
     public String getName() {
@@ -51,8 +49,10 @@ public class Role {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         Role role = (Role) o;
 

@@ -32,68 +32,19 @@ package pt.ua.dicoogle.server.queryretrieve;
  * @since Nov 21, 2008
  *
  */
-public class EchoReplyService extends Thread 
-{
-
+public class EchoReplyService extends Thread {
     private DicomEchoReply echoReply = null;
-
 
     public EchoReplyService() {
         this.echoReply = new DicomEchoReply();
     }
 
-
-
     public DicomEchoReply getEchoReply() {
         return echoReply;
     }
 
-
-
     @Override
-    public void run() {
-        /* 
-         * ////
-        try {
-            this.mw.add2ServerLogln("Starting Verification Service...", MainWindow.LOG_MODES.WARNING);
-            
-            if (this.echoReply.startListening()) {
-                this.mw.add2ServerLogln("Verification Service start listening on port "+ this.echoReply.getLocalPort() + ".",
-                                        MainWindow.LOG_MODES.NORMAL);
+    public void run() {}
 
-                this.mw.add2ServerLogln("Verification Service started!",MainWindow.LOG_MODES.WARNING);
-            } else {
-                this.mw.add2ServerLogln("Error Starting Verification Service on port " + this.echoReply.getLocalPort() + "...",
-                                        MainWindow.LOG_MODES.ERROR);
-            }
-        }
-        catch (Exception ex) {
-            this.mw.add2ServerLogln(ex.getMessage(), MainWindow.LOG_MODES.ERROR);
-        }
-        
-        */
-    }
-
-    public void  stopService() {
-        /* ///
-        try {
-            this.mw.add2ServerLogln("Stopping Verification Service...", MainWindow.LOG_MODES.WARNING);
-
-            if (this.echoReply.stopListening()) {
-                super.stop();
-
-                this.mw.add2ServerLogln("Verification Service stoped.", MainWindow.LOG_MODES.WARNING);
-            } else {
-                this.mw.add2ServerLogln("Error stopping Verification Service on port " + this.echoReply.getLocalPort() + " ...",
-                                        MainWindow.LOG_MODES.ERROR);
-            }
-        }
-        catch (Exception ex) {
-            this.mw.add2ServerLogln(ex.getMessage(), MainWindow.LOG_MODES.ERROR);
-        }
-         */
-        
-    }
-
-
+    public void stopService() {}
 }

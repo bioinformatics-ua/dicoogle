@@ -32,7 +32,7 @@ import net.xeoh.plugins.base.Plugin;
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public interface DicooglePlugin extends Plugin {
-    
+
     /**
      * Obtains the unique name of plugin. 
      * A plugin must have a name to serve as an ID, and this is the method from where it is retrieved. This
@@ -40,41 +40,41 @@ public interface DicooglePlugin extends Plugin {
      * 
      * @return the name of the plugin
      */
-    public abstract String getName();
-    
+    public String getName();
+
     /**
      * Issues the plugin to become enabled. It is expected that an enabled plugin, once configured, is ready
      * to perform its main tasks.
      * 
      * @return whether the plugin was successfully enabled
      */
-    public abstract boolean enable();
-    
+    public boolean enable();
+
     /**
      * Issues the plugin to become disabled. When called, the plugin is responsible
      * for stopping all services that the plugin is running. 
      * @return whether the plugin was successfully disabled
      */
-    public abstract boolean disable();
-    
-    
+    public boolean disable();
+
+
     /**
      * Verifies if the plugin is enabled.
      *
      * @return whether the plugin is enabled
      */
-    public abstract boolean isEnabled();
+    public boolean isEnabled();
 
     /** Sets the settings of this plugin.
      * This method lets the plugin receive its settings from the core Dicoogle system.
      * 
      * @param settings the parameters that will be used by the plugin
      */
-    public abstract void setSettings(ConfigurationHolder settings);
-    
+    public void setSettings(ConfigurationHolder settings);
+
     /**
      * Obtains access to the settings of the plugin.
      * @return the plugin's settings
      */
-    public abstract ConfigurationHolder getSettings();    
+    public ConfigurationHolder getSettings();
 }

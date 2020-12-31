@@ -24,10 +24,9 @@ import java.util.concurrent.Callable;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public interface ProgressCallable<T> extends Callable<T>
-{
-    
-    
+public interface ProgressCallable<T> extends Callable<T> {
+
+
     /**
      * returns the task progress, goes from 0 to 1
      * however, if we have an unbounded task a -1 is returned

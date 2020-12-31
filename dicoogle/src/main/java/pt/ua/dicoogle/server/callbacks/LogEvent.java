@@ -25,9 +25,9 @@ package pt.ua.dicoogle.server.callbacks;
  */
 
 
-public interface LogEvent
-{
+public interface LogEvent {
     public void startService(Object o);
+
     public void stopService(Object o);
 
 }

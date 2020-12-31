@@ -37,8 +37,7 @@ import org.dcm4che2.data.DicomObject;
  */
 public class Filter {
 
-     public static boolean applyFilter(DicomObject keyObj, DicomObject sourceObj)
-     {
+    public static boolean applyFilter(DicomObject keyObj, DicomObject sourceObj) {
         DicomObject kObj = keyObj;
         DicomObject sObj = sourceObj;
 
@@ -47,9 +46,9 @@ public class Filter {
         DicomElement dcmElmt;
         int tag;
 
-        //DebugManager.getInstance().debug("Appling a filter to DCMObj");
+        // DebugManager.getInstance().debug("Appling a filter to DCMObj");
 
-        for (; itKeys.hasNext();  ) {
+        for (; itKeys.hasNext();) {
             dcmElmt = (DicomElement) itKeys.next();
 
             if (dcmElmt.isEmpty()) {
@@ -57,7 +56,8 @@ public class Filter {
             }
 
             if (dcmElmt.hasDicomObjects()) {
-                if (dcmElmt.getDicomObject() == null) continue;
+                if (dcmElmt.getDicomObject() == null)
+                    continue;
 
                 if (!applyFilter(dcmElmt.getDicomObject(), sObj)) {
                     return false;
@@ -65,26 +65,24 @@ public class Filter {
                 continue;
             }
 
-             tag = dcmElmt.tag();
+            tag = dcmElmt.tag();
 
-             if ( sObj.get(tag)!= null &&
-                  kObj.get(tag)!= null &&
-                  !(byte2string(sObj.get(tag).getBytes()).trim().equals(byte2string(dcmElmt.getBytes()).trim()))
-                 ) {
-                    //System.out.println("-->" + byte2string(sObj.get(tag).getBytes()) );
-                    return false;
-             }
+            if (sObj.get(tag) != null && kObj.get(tag) != null
+                    && !(byte2string(sObj.get(tag).getBytes()).trim().equals(byte2string(dcmElmt.getBytes()).trim()))) {
+                // System.out.println("-->" + byte2string(sObj.get(tag).getBytes()) );
+                return false;
+            }
         }
 
         return true;
     }
 
 
-     private static String byte2string(byte[] in) {
+    private static String byte2string(byte[] in) {
         String out = "";
 
         for (int i = 0; i < in.length; i++) {
-            out += (char)in[i];
+            out += (char) in[i];
         }
 
         return out;

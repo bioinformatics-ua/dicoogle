@@ -18,106 +18,86 @@
  */
 package pt.ua.dicoogle.server;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
+import org.dcm4che2.data.Tag;
 import org.slf4j.Logger;
+import pt.ua.dicoogle.sdk.datastructs.SOPClass;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 import pt.ua.dicoogle.server.queryretrieve.QueryRetrieve;
 
 import org.slf4j.LoggerFactory;
-import pt.ua.dicoogle.core.ServerSettings;
-import pt.ua.dicoogle.rGUI.interfaces.controllers.IServices;
-import pt.ua.dicoogle.rGUI.server.controllers.Logs;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.server.web.DicoogleWeb;
-import pt.ua.dicoogle.taskManager.TaskManager;
 
 /**
  *
+ * @author Luís Bastião Silva <bastiao@bmd-softwre.com>
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
-public class ControlServices implements IServices
-{
+public class ControlServices {
     private static final Logger logger = LoggerFactory.getLogger(ControlServices.class);
-    
+
     private static ControlServices instance = null;
     // Services vars
-    private RSIStorage storage = null;
+    private DicomStorage storage = null;
     private boolean webServicesRunning = false;
     private boolean webServerRunning = false;
     private QueryRetrieve retrieve = null;
-    
-    private DicoogleWeb webServices;
-    
-    private ControlServices()
-    {
-        TaskManager taskManager = new TaskManager(Integer.parseInt(System.getProperty("dicoogle.taskManager.nThreads", "4")));
 
+    private DicoogleWeb webServices;
+
+    private ControlServices() {
         startInicialServices();
     }
 
-    public static synchronized ControlServices getInstance()
-    {
-//      sem.acquire();
-        if (instance == null)
-        {
+    public static synchronized ControlServices getInstance() {
+        // sem.acquire();
+        if (instance == null) {
             instance = new ControlServices();
         }
-//      sem.release();
+        // sem.release();
         return instance;
     }
 
 
-    /* Strats the inicial services based on ServerSettings */
-    private void startInicialServices()
-    {
-        ServerSettings settings = ServerSettings.getInstance();
+    /* Strats the inicial services based on ServerSettingsManager */
+    private void startInicialServices() {
+        ServerSettings settings = ServerSettingsManager.getSettings();
 
-        try
-        {
-          /*  if (settings.isP2P())
+        try {
+            /*  if (settings.isP2P())
             {
                 startP2P();
             }*/
 
-            if (settings.isStorage())
-            {
+            if (!this.storageIsRunning()) {
                 startStorage();
             }
 
-            if (settings.isQueryRetrive())
-            {
+            if (!this.queryRetrieveIsRunning()) {
                 startQueryRetrieve();
             }
 
-            if(settings.getWeb().isWebServer()){
-            	startWebServer();
+            if (!this.webServerIsRunning()) {
+                startWebServer();
             }
 
-            if (settings.getWeb().isWebServices())
-            {
-                startWebServices();
-            }
-
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         }
     }
 
     /* Stop all services that are running */
-    @Override
-    public boolean stopAllServices()
-    {
-        try
-        {
-        	//TODO: DELETED
-            //PluginController.getInstance().stopAll();
-           // stopP2P();
+    public boolean stopAllServices() {
+        try {
+            // TODO: DELETED
+            // PluginController.getSettings().stopAll();
+            // stopP2P();
             stopStorage();
             stopQueryRetrieve();
-            stopWebServices();
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
             return false;
         }
@@ -133,30 +113,28 @@ public class ControlServices implements IServices
      * 
      * @throws IOException
      */
-    @Override
-    public int startStorage() throws IOException
-    {
-        if (storage == null)
-        {
-            ServerSettings settings = ServerSettings.getInstance();
+    public int startStorage() throws IOException {
+        if (storage == null) {
+            ServerSettings settings = ServerSettingsManager.getSettings();
+
 
             SOPList list = SOPList.getInstance();
-            //list.setDefaultSettings();
+            settings.getDicomServicesSettings().getSOPClasses().forEach(sopClass -> sopClass.getTransferSyntaxes()
+                    .forEach(ts -> list.updateTSFieldByTsUID(sopClass.getUID(), ts, true)));
+
 
             int i;
 
             List l = list.getKeys();
             String[] keys = new String[l.size()];
 
-            for (i = 0; i < l.size(); i++)
-            {
+            for (i = 0; i < l.size(); i++) {
                 keys[i] = (String) l.get(i);
             }
-            storage = new RSIStorage(keys, list);
+            storage = new DicomStorage(keys, list);
             storage.start();
 
-            //DebugManager.getInstance().debug("Starting DICOM Storage SCP");
-            Logs.getInstance().addServerLog("Starting DICOM Storage SCP");
+            logger.info("Starting DICOM Storage SCP");
 
             return 0;
         }
@@ -164,86 +142,50 @@ public class ControlServices implements IServices
         return -2;
     }
 
-    @Override
-    public void stopStorage()
-    {
-        if (storage != null)
-        {
+    public void stopStorage() {
+        if (storage != null) {
             storage.stop();
             storage = null;
-            //DebugManager.getInstance().debug("Stopping DICOM Storage SCP");
-            Logs.getInstance().addServerLog("Stopping DICOM Storage SCP");
+            logger.info("Stopping DICOM Storage SCP");
         }
     }
 
-    @Override
-    public boolean storageIsRunning()
-    {
+    public boolean storageIsRunning() {
         return storage != null;
     }
 
-    @Override
-    public void startQueryRetrieve()
-    {
-        if (retrieve == null)
-        {
+    public void startQueryRetrieve() {
+        if (retrieve == null) {
             retrieve = new QueryRetrieve();
             retrieve.startListening();
-            //DebugManager.getInstance().debug("Starting DICOM QueryRetrive");
-            Logs.getInstance().addServerLog("Starting DICOM QueryRetrive");
+            // DebugManager.getInstance().debug("Starting DICOM QueryRetrive");
+            logger.info("Starting DICOM QueryRetrieve");
         }
     }
 
-    @Override
-    public void stopQueryRetrieve()
-    {
-        if (retrieve != null)
-        {
+    public void stopQueryRetrieve() {
+        if (retrieve != null) {
             retrieve.stopListening();
             retrieve = null;
-            //DebugManager.getInstance().debug("Stopping DICOM QueryRetrive");
-            Logs.getInstance().addServerLog("Stopping DICOM QueryRetrive");
+            logger.info("Stopping DICOM QueryRetrieve");
         }
     }
 
-    @Override
-    public boolean queryRetrieveIsRunning()
-    {
+    public boolean queryRetrieveIsRunning() {
         return retrieve != null;
     }
 
-    @Override
-    public boolean webServerIsRunning()
-    {
+    public boolean webServerIsRunning() {
         return webServerRunning;
     }
 
-    @Override
-    @Deprecated
-    public void startWebServices()
-    {
-    }
-
-    @Override
-    @Deprecated
-    public void stopWebServices()
-    {
-    }
-
-    @Override
-    public boolean webServicesIsRunning()
-    {
-        return webServicesRunning;
-    }
-    
-    //TODO: Review those below!
-    @Override
-    public void startWebServer(){
+    // TODO: Review those below!
+    public void startWebServer() {
         logger.info("Starting WebServer");
 
         try {
             if (webServices == null) {
-                webServices = new DicoogleWeb(ServerSettings.getInstance().getWeb().getServerPort());
+                webServices = new DicoogleWeb(ServerSettingsManager.getSettings().getWebServerSettings().getPort());
                 webServerRunning = true;
                 webServicesRunning = true;
                 logger.info("Starting Dicoogle Web");
@@ -251,20 +193,19 @@ public class ControlServices implements IServices
         } catch (Exception ex) {
             logger.error("Failed to launch the web server", ex);
         }
-        
+
     }
 
-    @Override
-    public void stopWebServer(){
+    public void stopWebServer() {
         logger.info("Stopping Web Server");
-        
-        if(webServices != null){
-            try { 
+
+        if (webServices != null) {
+            try {
                 webServicesRunning = false;
                 webServerRunning = false;
-                
+
                 webServices.stop();
-                
+
                 webServices = null;
             } catch (Exception ex) {
                 logger.error(ex.getMessage(), ex);
@@ -272,9 +213,9 @@ public class ControlServices implements IServices
         }
         logger.info("Stopping Dicoogle Web");
     }
-    
-    public DicoogleWeb getWebServicePlatform(){
-    	return webServices;
+
+    public DicoogleWeb getWebServicePlatform() {
+        return webServices;
     }
-    
+
 }

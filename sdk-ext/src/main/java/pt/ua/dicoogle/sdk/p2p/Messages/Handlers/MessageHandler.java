@@ -26,8 +26,7 @@ import pt.ua.dicoogle.sdk.p2p.Messages.MessageI;
  * @author Carlos Ferreira
  * @author Pedro Bento
  */
-public interface MessageHandler
-{
+public interface MessageHandler {
     /**
      * Method that handles with the message received.
      * @param message received

@@ -22,7 +22,6 @@ package pt.ua.dicoogle.sdk.index.handlers;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class FileAlreadyExistsException extends Exception
-{
+public class FileAlreadyExistsException extends Exception {
 
 }

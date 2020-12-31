@@ -21,10 +21,13 @@ package pt.ua.dicoogle.server.web.servlets.accounts;
 
 import java.io.IOException;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import pt.ua.dicoogle.server.users.HashService;
@@ -40,29 +43,37 @@ import pt.ua.dicoogle.server.web.utils.ResponseUtil;
 public class UserServlet extends HttpServlet {
 
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String usernameToRemove = req.getParameter("username");
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String pathInfo = req.getPathInfo();
 
+        if (pathInfo == null) {
+            ResponseUtil.sendError(resp, HttpServletResponse.SC_BAD_REQUEST, "Username not provided");
+            return;
+        }
+
+        String[] params = pathInfo.replaceFirst("^/", "").split("/");
+
+        if (params.length < 1) {
+            ResponseUtil.sendError(resp, HttpServletResponse.SC_BAD_REQUEST, "Username not provided");
+            return;
+        }
+
+        String usernameToRemove = params[0];
         boolean isRemoved = false;
         if (usernameToRemove != null && !usernameToRemove.equals("")) {
             isRemoved = UsersStruct.getInstance().removeUser(usernameToRemove);
         }
 
-        ResponseUtil.simpleResponse(resp, "success",isRemoved);
+        ResponseUtil.simpleResponse(resp, "success", isRemoved);
     }
 
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String user = req.getParameter("username");
         String pass = req.getParameter("password");
         boolean admin = Boolean.parseBoolean(req.getParameter("admin"));
-        //System.out.println("ADD USER: " + user + "\npass: " + pass + "\nadmin: " + admin);
-
-        String passHash = HashService.getSHA1Hash(pass);             //password Hash
-        String Hash = HashService.getSHA1Hash(user + admin + passHash);   //user Hash
-
-        boolean wasAdded = UsersStruct.getInstance().addUser(new User(user, Hash, admin));
-        ResponseUtil.simpleResponse(resp, "success",wasAdded );
+        boolean wasAdded = UsersStruct.getInstance().addUser(User.create(user, admin, pass));
+        ResponseUtil.simpleResponse(resp, "success", wasAdded);
     }
 
     @Override
@@ -70,7 +81,7 @@ public class UserServlet extends HttpServlet {
 
         Set<String> users = UsersStruct.getInstance().getUsernames();
         resp.setContentType("application/json");
-        
+
         JSONObject jsonObject = new JSONObject();
         JSONArray usersArray = new JSONArray();
         for (String user : users) {

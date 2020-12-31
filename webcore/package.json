@@ -1,13 +1,13 @@
 {
   "name": "dicoogle-webcore",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "private": true,
   "author": "Universidade de Aveiro, DETI/IEETA, Bioinformatics Group (http://bioinformatics.ua.pt/)",
   "maintainers": [
-    "Eduardo Pinho <eduardopinho@ua.pt>"
+    "Eduardo Pinho <eduardopinho@bmd-software.com>"
   ],
   "contributors": [
-    "Eduardo Pinho <eduardopinho@ua.pt>",
+    "Eduardo Pinho <eduardopinho@bmd-software.com>",
     "Luís Bastião Silva <bastiao@bmd-software.com>"
   ],
   "description": "Dicoogle Web Core for UI plugins",
@@ -17,7 +17,16 @@
   "jsnext:main": "src/dicoogle-webcore.js",
   "main": "src/dicoogle-webcore.js",
   "browserify": {
-    "transform": [["babelify", { "presets": ["es2015"] }]]
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            "@babel/preset-env"
+          ]
+        }
+      ]
+    ]
   },
   "keywords": [
     "dicoogle"
@@ -27,14 +36,14 @@
   },
   "license": "GPL-3.0+",
   "devDependencies": {
-    "eslint": "^2.11.1",
-    "eslint-plugin-import": "^1.8.1"
-  },
-  "peerDependencies": {
-    "dicoogle-client": "^3.6.0"
+    "@babel/core": "^7.0.0-0",
+    "@babel/preset-env": "^7.5.5",
+    "babelify": "^10.0.0",
+    "eslint": "^6.1.0",
+    "eslint-plugin-import": "^2.18.2"
   },
   "dependencies": {
-    "document-register-element": "^0.5.4",
-    "events": "^1.1.0"
+    "dicoogle-client": "^4.1.2",
+    "events": "^3.0.0"
   }
 }

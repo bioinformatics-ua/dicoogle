@@ -17,9 +17,8 @@
  * along with Dicoogle.  If not, see <http://www.gnu.org/licenses/>.
  */
 package pt.ua.dicoogle.server;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.*;
 
 import org.dcm4che2.data.UID;
 
@@ -30,8 +29,8 @@ import org.dcm4che2.data.UID;
  */
 public class TransfersStorage {
     private boolean accepted;
-    private boolean [] TS;
-    
+    private boolean[] TS;
+
     /*  [0] ImplicitVRLittleEndian
      *  [1] ExplicitVRLittleEndian
      *  [2] DeflatedExplicitVRLittleEndian
@@ -47,8 +46,9 @@ public class TransfersStorage {
      * [12] RLELossless
      * [13] MPEG2
      */
-    
+
     public static final Map<Integer, String> globalTransferMap;
+    public static final Map<String, String> globalTransferUIDsMap;
     static {
         Map<Integer, String> aMap = new HashMap<>();
         aMap.put(0, "ImplicitVRLittleEndian");
@@ -66,160 +66,154 @@ public class TransfersStorage {
         aMap.put(12, "RLELossless");
         aMap.put(13, "MPEG2");
         globalTransferMap = Collections.unmodifiableMap(aMap);
-    }
-    public TransfersStorage()
-    {
-        int i;
-        accepted = false;
-        TS = new boolean [14];
-        for(i = 0; i< TS.length; i++)
-        {
-            TS[i] = false;
-        }        
+        Map<String, String> uidsNameMapping = new HashMap<>();
+
+        uidsNameMapping.put(UID.ImplicitVRLittleEndian, "ImplicitVRLittleEndian");
+        uidsNameMapping.put(UID.ExplicitVRLittleEndian, "ExplicitVRLittleEndian");
+        uidsNameMapping.put(UID.DeflatedExplicitVRLittleEndian, "DeflatedExplicitVRLittleEndian");
+        uidsNameMapping.put(UID.ExplicitVRBigEndian, "ExplicitVRBigEndian");
+        uidsNameMapping.put(UID.JPEGLossless, "JPEGLossless");
+        uidsNameMapping.put(UID.JPEGLSLossless, "JPEGLSLossless");
+        uidsNameMapping.put(UID.JPEGLosslessNonHierarchical14, "JPEGLosslessNonHierarchical14");
+        uidsNameMapping.put(UID.JPEG2000LosslessOnly, "JPEG2000LosslessOnly");
+        uidsNameMapping.put(UID.JPEGBaseline1, "JPEGBaseline1");
+        uidsNameMapping.put(UID.JPEGExtended24, "JPEGExtended24");
+        uidsNameMapping.put(UID.JPEGLSLossyNearLossless, "JPEGLSLossyNearLossless");
+        uidsNameMapping.put(UID.JPEG2000, "JPEG2000");
+        uidsNameMapping.put(UID.RLELossless, "RLELossless");
+        uidsNameMapping.put(UID.MPEG2, "MPEG2");
+        globalTransferUIDsMap = Collections.unmodifiableMap(uidsNameMapping);
+
     }
 
-    public void setAccepted(boolean status)
-    {
+    public TransfersStorage() {
+        int i;
+        accepted = false;
+        TS = new boolean[14];
+        for (i = 0; i < TS.length; i++) {
+            TS[i] = false;
+        }
+    }
+
+    public void setAccepted(boolean status) {
         accepted = status;
     }
-    
-    public boolean getAccepted()
-    {
+
+    public boolean getAccepted() {
         return accepted;
     }
-    
-    public int setTS(boolean [] status)
-    {
+
+    public int setTS(boolean[] status) {
         int i;
-       
-        if (status.length != 14)
-        {
+
+        if (status.length != 14) {
             return -1;
         }
-        
-        for(i=0; i<status.length; i++)
-        {
+
+        for (i = 0; i < status.length; i++) {
             TS[i] = status[i];
         }
-        
+
         return 0;
     }
-    
-    public int setTS(boolean status, int index)
-    {
+
+    public int setTS(boolean status, int index) {
         int i;
-       
-        if(index < 0 || index > 13)
-        {
+
+        if (index < 0 || index > 13) {
             return -1;
-        }     
+        }
         TS[index] = status;
-        
+
         return 0;
     }
-            
-    public boolean[] getTS()
-    {
+
+    public boolean[] getTS() {
         return TS;
     }
-    
-    public void setDefaultSettings()
-    {
+
+    public void setDefaultSettings() {
         TS[0] = true;
         TS[1] = true;
         TS[4] = true;
         TS[5] = true;
         TS[8] = true;
         accepted = true;
-        
+
     }
-    
-    public String [] getVerboseTS()
-    {
-        int i, count =0;
-        String [] return_value = null;
-        for(i= 0; i<14; i++)
-        {
-            if(TS[i])
-            {
+
+    public String[] getVerboseTS() {
+        int i, count = 0;
+        String[] return_value = new String[0];
+        for (i = 0; i < 14; i++) {
+            if (TS[i]) {
                 count++;
             }
         }
-        if(count > 0)
-        {
+        if (count > 0) {
             i = 0;
             return_value = new String[count];
-            if (TS[0])
-            {
+            if (TS[0]) {
                 return_value[i] = UID.ImplicitVRLittleEndian;
                 i++;
             }
-            if (TS[1])
-            {
+            if (TS[1]) {
                 return_value[i] = UID.ExplicitVRLittleEndian;
                 i++;
             }
-            if (TS[2])
-            {
+            if (TS[2]) {
                 return_value[i] = UID.DeflatedExplicitVRLittleEndian;
                 i++;
             }
-            if (TS[3])
-            {
+            if (TS[3]) {
                 return_value[i] = UID.ExplicitVRBigEndian;
                 i++;
             }
-            if (TS[4])
-            {
+            if (TS[4]) {
                 return_value[i] = UID.JPEGLossless;
                 i++;
             }
-            if (TS[5])
-            {
+            if (TS[5]) {
                 return_value[i] = UID.JPEGLSLossless;
                 i++;
             }
-            if (TS[6])
-            {
+            if (TS[6]) {
                 return_value[i] = UID.JPEGLosslessNonHierarchical14;
                 i++;
             }
-            if (TS[7])
-            {
+            if (TS[7]) {
                 return_value[i] = UID.JPEG2000LosslessOnly;
                 i++;
             }
-            if (TS[8])
-            {
+            if (TS[8]) {
                 return_value[i] = UID.JPEGBaseline1;
                 i++;
             }
-            if (TS[9])
-            {
+            if (TS[9]) {
                 return_value[i] = UID.JPEGExtended24;
                 i++;
             }
-            if (TS[10])
-            {
+            if (TS[10]) {
                 return_value[i] = UID.JPEGLSLossyNearLossless;
                 i++;
             }
-            if (TS[11])
-            {
+            if (TS[11]) {
                 return_value[i] = UID.JPEG2000;
                 i++;
             }
-            if (TS[12])
-            {
+            if (TS[12]) {
                 return_value[i] = UID.RLELossless;
                 i++;
             }
-            if (TS[13])
-            {
+            if (TS[13]) {
                 return_value[i] = UID.MPEG2;
                 i++;
             }
-        }        
-        return return_value;        
+        }
+        return return_value;
+    }
+
+    public List<String> asList() {
+        return Arrays.asList(this.getVerboseTS());
     }
 }

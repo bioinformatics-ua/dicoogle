@@ -22,54 +22,47 @@ package pt.ua.dicoogle.plugins;
  * Dummie Class Loader, only to get the Class Name in a simple way
  * @author Carlos Ferreira
  */
-public class PluginPanelLoader extends ClassLoader
-{
+public class PluginPanelLoader extends ClassLoader {
 
     private static PluginPanelLoader instance = null;
 
-    private PluginPanelLoader(ClassLoader parent)
-    {
+    private PluginPanelLoader(ClassLoader parent) {
         super(parent);
     }
 
-    private PluginPanelLoader()
-    {
+    private PluginPanelLoader() {
         super(getSystemClassLoader());
     }
 
-    private static synchronized PluginPanelLoader getInstance()
-    {
-        if (instance == null)
-        {
+    private static synchronized PluginPanelLoader getInstance() {
+        if (instance == null) {
             instance = new PluginPanelLoader();
         }
         return instance;
     }
 
-    private static synchronized PluginPanelLoader getInstance(ClassLoader cl)
-    {
-        if (instance == null)
-        {
+    private static synchronized PluginPanelLoader getInstance(ClassLoader cl) {
+        if (instance == null) {
             instance = new PluginPanelLoader(cl);
         }
         return instance;
     }
 
-   /* @Override
+    /* @Override
     public Class<?> loadClass(String name)
     {
         try
         {
-            IPluginControllerAdmin plugins = AdminRefs.getInstance().getPluginController();
+            IPluginControllerAdmin plugins = AdminRefs.getSettings().getPluginController();
             HashMap<String, byte[]> panelClasses = plugins.getPanelClasses();
             Set<String> keys = panelClasses.keySet();
             for (String key : keys)
             {
                 byte[] pp = panelClasses.get(key);
-
+    
                 ClassLoader cl = PluginPanel.class.getClassLoader();
                 Class c = defineClass(pp);
-
+    
                 return c;
             }
         } catch (RemoteException ex)
@@ -78,22 +71,22 @@ public class PluginPanelLoader extends ClassLoader
         }
         return null;
     }
-
+    
     @Override
     public Class<?> loadClass(String name, boolean resolve)
     {
         try
         {
-            IPluginControllerAdmin plugins = AdminRefs.getInstance().getPluginController();
+            IPluginControllerAdmin plugins = AdminRefs.getSettings().getPluginController();
             HashMap<String, byte[]> panelClasses = plugins.getPanelClasses();
             Set<String> keys = panelClasses.keySet();
             for (String key : keys)
             {
                 byte[] pp = panelClasses.get(key);
-
+    
                 //ClassLoader cl = PluginPanel.class.getClassLoader();
                 Class c = defineClass(pp);
-
+    
                 return c;
             }
         } catch (RemoteException ex)
@@ -103,14 +96,14 @@ public class PluginPanelLoader extends ClassLoader
         return null;
     }*/
 
-    public Class defineClass(byte[] b)
-    {
+    public Class defineClass(byte[] b) {
         Class c = defineClass(null, b, 0, b.length);
-        //System.out.println(c.getName().substring(0, c.getName().lastIndexOf('.')));
-        //super.definePackage(c.getPackage().getName(), c.getPackage().getSpecificationTitle(), c.getPackage().getSpecificationVersion(), c.getPackage().getSpecificationVendor(),
-        //        c.getPackage().getImplementationTitle(), c.getPackage().getImplementationVersion(), c.getPackage().getImplementationVendor(), null);
+        // System.out.println(c.getName().substring(0, c.getName().lastIndexOf('.')));
+        // super.definePackage(c.getPackage().getName(), c.getPackage().getSpecificationTitle(), c.getPackage().getSpecificationVersion(),
+        // c.getPackage().getSpecificationVendor(),
+        // c.getPackage().getImplementationTitle(), c.getPackage().getImplementationVersion(), c.getPackage().getImplementationVendor(), null);
         super.resolveClass(c);
-        //System.out.println(c.getClassLoader().toString());
+        // System.out.println(c.getClassLoader().toString());
         return c;
         /*     try
         {

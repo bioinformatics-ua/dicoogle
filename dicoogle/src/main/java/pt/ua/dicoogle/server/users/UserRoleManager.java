@@ -24,5 +24,6 @@ package pt.ua.dicoogle.server.users;
 public interface UserRoleManager {
 
     public boolean hasRole(Role r);
+
     public void addRole(Role r);
 }

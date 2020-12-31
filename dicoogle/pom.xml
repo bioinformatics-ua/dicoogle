@@ -6,18 +6,17 @@
     <packaging>jar</packaging>
     <name>dicoogle</name>
     <url>http://www.dicoogle.com</url>
-    
+
     <parent>
         <groupId>pt.ua.ieeta</groupId>
         <artifactId>dicoogle-all</artifactId>
-        <version>2.5.2</version>
+        <version>3.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <log4j.version>2.2</log4j.version>
-
         <maven.build.timestamp.format>yyyyMMdd_HHmm</maven.build.timestamp.format>
         <buildNumber>${maven.build.timestamp}</buildNumber>
     </properties>
@@ -25,11 +24,12 @@
     <repositories>
         <repository>
             <id>mavencentral</id>
-            <url>http://repo1.maven.org/maven2/</url>
+            <url>https://repo1.maven.org/maven2/</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+
         <repository>
             <id>dcm4che</id>
             <url>http://www.dcm4che.org/maven2/</url>
@@ -90,7 +90,7 @@
                     <include>webapp/bootstrap/fonts/*</include>
                     <include>webapp/fonts/**</include>
                     <include>webapp/css/**</include>
-                    <include>webapp/lib/**</include>
+                    <include>webapp/dist/**</include>
                     <include>webapp/index.html</include>
                 </includes>
                 <excludes>
@@ -99,14 +99,15 @@
                     <exclude>META-INF/*.RSA</exclude>
                 </excludes>
             </resource>
-           <resource>
-               <directory>src/main/resources</directory>
-               <filtering>true</filtering>
-               <includes>
-                   <include>version.txt</include>
-               </includes>
+
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>version.txt</include>
+                </includes>
             </resource>
-         </resources>
+        </resources>
 
         <plugins>
             <plugin>
@@ -125,8 +126,8 @@
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>pt.ua.dicoogle.Main</mainClass>
                                     <manifestEntries>
-					    <Specification-Version>${project.version}</Specification-Version>
-					    <Implementation-Version>${project.version}</Implementation-Version>
+                                        <Specification-Version>${project.version}</Specification-Version>
+                                        <Implementation-Version>${project.version}</Implementation-Version>
                                         <Extension-Name>com.sun.media.imageio</Extension-Name>
                                         <Implementation-Vendor>BMD software/UA.PT Bioinformatics</Implementation-Vendor>
                                         <Specification-Vendor>BMD software/UA.PT Bioinformatics</Specification-Vendor>
@@ -156,11 +157,12 @@
                 <version>2.3.2</version>
                 <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                     <showDeprecation>true</showDeprecation>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -190,6 +192,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
@@ -213,11 +216,35 @@
                 </executions>
             </plugin>
 
-            <!-- Webapp -->
+            <plugin>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
+                <version>2.11.0</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/package-info.java</exclude>
+                    </excludes>
+                    <configFile>../formatter-config.xml</configFile>
+                </configuration>
 
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Webapp -->
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.7.5</version>
                 <executions>
                     <!-- Install Node and NPM -->
                     <execution>
@@ -243,14 +270,13 @@
 
                 </executions>
                 <configuration>
-                    <nodeVersion>v6.9.1</nodeVersion>
-                    <npmVersion>3.10.10</npmVersion>
+                    <nodeVersion>v12.16.1</nodeVersion>
+                    <npmVersion>6.11.3</npmVersion>
                     <installDirectory>target</installDirectory>
                     <!-- Defining webapp directory -->
                     <workingDirectory>src/main/resources/webapp</workingDirectory>
                 </configuration>
             </plugin>
-          
         </plugins>
     </build>
 
@@ -270,8 +296,20 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.1</version>
+            <version>4.13.1</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>at.favre.lib</groupId>
+            <artifactId>bcrypt</artifactId>
+            <version>0.9.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.0</version>
         </dependency>
 
         <dependency>
@@ -279,6 +317,30 @@
             <artifactId>json-lib</artifactId>
             <classifier>jdk15</classifier>
             <version>2.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.9.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.9.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.10.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>2.9.5</version>
         </dependency>
 
         <dependency>
@@ -306,29 +368,20 @@
         </dependency>
 
         <dependency>
-            <groupId>org.java.net.substance</groupId>
-            <artifactId>substance</artifactId>
-            <version>5.3</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
             <version>${jetty.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-webapp</artifactId>
             <version>${jetty.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlets</artifactId>
-            <version>${jetty.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-jsp</artifactId>
             <version>${jetty.version}</version>
         </dependency>
 
@@ -337,16 +390,11 @@
             <artifactId>org.restlet.ext.servlet</artifactId>
             <version>${restlet.version}</version>
         </dependency>
+
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>1.8</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>jdom2</artifactId>
-            <version>2.0.4</version>
         </dependency>
 
         <dependency>

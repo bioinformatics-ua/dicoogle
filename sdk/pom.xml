@@ -10,7 +10,7 @@
     <parent>
         <groupId>pt.ua.ieeta</groupId>
         <artifactId>dicoogle-all</artifactId>
-        <version>2.5.2</version>
+        <version>3.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -19,7 +19,6 @@
     </properties>
 
     <repositories>
-
         <repository>
             <id>mavencentral</id>
             <url>http://repo1.maven.org/maven2/</url>
@@ -27,13 +26,7 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
-        <repository>
-            <id>dcm4che</id>
-            <url>http://www.dcm4che.org/maven2/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
+
         <repository>
             <id>mi</id>
             <url>http://bioinformatics.ua.pt/maven/content/repositories/mi</url>
@@ -41,10 +34,19 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+
         <repository>
             <id>maven-restlet</id>
             <name>Public online Restlet repository</name>
             <url>http://maven.restlet.org</url>
+        </repository>
+
+        <repository>
+            <id>dcm4che</id>
+            <url>http://www.dcm4che.org/maven2/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
@@ -76,16 +78,18 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -94,6 +98,7 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
@@ -106,12 +111,36 @@
                     <excludes>
                         <exclude>**/package-info.java</exclude>
                     </excludes>
-
                 </configuration>
+
                 <executions>
                     <execution>
                         <goals>
                             <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
+                <version>2.11.0</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/package-info.java</exclude>
+                    </excludes>
+                    <configFile>../formatter-config.xml</configFile>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>format</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -121,15 +150,22 @@
 
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
             <version>1.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.9.5</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>2.9.5</version>
         </dependency>
 
         <dependency>
@@ -149,6 +185,7 @@
             <artifactId>jspf.core</artifactId>
             <version>1.0.2</version>
         </dependency>
+
         <dependency>
             <groupId>org.restlet.jse</groupId>
             <artifactId>org.restlet</artifactId>
@@ -160,16 +197,13 @@
             <artifactId>org.restlet.ext.json</artifactId>
             <version>${restlet.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.swinglabs</groupId>
-            <artifactId>swing-layout</artifactId>
-            <version>1.0.3</version>
-        </dependency>
+
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
             <version>${jetty.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -183,12 +217,30 @@
         </dependency>
 
         <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <classifier>jdk15</classifier>
+            <version>2.4</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
     </dependencies>
 
+    <distributionManagement>
+        <!-- Versioned releases are published to the releases repository -->
+        <repository>
+            <id>mi</id>
+            <url>http://bioinformatics.ua.pt/maven/content/repositories/mi</url>
+        </repository>
 
-
+        <!-- Snapshot releases are published to the snapshots repository -->
+        <snapshotRepository>
+            <id>mi</id>
+            <url>http://bioinformatics.ua.pt/maven/content/repositories/mi-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>

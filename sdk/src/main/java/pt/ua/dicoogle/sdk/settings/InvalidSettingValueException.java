@@ -23,26 +23,22 @@ package pt.ua.dicoogle.sdk.settings;
  *
  * @author António Novo <antonio.novo@ua.pt>
  */
-public class InvalidSettingValueException extends RuntimeException
-{
-	private String paramName;
+public class InvalidSettingValueException extends RuntimeException {
+    private String paramName;
 
-	public InvalidSettingValueException(String message, String paramName)
-	{
-		super(message);
+    public InvalidSettingValueException(String message, String paramName) {
+        super(message);
 
-		this.paramName = paramName;
-	}
+        this.paramName = paramName;
+    }
 
-	public InvalidSettingValueException(String message)
-	{
-		super(message);
+    public InvalidSettingValueException(String message) {
+        super(message);
 
-		this.paramName = null;
-	}
+        this.paramName = null;
+    }
 
-	public String getParamName()
-	{
-		return paramName;
-	}
+    public String getParamName() {
+        return paramName;
+    }
 }

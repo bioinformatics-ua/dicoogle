@@ -35,13 +35,13 @@ import org.restlet.routing.Router;
 public class PluginRestletApplication extends Application {
 
     private static final List<ServerResource> pluginServices = new ArrayList<>();
-    
+
     private Router internalRouter;
-    
+
     public PluginRestletApplication() {
         super();
     }
-    
+
     /**
      * Creates a root Restlet that will receive all incoming calls.
      * @return a Restlet for the root 
@@ -53,24 +53,22 @@ public class PluginRestletApplication extends Application {
         this.internalRouter = new Router(getContext());
         // Defines routing to resources
         this.internalRouter.setDefaultMatchingQuery(false);
-        
-        //lets add plugin registred services
-        //this is still a little brittle... :(
-        for(ServerResource resource : pluginServices) {
+
+        // lets add plugin registred services
+        // this is still a little brittle... :(
+        for (ServerResource resource : pluginServices) {
             LoggerFactory.getLogger(PluginRestletApplication.class).debug("Inbound: {}", resource);
             internalRouter.attach("/" + resource.toString(), resource.getClass());
         }
-        
-        LoggerFactory.getLogger(PluginRestletApplication.class).debug("Installed plugin restlets: {}",
-                pluginServices);
+
+        LoggerFactory.getLogger(PluginRestletApplication.class).debug("Installed plugin restlets: {}", pluginServices);
         return internalRouter;
     }
-    
-    protected void loadPlugins() {
-    }
-    
-    public static void attachRestPlugin(ServerResource resource){
+
+    protected void loadPlugins() {}
+
+    public static void attachRestPlugin(ServerResource resource) {
         pluginServices.add(resource);
     }
-    
+
 }

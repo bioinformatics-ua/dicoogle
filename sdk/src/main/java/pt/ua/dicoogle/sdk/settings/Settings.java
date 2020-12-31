@@ -36,29 +36,29 @@ import org.slf4j.LoggerFactory;
  * This object will be serialized to disk before shutdown and on configuration save.
  * 
  */
-public class Settings{
-    
+public class Settings {
+
     private static final Logger log = LoggerFactory.getLogger(Settings.class);
-    
-    File settingsXmlFile; //xml file handler
-    String settingsXmlString;//xml file contents
-    
+
+    File settingsXmlFile; // xml file handler
+    String settingsXmlString;// xml file contents
+
     /**
      * 
      * @param settingsXmlFile an xml file pointing to the settings
      * @throws IOException 
      */
-    public Settings(File settingsXmlFile) throws IOException{
+    public Settings(File settingsXmlFile) throws IOException {
         log.debug("Loading settings from: {}", settingsXmlFile.getAbsolutePath());
         this.settingsXmlFile = settingsXmlFile;
-        
-        //creates the settings file if it does not exist
-        if(!settingsXmlFile.exists()){
+
+        // creates the settings file if it does not exist
+        if (!settingsXmlFile.exists()) {
             settingsXmlFile.createNewFile();
             settingsXmlString = "";
             return;
         }
-        
+
         reload();
     }
 
@@ -67,52 +67,62 @@ public class Settings{
      * @param xml
      * @throws IOException 
      */
-    public void setXml(String xml) throws IOException{
+    public void setXml(String xml) throws IOException {
         settingsXmlString = xml;
         save();
     }
-    
+
     /**
      * reloads the xml file
      */
-    public final void reload() throws IOException{
-        //we have a settings file, lets read it to the string
+    public final void reload() throws IOException {
+        // we have a settings file, lets read it to the string
         try (FileInputStream stream = new FileInputStream(settingsXmlFile)) {
             FileChannel fc = stream.getChannel();
             MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
             String xmlSettings = Charset.defaultCharset().decode(bb).toString();
             settingsXmlString = xmlSettings;
         }
-        
+
         log.debug("Settings for: {}", settingsXmlFile.getAbsolutePath());
         log.debug(settingsXmlString);
         log.debug("...");
     }
-    
+
     /**
     * Saves the settings xml to disk (on the path provided to the constructor)
     * TODO: this is poorly done, we should save to a tmp file and then move the files
     * as opposed to just write on top of the old file
     * TODO: also, we should validate the xml
     */
-    public void save() throws IOException{
-        try(FileOutputStream fileOutputStream = new FileOutputStream(settingsXmlFile, true)){
+    public void save() throws IOException {
+        try (FileOutputStream fileOutputStream = new FileOutputStream(settingsXmlFile, true)) {
             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
             bufferedOutputStream.write(settingsXmlString.getBytes(Charset.defaultCharset()));
             bufferedOutputStream.flush();
         }
     }
-    
+
     /**
      * 
      * @return the xml contents of the file
      */
-    public String getXml(){return settingsXmlString;}
-    
+    public String getXml() {
+        return settingsXmlString;
+    }
+
     /*
      * Helper methods below
      */
-    public String field(String name){return null;}
-    public int fieldAsInt(String name){return 0;}
-    public double fieldAsDouble(String name){return 0.0;}
+    public String field(String name) {
+        return null;
+    }
+
+    public int fieldAsInt(String name) {
+        return 0;
+    }
+
+    public double fieldAsDouble(String name) {
+        return 0.0;
+    }
 }

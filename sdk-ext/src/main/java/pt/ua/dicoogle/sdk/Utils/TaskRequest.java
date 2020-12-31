@@ -25,16 +25,14 @@ import java.util.Observable;
  *
  * @author Carlos Ferreira
  */
-public class TaskRequest extends Observable
-{
+public class TaskRequest extends Observable {
     private int Task;
     private String RequesterPlugin;
     private Map<Integer, Object> Parameters;
     private Map<Integer, Object> results;
     private boolean completed;
 
-    public TaskRequest(int Task, String RequesterPlugin, Map<Integer, Object> Parameters)
-    {
+    public TaskRequest(int Task, String RequesterPlugin, Map<Integer, Object> Parameters) {
         this.Task = Task;
         this.RequesterPlugin = RequesterPlugin;
         this.Parameters = Parameters;
@@ -42,42 +40,35 @@ public class TaskRequest extends Observable
         this.results = null;
     }
 
-    public Map<Integer, Object> getParameters()
-    {
+    public Map<Integer, Object> getParameters() {
         return Parameters;
     }
 
-    public String getRequesterPlugin()
-    {
+    public String getRequesterPlugin() {
         return RequesterPlugin;
     }
 
-    public int getTask()
-    {
+    public int getTask() {
         return Task;
     }
 
-    public Map<Integer, Object> getResults()
-    {
+    public Map<Integer, Object> getResults() {
         return results;
     }
 
-    
-    public void completeTask()
-    {
+
+    public void completeTask() {
         this.completed = true;
     }
 
-    public boolean isCompleted()
-    {
+    public boolean isCompleted() {
         return this.completed;
     }
-    
-    public void setResults(Map<Integer, Object> results)
-    {
+
+    public void setResults(Map<Integer, Object> results) {
         this.results = results;
-        
-        //notification of the observers.
+
+        // notification of the observers.
         this.setChanged();
         this.notifyObservers();
     }

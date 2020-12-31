@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config>
+    <web-server autostart="true" port="8282">
+        <allowed-origins>test.dicoogle.com</allowed-origins>
+    </web-server>
+    <archive>
+        <save-thumbnails>true</save-thumbnails>
+        <thumbnail-size>128</thumbnail-size>
+        <main-directory>/opt/mydata</main-directory>
+        <indexer-effort>98</indexer-effort>
+        <dim-providers>
+            <dim-provider>lucene</dim-provider>
+            <dim-provider>postgres</dim-provider>
+        </dim-providers>
+        <default-storages>
+            <default-storage>filestorage</default-storage>
+            <default-storage>s3</default-storage>
+        </default-storages>
+        <enable-watch-directory>true</enable-watch-directory>
+        <watch-directory>/opt/my-data/watched</watch-directory>
+        <node-name>dicoogle01</node-name>
+    </archive>
+    <dicom-services>
+        <aetitle>TEST-STORAGE</aetitle>
+        <allowed-aetitles>any</allowed-aetitles>
+        <allowed-local-interfaces>any</allowed-local-interfaces>
+        <allowed-hostnames>any</allowed-hostnames>
+        <default-ts>
+            <ts>1.2.840.10008.1.2</ts>
+            <ts>1.2.840.10008.1.2.1</ts>
+            <ts>1.2.840.10008.1.2.4.80</ts>
+            <ts>1.2.840.10008.1.2.4.50</ts>
+        </default-ts>
+        <sop-classes>
+            <sop-class>
+                <uid>1.2.840.10008.5.1.4.1.1.88.40</uid>
+                <transfer-syntaxes>
+                    <ts>1.2.840.10008.1.2</ts>
+                    <ts>1.2.840.10008.1.2.1</ts>
+                    <ts>1.2.840.10008.1.2.4.80</ts>
+                    <ts>1.2.840.10008.1.2.4.50</ts>
+                </transfer-syntaxes>
+            </sop-class>
+            <sop-class>
+                <uid>1.2.840.10008.5.1.4.1.1.77.1.1</uid>
+            </sop-class>
+            <sop-class>
+                <uid>1.2.840.10008.5.1.4.1.1.12.1.1</uid>
+
+            </sop-class>
+        </sop-classes>
+        <move-destinations>
+            <move-destination>
+                <aetitle>ANOTHER-STORAGE</aetitle>
+                <address>192.168.42.42</address>
+                <port>6666</port>
+                <description>Our test storage</description>
+                <public>false</public>
+            </move-destination>
+        </move-destinations>
+
+        <storage autostart="true" port="6777" />
+
+        <query-retrieve autostart="false" port="1033" >
+            <rsp-delay>1</rsp-delay>
+            <dimse-rsp-timeout>50</dimse-rsp-timeout>
+            <idle-timeout>51</idle-timeout>
+            <accept-timeout>52</accept-timeout>
+            <connection-timeout>53</connection-timeout>
+            <sop-class>1.2.840.10008.5.1.4.1.2.1.1</sop-class>
+            <transfer-capabilities>1.2.840.10008.1.2.2</transfer-capabilities>
+            <transfer-capabilities>1.2.840.10008.1.2.1</transfer-capabilities>
+            <max-client-assocs>25</max-client-assocs>
+            <max-pdu-length-receive>16374</max-pdu-length-receive>
+            <max-pdu-length-send>16374</max-pdu-length-send>
+        </query-retrieve>
+    </dicom-services>
+</config>

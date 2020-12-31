@@ -41,6 +41,7 @@ import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import pt.ua.dicoogle.core.settings.ClientSettings;
 import pt.ua.dicoogle.sdk.Utils.Platform;
 
 /**
@@ -63,7 +64,7 @@ public class XMLClientSupport extends DefaultHandler {
 
     public XMLClientSupport() {
         filePath = Platform.homePath() + "clientConfig.xml";
-        
+
         cs = ClientSettings.getInstance();
     }
 
@@ -71,23 +72,17 @@ public class XMLClientSupport extends DefaultHandler {
     public void startElement(String uri, String localName, String qName, Attributes attribs) {
         if (localName.equals("ExternalViewer")) {
             isViewer = true;
-        }
-        else if(localName.equals("DefaultServerHost")){
+        } else if (localName.equals("DefaultServerHost")) {
             isHost = true;
-        }
-        else if(localName.equals("DefaultServerPort")){
+        } else if (localName.equals("DefaultServerPort")) {
             isPort = true;
-        }
-        else if(localName.equals("DefaultUsername")){
+        } else if (localName.equals("DefaultUsername")) {
             isUsername = true;
-        }
-        else if(localName.equals("DefaultPassword")){
+        } else if (localName.equals("DefaultPassword")) {
             isPassword = true;
-        }
-        else if(localName.equals("TempFilesDir")){
+        } else if (localName.equals("TempFilesDir")) {
             isTempDir = true;
-        }
-        else if(localName.equals("AutoConnect")){
+        } else if (localName.equals("AutoConnect")) {
             isAutoConnect = true;
         }
 
@@ -98,23 +93,17 @@ public class XMLClientSupport extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) {
         if (localName.equals("ExternalViewer")) {
             isViewer = false;
-        }
-        else if(localName.equals("DefaultServerHost")){
+        } else if (localName.equals("DefaultServerHost")) {
             isHost = false;
-        }
-        else if(localName.equals("DefaultServerPort")){
+        } else if (localName.equals("DefaultServerPort")) {
             isPort = false;
-        }
-        else if(localName.equals("DefaultUsername")){
+        } else if (localName.equals("DefaultUsername")) {
             isUsername = false;
-        }
-        else if(localName.equals("DefaultPassword")){
+        } else if (localName.equals("DefaultPassword")) {
             isPassword = false;
-        }
-        else if(localName.equals("TempFilesDir")){
+        } else if (localName.equals("TempFilesDir")) {
             isTempDir = false;
-        }
-        else if(localName.equals("AutoConnect")){
+        } else if (localName.equals("AutoConnect")) {
             isAutoConnect = false;
         }
     }
@@ -126,65 +115,57 @@ public class XMLClientSupport extends DefaultHandler {
             cs.setExtV(sView);
             return;
         }
-        if(isHost){
+        if (isHost) {
             String sView = new String(data, start, length);
             cs.setDefaultServerHost(sView);
             return;
         }
-        if(isPort){
+        if (isPort) {
             String sPort = new String(data, start, length);
             cs.setDefaultServerPort(Integer.parseInt(sPort));
             return;
         }
-        if(isUsername){
+        if (isUsername) {
             String sUsername = new String(data, start, length);
             cs.setDefaultUserName(sUsername);
             return;
         }
-        if(isPassword){
+        if (isPassword) {
             String sPassword = new String(data, start, length);
             cs.setDefaultPassword(sPassword);
             return;
         }
-        if(isTempDir){
+        if (isTempDir) {
             String sDir = new String(data, start, length);
             cs.setTempFilesDir(sDir);
             return;
         }
-        if(isAutoConnect)
-        {
-             String sView = new String(data, start, length);
-             boolean result = false;
-             if (sView.compareToIgnoreCase("true") == 0)
+        if (isAutoConnect) {
+            String sView = new String(data, start, length);
+            boolean result = false;
+            if (sView.compareToIgnoreCase("true") == 0)
                 result = true;
-             cs.setAutoConnect(result);
-             return;
-         }
+            cs.setAutoConnect(result);
+            return;
+        }
     }
 
-    public ClientSettings getXML()
-    {
-        try
-        {
+    public ClientSettings getXML() {
+        try {
             File file = new File(filePath);
-            if (!file.exists())
-            {
+            if (!file.exists()) {
                 cs.setDefaultSettings();
                 printXML();
                 return cs;
             }
-            InputSource src = new InputSource( new FileInputStream(file) );
+            InputSource src = new InputSource(new FileInputStream(file));
             XMLReader r = XMLReaderFactory.createXMLReader();
             r.setContentHandler(this);
             r.parse(src);
             return cs;
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ex) {
 
-        }
-        catch (SAXException ex)
-        {
+        } catch (SAXException ex) {
 
         }
         return null;
@@ -197,7 +178,7 @@ public class XMLClientSupport extends DefaultHandler {
             PrintWriter pw = new PrintWriter(out);
             StreamResult streamResult = new StreamResult(pw);
             SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
-            //      SAX2.0 ContentHandler.
+            // SAX2.0 ContentHandler.
             TransformerHandler hd = tf.newTransformerHandler();
             Transformer serializer = hd.getTransformer();
             serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
@@ -207,26 +188,26 @@ public class XMLClientSupport extends DefaultHandler {
             hd.setResult(streamResult);
             hd.startDocument();
 
-            //Get a processing instruction
-            //hd.processingInstruction("xml-stylesheet", "type=\"text/xsl\" href=\"mystyle.xsl\"");
+            // Get a processing instruction
+            // hd.processingInstruction("xml-stylesheet", "type=\"text/xsl\" href=\"mystyle.xsl\"");
             AttributesImpl atts = new AttributesImpl();
 
             String curTitle;
 
-            //root element
-            hd.startElement("", "", "Config", atts);  
+            // root element
+            hd.startElement("", "", "Config", atts);
 
             hd.startElement("", "", "DirectorySettings", atts);
 
             curTitle = cs.getExtV();
-            //external viewer
+            // external viewer
             hd.startElement("", "", "ExternalViewer", atts);
             hd.characters(curTitle.toCharArray(), 0, curTitle.length());
             hd.endElement("", "", "ExternalViewer");
 
 
             curTitle = cs.getTempFilesDir();
-            //external viewer
+            // external viewer
             hd.startElement("", "", "TempFilesDir", atts);
             hd.characters(curTitle.toCharArray(), 0, curTitle.length());
             hd.endElement("", "", "TempFilesDir");
@@ -236,25 +217,25 @@ public class XMLClientSupport extends DefaultHandler {
             hd.startElement("", "", "DefaultGUIServer", atts);
 
             curTitle = cs.getDefaultServerHost();
-            //external viewer
+            // external viewer
             hd.startElement("", "", "DefaultServerHost", atts);
             hd.characters(curTitle.toCharArray(), 0, curTitle.length());
             hd.endElement("", "", "DefaultServerHost");
 
             curTitle = String.valueOf(cs.getDefaultServerPort());
-            //external viewer
+            // external viewer
             hd.startElement("", "", "DefaultServerPort", atts);
             hd.characters(curTitle.toCharArray(), 0, curTitle.length());
             hd.endElement("", "", "DefaultServerPort");
 
             curTitle = cs.getDefaultUserName();
-            //external viewer
+            // external viewer
             hd.startElement("", "", "DefaultUsername", atts);
             hd.characters(curTitle.toCharArray(), 0, curTitle.length());
             hd.endElement("", "", "DefaultUsername");
 
             curTitle = cs.getDefaultPassword();
-            //external viewer
+            // external viewer
             hd.startElement("", "", "DefaultPassword", atts);
             hd.characters(curTitle.toCharArray(), 0, curTitle.length());
             hd.endElement("", "", "DefaultPassword");
@@ -264,7 +245,7 @@ public class XMLClientSupport extends DefaultHandler {
             else
                 curTitle = "false";
 
-            //Enable P2P
+            // Enable P2P
             hd.startElement("", "", "AutoConnect", atts);
             hd.characters(curTitle.toCharArray(), 0, curTitle.length());
             hd.endElement("", "", "AutoConnect");
@@ -275,14 +256,10 @@ public class XMLClientSupport extends DefaultHandler {
 
             hd.endDocument();
 
-        } catch (TransformerConfigurationException ex) {
-        } catch (SAXException ex) {
-        } catch (FileNotFoundException ex) {
-        } finally {
+        } catch (TransformerConfigurationException ex) {} catch (SAXException ex) {} catch (FileNotFoundException ex) {} finally {
             try {
                 out.close();
-            } catch (IOException ex) {
-            }
+            } catch (IOException ex) {}
         }
     }
 }

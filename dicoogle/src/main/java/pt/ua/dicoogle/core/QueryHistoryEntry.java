@@ -26,12 +26,12 @@ import java.util.AbstractMap.SimpleEntry;
  */
 public class QueryHistoryEntry<K, V> extends SimpleEntry<K, V> {
 
-    public QueryHistoryEntry(K key, V value){
+    public QueryHistoryEntry(K key, V value) {
         super(key, value);
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return super.getKey().toString();
     }
 }

@@ -26,6 +26,7 @@ import pt.ua.dicoogle.sdk.datastructs.IndexReport;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.task.Task;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -39,45 +40,49 @@ import java.util.concurrent.ExecutionException;
  */
 public class RunningIndexTasks {
     private static final Logger logger = LoggerFactory.getLogger(RunningIndexTasks.class);
-    private static int SOFT_MAX_RUNNINGTASKS = Integer.parseInt(System.getProperty("dicoogle.tasks.softRemoveTasks", "50000"));
-    private static int NUMBER_RUNNINGTASKS_TO_CLEAN = Integer.parseInt(System.getProperty("dicoogle.tasks.numberTaskClean", "2000"));
+    private static int SOFT_MAX_RUNNINGTASKS =
+            Integer.parseInt(System.getProperty("dicoogle.tasks.softRemoveTasks", "50000"));
+    private static int NUMBER_RUNNINGTASKS_TO_CLEAN =
+            Integer.parseInt(System.getProperty("dicoogle.tasks.numberTaskClean", "2000"));
     private static boolean ENABLE_HOOK = Boolean.valueOf(System.getProperty("dicoogle.tasks.removedCompleted", "true"));
-	public static RunningIndexTasks instance;
+    public static RunningIndexTasks instance;
 
-	private final Map<String, Task<Report>> taskRunningList;
+    private final Map<String, Task<Report>> taskRunningList;
 
-	public static RunningIndexTasks getInstance() {
-		if (instance == null)
-			instance = new RunningIndexTasks();
+    public static RunningIndexTasks getInstance() {
+        if (instance == null)
+            instance = new RunningIndexTasks();
+        return instance;
+    }
 
-		return instance;
-	}
+    public RunningIndexTasks() {
+        taskRunningList = new LinkedHashMap<>();
+    }
 
-	public RunningIndexTasks() {
-		taskRunningList = new LinkedHashMap<>();
-	}
+    public void addTask(String taskUid, Task<Report> task) {
+        taskRunningList.put(taskUid, task);
+        if (ENABLE_HOOK) {
+            hookRemoveRunningTasks();
+        }
+    }
 
-	public void addTask(String taskUid, Task<Report> task) {
-		taskRunningList.put(taskUid, task);
-		if (ENABLE_HOOK){
-		    hookRemoveRunningTasks();
-		}
-	}
+    public void addTask(Task<Report> task) {
+        taskRunningList.put(task.getUid(), task);
+    }
 
-	public boolean removeTask(String taskUid) {
-		return taskRunningList.remove(taskUid) != null;
-	}
+    public boolean removeTask(String taskUid) {
+        return taskRunningList.remove(taskUid) != null;
+    }
 
+    public void hookRemoveRunningTasks() {
 
-	public void hookRemoveRunningTasks(){
-
-	    if (this.taskRunningList.size()>SOFT_MAX_RUNNINGTASKS){
-	        int removedTasks = 0 ;
-	        Iterator<String> iterator = this.taskRunningList.keySet().iterator();
-	        while(iterator.hasNext()&& removedTasks<NUMBER_RUNNINGTASKS_TO_CLEAN){
-	            String tId = iterator.next();
-                Task<?> t =  this.taskRunningList.get(tId);
-                if (t.isCancelled() || t.isDone()){
+        if (this.taskRunningList.size() > SOFT_MAX_RUNNINGTASKS) {
+            int removedTasks = 0;
+            Iterator<String> iterator = this.taskRunningList.keySet().iterator();
+            while (iterator.hasNext() && removedTasks < NUMBER_RUNNINGTASKS_TO_CLEAN) {
+                String tId = iterator.next();
+                Task<?> t = this.taskRunningList.get(tId);
+                if (t.isCancelled() || t.isDone()) {
                     iterator.remove();
                     removedTasks++;
                 }
@@ -85,21 +90,20 @@ public class RunningIndexTasks {
         }
     }
 
-	public boolean stopTask(String taskUid) {
-		Task<Report> task = taskRunningList.get(taskUid);
-		if (task != null) {
-			return task.cancel(true);
-		} else {
-			logger.info("Attempt to stop unexistent task {}, ignoring", taskUid);
-		}
+    public boolean stopTask(String taskUid) {
+        Task<Report> task = taskRunningList.get(taskUid);
+        if (task != null) {
+            return task.cancel(true);
+        } else {
+            logger.info("Attempt to stop unexistent task {}, ignoring", taskUid);
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public Map<String, Task<Report>> getRunningTasks() {
-
-		return taskRunningList;
-	}
+    public Map<String, Task<Report>> getRunningTasks() {
+        return Collections.unmodifiableMap(taskRunningList);
+    }
 
     public String toJson() {
         JSONObject object = new JSONObject();
@@ -107,30 +111,12 @@ public class RunningIndexTasks {
 
         int countComplete = 0;
         int countCancelled = 0;
-        for (Map.Entry<String, Task<Report>> pair : taskRunningList.entrySet()) {
-            Task<Report> task = pair.getValue();
-            JSONObject entry = new JSONObject();
-            entry.put("taskUid", pair.getKey());
-            entry.put("taskName", task.getName());
-            entry.put("taskProgress", task.getProgress());
-
+        for (Task<Report> task : taskRunningList.values()) {
+            JSONObject entry = asJSON(task);
             if (task.isDone() && !task.isCancelled()) {
-                entry.put("complete", true);
                 countComplete += 1;
-                try {
-                    Report r = task.get();
-                    if (r instanceof IndexReport) {
-                        entry.put("elapsedTime", ((IndexReport)r).getElapsedTime());
-                        entry.put("nIndexed", ((IndexReport)r).getNIndexed());
-                        entry.put("nErrors", ((IndexReport)r).getNErrors());
-                    }
-                } catch (InterruptedException | ExecutionException ex) {
-                    logger.warn("Could not retrieve task result, ignoring", ex);
-                }
-            }
-            if (task.isCancelled()) {
+            } else if (task.isCancelled()) {
                 countCancelled += 1;
-                entry.put("canceled", true);
             }
             array.add(entry);
         }
@@ -138,5 +124,30 @@ public class RunningIndexTasks {
         object.put("results", array);
         object.put("count", array.size() - countComplete - countCancelled);
         return object.toString();
+    }
+
+    public JSONObject asJSON(Task<? extends Report> task) {
+        JSONObject entry = new JSONObject();
+        entry.put("taskUid", task.getUid());
+        entry.put("taskName", task.getName());
+        entry.put("taskProgress", task.getProgress());
+
+        if (task.isDone() && !task.isCancelled()) {
+            entry.put("complete", true);
+            try {
+                Report r = task.get();
+                if (r instanceof IndexReport) {
+                    entry.put("elapsedTime", ((IndexReport) r).getElapsedTime());
+                    entry.put("nIndexed", ((IndexReport) r).getNIndexed());
+                    entry.put("nErrors", ((IndexReport) r).getNErrors());
+                }
+            } catch (InterruptedException | ExecutionException ex) {
+                logger.warn("Could not retrieve task result, ignoring", ex);
+            }
+        }
+        if (task.isCancelled()) {
+            entry.put("canceled", true);
+        }
+        return entry;
     }
 }

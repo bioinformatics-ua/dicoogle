@@ -1,211 +1,157 @@
-import {Endpoints} from '../constants/endpoints';
-import $ from 'jquery';
+import dicoogleClient from "dicoogle-client";
 
-function getPatients(freetext, isKeyword, provider, callbackSucccess, callbackError){
-        console.log("store param: ", freetext);
-        // ??? use dicoogle client?
+const Dicoogle = dicoogleClient();
 
-        //'http://localhost:8080/search?query=wrix&keyword=false&provicer=lucene'
-        if(freetext.length === 0)
-        {
-          freetext = "*:*";
-          isKeyword = true;
-        }
-
-        var url = Endpoints.base + '/searchDIM?query=' + freetext + '&keyword=' + isKeyword;
-        if(provider !== "all")
-        {
-          provider = Array.prototype.concat.apply([], provider);
-          for (const p of provider) {
-            url += "&provider=" + p;
-          }
-        }
-        console.log("store url;", url);
-
-        $.ajax({
-
-          url: url,
-          dataType: 'json',
-          success: function(data) {
-
-            callbackSucccess(data);
-
-          },
-          error: function(xhr, status, err) {
-            callbackError(xhr);
-          }
-        });
+export function getDICOMFieldList(callback) {
+  Dicoogle.request("GET", "export/list").end((err, resp) => {
+    if (err) callback(err);
+    else callback(null, resp.text);
+  });
 }
 
-function unindex(uri, provider, callbackSuccess, callbackError){
-    console.log("Unindex param: ", uri);
-
-    var url = Endpoints.base + '/management/tasks/unindex';
-    var data = {'uri': uri}
-    if(provider !== 'all')
-      data['provider'] = provider;
-
-    // TODO use dicoogle client
-    $.ajax({
-      url: url,
-      data: data,
-      method: 'post',
-      traditional: true,
-      success: callbackSuccess,
-      error: function(xhr, status, err) {
-        callbackError(xhr);
-      }
-    });
+export function getTransferSettings(callback) {
+  Dicoogle.getTransferSyntaxSettings(callback);
 }
 
-function remove(uri, callbackSucccess, callbackError){
-    console.log("Unindex param: ", uri);
-
-    var url = Endpoints.base + '/management/tasks/remove';
-    var data = {'uri': uri}
-
-    // TODO use dicoogle client
-    $.ajax({
-      url: url,
-      data: data,
-      method: 'post',
-      traditional: true,
-      success: function(data) {
-       callbackSucccess(data);
-      },
-      error: function(xhr, status, err) {
-        callbackError(xhr);
-      }
-    });
+export function getIndexerSettings(callback) {
+  Dicoogle.getIndexerSettings(callback);
 }
 
-function getImageInfo(uid, callbackSucccess, callbackError){
-        console.log("getImageInfo: ", uid);
+export function getPatients(
+  freeText,
+  isKeyword,
+  provider,
+  callbackSuccess,
+  callbackError
+) {
+  console.log("getPatients: ", freeText);
+  if (freeText.length === 0) {
+    freeText = "*:*";
+    isKeyword = true;
+  }
 
-        //'http://localhost:8080/search?query=wrix&keyword=false&provicer=lucene'
-        var url = Endpoints.base + '/dump?uid=' + uid;
+  if (provider === "all") {
+    provider = undefined;
+  }
 
-        // TODO use dicoogle client
-        $.ajax({
-          url: url,
-          method: 'get',
-          dataType: 'json',
-          success: function(data) {
-            callbackSucccess(data);
-          },
-          error: function(xhr, status, err) {
-            callbackError(xhr);
-          }
-        });
+  const searchOptions = {
+    keyword: isKeyword,
+    provider
+  };
+
+  Dicoogle.searchDIM(freeText, searchOptions, (error, data) => {
+    if (error) {
+      callbackError(error);
+    } else {
+      callbackSuccess(data);
+    }
+  });
 }
 
-function getVersion(callbackSucccess, callbackError){
+export function unindex(uri, provider, callbackSuccess, callbackError) {
+  console.log("Unindex param: ", uri);
 
-    var url = Endpoints.base + '/ext/version';
-    // TODO use dicoogle client
-    $.ajax({
-        url: url,
-        method: 'get',
-        dataType: 'json',
-        success: function(data) {
+  if (provider === "all") {
+    provider = undefined;
+  }
 
-            callbackSucccess(data);
-
-        },
-        error: function(xhr, status, err) {
-            callbackError(xhr);
-        }
-    });
+  Dicoogle.unindex(uri, provider, function(error) {
+    if (error) {
+      callbackError(error);
+    } else {
+      callbackSuccess();
+    }
+  });
 }
 
-function request(url, callbackSucccess, callbackError){
-    console.log("request: " + url);
-    $.ajax({
+export function remove(uri, callbackSuccess, callbackError) {
+  console.log("Unindex param: ", uri);
 
-      url: url,
-      dataType: 'json',
-      success: function(data) {
+  Dicoogle.remove(uri, function(error) {
+    if (error) {
+      callbackError(error);
+    } else {
+      callbackSuccess();
+    }
+  });
+}
 
-      callbackSucccess(data);
+export function getImageInfo(uid, callbackSuccess, callbackError) {
+  console.log("getImageInfo: ", uid);
 
-      },
-      error: function(xhr, status, err) {
-        callbackError(xhr);
-      }
-    });
+  Dicoogle.dump(uid, function(error, data) {
+    if (error) {
+      callbackError(error);
+    } else {
+      callbackSuccess(data);
+    }
+  });
+}
+
+export function getVersion(callbackSuccess, callbackError) {
+  Dicoogle.getVersion(function(error, data) {
+    if (error) {
+      callbackError(error);
+    } else {
+      callbackSuccess(data);
+    }
+  });
 }
 
 /*
 INDEXER
 */
-function setWatcher(state){
-  console.log(state);
-  $.post(Endpoints.base + "/management/settings/index/watcher",
-  {
-    watcher: state
-  },
-    function(data, status){
-      //Response
-      console.log("Data: " + data + "\nStatus: " + status);
-    });
+export function setWatcher(state, callback) {
+  console.log("setWatcher:" + state);
 
-}
-function setZip(state){
-  console.log(state);
-  $.post(Endpoints.base + "/management/settings/index/zip",
-  {
-    zip: state
-  },
-    function(data, status){
-      //Response
-      console.log("Data: " + data + "\nStatus: " + status);
-    });
-
-}
-function setSaveT(state){
-  console.log(state);
-  $.post(Endpoints.base + "/management/settings/index/thumbnail",
-  {
-    thumbnail: state
-  },
-    function(data, status){
-      //Response
-      console.log("Data: " + data + "\nStatus: " + status);
-    });
-
+  const cb = callback ? callback : () => {};
+  Dicoogle.setIndexerSettings(Dicoogle.IndexerSettings.WATCHER, state, cb);
 }
 
-function saveIndexOptions(path, watcher, zip, saveThumbnail, effort, thumbnailSize){
-  //console.log(state);
-  $.post(Endpoints.base + "/management/settings/index",
-  {
-    path: path,
-    watcher: watcher,
-    zip: zip,
-    saveThumbnail: saveThumbnail,
-    effort: effort,
-    thumbnailSize: thumbnailSize
-  },
-    function(data, status){
-      //Response
-      console.log("Data: " + data + "\nStatus: " + status);
-    });
+export function setZip(state, callback) {
+  console.log("setZip:" + state);
 
+  const cb = callback ? callback : () => {};
+  Dicoogle.setIndexerSettings(Dicoogle.IndexerSettings.ZIP, state, cb);
 }
 
-function forceIndex(uri){
-  //console.log(state);
-  // TODO use dicoogle client
-  $.post(Endpoints.base + "/management/tasks/index",
-  {
-    uri: uri
-  },
-  function(data, status){
-    //Response
-    console.log("Status:", status);
+export function setSaveT(state, callback) {
+  console.log("setSaveThumbnail:" + state);
+
+  const cb = callback ? callback : () => {};
+  Dicoogle.setIndexerSettings(
+    Dicoogle.IndexerSettings.INDEX_THUMBNAIL,
+    state,
+    cb
+  );
+}
+
+export function saveIndexOptions(
+  path,
+  watcher,
+  zip,
+  thumbnail,
+  effort,
+  thumbnailSize
+) {
+  Dicoogle.setIndexerSettings(
+    {
+      path,
+      watcher,
+      zip,
+      thumbnail,
+      effort,
+      thumbnailSize
+    },
+    error => {
+      if (error) console.error("Dicoogle service failure", error);
+    }
+  );
+}
+
+export function forceIndex(uri, providers, callback) {
+  Dicoogle.index(uri, providers, error => {
+    if (error) console.error("Dicoogle service failure", error);
+    if (callback) callback(error);
   });
 }
-
-export {
-  getPatients, unindex, remove, getImageInfo, request, setWatcher,
-  setZip, setSaveT, saveIndexOptions, forceIndex, getVersion};

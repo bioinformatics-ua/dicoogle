@@ -21,18 +21,16 @@ package pt.ua.dicoogle.server.queryretrieve;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 
 import pt.ua.dicoogle.core.exceptions.CFindNotSupportedException;
 
 import java.util.Iterator;
-import java.util.Set;
 
 import org.dcm4che2.data.DicomElement;
 import org.dcm4che2.data.DicomObject;
 import org.dcm4che2.data.Tag;
 
-import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.sdk.utils.TagValue;
 import pt.ua.dicoogle.sdk.utils.TagsStruct;
 
@@ -48,22 +46,20 @@ import pt.ua.dicoogle.sdk.utils.TagsStruct;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class CFindBuilder
-{
+public class CFindBuilder {
 
-    private boolean patientRoot = false ;
-    private boolean studyRoot = false ;
+    private boolean patientRoot = false;
+    private boolean studyRoot = false;
 
     private String query = "";
-    
 
-    public CFindBuilder(DicomObject key, DicomObject rsp) throws CFindNotSupportedException
-    {
 
-        //if (!setRoot(rsp))
-        //    throw new CFindNotSupportedException() ;
+    public CFindBuilder(DicomObject key, DicomObject rsp) throws CFindNotSupportedException {
 
-              
+        // if (!setRoot(rsp))
+        // throw new CFindNotSupportedException() ;
+
+
         /**
          * Sample output
         (0008,0005) CS #10 [ISO_IR 100] Specific Character Set
@@ -82,7 +78,7 @@ public class CFindBuilder
          */
 
         /** Search by required fields
-
+        
          *
          *
         */
@@ -92,114 +88,92 @@ public class CFindBuilder
         String affectedSOP = new String(elem.getBytes());
 
         TagsStruct tagstruct = TagsStruct.getInstance();
-        
-        //TagsStruct.getInstance().toStringNew();
-        boolean all=false ;
-        String append = "" ;
-        query="";
+
+        // TagsStruct.getSettings().toStringNew();
+        boolean all = false;
+        String append = "";
+        query = "";
         System.out.println(tagstruct.getDIMFields().size());
         Iterator<TagValue> it = tagstruct.getDIMFields().iterator();
-        while(it.hasNext())
-        {
+        while (it.hasNext()) {
             /** Verify if this tags exists
             */
-        	TagValue tag = it.next();
-            int k = tag.getTagNumber() ;
+            TagValue tag = it.next();
+            int k = tag.getTagNumber();
             DicomElement e = key.get(k);
-            //DebugManager.getInstance().debug("get key::"+ k );
-            if (e!=null)
-            {
+            // DebugManager.getSettings().debug("get key::"+ k );
+            if (e != null) {
                 String value = new String(e.getBytes());
-                //DebugManager.getInstance().debug("Value getted in CFIND RP:<"+t.get(k).getAlias() + "> "+ value  +".");
-                if (value.equals(""))
-                {
-                    continue ;
+                // DebugManager.getSettings().debug("Value getted in CFIND RP:<"+t.get(k).getAlias() + "> "+ value +".");
+                if (value.equals("")) {
+                    continue;
 
-                }
-                else
-                {
-                    value=value.trim();
-                    boolean modified = false ;
+                } else {
+                    value = value.trim();
+                    boolean modified = false;
                     // TODO :: Study Date need to be rewritted
                     // and others weird tags like // should be mapped to lucene!
-                    if (k == Tag.ModalitiesInStudy)
-                    {
-                        String [] modality = value.split("\\\\");
-                        int i = 0 ;
+                    if (k == Tag.ModalitiesInStudy) {
+                        String[] modality = value.split("\\\\");
+                        int i = 0;
                         String modalityQuery = "";
-                        for (String mod : modality )
-                        {
+                        for (String mod : modality) {
 
-                            //DebugManager.getInstance().debug(mod);
+                            // DebugManager.getSettings().debug(mod);
 
-                            if (modified)
-                            {
+                            if (modified) {
                                 // There is already exist a modality
                                 modalityQuery += " OR ";
                             }
 
-                            i++ ; 
-                            modified = true ;
+                            i++;
+                            modified = true;
                             modalityQuery += "Modality" + ":" + mod;
                         }
-                        if (!modalityQuery.equals(""))
-                        {
+                        if (!modalityQuery.equals("")) {
                             System.err.println(modalityQuery);
-                            query = query + append +  " (" + modalityQuery + ")" ;
+                            query = query + append + " (" + modalityQuery + ")";
                         }
-                        
+
                     }
 
-                    else if(k == Tag.StudyDate)
-                    {
-                        System.out.println("Value :@" +value+".");
-                        
-                        String [] date = value.split("-");
-                        int i = 0 ;
-                        if (date.length==1)
-                        {
-                            
-                            if (!value.contains("-"))
-                            {
-                                query = query + append +tag.getAlias() + ":[" + date[0] + " TO " +
-                                date[0] + "]" ;
-                            }
-                            else
-                            {
-                                
-                                 String s;
-                                 Format formatter;
-                                 Date date2 = new Date();
+                    else if (k == Tag.StudyDate) {
+                        System.out.println("Value :@" + value + ".");
 
-                                 // 01/09/02
-                                 formatter = new SimpleDateFormat("YYYYMMdd");
-                                 s = formatter.format(date2);
+                        String[] date = value.split("-");
+                        int i = 0;
+                        if (date.length == 1) {
 
-                                 query = query + append +tag.getAlias() + ":[" + date[0] + " TO " +
-                                 s + "]" ;
+                            if (!value.contains("-")) {
+                                query = query + append + tag.getAlias() + ":[" + date[0] + " TO " + date[0] + "]";
+                            } else {
+
+                                String s;
+                                Format formatter;
+                                Date date2 = new Date();
+
+                                // 01/09/02
+                                formatter = new SimpleDateFormat("YYYYMMdd");
+                                s = formatter.format(date2);
+
+                                query = query + append + tag.getAlias() + ":[" + date[0] + " TO " + s + "]";
                             }
-                            
-                            
-                            //query = query +append + t.get(k).getAlias() + ":[" + date[0] + " TO " +
-                            //    date[0] + "]" ;
+
+
+                            // query = query +append + t.get(k).getAlias() + ":[" + date[0] + " TO " +
+                            // date[0] + "]" ;
+                        } else if (date.length == 2) {
+                            query = query + append + tag.getAlias() + ":[" + date[0] + " TO " + date[1] + "]";
                         }
-                        else if(date.length==2)
-                        {
-                            query = query + append + tag.getAlias() + ":[" + date[0] + " TO " +
-                                date[1] + "]" ;
-                        }
-                        modified = true ;
+                        modified = true;
                     }
-                    
-                    
-                    else if(k == Tag.StudyTime)
-                    {
-                        String [] date = value.split("-");
-                        int i = 0 ;
-                        if (date.length==1)
-                        {
-                            query = query + append +tag.getAlias() + ":[" + date[0] + " TO " +
-                                date[0] + "]" ;
+
+
+                    else if (k == Tag.StudyTime) {
+                        String[] date = value.split("-");
+                        int i = 0;
+                        if (date.length == 1) {
+                            query = query + append + tag.getAlias() + ":[" + date[0] + " TO " + date[0] + "]";
                             /*if (!value.contains("-"))
                             {
                                 query = query + append +t.get(k).getAlias() + ":[" + date[0] + " TO " +
@@ -211,33 +185,28 @@ public class CFindBuilder
                                  String s;
                                  Format formatter;
                                  Date date2 = new Date();
-
+                            
                                  // 01/09/02
                                  formatter = new SimpleDateFormat("YYYYMMdd");
                                  s = formatter.format(date2);
-
+                            
                                  query = query + append +t.get(k).getAlias() + ":[" + date[0] + " TO " +
                                  s + "]" ;
                             }*/
+                        } else if (date.length == 2) {
+                            query = query + append + tag.getAlias() + ":[" + date[0] + " TO " + date[1] + "]";
                         }
-                        else if(date.length==2)
-                        {
-                            query = query + append + tag.getAlias() + ":[" + date[0] + " TO " +
-                                date[1] + "]" ;
-                        }
-                        modified = true ;
+                        modified = true;
                     }
-                    
-                    
 
-                    else
-                    {
-                        modified = true ; 
+
+
+                    else {
+                        modified = true;
                         query += append + tag.getAlias() + ":" + value;
                     }
 
-                    if (modified && it.hasNext())
-                    {
+                    if (modified && it.hasNext()) {
                         append = " AND ";
                     }
 
@@ -245,21 +214,19 @@ public class CFindBuilder
 
             }
         }
-        
+
         if (query.equals(""))
-            query="*:*"; 
-        //DebugManager.getInstance().debug(">> Query String DICOM: "+ query);
+            query = "*:*";
+        // DebugManager.getSettings().debug(">> Query String DICOM: "+ query);
 
 
     }
 
-    public String getQueryString()
-            {
+    public String getQueryString() {
         return this.query;
     }
 
-    private synchronized  boolean setRoot(DicomObject rsp)
-    {
+    private synchronized boolean setRoot(DicomObject rsp) {
         /**
          * Verify if it is inside of:
          * Affected SOP Class UID (0000,0002)
@@ -272,39 +239,35 @@ public class CFindBuilder
 
 
 
-        //DebugManager.getInstance().debug(">" + affectedSOP);
-        //DebugManager.getInstance().debug(">> "+ServerSettings.getInstance().getSOPClass());
-        
+        // DebugManager.getSettings().debug(">" + affectedSOP);
+        // DebugManager.getSettings().debug(">> "+ServerSettingsManager.getSettings().getSOPClasses());
+
 
 
         boolean found = false;
 
-        for (String i : ServerSettings.getInstance().getSOPClass().split("\\|"))
-        {
-            //DebugManager.getInstance().debug("It have in settings:>: " + i);
+        for (String i : ServerSettingsManager.getSettings().getDicomServicesSettings().getQueryRetrieveSettings()
+                .getSOPClass()) {
+            // DebugManager.getSettings().debug("It have in settings:>: " + i);
 
-            if (affectedSOP.equals(i))
-            {
+            if (affectedSOP.equals(i)) {
                 /**
                 1.2.840.10008.5.1.4.1.2.1.1 (Patient)
                 1.2.840.10008.5.1.4.1.2.2.1 (Study)
                  */
-                //DebugManager.getInstance().debug(">>> Affected SOPs in ");
-                if (affectedSOP.equals("1.2.840.10008.5.1.4.1.2.1.1"))
-                {
-                    this.patientRoot = true ;
-                    found = true ;
+                // DebugManager.getSettings().debug(">>> Affected SOPs in ");
+                if (affectedSOP.equals("1.2.840.10008.5.1.4.1.2.1.1")) {
+                    this.patientRoot = true;
+                    found = true;
+                } else if (affectedSOP.equals("1.2.840.10008.5.1.4.1.2.2.1")) {
+                    this.studyRoot = true;
+                    found = true;
                 }
-                else if (affectedSOP.equals("1.2.840.10008.5.1.4.1.2.2.1"))
-                {
-                    this.studyRoot = true ;
-                    found = true  ;
-                }
-                break ;
+                break;
             }
         }
 
-        return found ;
+        return found;
 
     }
 
@@ -313,74 +276,64 @@ public class CFindBuilder
     /**
      * @return the patientRoot
      */
-    public boolean isPatientRoot()
-    {
+    public boolean isPatientRoot() {
         return patientRoot;
     }
 
     /**
      * @param patientRoot the patientRoot to set
      */
-    public void setPatientRoot(boolean patientRoot)
-    {
+    public void setPatientRoot(boolean patientRoot) {
         this.patientRoot = patientRoot;
     }
 
     /**
      * @return the studyRoot
      */
-    public boolean isStudyRoot()
-    {
+    public boolean isStudyRoot() {
         return studyRoot;
     }
 
     /**
      * @param studyRoot the studyRoot to set
      */
-    public void setStudyRoot(boolean studyRoot)
-    {
+    public void setStudyRoot(boolean studyRoot) {
         this.studyRoot = studyRoot;
     }
 
     /**
      * @return the query
      */
-    public String getQuery()
-    {
+    public String getQuery() {
         return query;
     }
 
     /**
      * @param query the query to set
      */
-    public void setQuery(String query)
-    {
+    public void setQuery(String query) {
         this.query = query;
     }
 
 
-    public static boolean isPatientRoot(DicomObject rsp)
-    {
+    public static boolean isPatientRoot(DicomObject rsp) {
         DicomElement elem = rsp.get(Integer.parseInt("00000002", 16));
         String affectedSOP = new String(elem.getBytes());
 
-        if (affectedSOP.equals("1.2.840.10008.5.1.4.1.2.2.1"))
-        {
+        if (affectedSOP.equals("1.2.840.10008.5.1.4.1.2.2.1")) {
             return true;
         }
         return false;
     }
 
-    public static boolean isStudyRoot(DicomObject rsp)
-    {
+    public static boolean isStudyRoot(DicomObject rsp) {
         DicomElement elem = rsp.get(Integer.parseInt("00000002", 16));
         String affectedSOP = new String(elem.getBytes());
-        if (affectedSOP.equals("1.2.840.10008.5.1.4.1.2.1.1"))
-        {
+        if (affectedSOP.equals("1.2.840.10008.5.1.4.1.2.1.1")) {
             return true;
         }
         return false;
     }
-    
+
 
 }

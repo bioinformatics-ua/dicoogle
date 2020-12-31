@@ -23,5 +23,5 @@ package pt.ua.dicoogle.sdk.index;
  * @author bastiao
  */
 public interface IDicomField {
-    
+
 }

@@ -40,14 +40,14 @@ public class TestResource extends ServerResource {
         Parameter param = getRequest().getResourceRef().getQueryAsForm().getFirst(name);
         return param != null && (param.getValue() == null || param.getValue().equalsIgnoreCase("true"));
     }
-    
+
     @Override
     public void doInit() {
         super.doInit();
         something = (String) getRequest().getAttributes().get("something");
         really = getQSBoolean("really");
     }
-    
+
     @Get("txt")
     public String testGet() {
         return (really ? "REALLY " : "") + something + " GET";

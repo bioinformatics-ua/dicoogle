@@ -29,84 +29,77 @@ import pt.ua.dicoogle.sdk.settings.Utils;
  *
  * @author António Novo <antonio.novo@ua.pt>
  */
-public class CheckboxWithHint implements GenericSetting
-{
-	private String id;
-	private boolean checked;
-	private String text;
-	private String hint;
+public class CheckboxWithHint implements GenericSetting {
+    private String id;
+    private boolean checked;
+    private String text;
+    private String hint;
 
-	public CheckboxWithHint(String id, boolean checked, String text) {
-		super();
-		this.id = id;
-		this.checked = checked;
-		this.text = text;
-	}
+    public CheckboxWithHint(String id, boolean checked, String text) {
+        super();
+        this.id = id;
+        this.checked = checked;
+        this.text = text;
+    }
 
-	public CheckboxWithHint(boolean checked, String text, String hint)
-	{
-		this.checked = checked;
-		this.text = text;
-		this.hint = hint;
-	}
+    public CheckboxWithHint(boolean checked, String text, String hint) {
+        this.checked = checked;
+        this.text = text;
+        this.hint = hint;
+    }
 
-	/**
-	 * @return the checked
-	 */
-	public boolean isChecked()
-	{
-		return checked;
-	}
+    /**
+     * @return the checked
+     */
+    public boolean isChecked() {
+        return checked;
+    }
 
-	/**
-	 * @param checked the checked to set
-	 */
-	public void setChecked(boolean checked)
-	{
-		this.checked = checked;
-	}
+    /**
+     * @param checked the checked to set
+     */
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+    }
 
-	/**
-	 * @return the text
-	 */
-	public String getText()
-	{
-		return text;
-	}
+    /**
+     * @return the text
+     */
+    public String getText() {
+        return text;
+    }
 
-	/**
-	 * @return the hint
-	 */
-	public String getHint()
-	{
-		return hint;
-	}
+    /**
+     * @return the hint
+     */
+    public String getHint() {
+        return hint;
+    }
 
-	public String toHTMLString(String htmlElementID)
-	{
-		String result = "";
+    public String toHTMLString(String htmlElementID) {
+        String result = "";
 
-		result += "<label class=\"checkbox\" title=\"" + StringEscapeUtils.escapeHtml4(hint) + "\">";
-		result +=	"<input type=\"checkbox\" id=\"" + htmlElementID + "\" name=\"" + htmlElementID + "\" " + (checked ? "checked=\"checked\"" : "") + " /> " + StringEscapeUtils.escapeHtml4(text);
-		result += "</label>";
+        result += "<label class=\"checkbox\" title=\"" + StringEscapeUtils.escapeHtml4(hint) + "\">";
+        result += "<input type=\"checkbox\" id=\"" + htmlElementID + "\" name=\"" + htmlElementID + "\" "
+                + (checked ? "checked=\"checked\"" : "") + " /> " + StringEscapeUtils.escapeHtml4(text);
+        result += "</label>";
 
-		return result;
-	}
+        return result;
+    }
 
-	public CheckboxWithHint fromHTTPParams(HashMap<String, String[]> params, int index, String htmlElementID)
-	{
-		CheckboxWithHint result = new CheckboxWithHint(this.checked, this.text, this.hint);
+    public CheckboxWithHint fromHTTPParams(HashMap<String, String[]> params, int index, String htmlElementID) {
+        CheckboxWithHint result = new CheckboxWithHint(this.checked, this.text, this.hint);
 
-		result.setChecked(Utils.parseCheckBoxValue(params.get(htmlElementID), index));
+        result.setChecked(Utils.parseCheckBoxValue(params.get(htmlElementID), index));
 
-		return result;
-	}
+        return result;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 }

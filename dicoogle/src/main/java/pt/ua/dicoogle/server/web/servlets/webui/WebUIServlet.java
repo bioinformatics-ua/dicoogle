@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.plugins.PluginController;
@@ -48,7 +47,17 @@ import pt.ua.dicoogle.server.web.auth.Authentication;
  */
 public class WebUIServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(WebUIServlet.class);
-    
+    private static final String PERMISSIVE_WEBUI_PROPERTY = System.getProperty("webui.permissive");
+    private static final boolean PERMISSIVE_WEBUI =
+            !(PERMISSIVE_WEBUI_PROPERTY == null || PERMISSIVE_WEBUI_PROPERTY.isEmpty()
+                    || "0".equals(PERMISSIVE_WEBUI_PROPERTY) || "false".equalsIgnoreCase(PERMISSIVE_WEBUI_PROPERTY));
+
+    static {
+        if (PERMISSIVE_WEBUI) {
+            logger.info("Web UI servlet loaded in permissive mode");
+        }
+    }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String name = req.getParameter("name");
@@ -81,18 +90,24 @@ public class WebUIServlet extends HttpServlet {
         for (WebUIPlugin plugin : plugins) {
 
             String pkg = PluginController.getInstance().getWebUIPackageJSON(plugin.getName());
-            boolean hasUserAllowPlugin= false;
-            for (String r:plugin.getRoles())
-            {
-                Role rr = RolesStruct.getInstance().getRole(r);
-
-                hasUserAllowPlugin = RolesStruct.getInstance().hasRole(user, rr);
-                if (hasUserAllowPlugin)
-                    break;
+            if (pkg == null) {
+                logger.warn("Ignoring web plugin {}", plugin.getName());
+                continue;
             }
 
+            final RolesStruct roles = RolesStruct.getInstance();
+            boolean pluginOk = PERMISSIVE_WEBUI;
+            if (!pluginOk) {
+                for (String r : plugin.getRoles()) {
+                    Role rr = roles.getRole(r);
 
-            if (pkg != null&&(hasUserAllowPlugin||(user!=null&&user.isAdmin()))) {
+                    if (roles.hasRole(user, rr)) {
+                        pluginOk = true;
+                        break;
+                    }
+                }
+            }
+            if (pluginOk) {
                 pkgList.add(pkg);
             }
         }
@@ -116,11 +131,12 @@ public class WebUIServlet extends HttpServlet {
      * @return a string in camelCase
      */
     public static String camelize(String s) {
-        String [] words = s.split("-");
-        if (words.length == 0) return "";
+        String[] words = s.split("-");
+        if (words.length == 0)
+            return "";
         StringBuilder t = new StringBuilder();
         t.append(words[0]);
-        for (int i = 1 ; i < words.length ; i++) {
+        for (int i = 1; i < words.length; i++) {
             if (!words[i].isEmpty()) {
                 t.append(Character.toUpperCase(words[i].charAt(0)));
                 t.append(words[i].substring(1));

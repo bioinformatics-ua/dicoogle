@@ -1,0 +1,1318 @@
+openapi: 3.0.0
+info:
+  description:
+    <p>Specification of the Dicoogle's PACS archive public API. This page describes all services available
+    by default to the common user of the Dicoogle open-source PACS archive.
+    In the given examples, the Demo website is used to try out the services. They may also be tried in
+    your local deploy of Dicoogle through the base path <a href="http://localhost:8080">http://localhost:8080</a>,
+    or another base path previously set. More information about Dicoogle configuration available in
+    <a href="https://bioinformatics-ua.github.io/dicoogle-learning-pack/">Dicoogle Learning Pack</a>.</p>
+
+    <p>Finally, the Dicoogle Team encourage you to try out the official Javascript client API,
+    dicoogle-client-js, available in <a href="https://github.com/bioinformatics-ua/dicoogle-client-js">GitHub</a>
+    and documented in detail in <a href="https://bioinformatics-ua.github.io/dicoogle-client-js/">GitHub Pages</a>.</p>
+
+    <p>Useful external links:</p>
+    <p>- <a href="http://www.dicoogle.com">Dicoogle Website</a> </p>
+    <p>- <a href="https://github.com/bioinformatics-ua/dicoogle">Dicoogle GitHub</a> </p>
+    <p>- <a href="https://bioinformatics-ua.github.io/dicoogle-learning-pack/">Dicoogle Learning Pack</a> </p>
+    <p>- <a href="https://bioinformatics-ua.github.io/dicoogle-api/javadoc/">Dicoogle Javadoc</a> </p>
+    <p>- <a href="https://github.com/bioinformatics-ua/dicoogle-client-js">Dicoogle Javascript Client</a> </p>
+    <br>
+  version: 3.0.0
+  title: Dicoogle
+  contact:
+    name: Support
+    url: http://dicoogle.com/about/
+  license:
+    name: GNU General Public License v3.0
+    url: https://www.gnu.org/licenses/gpl-3.0.en.html
+servers:
+  - url: http://demo.dicoogle.com/
+  - url: http://localhost:8080/
+  - url: http://yourdicooglehost/
+externalDocs:
+  description: Dicoogle API
+  url: https://bioinformatics-ua.github.io/dicoogle-api/
+tags:
+  - name: Authentication
+    description: Authentication related services
+  - name: User
+    description: User related services
+  - name: Search
+    description: Search related services
+  - name: Index
+    description: Index related services
+  - name: Management
+    description: Management related services
+  - name: Misc
+    description: Misc related services
+paths:
+  /login:
+    post:
+      tags:
+        - Authentication
+      summary: Log in to Dicoogle using the given credentials
+      operationId: login
+      parameters:
+        - in: query
+          name: username
+          description: The unique user name for the client
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: password
+          description: The user's password for authentication
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "401":
+          description: Wrong login credentials
+    get:
+      tags:
+        - Authentication
+      summary: Check if logged in
+      operationId: status
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FullUser"
+      security:
+        - dicoogle_auth:
+            - user
+  /logout:
+    post:
+      tags:
+        - Authentication
+      summary: Log out from the server
+      operationId: logout
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+      security:
+        - dicoogle_auth:
+            - user
+  /user:
+    put:
+      tags:
+        - User
+      summary: Create a user in the system
+      operationId: createUser
+      parameters:
+        - in: query
+          name: username
+          description: The unique user name for the client
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: password
+          description: The user's password for authentication
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: admin
+          description: Whether the user has administrator privileges or not
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+    get:
+      tags:
+        - User
+      summary: Get all the users in the system
+      operationId: getUsers
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Users"
+    delete:
+      tags:
+        - User
+      summary: Remove a user from the system
+      operationId: deleteUser
+      parameters:
+        - in: query
+          name: username
+          description: The unique user name for the client
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+  /search:
+    get:
+      tags:
+        - Search
+      summary: Perform a text query
+      operationId: search
+      parameters:
+        - in: query
+          name: query
+          description: the text query
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: provider
+          description: a list of provider plugins
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: field
+          description: ""
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Results"
+        "400":
+          description: Invalid supplied parameters
+  /searchDIM:
+    get:
+      tags:
+        - Search
+      summary: Perform a text query with DIM-formatted outcome
+      operationId: searchDIM
+      parameters:
+        - in: query
+          name: query
+          description: the text query
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: provider
+          description: a list of provider plugins
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: field
+          description: ""
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DIMResults"
+        "400":
+          description: Invalid supplied parameters
+  /dump:
+    get:
+      tags:
+        - Misc
+      summary: Retrieve an image's meta-data (perform an information dump)
+      operationId: dumpMetadata
+      parameters:
+        - in: query
+          name: uid
+          description: the SOP instance UID
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: provider
+          description: a list of provider plugins
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Result"
+        "400":
+          description: Invalid supplied parameters
+  /management/settings/index/path:
+    get:
+      tags:
+        - Management
+      summary: Get the current Dicoogle watcher directory
+      operationId: getWatchingDir
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+    post:
+      tags:
+        - Management
+      summary: Set the current Dicoogle watcher directory
+      operationId: setWatchDir
+      parameters:
+        - in: query
+          name: path
+          description: the Dicoogle watcher directory
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+        "400":
+          description: Invalid supplied parameters
+  /management/settings/index/effort:
+    get:
+      tags:
+        - Management
+      summary: Get the indexation effort
+      operationId: getIndexEffort
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+    post:
+      tags:
+        - Management
+      summary: Set the indexation effort
+      operationId: setIndexEffort
+      parameters:
+        - in: query
+          name: effort
+          description: the indexation effort
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful operation
+        "400":
+          description: Invalid supplied parameters
+  /management/settings/index/thumbnail:
+    get:
+      tags:
+        - Management
+      summary: Check thumbnail indexation
+      operationId: getThumbnailIndex
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+    post:
+      tags:
+        - Management
+      summary: Set thumbnail indexation
+      operationId: setThumbnailIndex
+      parameters:
+        - in: query
+          name: saveThumbnail
+          description: save thumbnail
+          required: true
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Successful operation
+        "400":
+          description: Invalid supplied parameters
+  /management/settings/index/watcher:
+    get:
+      tags:
+        - Management
+      summary: Check if Dicoogle watcher directory is enabled
+      operationId: getWatchDirEnabled
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+    post:
+      tags:
+        - Management
+      summary: Set if the watcher directory is enabled
+      operationId: setWatchDirEnabled
+      parameters:
+        - in: query
+          name: watcher
+          description: enable the Dicoogle watcher directory
+          required: true
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Successful operation
+        "400":
+          description: Invalid supplied parameters
+  /management/settings/index/thumbnail/size:
+    get:
+      tags:
+        - Management
+      summary: Get the thumbnail size
+      operationId: getThumbnailSize
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+    post:
+      tags:
+        - Management
+      summary: Set the thumbnail size
+      operationId: setThumbnailSize
+      parameters:
+        - in: query
+          name: thumbnailSize
+          description: the thumbnail size
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful operation
+        "400":
+          description: Invalid supplied parameters
+  /management/settings/index:
+    get:
+      tags:
+        - Management
+      summary: Get all of the current Indexer settings
+      operationId: getIndexSettings
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IndexSettings"
+    post:
+      tags:
+        - Management
+      summary: Set all the Indexer settings
+      operationId: setIndexSettings
+      parameters:
+        - in: query
+          name: path
+          description: the Dicoogle watcher directory
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: watcher
+          description: enable the Dicoogle watcher directory
+          required: true
+          schema:
+            type: boolean
+        - in: query
+          name: zip
+          description: index zip files
+          required: true
+          schema:
+            type: boolean
+        - in: query
+          name: saveThumbnail
+          description: save thumbnail
+          required: true
+          schema:
+            type: boolean
+        - in: query
+          name: effort
+          description: the indexation effort
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: thumbnailSize
+          description: the thumbnail size
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful operation
+        "400":
+          description: Invalid supplied parameters
+  /management/settings/transfer:
+    get:
+      tags:
+        - Management
+      summary: Get the list of current transfer syntax settings available
+      operationId: getAvailableTS
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransferSyntaxSettingsList"
+    post:
+      tags:
+        - Management
+      summary: Set (or reset) an option of a particular transfer syntax
+      operationId: setOptionTS
+      parameters:
+        - in: query
+          name: uid
+          description: the unique identifier of the transfer syntax
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: option
+          description: the name of the option to modify
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: value
+          description: whether to set (true) or reset (false) the option
+          required: true
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+  /wado:
+    get:
+      tags:
+        - Misc
+      summary: ""
+      operationId: wado
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+  /providers:
+    get:
+      tags:
+        - Index
+      summary: Retrieve a list of index provider plugins
+      operationId: getIndexPlugins
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListOfStrings"
+  /management/settings/dicom/query:
+    get:
+      tags:
+        - Management
+      summary: Get all of the current DICOM Query-Retrieve settings
+      operationId: getQueryRetrieveSettings
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuerySettings"
+    post:
+      tags:
+        - Management
+      summary: Set a group of DICOM Query/Retrieve settings
+      operationId: setQueryRetrieveSettings
+      parameters:
+        - in: query
+          name: acceptTimeout
+          description: ""
+          required: false
+          schema:
+            type: integer
+        - in: query
+          name: connectionTimeout
+          description: ""
+          required: false
+          schema:
+            type: integer
+        - in: query
+          name: idleTimeout
+          description: ""
+          required: false
+          schema:
+            type: integer
+        - in: query
+          name: maxAssociations
+          description: ""
+          required: false
+          schema:
+            type: integer
+        - in: query
+          name: maxPduReceive
+          description: ""
+          required: false
+          schema:
+            type: integer
+        - in: query
+          name: maxPduSend
+          description: ""
+          required: false
+          schema:
+            type: integer
+        - in: query
+          name: responseTimeout
+          description: ""
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful operation
+  /management/tasks/index:
+    post:
+      tags:
+        - Index
+      summary: Request a new indexing task over a given URI (recursively)
+      operationId: addIndexTaskURI
+      parameters:
+        - in: query
+          name: uri
+          description:
+            a URI or array of URIs representing the root resource of the files
+            to be indexed
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: plugin
+          description: a list of provider plugins
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tasks:
+                    $ref: "#/components/schemas/Tasks"
+        "400":
+          description: Invalid supplied parameters
+  /management/tasks/unindex:
+    post:
+      tags:
+        - Index
+      summary:
+        Request that a list of entries is unindexed in the specified indexers,
+        or all of them if left unspecified. Exactly one of the fields `uri`,
+        `SOPInstanceUID` and `SeriesInstanceUID` must be given.
+      operationId: addUnindexTaskList
+      parameters:
+        - in: query
+          name: uri
+          description:
+            a URI or array of URIs representing the root resource of the files
+            to be unindexed
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: SOPInstanceUID
+          description:
+            a UID or list of UIDs representing the DICOM instances to be
+            unindexed
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: SeriesInstanceUID
+          description: a UID or list of UIDs representing the DICOM series to be unindexed
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: StudyInstanceUID
+          description: a UID or list of UIDs representing the DICOM studies to be unindexed
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: provider
+          description: a list of provider plugins
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+        "400":
+          description: Invalid supplied parameters
+  /management/tasks/remove:
+    post:
+      tags:
+        - Index
+      summary: Request that the file at the given URI is permanently removed
+      operationId: addUnindexTaskURI
+      parameters:
+        - in: query
+          name: uri
+          description:
+            a URI or array of URIs representing the root resource of the files
+            to be indexed
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+        "400":
+          description: Invalid supplied parameters
+  /management/dicom/storage:
+    get:
+      tags:
+        - Management
+      summary: Check the storage's service status
+      operationId: getStorageStatus
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tasks:
+                    $ref: "#/components/schemas/ServiceStatus"
+    post:
+      tags:
+        - Management
+      summary: Change the storage's service status
+      operationId: setStorageStatus
+      parameters:
+        - in: query
+          name: isRunning
+          description: whether the service runs or not
+          required: false
+          schema:
+            type: boolean
+        - in: query
+          name: port
+          description: the port where the service is running
+          required: false
+          schema:
+            type: integer
+        - in: query
+          name: autostart
+          description: whether the service autostarts or not
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+  /management/dicom/query:
+    get:
+      tags:
+        - Management
+      summary: Check the query's service status
+      operationId: getQueryStatus
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tasks:
+                    $ref: "#/components/schemas/ServiceStatus"
+    post:
+      tags:
+        - Management
+      summary: Change the query's service status
+      operationId: setQueryStatus
+      parameters:
+        - in: query
+          name: isRunning
+          description: whether the service runs or not
+          required: false
+          schema:
+            type: boolean
+        - in: query
+          name: port
+          description: the port where the service is running
+          required: false
+          schema:
+            type: integer
+        - in: query
+          name: autostart
+          description: whether the service autostarts or not
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+  /management/settings/dicom:
+    get:
+      tags:
+        - Management
+      summary: Retrieve the AE title of the Dicoogle archive
+      operationId: getAETitle
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tasks:
+                    $ref: "#/components/schemas/AETitle"
+    put:
+      tags:
+        - Management
+      summary: Redefine the AE title of the Dicoogle archive
+      operationId: setAETitle
+      parameters:
+        - in: query
+          name: aetitle
+          description: a valid AE title for the PACS archive
+          required: true
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "400":
+          description: Invalid supplied parameter
+  /plugins:
+    get:
+      tags:
+        - Management
+      summary: Retrieve the list of existing plugins
+      operationId: getPluginList
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  plugins:
+                    $ref: "#/components/schemas/Plugins"
+  /logger:
+    get:
+      tags:
+        - Misc
+      summary: Retrieve the Dicoogle server's log text
+      operationId: getLogText
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+        "400":
+          description: Invalid supplied parameters
+  /index/task:
+    get:
+      tags:
+        - Index
+      summary: Get indexing tasks
+      operationId: getIndexTasks
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskResults"
+        "400":
+          description: Invalid supplied parameters
+    post:
+      tags:
+        - Index
+      summary: Change an indexing task
+      operationId: setIndexTask
+      parameters:
+        - in: query
+          name: type
+          description: the type of action to change the task
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: uid
+          description: ""
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+        "400":
+          description: Invalid supplied parameters
+  /export/cvs:
+    get:
+      tags:
+        - Misc
+      summary: Request a CSV file export of the results
+      operationId: exportCSV
+      parameters:
+        - in: query
+          name: query
+          description: the query to perform
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: fields
+          description:
+            a set of field names to be passed to the query providers when
+            requesting the query
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: providers
+          description: a set of query provider names
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: keyword
+          description: force whether the query is keyword-based
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Successful operation
+        "400":
+          description: Invalid supplied parameter
+  /export/list:
+    get:
+      tags:
+        - Misc
+      summary: Get a list of known valid DICOM fields
+      operationId: getValidDicomFields
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /management/settings/storage/dicom:
+    get:
+      tags:
+        - Management
+      summary: Get the currently associated remote servers
+      operationId: getAssociatedServers
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RemoteServers"
+        "400":
+          description: Invalid supplied parameters
+    post:
+      tags:
+        - Management
+      summary: Associate or remove a remote server
+      operationId: setAssociatedServer
+      parameters:
+        - in: query
+          name: type
+          description: whether the server is being associated or removed
+          required: true
+          schema:
+            type: boolean
+        - in: query
+          name: ip
+          description: ""
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: aetitle
+          description: ""
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: port
+          description: ""
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tasks:
+                    $ref: "#/components/schemas/Tasks"
+        "400":
+          description: Invalid supplied parameters
+  /ext/version:
+    get:
+      tags:
+        - Misc
+      summary: Retrieve the running Dicoogle version
+      operationId: getVersion
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Version"
+        "400":
+          description: Invalid supplied parameters
+components:
+  securitySchemes:
+    dicoogle_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: yourdicoogledomain/login
+          scopes:
+            user: perform operations as a regular user
+            admin: perform administration operations
+  schemas:
+    Success:
+      type: object
+      properties:
+        success:
+          type: boolean
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+    Users:
+      type: array
+      items:
+        $ref: "#/components/schemas/User"
+    FullUser:
+      type: object
+      properties:
+        user:
+          type: string
+        admin:
+          type: boolean
+        roles:
+          $ref: "#/components/schemas/ListOfStrings"
+    Result:
+      type: object
+      properties:
+        uri:
+          type: string
+          format: uri
+          example: file:/1bf65303-88a6-4c7e-bbd3-95cd3d2901a7
+        fields:
+          type: object
+          properties:
+            PatientID:
+              type: string
+              example: 9850721e-27bf-4e8c-a9cd-00680c3c83d7
+            SeriesDate:
+              type: string
+              example: "20150120"
+            StudyDate:
+              type: string
+              example: "20150120"
+            PatientName:
+              type: string
+              example: e8344a6c-3385-497f-bf47-01a89914d572
+            StudyInstanceUID:
+              type: string
+              example: 0c69d902-6cb1-4df5-8d1b-c17051d96c9a
+            SOPInstanceUID:
+              type: string
+              example: bd6ac908-a061-4ed4-9083-5a5dfb12e7f4
+            Modality:
+              type: string
+              example: CT
+            SeriesInstanceUID:
+              type: string
+              example: fd76f30b-2ee2-46ad-ac40-856266e6a396
+    Results:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/Result"
+        elapsedTime:
+          type: integer
+          example: 559
+        numResults:
+          type: integer
+          example: 5
+    DIMResult:
+      type: object
+    DIMResults:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/DIMResult"
+        elapsedTime:
+          type: integer
+          example: 5
+        numResults:
+          type: integer
+          example: 5
+    IndexSettings:
+      type: object
+      properties:
+        path:
+          type: string
+          example: /tmp
+        zip:
+          type: boolean
+          example: false
+        effort:
+          type: integer
+          example: false
+        thumbnail:
+          type: boolean
+          example: true
+        thumbnailSize:
+          type: integer
+          example: 64
+        watcher:
+          type: boolean
+          example: false
+    QuerySettings:
+      type: object
+      properties:
+        acceptTimeout:
+          type: integer
+          example: 60
+        connectionTimeout:
+          type: integer
+          example: 60
+        idleTimeout:
+          type: integer
+          example: 60
+        maxAssociations:
+          type: integer
+          example: 20
+        maxPduReceive:
+          type: integer
+          example: 16364
+        maxPduSend:
+          type: integer
+          example: 6364
+        responseTimeout:
+          type: integer
+          example: 0
+    Task:
+      type: object
+      properties:
+        canceled:
+          type: boolean
+          example: false
+        done:
+          type: boolean
+          example: false
+        name:
+          type: string
+          example: "[lucene]index storage/"
+        progress:
+          type: integer
+          example: 0
+        uid:
+          type: string
+          example: 5c5f36ec-a946-49db-b903-e815e2f08dee
+    Tasks:
+      type: array
+      items:
+        $ref: "#/components/schemas/Task"
+    ServiceStatus:
+      type: object
+      properties:
+        isRunning:
+          type: boolean
+          example: true
+        port:
+          type: integer
+          example: 6666
+        autostart:
+          type: boolean
+          example: true
+    AETitle:
+      type: object
+      properties:
+        aetitle:
+          type: string
+    Plugin:
+      type: object
+      properties:
+        name:
+          type: string
+          example: lucene
+        type:
+          type: string
+          example: query
+        enabled:
+          type: boolean
+          example: true
+    Plugins:
+      type: array
+      items:
+        $ref: "#/components/schemas/Plugin"
+    TaskResult:
+      type: object
+      properties:
+        uid:
+          type: string
+          example: 92b099fe-eea1-49bd-9a84-b3d0d6135c37
+        taskName:
+          type: string
+          example: "[lucene]index"
+        taskProgress:
+          type: number
+          example: 0.1
+        complete:
+          type: boolean
+          example: false
+        elapsedTime:
+          type: integer
+          example: 9
+        nIndexed:
+          type: integer
+          example: 3
+        nErrors:
+          type: integer
+          example: 0
+    TaskResults:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/TaskResult"
+        count:
+          type: integer
+    RemoteServer:
+      type: object
+      properties:
+        AETitle:
+          type: string
+        description:
+          type: string
+        ipAddrs:
+          type: string
+        isPublic:
+          type: boolean
+        port:
+          type: integer
+        public:
+          type: boolean
+    RemoteServers:
+      type: array
+      items:
+        $ref: "#/components/schemas/RemoteServer"
+    TransferSyntaxSettingsOption:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: boolean
+    TransferSyntaxSettings:
+      type: object
+      properties:
+        uid:
+          type: string
+        sop_name:
+          type: string
+        options:
+          type: array
+          items:
+            $ref: "#/components/schemas/TransferSyntaxSettingsOption"
+    TransferSyntaxSettingsList:
+      type: array
+      items:
+        $ref: "#/components/schemas/TransferSyntaxSettings"
+    Version:
+      type: object
+      properties:
+        version:
+          type: string
+    ListOfStrings:
+      type: array
+      items:
+        type: string

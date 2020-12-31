@@ -72,7 +72,7 @@
 
 .sidebar-nav li a:hover {
     text-decoration: none;
-    color: #fff;
+    color: $button_color;
     background: rgba(255,255,255,0.2);
 }
 
@@ -92,7 +92,7 @@
 }
 
 .sidebar-nav > .sidebar-brand a:hover {
-    color: #fff;
+    color: $button_color;
     background: none;
 }
 

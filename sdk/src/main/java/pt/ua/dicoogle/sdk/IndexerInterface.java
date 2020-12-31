@@ -39,7 +39,7 @@ public interface IndexerInterface extends DicooglePlugin {
      * @param file directory or file to index
      * @return a representation of the asynchronous indexation task
      */
-    public Task<Report> index(StorageInputStream file, Object ... parameters);
+    public Task<Report> index(StorageInputStream file, Object... parameters);
 
     /**
      * Indexes multiple file paths to the database. Indexation procedures are asynchronous, and will return
@@ -49,9 +49,9 @@ public interface IndexerInterface extends DicooglePlugin {
      * @param files a collection of directories and/or files to index
      * @return a representation of the asynchronous indexation task
      */
-    public Task<Report> index(Iterable<StorageInputStream> files, Object ... parameters);
+    public Task<Report> index(Iterable<StorageInputStream> files, Object... parameters);
 
-    
+
     /**
      * Checks whether the file in the given path can be indexed by this indexer. The indexer should verify if
      * the file holds compatible content (e.g. a DICOM file). If this method returns false, the file will not
@@ -60,8 +60,10 @@ public interface IndexerInterface extends DicooglePlugin {
      * @param path a URI to the file to check
      * @return whether the indexer can handle the file at the given path
      */
-    public boolean handles(URI path);    
-    
+    public default boolean handles(URI path) {
+        return true;
+    }
+
     /**
      * Removes the indexed file at the given path from the database.
      * 

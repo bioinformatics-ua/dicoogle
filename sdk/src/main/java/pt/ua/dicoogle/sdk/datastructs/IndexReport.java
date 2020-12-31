@@ -20,10 +20,10 @@ package pt.ua.dicoogle.sdk.datastructs;
 
 public abstract class IndexReport extends Report {
 
-	public abstract long getElapsedTime();
+    public abstract long getElapsedTime();
 
-	public abstract int getNErrors();
+    public abstract int getNErrors();
 
-	public abstract int getNIndexed();
+    public abstract int getNIndexed();
 
 }

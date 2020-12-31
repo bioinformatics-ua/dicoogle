@@ -18,144 +18,156 @@
  */
 package pt.ua.dicoogle.server.users;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.crypto.*;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.PosixFilePermission;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-import org.slf4j.LoggerFactory;
-
-import pt.ua.dicoogle.core.ServerSettings;
-import pt.ua.dicoogle.sdk.Utils.Platform;
+import java.util.Collections;
+import java.util.Set;
 
 /**
- * This class provides encryptation to the file that saves users information
- * Uses the AES algorithim with 128 bit key
+ * This class provides encryption to the file that saves users information
+ * Uses the AES algorithm with 128 bit key
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
 public class UserFileHandle {
 
-    private String filename;
-    private String keyFile;
+    private static final Logger logger = LoggerFactory.getLogger(UserFileHandle.class);
 
-    private Cipher cipher;
+    private final Path filename;
+    private final Path keyFile;
+
     private Key key;
-    private boolean encrypt;
+    private final boolean encrypt;
 
     public UserFileHandle() throws IOException {
-        filename = Platform.homePath() + "users.xml";
-        encrypt = ServerSettings.getInstance().isEncryptUsersFile();
+        filename = Paths.get("users");
+        keyFile = Paths.get("users.key");
+        boolean doEncrypt = false;
+        // user file encryption is on by default. If the users file already exists, the program
+        // will not generate a new key. if there is no key file, or the creation of a new key
+        // fails, encryption is disabled.
         try {
-
-            if(encrypt){
-                keyFile = "users.key";
-
-                try {
-                    ObjectInputStream in = new ObjectInputStream(new FileInputStream(keyFile));
-                    key = (Key) in.readObject();
-                    in.close();
-
-                } catch (FileNotFoundException ex) {
+            try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(keyFile))) {
+                key = (Key) in.readObject();
+                // encryption key read succesfully, encryption is enabled
+                doEncrypt = true;
+            } catch (NoSuchFileException ex) {
+                if (!Files.exists(filename)) {
+                    logger.info("Generating new user credential encryption key...");
                     KeyGenerator gen = KeyGenerator.getInstance("AES");
 
                     gen.init(128, new SecureRandom());
                     key = gen.generateKey();
 
-                    try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(keyFile))) {
+                    try (ObjectOutputStream out =
+                            new ObjectOutputStream(Files.newOutputStream(keyFile, StandardOpenOption.CREATE_NEW))) {
                         out.writeObject(key);
                     }
+                    try {
+                        // set read-only permissions to owner for security reasons
+                        Set<PosixFilePermission> perms = Collections.singleton(PosixFilePermission.OWNER_READ);
+                        Files.setPosixFilePermissions(keyFile, perms);
+                    } catch (UnsupportedOperationException ex2) {
+                        logger.warn(
+                                "Local file system does not support POSIX file attributes, leaving encryption key file with default permissions",
+                                ex2);
+                    }
+
+                    // a new key was successfully created
+                    doEncrypt = true;
                 }
-
-                cipher = Cipher.getInstance("AES");
             }
-
-        } catch (NoSuchAlgorithmException | ClassNotFoundException | NoSuchPaddingException ex) {
-            LoggerFactory.getLogger(UserFileHandle.class).error(ex.getMessage(), ex);
+        } catch (NoSuchAlgorithmException | ClassNotFoundException | ClassCastException ex) {
+            logger.error("Failed to get encryption key", ex);
+            key = null;
         }
+        this.encrypt = doEncrypt;
     }
 
     /**
      * Print one byte array in File
      * Encrypt that file with the key
+     *
      * @param bytes
      */
-    public void printFile(byte[] bytes) throws Exception {
-        InputStream in;
+    public void printFile(byte[] bytes) throws IOException {
+        if (encrypt) {
+            byte[] encryptedBytes = new byte[0];
 
-        if(encrypt){
-            cipher.init(Cipher.ENCRYPT_MODE, key);
+            try {
+                Cipher cipher = Cipher.getInstance("AES");
+                cipher.init(Cipher.ENCRYPT_MODE, key);
+                encryptedBytes = cipher.doFinal(bytes);
+            } catch (BadPaddingException e) {
+                logger.error("Invalid Key to decrypt users file.", e);
+            } catch (IllegalBlockSizeException e) {
+                logger.error("Users file \"{}\" is corrupted.", filename, e);
+            } catch (InvalidKeyException e) {
+                logger.error("Invalid Key to decrypt users file.", e);
+            } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+                throw new RuntimeException(e);
+            }
 
-            byte[] encryptedBytes = cipher.doFinal(bytes);
-            in = new ByteArrayInputStream(encryptedBytes);
+            printFileAux(encryptedBytes);
+        } else {
+            printFileAux(bytes);
         }
-        else
-            in = new ByteArrayInputStream(bytes);
-
-        FileOutputStream out = new FileOutputStream(filename);
-        
-
-        byte[] input = new byte[1024];
-        int bytesRead;
-        while ((bytesRead = in.read(input)) != -1) {
-            out.write(input, 0, bytesRead);
-            out.flush();
-        }
-
-        out.close();
-        in.close();
     }
 
-    /** Retrieve the contents of the users configuration file.
+    /**
+     * Retrieve the contents of the users configuration file.
+     *
      * @return a byte array, or null if the configuration file is not available or corrupted
      * @throws IOException on a failed attempt to read the file
      */
-    public byte[] getFileContent() throws IOException {
+    public byte[] getFileContent() {
         try {
-            try (FileInputStream fin = new FileInputStream(filename);
-                    ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-                byte[] data = new byte[1024];
-                int bytesRead;
+            byte[] data = Files.readAllBytes(filename);
 
-                while ((bytesRead = fin.read(data)) != -1) {
-                    out.write(data, 0, bytesRead);
-                    out.flush();
-                }
-
-                if(encrypt){
-                    cipher.init(Cipher.DECRYPT_MODE, key);
-                    byte[] Bytes = cipher.doFinal(out.toByteArray());
-                    return Bytes;
-                }
-                
-                return out.toByteArray();
+            if (encrypt) {
+                Cipher cipher = Cipher.getInstance("AES");
+                cipher.init(Cipher.DECRYPT_MODE, key);
+                data = cipher.doFinal(data);
             }
-        } catch (FileNotFoundException ex) {
-            LoggerFactory.getLogger(UserFileHandle.class).info("No such users file \"{}\", will create one with default settings.", filename);
+
+            return data;
+
+        } catch (NoSuchFileException ex) {
+            logger.info("No such users file \"{}\", will create one with default settings.", filename);
         } catch (IllegalBlockSizeException ex) {
-            LoggerFactory.getLogger(UserFileHandle.class).error("Users file \"{}\" is corrupted, will override it with default settings.", filename, ex);
+            logger.error("Users file \"{}\" is corrupted, will override it with default settings.", filename, ex);
         } catch (InvalidKeyException ex) {
-            LoggerFactory.getLogger(UserFileHandle.class).error("Invalid Key to decrypt users file! Please contact your system administator.");
-            System.exit(1); // FIXME this is too dangerous
+            logger.error("Invalid Key to decrypt users file! Please contact your system administator.");
+            System.exit(1);
+        } catch (BadPaddingException ex) {
+            logger.error("Invalid Key to decrypt users file! Please contact your system administator.");
+            System.exit(2);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+            throw new RuntimeException(e);
+        } catch (IOException ex) {
+            logger.error("Error writing file \"{}\".", filename, ex);
         }
-        catch(BadPaddingException ex){
-            LoggerFactory.getLogger(UserFileHandle.class).error("Invalid Key to decrypt users file! Please contact your system administator.");
-            System.exit(2); // FIXME this is too dangerous
-        }
+
         return null;
+    }
+
+    private void printFileAux(byte[] bytes) throws IOException {
+        try (InputStream in = new ByteArrayInputStream(bytes)) {
+            Files.copy(in, filename, StandardCopyOption.REPLACE_EXISTING);
+        }
     }
 }

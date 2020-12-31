@@ -1,4 +1,4 @@
-import Reflux from 'reflux';
+import Reflux from "reflux";
 
 /**
  * The goal of these actions is to handle result batches.

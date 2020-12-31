@@ -33,42 +33,61 @@ import net.sf.json.JSONObject;
  */
 public class ResponseUtil {
 
-    public static void simpleResponse(HttpServletResponse resp, String name ,boolean state) throws IOException {
+    public static void simpleResponse(HttpServletResponse resp, String name, boolean state) throws IOException {
         resp.setContentType("application/json");
         JSONObject object = new JSONObject();
         object.put(name, state);
         object.write(resp.getWriter());
     }
-    
+
     public static void objectResponse(HttpServletResponse resp, List<Pair> pairs) throws IOException {
         resp.setContentType("application/json");
-    	JSONObject object = new JSONObject();
-    	
-    	for(Pair entry: pairs){
-    		object.put(entry.getKey(), entry.getValue().toString());	
-    	}
-    	
-    	object.write(resp.getWriter());
+        JSONObject object = new JSONObject();
+
+        for (Pair entry : pairs) {
+            object.put(entry.getKey(), entry.getValue().toString());
+        }
+
+        object.write(resp.getWriter());
     }
-    
+
+    /**
+     * Associates an error to an http response.
+     *
+     * @param resp the response
+     * @param code the status code
+     * @param message the error message
+     * @throws IOException if an I/O error occurs
+     */
+    public static void sendError(HttpServletResponse resp, int code, String message) throws IOException {
+        resp.setContentType("application/json");
+        resp.setStatus(code);
+        JSONObject obj = new JSONObject();
+        obj.put("error", message);
+        resp.getWriter().append(obj.toString());
+    }
+
     /*
      * Generic Pair Util for Json response
      */
-    public static class Pair<V>{
-    	String key;
-    	V value;
-		public Pair(String key, V value) {
-			super();
-			this.key = key;
-			this.value = value;
-		}
-		public String getKey() {
-			return key;
-		}
-		public V getValue() {
-			return value;
-		}
-    	
-    	
+    public static class Pair<V> {
+        String key;
+        V value;
+
+        public Pair(String key, V value) {
+            super();
+            this.key = key;
+            this.value = value;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public V getValue() {
+            return value;
+        }
+
+
     }
 }

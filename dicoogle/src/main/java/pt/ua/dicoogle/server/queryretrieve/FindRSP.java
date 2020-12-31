@@ -52,49 +52,45 @@ import pt.ua.dicoogle.server.SearchDicomResult;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class FindRSP implements DimseRSP 
-{
-    
+public class FindRSP implements DimseRSP {
+
     private DicomObject rsp;
     private DicomObject keys;
-    
-    
-    
+
+
+
     /** 
      * Each moment in timeline we're getting a item
      */
     private DicomObject mwl = null;
 
-    SearchDicomResult search = null ; 
-    
+    SearchDicomResult search = null;
+
     private String callingAET;
     private LuceneQueryACLManager luke;
-    
-    public FindRSP(DicomObject keys, DicomObject rsp, String callingAET, LuceneQueryACLManager luke)
-    {
-        this.rsp = rsp ; 
-        this.keys = keys ;
-        
+
+    public FindRSP(DicomObject keys, DicomObject rsp, String callingAET, LuceneQueryACLManager luke) {
+        this.rsp = rsp;
+        this.keys = keys;
+
         this.callingAET = callingAET;
         this.luke = luke;
-        
-        
-        /** Debug - show keys, rsp, index */ 
-        if (keys!=null)
-        {
-            //DebugManager.getInstance().debug("keys object: ");
-            //DebugManager.getInstance().debug(keys.toString());
+
+
+        /** Debug - show keys, rsp, index */
+        if (keys != null) {
+            // DebugManager.getSettings().debug("keys object: ");
+            // DebugManager.getSettings().debug(keys.toString());
         }
-        if (rsp!=null)
-        {
-            //DebugManager.getInstance().debug("Rsp object");
-            //DebugManager.getInstance().debug(rsp.toString());
+        if (rsp != null) {
+            // DebugManager.getSettings().debug("Rsp object");
+            // DebugManager.getSettings().debug(rsp.toString());
         }
-        
+
         /** 
          * Get object to search
          */
-        ArrayList<String> extrafields  = null ;
+        ArrayList<String> extrafields = null;
         extrafields = new ArrayList<String>();
 
         extrafields.add("PatientName");
@@ -137,12 +133,12 @@ public class FindRSP implements DimseRSP
 
 
         extrafields.add("SOPInstanceUID");
-        
+
         String query = getQueryString(keys, rsp);
-        //System.out.println("OLD Query: "+query);
+        // System.out.println("OLD Query: "+query);
         query = applyQueryFilter(query);
-        
-        System.out.println("NEW Query: "+query);
+
+        System.out.println("NEW Query: " + query);
 
         /** 
          * Search results
@@ -152,7 +148,7 @@ public class FindRSP implements DimseRSP
          * - How works extrafields?
          */
 
-        SearchDicomResult.QUERYLEVEL level = null ;
+        SearchDicomResult.QUERYLEVEL level = null;
         /*
         if (CFindBuilder.isPatientRoot(rsp))
         {
@@ -165,34 +161,25 @@ public class FindRSP implements DimseRSP
         DicomElement elem = keys.get(Integer.parseInt("00080052", 16));
         String levelStr = new String(elem.getBytes());
 
-        if (levelStr.contains("PATIENT"))
-        {
+        if (levelStr.contains("PATIENT")) {
             level = SearchDicomResult.QUERYLEVEL.PATIENT;
-        }
-        else if(levelStr.contains("STUDY"))
-        {
+        } else if (levelStr.contains("STUDY")) {
             level = SearchDicomResult.QUERYLEVEL.STUDY;
-        }
-        else if (levelStr.contains("SERIES"))
-        {
+        } else if (levelStr.contains("SERIES")) {
             level = SearchDicomResult.QUERYLEVEL.SERIE;
-        }
-        else if (levelStr.contains("IMAGE"))
-        {
+        } else if (levelStr.contains("IMAGE")) {
             level = SearchDicomResult.QUERYLEVEL.IMAGE;
         }
-        System.out.println("Charset: "+ this.keys.get(Tag.SpecificCharacterSet));
-        search = new SearchDicomResult(query,
-                 true, extrafields, level);
+        System.out.println("Charset: " + this.keys.get(Tag.SpecificCharacterSet));
+        search = new SearchDicomResult(query, true, extrafields, level);
 
 
 
-         if (search == null)
-         {
-            //DebugManager.getInstance().debug(">> Search is null, so" +
-            //        " somethig is wrong ");
-         }
-         
+        if (search == null) {
+            // DebugManager.getSettings().debug(">> Search is null, so" +
+            // " somethig is wrong ");
+        }
+
         // always return Specific Character Set
         if (!keys.contains(Tag.SpecificCharacterSet)) {
             this.keys.putNull(Tag.SpecificCharacterSet, VR.CS);
@@ -204,31 +191,27 @@ public class FindRSP implements DimseRSP
 
 
 
-
-    private String getQueryString(DicomObject keys, DicomObject rsp)
-    {
+    private String getQueryString(DicomObject keys, DicomObject rsp) {
         String result = "";
-        try
-        {
+        try {
             CFindBuilder c = new CFindBuilder(keys, rsp);
-            result = c.getQueryString() ;
-        } catch (CFindNotSupportedException ex)
-        {
+            result = c.getQueryString();
+        } catch (CFindNotSupportedException ex) {
             LoggerFactory.getLogger(FindRSP.class).error(ex.getMessage(), ex);
         }
 
-        return result ;
+        return result;
     }
 
-     private String applyQueryFilter(String normalQuery){
-        if(luke == null)
+    private String applyQueryFilter(String normalQuery) {
+        if (luke == null)
             return normalQuery;
-       //LuceneQueryACLManager luke = new LuceneQueryACLManager(manager);
-       
-       String query = luke.produceQueryFilter(new Principal("AETitle", callingAET));
-         if(query.length() > 0 )
-             return normalQuery + query;
-               
+        // LuceneQueryACLManager luke = new LuceneQueryACLManager(manager);
+
+        String query = luke.produceQueryFilter(new Principal("AETitle", callingAET));
+        if (query.length() > 0)
+            return normalQuery + query;
+
         return normalQuery;
     }
 
@@ -247,23 +230,20 @@ public class FindRSP implements DimseRSP
      */
 
     @Override
-    public boolean next() throws IOException, InterruptedException 
-    {
-        if (search!=null)
-        {
-            if (search.hasNext())
-            {
-                    //DebugManager.getInstance().debug("We have next, so get it");
-                    mwl = search.next();
-                    //if (mwl.matches(this.keys, true))
-                    //{
+    public boolean next() throws IOException, InterruptedException {
+        if (search != null) {
+            if (search.hasNext()) {
+                // DebugManager.getSettings().debug("We have next, so get it");
+                mwl = search.next();
+                // if (mwl.matches(this.keys, true))
+                // {
 
-                        // always return Specific Character Set
-                        if (!this.mwl.contains(Tag.SpecificCharacterSet))
-                            this.mwl.putNull(Tag.SpecificCharacterSet, VR.CS);
-                        this.rsp.putInt(Tag.Status, VR.US, mwl.containsAll(keys) ? Status.Pending : Status.PendingWarning);
-                        return true;
-                    //}
+                // always return Specific Character Set
+                if (!this.mwl.contains(Tag.SpecificCharacterSet))
+                    this.mwl.putNull(Tag.SpecificCharacterSet, VR.CS);
+                this.rsp.putInt(Tag.Status, VR.US, mwl.containsAll(keys) ? Status.Pending : Status.PendingWarning);
+                return true;
+                // }
             }
 
             /** Sucess */
@@ -271,56 +251,48 @@ public class FindRSP implements DimseRSP
             /** Clean pointers */
             this.mwl = null;
             this.search = null;
-            return true ;
-            
-        }
-        else
-        {
+            return true;
+
+        } else {
             this.rsp.putInt(Tag.Status, VR.US, Status.Cancel);
         }
         return false;
     }
-    
+
     /**
      * 
      * @return
      */
     @Override
-    public DicomObject getCommand() 
-    {
+    public DicomObject getCommand() {
         return this.rsp;
     }
-    
-    
+
+
     /**
      * This method see the current DicomObject and return it
      * @return null or DicomObject
      */
     @Override
-    public DicomObject getDataset() 
-    {
-        //DebugManager.getInstance().debug("Get Data Set");
-        return  this.mwl != null ? this.mwl.subSet(this.keys) : null;
+    public DicomObject getDataset() {
+        // DebugManager.getSettings().debug("Get Data Set");
+        return this.mwl != null ? this.mwl.subSet(this.keys) : null;
     }
 
     @Override
-    public void cancel(Association arg0) throws IOException 
-    {
+    public void cancel(Association arg0) throws IOException {
 
-        search = null ;
-        try
-        {
+        search = null;
+        try {
             arg0.release(true);
-            
-        } catch (InterruptedException ex)
-        {
+
+        } catch (InterruptedException ex) {
             LoggerFactory.getLogger(FindRSP.class).error(ex.getMessage(), ex);
         }
     }
 
-   @Override
-    protected void finalize() throws Throwable
-   {
+    @Override
+    protected void finalize() throws Throwable {
 
         super.finalize();
 
@@ -328,4 +300,4 @@ public class FindRSP implements DimseRSP
     }
 
 }
-    
+

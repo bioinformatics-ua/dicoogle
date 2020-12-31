@@ -36,8 +36,7 @@ import java.util.zip.ZipInputStream;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class UnZip
-{
+public class UnZip {
     final int BUFFER = 2048;
 
     private String filePath = null;
@@ -46,38 +45,33 @@ public class UnZip
     private CheckedInputStream checksum = null;
 
 
-    public UnZip(String filePath)
-    {
+    public UnZip(String filePath) {
         this.filePath = filePath;
     }
 
-    public void loadFile()
-    {
+    public void loadFile() {
 
         FileInputStream fis = null;
-        try
-        {
+        try {
             fis = new FileInputStream(this.filePath);
-        }
-        catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException ex) {
             LoggerFactory.getLogger(UnZip.class).error(ex.getMessage(), ex);
         }
         checksum = new CheckedInputStream(fis, new Adler32());
-        
-        
+
+
         zis = new ZipInputStream(new BufferedInputStream(checksum));
 
-      }
-        
+    }
 
 
-    public void decompress()
-    {
+
+    public void decompress() {
 
 
-        if (zis==null)
+        if (zis == null)
             return;
-        
+
         ZipEntry entry;
         try {
             while ((entry = zis.getNextEntry()) != null) {
@@ -100,17 +94,14 @@ public class UnZip
 
     }
 
-    public void close()
-    {
+    public void close() {
 
-        try
-        {
+        try {
             zis.close();
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             LoggerFactory.getLogger(UnZip.class).error(ex.getMessage(), ex);
         }
-        System.out.println("Checksum:"+checksum.getChecksum().getValue());
+        System.out.println("Checksum:" + checksum.getChecksum().getValue());
 
 
     }

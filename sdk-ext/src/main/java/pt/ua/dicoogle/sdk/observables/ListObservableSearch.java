@@ -24,14 +24,12 @@ import java.util.ArrayList;
  *
  * @author bastiao
  */
-public class ListObservableSearch<type> extends ListObservable
-{
-    
-    public ListObservableSearch()
-    {
-        super();   
+public class ListObservableSearch<type> extends ListObservable {
+
+    public ListObservableSearch() {
+        super();
     }
-    
+
     private Boolean finish = false;
     private String queryId = "";
 
@@ -46,13 +44,12 @@ public class ListObservableSearch<type> extends ListObservable
      * @param finish the finish to set
      */
     public void setFinish(Boolean finish) {
-        
+
         this.finish = finish;
     }
-    
+
     @Override
-    public ArrayList getArray()
-    {
+    public ArrayList getArray() {
         return super.getArray();
     }
 
@@ -69,5 +66,5 @@ public class ListObservableSearch<type> extends ListObservable
     public void setQueryId(String queryId) {
         this.queryId = queryId;
     }
-    
+
 }

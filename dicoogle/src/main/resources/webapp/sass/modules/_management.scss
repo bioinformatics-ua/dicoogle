@@ -1,66 +1,83 @@
 @media screen and (max-width: 480px) {
-    .nav {
-        padding-left: 2px;
-        padding-right: 2px;
-    }
-    .nav li {
-        display: block !important;
-        width: 100%;
-        margin: 0px;
-    }
-    .nav li.active {
-        border-bottom: 1px solid #ddd!important;
-        margin: 0px;
-    }
+  .nav {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+  .nav li {
+    display: block !important;
+    width: 100%;
+    margin: 0px;
+  }
+  .nav li.active {
+    border-bottom: 1px solid #ddd !important;
+    margin: 0px;
+  }
 }
 .nav-pills {
-    li.active {
-        a {
-            background-color: $blue1;
-            &:hover {
-                background: $blue1;
-            }
-            &:focus {
-                background: $blue1;
-            }
-        }
+  li.active {
+    a {
+      background-color: $blue1;
+      &:hover {
+        background: $blue1;
+      }
+      &:focus {
+        background: $blue1;
+      }
     }
-    li {
-        a {
-            background-color: $main_color;
-            color: $blue1;
-            &:hover {
-                background: $hover_color;
-            }
-        }
+  }
+  li {
+    a {
+      background-color: $main_color;
+      color: $blue1;
+      &:hover {
+        background: $hover_color;
+        color: $button_color;
+      }
     }
+  }
 }
 .well {
-    background: $main_color;
+  background: $main_color;
 }
 
-.list-group-item-management{
-    border-color:$hover_color;
-    border-right-color: white;
-    border-left-color: white;
+.list-group-item-management {
+  border-color: $hover_color;
+  border-right-color: white;
+  border-left-color: white;
 }
 
-.panel-primary{
-    .panel-heading{
- background-color: $hover_color;
- background-image: none;
-    }
+.panel-primary {
+  .panel-heading {
+    background-color: $blue1;
+    background-image: none;
+  }
 
-    border-color: $hover_color;
+  border-color: $hover_color;
 }
-.indexprogress{
+.indexprogress {
   width: 40%;
 }
 
-.panel-title{
-    color: $blue1;
+.panel-title {
+  color: white;
 }
 
-.topMargin{
- margin-top: 30px;
+.topMargin {
+  margin-top: 30px;
+}
+
+.panel-heading .accordion-toggle:after {
+  /* symbol for "opening" panels */
+  font-family: "Glyphicons Halflings";
+  content: "\e114";
+  position: absolute;
+  right: 30px;
+  color: $blue1;
+}
+.panel-heading .accordion-toggle.collapsed:after {
+  /* symbol for "collapsed" panels */
+  content: "\e080";
+}
+.panel-heading-toggle {
+  padding-right: 40px;
 }

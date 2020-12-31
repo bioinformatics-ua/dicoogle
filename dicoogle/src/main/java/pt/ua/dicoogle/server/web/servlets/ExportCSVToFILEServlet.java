@@ -24,8 +24,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -42,123 +42,126 @@ import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.core.QueryExpressionBuilder;
 import pt.ua.dicoogle.core.query.ExportToCSVQueryTask;
 import pt.ua.dicoogle.plugins.PluginController;
+import pt.ua.dicoogle.server.web.utils.ResponseUtil;
 
 public class ExportCSVToFILEServlet extends HttpServlet {
-	private static final Logger logger = LoggerFactory.getLogger(ExportCSVToFILEServlet.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExportCSVToFILEServlet.class);
 
-	private final Path tempDirectory;
-	public ExportCSVToFILEServlet(Path tempDirectory) {
-		super();
-		this.tempDirectory = tempDirectory;
-	}
+    private File tempDirectory;
 
-	private static final long serialVersionUID = 1L;
+    public ExportCSVToFILEServlet(File tempDirectory) {
+        super();
+        this.tempDirectory = tempDirectory;
+    }
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		String uid = req.getParameter("UID");
-		if(uid == null){
-			resp.sendError(401, "No Query UID Supplied: Please fill the field \"UID\"");
-			return;
-		}
-		
-		File tmpFile = this.getCsvFile(uid);
-		if(!tmpFile.exists()){
-			resp.sendError(402, "The file for the given uid was not found. Please try again...");
-			return; 
-		}
-		
-		// Find this file id in database to get file name, and file type
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String uid = req.getParameter("UID");
+        if (uid == null) {
+            ResponseUtil.sendError(resp, 400, "No query UID Supplied: Please provide the field \"UID\"");
+            return;
+        }
+
+        // validate UUID
+        try {
+            UUID.fromString(uid);
+        } catch (IllegalArgumentException ex) {
+            ResponseUtil.sendError(resp, 400, "Illegal UUID supplied");
+            return;
+        }
+
+        File tmpFile = new File(tempDirectory, "QueryResultsExport-" + uid);
+        logger.debug("Reading temporary CSV file: {}", tmpFile);
+        if (!tmpFile.exists()) {
+            ResponseUtil.sendError(resp, 404, "The file for the given UID was not found.");
+            return;
+        }
+
+        // Find this file id in database to get file name, and file type
 
         // You must tell the browser the file type you are going to send
         // for example application/pdf, text/plain, text/html, image/jpg
         resp.setContentType("application/csv");
         // Make sure to show the download dialog
-        resp.setHeader("Content-disposition","attachment; filename=QueryResultsExport.csv");		
-		
-		try (BufferedInputStream bi = new BufferedInputStream(new FileInputStream(tmpFile))) {
+        resp.setHeader("Content-disposition", "attachment; filename=QueryResultsExport.csv");
 
-			IOUtils.copy(bi, resp.getOutputStream());
-			resp.getOutputStream().flush();
-		}
-	}
+        try (BufferedInputStream bi = new BufferedInputStream(new FileInputStream(tmpFile))) {
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		List<String> orderedFields = new ArrayList<>();
-		Map<String, String> fields = new HashMap<>();
-		String queryString = null;
-		String[] arr;		
-		boolean keyword;
-		
-		try {
-			queryString = req.getParameter("query");
-			if (queryString == null) {
-				resp.sendError(402,
-						"QueryString not supplied: Please fill the field \"query\"");
-				return;
-			}
+            IOUtils.copy(bi, resp.getOutputStream());
+            resp.getOutputStream().flush();
+        }
+    }
 
-			System.out.println(req.getParameter("fields"));
-			JSONArray jsonObj = new JSONArray().fromObject(req.getParameter("fields"));
-			if (jsonObj.size()== 0) {
-				resp.sendError(403,
-						"No fields supplied: Please fill the field \"extraFields\" in \"JSON\"");
-				return;
-			}
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        List<String> orderedFields = new ArrayList<>();
+        Map<String, String> fields = new HashMap<>();
+        String queryString = null;
+        String[] arr;
+        boolean keyword;
 
-			for (Object f : jsonObj) {
-				fields.put(f.toString(), f.toString());
-				orderedFields.add(f.toString());
-			}
-			keyword = Boolean.parseBoolean(req.getParameter("keyword"));
+        try {
+            queryString = req.getParameter("query");
+            if (queryString == null) {
+                ResponseUtil.sendError(resp, 400, "QueryString not supplied: Please fill the field \"query\"");
+                return;
+            }
 
-			arr = req.getParameterValues("providers");
-		} catch (JSONException ex) {
-			resp.sendError(400, "Invalid JSON content");
-			return;
-		}
-		
-		if (!keyword) {
+            logger.debug("{}", req.getParameter("fields"));
+            JSONArray jsonObj = JSONArray.fromObject(req.getParameter("fields"));
+            if (jsonObj.size() == 0) {
+                ResponseUtil.sendError(resp, 400,
+                        "No fields supplied: Please fill the field \"extraFields\" in \"JSON\"");
+                return;
+            }
+
+            for (Object f : jsonObj) {
+                fields.put(f.toString(), f.toString());
+                orderedFields.add(f.toString());
+            }
+            keyword = Boolean.parseBoolean(req.getParameter("keyword"));
+
+            arr = req.getParameterValues("providers");
+        } catch (JSONException ex) {
+            ResponseUtil.sendError(resp, 400, "Invalid JSON content");
+            return;
+        }
+
+        if (!keyword) {
             QueryExpressionBuilder q = new QueryExpressionBuilder(queryString);
             queryString = q.getQueryString();
         }
 
-		String uid = UUID.randomUUID().toString();
-		//File tempFile = File.createTempFile("QueryResultsExport-", uid, tempDirectory);
-		
-		File tempFile = this.getCsvFile(uid);
-		tempFile.deleteOnExit();
-		logger.debug("UID: {}", uid);
-		logger.debug("FilePath: {}", tempFile.getAbsolutePath());
-		
-		try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tempFile))) {
-			ExportToCSVQueryTask task = new ExportToCSVQueryTask(orderedFields,
-					bos);
-			
-			if (arr == null || arr.length ==0) {
-				PluginController.getInstance().queryAll(task, queryString, fields);
-			} else {
-				List<String> providers = new ArrayList<>();
-				for (Object f : arr) {
-					providers.add(f.toString());
-				}
-				PluginController.getInstance().query(task, providers, queryString,
-						fields);
-			}
+        String uid = UUID.randomUUID().toString();
+        // File tempFile = File.createTempFile("QueryResultsExport-", uid, tempDirectory);
+        File tempFile = new File(tempDirectory, "QueryResultsExport-" + uid);
+        tempFile.deleteOnExit();
+        logger.debug("UID: {}", uid);
+        logger.debug("FilePath: {}", tempFile.getAbsolutePath());
 
-			task.await();
-		}
-		
-		JSONObject obj = new JSONObject();
-		obj.put("uid", uid);
-		resp.getWriter().write(obj.toString());
-		resp.getWriter().flush();
-	}
+        FileOutputStream outStream = new FileOutputStream(tempFile);
+        BufferedOutputStream bos = new BufferedOutputStream(outStream);
 
-	private File getCsvFile(String uid) {
-		return this.tempDirectory.resolve("QueryResultsExport-" + uid).toFile();
-	}
+        ExportToCSVQueryTask task = new ExportToCSVQueryTask(orderedFields, bos);
+
+        if (arr == null || arr.length == 0) {
+            PluginController.getInstance().queryAll(task, queryString, fields);
+        } else {
+            List<String> providers = new ArrayList<>();
+            for (Object f : arr) {
+                providers.add(f.toString());
+            }
+            PluginController.getInstance().query(task, providers, queryString, fields);
+        }
+
+        task.await();
+
+        JSONObject obj = new JSONObject();
+        obj.put("uid", uid);
+        resp.getWriter().write(obj.toString());
+        resp.getWriter().flush();
+    }
+
 }

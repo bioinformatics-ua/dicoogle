@@ -18,23 +18,9 @@
  */
 package pt.ua.dicoogle.server.users;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Iterator;
-
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.stream.StreamResult;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -43,15 +29,31 @@ import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.stream.Collectors;
+
 /**
  * This class saves the list of users to XML
  *
  * @author Samuel Campos <samuelcampos@ua.pt>
  */
-public class UsersXML extends DefaultHandler
-{
-    private UsersStruct users = UsersStruct.getInstance();
-    private boolean isUsers = false ;
+public class UsersXML extends DefaultHandler {
+    private static final Logger logger = LoggerFactory.getLogger(UsersXML.class);
+    Collection<User> users;
+    private boolean isUsers = false;
 
     private String username;
     private String Hash;
@@ -59,104 +61,78 @@ public class UsersXML extends DefaultHandler
     private String roles;
 
 
-    public UsersXML()
-    {
+    public UsersXML() {
         username = "";
         Hash = "";
         roles = "";
         admin = false;
+
+        users = new LinkedList<>();
     }
 
 
     @Override
-    public void startElement( String uri, String localName, String qName,
-            Attributes attribs )
-    {
-
-
-
-        if (localName.equals("Users"))
-        {
-            isUsers = true ;
-        }
-        else if (this.isUsers && localName.equals("user"))
-        {
+    public void startElement(String uri, String localName, String qName, Attributes attribs) {
+        if (localName.equals("Users")) {
+            isUsers = true;
+        } else if (this.isUsers && localName.equals("user")) {
             this.username = this.resolveAttrib("username", attribs, "xp");
             this.Hash = this.resolveAttrib("hash", attribs, "xp");
 
             String temp = this.resolveAttrib("admin", attribs, "xp");
-            if(temp.equals("true"))
+            if (temp.equals("true"))
                 this.admin = true;
             else
                 this.admin = false;
             this.roles = this.resolveAttrib("roles", attribs, "xp");
-
         }
-        
     }
 
 
     @Override
-    public void endElement( String uri, String localName, String qName )
-    {
-
-        if (localName.equals("Users"))
-        {
-            isUsers = false ;
-        }
-        else if( localName.equals( "user" ) )
-        {
-
+    public void endElement(String uri, String localName, String qName) {
+        if (localName.equals("Users")) {
+            isUsers = false;
+        } else if (localName.equals("user")) {
             User u = new User(username, Hash, admin);
-            users.addUser(u);
-            if (roles!=null)
-            {
-                String [] rolesTmp = roles.split(",");
-                for (int i = 0; i<rolesTmp.length; i++)
-                {
+            users.add(u);
+            if (roles != null) {
+                String[] rolesTmp = roles.split(",");
+                for (int i = 0; i < rolesTmp.length; i++) {
                     Role role = RolesStruct.getInstance().getRole(rolesTmp[i]);
-                    u.addRole(role);
+                    if (role != null)
+                        u.addRole(role);
                 }
-
             }
         }
-        
     }
 
-     private String resolveAttrib( String attr, Attributes attribs, String defaultValue) {
-         String tmp = attribs.getValue(attr);
-         return (tmp!=null)?(tmp):(defaultValue);
-     }
+    private String resolveAttrib(String attr, Attributes attribs, String defaultValue) {
+        String tmp = attribs.getValue(attr);
+        return (tmp != null) ? (tmp) : (defaultValue);
+    }
 
 
-    public UsersStruct getXML()
-    {
-        users.reset();
-        
-        try
-        {
+    public Collection<User> getXML() {
+        try {
             UserFileHandle file = new UserFileHandle();
             byte[] xml = file.getFileContent();
-            
-            if (xml == null)
-            {
-                //DebugManager.getInstance().debug("Setting users default, writing a file with the default information!");
-                users.setDefaults();
-                printXML();
+
+            if (xml == null) {
+                users = new LinkedList<>(UsersStruct.getDefaults());
+                printXML(users);
+
                 return users;
             }
 
-
             // Never throws the exception cause file not exists so need try catch
-            InputSource src = new InputSource( new ByteArrayInputStream(xml) );
+            InputSource src = new InputSource(new ByteArrayInputStream(xml));
             XMLReader r = XMLReaderFactory.createXMLReader();
             r.setContentHandler(this);
             r.parse(src);
             return users;
-        }
-        catch (SAXException | IOException ex)
-        {
-            LoggerFactory.getLogger(UsersXML.class).error(ex.getMessage(), ex);
+        } catch (SAXException | IOException ex) {
+            logger.error("Error reading users XML configuration file.", ex);
         }
         return null;
     }
@@ -164,72 +140,52 @@ public class UsersXML extends DefaultHandler
     /**
      * Print the users information to the XML file
      */
-    public void printXML()
-    {
-
+    public void printXML(Collection<User> users) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-       
 
-        PrintWriter pw = new PrintWriter(out);
-        StreamResult streamResult = new StreamResult(pw);
         SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
-        //      SAX2.0 ContentHandler.
+        // SAX2.0 ContentHandler.
         TransformerHandler hd = null;
-        try
-        {
+        try {
             hd = tf.newTransformerHandler();
-        } catch (TransformerConfigurationException ex)
-        {
-            LoggerFactory.getLogger(UsersXML.class).error(ex.getMessage(), ex);
+        } catch (TransformerConfigurationException ex) {
+            logger.error("Failed creating configuration object", ex);
         }
-        
+
         Transformer serializer = hd.getTransformer();
         serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         serializer.setOutputProperty(OutputKeys.METHOD, "xml");
         serializer.setOutputProperty(OutputKeys.INDENT, "yes");
-        serializer.setOutputProperty(OutputKeys.STANDALONE, "yes");   
-        try
-        {
+        serializer.setOutputProperty(OutputKeys.STANDALONE, "yes");
+
+        try (PrintWriter pw = new PrintWriter(out)) {
+            StreamResult streamResult = new StreamResult(pw);
             hd.setResult(streamResult);
             hd.startDocument();
-        } catch (SAXException ex)
-        {
-            LoggerFactory.getLogger(UsersXML.class).error(ex.getMessage(), ex);
-        }
 
-        AttributesImpl atts = new AttributesImpl();
-        try
-        {
-            //root element
+            AttributesImpl atts = new AttributesImpl();
+            // root element
             hd.startElement("", "", "Users", atts);
 
-            Iterator<User> us = UsersStruct.getInstance().getUsers().iterator();
+            Iterator<User> us = users.iterator();
 
             atts.clear();
-            while (us.hasNext())
-            {
+            while (us.hasNext()) {
                 User user = us.next();
-                
+
                 atts.addAttribute("", "", "username", "", user.getUsername());
-                atts.addAttribute("", "", "hash", "", user.getPasswordHash()) ;
+                atts.addAttribute("", "", "hash", "", user.getPasswordHash());
 
                 String temp = "false";
-                if(user.isAdmin())
+                if (user.isAdmin())
                     temp = "true";
-                if (user.getRoles()!=null&&user.getRoles().size()>0)
-                {
-                    String roles = "";
-                    for (Role r : user.getRoles())
-                    {
-                        roles+=r.getName()+",";
-                    }
-                    StringUtils.removeEnd(roles, ",");
+                if (user.getRoles() != null && user.getRoles().size() > 0) {
+                    String roles = user.getRoles().stream().map(Role::getName).collect(Collectors.joining(","));
 
-
-                    atts.addAttribute("", "", "roles", "", roles ) ;
+                    atts.addAttribute("", "", "roles", "", roles);
                 }
 
-                atts.addAttribute("", "", "admin", "", temp) ;
+                atts.addAttribute("", "", "admin", "", temp);
 
                 hd.startElement("", "", "user", atts);
                 atts.clear();
@@ -237,23 +193,16 @@ public class UsersXML extends DefaultHandler
             }
             hd.endElement("", "", "Users");
 
-
             hd.endDocument();
-        } catch (SAXException ex)
-        {
-            LoggerFactory.getLogger(UsersXML.class).error(ex.getMessage(), ex);
-        }
-        finally {
+        } catch (SAXException ex) {
+            logger.error("Failed to parse XML file", ex);
+        } finally {
             try {
-                out.close();
-                
                 UserFileHandle file = new UserFileHandle();
                 file.printFile(out.toByteArray());
-            } catch (Exception ex) {
-                  LoggerFactory.getLogger(UsersXML.class).error(ex.getMessage(), ex);
+            } catch (IOException e) {
+                logger.error("Failed to write user roles file", e);
             }
         }
-
-
     }
 }

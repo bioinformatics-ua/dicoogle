@@ -1,12 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>pt.ua.ieeta</groupId>
-  <artifactId>dicoogle-all</artifactId>
-    <version>2.5.2</version>
-  <packaging>pom</packaging>
-  <name>dicoogle-all</name>
-  
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>pt.ua.ieeta</groupId>
+    <artifactId>dicoogle-all</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>dicoogle-all</name>
+
     <properties>
         <jetty.version>9.0.3.v20130506</jetty.version>
         <restlet.version>2.1.2</restlet.version>
@@ -20,66 +20,86 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
-        	<plugin>
-				<groupId>com.mycila</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<header>short-license.txt</header>
-					<includes>
-						<include>**/*.java</include>
-					</includes>
-					<excludes>
-						<exclude>**/package-info.java</exclude>
-					</excludes>
 
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <header>short-license.txt</header>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/package-info.java</exclude>
+                    </excludes>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
+                <version>2.11.0</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/package-info.java</exclude>
+                    </excludes>
+                    <configFile>formatter-config.xml</configFile>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
     <profiles>
+        <profile>
+            <id>prod-repository</id>
+            <activation>
+                <property>
+                    <name>!useBmdRepo</name>
+                </property>
+            </activation>
+            <properties>
 
+            </properties>
+            <distributionManagement>
+                <!-- Versioned releases are published to the releases repository -->
+                <repository>
+                    <id>mi</id>
+                    <url>http://bioinformatics.ua.pt/maven/content/repositories/mi</url>
+                </repository>
 
+                <!-- Snapshot releases are published to the snapshots repository -->
+                <snapshotRepository>
+                    <id>mi</id>
+                    <url>http://bioinformatics.ua.pt/maven/content/repositories/mi-snapshots</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
 
-            <profile>
-                <id>prod-repository</id>
-                <activation>
-                    <property>
-                        <name>!useBmdRepo</name>
-
-                    </property>
-                </activation>
-                <properties>
-
-                </properties>
-                <distributionManagement>
-                    <!-- Versioned releases are published to the releases repository -->
-                    <repository>
-                        <id>mi</id>
-                        <url>http://bioinformatics.ua.pt/maven/content/repositories/mi</url>
-                    </repository>
-
-
-                    <!-- Snapshot releases are published to the snapshots repository -->
-                    <snapshotRepository>
-                        <id>mi</id>
-                        <url>http://bioinformatics.ua.pt/maven/content/repositories/mi-snapshots</url>
-                    </snapshotRepository>
-                </distributionManagement>
-
-            </profile>
         <profile>
             <id>bmd-repository</id>
             <activation>
@@ -89,39 +109,27 @@
                 </property>
             </activation>
 
-
-            <properties>
-
-            </properties>
             <distributionManagement>
-            <!-- Versioned releases are published to the releases repository -->
-            <repository>
-                <id>bmdsoftware-releases</id>
-                <name>BMD Software Nexus (Internal Releases)</name>
-                <url>https://dev.bmd-software.com/nexus/content/repositories/releases</url>
-            </repository>
-            <!-- Snapshot releases are published to the snapshots repository -->
-            <snapshotRepository>
-                <id>bmdsoftware-snapshots</id>
-                <name>BMD Software Nexus (Internal Snapshots)</name>
-                <url>https://dev.bmd-software.com/nexus/content/repositories/snapshots</url>
-            </snapshotRepository>
-            </distributionManagement>
+                <!-- Versioned releases are published to the releases repository -->
+                <repository>
+                    <id>bmdsoftware-releases</id>
+                    <name>BMD Software Nexus (Internal Releases)</name>
+                    <url>https://dev.bmd-software.com/nexus/content/repositories/releases</url>
+                </repository>
 
+                <!-- Snapshot releases are published to the snapshots repository -->
+                <snapshotRepository>
+                    <id>bmdsoftware-snapshots</id>
+                    <name>BMD Software Nexus (Internal Snapshots)</name>
+                    <url>https://dev.bmd-software.com/nexus/content/repositories/snapshots</url>
+                </snapshotRepository>
+            </distributionManagement>
         </profile>
     </profiles>
-
-    <distributionManagement>
-
-
-
-
-
-    </distributionManagement>
 
     <modules>
         <module>dicoogle</module>
         <module>sdk</module>
-        <module>sdk-ext</module>      
+        <module>sdk-ext</module>
     </modules>
 </project>

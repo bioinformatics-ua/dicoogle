@@ -41,16 +41,18 @@ import net.sf.json.JSONObject;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.StorageInputStream;
 import pt.ua.dicoogle.sdk.StorageInterface;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
+import pt.ua.dicoogle.sdk.utils.QueryParseException;
 import pt.ua.dicoogle.server.web.dicom.Convert2PNG;
 import pt.ua.dicoogle.server.web.dicom.Information;
 import pt.ua.dicoogle.server.web.utils.LocalImageCache;
+import pt.ua.dicoogle.server.web.utils.ResponseUtil;
 
 /**
  * Handles the requests for DICOM frames, returning them as PNG images.
@@ -59,15 +61,14 @@ import pt.ua.dicoogle.server.web.utils.LocalImageCache;
  * @author Antonio
  * @author Eduardo Pinho <eduardopinho@ua.pt>
  */
-public class ImageServlet extends HttpServlet
-{
+public class ImageServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(ImageServlet.class);
     private static final long serialVersionUID = 1L;
 
     public static final int BUFFER_SIZE = 1500; // byte size for read-write ring bufer, optimized for regular TCP connection windows
 
     private final LocalImageCache cache;
-	
+
     /**
      * Creates an image servlet.
      *
@@ -76,40 +77,49 @@ public class ImageServlet extends HttpServlet
     public ImageServlet(LocalImageCache cache) {
         this.cache = cache;
     }
-    
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-	{
-		String sopInstanceUID = request.getParameter("SOPInstanceUID");
-		String uri = request.getParameter("uri");
-        boolean thumbnail = Boolean.valueOf(request.getParameter("thumbnail"));
-        
-		if (sopInstanceUID == null) {
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String sopInstanceUID = request.getParameter("SOPInstanceUID");
+        String uri = request.getParameter("uri");
+        String qsThumbnail = request.getParameter("thumbnail");
+        boolean thumbnail = qsThumbnail != null && (qsThumbnail.isEmpty() || Boolean.valueOf(qsThumbnail));
+
+        if (sopInstanceUID == null) {
             if (uri == null) {
                 response.sendError(400, "URI or SOP Instance UID not provided");
                 return;
             }
-        } else if (sopInstanceUID.trim().isEmpty()) {
-			response.sendError(400, "Invalid SOP Instance UID!");
-			return;
-		}
-		String[] providerArray = request.getParameterValues("provider");
+        } else {
+            sopInstanceUID = sopInstanceUID.trim();
+            if (sopInstanceUID.isEmpty()) {
+                response.sendError(400, "Invalid SOP Instance UID!");
+                return;
+            }
+        }
+        String[] providerArray = request.getParameterValues("provider");
         List<String> providers = providerArray == null ? null : Arrays.asList(providerArray);
-		String sFrame = request.getParameter("frame");
+        String sFrame = request.getParameter("frame");
         int frame;
-		if (sFrame == null) {
+        if (sFrame == null) {
             frame = 0;
         } else {
             frame = Integer.parseInt(sFrame);
         }
-        
+
         StorageInputStream imgFile;
         if (sopInstanceUID != null) {
-            // get the image file for that SOP Instance UID
-            imgFile = getFileFromSOPInstanceUID(sopInstanceUID, providers);
+            try {
+                // get the image file for that SOP Instance UID
+                imgFile = getFileFromSOPInstanceUID(sopInstanceUID, providers);
+            } catch (QueryParseException ex) {
+                ResponseUtil.sendError(response, 400, "Failed to parse the query: " + ex.getMessage());
+                return;
+            }
             // if no .dcm file was found tell the client
             if (imgFile == null) {
-                response.sendError(404, "No image file for supplied SOP Instance UID!");
+                ResponseUtil.sendError(response, 404, "No image file for supplied SOP Instance UID");
                 return;
             }
         } else {
@@ -120,35 +130,35 @@ public class ImageServlet extends HttpServlet
                 Iterator<StorageInputStream> storages = storageInt.at(imgUri).iterator();
                 // take the first valid storage
                 if (!storages.hasNext()) {
-                    response.sendError(404, "No image file for supplied URI!");
+                    ResponseUtil.sendError(response, 404, "No image file for supplied URI");
                     return;
                 }
                 imgFile = storages.next();
-                 
+
             } catch (URISyntaxException ex) {
-                response.sendError(400, "Bad URI syntax");
+                ResponseUtil.sendError(response, 400, "Bad URI syntax");
                 return;
             }
         }
 
-		// if there is a cache available then use it
-		if (cache != null && cache.isRunning()) {
+        // if there is a cache available then use it
+        if (cache != null && cache.isRunning()) {
 
             try {
                 InputStream istream = cache.get(imgFile.getURI(), frame, thumbnail);
                 response.setContentType("image/png");
-                try(ServletOutputStream out = response.getOutputStream()) {
+                try (ServletOutputStream out = response.getOutputStream()) {
                     IOUtils.copy(istream, out);
                 }
             } catch (IOException ex) {
                 logger.warn("Could not convert the image", ex);
-                response.sendError(500);
+                ResponseUtil.sendError(response, 500, "Failed to convert the image");
             } catch (RuntimeException ex) {
                 logger.error("Unexpected exception", ex);
-                response.sendError(500);
+                ResponseUtil.sendError(response, 500, "Unexpected internal server error");
             }
-            
- 		} else {
+
+        } else {
             // if the cache is invalid or not running convert the image and return it "on-the-fly"
             try {
                 ByteArrayOutputStream pngStream = getPNGStream(imgFile, frame, thumbnail);
@@ -160,22 +170,17 @@ public class ImageServlet extends HttpServlet
                 }
             } catch (IOException ex) {
                 logger.warn("Could not convert the image", ex);
-                response.sendError(500, "Could not convert the image");
+                ResponseUtil.sendError(response, 500, "Failed to convert the image");
             }
-		}
+        }
     }
-    
-    private ByteArrayOutputStream getPNGStream(StorageInputStream imgFile, int frame, boolean thumbnail) throws IOException {
+
+    private ByteArrayOutputStream getPNGStream(StorageInputStream imgFile, int frame, boolean thumbnail)
+            throws IOException {
         ByteArrayOutputStream pngStream;
         if (thumbnail) {
-            int thumbSize;
-            try {
-                // retrieve thumbnail dimension settings
-                thumbSize = Integer.parseInt(ServerSettings.getInstance().getThumbnailsMatrix());
-            } catch (NumberFormatException ex) {
-                logger.warn("Failed to parse ThumbnailMatrix, using default thumbnail size");
-                thumbSize = 64;
-            }
+            // retrieve thumbnail dimension settings
+            int thumbSize = ServerSettingsManager.getSettings().getArchiveSettings().getThumbnailSize();
             pngStream = Convert2PNG.DICOM2ScaledPNGStream(imgFile, frame, thumbSize, thumbSize);
         } else {
             pngStream = Convert2PNG.DICOM2PNGStream(imgFile, frame);
@@ -183,46 +188,45 @@ public class ImageServlet extends HttpServlet
         return pngStream;
     }
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // TODO this service does not make sense as a POST.
         // either remove or relocate to another resource
-        
-		String sop = req.getParameter("SOPInstanceUID");
-		if(sop == null){
-			resp.sendError(500, "No SOPInstanceUID in Request");
-			return;
-		}
 
-		float frameRate = Information.getFrameRateFromImage(sop);
-		if(frameRate == -1){
-			resp.sendError(500, "Cannot Locate the image File.");
-			return;
-		}
-		
-		int nFrames = Information.getNumberOfFramesInFile(sop);
-		
-		JSONObject r = new JSONObject();
-		r.put("SOPInstanceUID", sop);
-		r.put("NumberOfFrames", nFrames);
-		r.put("FrameRate", frameRate);
-		
-		resp.setContentType("application/json");
-		
-		PrintWriter wr = resp.getWriter();
-		wr.print(r.toString());	
-	}
-	
-    private static StorageInputStream getFileFromSOPInstanceUID(String sopInstanceUID, List<String> providers) throws IOException {
+        String sop = req.getParameter("SOPInstanceUID");
+        if (sop == null) {
+            resp.sendError(500, "No SOPInstanceUID in Request");
+            return;
+        }
+
+        float frameRate = Information.getFrameRateFromImage(sop);
+        if (frameRate == -1) {
+            resp.sendError(500, "Cannot Locate the image File.");
+            return;
+        }
+
+        int nFrames = Information.getNumberOfFramesInFile(sop);
+
+        JSONObject r = new JSONObject();
+        r.put("SOPInstanceUID", sop);
+        r.put("NumberOfFrames", nFrames);
+        r.put("FrameRate", frameRate);
+
+        resp.setContentType("application/json");
+
+        PrintWriter wr = resp.getWriter();
+        wr.print(r.toString());
+    }
+
+    private static StorageInputStream getFileFromSOPInstanceUID(String sopInstanceUID, List<String> providers)
+            throws IOException {
         // TODO use only DIM sources?
         JointQueryTask qt = new JointQueryTask() {
             @Override
-            public void onCompletion() {
-            }
+            public void onCompletion() {}
+
             @Override
-            public void onReceive(Task<Iterable<SearchResult>> e) {
-            }
+            public void onReceive(Task<Iterable<SearchResult>> e) {}
         };
         try {
             if (providers == null) {
@@ -246,7 +250,5 @@ public class ImageServlet extends HttpServlet
         } catch (InterruptedException | ExecutionException ex) {
             throw new IOException(ex);
         }
-        
     }
-    	
 }

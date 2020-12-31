@@ -22,21 +22,19 @@ package pt.ua.dicoogle.sdk.index;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class DicomByteArrField implements IDicomField
-{
- 
-    private String name;
-    private byte [] value;
-    
+public class DicomByteArrField implements IDicomField {
 
-    public DicomByteArrField(String name, byte [] value)
-    {
+    private String name;
+    private byte[] value;
+
+
+    public DicomByteArrField(String name, byte[] value) {
         this.name = name;
         this.value = value;
-        
+
     }
-    
-    
+
+
     /**
      * @return the name
      */
@@ -54,14 +52,14 @@ public class DicomByteArrField implements IDicomField
     /**
      * @return the value
      */
-    public  byte [] getValue() {
+    public byte[] getValue() {
         return value;
     }
 
     /**
      * @param value the value to set
      */
-    public void setValue(byte [] value) {
+    public void setValue(byte[] value) {
         this.value = value;
     }
 

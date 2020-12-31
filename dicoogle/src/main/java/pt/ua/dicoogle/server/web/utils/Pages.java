@@ -25,18 +25,16 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author António Novo <antonio.novo@ua.pt>
  */
-public class Pages
-{
-	/**
-	 * Retrieves the currently request page file name.
-	 * Based on http://stackoverflow.com/a/11150213
-	 *
-	 * @param request the Http servlet request object.
-	 * @return the currently request page file name.
-	 */
-	public static String getCurrentPageFileName(HttpServletRequest request)
-	{
-		String uri = request.getRequestURI();
-		return uri.substring(uri.lastIndexOf("/") + 1);
-	}
+public class Pages {
+    /**
+     * Retrieves the currently request page file name.
+     * Based on http://stackoverflow.com/a/11150213
+     *
+     * @param request the Http servlet request object.
+     * @return the currently request page file name.
+     */
+    public static String getCurrentPageFileName(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        return uri.substring(uri.lastIndexOf("/") + 1);
+    }
 }

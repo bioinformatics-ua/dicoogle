@@ -1,14 +1,17 @@
-.btn_dicoogle{
-    background-color: $blue1;
-    color: #ffffff;
-    margin-right:5px;
-    &:hover{
-        background-color: $blue4;
-        color: #ffffff;
-    }
-    a{
-      color: #ffffff;
-    }
+.btn_dicoogle {
+  background-color: $blue1;
+  color: $button_color;
+  margin-right: 5px;
+  &:hover {
+    background-color: $blue4;
+    color: $button_color;
+  }
+  &:focus {
+    color: $button_color;
+    text-decoration: none;
+  }
 
-
+  a {
+    color: $button_color;
+  }
 }

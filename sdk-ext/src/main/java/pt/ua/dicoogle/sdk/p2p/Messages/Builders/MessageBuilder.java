@@ -42,10 +42,9 @@ import pt.ua.dicoogle.sdk.datastructs.SearchResult;
  * @author Carlos Ferreira
  * @author Pedro Bento
  */
-public class MessageBuilder
-{
-    public MessageI buildQueryMessage(String query, Collection<String> extrafields, String pluginName, Integer queryNumber) throws IOException
-    {
+public class MessageBuilder {
+    public MessageI buildQueryMessage(String query, Collection<String> extrafields, String pluginName,
+            Integer queryNumber) throws IOException {
         DocumentFactory dfactory = new DocumentFactory();
         Document document = dfactory.createDocument("UTF-8");
 
@@ -65,8 +64,7 @@ public class MessageBuilder
         temp = root.addElement(MessageFields.QUERY);
         temp.setText(query);
 
-        for (String extrafield : extrafields)
-        {
+        for (String extrafield : extrafields) {
             temp = root.addElement(MessageFields.EXTRAFIELD);
             temp.setText(extrafield);
         }
@@ -75,11 +73,9 @@ public class MessageBuilder
         ByteArrayOutputStream a = new ByteArrayOutputStream();
 
         XMLWriter output = null;
-        try
-        {
+        try {
             output = new XMLWriter(a, format);
-        } catch (UnsupportedEncodingException ex)
-        {
+        } catch (UnsupportedEncodingException ex) {
             ex.printStackTrace(System.out);
         }
 
@@ -87,14 +83,14 @@ public class MessageBuilder
 
         output.close();
 
-        //just for tests
-        //System.out.println(a.toString());
+        // just for tests
+        // System.out.println(a.toString());
 
         return new MessageXML(a.toByteArray());
     }
 
-    public MessageI buildQueryResponse(List<SearchResult> results, String queryNumber, String pluginName) throws IOException
-    {
+    public MessageI buildQueryResponse(List<SearchResult> results, String queryNumber, String pluginName)
+            throws IOException {
         DocumentFactory dfactory = new DocumentFactory();
         Document document = dfactory.createDocument("UTF-8");
         Element root = document.addElement(MessageFields.MESSAGE);
@@ -105,8 +101,7 @@ public class MessageBuilder
         temp = root.addElement(MessageFields.QUERY_NUMBER);
         temp.setText(queryNumber);
         temp = root.addElement(MessageFields.SEARCH_RESULTS);
-        for (SearchResult result : results)
-        {
+        for (SearchResult result : results) {
             temp2 = temp.addElement(MessageFields.SEARCH_RESULT);
 
             temp3 = temp2.addElement(SearchResultFields.FILE_NAME);
@@ -114,16 +109,15 @@ public class MessageBuilder
 
             temp3 = temp2.addElement(SearchResultFields.FILE_HASH);
             temp3.setText(result.get("filehash").toString());
-            //temp3 = temp2.addElement(SearchResultFields.FILE_PATH);
-            //temp3.setText(result.getPath());
+            // temp3 = temp2.addElement(SearchResultFields.FILE_PATH);
+            // temp3.setText(result.getPath());
             temp3 = temp2.addElement(SearchResultFields.FILE_SIZE);
             temp3.setText(result.get("size").toString());
 
             temp3 = temp2.addElement(SearchResultFields.EXTRAFIELDS);
             HashMap<String, Object> extrafields = result.getExtraData();
             Set<String> keys = extrafields.keySet();
-            for (String key : keys)
-            {
+            for (String key : keys) {
                 temp2 = temp3.addElement(key);
                 /** FIXME: Probably need to replace other fields like \14 ? */
                 temp2.setText(extrafields.get(key).toString().replaceAll("\0", " "));
@@ -133,11 +127,9 @@ public class MessageBuilder
         ByteArrayOutputStream a = new ByteArrayOutputStream();
 
         XMLWriter output = null;
-        try
-        {
+        try {
             output = new XMLWriter(a, format);
-        } catch (UnsupportedEncodingException ex)
-        {
+        } catch (UnsupportedEncodingException ex) {
             ex.printStackTrace(System.out);
         }
 
@@ -147,8 +139,7 @@ public class MessageBuilder
         return new MessageXML(a.toByteArray());
     }
 
-    public MessageI buildFileRequest(String filename, String fileHash, String pluginName) throws IOException
-    {
+    public MessageI buildFileRequest(String filename, String fileHash, String pluginName) throws IOException {
         DocumentFactory dfactory = new DocumentFactory();
         Document document = dfactory.createDocument("UTF-8");
         Element root = document.addElement(MessageFields.MESSAGE);
@@ -164,11 +155,9 @@ public class MessageBuilder
         ByteArrayOutputStream a = new ByteArrayOutputStream();
 
         XMLWriter output = null;
-        try
-        {
+        try {
             output = new XMLWriter(a, format);
-        } catch (UnsupportedEncodingException ex)
-        {
+        } catch (UnsupportedEncodingException ex) {
             ex.printStackTrace(System.out);
         }
 

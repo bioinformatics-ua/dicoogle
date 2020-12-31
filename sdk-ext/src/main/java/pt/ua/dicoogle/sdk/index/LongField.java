@@ -22,21 +22,19 @@ package pt.ua.dicoogle.sdk.index;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class LongField implements IDicomField
-{
- 
+public class LongField implements IDicomField {
+
     private String name;
     private Long value;
-    
 
-    public LongField(String name, Long value)
-    {
+
+    public LongField(String name, Long value) {
         this.name = name;
         this.value = value;
-        
+
     }
-    
-    
+
+
     /**
      * @return the name
      */

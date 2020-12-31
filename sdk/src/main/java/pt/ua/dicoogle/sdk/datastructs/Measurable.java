@@ -19,17 +19,17 @@
 package pt.ua.dicoogle.sdk.datastructs;
 
 public class Measurable {
-	private long t;
-	
-	public void start(){
-		t = System.currentTimeMillis();
-	}
-	
-	public void stop(){
-		t = System.currentTimeMillis() - t;
-	}
-	
-	public long getTime(){
-		return t;
-	}
+    private long t;
+
+    public void start() {
+        t = System.currentTimeMillis();
+    }
+
+    public void stop() {
+        t = System.currentTimeMillis() - t;
+    }
+
+    public long getTime() {
+        return t;
+    }
 }

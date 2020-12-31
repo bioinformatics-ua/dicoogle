@@ -24,10 +24,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import metal.utils.fileiterator.FileIterator;
 
@@ -40,174 +44,184 @@ import pt.ua.dicoogle.sdk.PluginBase;
 import pt.ua.dicoogle.sdk.StorageInputStream;
 import pt.ua.dicoogle.sdk.StorageInterface;
 
-public class DefaultFileStoragePlugin extends PluginBase implements StorageInterface{
+public class DefaultFileStoragePlugin extends PluginBase implements StorageInterface {
 
-	private static final Logger logger = LoggerFactory.getLogger(DefaultFileStoragePlugin.class);
-	
-	private String defaultScheme = "file";
-	
-	public DefaultFileStoragePlugin() {
-		super();
-		super.storagePlugins.add(this);
-	}
+    private static final Logger logger = LoggerFactory.getLogger(DefaultFileStoragePlugin.class);
 
-	@Override
-	public boolean enable() {
-		return true;
-	}
+    private final String defaultScheme = "file";
 
-	@Override
-	public boolean disable() {
-		return false;
-	}
+    public DefaultFileStoragePlugin() {
+        super();
+        super.storagePlugins.add(this);
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
+    @Override
+    public boolean enable() {
+        return true;
+    }
 
-	@Override
-	public String getScheme() {
-		return defaultScheme;
-	}
+    @Override
+    public boolean disable() {
+        return false;
+    }
 
-	@Override
-	public boolean handles(URI location) {
-		if (location.getScheme() == null)
-			return true;
-		return location.getScheme().equals(defaultScheme);
-	}
-	
-	private Iterator<StorageInputStream> createIterator(URI location){
-		if(!handles(location)){
-			logger.error("Cannot Handle: "+location.toString());
-			return Collections.emptyIterator();
-		}
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
-		logger.debug("Stared creating Iterator in: "+location.getSchemeSpecificPart()); 
-		File parent = new File(location.getSchemeSpecificPart());
-		Iterator<File> fileIt;
-		
-		if (parent.isDirectory()) {
-			logger.debug("Location is a directory: "+location.getSchemeSpecificPart());
-			fileIt = new FileIterator(parent);
-		} else {
-			List<File> files = new ArrayList<>(1);
-			files.add(parent);
-			fileIt = files.iterator();
-		}
+    @Override
+    public String getScheme() {
+        return defaultScheme;
+    }
 
-		logger.debug("Finished assembling Iterator: "+ location.getSchemeSpecificPart());
-		return new MyIterator(fileIt);
-	}
+    @Override
+    public boolean handles(URI location) {
+        if (location.getScheme() == null)
+            return true;
+        return location.getScheme().equals(defaultScheme);
+    }
 
-	@Override
-	public Iterable<StorageInputStream> at(URI location, Object ... args) {
-		return new MyIterable(location);		
-	}
+    private Iterator<StorageInputStream> createIterator(URI location) {
+        if (!handles(location)) {
+            logger.error("Cannot Handle: " + location.toString());
+            return Collections.emptyIterator();
+        }
 
-	@Override
-	public URI store(DicomObject dicomObject, Object ... args) {
-		return null;
-	}
+        logger.debug("Stared creating Iterator in: " + location.getSchemeSpecificPart());
+        File parent = new File(location.getSchemeSpecificPart());
+        Iterator<File> fileIt;
 
-	@Override
-	public URI store(DicomInputStream inputStream, Object ... args) throws IOException {
-		return null;
-	}
+        if (parent.isDirectory()) {
+            logger.debug("Location is a directory: " + location.getSchemeSpecificPart());
+            fileIt = new FileIterator(parent);
+        } else {
+            List<File> files = new ArrayList<>(1);
+            files.add(parent);
+            fileIt = files.iterator();
+        }
 
-	@Override
-	public void remove(URI location) {
-		if (!location.getScheme().equals(defaultScheme)) {
-			return;
-		}
+        logger.debug("Finished assembling Iterator: " + location.getSchemeSpecificPart());
+        return new MyIterator(fileIt);
+    }
 
-		String path = location.getSchemeSpecificPart();
-		File f = new File(path);
-		if (f.exists()) {
-			f.delete();
-		}		
-	}
+    @Override
+    public Iterable<StorageInputStream> at(URI location, Object... args) {
+        return new MyIterable(location);
+    }
 
-	@Override
-	public String getName() {
-		return "default-filesystem-plugin";
-	}
+    @Override
+    public URI store(DicomObject dicomObject, Object... args) {
+        return null;
+    }
 
-	private class MyIterable implements Iterable<StorageInputStream>{
+    @Override
+    public URI store(DicomInputStream inputStream, Object... args) throws IOException {
+        return null;
+    }
 
-		private URI baseLocation;
+    @Override
+    public void remove(URI location) {
+        if (!location.getScheme().equals(defaultScheme)) {
+            return;
+        }
 
-		public MyIterable(URI baseLocation) {
-			super();
-			this.baseLocation = baseLocation;
-		}
+        String path = location.getSchemeSpecificPart();
+        File f = new File(path);
+        if (f.exists()) {
+            f.delete();
+        }
+    }
 
-		@Override
-		public Iterator<StorageInputStream> iterator() {
-			// TODO Auto-generated method stub
-			return createIterator(baseLocation);
-		}
-		
-	}
-	
-	private static class MyIterator implements Iterator<StorageInputStream>{
-	
-		private Iterator<File> it;
-		
-		public MyIterator(Iterator<File> it) {
-			super();
-			this.it = it;
-		}
+    @Override
+    public Stream<URI> list(URI location) throws IOException {
+        if (!location.getScheme().equals(defaultScheme)) {
+            return Stream.empty();
+        }
 
-		@Override
-		public boolean hasNext() {
-			return it.hasNext();
-		}
+        Path base = Paths.get(location);
+        return Files.list(base).map(Path::toUri);
+    }
 
-		@Override
-		public StorageInputStream next() {
-			if(!it.hasNext())
-				return null;
-			File f = it.next();
-			logger.debug("Added File: "+f.toURI());
-			MyDICOMInputString stream = new MyDICOMInputString(f);			
-			return stream;
-		}
+    @Override
+    public String getName() {
+        return "default-filesystem-plugin";
+    }
 
-		@Override
-		public void remove() {
-			// TODO Auto-generated method stub
-			
-		}
-	}
-	
-	private static class MyDICOMInputString implements StorageInputStream{
-		
-		private File file;
+    private class MyIterable implements Iterable<StorageInputStream> {
 
-		public MyDICOMInputString(File file) {
-			super();
-			this.file = file;
-		}
+        private URI baseLocation;
 
-		@Override
-		public URI getURI() {
-			return file.toURI();
-		}
+        public MyIterable(URI baseLocation) {
+            super();
+            this.baseLocation = baseLocation;
+        }
 
-		@Override
-		public InputStream getInputStream() throws IOException {
-			// TODO Auto-generated method stub
-			return new BufferedInputStream(new FileInputStream(file));
-		}
+        @Override
+        public Iterator<StorageInputStream> iterator() {
+            // TODO Auto-generated method stub
+            return createIterator(baseLocation);
+        }
 
-		@Override
-		public long getSize() throws IOException {
-			// TODO Auto-generated method stub
-			return file.length();
-		}
-		
-	}
-		
+    }
+
+    private static class MyIterator implements Iterator<StorageInputStream> {
+
+        private Iterator<File> it;
+
+        public MyIterator(Iterator<File> it) {
+            super();
+            this.it = it;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return it.hasNext();
+        }
+
+        @Override
+        public StorageInputStream next() {
+            if (!it.hasNext())
+                return null;
+            File f = it.next();
+            logger.debug("Added File: " + f.toURI());
+            MyDICOMInputString stream = new MyDICOMInputString(f);
+            return stream;
+        }
+
+        @Override
+        public void remove() {
+            // TODO Auto-generated method stub
+
+        }
+    }
+
+    private static class MyDICOMInputString implements StorageInputStream {
+
+        private File file;
+
+        public MyDICOMInputString(File file) {
+            super();
+            this.file = file;
+        }
+
+        @Override
+        public URI getURI() {
+            return file.toURI();
+        }
+
+        @Override
+        public InputStream getInputStream() throws IOException {
+            // TODO Auto-generated method stub
+            return new BufferedInputStream(new FileInputStream(file));
+        }
+
+        @Override
+        public long getSize() throws IOException {
+            // TODO Auto-generated method stub
+            return file.length();
+        }
+
+    }
+
 }

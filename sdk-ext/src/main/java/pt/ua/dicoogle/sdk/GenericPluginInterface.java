@@ -31,13 +31,12 @@ import pt.ua.dicoogle.sdk.observables.ListObservableSearch;
  *
  * @author Carlos Ferreira
  */
-public interface GenericPluginInterface extends Plugin
-{
+public interface GenericPluginInterface extends Plugin {
     public void attendTask(TaskRequest task);
-    
-    //public ListObservable<TaskRequest> getTaskRequestsList();
 
-    //public ListObservable<SearchResult> getResults();
+    // public ListObservable<TaskRequest> getTaskRequestsList();
+
+    // public ListObservable<SearchResult> getResults();
 
     public String getName();
 
@@ -51,9 +50,11 @@ public interface GenericPluginInterface extends Plugin
      * @param extrafields
      * @return
      */
-    
+
     public ListObservableSearch<SearchResult> search(String query, Collection<String> extrafields);
+
     public ListObservableSearch<SearchResult> searchOne(String query, Collection<String> Extrafields, String address);
+
     public FileObservable requestFile(String address, String name, String hash);
 
     public boolean isLocalPlugin();
@@ -64,9 +65,9 @@ public interface GenericPluginInterface extends Plugin
 
     public ArrayList<Object> getPanelInitilizationParams();
 
-    //public PluginPanel getConfigPanel();
+    // public PluginPanel getConfigPanel();
 
-    //public void setSettings(PluginPanel settings);
+    // public void setSettings(PluginPanel settings);
 
     public boolean isRunning();
 }

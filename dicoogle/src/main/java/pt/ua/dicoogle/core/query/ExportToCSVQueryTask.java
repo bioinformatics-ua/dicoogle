@@ -35,97 +35,96 @@ import pt.ua.dicoogle.sdk.task.Task;
 
 public class ExportToCSVQueryTask extends JointQueryTask {
 
-	private static final Logger log = LoggerFactory.getLogger(ExportToCSVQueryTask.class);
-	
-	private static String[] searchChars = new String[]{"\n", ";"};
-	private static String[] replaceChars = new String[]{"", ","};
-	
-	private List<String> tagsOrder;
-	// private OutputStream outputStream;
-	private PrintWriter writter;
-	private CountDownLatch latch;
-	
-	private int nLines = 0;
+    private static final Logger log = LoggerFactory.getLogger(ExportToCSVQueryTask.class);
 
-	public ExportToCSVQueryTask(List<String> tagsOrder, OutputStream outputStream) {
-		super();
-		this.tagsOrder = tagsOrder;
-		this.latch = new CountDownLatch(1);
-		writter = new PrintWriter(outputStream);
+    private static String[] searchChars = new String[] {"\n", ";"};
+    private static String[] replaceChars = new String[] {"", ","};
 
-		printFirstLine();
-	}
+    private List<String> tagsOrder;
+    // private OutputStream outputStream;
+    private PrintWriter writter;
+    private CountDownLatch latch;
 
-	@Override
-	public void onCompletion() {
-		log.debug("ExportToCSV task: completed");
-		writter.flush();
-		writter.close();
-		latch.countDown();
-		
-		log.info("Exported CSV Table: ", tagsOrder.toString(), nLines);
-	}
+    private int nLines = 0;
 
-	@Override
-	public void onReceive(Task<Iterable<SearchResult>> e) {
-		log.debug("ExportToCSV task: Received results");
-		try {
-			Iterable<SearchResult> it = e.get();
-			for (SearchResult result : it) {
-				printLine(result);
-			}
-		} catch (InterruptedException | ExecutionException e1) {
-			e1.printStackTrace();
-		}
+    public ExportToCSVQueryTask(List<String> tagsOrder, OutputStream outputStream) {
+        super();
+        this.tagsOrder = tagsOrder;
+        this.latch = new CountDownLatch(1);
+        writter = new PrintWriter(outputStream);
 
-	}
+        printFirstLine();
+    }
 
-	/**
-	 * Print the first line of the .csv file
-	 * 
-	 */
-	private void printFirstLine() {
-		StringBuilder builder = new StringBuilder();
-		
-		log.debug("Started, Printing first line: ", tagsOrder);
-		
-		for (String tag : tagsOrder) {
-			builder.append("\"").append(tag).append("\";");
-		}
+    @Override
+    public void onCompletion() {
+        log.debug("ExportToCSV task: completed");
+        writter.flush();
+        writter.close();
+        latch.countDown();
 
-		this.writter.println(builder.toString());
-	}
+        log.info("Exported CSV Table: ", tagsOrder.toString(), nLines);
+    }
 
-	private void printLine(SearchResult result){
-		StringBuilder builder = new StringBuilder();
-		
-		HashMap<String, Object> extraFields = result.getExtraData();
-		
-		for (String tag : tagsOrder) {
-			Object temp1 = extraFields.get(tag);
+    @Override
+    public void onReceive(Task<Iterable<SearchResult>> e) {
+        log.debug("ExportToCSV task: Received results");
+        try {
+            Iterable<SearchResult> it = e.get();
+            for (SearchResult result : it) {
+                printLine(result);
+            }
+        } catch (InterruptedException | ExecutionException e1) {
+            e1.printStackTrace();
+        }
 
-			final String s = (temp1 != null) ?
-				temp1.toString().trim() : "";
+    }
 
-			if (s.length() > 0) {
-				String temp = StringUtils.replaceEach(s, searchChars, replaceChars);
-				builder.append('\"').append(temp).append("\";");
-			} else {
-				builder.append(";");
-			}
-		}
-		
-		log.trace("Printing Line: ", builder.toString());
-		nLines++;
-		this.writter.println(builder.toString());
-	}
+    /**
+     * Print the first line of the .csv file
+     * 
+     */
+    private void printFirstLine() {
+        StringBuilder builder = new StringBuilder();
 
-	public void await() {
-		try {
-			latch.await();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-	
+        log.debug("Started, Printing first line: ", tagsOrder);
+
+        for (String tag : tagsOrder) {
+            builder.append("\"").append(tag).append("\";");
+        }
+
+        this.writter.println(builder.toString());
+    }
+
+    private void printLine(SearchResult result) {
+        StringBuilder builder = new StringBuilder();
+
+        HashMap<String, Object> extraFields = result.getExtraData();
+
+        for (String tag : tagsOrder) {
+            Object temp1 = extraFields.get(tag);
+
+            final String s = (temp1 != null) ? temp1.toString().trim() : "";
+
+            if (s.length() > 0) {
+                String temp = StringUtils.replaceEach(s, searchChars, replaceChars);
+                builder.append('\"').append(temp).append("\";");
+            } else {
+                builder.append(";");
+            }
+        }
+
+        log.trace("Printing Line: ", builder.toString());
+        nLines++;
+        this.writter.println(builder.toString());
+    }
+
+    public void await() {
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

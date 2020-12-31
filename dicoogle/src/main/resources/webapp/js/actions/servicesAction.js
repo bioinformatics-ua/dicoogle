@@ -1,4 +1,4 @@
-import Reflux from 'reflux';
+import Reflux from "reflux";
 const ServiceAction = {};
 ServiceAction.getStorage = Reflux.createAction();
 ServiceAction.getQuery = Reflux.createAction();

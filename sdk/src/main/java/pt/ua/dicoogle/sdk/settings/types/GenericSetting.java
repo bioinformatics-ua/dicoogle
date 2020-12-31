@@ -25,30 +25,29 @@ import java.util.HashMap;
  *
  * @author António Novo <antonio.novo@ua.pt>
  */
-public interface GenericSetting
-{
-	// Output formats ------------------------------------------------------
+public interface GenericSetting {
+    // Output formats ------------------------------------------------------
 
-	/**
-	 * Outputs the current setting onto an HTML formated string, that can be
-	 * embeded onto a webpage.
-	 *
-	 * @param htmlElementID the ID name of the this HTML element.
-	 * @return an HTML formated string, that can be embeded onto a webpage.
-	 */
-	public String toHTMLString(String htmlElementID);
+    /**
+     * Outputs the current setting onto an HTML formated string, that can be
+     * embeded onto a webpage.
+     *
+     * @param htmlElementID the ID name of the this HTML element.
+     * @return an HTML formated string, that can be embeded onto a webpage.
+     */
+    public String toHTMLString(String htmlElementID);
 
-	// Input formats -------------------------------------------------------
+    // Input formats -------------------------------------------------------
 
-	/**
-	 * Based on a list of HTTP request form (names & values) and the original
-	 * value object (of same type/class), parse the later to match the former
-	 * format with the new values. The original setting will be the object where
-	 * this function gets called at.
-	 *
-	 * @param params the new params, and their values, to put into the return object.
-	 * @param index the param index where the value is.
-	 * @return a new GenericSetting with the updated information.
-	 */
-	public GenericSetting fromHTTPParams(HashMap<String, String[]> params, int index, String htmlElementID);
+    /**
+     * Based on a list of HTTP request form (names & values) and the original
+     * value object (of same type/class), parse the later to match the former
+     * format with the new values. The original setting will be the object where
+     * this function gets called at.
+     *
+     * @param params the new params, and their values, to put into the return object.
+     * @param index the param index where the value is.
+     * @return a new GenericSetting with the updated information.
+     */
+    public GenericSetting fromHTTPParams(HashMap<String, String[]> params, int index, String htmlElementID);
 }

@@ -19,6 +19,7 @@
 package pt.ua.dicoogle.sdk.task;
 
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
@@ -30,53 +31,71 @@ import java.util.concurrent.FutureTask;
  */
 public class Task<Type> extends FutureTask<Type> {
 
-    private String taskName = "unnamed task";
+    private final String uid;
+    private String taskName;
     private Callable callable;
-    ArrayList<Runnable> toRunWhenComplete;
-    
-    public Task(Callable<Type> c){
-        super(c);
-        callable = c;
-        toRunWhenComplete = new ArrayList<>();//we could lazy initialize this in onCompletion
+    private ArrayList<Runnable> toRunWhenComplete;
+
+    /** Create a new task with a randomly generated ID. */
+    public Task(Callable<Type> c) {
+        this("unnamed task", c);
     }
-    
-    public Task(String name, Callable<Type> c){
+
+    /** Create a new task with a specific name and a randomly generated ID. */
+    public Task(String name, Callable<Type> c) {
+        this(generateUID(), name, c);
+    }
+
+    public Task(String uid, String name, Callable<Type> c) {
         super(c);
+        this.callable = c;
+        this.uid = uid;
         taskName = name;
-        toRunWhenComplete = new ArrayList<>();//we could lazy initialize this in onCompletion
+        toRunWhenComplete = new ArrayList<>();
     }
-    
+
     @Override
-    protected void set(Type ret){
+    protected void set(Type ret) {
         super.set(ret);
-        for(Runnable r : toRunWhenComplete){
+        for (Runnable r : toRunWhenComplete) {
             r.run();
         }
     }
-    
-    public void onCompletion(Runnable r){
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void onCompletion(Runnable r) {
         toRunWhenComplete.add(r);
     }
-    
+
     /** Gets the task's name
      * @return a task name, for presentation purposes
      */
-    public String getName(){return this.taskName;}
-    
+    public String getName() {
+        return this.taskName;
+    }
+
     /** Sets the task's name
      * @param name the new task's name, for presentation purposes
      */
-    public void setName(String name){this.taskName = name;}
-    
+    public void setName(String name) {
+        this.taskName = name;
+    }
+
     /** Gets the task's progress
      * @return the task's progress from 0 to 1, or -1 if the task is unbounded
      */
-    public float getProgress(){
-        if (callable instanceof ProgressCallable){
-            return ((ProgressCallable)this.callable).getProgress();
+    public float getProgress() {
+        if (callable instanceof ProgressCallable) {
+            return ((ProgressCallable) this.callable).getProgress();
         }
         return -1;
     }
-    
+
+    private static String generateUID() {
+        return UUID.randomUUID().toString();
+    }
 }
 

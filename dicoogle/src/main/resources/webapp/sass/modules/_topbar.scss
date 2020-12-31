@@ -1,38 +1,40 @@
 .topbar {
-    width: 100%;
-    height: 50px;
-    background: $blue1;
-    position:fixed;
-    z-index: 1001;
-    line-height: 50px;
+  width: 100%;
+  height: 50px;
+  background: $blue1;
+  position: fixed;
+  z-index: 1001;
+  line-height: 50px;
 }
 .btn_drawer {
-    width: 50px;
-    height: 50px;
-    background-color: Transparent;
-    background-repeat: no-repeat;
-    border: none;
-    cursor: pointer;
-    overflow: hidden;
-    max-width: 100%;
-    max-height: 100%;
-    padding: 15px
+  width: 50px;
+  height: 50px;
+  background-color: Transparent;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  max-width: 100%;
+  max-height: 100%;
+  padding: 15px;
 }
 .topbar {
-    a {
-        height: 50px;
-        color: #ffffff;
-        font-size: 30px;
-        vertical-align: middle;
-    }
+  a {
+    height: 50px;
+    color: $blue6;
+    font-size: 30px;
+    vertical-align: middle;
+  }
 }
 
 .usernameLogin {
-    padding-right: 5px;
+  padding-right: 5px;
 }
-
 
 .buttonLogin {
-    padding-right: 10px;
+  padding-right: 10px;
 }
 
+.logo-image {
+  max-height: 60%;
+}

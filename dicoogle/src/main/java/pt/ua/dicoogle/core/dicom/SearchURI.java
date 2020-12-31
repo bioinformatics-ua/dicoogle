@@ -48,8 +48,7 @@ public class SearchURI {
         } catch (ExecutionException ex) {
             LoggerFactory.getLogger(SearchURI.class).error(ex.getMessage(), ex);
         }
-        if (results==null)
-        {
+        if (results == null) {
             return results;
         }
         for (SearchResult r : results) {
@@ -57,7 +56,7 @@ public class SearchURI {
         }
 
         return resultsArr;
-        
+
 
     }
 
@@ -65,7 +64,7 @@ public class SearchURI {
 
         @Override
         public void onCompletion() {
-            
+
         }
 
         @Override

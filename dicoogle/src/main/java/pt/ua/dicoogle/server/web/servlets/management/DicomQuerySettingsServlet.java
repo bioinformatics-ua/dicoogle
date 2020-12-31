@@ -29,7 +29,8 @@ import net.sf.json.JSONSerializer;
 
 import org.apache.commons.lang3.StringUtils;
 
-import pt.ua.dicoogle.core.ServerSettings;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
 /**
  *
@@ -37,92 +38,89 @@ import pt.ua.dicoogle.core.ServerSettings;
  */
 public class DicomQuerySettingsServlet extends HttpServlet {
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		ServerSettings ss = ServerSettings.getInstance();
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        ServerSettings.DicomServices.QueryRetrieve ss =
+                ServerSettingsManager.getSettings().getDicomServicesSettings().getQueryRetrieveSettings();
 
-		int responseTimeout = ss.getRspDelay();
-		int connectionTimeout = ss.getConnectionTimeout();
-		int idleTimeout = ss.getIdleTimeout();
-		int acceptTimeout = ss.getAcceptTimeout();
-		int maxPduSend = ss.getMaxPDULenghtSend();
-		int maxPduReceive = ss.getMaxPDULengthReceive();
-		int maxAssociations = ss.getMaxClientAssoc();
+        int responseTimeout = ss.getRspDelay();
+        int connectionTimeout = ss.getConnectionTimeout();
+        int idleTimeout = ss.getIdleTimeout();
+        int acceptTimeout = ss.getAcceptTimeout();
+        int maxPduSend = ss.getMaxPDULengthSend();
+        int maxPduReceive = ss.getMaxPDULengthReceive();
+        int maxAssociations = ss.getMaxClientAssoc();
 
-		QueryRetrieveSettingsObject queryRetrieveSettings = new QueryRetrieveSettingsObject(
-				responseTimeout, connectionTimeout, idleTimeout, acceptTimeout,
-				maxPduSend, maxPduReceive, maxAssociations);
-        	resp.setContentType("application/json");
-		resp.getWriter().write(JSONSerializer.toJSON(queryRetrieveSettings).toString());
-	}
+        QueryRetrieveSettingsObject queryRetrieveSettings = new QueryRetrieveSettingsObject(responseTimeout,
+                connectionTimeout, idleTimeout, acceptTimeout, maxPduSend, maxPduReceive, maxAssociations);
+        resp.setContentType("application/json");
+        resp.getWriter().write(JSONSerializer.toJSON(queryRetrieveSettings).toString());
+    }
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		String responseTimeout = req.getParameter("responseTimeout");
-		String connectionTimeout = req.getParameter("connectionTimeout");
-		String idleTimeout = req.getParameter("idleTimeout");
-		String acceptTimeout = req.getParameter("acceptTimeout");
-		String maxPduSend = req.getParameter("maxPduSend");
-		String maxPduReceive = req.getParameter("maxPduReceive");
-		String maxAssociations = req.getParameter("maxAssociations");
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String responseTimeout = req.getParameter("responseTimeout");
+        String connectionTimeout = req.getParameter("connectionTimeout");
+        String idleTimeout = req.getParameter("idleTimeout");
+        String acceptTimeout = req.getParameter("acceptTimeout");
+        String maxPduSend = req.getParameter("maxPduSend");
+        String maxPduReceive = req.getParameter("maxPduReceive");
+        String maxAssociations = req.getParameter("maxAssociations");
 
-		ServerSettings ss = ServerSettings.getInstance();
+        ServerSettings.DicomServices.QueryRetrieve ss =
+                ServerSettingsManager.getSettings().getDicomServicesSettings().getQueryRetrieveSettings();
 
-		if (StringUtils.isNotEmpty(responseTimeout)) {
-			int intV = Integer.parseInt(responseTimeout);
-			ss.setRspDelay(intV);
-		}
-		if (StringUtils.isNotEmpty(connectionTimeout)) {
-			int intV = Integer.parseInt(connectionTimeout);
-			ss.setConnectionTimeout(intV);
-		}
-		if (StringUtils.isNotEmpty(idleTimeout)) {
-			int intV = Integer.parseInt(idleTimeout);
-			ss.setIdleTimeout(intV);
-		}
-		if (StringUtils.isNotEmpty(acceptTimeout)) {
-			int intV = Integer.parseInt(acceptTimeout);
-			ss.setAcceptTimeout(intV);
-		}
-		if (StringUtils.isNotEmpty(maxPduSend)) {
-			int intV = Integer.parseInt(maxPduSend);
-			ss.setMaxPDULengthSend(intV);
-		}
-		if (StringUtils.isNotEmpty(maxPduReceive)) {
-			int intV = Integer.parseInt(maxPduReceive);
-			ss.setMaxPDULengthReceive(intV);
-		}
-		if (StringUtils.isNotEmpty(maxAssociations)) {
-			int intV = Integer.parseInt(maxAssociations);
-			ss.setMaxClientAssoc(intV);
-		}
-
-	}
-
-	/*
-	 * MODEL FOR QUERY RETRIEVE SETTINGS
-	 */
-	public static class QueryRetrieveSettingsObject {
-        private int responseTimeout, connectionTimeout, idleTimeout, acceptTimeout,
-				maxPduSend, maxPduReceive, maxAssociations;
-
-        public QueryRetrieveSettingsObject() {
+        if (StringUtils.isNotEmpty(responseTimeout)) {
+            int intV = Integer.parseInt(responseTimeout);
+            ss.setRspDelay(intV);
         }
-        
-		public QueryRetrieveSettingsObject(int responseTimeout,
-				int connectionTimeout, int idleTimeout, int acceptTimeout,
-				int maxPduSend, int maxPduReceive, int maxAssociations) {
-			super();
-			this.responseTimeout = responseTimeout;
-			this.connectionTimeout = connectionTimeout;
-			this.idleTimeout = idleTimeout;
-			this.acceptTimeout = acceptTimeout;
-			this.maxPduSend = maxPduSend;
-			this.maxPduReceive = maxPduReceive;
-			this.maxAssociations = maxAssociations;
-		}
+        if (StringUtils.isNotEmpty(connectionTimeout)) {
+            int intV = Integer.parseInt(connectionTimeout);
+            ss.setConnectionTimeout(intV);
+        }
+        if (StringUtils.isNotEmpty(idleTimeout)) {
+            int intV = Integer.parseInt(idleTimeout);
+            ss.setIdleTimeout(intV);
+        }
+        if (StringUtils.isNotEmpty(acceptTimeout)) {
+            int intV = Integer.parseInt(acceptTimeout);
+            ss.setAcceptTimeout(intV);
+        }
+        if (StringUtils.isNotEmpty(maxPduSend)) {
+            int intV = Integer.parseInt(maxPduSend);
+            ss.setMaxPDULengthSend(intV);
+        }
+        if (StringUtils.isNotEmpty(maxPduReceive)) {
+            int intV = Integer.parseInt(maxPduReceive);
+            ss.setMaxPDULengthReceive(intV);
+        }
+        if (StringUtils.isNotEmpty(maxAssociations)) {
+            int intV = Integer.parseInt(maxAssociations);
+            ss.setMaxClientAssoc(intV);
+        }
+
+    }
+
+    /*
+     * MODEL FOR QUERY RETRIEVE SETTINGS
+     */
+    public static class QueryRetrieveSettingsObject {
+        private int responseTimeout, connectionTimeout, idleTimeout, acceptTimeout, maxPduSend, maxPduReceive,
+                maxAssociations;
+
+        public QueryRetrieveSettingsObject() {}
+
+        public QueryRetrieveSettingsObject(int responseTimeout, int connectionTimeout, int idleTimeout,
+                int acceptTimeout, int maxPduSend, int maxPduReceive, int maxAssociations) {
+            super();
+            this.responseTimeout = responseTimeout;
+            this.connectionTimeout = connectionTimeout;
+            this.idleTimeout = idleTimeout;
+            this.acceptTimeout = acceptTimeout;
+            this.maxPduSend = maxPduSend;
+            this.maxPduReceive = maxPduReceive;
+            this.maxAssociations = maxAssociations;
+        }
 
         public int getResponseTimeout() {
             return responseTimeout;
@@ -180,5 +178,5 @@ public class DicomQuerySettingsServlet extends HttpServlet {
             this.maxAssociations = maxAssociations;
         }
 
-	}
+    }
 }

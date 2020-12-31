@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONSerializer;
-import pt.ua.dicoogle.core.XMLSupport;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.server.SOPList;
 import pt.ua.dicoogle.server.TransfersStorage;
 import pt.ua.dicoogle.server.web.utils.ResponseUtil;
@@ -40,29 +40,43 @@ import pt.ua.dicoogle.server.web.utils.ResponseUtil;
 */
 public class TransferOptionsServlet extends HttpServlet {
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		String uid = req.getParameter("uid");
-		
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String uid = req.getParameter("uid");
+
         resp.setContentType("application/json");
-		String soplist = SOPList.getInstance().getSOPList();
-		resp.getWriter().write(soplist);
-	}
+        String soplist = SOPList.getInstance().getSOPList();
+        resp.getWriter().write(soplist);
+    }
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		
-		String UID = req.getParameter("uid");
-		String option = req.getParameter("option");
-		String valueS = req.getParameter("value");
-		boolean value = Boolean.parseBoolean(req.getParameter("value"));
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-		SOPList.getInstance().updateTSField(UID, option, value);
-		new XMLSupport().printXML();
-		ResponseUtil.simpleResponse(resp, "success", true);
-	}
+        String UID = req.getParameter("uid");
+        String option = req.getParameter("option");
+        String valueS = req.getParameter("value");
+
+        if (UID == null) {
+            ResponseUtil.sendError(resp, 400, "No query UID Supplied: Please provide the field \"uid\"");
+            return;
+        }
+
+        if (option == null) {
+            ResponseUtil.sendError(resp, 400, "No query option Supplied: Please provide the field \"option\"");
+            return;
+        }
+
+        if (valueS == null) {
+            ResponseUtil.sendError(resp, 400, "No query value Supplied: Please provide the field \"value\"");
+            return;
+        }
+
+        boolean value = Boolean.parseBoolean(valueS);
+
+        SOPList.getInstance().updateTSField(UID, option, value);
+        ServerSettingsManager.saveSettings();
+        ResponseUtil.simpleResponse(resp, "success", true);
+    }
 
     public static class TransferenceOptionsResponse {
         List<Option> options;
@@ -83,12 +97,11 @@ public class TransferOptionsServlet extends HttpServlet {
         public static TransferenceOptionsResponse fromBooleanList(boolean[] tsList) {
             TransferenceOptionsResponse tor = new TransferenceOptionsResponse();
             for (int i = 0; i < tsList.length; i++) {
-                tor.options.add(new Option(
-                        TransfersStorage.globalTransferMap.get(i), tsList[i]));
+                tor.options.add(new Option(TransfersStorage.globalTransferMap.get(i), tsList[i]));
             }
             return tor;
         }
-        
+
         public static String getJSON(boolean[] tsList) {
             TransferenceOptionsResponse tor = fromBooleanList(tsList);
             return JSONSerializer.toJSON(tor).toString();

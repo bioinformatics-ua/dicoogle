@@ -26,49 +26,41 @@ import pt.ua.dicoogle.server.users.UsersXML;
 import pt.ua.dicoogle.server.web.auth.Authentication;
 import pt.ua.dicoogle.server.web.auth.LoggedIn;
 
+import java.util.Collection;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static pt.ua.dicoogle.server.web.servlets.webui.WebUIServlet.camelize;
 
 /**
  * Created by bastiao on 23/01/16.
  */
 public class TestUsers {
+    @BeforeClass
+    public static void setUpClass() {}
+
+    @AfterClass
+    public static void tearDownClass() {}
+
+    @Before
+    public void setUp() {}
+
+    @After
+    public void tearDown() {}
 
     @Test
-    @Ignore // needs isolation
-    public void testUsers() {
+    public void authentication() {
+        String passwd = "123";
+        User u = User.create("nat", false, passwd);
+        assertTrue(u.verifyPassword(passwd));
 
-        UsersStruct users = UsersStruct.getInstance();
-        UsersXML usersXML = new UsersXML();
-        users = usersXML.getXML();
+        passwd = "correctHorseBatteryStaple";
+        assertTrue(u.changePassword("123", passwd));
+        assertTrue(u.verifyPassword(passwd));
 
-        String username = "nat";
-        boolean admin = false;
-        String passPlainText = "123";
-        String passHash = HashService.getSHA1Hash(passPlainText);             //password Hash
-        String hash = HashService.getSHA1Hash(username + admin + passHash);
-        System.out.println(hash);
-        System.out.println(passHash);
-        User u = new User("nat",hash, admin);
-        users.addUser(u);
-
-
-        for (String uu : users.getUsernames())
-        {
-            System.out.println(users.getUser(uu));
-        }
-
-        Authentication auth = Authentication.getInstance();
-        try {
-            LoggedIn loggedIn = auth.login("nat", "123");
-            System.out.println(loggedIn.getUserName());
-            System.out.println(loggedIn.isAdmin());
-        }
-        catch(Exception e)
-        {
-            System.out.println("Error in the test");
-        }
-
+        passwd = "VeryStrongPassword!!11";
+        assertTrue(u.resetPassword(passwd));
+        assertTrue(u.verifyPassword(passwd));
     }
 
 }

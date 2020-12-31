@@ -20,6 +20,7 @@
 package pt.ua.dicoogle.server.web.servlets.search;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -35,12 +36,10 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
-import pt.ua.dicoogle.core.TagsXML;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
-import pt.ua.dicoogle.sdk.utils.DictionaryAccess;
 import pt.ua.dicoogle.sdk.utils.TagValue;
 import pt.ua.dicoogle.sdk.utils.TagsStruct;
 
@@ -58,30 +57,32 @@ public class DumpServlet extends HttpServlet {
         if (StringUtils.isEmpty(uid)) {
             resp.sendError(400, "No uid supplied");
         }
-        
+
         String[] providerArr = req.getParameterValues("provider");
-        List<String> providers = (providerArr == null)
-                ? PluginController.getInstance().getQueryProvidersName(true)
-                : Arrays.asList(providerArr);
-        
+        List<String> providers = providerArr != null ? Arrays.asList(providerArr) : new ArrayList<>();
+        providers = PluginController.getInstance().filterDicomQueryProviders(providers);
+
+        if (providers.size() == 0) {
+            resp.sendError(400, "No valid DIM providers supplied.");
+        }
+
         String query = "SOPInstanceUID:" + uid;
-        
-        Set<TagValue> tags = TagsStruct.getInstance().getAllFields(); 
-        //TODO: PERHAPS REMOVE DICTIONARY ACCESS SINGLETON
-        
+
+        Set<TagValue> tags = TagsStruct.getInstance().getAllFields();
+        // TODO: PERHAPS REMOVE DICTIONARY ACCESS SINGLETON
+
         HashMap<String, String> extraFields = new HashMap<>();
         for (TagValue s : tags) {
-        	if(!s.getVR().equalsIgnoreCase("SQ"))
-        		extraFields.put(s.getAlias(), s.getAlias());
+            if (!s.getVR().equalsIgnoreCase("SQ"))
+                extraFields.put(s.getAlias(), s.getAlias());
         }
-        
+
         JointQueryTask queryTaskHolder = new JointQueryTask() {
             @Override
-            public void onCompletion() {
-            }
+            public void onCompletion() {}
+
             @Override
-            public void onReceive(Task<Iterable<SearchResult>> e) {
-            }
+            public void onReceive(Task<Iterable<SearchResult>> e) {}
         };
 
         long tick = System.currentTimeMillis();
@@ -94,7 +95,7 @@ public class DumpServlet extends HttpServlet {
             return;
         }
 
-        long time = System.currentTimeMillis()-tick;
+        long time = System.currentTimeMillis() - tick;
         String json = processJSON(results, time);
 
         resp.setContentType("application/json");
@@ -107,7 +108,7 @@ public class DumpServlet extends HttpServlet {
         JSONObject fields = new JSONObject();
         for (SearchResult r : results) {
             rj.put("uri", r.getURI().toString());
-            for (Map.Entry<String,Object> e : r.getExtraData().entrySet()) {
+            for (Map.Entry<String, Object> e : r.getExtraData().entrySet()) {
                 fields.put(e.getKey(), e.getValue());
             }
         }

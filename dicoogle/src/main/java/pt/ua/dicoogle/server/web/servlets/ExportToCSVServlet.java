@@ -40,107 +40,96 @@ import pt.ua.dicoogle.plugins.PluginController;
  */
 public class ExportToCSVServlet extends HttpServlet {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		resp.setHeader("Content-disposition","attachment; filename=QueryResultsExport.csv");
-		String queryString = req.getParameter("query");
-		String[] fields = req.getParameterValues("fields");
-		String[] providers = req.getParameterValues("providers");
-		
-		if(queryString == null)
-			resp.sendError(401, "Query Parameters not found");
-		
-		if(fields == null || fields.length==0)
-			resp.sendError(402, "Fields Parameters not found");
-						    	
-	    List<String> fieldList = new ArrayList<>(fields.length);
-	    Map<String, String> fieldsMap = new HashMap<>();
-	    for(String f : fields){
-	    	fieldList.add(f);
-	    	fieldsMap.put(f, f);
-	    }
-	    	    	    
-    	ExportToCSVQueryTask task = new ExportToCSVQueryTask( fieldList,
-				resp.getOutputStream());
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setHeader("Content-disposition", "attachment; filename=QueryResultsExport.csv");
+        String queryString = req.getParameter("query");
+        String[] fields = req.getParameterValues("fields");
+        String[] providers = req.getParameterValues("providers");
 
-    	if(providers == null || providers.length == 0) {
-			PluginController.getInstance().queryAll(task, queryString, fieldsMap);
-		} else {
-			List<String> providersList = new ArrayList<>();
-			for (String f : providers) {
-				providersList.add(f);
-			}
-			PluginController.getInstance().query(task, providersList, queryString,
-					fieldsMap);
-		}
+        if (queryString == null)
+            resp.sendError(401, "Query Parameters not found");
 
-		task.await();
-	}
-	
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		String dataString = req.getParameter("JSON-DATA");
-		if (dataString == null) {
-			resp.sendError(401,
-					"No data suplied: Please fill the field \"JSON-DATA\"");
-			return;
-		}
+        if (fields == null || fields.length == 0)
+            resp.sendError(402, "Fields Parameters not found");
 
-		List<String> orderedFields = new ArrayList<>();
-		Map<String, String> fields = new HashMap<>();
-		String queryString = null;
-		JSONArray arr;		
-		
-		try {
-			JSONObject data = JSONObject.fromObject(dataString);
-			queryString = data.getString("queryString");
-			if (queryString == null) {
-				resp.sendError(
-						402,
-						"QueryString no suplied: Please fill the field \"queryString\" in \"JSON-DATA\"");
-				return;
-			}
+        List<String> fieldList = new ArrayList<>(fields.length);
+        Map<String, String> fieldsMap = new HashMap<>();
+        for (String f : fields) {
+            fieldList.add(f);
+            fieldsMap.put(f, f);
+        }
 
-			arr = data.getJSONArray("extraFields");
-			if (arr.isEmpty()) {
-				resp.sendError(403,
-						"No fields no suplied: Please fill the field \"extraFiekds\" in \"JSON-DATA\"");
-				return;
-			}
+        ExportToCSVQueryTask task = new ExportToCSVQueryTask(fieldList, resp.getOutputStream());
 
-			for (Object f : arr) {
-				fields.put(f.toString(), f.toString());
-				orderedFields.add(f.toString());
-			}
+        if (providers == null || providers.length == 0) {
+            PluginController.getInstance().queryAll(task, queryString, fieldsMap);
+        } else {
+            List<String> providersList = new ArrayList<>();
+            for (String f : providers) {
+                providersList.add(f);
+            }
+            PluginController.getInstance().query(task, providersList, queryString, fieldsMap);
+        }
 
-			arr = data.getJSONArray("providers");
-		} catch (JSONException ex) {
-			resp.sendError(400,
-					"Error parsing the JSON String: " + ex.toString());
-			return;
-		}
+        task.await();
+    }
 
-		ExportToCSVQueryTask task = new ExportToCSVQueryTask(orderedFields,
-				resp.getOutputStream());
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // TODO Auto-generated method stub
+        String dataString = req.getParameter("JSON-DATA");
+        if (dataString == null) {
+            resp.sendError(401, "No data suplied: Please fill the field \"JSON-DATA\"");
+            return;
+        }
 
-		if (arr.isEmpty()) {
-			PluginController.getInstance().queryAll(task, queryString, fields);
-		} else {
-			List<String> providers = new ArrayList<>();
-			for (Object f : arr) {
-				providers.add(f.toString());
-			}
-			PluginController.getInstance().query(task, providers, queryString,
-					fields);
-		}
+        List<String> orderedFields = new ArrayList<>();
+        Map<String, String> fields = new HashMap<>();
+        String queryString = null;
+        JSONArray arr;
 
-		task.await();
-		
-	}
+        try {
+            JSONObject data = JSONObject.fromObject(dataString);
+            queryString = data.getString("queryString");
+            if (queryString == null) {
+                resp.sendError(402, "QueryString no suplied: Please fill the field \"queryString\" in \"JSON-DATA\"");
+                return;
+            }
+
+            arr = data.getJSONArray("extraFields");
+            if (arr.isEmpty()) {
+                resp.sendError(403, "No fields no suplied: Please fill the field \"extraFiekds\" in \"JSON-DATA\"");
+                return;
+            }
+
+            for (Object f : arr) {
+                fields.put(f.toString(), f.toString());
+                orderedFields.add(f.toString());
+            }
+
+            arr = data.getJSONArray("providers");
+        } catch (JSONException ex) {
+            resp.sendError(400, "Error parsing the JSON String: " + ex.toString());
+            return;
+        }
+
+        ExportToCSVQueryTask task = new ExportToCSVQueryTask(orderedFields, resp.getOutputStream());
+
+        if (arr.isEmpty()) {
+            PluginController.getInstance().queryAll(task, queryString, fields);
+        } else {
+            List<String> providers = new ArrayList<>();
+            for (Object f : arr) {
+                providers.add(f.toString());
+            }
+            PluginController.getInstance().query(task, providers, queryString, fields);
+        }
+
+        task.await();
+
+    }
 
 }

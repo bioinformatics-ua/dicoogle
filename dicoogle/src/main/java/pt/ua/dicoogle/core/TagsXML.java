@@ -52,221 +52,165 @@ import pt.ua.dicoogle.sdk.utils.TagsStruct;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class TagsXML extends DefaultHandler
-{
+public class TagsXML extends DefaultHandler {
 
-    private TagsStruct tags = TagsStruct.getInstance() ;
-
-
-    private boolean isTags = false ;
-    private boolean isDIM = false ;
-    private boolean isTag = false ;
+    private TagsStruct tags = TagsStruct.getInstance();
 
 
-    private String tagTemp  = null ;
-    private String vr  = null ;
-    private String tagAliasTemp = null ;
+    private boolean isTags = false;
+    private boolean isDIM = false;
+    private boolean isTag = false;
 
-    private String modalities = null ;
-    private String modalityID = null ;
+
+    private String tagTemp = null;
+    private String vr = null;
+    private String tagAliasTemp = null;
+
+    private String modalities = null;
+    private String modalityID = null;
     private ArrayList<String> modalityList = new ArrayList<String>();
 
 
-    public TagsXML()
-    {
+    public TagsXML() {
 
     }
 
 
     @Override
-    public void startElement( String uri, String localName, String qName,
-            Attributes attribs )
-    {
+    public void startElement(String uri, String localName, String qName, Attributes attribs) {
 
 
 
-        if (localName.equals("Tags"))
-        {
-            isTags = true ;
-        }
-        else if( localName.equals( "DIM" ) )
-        {
+        if (localName.equals("Tags")) {
+            isTags = true;
+        } else if (localName.equals("DIM")) {
             isDIM = true;
-        }
-        else if ( localName.equals("tag") )
-        {
-            isTag = true ;
+        } else if (localName.equals("tag")) {
+            isTag = true;
             this.tagTemp = this.resolveAttrib("id", attribs, localName);
             this.tagAliasTemp = this.resolveAttrib("alias", attribs, localName);
             this.vr = this.resolveAttrib("vr", attribs, localName);
 
-        }
-        else if ( localName.equals("others"))
-        {
-        }
-         else if ( localName.equals("modalities"))
-        {
+        } else if (localName.equals("others")) {} else if (localName.equals("modalities")) {
             this.modalities = this.resolveAttrib("enable", attribs, localName);
             String indexAll = this.resolveAttrib("all", attribs, localName);
-            if (indexAll.equals("true"))
-            {
+            if (indexAll.equals("true")) {
                 tags.enableIndexAllModalities(true);
-            }
-            else if (indexAll.equals("false"))
-            {
+            } else if (indexAll.equals("false")) {
                 tags.enableIndexAllModalities(false);
-            }
-            else
-            {
+            } else {
                 tags.enableIndexAllModalities(false);
             }
 
 
 
-        }
-         else if (localName.equals("modality"))
-         {
+        } else if (localName.equals("modality")) {
 
             this.modalityID = this.resolveAttrib("id", attribs, localName);
-         }
+        }
     }
 
 
     @Override
-    public void endElement( String uri, String localName, String qName )
-    {
+    public void endElement(String uri, String localName, String qName) {
 
-        if (localName.equals("Tags"))
-        {
-            isTags = false ;
-        }
-        else if( localName.equals( "DIM" ) )
-        {
+        if (localName.equals("Tags")) {
+            isTags = false;
+        } else if (localName.equals("DIM")) {
             isDIM = false;
-        }
-        else if ( localName.equals("tag") )
-        {
+        } else if (localName.equals("tag")) {
 
             /** Verify if it is a DIM Fields */
-            if (isDIM)
-            {
-                if (this.tagTemp!= null)
-                {
-                	tags.addDIMField(new TagValue(Integer.parseInt(this.tagTemp, 16),
-                            this.tagAliasTemp));
+            if (isDIM) {
+                if (this.tagTemp != null) {
+                    tags.addDIMField(new TagValue(Integer.parseInt(this.tagTemp, 16), this.tagAliasTemp));
                 }
-            }
-            else /** Otherwise it will be inserted on OtherFields */
+            } else /** Otherwise it will be inserted on OtherFields */
             {
-              /** Verification if it a duplicate fields will be made in TagsStruct
-               And it is the reason it isn't verify outside the Module
-               */
+                /** Verification if it a duplicate fields will be made in TagsStruct
+                 And it is the reason it isn't verify outside the Module
+                 */
 
-                TagValue v =new TagValue(Integer.parseInt(this.tagTemp, 16),
-                        this.tagAliasTemp);
+                TagValue v = new TagValue(Integer.parseInt(this.tagTemp, 16), this.tagAliasTemp);
                 v.setVR(vr);
                 tags.addPrivateField(v);
             }
             isTag = false;
-        }
-        else if ( localName.equals("others"))
-        {
-        }
-         else if ( localName.equals("modalities"))
-        {
-            if (modalities.equals("true"))
-            {
+        } else if (localName.equals("others")) {} else if (localName.equals("modalities")) {
+            if (modalities.equals("true")) {
                 tags.removeAllModalities();
-                for(String modality : this.modalityList)
-                	tags.addModality(modality);
-            }
-            else
-            {
+                for (String modality : this.modalityList)
+                    tags.addModality(modality);
+            } else {
                 tags.removeAllModalities();
             }
 
-        }
-         else if (localName.equals("modality") )
-         {
+        } else if (localName.equals("modality")) {
             this.modalityList.add(this.modalityID);
-         }
+        }
     }
 
 
-   @Override
-    public void characters( char[] data, int start, int length )
-    {
-         new String(data, start, length);
+    @Override
+    public void characters(char[] data, int start, int length) {
+        new String(data, start, length);
 
 
-         if ( isTags && isDIM && isTag)
-         {
+        if (isTags && isDIM && isTag) {
 
-             //System.out.println(tag);
-             return;
-         }
+            // System.out.println(tag);
+            return;
+        }
 
 
     }
 
 
-     private String resolveAttrib( String attr, Attributes attribs, String defaultValue) {
-         String tmp = attribs.getValue(attr);
-         return (tmp!=null)?(tmp):(defaultValue);
-     }
+    private String resolveAttrib(String attr, Attributes attribs, String defaultValue) {
+        String tmp = attribs.getValue(attr);
+        return (tmp != null) ? (tmp) : (defaultValue);
+    }
 
 
-    public TagsStruct getXML() throws FileNotFoundException, SAXException, IOException
-    {
-        try
-        {
+    public TagsStruct getXML() throws FileNotFoundException, SAXException, IOException {
+        try {
             File file = new File(Platform.homePath() + "tags.xml");
-            if (!file.exists())
-            {
+            if (!file.exists()) {
                 printXML();
                 return tags;
             }
 
 
             // Never throws the exception cause file not exists so need try catch
-            InputSource src = new InputSource( new FileInputStream(file) );
+            InputSource src = new InputSource(new FileInputStream(file));
             XMLReader r = XMLReaderFactory.createXMLReader();
             r.setContentHandler(this);
             r.parse(src);
             return tags;
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ex) {
 
-        }
-        catch (SAXException ex)
-        {
+        } catch (SAXException ex) {
 
         }
         return null;
     }
 
-    public void printXML()
-    {
+    public void printXML() {
 
         FileOutputStream out = null;
-        try
-        {
+        try {
             out = new FileOutputStream(Platform.homePath() + "tags.xml");
-        } catch (FileNotFoundException ex)
-        {
+        } catch (FileNotFoundException ex) {
             LoggerFactory.getLogger(TagsXML.class).error(ex.getMessage(), ex);
         }
         PrintWriter pw = new PrintWriter(out);
         StreamResult streamResult = new StreamResult(pw);
         SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
-        //      SAX2.0 ContentHandler.
+        // SAX2.0 ContentHandler.
         TransformerHandler hd = null;
-        try
-        {
+        try {
             hd = tf.newTransformerHandler();
-        } catch (TransformerConfigurationException ex)
-        {
+        } catch (TransformerConfigurationException ex) {
             LoggerFactory.getLogger(TagsXML.class).error(ex.getMessage(), ex);
         }
         Transformer serializer = hd.getTransformer();
@@ -275,32 +219,29 @@ public class TagsXML extends DefaultHandler
         serializer.setOutputProperty(OutputKeys.INDENT, "yes");
         serializer.setOutputProperty(OutputKeys.STANDALONE, "yes");
         hd.setResult(streamResult);
-        try
-        {
+        try {
             hd.startDocument();
-        } catch (SAXException ex)
-        {
+        } catch (SAXException ex) {
             LoggerFactory.getLogger(TagsXML.class).error(ex.getMessage(), ex);
         }
 
         TagsStruct t = TagsStruct.getInstance();
         AttributesImpl atts = new AttributesImpl();
-        try
-        {
-            //String curTitle = String.valueOf(s.getPort());
-            //root element
+        try {
+            // String curTitle = String.valueOf(s.getPort());
+            // root element
             hd.startElement("", "", "Tags", atts);
 
             // DIM
             hd.startElement("", "", "DIM", atts);
 
             // tags
-            for(TagValue tag : t.getDIMFields()){            	 
-                 atts.addAttribute("", "", "id", "", tag.getTagID());
-                 atts.addAttribute("", "", "alias", "", tag.getAlias()) ;
-                 hd.startElement("", "", "tag", atts);
-                 atts.clear();
-                 hd.endElement("", "", "tag");            	
+            for (TagValue tag : t.getDIMFields()) {
+                atts.addAttribute("", "", "id", "", tag.getTagID());
+                atts.addAttribute("", "", "alias", "", tag.getAlias());
+                hd.startElement("", "", "tag", atts);
+                atts.clear();
+                hd.endElement("", "", "tag");
             }
             hd.endElement("", "", "DIM");
 
@@ -310,11 +251,10 @@ public class TagsXML extends DefaultHandler
             hd.startElement("", "", "others", atts);
 
             // tags
-            for(TagValue tag : t.getPrivateFields())
-            {
+            for (TagValue tag : t.getPrivateFields()) {
                 atts.addAttribute("", "", "id", "", tag.getTagID());
-                atts.addAttribute("", "", "alias", "", tag.getAlias()) ;
-                atts.addAttribute("", "", "vr", "", tag.getVR()) ;
+                atts.addAttribute("", "", "alias", "", tag.getAlias());
+                atts.addAttribute("", "", "vr", "", tag.getVR());
                 hd.startElement("", "", "tag", atts);
                 atts.clear();
                 hd.endElement("", "", "tag");
@@ -322,51 +262,45 @@ public class TagsXML extends DefaultHandler
             hd.endElement("", "", "others");
 
             // Modalities
-            String enable = "false" ;
+            String enable = "false";
             if (t.getModalities() != null)
                 enable = "true";
             atts.clear();
             atts.addAttribute("", "", "enable", "", enable);
-            String indexAllModalities = "false" ;
+            String indexAllModalities = "false";
             if (t.isIndexAllModalitiesEnabled())
                 indexAllModalities = "true";
-            atts.addAttribute("", "", "all", "",indexAllModalities );
+            atts.addAttribute("", "", "all", "", indexAllModalities);
             hd.startElement("", "", "modalities", atts);
 
             // tags
-           if (t.getModalities() != null){
-        	   for(String modality: t.getModalities()){
+            if (t.getModalities() != null) {
+                for (String modality : t.getModalities()) {
                     atts.addAttribute("", "", "id", "", modality);
                     hd.startElement("", "", "modality", atts);
                     atts.clear();
                     hd.endElement("", "", "modality");
                 }
-           }
+            }
 
 
             hd.endElement("", "", "modalities");
-            
-            
+
+
             hd.startElement("", "", "dictionaries", atts);
 
 
-            
-            
-            
-            
 
             hd.endElement("", "", "dictionaries");
-            
-            
+
+
             hd.endElement("", "", "Tags");
 
 
             hd.endDocument();
-        } catch (SAXException ex)
-        {
+        } catch (SAXException ex) {
             LoggerFactory.getLogger(TagsXML.class).error(ex.getMessage(), ex);
-        }
-        finally {
+        } finally {
             try {
                 out.close();
             } catch (IOException ex) {
