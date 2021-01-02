@@ -179,13 +179,16 @@ const StorageView = React.createClass({
   componentWillUnmount() {
     this.unsubscribe();
   },
-  _onChange: function (data) {
+  _onChange: function(data) {
     if (!data.success) {
-      this.props.showToastMessage("error", { title: "Error", body: data.status });
+      this.props.showToastMessage("error", {
+        title: "Error",
+        body: data.status
+      });
     } else if (!data.error && this.state.status === "done") {
       this.props.showToastMessage("success", { title: "Success" });
     }
-    
+
     this.setState({ data: data.data, status: "done" });
   },
 

@@ -37,7 +37,7 @@ const SearchResult = React.createClass({
     };
   },
 
-  getInitialState: function () {
+  getInitialState: function() {
     return {
       showExport: false,
       showDangerousOptions: DefaultOptions.showSearchOptions,
@@ -48,7 +48,7 @@ const SearchResult = React.createClass({
     };
   },
 
-  componentWillMount: function () {
+  componentWillMount: function() {
     Webcore.fetchPlugins("result-batch", packages => {
       Webcore.fetchModules(packages);
       this.setState({
@@ -71,7 +71,7 @@ const SearchResult = React.createClass({
       if (!this.state.current) this.onStepClicked(0);
     }
   },
-  _onSearchResult: function (_outcome) {
+  _onSearchResult: function(_outcome) {
     this.onStepClicked(0, true);
   },
   handleClickExport() {
@@ -98,7 +98,7 @@ const SearchResult = React.createClass({
     return this.props.searchOutcome.error;
   },
 
-  render: function () {
+  render: function() {
     const { searchOutcome } = this.props;
 
     if (this.isLoading()) {
@@ -238,19 +238,37 @@ const SearchResult = React.createClass({
     return view;
   },
 
-  onStepClicked: function (stepComponent, newData) {
-    this.setState({ current: stepComponent, maxStep: newData ? 0 : Math.max(this.state.maxStep, stepComponent) });
+  onStepClicked: function(stepComponent, newData) {
+    this.setState({
+      current: stepComponent,
+      maxStep: newData ? 0 : Math.max(this.state.maxStep, stepComponent)
+    });
   },
-  onPatientClicked: function (patient) {
-    this.setState({ current: 1, maxStep: Math.max(this.state.maxStep, 1), patient, study: null, serie: null });
+  onPatientClicked: function(patient) {
+    this.setState({
+      current: 1,
+      maxStep: Math.max(this.state.maxStep, 1),
+      patient,
+      study: null,
+      serie: null
+    });
   },
-  onStudyClicked: function (study) {
-    this.setState({ current: 2, maxStep: Math.max(this.state.maxStep, 2), study, serie: null });
+  onStudyClicked: function(study) {
+    this.setState({
+      current: 2,
+      maxStep: Math.max(this.state.maxStep, 2),
+      study,
+      serie: null
+    });
   },
-  onSeriesClicked: function (serie) {
-    this.setState({ current: 3, maxStep: Math.max(this.state.maxStep, 3), serie });
+  onSeriesClicked: function(serie) {
+    this.setState({
+      current: 3,
+      maxStep: Math.max(this.state.maxStep, 3),
+      serie
+    });
   },
-  toggleAdvOpt: function () {
+  toggleAdvOpt: function() {
     this.setState({ showDangerousOptions: !this.state.showDangerousOptions });
   }
 });
@@ -260,9 +278,9 @@ const Step = React.createClass({
     current: PropTypes.number.isRequired,
     maxStep: PropTypes.number.isRequired,
     counters: PropTypes.arrayOf(PropTypes.number).isRequired,
-    onClick: PropTypes.func.isRequired,
+    onClick: PropTypes.func.isRequired
   },
-  render: function () {
+  render: function() {
     const {
       current,
       counters: [nPatients, nStudies, nSeries, nImages]
@@ -325,12 +343,12 @@ const Step = React.createClass({
       </div>
     );
   },
-  getStep: function (current, step) {
+  getStep: function(current, step) {
     if (step === current) return "col-xs-3 wizardbar-item current";
     else if (step > current) return "col-xs-3 wizardbar-item disabled";
     else if (step < current) return "col-xs-3 wizardbar-item completed";
   },
-  onStepClicked: function (newStep) {
+  onStepClicked: function(newStep) {
     console.log(`onStepClicked(${newStep}, max = ${this.props.maxStep})`);
     // only allow moving to this step if the user had moved to it before
     if (this.props.maxStep >= newStep) {

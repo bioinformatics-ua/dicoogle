@@ -36,7 +36,10 @@ const PluginsView = React.createClass({
       });
 
       if (this.state.error) {
-        this.props.showToastMessage("error", { title: "Error", body: this.state.error });
+        this.props.showToastMessage("error", {
+          title: "Error",
+          body: this.state.error
+        });
       } else {
         this.props.showToastMessage("success", { title: "Saved" });
       }
