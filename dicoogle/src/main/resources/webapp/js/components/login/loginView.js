@@ -1,7 +1,7 @@
 import React from "react";
 import * as UserActions from "../../actions/userActions";
 import UserStore from "../../stores/userStore";
-import {Panel} from "react-bootstrap";
+import { Panel } from "react-bootstrap";
 
 const LoginView = React.createClass({
   contextTypes: {
@@ -101,7 +101,6 @@ const LoginView = React.createClass({
                 {guestCredentials}
               </form>
             </div>
-
           </section>
 
           {/*to fill the empty space between the login and footer*/}
@@ -109,11 +108,16 @@ const LoginView = React.createClass({
 
           <footer id="footer">
             <div style={{ width: "100%", textAlign: "center" }}>
-              For commercial support, contact
-              <a target="_new" href="http://www.bmd-software.com">{" "}
-                BMD Software
+              Community information and Learning Pack available on the{" "}
+              <a target="_new" href="http://www.dicoogle.com">
+                {" "}
+                the Dicoogle website
               </a>.{" "}
-              For community information go to <a target="_new" href="http://www.dicoogle.com"> the Dicoogle website</a>  .
+              Commercial support, by
+              <a target="_new" href="http://www.bmd-software.com">
+                {" "}
+                BMD Software
+              </a>.
             </div>
             <div
               style={{ width: "100%", textAlign: "center" }}
