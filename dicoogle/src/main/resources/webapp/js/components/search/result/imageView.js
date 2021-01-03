@@ -57,7 +57,7 @@ const ImageView = createReactClass({
     return this.formatGlobal(item.sopInstanceUID, item);
   },
   _preloader: function() {
-    return <img src="spinner.gif" />;
+    return <div className="loader-inner ball-pulse" />;
   },
   formatThumbUrl: function(cell, item) {
     let self = this;
