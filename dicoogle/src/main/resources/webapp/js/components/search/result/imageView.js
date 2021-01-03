@@ -368,7 +368,7 @@ var PopOverView = createReactClass({
     if (this.state.data === null) {
       return (
         <Modal
-          {...this.props}
+          onHide={this.props.onHide}
           show={this.props.uid !== null}
           bsStyle="primary"
           title="Image Dump"
