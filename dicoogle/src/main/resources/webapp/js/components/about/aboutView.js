@@ -30,18 +30,21 @@ const AboutView = createReactClass({
           <Panel.Heading>
             <h4>Dicoogle, version {versionNumber}</h4>
           </Panel.Heading>
-          Dicoogle is an open source medical imaging repository with an
-          extensible indexing system and distributed mechanisms. Our solution
-          can be used as a PACS archive, or as a client for reading your PACS
-          archive file system, thus allowing you to do PACS mining. Moreover, it
-          can be easily extended with your own pluggable components. At present,
-          we have already indexed around 22 million DICOM images, and this
-          number tends to increase. There are several researchers working to
-          evaluate and improve the quality of medical records, and Dicoogle has
-          contributed to many of such case studies.
+          Dicoogle is an open-source PACS archive software that replaces the
+          traditional database model with an extensible indexing and retrieval
+          framework and provides easy expansion of functionalities through the
+          use of plug-ins. It was designed to accommodate automatic information
+          extraction, indexing, and storage of all meta-data detected in medical
+          images, without re-engineering or reconfiguration requirements, thus
+          overcoming the limitations of traditional DICOM query services. By
+          presenting the technical assets for plugin development such as a
+          Software Development Kit (SDK), developers are free to expand the
+          archive independently and non-exclusively, without changes to the core
+          platform. This extensible architecture of Dicoogle has enabled its use
+          in research and the healthcare industry, as many use cases can be
+          fulfilled in the same deployment.
           <br />
         </Panel>
-
         <Panel bsStyle="primary">
           <Panel.Heading>
             <h4>Main third party components</h4>
@@ -88,7 +91,10 @@ const AboutView = createReactClass({
           </Panel.Heading>
           As an open source software, Dicoogle can accept contributions from
           developers around the world. Dicoogle OSS is led and supported by
-          Bioinformatics UA and BMD Software. Please check{" "}
+          Bioinformatics UA and{" "}
+          <a target="_new" href="http://www.bmd-software.com">
+            BMD Software
+          </a>. Please check{" "}
           <a target="_new" href="http://www.dicoogle.com">
             the Dicoogle website
           </a>{" "}
@@ -100,7 +106,7 @@ const AboutView = createReactClass({
             GitHub repository
           </a>{" "}
           for more information.
-          <div style={{ }}>
+          <div>
             <a href="https://bioinformatics.ua.pt">
               <img
                 src="assets/logos/logobio.png"
