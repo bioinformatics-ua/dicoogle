@@ -1,4 +1,6 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import createReactClass from "create-react-class";
+import * as PropTypes from "prop-types";
 
 import { PatientView } from "./result/patientView";
 import { StudyView } from "./result/studyView";
@@ -10,7 +12,7 @@ import PluginForm from "../plugin/pluginForm.jsx";
 import { DefaultOptions } from "../../constants/defaultOptions";
 import { SearchStore } from "../../stores/searchStore";
 
-const SearchResult = React.createClass({
+const SearchResult = createReactClass({
   propTypes: {
     requestedQuery: PropTypes.shape({
       text: PropTypes.string,
@@ -273,7 +275,7 @@ const SearchResult = React.createClass({
   }
 });
 
-const Step = React.createClass({
+const Step = createReactClass({
   propTypes: {
     current: PropTypes.number.isRequired,
     maxStep: PropTypes.number.isRequired,

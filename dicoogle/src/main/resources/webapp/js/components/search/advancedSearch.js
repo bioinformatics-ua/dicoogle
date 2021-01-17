@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import createReactClass from "create-react-class";
 import { SearchStore } from "../../stores/searchStore";
 import { ActionCreators } from "../../actions/searchActions";
 import { SearchResult } from "./searchResult";
@@ -8,7 +9,7 @@ import { SearchResult } from "./searchResult";
 // - it should not perform React renders
 // - it should delegate the actual search to the parent component
 
-const AdvancedSearch = React.createClass({
+const AdvancedSearch = createReactClass({
   getInitialState: function() {
     return { label: "login" };
   },

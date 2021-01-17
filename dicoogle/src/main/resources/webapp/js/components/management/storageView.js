@@ -1,4 +1,5 @@
 import React from "react";
+import createReactClass from "create-react-class";
 
 import { StorageActions } from "../../actions/storageActions";
 import { StorageStore } from "../../stores/storageStore";
@@ -12,7 +13,7 @@ import {
   HelpBlock
 } from "react-bootstrap";
 
-const AddStorageModal = React.createClass({
+const AddStorageModal = createReactClass({
   getInitialState() {
     return {
       aetitle: "",
@@ -161,7 +162,7 @@ const AddStorageModal = React.createClass({
   }
 });
 
-const StorageView = React.createClass({
+const StorageView = createReactClass({
   getInitialState: function() {
     return {
       data: [],

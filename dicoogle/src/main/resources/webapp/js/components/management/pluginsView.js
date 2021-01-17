@@ -1,8 +1,9 @@
 import React from "react";
+import createReactClass from "create-react-class";
 import * as PluginActions from "../../actions/pluginActions";
 import PluginStore from "../../stores/pluginStore";
 
-const PluginsView = React.createClass({
+const PluginsView = createReactClass({
   getInitialState() {
     return {
       plugins: {},

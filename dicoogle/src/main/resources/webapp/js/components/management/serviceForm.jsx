@@ -1,4 +1,5 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import * as PropTypes from "prop-types";
 import { FormGroup, FormControl } from "react-bootstrap";
 
 export default class ServiceForm extends React.Component {

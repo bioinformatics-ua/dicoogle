@@ -1,9 +1,10 @@
 import React from "react";
+import createReactClass from "create-react-class";
 
 import { TransferStore } from "../../stores/transferStore";
 import { TransferActions } from "../../actions/transferActions";
 
-const TransferOptionsView = React.createClass({
+const TransferOptionsView = createReactClass({
   getInitialState() {
     this.selectAllOn = true;
     return {

@@ -1,16 +1,22 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import * as PropTypes from "prop-types";
 
-const LoadingView = React.createClass({
-  contextTypes: {
-    router: PropTypes.object.isRequired
-  },
-  getInitialState: function() {
+class LoadingView extends React.Component {
+  static get contextTypes() {
     return {
+      router: PropTypes.object.isRequired
+    };
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
       data: {},
       status: "loading"
     };
-  },
-  render: function() {
+  }
+
+  render() {
     return (
       <div
         id="loginwrapper"
@@ -43,6 +49,6 @@ const LoadingView = React.createClass({
       </div>
     );
   }
-});
+}
 
 export default LoadingView;

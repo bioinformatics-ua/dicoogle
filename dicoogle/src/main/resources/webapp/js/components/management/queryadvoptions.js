@@ -1,9 +1,10 @@
 import React from "react";
+import createReactClass from "create-react-class";
 import { Button, Modal } from "react-bootstrap";
 import ServiceAction from "../../actions/servicesAction";
 import ServicesStore from "../../stores/servicesStore";
 
-const QueryAdvancedOptionsModal = React.createClass({
+const QueryAdvancedOptionsModal = createReactClass({
   getInitialState: function() {
     return {
       acceptTimeout: "...",

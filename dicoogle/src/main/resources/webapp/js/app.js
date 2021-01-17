@@ -1,12 +1,13 @@
 import "../sass/dicoogle.scss";
-import React, { PropTypes } from "react";
+import React from "react";
+import * as PropTypes from "prop-types";
 import ReactDOM from "react-dom";
 import Sidebar from "./components/sidebar";
 import { Endpoints } from "./constants/endpoints";
 import dicoogleClient from "dicoogle-client";
 import Webcore from "dicoogle-webcore";
 
-import { Router, Route, IndexRoute } from "react-router";
+import { Router, Route, IndexRoute, hashHistory } from "react-router";
 
 import { Search } from "./components/search/searchView";
 import { SearchResultView } from "./components/search/searchResultView";
@@ -18,7 +19,6 @@ import PluginView from "./components/plugin/pluginView";
 import AboutView from "./components/about/aboutView";
 import LoadingView from "./components/login/loadingView";
 import LoginView from "./components/login/loginView";
-import { hashHistory /*, browserHistory*/ } from "react-router";
 import * as UserActions from "./actions/userActions";
 import UserStore from "./stores/userStore";
 
@@ -30,7 +30,7 @@ class App extends React.Component {
   static get contextTypes() {
     return {
       router: PropTypes.object.isRequired,
-      location: React.PropTypes.object
+      location: PropTypes.object
     };
   }
 
@@ -93,7 +93,7 @@ class App extends React.Component {
     }
 
     if (this.props.location.pathname === "/") {
-      this.props.history.pushState(null, "login");
+      this.props.router.push("login");
     }
   }
 
@@ -106,7 +106,7 @@ class App extends React.Component {
 
     if (!data.isLoggedIn) {
       if (!process.env.GUEST_USERNAME) {
-        this.props.router.push("login");
+        this.props.router.replace("login");
       } else {
         if (!data.loginFailed) {
           this.props.router.push("loading");
@@ -186,10 +186,10 @@ class App extends React.Component {
             src="assets/logo-light-blue.png"
             id="webapp-logo-light"
           />
-          <div className="pull-right" bsStyle="padding:15px">
+          <div className="pull-right">
             <span
               className="user-name usernameLogin"
-              bsStyle="padding-right:10px"
+              style={{ paddingRight: "0.5em" }}
             >
               {UserStore.getUsername()}
             </span>

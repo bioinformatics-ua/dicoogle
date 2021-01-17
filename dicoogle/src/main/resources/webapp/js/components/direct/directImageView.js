@@ -1,10 +1,12 @@
 import React from "react";
+import createReactClass from "create-react-class";
+import * as PropTypes from "prop-types";
 import { getUrlVars } from "../../utils/url";
 import { Endpoints } from "../../constants/endpoints";
 
-export const DirectImageView = React.createClass({
+export const DirectImageView = createReactClass({
   propTypes: {
-    params: React.PropTypes.object.isRequired
+    params: PropTypes.object.isRequired
   },
 
   getInitialState: function() {

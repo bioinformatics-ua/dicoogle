@@ -1,7 +1,8 @@
 import React from "react";
+import createReactClass from "create-react-class";
 import { Transition } from "react-transition-group";
 
-const ToastView = React.createClass({
+const ToastView = createReactClass({
   render() {
     let { message, duration, toastType } = this.props;
 

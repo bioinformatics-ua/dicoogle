@@ -1,4 +1,5 @@
 import React from "react";
+import createReactClass from "create-react-class";
 import { SearchStore } from "../../../stores/searchStore";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 
@@ -10,7 +11,7 @@ import ResultSelectActions from "../../../actions/resultSelectAction";
 
 import UserStore from "../../../stores/userStore";
 
-const StudyView = React.createClass({
+const StudyView = createReactClass({
   getInitialState: function() {
     // We need this because refs are not updated in BootstrapTable.
     this.refsClone = {};

@@ -1,11 +1,11 @@
 import React from "react";
+import createReactClass from "create-react-class";
 
 import { IndexerStore } from "../../stores/indexerStore";
 import { IndexerActions } from "../../actions/indexerActions";
 import { saveIndexOptions } from "../../handlers/requestHandler";
-import { ToastView } from "../mixins/toastView";
 
-const ConfigurationEntry = React.createClass({
+const ConfigurationEntry = createReactClass({
   render() {
     return (
       <li className="list-group-item list-group-item-management">
@@ -18,7 +18,7 @@ const ConfigurationEntry = React.createClass({
   }
 });
 
-const IndexerView = React.createClass({
+const IndexerView = createReactClass({
   getInitialState: function() {
     return {
       data: {

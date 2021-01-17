@@ -12,24 +12,25 @@ var React = require('react');
 // bundled dependencies
 var Reactable = require('reactable');
 
-var ResultTable = React.createClass({
-  getInitialState: function() {
-    return {
+class ResultTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       results : [],
       resultNum: null,
       requestTime: 0
     };
-  },
-  onChange: function(e) {
+  }
+  onChange(e) {
     //this.setState({text: e.target.value});
-  },
-  shouldComponentUpdate: function(nextProps, nextState) {
+  }
+  shouldComponentUpdate(nextProps, nextState) {
     return nextProps.id !== this.props.id ||
       (nextState.requestTime - this.state.requestTime) > 0;
-  },
-  componentWillUpdate: function(nextProps, nextState) {
-  },
-  render: function() {
+  }
+  componentWillUpdate(nextProps, nextState) {
+  }
+  render() {
     var Table = Reactable.Table;
     return (
         <div>
@@ -37,7 +38,7 @@ var ResultTable = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = function() {
     var resultTable;
