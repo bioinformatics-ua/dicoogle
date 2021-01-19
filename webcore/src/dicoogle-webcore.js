@@ -244,7 +244,7 @@ export const updateSlot = m.updateSlot;
         console.error('Failed to fetch plugin descriptors:' , error);
         return;
       }
-      var packageArray = data.body.plugins;
+      var packageArray = data.plugins;
       for (let i = 0; i < packageArray.length; i++) {
         if (!packages[packageArray[i].name]) {
           packages[packageArray[i].name] = packageArray[i];
@@ -482,7 +482,7 @@ export const webUISlot = m.webUISlot;
    */
   function service_get(uri, qs, callback) {
     // issue request
-    Dicoogle.request('GET', uri, qs).then((x) => callback(null, x), callback);
+    Dicoogle.request('GET', uri, qs).then((x) => callback(null, x.body), callback);
   }
   
   function getScript(moduleName, callback) {
