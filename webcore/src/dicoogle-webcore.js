@@ -482,7 +482,7 @@ export const webUISlot = m.webUISlot;
    */
   function service_get(uri, qs, callback) {
     // issue request
-    Dicoogle.request('GET', uri, qs, callback);
+    Dicoogle.request('GET', uri, qs).then((x) => callback(null, x.body), callback);
   }
   
   function getScript(moduleName, callback) {
@@ -505,7 +505,7 @@ export const webUISlot = m.webUISlot;
   }
 
   // custom element definitions
-  export const HTMLDicoogleSlotElement = customElements.define('dicoogle-slot', class HTMLDicoogleSlotElement extends HTMLDivElement {
+  export const HTMLDicoogleSlotElement = customElements.define('dicoogle-slot', class HTMLDicoogleSlotElement extends HTMLElement  {
         constructor() {
           super();
         }
