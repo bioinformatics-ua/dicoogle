@@ -136,14 +136,14 @@ public class RSIStorage extends StorageService
 
             nc.setPort(settings.getStoragePort());
             this.nae.setInstalled(true);
-            this.nc.setMaxScpAssociations(Integer.parseInt(System.getProperty("dicoogle.cstore.dimseRspTimeout", "50")));
+            this.nc.setMaxScpAssociations(Integer.parseInt(System.getProperty("dicoogle.cstore.maxScpAssociations", "50")));
             this.nc.setAcceptTimeout(Integer.parseInt(System.getProperty("dicoogle.cstore.acceptTimeout", "5000")));
             this.nc.setConnectTimeout(Integer.parseInt(System.getProperty("dicoogle.cstore.connectTimeout", "5000")));
 
 
             this.nae.setAssociationAcceptor(true);
             this.nae.setAssociationInitiator(false);
-            
+
             ServerSettings s  = ServerSettings.getInstance();
             this.nae.setDimseRspTimeout(Integer.parseInt(System.getProperty("dicoogle.cstore.dimseRspTimeout", "18000000")));
             //
