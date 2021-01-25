@@ -169,7 +169,6 @@ public class RSIStorage extends StorageService
                 nae2.setIdleTimeout(Integer.parseInt(System.getProperty("dicoogle.cstore.idleTimeout", "18000000")));
                 nae2.setMaxPDULengthReceive(s.getMaxPDULengthReceive()+Integer.parseInt(System.getProperty("dicoogle.cstore.appendMaxPDU", "1000")));
                 nae2.setRetrieveRspTimeout(Integer.parseInt(System.getProperty("dicoogle.cstore.retrieveRspTimeout", "18000000")));
-                nae2.setRetrieveRspTimeout(Integer.parseInt(System.getProperty("dicoogle.cstore.retrieveRspTimeout", "18000000")));
                 //we accept assoociations, this is a server
                 nae2.setAssociationAcceptor(true);
                 //we support the VerificationServiceSOP
