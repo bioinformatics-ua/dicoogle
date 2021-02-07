@@ -112,13 +112,12 @@ const StudyView = createReactClass({
   },
   handleSelect(item) {
     let { studyInstanceUID } = item;
-    // ResultSelectActions.select(item);
     let value = this.refsClone[studyInstanceUID].checked;
     if (value) ResultSelectActions.select(item, studyInstanceUID);
     else ResultSelectActions.unSelect(item, studyInstanceUID);
   },
-  handleRefs: function(id, input) {	
-    this.refsClone[id] = input;	
+  handleRefs: function(id, input) {
+    this.refsClone[id] = input;
   },
   formatSelect: function(cell, item) {
     let { studyInstanceUID } = item;

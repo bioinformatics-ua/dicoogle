@@ -121,13 +121,12 @@ const SeriesView = createReactClass({
 
   handleSelect(item) {
     let { serieInstanceUID } = item;
-    // ResultSelectActions.select(item);
     let value = this.refsClone[serieInstanceUID].checked;
     if (value) ResultSelectActions.select(item, serieInstanceUID);
     else ResultSelectActions.unSelect(item, serieInstanceUID);
   },
-  handleRefs: function(id, input) {	
-    this.refsClone[id] = input;	
+  handleRefs: function(id, input) {
+    this.refsClone[id] = input;
   },
   formatSelect: function(cell, item) {
     let { serieInstanceUID } = item;

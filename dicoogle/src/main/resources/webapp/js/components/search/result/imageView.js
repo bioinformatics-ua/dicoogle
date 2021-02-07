@@ -150,12 +150,11 @@ const ImageView = createReactClass({
     }
     return <div />;
   },
-  handleRefs: function(id, input) {	
-    this.refsClone[id] = input;	
+  handleRefs: function(id, input) {
+    this.refsClone[id] = input;
   },
   handleSelect(item) {
     let { sopInstanceUID } = item;
-    // ResultSelectActions.select(item);
     let value = this.refsClone[sopInstanceUID].checked;
     if (value) ResultSelectActions.select(item, sopInstanceUID);
     else ResultSelectActions.unSelect(item, sopInstanceUID);
