@@ -122,10 +122,13 @@ const PatientView = createReactClass({
   },
   handleSelect(item) {
     let { id } = item;
-    ResultSelectActions.select(item);
+    // ResultSelectActions.select(item);
     let value = this.refsClone[id].checked;
     if (value) ResultSelectActions.select(item, id);
     else ResultSelectActions.unSelect(item, id);
+  },
+  handleRefs: function(id, input) {	
+    this.refsClone[id] = input;	
   },
   formatSelect: function(cell, item) {
     let { id } = item;
@@ -135,7 +138,7 @@ const PatientView = createReactClass({
         <Checkbox
           label=""
           onChange={this.handleSelect.bind(this, item)}
-          inputRef={ref => this.refsClone[id] = ref}
+          inputRef={this.handleRefs.bind(this, id)}
         />
       </div>
     );

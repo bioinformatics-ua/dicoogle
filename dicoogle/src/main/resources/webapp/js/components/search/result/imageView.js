@@ -150,7 +150,9 @@ const ImageView = createReactClass({
     }
     return <div />;
   },
-
+  handleRefs: function(id, input) {	
+    this.refsClone[id] = input;	
+  },
   handleSelect(item) {
     let { sopInstanceUID } = item;
     // ResultSelectActions.select(item);
@@ -166,7 +168,7 @@ const ImageView = createReactClass({
         <Checkbox
           label=""
           onChange={this.handleSelect.bind(this, item)}
-          inputRef={ref => this.refsClone[sopInstanceUID] = ref}
+          inputRef={this.handleRefs.bind(this, sopInstanceUID)}
         />
       </div>
     );
