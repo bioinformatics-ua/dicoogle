@@ -1,5 +1,4 @@
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>dicoogle-sdk</artifactId>
@@ -10,7 +9,7 @@
     <parent>
         <groupId>pt.ua.ieeta</groupId>
         <artifactId>dicoogle-all</artifactId>
-        <version>3.0.1-SNAPSHOT</version>
+        <version>3.0.1-POI-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -20,8 +19,8 @@
 
     <repositories>
         <repository>
-            <id>mavencentral</id>
-            <url>http://repo1.maven.org/maven2/</url>
+            <id>central</id>
+            <url>https://maven.aliyun.com/repository/public</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
@@ -31,7 +30,7 @@
             <id>mi</id>
             <url>http://bioinformatics.ua.pt/maven/content/repositories/mi</url>
             <snapshots>
-                <enabled>false</enabled>
+                <enabled>true</enabled>
             </snapshots>
         </repository>
 
@@ -230,17 +229,4 @@
         </dependency>
     </dependencies>
 
-    <distributionManagement>
-        <!-- Versioned releases are published to the releases repository -->
-        <repository>
-            <id>mi</id>
-            <url>http://bioinformatics.ua.pt/maven/content/repositories/mi</url>
-        </repository>
-
-        <!-- Snapshot releases are published to the snapshots repository -->
-        <snapshotRepository>
-            <id>mi</id>
-            <url>http://bioinformatics.ua.pt/maven/content/repositories/mi-snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
 </project>

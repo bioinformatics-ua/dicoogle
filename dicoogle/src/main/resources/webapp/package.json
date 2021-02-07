@@ -91,6 +91,7 @@
     "webpack-merge": "^4.2.2"
   },
   "scripts": {
+    "dev": "DICOOGLE_BASE_URL=http://localhost:8080 webpack-dev-server --open --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
     "start": "webpack-dev-server --open --config webpack.dev.js",
     "precommit": "lint-staged",

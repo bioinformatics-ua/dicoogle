@@ -48,13 +48,11 @@ import org.dcm4che2.net.TransferCapability;
 import org.dcm4che2.net.service.StorageService;
 import org.dcm4che2.net.service.VerificationService;
 
-
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.IndexerInterface;
 import pt.ua.dicoogle.sdk.StorageInterface;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
-
 
 /**
  * DICOM Storage Service is provided by this class
@@ -65,11 +63,37 @@ import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
 public class DicomStorage extends StorageService {
 
+    public class PoiDicomDevice extends Device {
+        /**
+         * Constructor which sets the name of this device.
+         * 
+         * @param deviceName String
+         */
+        public PoiDicomDevice(String deviceName) {
+            super(deviceName);
+        }
+
+        /**
+         * Get a specific <code>NetworkApplicationEntity</code> object by it's AE title.
+         * 
+         * @param aet A String containing the AE title.
+         * @return The <code>NetworkApplicationEntity</code> corresponding to the aet parameter.
+         */
+        @Override
+        public NetworkApplicationEntity getNetworkApplicationEntity(String aet) {
+            NetworkApplicationEntity[] naes = this.getNetworkApplicationEntity();
+            if (naes.length >= 1) {
+                return naes[0];
+            }
+            return null;
+        }
+    }
+
     private SOPList list;
     private ServerSettings settings;
 
     private Executor executor = new NewThreadExecutor("DicoogleStorage");
-    private Device device = new Device("DicoogleStorage");
+    private Device device = new PoiDicomDevice("DicoogleStorage");
     private NetworkApplicationEntity nae = new NetworkApplicationEntity();
     private NetworkConnection nc = new NetworkConnection();
 
@@ -89,7 +113,7 @@ public class DicomStorage extends StorageService {
     /**
      *
      * @param Services List of supported SOP Classes
-     * @param l list of Supported SOPClasses with supported Transfer Syntax
+     * @param l        list of Supported SOPClasses with supported Transfer Syntax
      */
 
     public DicomStorage(String[] Services, SOPList l) {
@@ -125,16 +149,14 @@ public class DicomStorage extends StorageService {
 
         nae.setAETitle(settings.getDicomServicesSettings().getAETitle());
 
-
         nc.setPort(settings.getDicomServicesSettings().getStorageSettings().getPort());
-
 
         this.nae.setInstalled(true);
         this.nae.setAssociationAcceptor(true);
         this.nae.setAssociationInitiator(false);
 
-        int maxPDULengthReceive =
-                settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthReceive();
+        int maxPDULengthReceive = settings.getDicomServicesSettings().getQueryRetrieveSettings()
+                .getMaxPDULengthReceive();
         int maxPDULengthSend = settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthSend();
 
         ServerSettings s = ServerSettingsManager.getSettings();
@@ -143,7 +165,6 @@ public class DicomStorage extends StorageService {
         this.nae.setMaxPDULengthReceive(maxPDULengthReceive + 1000);
         this.nae.setMaxPDULengthSend(maxPDULengthSend + 1000);
         this.nae.setRetrieveRspTimeout(60000 * 300);
-
 
         // Added alternative AETitles.
 
@@ -183,19 +204,19 @@ public class DicomStorage extends StorageService {
         // Just set the Network Application Entity array - which accepts a set of AEs.
         device.setNetworkApplicationEntity(naeArr);
 
-
         initTS(Services);
     }
 
     /**
-     *  Sets the tranfer capability for this execution of the storage service
-     *  @param Services Services to be supported
+     * Sets the tranfer capability for this execution of the storage service
+     * 
+     * @param Services Services to be supported
      */
     private void initTS(String[] Services) {
         int count = list.getAccepted();
         // System.out.println(count);
         TransferCapability[] tc = new TransferCapability[count + 1];
-        String[] Verification = {UID.ImplicitVRLittleEndian, UID.ExplicitVRLittleEndian, UID.ExplicitVRBigEndian};
+        String[] Verification = { UID.ImplicitVRLittleEndian, UID.ExplicitVRLittleEndian, UID.ExplicitVRBigEndian };
         String[] TS;
         TransfersStorage local;
 
@@ -224,16 +245,15 @@ public class DicomStorage extends StorageService {
 
     @Override
     /**
-     * Called when a C-Store Request has been accepted
-     * Parameters defined by dcm4che2
+     * Called when a C-Store Request has been accepted Parameters defined by dcm4che2
      */
     public void cstore(final Association as, final int pcid, DicomObject rq, PDVInputStream dataStream, String tsuid)
             throws DicomServiceException, IOException {
         // DebugManager.getSettings().debug(":: Verify Permited AETs @??C-Store Request ");
 
         boolean permited = false;
-        Collection<String> allowedAETitles =
-                ServerSettingsManager.getSettings().getDicomServicesSettings().getAllowedAETitles();
+        Collection<String> allowedAETitles = ServerSettingsManager.getSettings().getDicomServicesSettings()
+                .getAllowedAETitles();
         if (allowedAETitles.isEmpty()) {
             permited = true;
         } else {
@@ -256,9 +276,8 @@ public class DicomStorage extends StorageService {
 
     @Override
     /**
-     * Actually do the job of saving received file on disk
-     * on this server with extras such as Lucene indexing
-     * and DICOMDIR update
+     * Actually do the job of saving received file on disk on this server with extras such as Lucene
+     * indexing and DICOMDIR update
      */
     protected void onCStoreRQ(Association as, int pcid, DicomObject rq, PDVInputStream dataStream, String tsuid,
             DicomObject rsp) throws IOException, DicomServiceException {
@@ -291,8 +310,8 @@ public class DicomStorage extends StorageService {
     }
 
     /**
-     * ImageElement is a entry of a C-STORE. For Each C-STORE RQ
-     * an ImageElement is created and are put in the queue to index.
+     * ImageElement is a entry of a C-STORE. For Each C-STORE RQ an ImageElement is created and are put
+     * in the queue to index.
      *
      * This only happens after the store in Storage Plugins.
      *
@@ -329,7 +348,6 @@ public class DicomStorage extends StorageService {
         }
     }
 
-
     class Indexer extends Thread {
         public Collection<IndexerInterface> plugins;
 
@@ -351,26 +369,22 @@ public class DicomStorage extends StorageService {
         }
     }
 
-
     private String getFullPath(DicomObject d) {
 
         return getDirectory(d) + File.separator + getBaseName(d);
 
     }
 
-
     private String getFullPathCache(String dir, DicomObject d) {
         return dir + File.separator + getBaseName(d);
 
     }
-
 
     private String getBaseName(DicomObject d) {
         String result = "UNKNOWN.dcm";
         String sopInstanceUID = d.getString(Tag.SOPInstanceUID);
         return sopInstanceUID + ".dcm";
     }
-
 
     private String getDirectory(DicomObject d) {
 
@@ -390,7 +404,6 @@ public class DicomStorage extends StorageService {
         institutionName = institutionName.replace(" ", "");
         institutionName = institutionName.replace(".", "");
         institutionName = institutionName.replace("&", "");
-
 
         if (modality == null || modality.equals("")) {
             modality = "UN_MODALITY";
@@ -442,6 +455,7 @@ public class DicomStorage extends StorageService {
 
     /*
      * Start the Storage Service
+     * 
      * @throws java.io.IOException
      */
     public void start() throws IOException {
@@ -450,11 +464,10 @@ public class DicomStorage extends StorageService {
         device.startListening(executor);
         indexer.start();
 
-
     }
 
     /**
-     * Stop the storage service 
+     * Stop the storage service
      */
     public void stop() {
         this.pool.shutdown();
