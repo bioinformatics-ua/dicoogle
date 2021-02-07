@@ -134,10 +134,11 @@ const SearchResult = createReactClass({
     const pluginButtons = this.state.batchPlugins.map(plugin => (
       <button
         key={plugin.name}
-        className="btn btn_dicoogle fa dicoogle-webcore-result-batch-button"
+        className="btn btn_dicoogle dicoogle-webcore-result-batch-button"
         onClick={this.handleClickBatchPluginButton.bind(this, plugin)}
-      >
-        {plugin.caption}
+      > 
+        <i className="fa fa-plug" />
+        {" "} {plugin.caption}
       </button>
     ));
 
