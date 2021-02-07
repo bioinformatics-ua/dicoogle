@@ -122,12 +122,9 @@ const SeriesView = createReactClass({
   handleSelect(item) {
     let { serieInstanceUID } = item;
     // ResultSelectActions.select(item);
-    let value = this.refsClone[serieInstanceUID].getChecked();
+    let value = this.refsClone[serieInstanceUID].checked;
     if (value) ResultSelectActions.select(item, serieInstanceUID);
     else ResultSelectActions.unSelect(item, serieInstanceUID);
-  },
-  handleRefs: function(id, input) {
-    this.refsClone[id] = input;
   },
   formatSelect: function(cell, item) {
     let { serieInstanceUID } = item;
@@ -137,7 +134,7 @@ const SeriesView = createReactClass({
         <Checkbox
           label=""
           onChange={this.handleSelect.bind(this, item)}
-          ref={this.handleRefs.bind(this, serieInstanceUID)}
+          inputRef={ref => this.refsClone[serieInstanceUID] = ref}
         />
       </div>
     );

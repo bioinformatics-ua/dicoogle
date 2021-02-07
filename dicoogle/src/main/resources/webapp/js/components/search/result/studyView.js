@@ -113,12 +113,9 @@ const StudyView = createReactClass({
   handleSelect(item) {
     let { studyInstanceUID } = item;
     // ResultSelectActions.select(item);
-    let value = this.refsClone[studyInstanceUID].getChecked();
+    let value = this.refsClone[studyInstanceUID].checked;
     if (value) ResultSelectActions.select(item, studyInstanceUID);
     else ResultSelectActions.unSelect(item, studyInstanceUID);
-  },
-  handleRefs: function(id, input) {
-    this.refsClone[id] = input;
   },
   formatSelect: function(cell, item) {
     let { studyInstanceUID } = item;
@@ -128,7 +125,7 @@ const StudyView = createReactClass({
         <Checkbox
           label=""
           onChange={this.handleSelect.bind(this, item)}
-          ref={this.handleRefs.bind(this, studyInstanceUID)}
+          inputRef={ref => this.refsClone[studyInstanceUID] = ref}
         />
       </div>
     );
