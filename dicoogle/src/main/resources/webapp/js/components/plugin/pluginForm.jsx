@@ -1,8 +1,7 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 import { ResultsSelected } from "../../stores/resultSelected";
-import dicoogleClient from "dicoogle-client";
-const Dicoogle = dicoogleClient();
+import Webcore from "dicoogle-webcore";
 
 export default class PluginForm extends React.Component {
   static get propTypes() {
@@ -38,7 +37,8 @@ export default class PluginForm extends React.Component {
       const node = component;
       node.data = this.props.data;
       node.addEventListener("hide", this.handleHideSignal);
-      Dicoogle.emitSlotSignal(
+
+      Webcore.emitSlotSignal(
         node,
         "result-selection-ready",
         ResultsSelected.get()

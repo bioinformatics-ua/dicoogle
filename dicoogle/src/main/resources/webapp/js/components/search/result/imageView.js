@@ -150,16 +150,14 @@ const ImageView = createReactClass({
     }
     return <div />;
   },
-
-  handleSelect(item) {
-    let { sopInstanceUID } = item;
-    // ResultSelectActions.select(item);
-    let value = this.refsClone[sopInstanceUID].getChecked();
-    if (value) ResultSelectActions.select(item, sopInstanceUID);
-    else ResultSelectActions.unSelect(item, sopInstanceUID);
-  },
   handleRefs: function(id, input) {
     this.refsClone[id] = input;
+  },
+  handleSelect(item) {
+    let { sopInstanceUID } = item;
+    let value = this.refsClone[sopInstanceUID].checked;
+    if (value) ResultSelectActions.select(item, sopInstanceUID);
+    else ResultSelectActions.unSelect(item, sopInstanceUID);
   },
   formatSelect: function(cell, item) {
     let { sopInstanceUID } = item;
@@ -169,7 +167,7 @@ const ImageView = createReactClass({
         <Checkbox
           label=""
           onChange={this.handleSelect.bind(this, item)}
-          ref={this.handleRefs.bind(this, sopInstanceUID)}
+          inputRef={this.handleRefs.bind(this, sopInstanceUID)}
         />
       </div>
     );
