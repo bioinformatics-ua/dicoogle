@@ -1,12 +1,18 @@
 import React from "react";
 import { Modal } from "react-bootstrap";
 
-const ConfirmModal = React.createClass({
-  onConfirm: function() {
+class ConfirmModal extends React.Component {
+  constructor(props) {
+    super(props);
+    this.onConfirm = this.onConfirm.bind(this);
+  }
+
+  onConfirm() {
     this.props.onConfirm();
     this.props.onHide();
-  },
-  render: function() {
+  }
+
+  render() {
     var body_message =
       this.props.message ||
       "The following files will be unindexed. This operation might be irreversible.";
@@ -29,6 +35,6 @@ const ConfirmModal = React.createClass({
       </Modal>
     );
   }
-});
+}
 
 export default ConfirmModal;

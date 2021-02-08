@@ -1,4 +1,5 @@
 import React from "react";
+import createReactClass from "create-react-class";
 import { IndexStatusActions } from "../../actions/indexStatusAction";
 import { IndexStatusStore } from "../../stores/indexStatusStore";
 import * as PluginActions from "../../actions/pluginActions";
@@ -11,7 +12,7 @@ import Select from "react-select";
 import PluginStore from "../../stores/pluginStore";
 
 var refreshIntervalId;
-const IndexStatusView = React.createClass({
+const IndexStatusView = createReactClass({
   getInitialState: function() {
     return {
       data: {},

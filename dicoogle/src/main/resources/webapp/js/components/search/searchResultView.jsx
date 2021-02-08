@@ -1,4 +1,6 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import createReactClass from "create-react-class";
+import * as PropTypes from "prop-types";
 
 import { SearchStore } from "../../stores/searchStore";
 import { ActionCreators } from "../../actions/searchActions";
@@ -7,7 +9,7 @@ import Webcore from "dicoogle-webcore";
 import { DefaultOptions } from "../../constants/defaultOptions";
 import { SearchResult } from "./searchResult";
 
-const SearchResultView = React.createClass({
+const SearchResultView = createReactClass({
   propTypes: {
     items: PropTypes.shape({
       text: PropTypes.string,

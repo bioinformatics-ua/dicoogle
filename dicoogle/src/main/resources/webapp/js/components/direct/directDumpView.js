@@ -1,11 +1,13 @@
 import React from "react";
+import createReactClass from "create-react-class";
+import * as PropTypes from "prop-types";
 import { DumpStore } from "../../stores/dumpStore";
 import { DumpActions } from "../../actions/dumpActions";
 import { getUrlVars } from "../../utils/url";
 
-const DirectDumpView = React.createClass({
+const DirectDumpView = createReactClass({
   propTypes: {
-    params: React.PropTypes.object.isRequired
+    params: PropTypes.object.isRequired
   },
   getInitialState: function() {
     return {

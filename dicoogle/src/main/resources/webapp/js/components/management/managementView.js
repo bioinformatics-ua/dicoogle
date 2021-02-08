@@ -1,4 +1,5 @@
 import React from "react";
+import createReactClass from "create-react-class";
 import { TransferOptionsView } from "../management/transferOptionsView";
 import { ServicesAndPluginsView } from "../management/servicesAndPluginsView";
 import { LoggerView } from "../management/loggerView";
@@ -6,7 +7,7 @@ import { IndexerView } from "../management/indexerView";
 import { StorageView } from "../management/storageView";
 import { ToastView } from "../mixins/toastView";
 
-const ManagementView = React.createClass({
+const ManagementView = createReactClass({
   getInitialState: function() {
     return {
       selectedtab: 0,

@@ -1,11 +1,12 @@
 import React from "react";
+import createReactClass from "create-react-class";
 import { Button, Modal } from "react-bootstrap";
 import { SearchStore } from "../../../stores/searchStore";
 import { ActionCreators } from "../../../actions/searchActions";
 import ConfirmModal from "./confirmModal";
 import { Endpoints } from "../../../constants/endpoints";
 import { DumpStore } from "../../../stores/dumpStore";
-import ImageLoader from "react-imageloader";
+import ImageLoader from "react-load-image";
 import PluginView from "../../plugin/pluginView";
 import { DumpActions } from "../../../actions/dumpActions";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
@@ -13,7 +14,7 @@ import { Checkbox } from "react-bootstrap";
 import ResultSelectActions from "../../../actions/resultSelectAction";
 import UserStore from "../../../stores/userStore";
 
-const ImageView = React.createClass({
+const ImageView = createReactClass({
   getInitialState: function() {
     // We need this because refs are not updated in BootstrapTable.
     this.refsClone = {};
@@ -56,7 +57,7 @@ const ImageView = React.createClass({
     return this.formatGlobal(item.sopInstanceUID, item);
   },
   _preloader: function() {
-    return <img src="spinner.gif" />;
+    return <div className="loader-inner ball-pulse" />;
   },
   formatThumbUrl: function(cell, item) {
     let self = this;
@@ -69,9 +70,10 @@ const ImageView = React.createClass({
         <ImageLoader
           src={thumbUrl}
           style={{ width: "64px", cursor: "pointer" }}
-          wrapper={React.DOM.div}
         >
+          <img />
           <img src="assets/image-not-found.png" width="64px" />
+          {this._preloader()}
         </ImageLoader>
       </div>
     );
@@ -148,16 +150,14 @@ const ImageView = React.createClass({
     }
     return <div />;
   },
-
-  handleSelect(item) {
-    let { sopInstanceUID } = item;
-    // ResultSelectActions.select(item);
-    let value = this.refsClone[sopInstanceUID].getChecked();
-    if (value) ResultSelectActions.select(item, sopInstanceUID);
-    else ResultSelectActions.unSelect(item, sopInstanceUID);
-  },
   handleRefs: function(id, input) {
     this.refsClone[id] = input;
+  },
+  handleSelect(item) {
+    let { sopInstanceUID } = item;
+    let value = this.refsClone[sopInstanceUID].checked;
+    if (value) ResultSelectActions.select(item, sopInstanceUID);
+    else ResultSelectActions.unSelect(item, sopInstanceUID);
   },
   formatSelect: function(cell, item) {
     let { sopInstanceUID } = item;
@@ -167,7 +167,7 @@ const ImageView = React.createClass({
         <Checkbox
           label=""
           onChange={this.handleSelect.bind(this, item)}
-          ref={this.handleRefs.bind(this, sopInstanceUID)}
+          inputRef={this.handleRefs.bind(this, sopInstanceUID)}
         />
       </div>
     );
@@ -337,7 +337,7 @@ const ImageView = React.createClass({
   }
 });
 
-var PopOverView = React.createClass({
+var PopOverView = createReactClass({
   getInitialState: function() {
     return {
       data: null,
@@ -366,7 +366,7 @@ var PopOverView = React.createClass({
     if (this.state.data === null) {
       return (
         <Modal
-          {...this.props}
+          onHide={this.props.onHide}
           show={this.props.uid !== null}
           bsStyle="primary"
           title="Image Dump"
@@ -456,11 +456,12 @@ var PopOverView = React.createClass({
   }
 });
 
-var PopOverImageViewer = React.createClass({
+var PopOverImageViewer = createReactClass({
   render() {
     let url =
-      this.props.uid !== null &&
-      Endpoints.base + "/dic2png?SOPInstanceUID=" + this.props.uid;
+      this.props.uid !== null
+        ? Endpoints.base + "/dic2png?SOPInstanceUID=" + this.props.uid
+        : null;
     return (
       <Modal
         onHide={this.props.onHide}
@@ -472,13 +473,17 @@ var PopOverImageViewer = React.createClass({
           <Modal.Title>View Image</Modal.Title>
         </Modal.Header>
         <div className="modal-body">
-          <ImageLoader
-            src={url}
-            style={{ width: "100%" }}
-            wrapper={React.DOM.div}
-          >
-            <img src="assets/image-not-found.png" width="100%" />
-          </ImageLoader>
+          {url && (
+            <ImageLoader
+              src={url}
+              style={{ width: "100%" }}
+              wrapper={React.DOM.div}
+            >
+              <img />
+              <img src="assets/image-not-found.png" width="100%" />
+              <div>...</div>
+            </ImageLoader>
+          )}
         </div>
         <div className="modal-footer">
           <Button bsClass="btn btn_dicoogle" onClick={this.props.onHide}>

@@ -1,4 +1,5 @@
 import React from "react";
+import createReactClass from "create-react-class";
 import Select from "react-select";
 import {
   Button,
@@ -13,7 +14,7 @@ import { ExportActions } from "../../actions/exportActions";
 import { ExportStore } from "../../stores/exportStore";
 import { ToastView } from "../mixins/toastView";
 
-const ExportView = React.createClass({
+const ExportView = createReactClass({
   getInitialState: function() {
     return {
       fields: [],

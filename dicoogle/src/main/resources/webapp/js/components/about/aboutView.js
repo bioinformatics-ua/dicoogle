@@ -1,10 +1,11 @@
 import React from "react";
+import createReactClass from "create-react-class";
 
 import { VersionStore } from "../../stores/versionStore";
 import { VersionActions } from "../../actions/versionAction";
 import { Panel, Grid, Row, Col } from "react-bootstrap";
 
-const AboutView = React.createClass({
+const AboutView = createReactClass({
   getInitialState: function() {
     return { version: "" };
   },
@@ -21,30 +22,14 @@ const AboutView = React.createClass({
     this.unsubscribe();
   },
   render: function() {
-    let versionNumber = this.state.version;
-    var title = <h3>Dicoogle PACS, version: {versionNumber}</h3>;
-    var licenses = (
-      <Grid className="">
-        <Row className="show-grid">
-          <Col className="gridAbout" xs={2} md={2}>
-            <b>dcm4che2</b>
-            <br />License: GPL
-          </Col>
-          <Col className="gridAbout" xs={2} md={2}>
-            <b>react.js+reflux</b>
-            <br />License: BSD
-          </Col>
-          <Col className="gridAbout" xs={2} md={2}>
-            <b>Jetty</b>
-            <br />License: GPL
-          </Col>
-        </Row>
-      </Grid>
-    );
+    const versionNumber = this.state.version;
 
     var panelsInstance = (
       <div className="about">
-        <Panel header={title} bsStyle="primary">
+        <Panel bsStyle="primary">
+          <Panel.Heading>
+            <h4>Dicoogle, version {versionNumber}</h4>
+          </Panel.Heading>
           Dicoogle is an open-source PACS archive software that replaces the
           traditional database model with an extensible indexing and retrieval
           framework and provides easy expansion of functionalities through the
@@ -57,17 +42,37 @@ const AboutView = React.createClass({
           archive independently and non-exclusively, without changes to the core
           platform. This extensible architecture of Dicoogle has enabled its use
           in research and the healthcare industry, as many use cases can be
-          fulfilled in the same deployment
+          fulfilled in the same deployment.
           <br />
         </Panel>
-
-        <Panel header="Main third party components" bsStyle="primary">
-          {licenses}
+        <Panel bsStyle="primary">
+          <Panel.Heading>
+            <h4>Main third party components</h4>
+          </Panel.Heading>
+          <Grid>
+            <Row className="show-grid">
+              <Col className="gridAbout" xs={2} md={2}>
+                <b>dcm4che2</b>
+                <br />License: GPL
+              </Col>
+              <Col className="gridAbout" xs={2} md={2}>
+                <b>React</b>
+                <br />License: MIT
+              </Col>
+              <Col className="gridAbout" xs={2} md={2}>
+                <b>Jetty</b>
+                <br />License: GPL
+              </Col>
+            </Row>
+          </Grid>
           Note: Although these are not the only components used, these are
           considered the main ones.
         </Panel>
 
-        <Panel header="Disclaimer" bsStyle="primary">
+        <Panel bsStyle="primary">
+          <Panel.Heading>
+            <h4>Disclaimer</h4>
+          </Panel.Heading>
           This software is provided by the copyright holders and contributors
           "as is" and any express or implied warranties, including, but not
           limited to, the implied warranties of merchantability and fitness for
@@ -80,7 +85,10 @@ const AboutView = React.createClass({
           (including negligence or otherwise) arising in any way out of the use
           of this software, even if advised of the possibility of such damage.
         </Panel>
-        <Panel header="Developers" bsStyle="primary">
+        <Panel bsStyle="primary">
+          <Panel.Heading>
+            <h4>Developers</h4>
+          </Panel.Heading>
           As an open source software, Dicoogle can accept contributions from
           developers around the world. Dicoogle OSS is led and supported by
           Bioinformatics UA and{" "}
@@ -98,29 +106,29 @@ const AboutView = React.createClass({
             GitHub repository
           </a>{" "}
           for more information.
-          <div style={{ display: "inline-block", width: "100%" }}>
-            <a href="http://bioinformatics.ua.pt">
+          <div>
+            <a href="https://bioinformatics.ua.pt">
               <img
                 src="assets/logos/logobio.png"
-                style={{ height: 40, margin: 5 }}
+                style={{ height: "3em", margin: 5 }}
               />
             </a>
-            <a href="http://bmd-software.com/">
+            <a href="https://bmd-software.com/">
               <img
                 src="assets/logos/logo.png"
-                style={{ height: 40, padding: 5, margin: 5 }}
+                style={{ height: "3em", margin: 5 }}
               />
             </a>
-            <a href="http://www.ieeta.pt/">
+            <a href="https://www.ieeta.pt/">
               <img
                 src="assets/logos/logo-ieeta.png"
-                style={{ height: 60, margin: 5 }}
+                style={{ height: "5em", margin: 5 }}
               />
             </a>
-            <a href="http://www.ua.pt/">
+            <a href="https://www.ua.pt/">
               <img
                 src="assets/logos/logo-ua.png"
-                style={{ height: 60, margin: 5 }}
+                style={{ height: "5em", margin: 5 }}
               />
             </a>
           </div>
@@ -128,7 +136,7 @@ const AboutView = React.createClass({
             <a>
               <img
                 src="assets/logos/logoFCT.png"
-                style={{ height: 30, margin: 5 }}
+                style={{ height: "4em", margin: 5 }}
               />
             </a>
           </div>

@@ -1,4 +1,5 @@
 import React from "react";
+import createReactClass from "create-react-class";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import { ActionCreators } from "../../../actions/searchActions";
 import { SearchStore } from "../../../stores/searchStore";
@@ -21,7 +22,7 @@ import UserStore from "../../../stores/userStore";
  * ^^^
  * WAT
  */
-const PatientView = React.createClass({
+const PatientView = createReactClass({
   getInitialState() {
     // We need this because refs are not updated in BootstrapTable.
     this.refsClone = {};
@@ -121,8 +122,7 @@ const PatientView = React.createClass({
   },
   handleSelect(item) {
     let { id } = item;
-    // ResultSelectActions.select(item);
-    let value = this.refsClone[id].getChecked();
+    let value = this.refsClone[id].checked;
     if (value) ResultSelectActions.select(item, id);
     else ResultSelectActions.unSelect(item, id);
   },
@@ -137,7 +137,7 @@ const PatientView = React.createClass({
         <Checkbox
           label=""
           onChange={this.handleSelect.bind(this, item)}
-          ref={this.handleRefs.bind(this, id)}
+          inputRef={this.handleRefs.bind(this, id)}
         />
       </div>
     );

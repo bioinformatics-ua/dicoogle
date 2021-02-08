@@ -1,4 +1,5 @@
 import React from "react";
+import createReactClass from "create-react-class";
 import { SearchStore } from "../../../stores/searchStore";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 
@@ -10,7 +11,7 @@ import ResultSelectActions from "../../../actions/resultSelectAction";
 
 import UserStore from "../../../stores/userStore";
 
-const StudyView = React.createClass({
+const StudyView = createReactClass({
   getInitialState: function() {
     // We need this because refs are not updated in BootstrapTable.
     this.refsClone = {};
@@ -111,8 +112,7 @@ const StudyView = React.createClass({
   },
   handleSelect(item) {
     let { studyInstanceUID } = item;
-    // ResultSelectActions.select(item);
-    let value = this.refsClone[studyInstanceUID].getChecked();
+    let value = this.refsClone[studyInstanceUID].checked;
     if (value) ResultSelectActions.select(item, studyInstanceUID);
     else ResultSelectActions.unSelect(item, studyInstanceUID);
   },
@@ -127,7 +127,7 @@ const StudyView = React.createClass({
         <Checkbox
           label=""
           onChange={this.handleSelect.bind(this, item)}
-          ref={this.handleRefs.bind(this, studyInstanceUID)}
+          inputRef={this.handleRefs.bind(this, studyInstanceUID)}
         />
       </div>
     );

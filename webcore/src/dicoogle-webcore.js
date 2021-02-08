@@ -100,17 +100,6 @@ export const init = m.init;
     event_hub.emit(name, ...args);
   }
 
-  /** Emit a DOM custom event from the slot element.
-   * @param {HTMLDicoogleSlotElement} slotDOM the slot DOM element to emit the event from
-   * @param {string} name the event name
-   * @param {any} data the data to be transmitted as custom event detail
-   * @return {void}
-   */
-  function emitSlotSignal(slotDOM, name, data) {
-    if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
-    slotDOM.dispatchEvent(new CustomEvent(name, {detail: data}));
-  }
-  
   /** Add an event listener to the webcore's event emitter.
    * @param {string} eventName the name of the event (can be one of 'load','loadMenu','loadQuery','loadResult', or custom event names)
    * @param {function(...any)} fn the listener function
@@ -122,6 +111,19 @@ export const init = m.init;
     return m;
   };
 export const addEventListener = m.addEventListener;
+
+  /** Emit a DOM custom event from the slot element.
+   * @param {HTMLDicoogleSlotElement} slotDOM the slot DOM element to emit the event from
+   * @param {string} name the event name
+   * @param {any} data the data to be transmitted as custom event detail
+   * @return {void}
+   */
+  m.emitSlotSignal = function(slotDOM, name, data) {
+    if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
+    slotDOM.dispatchEvent(new CustomEvent(name, {detail: data}));
+  }
+
+export const emitSlotSignal = m.emitSlotSignal;
   
   /** Remove an event listener from the webcore's event emitter.
    * @param {string} eventName the name of the event
@@ -482,7 +484,7 @@ export const webUISlot = m.webUISlot;
    */
   function service_get(uri, qs, callback) {
     // issue request
-    Dicoogle.request('GET', uri, qs, callback);
+    Dicoogle.request('GET', uri, qs).then((x) => callback(null, x.body), callback);
   }
   
   function getScript(moduleName, callback) {
@@ -505,7 +507,7 @@ export const webUISlot = m.webUISlot;
   }
 
   // custom element definitions
-  export const HTMLDicoogleSlotElement = customElements.define('dicoogle-slot', class HTMLDicoogleSlotElement extends HTMLDivElement {
+  export const HTMLDicoogleSlotElement = customElements.define('dicoogle-slot', class HTMLDicoogleSlotElement extends HTMLElement  {
         constructor() {
           super();
         }

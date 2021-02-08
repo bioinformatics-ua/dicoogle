@@ -4,13 +4,15 @@
  */
 
 import React from "react";
+import createReactClass from "create-react-class";
+import * as PropTypes from "prop-types";
 import { Link } from "react-router";
 import UserStore from "../stores/userStore";
 
-const Sidebar = React.createClass({
+const Sidebar = createReactClass({
   propTypes: {
-    pluginMenuItems: React.PropTypes.array.isRequired,
-    onLogout: React.PropTypes.func
+    pluginMenuItems: PropTypes.array.isRequired,
+    onLogout: PropTypes.func
   },
 
   render() {

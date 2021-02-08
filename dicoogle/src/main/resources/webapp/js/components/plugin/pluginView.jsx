@@ -1,14 +1,15 @@
 import React from "react";
+import * as PropTypes from "prop-types";
 
 export default class PluginView extends React.Component {
   static get propTypes() {
     return {
       // React router fills this with a plugin name
-      params: React.PropTypes.object,
+      params: PropTypes.object,
       // the plugin name
-      plugin: React.PropTypes.string,
-      slotId: React.PropTypes.string,
-      data: React.PropTypes.object
+      plugin: PropTypes.string,
+      slotId: PropTypes.string,
+      data: PropTypes.object
     };
   }
 
