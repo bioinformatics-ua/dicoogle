@@ -28,8 +28,9 @@ import java.util.stream.Stream;
 import org.dcm4che2.data.DicomObject;
 import org.dcm4che2.io.DicomInputStream;
 
-/** Storage plugin interface. These types of plugins provide an abstraction to reading and writing from
- * files or data blobs.
+/**
+ * Storage plugin interface. These types of plugins provide an abstraction to
+ * reading and writing from files or data blobs.
  * 
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @author Frederico Valente
@@ -45,10 +46,11 @@ public interface StorageInterface extends DicooglePlugin {
     public String getScheme();
 
     /**
-     * Checks whether the file in the given path can be handled by this storage plugin.
+     * Checks whether the file in the given path can be handled by this storage
+     * plugin.
      *
      * @param location a URI containing a scheme to be verified
-     * @return true if this storage plugin is in charge of URIs in the given form 
+     * @return true if this storage plugin is in charge of URIs in the given form
      */
     @Deprecated
     public default boolean handles(URI location) {
@@ -56,18 +58,20 @@ public interface StorageInterface extends DicooglePlugin {
     }
 
     /**
-     * Provides a means of iteration over all existing objects at a specified location,
-     * including those in sub-directories.
-     * This method is particularly nice for use in for-each loops.
+     * Provides a means of iteration over all existing objects at a specified
+     * location, including those in sub-directories. This method is particularly
+     * nice for use in for-each loops.
      * 
-     * The provided scheme is not relevant at this point, but the developer must avoid calling this method
-     * with a path of a different schema.
+     * The provided scheme is not relevant at this point, but the developer must
+     * avoid calling this method with a path of a different schema.
      * 
-     * <pre>for(StorageInputStream dicomObj : storagePlugin.at("file://dataset/")){
-     *      System.err.println(dicomObj.getURI());
-     * }</pre>
+     * <pre>
+     * for (StorageInputStream dicomObj : storagePlugin.at("file://dataset/")) {
+     *     System.err.println(dicomObj.getURI());
+     * }
+     * </pre>
      * 
-     * @param location the location to read
+     * @param location   the location to read
      * @param parameters a variable list of extra parameters for the retrieve
      * @return an iterable of storage input streams
      * @see StorageInputStream
@@ -77,47 +81,49 @@ public interface StorageInterface extends DicooglePlugin {
     /**
      * Stores a DICOM object into the storage.
      *
+     * @param calledAET   AET to be called
      * @param dicomObject Object to be Stored
-     * @param parameters a variable list of extra parameters for the retrieve
+     * @param parameters  a variable list of extra parameters for the retrieve
      * @return The URI of the previously stored Object.
      */
-    public URI store(DicomObject dicomObject, Object... parameters);
+    public URI store(String calledAET, DicomObject dicomObject, Object... parameters);
 
     /**
      * Stores a new element into the storage.
      *
      * @param inputStream an input stream with the contents to be stored
-     * @param parameters a variable list of extra parameters for the retrieve
+     * @param parameters  a variable list of extra parameters for the retrieve
      * @return the URI of the stored data
      * @throws IOException if an I/O error occurs
      */
-    public URI store(DicomInputStream inputStream, Object... parameters) throws IOException;
+    public URI store(String calledAET, DicomInputStream inputStream, Object... parameters) throws IOException;
 
-    /** Removes an element at the given URI.
+    /**
+     * Removes an element at the given URI.
      * 
      * @param location the URI of the stored data
      */
     public void remove(URI location);
 
-    /** Lists the elements at the given location in the storage's file tree.
-     * Unlike {@link StorageInterface#at}, this method is not recursive and
-     * can yield intermediate URIs representing other directories rather than
-     * objects.
+    /**
+     * Lists the elements at the given location in the storage's file tree. Unlike
+     * {@link StorageInterface#at}, this method is not recursive and can yield
+     * intermediate URIs representing other directories rather than objects.
      * 
-     * The provided scheme is not relevant at this point, but the developer
-     * must avoid calling this method with a path of a different scheme.
+     * The provided scheme is not relevant at this point, but the developer must
+     * avoid calling this method with a path of a different scheme.
      * 
      * @param location the base storage location to list
      * 
      * @return a standard stream of URIs representing entries in the given base
-     * location
+     *         location
      * @throws UnsupportedOperationException if this storage does not support
-     * listing directories
-     * @throws NoSuchFileException if the given location does not exist in the
-     * storage
-     * @throws NotDirectoryException if the given location does not refer to a
-     * listable entry (a directory)
-     * @throws IOException if some other I/O error occurs
+     *                                       listing directories
+     * @throws NoSuchFileException           if the given location does not exist in
+     *                                       the storage
+     * @throws NotDirectoryException         if the given location does not refer to
+     *                                       a listable entry (a directory)
+     * @throws IOException                   if some other I/O error occurs
      */
     public default Stream<URI> list(URI location) throws IOException {
         throw new UnsupportedOperationException(

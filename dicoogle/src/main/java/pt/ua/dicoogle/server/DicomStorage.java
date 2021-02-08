@@ -155,8 +155,8 @@ public class DicomStorage extends StorageService {
         this.nae.setAssociationAcceptor(true);
         this.nae.setAssociationInitiator(false);
 
-        int maxPDULengthReceive = settings.getDicomServicesSettings().getQueryRetrieveSettings()
-                .getMaxPDULengthReceive();
+        int maxPDULengthReceive =
+                settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthReceive();
         int maxPDULengthSend = settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthSend();
 
         ServerSettings s = ServerSettingsManager.getSettings();
@@ -216,7 +216,7 @@ public class DicomStorage extends StorageService {
         int count = list.getAccepted();
         // System.out.println(count);
         TransferCapability[] tc = new TransferCapability[count + 1];
-        String[] Verification = { UID.ImplicitVRLittleEndian, UID.ExplicitVRLittleEndian, UID.ExplicitVRBigEndian };
+        String[] Verification = {UID.ImplicitVRLittleEndian, UID.ExplicitVRLittleEndian, UID.ExplicitVRBigEndian};
         String[] TS;
         TransfersStorage local;
 
@@ -252,8 +252,8 @@ public class DicomStorage extends StorageService {
         // DebugManager.getSettings().debug(":: Verify Permited AETs @??C-Store Request ");
 
         boolean permited = false;
-        Collection<String> allowedAETitles = ServerSettingsManager.getSettings().getDicomServicesSettings()
-                .getAllowedAETitles();
+        // TODO(nagi): Read allowed calling AETs
+        Collection<String> allowedAETitles = new ArrayList<String>();
         if (allowedAETitles.isEmpty()) {
             permited = true;
         } else {
@@ -293,15 +293,20 @@ public class DicomStorage extends StorageService {
             Iterable<StorageInterface> plugins = PluginController.getInstance().getStoragePlugins(true);
 
             URI uri = null;
+            Boolean isStored = false;
             for (StorageInterface storage : plugins) {
-                uri = storage.store(d);
+                uri = storage.store(as.getCalledAET(), d);
                 if (uri != null) {
+                    isStored = true;
                     // queue to index
                     ImageElement element = new ImageElement();
                     element.setCallingAET(as.getCallingAET());
                     element.setUri(uri);
                     queue.add(element);
                 }
+            }
+            if (!isStored) {
+                throw new IOException("Object is not stored");
             }
 
         } catch (IOException e) {

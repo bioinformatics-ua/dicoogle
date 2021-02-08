@@ -111,12 +111,12 @@ public class DefaultFileStoragePlugin extends PluginBase implements StorageInter
     }
 
     @Override
-    public URI store(DicomObject dicomObject, Object... args) {
+    public URI store(String calledAET, DicomObject dicomObject, Object... args) {
         return null;
     }
 
     @Override
-    public URI store(DicomInputStream inputStream, Object... args) throws IOException {
+    public URI store(String calledAET, DicomInputStream inputStream, Object... args) throws IOException {
         return null;
     }
 
