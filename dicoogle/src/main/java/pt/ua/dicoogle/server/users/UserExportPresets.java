@@ -49,12 +49,7 @@ public class UserExportPresets {
 
         Files.createDirectories(presetsDir);
 
-        try (ObjectOutputStream out =
-                     new ObjectOutputStream(Files.newOutputStream(presetsDir.resolve(presetName)))) {
-            out.writeObject(fields);
-        } catch (IOException e) {
-            logger.error("Could not save preset.", e.getMessage());
-        }
+        Files.write(presetsDir.resolve(presetName), Arrays.asList(fields));
     }
 
     /**
@@ -74,15 +69,14 @@ public class UserExportPresets {
         }
 
         Stream<Path> fileList = Files.list(presetsDir);
-        fileList.filter(file -> !Files.isDirectory(file))
-                .forEach(file -> {
-                    try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(file))) {
-                        String[] preset = (String[]) in.readObject();
-                        presets.put(file.getFileName().toString(), preset);
-                    } catch (IOException | ClassNotFoundException e) {
-                        logger.error("Could not read preset.", e.getMessage());
-                    }
-                });
+        fileList.filter(file -> !Files.isDirectory(file)).forEach(file -> {
+            try {
+                String[] preset = Files.readAllLines(file).toArray(new String[0]);
+                presets.put(file.getFileName().toString(), preset);
+            } catch (IOException e) {
+                logger.error("Could not read preset.", e);
+            }
+        });
 
         return presets;
     }
