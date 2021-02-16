@@ -50,7 +50,7 @@ public class UserExportPresets {
         Files.createDirectories(presetsDir);
 
         try (ObjectOutputStream out =
-                     new ObjectOutputStream(Files.newOutputStream(Paths.get(presetsDir.toString(), presetName)))) {
+                     new ObjectOutputStream(Files.newOutputStream(presetsDir.resolve(presetName)))) {
             out.writeObject(fields);
         } catch (IOException e) {
             logger.error("Could not save preset.", e.getMessage());
