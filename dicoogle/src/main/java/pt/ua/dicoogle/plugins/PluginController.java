@@ -522,7 +522,8 @@ public class PluginController {
 
 
     public JointQueryTask queryAll(JointQueryTask holder, final String query, final Object... parameters) {
-        return queryAll(holder, query, parameters);
+        List<String> providers = this.getQueryProvidersName(true);
+        return query(holder, providers, query, parameters);
     }
 
     public JointQueryTask queryAll(JointQueryTask holder, final String query, final DimLevel level,
