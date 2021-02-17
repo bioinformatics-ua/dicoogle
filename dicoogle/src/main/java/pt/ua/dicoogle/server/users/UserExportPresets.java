@@ -45,8 +45,8 @@ public class UserExportPresets {
      */
     public static void savePreset(String username, String presetName, String[] fields) throws IOException {
         Path presetsDir = Paths.get(Platform.homePath(), "userdata", username, "presets");
-
         Files.createDirectories(presetsDir);
+        presetName = presetName.endsWith(".txt") ? presetName : presetName.concat(".txt");
 
         Files.write(presetsDir.resolve(presetName), Arrays.asList(fields));
     }
@@ -71,7 +71,9 @@ public class UserExportPresets {
         fileList.filter(file -> !Files.isDirectory(file)).forEach(file -> {
             try {
                 String[] preset = Files.readAllLines(file).toArray(new String[0]);
-                presets.put(file.getFileName().toString(), preset);
+                String fileName = file.getFileName().toString();
+                String presetName = fileName.substring(0, fileName.lastIndexOf('.'));
+                presets.put(presetName, preset);
             } catch (IOException e) {
                 logger.error("Could not read preset.", e);
             }
