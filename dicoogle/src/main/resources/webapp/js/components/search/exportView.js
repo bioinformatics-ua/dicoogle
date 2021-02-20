@@ -2,7 +2,6 @@ import React from "react";
 import createReactClass from "create-react-class";
 import Select from "react-select";
 import {
-  Button,
   Modal,
   FormGroup,
   FormControl,
@@ -135,19 +134,17 @@ const ExportView = createReactClass({
           <FormGroup>
             <ControlLabel>Inline fields to export (optional):</ControlLabel>
 
-            <div className="modal-body">
-              <textarea
-                id="textFields"
-                placeholder="Paste export fields here (one per line)"
-                onChange={this.handleFieldSelectTextArea}
-                rows="10"
-                value={this.state.selectedFieldsAdditionals}
-                className="exportlist form-control"
-              />
-            </div>
+            <textarea
+              id="textFields"
+              placeholder="Paste export fields here (one per line)"
+              onChange={this.handleFieldSelectTextArea}
+              rows="10"
+              value={this.state.selectedFieldsAdditionals}
+              className="exportlist form-control"
+            />
           </FormGroup>
         </Modal.Body>
-        <Modal.Footer id="hacked-modal-footer-do-not-remove">
+        <Modal.Footer id="hacked-modal-footer-do-not-remove" className="modal-dicoogle">
           <Form inline>
             <FormControl
               type="text"
@@ -157,20 +154,13 @@ const ExportView = createReactClass({
               maxLength="100"
             />
 
-            <Button
-              bsStyle="default"
-              onClick={this.handleSavePresetClicked}
-              disabled={!this.canExport()}
-            >
-              Save Preset
-            </Button>
-            <Button
-              bsStyle="primary"
-              onClick={this.handleExportClicked}
-              disabled={!this.canSave()}
-            >
+            <button className="btn btn_dicoogle btn-export" id="export-btn" onClick={this.handleExportClicked} disabled={!this.canSave()}>
               Export
-            </Button>
+            </button>
+
+            <button className="btn btn_dicoogle btn-export" id="save-preset-btn" onClick={this.handleSavePresetClicked} disabled={!this.canExport()}>
+              Save Preset
+            </button>
           </Form>
         </Modal.Footer>
         <ToastView
