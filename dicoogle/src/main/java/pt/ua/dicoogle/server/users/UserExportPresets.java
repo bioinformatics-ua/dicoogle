@@ -18,14 +18,14 @@
  */
 package pt.ua.dicoogle.server.users;
 
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.sdk.Utils.Platform;
 
 import java.io.*;
-import java.nio.file.Files;
+import java.nio.file.*;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Saves and lists user's presets for fields to be exported.
@@ -33,6 +33,7 @@ import java.util.*;
  * @author Leonardo Oliveira <leonardooliveira@ua.pt>
  */
 public class UserExportPresets {
+    private static final Logger logger = LoggerFactory.getLogger(UserExportPresets.class);
 
     /**
      * Saves a user's preset.
@@ -43,19 +44,11 @@ public class UserExportPresets {
      * @throws IOException if an I/O error occurs
      */
     public static void savePreset(String username, String presetName, String[] fields) throws IOException {
-        File presetsDir = new File(Platform.homePath() + "users/" + username + "/presets");
+        Path presetsDir = Paths.get(Platform.homePath(), "userdata", username, "presets");
+        Files.createDirectories(presetsDir);
+        presetName = presetName.endsWith(".txt") ? presetName : presetName.concat(".txt");
 
-        // create presets dir, if it doesn't exist
-        Files.createDirectories(presetsDir.toPath());
-
-        File presetFile = new File(presetsDir + "/" + presetName + ".txt");
-
-        try (Writer writer = new PrintWriter(presetFile)) {
-            for (String field : fields) {
-                writer.write(field);
-                writer.write('\n');
-            }
-        }
+        Files.write(presetsDir.resolve(presetName), Arrays.asList(fields));
     }
 
     /**
@@ -66,18 +59,25 @@ public class UserExportPresets {
      * @throws IOException if an I/O error occurs
      */
     public static Map<String, String[]> getPresets(String username) throws IOException {
-        File presetsDir = new File(Platform.homePath() + "users/" + username + "/presets/");
+        Path presetsDir = Paths.get(Platform.homePath(), "userdata", username, "presets");
 
         Map<String, String[]> presets = new HashMap<>();
 
-        if (!presetsDir.isDirectory()) {
+        if (!Files.isDirectory(presetsDir)) {
             return presets;
         }
 
-        for (File presetFile : presetsDir.listFiles()) {
-            String[] fields = FileUtils.readFileToString(presetFile, "UTF-8").split("\n");
-            presets.put(FilenameUtils.removeExtension(presetFile.getName()), fields);
-        }
+        Stream<Path> fileList = Files.list(presetsDir);
+        fileList.filter(file -> !Files.isDirectory(file)).forEach(file -> {
+            try {
+                String[] preset = Files.readAllLines(file).toArray(new String[0]);
+                String fileName = file.getFileName().toString();
+                String presetName = fileName.substring(0, fileName.lastIndexOf('.'));
+                presets.put(presetName, preset);
+            } catch (IOException e) {
+                logger.error("Could not read preset from `{}`", file.getFileName(), e);
+            }
+        });
 
         return presets;
     }
