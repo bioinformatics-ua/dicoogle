@@ -75,7 +75,7 @@ public class UserExportPresets {
                 String presetName = fileName.substring(0, fileName.lastIndexOf('.'));
                 presets.put(presetName, preset);
             } catch (IOException e) {
-                logger.error("Could not read preset.", e);
+                logger.error("Could not read preset from `{}`", file.getFileName(), e);
             }
         });
 
