@@ -27,6 +27,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import org.dcm4che2.io.DicomInputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.StorageInputStream;
 import pt.ua.dicoogle.sdk.StorageInterface;
@@ -36,6 +38,8 @@ import pt.ua.dicoogle.sdk.StorageInterface;
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class CallDCMSend {
+    private static final Logger logger = LoggerFactory.getLogger(CMoveServiceSCP.class);
+
 
     public CallDCMSend(ArrayList<File> files, int port, String hostname, String AETitle, String cmoveID)
             throws Exception {
@@ -49,17 +53,11 @@ public class CallDCMSend {
         for (File fx : files) {
             File f = fx;
             dcmsnd.addFile(f);
+
         }
         dcmsnd.setCalledAET(AETitle);
 
         dcmsnd.configureTransferCapability();
-        // try {
-        // dcmsnd.initTLS();
-        // } catch (Exception e) {
-        // System.err.println("ERROR: Failed to initialize TLS context:"
-        // + e.getMessage());
-        // System.exit(2);
-        // }
 
         dcmsnd.setMoveOriginatorMessageID(cmoveID);
         dcmsnd.start();
@@ -74,7 +72,6 @@ public class CallDCMSend {
 
         DcmSndV2 dcmsnd = new DcmSndV2();
 
-
         dcmsnd.setRemoteHost(hostname);
         dcmsnd.setRemotePort(port);
 
@@ -86,7 +83,7 @@ public class CallDCMSend {
 
 
             if (plugin != null) {
-                System.out.println("Retrieving: " + rui.toString());
+                logger.debug("Retrieving: {}", rui);
                 try {
                     System.out.println("Retrieving: " + rui.toString());
                     Iterable<StorageInputStream> it = plugin.at(rui);
@@ -94,28 +91,18 @@ public class CallDCMSend {
                     for (StorageInputStream iStream : it) {
                         byte[] byteArr = ByteStreams.toByteArray(new DicomInputStream(iStream.getInputStream()));
                         dcmsnd.addFile(ByteBuffer.wrap(byteArr));
-                        System.out.println("Added NewFile: " + rui.toString());
+                        logger.debug("Added NewFile: {}", rui);
                     }
 
-                    /*InputStream retrievedFile = plugin.retrieve(rui); 
-                    byte[] byteArr = ByteStreams.toByteArray(retrievedFile);
-                    dcmsnd.addFile(ByteBuffer.wrap(byteArr));
-                    System.out.println("Added NewFile: "+rui.toString());*/
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
             }
+
         }
         dcmsnd.setCalledAET(AETitle);
 
         dcmsnd.configureTransferCapability();
-        // try {
-        // dcmsnd.initTLS();
-        // } catch (Exception e) {
-        // System.err.println("ERROR: Failed to initialize TLS context:"
-        // + e.getMessage());
-        // System.exit(2);
-        // }
 
         dcmsnd.setMoveOriginatorMessageID(cmoveID);
         dcmsnd.start();
