@@ -103,7 +103,7 @@ public class CMoveServiceSCP extends CMoveService {
 
             return new MoveRSP(data, rsp);
         } else {
-            logger.info("Client association permited: " + as.getCallingAET() + "!");
+            logger.info("Client association with {} is permitted!", as.getCallingAET());
         }
 
         try {
@@ -135,7 +135,7 @@ public class CMoveServiceSCP extends CMoveService {
 
         String SOPUID = new String(data.get(Integer.parseInt("0020000D", 16)).getBytes());
         String CMoveID = cmd.getString(org.dcm4che2.data.Tag.MessageID);
-        System.out.println("C-MOVE ID REQUEST: " + CMoveID);
+
         
         /**
          * Get object to search
@@ -178,10 +178,7 @@ public class CMoveServiceSCP extends CMoveService {
 
 
 
-        if (search == null) {
-            logger.error(">> Search is empty/null, somethig is wrong with query terms");
-        } else {
-
+        if (search != null) {
             while (search.hasNext()) {
                 DicomObject obj = search.next();
                 DicomElement e = obj.get(Integer.parseInt("0020000D", 16));

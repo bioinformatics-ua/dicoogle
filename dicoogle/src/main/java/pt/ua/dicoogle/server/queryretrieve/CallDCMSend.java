@@ -91,7 +91,7 @@ public class CallDCMSend
 
                 if(plugin != null)
                 {
-                    logger.debug("Retrieving: {}", rui.toString());
+                    logger.debug("Retrieving: {}", rui);
                     try{
                         Iterable<StorageInputStream> it = plugin.at(rui);
 
@@ -99,13 +99,8 @@ public class CallDCMSend
                         {
                             byte[] byteArr = ByteStreams.toByteArray(new DicomInputStream(iStream.getInputStream()));
                             dcmsnd.addFile(ByteBuffer.wrap(byteArr));
-                            System.out.println("Added NewFile: "+rui.toString());
+                            logger.debug("Added NewFile: {}", rui);
                         }
-
-                        /*InputStream retrievedFile = plugin.retrieve(rui);
-                        byte[] byteArr = ByteStreams.toByteArray(retrievedFile);
-                        dcmsnd.addFile(ByteBuffer.wrap(byteArr));
-                        System.out.println("Added NewFile: "+rui.toString());*/
                     }catch(IOException ex){
                         ex.printStackTrace();
                     }
