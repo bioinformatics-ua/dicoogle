@@ -48,12 +48,15 @@ import pt.ua.dicoogle.server.DicomNetwork;
 import pt.ua.dicoogle.server.SearchDicomResult;
 import pt.ua.dicoogle.core.ServerSettings;
 import pt.ua.dicoogle.rGUI.server.controllers.Logs;
+import pt.ua.dicoogle.server.web.DicoogleWeb;
 
 /**
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class CMoveServiceSCP extends CMoveService {
+    private static final Logger logger = LoggerFactory.getLogger(CMoveServiceSCP.class);
+
 
     private DicomNetwork service = null;
     private LuceneQueryACLManager luke;
@@ -72,15 +75,12 @@ public class CMoveServiceSCP extends CMoveService {
     @Override
     protected DimseRSP doCMove(Association as, int pcid, DicomObject cmd,
             DicomObject data, DicomObject rsp) throws DicomServiceException {
-        //DebugManager.getInstance().debug("doCMove");
-        //DebugManager.getInstance().debug("DoCmove");
 
         DimseRSP replay = null;
 
         /**
          * Verify Permited AETs
          */
-        //DebugManager.getInstance().debug(":: Verify Permited AETs @??C-MOVE Action ");
 
         boolean permited = false;
 
@@ -99,22 +99,18 @@ public class CMoveServiceSCP extends CMoveService {
         }
 
         if (!permited) {
-            //DebugManager.getInstance().debug("Client association NOT permited: " + as.getCallingAET() + "!");
             as.abort();
 
             return new MoveRSP(data, rsp);
         } else {
-            //DebugManager.getInstance().debug("Client association permited: " + as.getCallingAET() + "!");
+            logger.info("Client association with {} is permitted!", as.getCallingAET());
         }
 
-        /** FIXME: Write wait by rspreplay */
         try {
             Thread.sleep(ServerSettings.getInstance().getRspDelay());
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error while waiting ", e);
         }
-
-
 
         /**
          *
@@ -129,9 +125,6 @@ public class CMoveServiceSCP extends CMoveService {
         int portAddr = as.getSocket().getPort();
 
         String destination = cmd.getString(org.dcm4che2.data.Tag.MoveDestination);
-        //DebugManager.getInstance().debug("A Move was required to <ip:port> : <"
-        //        + ip.getHostAddress() + ":" + portAddr + ">" + " to --> " + destination);
-
 
 
         /** Verify if it have the field destination */
@@ -140,13 +133,9 @@ public class CMoveServiceSCP extends CMoveService {
                     "Missing Move Destination");
         }
 
-        /*DebugManager.getInstance().debug("-- Objects containing the data requested by C-MOVE");
-        DebugManager.getInstance().debug(data.toString());
-        DebugManager.getInstance().debug(cmd.toString());
-        DebugManager.getInstance().debug(rsp.toString());*/
         String SOPUID = new String(data.get(Integer.parseInt("0020000D", 16)).getBytes());
         String CMoveID = cmd.getString(org.dcm4che2.data.Tag.MessageID);
-        System.out.println("C-MOVE ID REQUEST: " + CMoveID);
+
         
         /**
          * Get object to search
@@ -189,11 +178,7 @@ public class CMoveServiceSCP extends CMoveService {
 
 
 
-        if (search == null) {
-            //DebugManager.getInstance().debug(">> Search is null, so"
-            //        + " somethig is wrong ");
-        } else {
-
+        if (search != null) {
             while (search.hasNext()) {
                 DicomObject obj = search.next();
                 DicomElement e = obj.get(Integer.parseInt("0020000D", 16));
@@ -217,10 +202,6 @@ public class CMoveServiceSCP extends CMoveService {
             }
         }
 
-
-
-
-
         if (files.size() != 0) {
 
             /**
@@ -237,7 +218,6 @@ public class CMoveServiceSCP extends CMoveService {
             }
 
 
-
             LogLine ll = new LogLine("cmove", LogLine.getDateTime(), destination,
                     "Files: " + files.size() + " -- (" + hostDest + ":" + portAddr + ")","studyUID="+data.getString(Tag.StudyInstanceUID));
             LogDICOM.getInstance().addLine(ll);
@@ -251,10 +231,9 @@ public class CMoveServiceSCP extends CMoveService {
                 }
             }
 
-            //Logs.getInstance().addLog(ll);
             if (CMoveID==null||CMoveID.equals(""))
             {
-                //DebugManager.getInstance().debug("No originator message ID");
+                logger.warn("No originator message ID, aborting");
                 return null;
             }
             try
@@ -263,45 +242,11 @@ public class CMoveServiceSCP extends CMoveService {
                 new CallDCMSend(files, portAddr, hostDest, destination, CMoveID);
             } catch (Exception ex)
             {
-                ex.printStackTrace();
-                //DebugManager.getInstance().debug("Error Sending files to Storage Server!");
+                logger.error("Error Sending files to Storage Server! ", ex);
             }
         }
 
-        /** UnNecessary now 
 
-        // put a BufferedReader on the ls output
-
-        InputStream inputstream =
-        proc.getInputStream();
-        InputStreamReader inputstreamreader =
-        new InputStreamReader(inputstream);
-        BufferedReader bufferedreader =
-        new BufferedReader(inputstreamreader);
-
-        // read the ls output
-
-        String line;
-        try
-        {
-        while ((line = bufferedreader.readLine()) != null)
-        {
-        System.out.println(">>>"+line);
-        }
-        //replay = new MoveRSP(keys, rsp, this.core); // Third Party Move
-        } catch (IOException ex)
-        {
-        LoggerFactory.getLogger(CMoveServiceSCP.class).error(ex.getMessage(), ex);
-        }
-        try
-        {
-        Thread.sleep(100);
-        //replay = new MoveRSP(keys, rsp, this.core); // Third Party Move
-        } catch (InterruptedException ex)
-        {
-        LoggerFactory.getLogger(CMoveServiceSCP.class).error(ex.getMessage(), ex);
-        }
-         */
         replay = new MoveRSP(data, rsp); // Third Party Move
         return replay;
 
