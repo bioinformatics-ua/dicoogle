@@ -38,7 +38,7 @@ import pt.ua.dicoogle.sdk.StorageInterface;
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class CallDCMSend {
-    private static final Logger logger = LoggerFactory.getLogger(CMoveServiceSCP.class);
+    private static final Logger logger = LoggerFactory.getLogger(CallDCMSend.class);
 
 
     public CallDCMSend(ArrayList<File> files, int port, String hostname, String AETitle, String cmoveID)
