@@ -101,7 +101,7 @@ public class DicomStorage extends StorageService {
         settings = ServerSettingsManager.getSettings();
 
         // Added default alternative AETitle.
-        // alternativeAETs.add(ServerSettingsManager.getSettings().getNodeName());
+        alternativeAETs.add(ServerSettingsManager.getSettings().getArchiveSettings().getNodeName());
 
         path = settings.getArchiveSettings().getMainDirectory();
         if (path == null) {
@@ -130,6 +130,10 @@ public class DicomStorage extends StorageService {
 
 
         this.nae.setInstalled(true);
+        this.nc.setMaxScpAssociations(Integer.parseInt(System.getProperty("dicoogle.cstore.maxScpAssociations", "50")));
+        this.nc.setAcceptTimeout(Integer.parseInt(System.getProperty("dicoogle.cstore.acceptTimeout", "5000")));
+        this.nc.setConnectTimeout(Integer.parseInt(System.getProperty("dicoogle.cstore.connectTimeout", "5000")));
+
         this.nae.setAssociationAcceptor(true);
         this.nae.setAssociationInitiator(false);
 
@@ -138,11 +142,16 @@ public class DicomStorage extends StorageService {
         int maxPDULengthSend = settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthSend();
 
         ServerSettings s = ServerSettingsManager.getSettings();
-        this.nae.setDimseRspTimeout(60000 * 300);
-        this.nae.setIdleTimeout(60000 * 300);
-        this.nae.setMaxPDULengthReceive(maxPDULengthReceive + 1000);
-        this.nae.setMaxPDULengthSend(maxPDULengthSend + 1000);
-        this.nae.setRetrieveRspTimeout(60000 * 300);
+
+        this.nae.setDimseRspTimeout(
+                Integer.parseInt(System.getProperty("dicoogle.cstore.dimseRspTimeout", "18000000")));
+        this.nae.setIdleTimeout(Integer.parseInt(System.getProperty("dicoogle.cstore.idleTimeout", "18000000")));
+        this.nae.setMaxPDULengthReceive(
+                maxPDULengthReceive + Integer.parseInt(System.getProperty("dicoogle.cstore.appendMaxPDU", "1000")));
+        this.nae.setMaxPDULengthSend(
+                maxPDULengthSend + Integer.parseInt(System.getProperty("dicoogle.cstore.appendMaxPDU", "1000")));
+        this.nae.setRetrieveRspTimeout(
+                Integer.parseInt(System.getProperty("dicoogle.cstore.retrieveRspTimeout", "18000000")));
 
 
         // Added alternative AETitles.
@@ -156,11 +165,16 @@ public class DicomStorage extends StorageService {
         for (String alternativeAET : alternativeAETs) {
             NetworkApplicationEntity nae2 = new NetworkApplicationEntity();
             nae2.setNetworkConnection(nc);
-            nae2.setDimseRspTimeout(60000 * 300);
-            nae2.setIdleTimeout(60000 * 300);
-            nae2.setMaxPDULengthReceive(maxPDULengthReceive + 1000);
-            nae2.setMaxPDULengthSend(maxPDULengthSend + 1000);
-            nae2.setRetrieveRspTimeout(60000 * 300);
+            nae2.setDimseRspTimeout(
+                    Integer.parseInt(System.getProperty("dicoogle.cstore.dimseRspTimeout", "18000000")));
+            nae2.setIdleTimeout(Integer.parseInt(System.getProperty("dicoogle.cstore.idleTimeout", "18000000")));
+            nae2.setMaxPDULengthReceive(
+                    maxPDULengthReceive + Integer.parseInt(System.getProperty("dicoogle.cstore.appendMaxPDU", "1000")));
+            nae2.setMaxPDULengthSend(
+                    maxPDULengthSend + Integer.parseInt(System.getProperty("dicoogle.cstore.appendMaxPDU", "1000")));
+            nae2.setRetrieveRspTimeout(
+                    Integer.parseInt(System.getProperty("dicoogle.cstore.retrieveRspTimeout", "18000000")));
+
             // we accept assoociations, this is a server
             nae2.setAssociationAcceptor(true);
             // we support the VerificationServiceSOP
