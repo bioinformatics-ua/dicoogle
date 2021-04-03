@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>pt.ua.ieeta</groupId>
   <artifactId>dicoogle-all</artifactId>
-    <version>2.5.3</version>
+    <version>2.5.4</version>
   <packaging>pom</packaging>
   <name>dicoogle-all</name>
   
