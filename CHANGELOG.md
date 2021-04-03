@@ -3,13 +3,19 @@ This document intends to keep track of the changes performed on the various rele
 
 ## 3.0
 
-### 3.0.1  (2021-02-08)
+### 3.0.2 (2021-04-03)
+
+- Fix: exportToCSV modal on webapp (#450)
+- Fix: StackOverflowError and users settings folder issues (#451)
+- Enhancement: DICOM services - bring patches from 2.5.X releases to main stream (#453)
+
+### 3.0.1 (2021-02-08)
 
 * Fix: Webcore plugins was not able to load 
 * Fix: WebUI Plugins: emit events for result-batch slot plugins
 * Enhancement: [UI] small improvements in button UI for search result slot. (#447)
 
-### 3.0.0  (2020-12-31)
+### 3.0.0 (2020-12-31)
 
 * New: configuration format (config.xml now lives in confs/server.xml)
 * New: [SDK] expansion to better support DIM (DICOM Information Modal).
