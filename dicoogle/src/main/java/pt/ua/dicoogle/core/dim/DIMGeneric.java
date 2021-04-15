@@ -242,6 +242,8 @@ public class DIMGeneric
         String InstitutionName = toTrimmedString( extra.get("InstitutionName"), false);
         String operatorsName = toTrimmedString (extra.get("OperatorsName"), false);
         String RequestingPhysician = toTrimmedString (extra.get("RequestingPhysician"), false);
+        String RequestedProcedurePriority = toTrimmedString (extra.get("RequestedProcedurePriority"), false);
+
 
         Study s = parent.getStudy(studyUID);
         if (s == null) {
@@ -256,6 +258,7 @@ public class DIMGeneric
         s.setPatientName(parent.getPatientName());
         s.setOperatorsName(operatorsName);
         s.setRequestingPhysician(RequestingPhysician);
+        s.setRequestedProcedurePriority(RequestedProcedurePriority);
         return s;
     }
 

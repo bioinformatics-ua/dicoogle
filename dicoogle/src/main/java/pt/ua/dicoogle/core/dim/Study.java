@@ -40,6 +40,9 @@ public class Study {
     private String operatorsName;
     private String RequestingPhysician;
 
+    // Used only to retrieve RequestedProcedurePriority (usually retrieved by HL7).
+    private String RequestedProcedurePriority;
+
     // Look in the cases where there same patient identifier with different
     // patient names
     private String patientName;
@@ -240,5 +243,11 @@ public class Study {
         this.RequestingPhysician = RequestingPhysician;
     }
 
-    
+    public String getRequestedProcedurePriority() {
+        return RequestedProcedurePriority;
+    }
+
+    public void setRequestedProcedurePriority(String requestedProcedurePriority) {
+        RequestedProcedurePriority = requestedProcedurePriority;
+    }
 }

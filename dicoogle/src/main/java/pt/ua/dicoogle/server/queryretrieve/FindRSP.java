@@ -135,6 +135,9 @@ public class FindRSP implements DimseRSP
         extrafields.add("ViewCodeSequence_CodingSchemeVersion");
         extrafields.add("ViewCodeSequence_CodeMeaning");
 
+        // HL7 custom integration
+        extrafields.add("RequestedProcedurePriority");
+
 
         extrafields.add("SOPInstanceUID");
         

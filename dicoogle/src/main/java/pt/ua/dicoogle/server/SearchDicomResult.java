@@ -340,6 +340,11 @@ public class SearchDicomResult implements Iterator<DicomObject>
                 result.putString(Tag.NumberOfStudyRelatedInstances, VR.IS,""+instances);
                 result.putString(Tag.NumberOfSeriesRelatedInstances, VR.IS,""+studyTmp.getSeries().size());
 
+                // HL7 adaptation
+                if (!studyTmp.getRequestedProcedurePriority().isEmpty()){
+                    result.putString(Tag.RequestedProcedurePriority, VR.SH,studyTmp.getRequestedProcedurePriority());
+                }
+
 
                 return result;
                 
