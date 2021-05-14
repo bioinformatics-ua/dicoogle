@@ -27,6 +27,7 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
-    - run: cd dicoogle/src/main/resources/webapp
-    - run: npm ci
-    - run: npm run build
+    - working-directory: ./dicoogle/src/main/resources/webapp
+      run: npm ci
+    - working-directory: ./dicoogle/src/main/resources/webapp
+      run: npm run build
