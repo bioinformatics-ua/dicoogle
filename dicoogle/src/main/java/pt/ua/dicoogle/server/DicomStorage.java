@@ -26,6 +26,7 @@ import java.net.URI;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.dcm4che2.data.DicomObject;
 import org.dcm4che2.data.Tag;
@@ -83,8 +84,9 @@ public class DicomStorage extends StorageService {
     private Set<String> priorityAETs = new HashSet<>();
 
     // Changed to support priority queue.
-    private BlockingQueue<ImageElement> queue = new PriorityBlockingQueue<ImageElement>();
+    private BlockingQueue<ImageElement> queue = new PriorityBlockingQueue<>();
     private NetworkApplicationEntity[] naeArr = null;
+    private AtomicLong seqNum = new AtomicLong(0L);
 
     /**
      *
@@ -287,14 +289,11 @@ public class DicomStorage extends StorageService {
 
             Iterable<StorageInterface> plugins = PluginController.getInstance().getStoragePlugins(true);
 
-            URI uri = null;
             for (StorageInterface storage : plugins) {
-                uri = storage.store(d);
+                URI uri = storage.store(d);
                 if (uri != null) {
-                    // queue to index
-                    ImageElement element = new ImageElement();
-                    element.setCallingAET(as.getCallingAET());
-                    element.setUri(uri);
+                    // enqueue to index
+                    ImageElement element = new ImageElement(uri, as.getCallingAET(), seqNum.getAndIncrement());
                     queue.add(element);
                 }
             }
@@ -305,41 +304,53 @@ public class DicomStorage extends StorageService {
     }
 
     /**
-     * ImageElement is a entry of a C-STORE. For Each C-STORE RQ
-     * an ImageElement is created and are put in the queue to index.
+     * A C-STORE entry.
+     * For Each C-STORE RQ, an ImageElement is created
+     * and put in the storage service's priority queue for indexing.
+     * 
+     * The priority criteria are, in descending order of importance:
+     * 1. whether the calling AE title is in the list of priority AEs
+     * 2. earliest sequence number
      *
      * This only happens after the store in Storage Plugins.
-     *
-     * @param <E>
      */
-    class ImageElement<E extends Comparable<? super E>> implements Comparable<ImageElement<E>> {
-        private URI uri;
-        private String callingAET;
+    final class ImageElement implements Comparable<ImageElement> {
+        private final URI uri;
+        private final String callingAET;
+        private final long seqNumber;
+
+        ImageElement(URI uri, String callingAET, long seqNumber) {
+            Objects.requireNonNull(uri);
+            Objects.requireNonNull(callingAET);
+            this.uri = uri;
+            this.callingAET = callingAET;
+            this.seqNumber = seqNumber;
+        }
 
         public URI getUri() {
             return uri;
-        }
-
-        public void setUri(URI uri) {
-            this.uri = uri;
         }
 
         public String getCallingAET() {
             return callingAET;
         }
 
-        public void setCallingAET(String callingAET) {
-            this.callingAET = callingAET;
+        public long getSequenceNumber() {
+            return seqNumber;
         }
 
         @Override
-        public int compareTo(ImageElement<E> o1) {
-            if (o1.getCallingAET().equals(this.getCallingAET()))
-                return 0;
-            else if (priorityAETs.contains(this.getCallingAET()))
-                return -1;
-            else
-                return 1;
+        public int compareTo(ImageElement other) {
+            boolean thisPriority = priorityAETs.contains(this.getCallingAET());
+            boolean thatPriority = priorityAETs.contains(other.getCallingAET());
+
+            int priorityOrder = Boolean.compare(thisPriority, thatPriority);
+
+            if (priorityOrder != 0) {
+                return priorityOrder;
+            }
+
+            return Long.compare(this.seqNumber, other.seqNumber);
         }
     }
 
@@ -353,11 +364,9 @@ public class DicomStorage extends StorageService {
                     // Fetch an element by the queue taking into account the priorities.
                     ImageElement element = queue.take();
                     URI exam = element.getUri();
-                    if (exam != null) {
-                        List<Report> reports = PluginController.getInstance().indexBlocking(exam);
-                    }
+                    List<Report> reports = PluginController.getInstance().indexBlocking(exam);
                 } catch (InterruptedException ex) {
-                    LoggerFactory.getLogger(DicomStorage.class).error(ex.getMessage(), ex);
+                    LoggerFactory.getLogger(DicomStorage.class).error("Could not take instance to index", ex);
                 }
 
             }
