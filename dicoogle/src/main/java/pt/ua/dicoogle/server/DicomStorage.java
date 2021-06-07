@@ -111,7 +111,7 @@ public class DicomStorage extends StorageService {
         }
 
         this.priorityAETs = new HashSet<>(settings.getDicomServicesSettings().getPriorityAETitles());
-        LoggerFactory.getLogger(DicomStorage.class).debug("Priority C-STORE: " + this.priorityAETs);
+        LoggerFactory.getLogger(DicomStorage.class).debug("Priority C-STORE: {}", this.priorityAETs);
 
         device.setNetworkApplicationEntity(nae);
 
@@ -258,7 +258,7 @@ public class DicomStorage extends StorageService {
 
         if (!permited) {
             // DebugManager.getSettings().debug("Client association NOT permited: " + as.getCallingAET() + "!");
-            System.err.println("Client association NOT permited: " + as.getCallingAET() + "!");
+            LoggerFactory.getLogger(DicomStorage.class).warn("Client association with {} NOT permitted!", as.getCallingAET());
             as.abort();
 
             return;
