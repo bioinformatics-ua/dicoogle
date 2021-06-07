@@ -20,12 +20,9 @@ package pt.ua.dicoogle.server;
 
 import pt.ua.dicoogle.core.ServerSettings;
 
-import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -37,11 +34,6 @@ import org.dcm4che2.net.CommandUtils;
 import org.dcm4che2.net.Device;
 import org.dcm4che2.net.DicomServiceException;
 
-///import org.dcm4che2.net.Executor;
-/** dcm4che doesn't support Executor anymore, so now import from java.util */ 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dcm4che2.net.NetworkApplicationEntity;
@@ -57,7 +49,6 @@ import org.dcm4che2.net.service.VerificationService;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.IndexerInterface;
 import pt.ua.dicoogle.sdk.StorageInterface;
-import pt.ua.dicoogle.sdk.datastructs.Report;
 
 
 /**
@@ -77,14 +68,6 @@ public class RSIStorage extends StorageService
     private NetworkConnection nc = new NetworkConnection();
     
     private String path;
-    private DicomDirCreator dirc;
-    
-    private int fileBufferSize = 256;
-    private int threadPoolSize = 10;
-    
-    private ExecutorService pool = Executors.newFixedThreadPool(threadPoolSize);
-    
-    private boolean gzip = ServerSettings.getInstance().isGzipStorage();;
 
     private Set<String> alternativeAETs = new HashSet<>();
     private Set<String> priorityAETs = new HashSet<>();
@@ -376,7 +359,7 @@ public class RSIStorage extends StorageService
                     // Fetch an element by the queue taking into account the priorities.
                     ImageElement element = queue.take();
                     URI exam = element.getUri();
-                    List <Report> reports = PluginController.getInstance().indexBlocking(exam);
+                    PluginController.getInstance().indexBlocking(exam);
                 } catch (InterruptedException ex) {
                     LoggerFactory.getLogger(RSIStorage.class).error("Could not take instance to index", ex);
                 }
@@ -385,140 +368,20 @@ public class RSIStorage extends StorageService
             
         }
     }
-    
-    
-    private String getFullPath(DicomObject d)
-    {
-    
-        return getDirectory(d) + File.separator + getBaseName(d);
-    
-    }
-    
-    
-    private String getFullPathCache(String dir, DicomObject d)
-    {    
-        return dir + File.separator + getBaseName(d);
- 
-    }
-    
-    
-    
-    private String getBaseName(DicomObject d)
-    {
-        String result = "UNKNOWN.dcm";
-        String sopInstanceUID = d.getString(Tag.SOPInstanceUID);
-        return sopInstanceUID+".dcm";
-    }
-    
-    
-    private String getDirectory(DicomObject d)
-    {
-    
-        String result = "UN";
-        
-        String institutionName = d.getString(Tag.InstitutionName);
-        String modality = d.getString(Tag.Modality);
-        String studyDate = d.getString(Tag.StudyDate);
-        String accessionNumber = d.getString(Tag.AccessionNumber);
-        String studyInstanceUID = d.getString(Tag.StudyInstanceUID);
-        String patientName = d.getString(Tag.PatientName);
-        
-        if (institutionName==null || institutionName.equals(""))
-        {
-            institutionName = "UN_IN";
-        }
-        institutionName = institutionName.trim();
-        institutionName = institutionName.replace(" ", "");
-        institutionName = institutionName.replace(".", "");
-        institutionName = institutionName.replace("&", "");
-
-        
-        if (modality == null || modality.equals(""))
-        {
-            modality = "UN_MODALITY";
-        }
-        
-        if (studyDate == null || studyDate.equals(""))
-        {
-            studyDate = "UN_DATE";
-        }
-        else
-        {
-            try
-            {
-                String year = studyDate.substring(0, 4);
-                String month =  studyDate.substring(4, 6);
-                String day =  studyDate.substring(6, 8);
-                
-                studyDate = year + File.separator + month + File.separator + day;
-                
-            }
-            catch(Exception e)
-            {
-                e.printStackTrace();
-                studyDate = "UN_DATE";
-            }
-        }
-        
-        if (accessionNumber == null || accessionNumber.equals(""))
-        {
-            patientName = patientName.trim();
-            patientName = patientName.replace(" ", "");
-            patientName = patientName.replace(".", "");
-            patientName = patientName.replace("&", "");
-            
-            if (patientName == null || patientName.equals(""))
-            {
-                if (studyInstanceUID == null || studyInstanceUID.equals(""))
-                {
-                    accessionNumber = "UN_ACC";
-                }
-                else
-                {
-                    accessionNumber = studyInstanceUID;
-                }
-            }
-            else
-            {
-                accessionNumber = patientName;
-                
-            }
-            
-        }
-        
-        result = path+File.separator+institutionName+File.separator+modality+File.separator+studyDate+File.separator+accessionNumber;
-        
-        return result;
-        
-    }
     private Indexer indexer = new Indexer();
     /*
      * Start the Storage Service 
      * @throws java.io.IOException
      */
-    public void start() throws IOException
-    {       
-        //dirc = new DicomDirCreator(path, "Dicoogle");
-        pool = Executors.newFixedThreadPool(threadPoolSize);
-        device.startListening(executor); 
+    public void start() throws IOException {
+        device.startListening(executor);
         indexer.start();
-        
+    }
 
-    } 
-    
     /**
      * Stop the storage service 
      */
-    public void stop()
-    {
-        this.pool.shutdown();
-        try {
-            pool.awaitTermination(6, TimeUnit.DAYS);
-        } catch (InterruptedException ex) {
-            LoggerFactory.getLogger(RSIStorage.class).error(ex.getMessage(), ex);
-        }
+    public void stop() {
         device.stopListening();
-        
-        //dirc.dicomdir_close();
-    }   
+    }
 }
