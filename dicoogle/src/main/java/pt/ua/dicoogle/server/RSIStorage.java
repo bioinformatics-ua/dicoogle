@@ -120,7 +120,7 @@ public class RSIStorage extends StorageService
             }
 
             this.priorityAETs = settings.getPriorityAETitles();
-            LoggerFactory.getLogger(RSIStorage.class).debug("Priority C-STORE: " + this.priorityAETs);
+            LoggerFactory.getLogger(RSIStorage.class).debug("Priority C-STORE: {}", this.priorityAETs);
 
             device.setNetworkApplicationEntity(nae);
 
@@ -264,8 +264,8 @@ public class RSIStorage extends StorageService
         }
 
         if (!permited) {
-            //DebugManager.getInstance().debug("Client association NOT permited: " + as.getCallingAET() + "!");
-            System.err.println("Client association NOT permited: " + as.getCallingAET() + "!");
+            // DebugManager.getSettings().debug("Client association NOT permited: " + as.getCallingAET() + "!");
+            LoggerFactory.getLogger(RSIStorage.class).warn("Client association with {} NOT permitted!", as.getCallingAET());
             as.abort();
             
             return;
@@ -378,7 +378,7 @@ public class RSIStorage extends StorageService
                     URI exam = element.getUri();
                     List <Report> reports = PluginController.getInstance().indexBlocking(exam);
                 } catch (InterruptedException ex) {
-                    LoggerFactory.getLogger(DicomStorage.class).error("Could not take instance to index", ex);
+                    LoggerFactory.getLogger(RSIStorage.class).error("Could not take instance to index", ex);
                 }
                  
             }
