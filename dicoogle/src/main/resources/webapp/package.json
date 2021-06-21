@@ -34,7 +34,8 @@
     "index.html"
   ],
   "engines": {
-    "npm": ">=2.0.0"
+    "node": ">=10 <12",
+    "npm": ">=6"
   },
   "dependencies": {
     "bootstrap": "^3.3.2",
