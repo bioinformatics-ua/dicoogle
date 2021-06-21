@@ -20,12 +20,11 @@ package pt.ua.dicoogle.server;
 
 import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.dcm4che2.data.DicomObject;
 import org.dcm4che2.data.Tag;
@@ -35,8 +34,6 @@ import org.dcm4che2.net.CommandUtils;
 import org.dcm4che2.net.Device;
 import org.dcm4che2.net.DicomServiceException;
 
-///import org.dcm4che2.net.Executor;
-/** dcm4che doesn't support Executor anymore, so now import from java.util */
 import org.slf4j.LoggerFactory;
 
 import org.dcm4che2.net.NetworkApplicationEntity;
@@ -52,7 +49,6 @@ import org.dcm4che2.net.service.VerificationService;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.IndexerInterface;
 import pt.ua.dicoogle.sdk.StorageInterface;
-import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
 
@@ -75,16 +71,13 @@ public class DicomStorage extends StorageService {
 
     private String path;
 
-    private int threadPoolSize = 10;
-
-    private ExecutorService pool = Executors.newFixedThreadPool(threadPoolSize);
-
     private Set<String> alternativeAETs = new HashSet<>();
     private Set<String> priorityAETs = new HashSet<>();
 
     // Changed to support priority queue.
-    private BlockingQueue<ImageElement> queue = new PriorityBlockingQueue<ImageElement>();
+    private BlockingQueue<ImageElement> queue = new PriorityBlockingQueue<>();
     private NetworkApplicationEntity[] naeArr = null;
+    private AtomicLong seqNum = new AtomicLong(0L);
 
     /**
      *
@@ -109,7 +102,7 @@ public class DicomStorage extends StorageService {
         }
 
         this.priorityAETs = new HashSet<>(settings.getDicomServicesSettings().getPriorityAETitles());
-        LoggerFactory.getLogger(DicomStorage.class).debug("Priority C-STORE: " + this.priorityAETs);
+        LoggerFactory.getLogger(DicomStorage.class).debug("Priority C-STORE: {}", this.priorityAETs);
 
         device.setNetworkApplicationEntity(nae);
 
@@ -140,8 +133,6 @@ public class DicomStorage extends StorageService {
         int maxPDULengthReceive =
                 settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthReceive();
         int maxPDULengthSend = settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthSend();
-
-        ServerSettings s = ServerSettingsManager.getSettings();
 
         this.nae.setDimseRspTimeout(
                 Integer.parseInt(System.getProperty("dicoogle.cstore.dimseRspTimeout", "18000000")));
@@ -256,7 +247,7 @@ public class DicomStorage extends StorageService {
 
         if (!permited) {
             // DebugManager.getSettings().debug("Client association NOT permited: " + as.getCallingAET() + "!");
-            System.err.println("Client association NOT permited: " + as.getCallingAET() + "!");
+            LoggerFactory.getLogger(DicomStorage.class).warn("Client association with {} NOT permitted!", as.getCallingAET());
             as.abort();
 
             return;
@@ -287,14 +278,11 @@ public class DicomStorage extends StorageService {
 
             Iterable<StorageInterface> plugins = PluginController.getInstance().getStoragePlugins(true);
 
-            URI uri = null;
             for (StorageInterface storage : plugins) {
-                uri = storage.store(d);
+                URI uri = storage.store(d);
                 if (uri != null) {
-                    // queue to index
-                    ImageElement element = new ImageElement();
-                    element.setCallingAET(as.getCallingAET());
-                    element.setUri(uri);
+                    // enqueue to index
+                    ImageElement element = new ImageElement(uri, as.getCallingAET(), seqNum.getAndIncrement());
                     queue.add(element);
                 }
             }
@@ -305,41 +293,53 @@ public class DicomStorage extends StorageService {
     }
 
     /**
-     * ImageElement is a entry of a C-STORE. For Each C-STORE RQ
-     * an ImageElement is created and are put in the queue to index.
+     * A C-STORE entry.
+     * For Each C-STORE RQ, an ImageElement is created
+     * and put in the storage service's priority queue for indexing.
+     * 
+     * The priority criteria are, in descending order of importance:
+     * 1. whether the calling AE title is in the list of priority AEs
+     * 2. earliest sequence number
      *
      * This only happens after the store in Storage Plugins.
-     *
-     * @param <E>
      */
-    class ImageElement<E extends Comparable<? super E>> implements Comparable<ImageElement<E>> {
-        private URI uri;
-        private String callingAET;
+    final class ImageElement implements Comparable<ImageElement> {
+        private final URI uri;
+        private final String callingAET;
+        private final long seqNumber;
+
+        ImageElement(URI uri, String callingAET, long seqNumber) {
+            Objects.requireNonNull(uri);
+            Objects.requireNonNull(callingAET);
+            this.uri = uri;
+            this.callingAET = callingAET;
+            this.seqNumber = seqNumber;
+        }
 
         public URI getUri() {
             return uri;
-        }
-
-        public void setUri(URI uri) {
-            this.uri = uri;
         }
 
         public String getCallingAET() {
             return callingAET;
         }
 
-        public void setCallingAET(String callingAET) {
-            this.callingAET = callingAET;
+        public long getSequenceNumber() {
+            return seqNumber;
         }
 
         @Override
-        public int compareTo(ImageElement<E> o1) {
-            if (o1.getCallingAET().equals(this.getCallingAET()))
-                return 0;
-            else if (priorityAETs.contains(this.getCallingAET()))
-                return -1;
-            else
-                return 1;
+        public int compareTo(ImageElement other) {
+            boolean thisPriority = priorityAETs.contains(this.getCallingAET());
+            boolean thatPriority = priorityAETs.contains(other.getCallingAET());
+
+            int priorityOrder = Boolean.compare(thisPriority, thatPriority);
+
+            if (priorityOrder != 0) {
+                return priorityOrder;
+            }
+
+            return Long.compare(this.seqNumber, other.seqNumber);
         }
     }
 
@@ -353,103 +353,14 @@ public class DicomStorage extends StorageService {
                     // Fetch an element by the queue taking into account the priorities.
                     ImageElement element = queue.take();
                     URI exam = element.getUri();
-                    if (exam != null) {
-                        List<Report> reports = PluginController.getInstance().indexBlocking(exam);
-                    }
+                    PluginController.getInstance().indexBlocking(exam);
                 } catch (InterruptedException ex) {
-                    LoggerFactory.getLogger(DicomStorage.class).error(ex.getMessage(), ex);
+                    LoggerFactory.getLogger(DicomStorage.class).error("Could not take instance to index", ex);
                 }
 
             }
 
         }
-    }
-
-
-    private String getFullPath(DicomObject d) {
-
-        return getDirectory(d) + File.separator + getBaseName(d);
-
-    }
-
-
-    private String getFullPathCache(String dir, DicomObject d) {
-        return dir + File.separator + getBaseName(d);
-
-    }
-
-
-    private String getBaseName(DicomObject d) {
-        String result = "UNKNOWN.dcm";
-        String sopInstanceUID = d.getString(Tag.SOPInstanceUID);
-        return sopInstanceUID + ".dcm";
-    }
-
-
-    private String getDirectory(DicomObject d) {
-
-        String result = "UN";
-
-        String institutionName = d.getString(Tag.InstitutionName);
-        String modality = d.getString(Tag.Modality);
-        String studyDate = d.getString(Tag.StudyDate);
-        String accessionNumber = d.getString(Tag.AccessionNumber);
-        String studyInstanceUID = d.getString(Tag.StudyInstanceUID);
-        String patientName = d.getString(Tag.PatientName);
-
-        if (institutionName == null || institutionName.equals("")) {
-            institutionName = "UN_IN";
-        }
-        institutionName = institutionName.trim();
-        institutionName = institutionName.replace(" ", "");
-        institutionName = institutionName.replace(".", "");
-        institutionName = institutionName.replace("&", "");
-
-
-        if (modality == null || modality.equals("")) {
-            modality = "UN_MODALITY";
-        }
-
-        if (studyDate == null || studyDate.equals("")) {
-            studyDate = "UN_DATE";
-        } else {
-            try {
-                String year = studyDate.substring(0, 4);
-                String month = studyDate.substring(4, 6);
-                String day = studyDate.substring(6, 8);
-
-                studyDate = year + File.separator + month + File.separator + day;
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                studyDate = "UN_DATE";
-            }
-        }
-
-        if (accessionNumber == null || accessionNumber.equals("")) {
-            patientName = patientName.trim();
-            patientName = patientName.replace(" ", "");
-            patientName = patientName.replace(".", "");
-            patientName = patientName.replace("&", "");
-
-            if (patientName == null || patientName.equals("")) {
-                if (studyInstanceUID == null || studyInstanceUID.equals("")) {
-                    accessionNumber = "UN_ACC";
-                } else {
-                    accessionNumber = studyInstanceUID;
-                }
-            } else {
-                accessionNumber = patientName;
-
-            }
-
-        }
-
-        result = path + File.separator + institutionName + File.separator + modality + File.separator + studyDate
-                + File.separator + accessionNumber;
-
-        return result;
-
     }
 
     private Indexer indexer = new Indexer();
@@ -459,26 +370,14 @@ public class DicomStorage extends StorageService {
      * @throws java.io.IOException
      */
     public void start() throws IOException {
-        // dirc = new DicomDirCreator(path, "Dicoogle");
-        pool = Executors.newFixedThreadPool(threadPoolSize);
         device.startListening(executor);
         indexer.start();
-
-
     }
 
     /**
      * Stop the storage service 
      */
     public void stop() {
-        this.pool.shutdown();
-        try {
-            pool.awaitTermination(6, TimeUnit.DAYS);
-        } catch (InterruptedException ex) {
-            LoggerFactory.getLogger(DicomStorage.class).error(ex.getMessage(), ex);
-        }
         device.stopListening();
-
-        // dirc.dicomdir_close();
     }
 }
