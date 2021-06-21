@@ -545,8 +545,10 @@ public class Dicoogle
 			sopClasses.put(UID.BasicVoiceAudioWaveformStorage, "BasicVoiceAudioWaveformStorage");
 			sopClasses.put(UID.HangingProtocolStorage, "HangingProtocolStorage");
 			sopClasses.put(UID.SiemensCSANonImageStorage, "SiemensCSANonImageStorage");
-                        sopClasses.put(UID.VLWholeSlideMicroscopyImageStorage, "VLWholeSlideMicroscopyImageStorage");
-                        sopClasses.put(UID.BreastTomosynthesisImageStorage, "BreastTomosynthesisImageStorage");
+			sopClasses.put(UID.VLWholeSlideMicroscopyImageStorage, "VLWholeSlideMicroscopyImageStorage");
+			sopClasses.put(UID.BreastTomosynthesisImageStorage, "BreastTomosynthesisImageStorage");
+			sopClasses.put(UID.XRayRadiationDoseSRStorage, "XRayRadiationDoseSRStorage");
+
 
 			transferSettings.put(UID.ImplicitVRLittleEndian, "ImplicitVRLittleEndian");
 			transferSettings.put(UID.ExplicitVRLittleEndian, "ExplicitVRLittleEndian");
