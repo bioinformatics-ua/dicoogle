@@ -127,7 +127,8 @@ public class SOPList {
         UID.HangingProtocolStorage,
         UID.SiemensCSANonImageStorage,
         UID.VLWholeSlideMicroscopyImageStorage,
-        UID.BreastTomosynthesisImageStorage
+        UID.BreastTomosynthesisImageStorage,
+        UID.XRayRadiationDoseSRStorage
         };
 
     public static synchronized SOPList getInstance()

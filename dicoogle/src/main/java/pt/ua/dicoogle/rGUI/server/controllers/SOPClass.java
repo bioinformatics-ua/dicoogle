@@ -172,6 +172,7 @@ public class SOPClass implements ISOPClass {
         SOPClassList.add("BasicVoiceAudioWaveformStorage");
         SOPClassList.add("HangingProtocolStorage");
         SOPClassList.add("SiemensCSANonImageStorage");
+        SOPClassList.add("XRayRadiationDoseSRStorage");
     }
 
     /**
@@ -456,7 +457,9 @@ public class SOPClass implements ISOPClass {
 
         if(sopClass.equals("SiemensCSANonImageStorage"))
             return UID.SiemensCSANonImageStorage;
-        
+        if(sopClass.equals("XRayRadiationDoseSRStorage"))
+            return UID.XRayRadiationDoseSRStorage;
+
         return null;
     }
 
