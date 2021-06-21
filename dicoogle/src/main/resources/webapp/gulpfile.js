@@ -4,11 +4,11 @@ var browserify = require('browserify');
 var buffer = require('vinyl-buffer');
 var eslint = require('gulp-eslint');
 var gulp = require('gulp');
-var gutil = require('gulp-util');
+var log = require('fancy-log');
 var processhtml = require('gulp-processhtml');
 var rename = require('gulp-rename');
 var rm = require('gulp-rm');
-var sass = require('gulp-sass');
+var sass = require('gulp-dart-sass');
 var source = require('vinyl-source-stream');
 var sourcemaps = require('gulp-sourcemaps');
 var uglify = require('gulp-uglify');
@@ -62,7 +62,7 @@ gulp.task('lint', function () {
 });
 
 function handleBundlingError(e) {
-  gutil.log('' + e);
+  log('' + e);
 }
 
 gulp.task('js', ['lint'], function () {
@@ -94,7 +94,7 @@ gulp.task('js:watch', function () {
 
   var b = createBrowserify(true, true);
   b.on('update', bundle); // on any dep update, runs the bundler
-  b.on('log', gutil.log); // output build logs to terminal
+  b.on('log', log); // output build logs to terminal
 
   function bundle() {
     return b.bundle()
