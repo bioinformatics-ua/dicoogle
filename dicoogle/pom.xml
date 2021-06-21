@@ -25,14 +25,14 @@
     <repositories>
         <repository>
             <id>mavencentral</id>
-            <url>http://repo1.maven.org/maven2/</url>
+            <url>https://repo1.maven.org/maven2/</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
         </repository>
         <repository>
             <id>dcm4che</id>
-            <url>http://www.dcm4che.org/maven2/</url>
+            <url>https://www.dcm4che.org/maven2/</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
@@ -40,7 +40,7 @@
 
         <repository>
             <id>mi</id>
-            <url>http://bioinformatics.ua.pt/maven/content/repositories/mi</url>
+            <url>https://bioinformatics.ua.pt/maven/content/repositories/mi</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -48,7 +48,7 @@
 
         <repository>
             <id>mi-snapshots</id>
-            <url>http://bioinformatics.ua.pt/maven/content/repositories/mi-snapshots</url>
+            <url>https://bioinformatics.ua.pt/maven/content/repositories/mi-snapshots</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
@@ -63,7 +63,7 @@
         <repository>
             <id>maven-restlet</id>
             <name>Public online Restlet repository</name>
-            <url>http://maven.restlet.org</url>
+            <url>https://maven.restlet.org</url>
         </repository>
 
         <repository>
@@ -243,8 +243,8 @@
 
                 </executions>
                 <configuration>
-                    <nodeVersion>v6.9.1</nodeVersion>
-                    <npmVersion>3.10.10</npmVersion>
+                    <nodeVersion>v10.24.1</nodeVersion>
+                    <npmVersion>6.14.12</npmVersion>
                     <installDirectory>target</installDirectory>
                     <!-- Defining webapp directory -->
                     <workingDirectory>src/main/resources/webapp</workingDirectory>

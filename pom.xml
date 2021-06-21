@@ -68,14 +68,14 @@
                     <!-- Versioned releases are published to the releases repository -->
                     <repository>
                         <id>mi</id>
-                        <url>http://bioinformatics.ua.pt/maven/content/repositories/mi</url>
+                        <url>https://bioinformatics.ua.pt/maven/content/repositories/mi</url>
                     </repository>
 
 
                     <!-- Snapshot releases are published to the snapshots repository -->
                     <snapshotRepository>
                         <id>mi</id>
-                        <url>http://bioinformatics.ua.pt/maven/content/repositories/mi-snapshots</url>
+                        <url>https://bioinformatics.ua.pt/maven/content/repositories/mi-snapshots</url>
                     </snapshotRepository>
                 </distributionManagement>
 
