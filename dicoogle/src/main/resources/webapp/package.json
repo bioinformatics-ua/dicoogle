@@ -34,7 +34,7 @@
     "index.html"
   ],
   "engines": {
-    "node": ">=10 <12",
+    "node": "10.x.x",
     "npm": ">=6"
   },
   "dependencies": {
