@@ -54,6 +54,7 @@ public class Series implements SeriesInterface {
 
     private ArrayList<URI> imageList = new ArrayList<>();
     private ArrayList<String> UIDList = new ArrayList<>();
+    private ArrayList<String> instanceNumbers = new ArrayList<>();
 
     public Series(Study study, String SeriesInstanceUID, String modality) {
         this.parent = study;
@@ -71,8 +72,13 @@ public class Series implements SeriesInterface {
 
 
     public void addImage(URI ImagePath, String sopUid) {
+        this.addImage(ImagePath, sopUid, null);
+    }
+
+    public void addImage(URI ImagePath, String sopUid, String instanceNumber) {
         this.imageList.add(ImagePath);
         this.UIDList.add(sopUid);
+        this.instanceNumbers.add(instanceNumber);
     }
 
     public void removeImage(URI imagePath) {
@@ -119,12 +125,20 @@ public class Series implements SeriesInterface {
         return UIDList;
     }
 
+    public ArrayList<String> getInstanceNumberList() {
+        return instanceNumbers;
+    }
+
     /**
      * @param imageList the imageList to set
      */
     public void setImageList(ArrayList<URI> imageList, ArrayList<String> sops) {
         this.imageList = imageList;
         this.UIDList = sops;
+    }
+
+    public void setInstanceNumberList(ArrayList<String> list) {
+        this.instanceNumbers = list;
     }
 
     /**

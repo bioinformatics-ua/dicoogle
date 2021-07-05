@@ -187,6 +187,8 @@ public class DIMGeneric {
         String SeriesDate = toTrimmedString(extra.get("SeriesDate"), false);
         String ProtocolName = toTrimmedString(extra.get("ProtocolName"), false);
 
+        String instanceNumber = toTrimmedString(extra.get("InstanceNumber"), true);
+
         /**
          * Get data to Image
          */
@@ -336,7 +338,7 @@ public class DIMGeneric {
             series.setViewCodeSequence_CodingSchemeDesignator(ViewCodeSequence_CodingSchemeDesignator);
             series.setViewCodeSequence_CodingSchemeVersion(ViewCodeSequence_CodingSchemeVersion);
 
-            series.addImage(uri, sopInstUID);
+            series.addImage(uri, sopInstUID, instanceNumber);
             s.addSerie(series);
             this.patients.add(p);
             this.patientsHash.put(patientIdentifier, p);
@@ -443,7 +445,11 @@ public class DIMGeneric {
                             image.put("rawPath", rawPath);
                             image.put("uri", serie.getImageList().get(i).toString());
                             image.put("filename", rawPath.substring(rawPath.lastIndexOf("/") + 1, rawPath.length()));
-
+                            String instanceNum = serie.getInstanceNumberList().get(i);
+                            if (instanceNum != null) {
+                                image.put("number", instanceNum);
+                            }
+    
                             instances.add(image);
                         }
                         seriesObj.put("images", instances);
