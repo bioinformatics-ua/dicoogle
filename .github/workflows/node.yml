@@ -1,0 +1,33 @@
+# This workflow validates and builds the Dicoogle web application.
+name: Build Webapp with Node.js
+
+on:
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ dev ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x, 14.x, 16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        # Recommended versions to include:
+        # - minimum supported version
+        # - latest LTS
+        # - latest stable
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+    - working-directory: ./dicoogle/src/main/resources/webapp
+      run: npm ci
+    - working-directory: ./dicoogle/src/main/resources/webapp
+      run: npm run build

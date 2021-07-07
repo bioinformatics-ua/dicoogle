@@ -64,6 +64,10 @@ module.exports = {
     ]
   },
   resolve: {
+    alias: {
+      // force webcore/dicoogle-client to resolve to the same as the webapp's
+      'dicoogle-client': __dirname + '/node_modules/dicoogle-client'
+    },
     extensions: [".js", ".jsx", ".json"]
   }
 };
