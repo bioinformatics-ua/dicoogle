@@ -3,13 +3,16 @@
 [![Java CI with Maven](https://github.com/bioinformatics-ua/dicoogle/actions/workflows/maven.yml/badge.svg)](https://github.com/bioinformatics-ua/dicoogle/actions/workflows/maven.yml)
 [![Build Webapp with Node.js](https://github.com/bioinformatics-ua/dicoogle/actions/workflows/node.yml/badge.svg)](https://github.com/bioinformatics-ua/dicoogle/actions/workflows/node.yml)
 
+> This is the development branch for Dicoogle 3. [See here](https://github.com/bioinformatics-ua/dicoogle/tree/release/2.X) for the development line of Dicoogle 2, which is being phased out.
+
 Dicoogle is an extensible, platform-independent and open-source PACS archive software that replaces the traditional centralized database with a more agile indexing and retrieval mechanism. It was designed to support automatic extraction, indexing and storage of all meta-data detected in medical images, including private DICOM attribute tags, without re-engineering or reconfiguration requirements.
 
-The architecture of Dicoogle is described in the following article:
+The architecture of Dicoogle is described in the following articles:
 
-Valente, F., Silva, L.A.B., Godinho, T.M., Costa, C. _Anatomy of an Extensible Open Source PACS_. J Digit Imaging (2016) 29: 284. doi:10.1007/s10278-015-9834-0 [Available Online: http://link.springer.com/article/10.1007/s10278-015-9834-0]
+- Lebre, L., Pinho, E., Silva, J.M., Costa, C. _Dicoogle Framework for Medical Imaging Teaching and Research_. 2020 IEEE Symposium on Computers and Communications (ISCC) [[link](https://www.researchgate.net/publication/337703675_Dicoogle_Framework_for_Medical_Imaging_Teaching_and_Research)]
+- Valente, F., Silva, L.A.B., Godinho, T.M., Costa, C. _Anatomy of an Extensible Open Source PACS_. J Digit Imaging (2016) 29: 284. doi:10.1007/s10278-015-9834-0 [[link](https://link.springer.com/article/10.1007/s10278-015-9834-0)]
 
-Our official website is at www.dicoogle.com. A few essential plugins for Dicoogle are available to download there, as well as a built jar of the Dicoogle platform. To learn how to use Dicoogle, please see our [Learning Pack](//bioinformatics-ua.github.io/dicoogle-learning-pack). To build the core platform yourself, please see the section on [Building Dicoogle](#building-dicoogle).
+Our official website is at https://www.dicoogle.com. A few essential plugins for Dicoogle are available to download there, as well as a built jar of the Dicoogle platform. To learn how to use Dicoogle, please see our [Learning Pack](https://bioinformatics-ua.github.io/dicoogle-learning-pack). To build the core platform yourself, please see the section on [Building Dicoogle](#building-dicoogle) below. The learning pack also has a page on [Building Dicoogle](https://bioinformatics-ua.github.io/dicoogle-learning-pack/docs/building/).
 
 Brief Documentation
 -------------------
@@ -31,7 +34,7 @@ Brief Documentation
 
 #### Available Plugins
   
-  We provide a few plugins at the official website, in the [Downloads](http://www.dicoogle.com/?page_id=67) page.
+  We provide a few plugins at the official website, in the [Downloads](https://dicoogle.com/downloads/) page.
 
   * Lucene Index/Query Plugin - (lucene.jar)
       
@@ -47,11 +50,6 @@ Brief Documentation
       
         * `root-dir`: is the root directory where DICOM Files will be stored
         * `scheme`: Specifies the scheme/protocol of the file plugin. This value is arbitrary, but must be unique among all installed plugins. As such, avoid using well known protocol names such as http or file.
-
-  * Dicoogle Wan Plugin - (wan-plugin.jar)
-
-      The WAN Plugin may be used to federate instances of the Dicoogle Repository. The google app engine is used to federate and relay communications between the multiple instances.
-      It is possible to call services on remote instances of the Dicoogle Platform seamlessly, such as, Query or Retrieval of studies.
 
 #### Configuring Plugins
 
@@ -86,7 +84,7 @@ Brief Documentation
 
 #### Using the Web Services
 
-  Let us assume that the Web Services for our instance of Dicoogle are running in http://demo.dicoogle.com/
+  Let us assume that the Web Services for our instance of Dicoogle are running in https://demo.dicoogle.com/
  
   * Searching
      Dicoogle provides a flexible web service for querying, under the `/search` endpoint.
@@ -141,7 +139,7 @@ We also have programmatic APIs for interfacing with Dicoogle in [JavaScript](htt
 
 #### Create your own Plugins
 
-  In order to integrate new functionalities in Dicoogle, you may create your own plugin set. A plugin set comprises plugins that are developed with the intent of supporting a given feature, and are packaged in a single jar file for deployment. See the wiki page on [Plugin Development](https://github.com/bioinformatics-ua/dicoogle/wiki/Plugin-Development) for our guide, and our [sample plugin project](https://github.com/bioinformatics-ua/dicoogle-plugin-sample) for a base project from which you can start making your own plugins.
+  In order to integrate new functionalities in Dicoogle, you may create your own plugin set. A plugin set comprises plugins that are developed with the intent of supporting a given feature, and are packaged in a single jar file for deployment. See the learning pack on [Plugin Development](https://bioinformatics-ua.github.io/dicoogle-learning-pack/docs/developing-plugins/) for our guide (we also have a [wiki page](https://github.com/bioinformatics-ua/dicoogle/wiki/Plugin-Development)), and our [sample plugin project](https://github.com/bioinformatics-ua/dicoogle-plugin-sample) for a base project from which you can start making your own plugins.
 
 ### Building Dicoogle 
 
@@ -152,7 +150,7 @@ Before building, please make sure that your system contains the following tools:
 
  1. Retrieve the full source code from this repository: `git clone https://github.com/bioinformatics-ua/dicoogle.git`
  2. Navigate to the project's base directory, and build the parent Maven project by calling `mvn install`.
-    - Note: if you want, you can skip building the webapp via Maven: `mvn install -Dskip.installnodenpm -Dskip.npm`
+    - Note: this will build the web application using an embedded version of Node.js and npm. To skip building the webapp: `mvn install -Dskip.installnodenpm -Dskip.npm`
  3. The resulting jar file can be found in "./dicoogle/target".
 
 
