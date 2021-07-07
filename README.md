@@ -1,5 +1,9 @@
-<img src="https://cloud.githubusercontent.com/assets/4738426/21611123/64d0b4de-d1c3-11e6-8f99-d14fce8591f2.png" height="50"/>
-===================================================================
+# <img src="https://cloud.githubusercontent.com/assets/4738426/21611123/64d0b4de-d1c3-11e6-8f99-d14fce8591f2.png" height="50"/>
+
+[![Build Dicoogle 2](https://github.com/bioinformatics-ua/dicoogle/actions/workflows/dicoogle2.yml/badge.svg?branch=releases%2F2.5.X)](https://github.com/bioinformatics-ua/dicoogle/actions/workflows/dicoogle2.yml)
+
+> You are reading the sources of Dicoogle 2, which is being phased out.
+> [Click here for the latest version of Dicoogle](https://github.com/bioinformatics-ua/dicoogle/tree/dev)
 
 Dicoogle is an extensible, platform-independent and open-source PACS archive software that replaces the traditional centralized database with a more agile indexing and retrieval mechanism. It was designed to support automatic extraction, indexing and storage of all meta-data detected in medical images, including private DICOM attribute tags, without re-engineering or reconfiguration requirements.
 
@@ -145,13 +149,12 @@ We also have programmatic APIs for interfacing with Dicoogle in [JavaScript](htt
 
 Before building, please make sure that your system contains the following tools:
 
- - Java JDK, either Oracle or OpenJDK (at least version 7; JDK 8 is recommended)
+ - Java JDK, either Oracle or OpenJDK (at least version 7; JDK 8 is recommended; note that JDK 9 or higher is only supported in Dicoogle 3)
  - Maven 3
- - [Node.js](https://nodejs.org/en/download/) (at least version 4; LTS or Stable versions are recommended) and npm (at least version 2)
 
  1. Retrieve the full source code from this repository: `git clone https://github.com/bioinformatics-ua/dicoogle.git`
  2. Navigate to the project's base directory, and build the parent Maven project by calling `mvn install`.
-    - Note: if you want, you can skip the npm part: `mvn install -Dskip.npm`
+    - Note: this will also build the web application with an embedded Node.js and npm. If you want to handle building the webapp yourself, you can skip this part: `mvn install -Dskip.installnodenpm -Dskip.npm`
  3. The resulting jar file can be found in "./dicoogle/target".
 
 
@@ -172,23 +175,26 @@ Project committers
 
 Maintainers:
 
-* Luís Bastião (BMD software - development leader) - [@bastiao](https://github.com/bastiao)
-* Eduardo Pinho (UA.PT Bioinformatics) - [@Enet4](https://github.com/Enet4)
+* Luís Bastião (BMD Software - development leader) - [@bastiao](https://github.com/bastiao)
+* Eduardo Pinho (BMD Software) - [@Enet4](https://github.com/Enet4)
+* Rui Lebre (UA.PT Bioinformatics) - [@rlebre](https://github.com/rlebre)
 
 Contributors:
 
-* Renato Pinho (BMD software)
-* David Campos (BMD software)
-* Eriksson Monteiro (UA.PT Bioinformatics)
-* Tiago Godinho (UA.PT Bioinformatics)
 * Jorge Miguel Silva (UA.PT Bioinformatics)
 
 Past developers:
 
-* Samuel Campos
 * Carlos Ferreira
-* Luis Ribeiro
+* David Campos
+* Eriksson Monteiro
+* Frederico Silva
 * Frederico Valente
+* Leonardo Oliveira
+* Luis Ribeiro
+* Renato Pinho
+* Samuel Campos
+* Tiago Godinho
 
 Project leaders
 ---------------

@@ -1,8 +1,13 @@
 # Dicoogle Web Application
-
 ## Building
 
-`npm` version 2 or earlier is required. To build everything for production (ready to be bundled for when creating dicoogle.jar):
+Building the webapp of Dicoogle 2 requires Node.js 10,
+the final version of which is `10.24.1`.
+If necessary, it can be obtained with a Node.js version manager (nvm)
+or at the official [Node.js website](https://nodejs.org/dist/latest-v10.x/).
+npm version 3 or higher is required, npm 6 is recommended.
+
+To build everything for production (ready to be bundled for when creating dicoogle.jar):
 
     npm install
 
