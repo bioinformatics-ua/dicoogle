@@ -22,7 +22,7 @@ export default class PluginFormModal extends React.Component {
     super(props);
     this.handleMounted = this.handleMounted.bind(this);
     this.handleHideSignal = this.handleHideSignal.bind(this);
-    this.handlePluginReady = this.handlePluginReady.bind(this);
+    this.handlePluginLoad = this.handlePluginLoad.bind(this);
   }
 
   onConfirm() {
@@ -33,7 +33,7 @@ export default class PluginFormModal extends React.Component {
     if (component) {
       const node = component;
       node.addEventListener('hide', this.handleHideSignal);
-      node.addEventListener('plugin-ready', this.handlePluginReady);
+      node.addEventListener('plugin-load', this.handlePluginLoad);
       Dicoogle.emitSlotSignal(node, 'result-selection-ready', ResultsSelected.get());
     }
   }
@@ -41,14 +41,12 @@ export default class PluginFormModal extends React.Component {
   handleHideSignal({target}) {
       console.log('Plugin requested to hide');
       target.removeEventListener('hide', this.handleHideSignal);
-      target.removeEventListener('plugin-ready', this.handlePluginReady);
+      target.removeEventListener('plugin-load', this.handlePluginLoad);
       this.props.onHide();
   }
 
-  handlePluginReady({target}){
-    console.log("WebCore: got plugin-ready")
+  handlePluginLoad({target}){
     if (target) {
-      console.log("WebCore: about to emit ResultsSelected.get()")
       Dicoogle.emitSlotSignal(target, 'result-selection-ready', ResultsSelected.get());
     }
   }
