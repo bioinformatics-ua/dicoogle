@@ -93,7 +93,9 @@ const SeriesView = React.createClass({
       return (<div></div>);
   },
 
-  handleSelect(item){
+  handleSelect(item, event){
+
+    event.stopPropagation();
 
     let {serieInstanceUID} = item;
     // ResultSelectActions.select(item);
@@ -112,7 +114,7 @@ const SeriesView = React.createClass({
     let classNameForIt = "advancedOptions " + serieInstanceUID;
     return (<div className={classNameForIt}>
               <Input type="checkbox" label=""
-                    onChange={this.handleSelect.bind(this, item)}
+                    onChange={(e) => this.handleSelect(item, e)}
                     ref={this.handleRefs.bind(this, serieInstanceUID)}/>
             </div>
     );

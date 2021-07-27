@@ -95,8 +95,11 @@ const PatientView = React.createClass({
           return (<div></div>);
 
   },
-  handleSelect(item){
-      let {id} = item;
+      handleSelect(item, event){
+
+          event.stopPropagation();
+
+          let {id} = item;
      // ResultSelectActions.select(item);
       let value = this.refsClone[id].getChecked();
       if (value)
@@ -114,7 +117,7 @@ const PatientView = React.createClass({
     let classNameForIt = "advancedOptions " + id;
     return (<div className={classNameForIt}>
               <Input type="checkbox" label=""
-                    onChange={this.handleSelect.bind(this, item)}
+                     onChange={(e) => this.handleSelect(item, e)}
                     ref={this.handleRefs.bind(this, id)}/>
             </div>
     );
