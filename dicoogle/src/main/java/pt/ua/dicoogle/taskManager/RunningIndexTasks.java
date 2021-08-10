@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -44,7 +45,7 @@ public class RunningIndexTasks {
             Integer.parseInt(System.getProperty("dicoogle.tasks.softRemoveTasks", "50000"));
     private static int NUMBER_RUNNINGTASKS_TO_CLEAN =
             Integer.parseInt(System.getProperty("dicoogle.tasks.numberTaskClean", "2000"));
-    private static boolean ENABLE_HOOK = Boolean.valueOf(System.getProperty("dicoogle.tasks.removedCompleted", "true"));
+    private static boolean ENABLE_HOOK = Boolean.valueOf(System.getProperty("dicoole.tasks.removedCompleted", "true"));
     public static RunningIndexTasks instance;
 
     private final Map<String, Task<Report>> taskRunningList;
@@ -56,7 +57,7 @@ public class RunningIndexTasks {
     }
 
     public RunningIndexTasks() {
-        taskRunningList = new LinkedHashMap<>();
+        taskRunningList = new ConcurrentHashMap<>(SOFT_MAX_RUNNINGTASKS, 0.75f, 4);
     }
 
     public void addTask(String taskUid, Task<Report> task) {
@@ -82,7 +83,7 @@ public class RunningIndexTasks {
             while (iterator.hasNext() && removedTasks < NUMBER_RUNNINGTASKS_TO_CLEAN) {
                 String tId = iterator.next();
                 Task<?> t = this.taskRunningList.get(tId);
-                if (t.isCancelled() || t.isDone()) {
+                if (t != null && (t.isCancelled() || t.isDone())){
                     iterator.remove();
                     removedTasks++;
                 }
