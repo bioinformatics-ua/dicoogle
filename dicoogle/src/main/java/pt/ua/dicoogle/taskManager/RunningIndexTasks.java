@@ -77,7 +77,7 @@ public class RunningIndexTasks {
 	        while(iterator.hasNext()&& removedTasks<NUMBER_RUNNINGTASKS_TO_CLEAN){
 	            String tId = iterator.next();
                 Task<?> t =  this.taskRunningList.get(tId);
-                if (t.isCancelled() || t.isDone()){
+                if (t != null && (t.isCancelled() || t.isDone())){
                     iterator.remove();
                     removedTasks++;
                 }
