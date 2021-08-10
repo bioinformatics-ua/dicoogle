@@ -29,6 +29,7 @@ import pt.ua.dicoogle.sdk.task.Task;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -54,7 +55,7 @@ public class RunningIndexTasks {
 	}
 
 	public RunningIndexTasks() {
-		taskRunningList = new LinkedHashMap<>();
+		taskRunningList = new ConcurrentHashMap<>();
 	}
 
 	public void addTask(String taskUid, Task<Report> task) {
