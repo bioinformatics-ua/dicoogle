@@ -5,7 +5,7 @@
     <artifactId>dicoogle-sdk-ext</artifactId>
     <packaging>jar</packaging>
     <name>dicoogle-sdk-ext</name>
-    <url>http://www.dicoogle.com</url>
+    <url>https://www.dicoogle.com</url>
 
     <parent>
         <groupId>pt.ua.ieeta</groupId>
@@ -21,7 +21,7 @@
     <repositories>
         <repository>
             <id>mavencentral</id>
-            <url>http://repo1.maven.org/maven2/</url>
+            <url>https://repo1.maven.org/maven2/</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
@@ -172,13 +172,13 @@
         <!-- Versioned releases are published to the releases repository -->
         <repository>
             <id>mi</id>
-            <url>http://bioinformatics.ua.pt/maven/content/repositories/mi</url>
+            <url>https://bioinformatics.ua.pt/maven/content/repositories/mi</url>
         </repository>
 
         <!-- Snapshot releases are published to the snapshots repository -->
         <snapshotRepository>
             <id>mi</id>
-            <url>http://bioinformatics.ua.pt/maven/content/repositories/mi-snapshots</url>
+            <url>https://bioinformatics.ua.pt/maven/content/repositories/mi-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 </project>
