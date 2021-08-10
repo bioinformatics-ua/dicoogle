@@ -45,7 +45,7 @@ public class RunningIndexTasks {
             Integer.parseInt(System.getProperty("dicoogle.tasks.softRemoveTasks", "50000"));
     private static int NUMBER_RUNNINGTASKS_TO_CLEAN =
             Integer.parseInt(System.getProperty("dicoogle.tasks.numberTaskClean", "2000"));
-    private static boolean ENABLE_HOOK = Boolean.valueOf(System.getProperty("dicoole.tasks.removedCompleted", "true"));
+    private static boolean ENABLE_HOOK = Boolean.valueOf(System.getProperty("dicoogle.tasks.removedCompleted", "true"));
     public static RunningIndexTasks instance;
 
     private final Map<String, Task<Report>> taskRunningList;
