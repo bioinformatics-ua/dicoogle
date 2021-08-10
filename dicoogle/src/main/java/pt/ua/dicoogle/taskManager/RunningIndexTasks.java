@@ -46,6 +46,7 @@ public class RunningIndexTasks {
 	public static RunningIndexTasks instance;
 
 	private final Map<String, Task<Report>> taskRunningList;
+	private boolean cleaning = false; // if cleaning task is running or not.
 
 	public static RunningIndexTasks getInstance() {
 		if (instance == null)
@@ -60,8 +61,10 @@ public class RunningIndexTasks {
 
 	public void addTask(String taskUid, Task<Report> task) {
 		taskRunningList.put(taskUid, task);
-		if (ENABLE_HOOK){
+		if (ENABLE_HOOK && !cleaning){
+		    cleaning = true; // will execute cleaning process
 		    hookRemoveRunningTasks();
+		    cleaning = false; // already cleaned
 		}
 	}
 
