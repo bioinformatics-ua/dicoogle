@@ -55,7 +55,7 @@ public class RunningIndexTasks {
 	}
 
 	public RunningIndexTasks() {
-		taskRunningList = new ConcurrentHashMap<>();
+		taskRunningList = new ConcurrentHashMap<>(SOFT_MAX_RUNNINGTASKS, 0.75f, 4);
 	}
 
 	public void addTask(String taskUid, Task<Report> task) {
