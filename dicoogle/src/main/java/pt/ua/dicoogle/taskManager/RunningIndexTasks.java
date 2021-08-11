@@ -32,6 +32,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Singleton that contains all running index tasks
@@ -49,6 +50,7 @@ public class RunningIndexTasks {
     public static RunningIndexTasks instance;
 
     private final Map<String, Task<Report>> taskRunningList;
+    private AtomicBoolean cleaning = new AtomicBoolean(false); // if cleaning task is running or not.
 
     public static RunningIndexTasks getInstance() {
         if (instance == null)
@@ -62,8 +64,10 @@ public class RunningIndexTasks {
 
     public void addTask(String taskUid, Task<Report> task) {
         taskRunningList.put(taskUid, task);
-        if (ENABLE_HOOK) {
+        if (ENABLE_HOOK && !cleaning.compareAndSet(false, true)){
+            // will execute cleaning process
             hookRemoveRunningTasks();
+            cleaning.set(false); // already cleaned
         }
     }
 
