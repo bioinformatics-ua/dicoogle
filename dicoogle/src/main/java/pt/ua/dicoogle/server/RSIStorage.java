@@ -332,19 +332,37 @@ public class RSIStorage extends StorageService
 
         @Override
         public int compareTo(ImageElement other) {
-            boolean thisPriority = priorityAETs.contains(this.getCallingAET());
-            boolean thatPriority = priorityAETs.contains(other.getCallingAET());
-
-            int priorityOrder = Boolean.compare(thisPriority, thatPriority);
-
-            if (priorityOrder != 0) {
-                return priorityOrder;
-            }
-
-            return Long.compare(this.seqNumber, other.seqNumber);
+            return compareElementsImpl(RSIStorage.this.priorityAETs, this.callingAET, this.seqNumber,
+                    other.callingAET, other.seqNumber);
         }
     }
 
+    /** Standalone implementation of image element sorting criteria.
+     * 
+     * @param priorityAETs the set of calling AE titles
+     * from which incoming images have a HIGHER priority
+     * @param thisAETitle this image's AE title
+     * @param thisSeqNumber this image's sequence number
+     * @param otherAETitle the other image's AE title
+     * @param otherSeqNumber the other image's sequence number
+     * @return a number < 0 if this image has a higher priority than the other,
+     * > 0 if the other image has a higher priority
+     * (=0 should not happen because sequence numbers are unique)
+     * @see {@link ImageElement#compareTo(ImageElement)}
+     */
+    static int compareElementsImpl(Set<String> priorityAETs, String thisAETitle, long thisSeqNumber,
+            String otherAETitle, long otherSeqNumber) {
+        boolean thisPriority = priorityAETs.contains(thisAETitle);
+        boolean thatPriority = priorityAETs.contains(otherAETitle);
+
+        int priorityOrder = Boolean.compare(thisPriority, thatPriority);
+
+        if (priorityOrder != 0) {
+            return -priorityOrder;
+        }
+
+        return Long.compare(thisSeqNumber, otherSeqNumber);
+    }
     
     class Indexer extends Thread
     {
