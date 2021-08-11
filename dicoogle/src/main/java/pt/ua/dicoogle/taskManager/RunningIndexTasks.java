@@ -29,7 +29,9 @@ import pt.ua.dicoogle.sdk.task.Task;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Singleton that contains all running index tasks
@@ -45,22 +47,24 @@ public class RunningIndexTasks {
 	public static RunningIndexTasks instance;
 
 	private final Map<String, Task<Report>> taskRunningList;
+	private AtomicBoolean cleaning = new AtomicBoolean(false); // if cleaning task is running or not.
 
 	public static RunningIndexTasks getInstance() {
 		if (instance == null)
 			instance = new RunningIndexTasks();
-
 		return instance;
 	}
 
 	public RunningIndexTasks() {
-		taskRunningList = new LinkedHashMap<>();
+		taskRunningList = new ConcurrentHashMap<>(SOFT_MAX_RUNNINGTASKS, 0.75f, 4);
 	}
 
 	public void addTask(String taskUid, Task<Report> task) {
 		taskRunningList.put(taskUid, task);
-		if (ENABLE_HOOK){
+		if (ENABLE_HOOK && !cleaning.compareAndSet(false, true)){
+		    // will execute cleaning process
 		    hookRemoveRunningTasks();
+		    cleaning.set(false); // already cleaned
 		}
 	}
 
@@ -77,7 +81,7 @@ public class RunningIndexTasks {
 	        while(iterator.hasNext()&& removedTasks<NUMBER_RUNNINGTASKS_TO_CLEAN){
 	            String tId = iterator.next();
                 Task<?> t =  this.taskRunningList.get(tId);
-                if (t.isCancelled() || t.isDone()){
+                if (t != null && (t.isCancelled() || t.isDone())){
                     iterator.remove();
                     removedTasks++;
                 }
