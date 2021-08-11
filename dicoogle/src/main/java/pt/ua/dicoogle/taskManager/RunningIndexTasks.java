@@ -64,7 +64,7 @@ public class RunningIndexTasks {
 		if (ENABLE_HOOK && !cleaning.compareAndSet(false, true)){
 		    // will execute cleaning process
 		    hookRemoveRunningTasks();
-            cleaning.set(false); // already cleaned
+		    cleaning.set(false); // already cleaned
 		}
 	}
 
