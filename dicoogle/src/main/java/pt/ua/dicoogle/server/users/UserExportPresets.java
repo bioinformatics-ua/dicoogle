@@ -20,7 +20,7 @@ package pt.ua.dicoogle.server.users;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pt.ua.dicoogle.sdk.Utils.Platform;
+import pt.ua.dicoogle.utils.Platform;
 
 import java.io.*;
 import java.nio.file.*;
