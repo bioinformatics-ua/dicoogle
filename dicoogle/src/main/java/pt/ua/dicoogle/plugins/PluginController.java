@@ -27,9 +27,6 @@ import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
 import pt.ua.dicoogle.plugins.webui.WebUIPluginManager;
 import pt.ua.dicoogle.sdk.*;
-import pt.ua.dicoogle.sdk.Utils.TaskQueue;
-import pt.ua.dicoogle.sdk.Utils.TaskRequest;
-import pt.ua.dicoogle.sdk.core.PlatformCommunicatorInterface;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.datastructs.dim.DimLevel;
@@ -42,7 +39,6 @@ import pt.ua.dicoogle.server.web.DicoogleWeb;
 import pt.ua.dicoogle.taskManager.RunningIndexTasks;
 import pt.ua.dicoogle.taskManager.TaskManager;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -81,7 +77,6 @@ public class PluginController {
     private final Collection<PluginSet> pluginSets;
     private final Collection<DeadPlugin> deadPluginSets;
     private File pluginFolder;
-    private TaskQueue tasks = null;
     private final PluginPreparer preparer;
 
     private PluginSet remoteQueryPlugins = null;
@@ -93,8 +88,6 @@ public class PluginController {
     public PluginController(File pathToPluginDirectory) {
         logger.info("Creating PluginController Instance");
         pluginFolder = pathToPluginDirectory;
-
-        tasks = new TaskQueue();
 
         // the plugin directory does not exist. lets create it
         if (!pathToPluginDirectory.exists()) {
@@ -434,12 +427,6 @@ public class PluginController {
         }
         return queriers;
     }
-
-    public void addTask(TaskRequest task) {
-        this.tasks.addTask(task);
-    }
-
-
 
     public List<String> getQueryProvidersName(boolean enabled) {
         Collection<QueryInterface> plugins = getQueryPlugins(enabled);

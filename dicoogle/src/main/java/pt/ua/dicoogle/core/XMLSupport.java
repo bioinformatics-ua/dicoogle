@@ -58,7 +58,7 @@ import org.dcm4che2.data.UID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pt.ua.dicoogle.sdk.Utils.Platform;
+import pt.ua.dicoogle.utils.Platform;
 
 @Deprecated
 public class XMLSupport extends DefaultHandler {
