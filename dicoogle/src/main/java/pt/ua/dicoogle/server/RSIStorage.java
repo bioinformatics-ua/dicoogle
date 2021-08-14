@@ -377,7 +377,7 @@ public class RSIStorage extends StorageService
                     // Fetch an element by the queue taking into account the priorities.
                     ImageElement element = queue.take();
                     URI exam = element.getUri();
-                    PluginController.getInstance().indexBlocking(exam);
+                    PluginController.getInstance().index(exam);
                 } catch (InterruptedException ex) {
                     LoggerFactory.getLogger(RSIStorage.class).error("Could not take instance to index", ex);
                 }
