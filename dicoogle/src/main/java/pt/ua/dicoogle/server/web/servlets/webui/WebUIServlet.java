@@ -41,7 +41,7 @@ import pt.ua.dicoogle.server.web.auth.Authentication;
 /**
  * Retrieval of web UI plugins and respective packages/modules.
  * 
- * <b>This API is unstable. It is currently only compatible with dicoogle-webcore >= 0.12.x && <= 0.14.x</b>
+ * <b>This API is unstable. It is currently only compatible with dicoogle-webcore >= 0.12.x && <= 0.15.x</b>
  *
  * @author Eduardo Pinho
  */
@@ -96,7 +96,7 @@ public class WebUIServlet extends HttpServlet {
             }
 
             final RolesStruct roles = RolesStruct.getInstance();
-            boolean pluginOk = PERMISSIVE_WEBUI;
+            boolean pluginOk = PERMISSIVE_WEBUI || plugin.getRoles().isEmpty();
             if (!pluginOk) {
                 for (String r : plugin.getRoles()) {
                     Role rr = roles.getRole(r);
