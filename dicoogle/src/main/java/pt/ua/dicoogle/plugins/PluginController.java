@@ -83,7 +83,7 @@ public class PluginController{
     private final WebUIPluginManager webUI;
     private final DicooglePlatformProxy proxy;
     private TaskManager taskManager = new TaskManager(Integer.parseInt(System.getProperty("dicoogle.taskManager.nThreads", "4")));
-    private TaskManager taskManagerQueries = new TaskManager(Integer.parseInt(System.getProperty("dicoogle.taskManager.nThreads", "4")));
+    private TaskManager taskManagerQueries = new TaskManager(Integer.parseInt(System.getProperty("dicoogle.taskManager.nQueryThreads", "4")));
 
     public PluginController(File pathToPluginDirectory) {
     	logger.info("Creating PluginController Instance");
