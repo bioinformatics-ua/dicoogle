@@ -76,8 +76,8 @@ public class RSIStorage extends StorageService
     private BlockingQueue<ImageElement> queue = new PriorityBlockingQueue<>();
     private NetworkApplicationEntity[] naeArr = null;
     private AtomicLong seqNum = new AtomicLong(0L);
+    private static boolean ENABLED_ASYNC_INDEX = Boolean.valueOf(System.getProperty("dicoogle.index.async", "true"));
 
-    
     /**
      * 
      * @param Services List of supported SOP Classes
@@ -377,7 +377,10 @@ public class RSIStorage extends StorageService
                     // Fetch an element by the queue taking into account the priorities.
                     ImageElement element = queue.take();
                     URI exam = element.getUri();
-                    PluginController.getInstance().index(exam);
+                    if (ENABLED_ASYNC_INDEX)
+                        PluginController.getInstance().index(exam);
+                    else
+                        PluginController.getInstance().indexBlocking(exam);
                 } catch (InterruptedException ex) {
                     LoggerFactory.getLogger(RSIStorage.class).error("Could not take instance to index", ex);
                 }
