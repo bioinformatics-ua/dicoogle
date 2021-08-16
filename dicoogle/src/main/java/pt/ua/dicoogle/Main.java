@@ -28,7 +28,7 @@ import pt.ua.dicoogle.core.AsyncIndex;
 import pt.ua.dicoogle.core.TagsXML;
 import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.plugins.PluginController;
-import pt.ua.dicoogle.sdk.Utils.Platform;
+import pt.ua.dicoogle.utils.Platform;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 import pt.ua.dicoogle.sdk.utils.TagsStruct;
 
@@ -175,10 +175,5 @@ public class Main {
         if (settings.getArchiveSettings().isDirectoryWatcherEnabled()) {
             AsyncIndex asyncIndex = new AsyncIndex();
         }
-    }
-
-    private static void LaunchGUIClient() {
-        logger.error("Remote GUI is no longer supported: please enter the Dicoogle web application");
-        System.exit(-1);
     }
 }

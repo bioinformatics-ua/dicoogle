@@ -40,7 +40,7 @@ import org.dcm4che2.net.TransferCapability;
 import org.dcm4che2.net.service.VerificationService;
 import org.slf4j.LoggerFactory;
 
-import pt.ua.dicoogle.sdk.Utils.Platform;
+import pt.ua.dicoogle.utils.Platform;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 import pt.ua.dicoogle.server.DicomNetwork;
 

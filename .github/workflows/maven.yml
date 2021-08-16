@@ -1,7 +1,6 @@
-# This workflow will build a Java project with Maven
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
-
-name: Java CI with Maven
+# This workflow builds the full Java project using Maven.
+# The webapp is not included.
+name: Build Dicoogle with Maven
 
 on:
   push:
@@ -14,11 +13,16 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        java-version: ['8', '11']
+
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v2
       with:
-        java-version: 1.8
+        distribution: 'zulu'
+        java-version: ${{ matrix.java-version }}
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B package -Dskip.installnodenpm -Dskip.npm --file pom.xml

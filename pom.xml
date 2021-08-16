@@ -130,6 +130,5 @@
     <modules>
         <module>dicoogle</module>
         <module>sdk</module>
-        <module>sdk-ext</module>
     </modules>
 </project>

@@ -44,7 +44,7 @@ import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import pt.ua.dicoogle.sdk.Utils.Platform;
+import pt.ua.dicoogle.utils.Platform;
 import pt.ua.dicoogle.sdk.utils.TagValue;
 import pt.ua.dicoogle.sdk.utils.TagsStruct;
 

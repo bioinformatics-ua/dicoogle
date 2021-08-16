@@ -239,14 +239,11 @@ export const updateSlot = m.updateSlot;
   m.fetchPlugins = function (slotIds, callback) {
     if (process.env.NODE_ENV !== 'production' && !check_initialized()) return;
     console.log('Fetching Dicoogle web UI plugin descriptors ...');
-    slotIds = [].concat(slotIds);
-    let uri = 'webui';
-    service_get(uri, {'slot-id': slotIds}, function(error, data) {
+    Dicoogle.getWebUIPlugins(slotIds, function(error, packageArray) {
       if (error) {
         console.error('Failed to fetch plugin descriptors:' , error);
         return;
       }
-      var packageArray = data.plugins;
       for (let i = 0; i < packageArray.length; i++) {
         if (!packages[packageArray[i].name]) {
           packages[packageArray[i].name] = packageArray[i];
@@ -296,13 +293,12 @@ export const fetchModules = m.fetchModules;
     options.query = query;
     let requestTime = new Date();
     let queryService = options.overrideService || 'search';
-    service_get(queryService, options, function (error, data) {
-      if (error) {
-        if (callback) callback(error, null);
-        return;
-      }
+    
+    Dicoogle.request(queryService, options).then((data) => {
       dispatch_result(data, requestTime, options);
       if (callback) callback(null, data);
+    }, (error) => {
+      callback && callback(error);
     });
   }
   
@@ -473,20 +469,7 @@ export const webUISlot = m.webUISlot;
     }
     event_hub.emit('result', result, requestTime, options);
   }
-  
-  /**
-   * Send a GET request to a Dicoogle service.
-   *
-   * @param {string} uri the request URI in string or array form
-   * @param {string} qs an object containing query string parameters (or a QS without '?')
-   * @param {function(error, outcome)} callback a callback function
-   * @return {void}
-   */
-  function service_get(uri, qs, callback) {
-    // issue request
-    Dicoogle.request('GET', uri, qs).then((x) => callback(null, x.body), callback);
-  }
-  
+    
   function getScript(moduleName, callback) {
     let script = document.createElement('script');
     let prior = document.getElementsByTagName('script')[0];

@@ -42,7 +42,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import pt.ua.dicoogle.core.settings.ClientSettings;
-import pt.ua.dicoogle.sdk.Utils.Platform;
+import pt.ua.dicoogle.utils.Platform;
 
 /**
  *
