@@ -21,9 +21,7 @@ package pt.ua.dicoogle.server;
 import java.io.IOException;
 import java.util.List;
 
-import org.dcm4che2.data.Tag;
 import org.slf4j.Logger;
-import pt.ua.dicoogle.sdk.datastructs.SOPClass;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 import pt.ua.dicoogle.server.queryretrieve.QueryRetrieve;
 

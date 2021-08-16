@@ -181,7 +181,6 @@ public class SOPList {
      */
     public synchronized TransfersStorage getTS(String UID) {
         TransfersStorage TS;
-        boolean[] p = null;
 
         TS = table.get(UID);
         return TS;

@@ -21,8 +21,6 @@ package pt.ua.dicoogle.core.auth;
 import org.junit.Ignore;
 import org.junit.Test;
 import pt.ua.dicoogle.server.users.*;
-import pt.ua.dicoogle.server.web.auth.Authentication;
-import pt.ua.dicoogle.server.web.auth.LoggedIn;
 
 import java.util.Collection;
 

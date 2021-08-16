@@ -854,23 +854,4 @@ public class PluginController {
             return null;
         }
     }
-
-    // METHODS FOR SERVICE:JAVA
-    /**
-     *
-     * TODO: REVIEW! BELOW
-     *
-     * Checks if the plugin exists and has advanced/internal settings.
-     *
-     * @param pluginName the name of the plugin.
-     * @return true if the plugin exists and has at least one advance/internal
-     * settings, false otherwise.
-     */
-    public boolean hasAdvancedSettings(String pluginName) {
-        return false;
-    }
-
-    public HashMap<String, String> getAdvancedSettingsHelp(String pluginName) {
-        return null;
-    }
 }

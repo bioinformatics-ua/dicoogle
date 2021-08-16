@@ -21,9 +21,6 @@ package pt.ua.dicoogle.sdk.utils;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Iterator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.dcm4che2.data.Tag;
 

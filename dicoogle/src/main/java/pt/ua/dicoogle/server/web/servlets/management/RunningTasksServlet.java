@@ -19,7 +19,6 @@
 package pt.ua.dicoogle.server.web.servlets.management;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

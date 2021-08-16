@@ -59,7 +59,6 @@ public class Query extends JointQueryTask {
 
     @Override
     public void onCompletion() {
-        // TODO Auto-generated method stub
         this.latch.countDown();
     }
 

@@ -19,7 +19,6 @@
 
 package pt.ua.dicoogle.server.web.servlets.webui;
 
-import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.plugins.PluginController;
@@ -31,7 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
-import java.nio.ByteBuffer;
 
 /**
  * Retrieval of web UI plugins and respective packages/modules.

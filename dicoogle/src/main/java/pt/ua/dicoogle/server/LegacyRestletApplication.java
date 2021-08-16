@@ -57,22 +57,16 @@ public class LegacyRestletApplication extends Application {
 
         // Define routing to resources
         this.internalRouter.setDefaultMatchingQuery(false);
-        // internalRouter.attach("/test/{something}", TestResource.class);
         internalRouter.attach("/dim", RestDimResource.class);// search resource
         internalRouter.attach("/file", RestFileResource.class);// file download resource
         internalRouter.attach("/dump", RestDumpResource.class);// dump resource
         internalRouter.attach("/tags", RestTagsResource.class);// list of avalilable tags resource
-        // router.attach("/image", RestImageResource.class);//jpg image resource
-        // router.attach("/enumField", RestEnumField.class);
-        // router.attach("/countResuls", RestCountQueryResults.class);
         internalRouter.attach("/wado", RestWADOResource.class);
         internalRouter.attach("/img", RestDcmImageResource.class);
         internalRouter.attach("/examTime", ExamTimeResource.class);
 
         // Advanced Dicoogle Features
         internalRouter.attach("/doIndex", ForceIndexing.class);
-
-        // internalRouter.attachDefault(ExtResource.class);
 
         LoggerFactory.getLogger(LegacyRestletApplication.class).debug("Legacy service routes: {}",
                 internalRouter.getRoutes());

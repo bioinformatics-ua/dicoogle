@@ -19,10 +19,6 @@
 
 package pt.ua.dicoogle.webui;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static pt.ua.dicoogle.server.web.servlets.webui.WebUIServlet.camelize;

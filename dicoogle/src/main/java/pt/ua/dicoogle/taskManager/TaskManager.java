@@ -19,10 +19,8 @@
 
 package pt.ua.dicoogle.taskManager;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import pt.ua.dicoogle.sdk.task.Task;
 
 /**
