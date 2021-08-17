@@ -11,6 +11,7 @@ cache:
     - $HOME/.m2
 
 matrix:
+  fast_finish: true
   include:
     - jdk: oraclejdk8
       env: NODE_VERSION=10 WEBAPP_ONLY=1
