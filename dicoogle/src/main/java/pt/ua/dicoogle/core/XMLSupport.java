@@ -1069,12 +1069,10 @@ public class XMLSupport extends DefaultHandler
     
     public void printXML()
     {
-        FileOutputStream out = null;
         list.CleanList();
-        try {
-            out = new FileOutputStream(Platform.homePath() + "config.xml");
-            PrintWriter pw = new PrintWriter(out);
-            StreamResult streamResult = new StreamResult(pw);
+        
+        try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(Platform.homePath() + "config.xml"))) {
+            StreamResult streamResult = new StreamResult(out);
             SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
             //      SAX2.0 ContentHandler.
             TransformerHandler hd = tf.newTransformerHandler();
@@ -1655,18 +1653,8 @@ public class XMLSupport extends DefaultHandler
             
             hd.endDocument();
                         
-        } catch (TransformerConfigurationException ex) {
-            
-        } catch (SAXException ex) {
-            
-        } catch (FileNotFoundException ex) {
-            
-        } finally {
-            try {
-                out.close();
-            } catch (IOException ex) {
-                
-            }
+        } catch (TransformerConfigurationException|SAXException|IOException ex) {
+            logger.error("An error occurred while printing XML server settings", ex);  
         }
    }
 }
