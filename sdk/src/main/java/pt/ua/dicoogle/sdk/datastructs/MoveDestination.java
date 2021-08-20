@@ -21,8 +21,6 @@ package pt.ua.dicoogle.sdk.datastructs;
 import com.fasterxml.jackson.annotation.*;
 
 import java.io.Serializable;
-import java.net.InetAddress;
-import java.net.SocketAddress;
 import java.util.Objects;
 
 /** An immutable data structure for describing a DICOM node (potential C-MOVE destinations).

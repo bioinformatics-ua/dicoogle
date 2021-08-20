@@ -22,8 +22,6 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.slf4j.LoggerFactory;
-import pt.ua.dicoogle.server.users.Role;
-import pt.ua.dicoogle.server.users.RolesStruct;
 
 import java.util.HashSet;
 import java.util.Set;

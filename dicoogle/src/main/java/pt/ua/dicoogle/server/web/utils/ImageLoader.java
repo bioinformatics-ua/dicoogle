@@ -26,8 +26,6 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import org.dcm4che2.imageio.plugins.dcm.DicomImageReadParam;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.sdk.StorageInputStream;
 

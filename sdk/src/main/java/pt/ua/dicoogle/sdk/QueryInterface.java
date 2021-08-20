@@ -22,7 +22,6 @@ import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.utils.QueryException;
 import pt.ua.dicoogle.sdk.utils.QueryParseException;
 import pt.ua.dicoogle.sdk.utils.RetrievalException;
-import pt.ua.dicoogle.sdk.datastructs.dim.DimLevel;
 
 /**
  * Query Interface Plugin. Query plugins provide a means of handling queries and obtaining search results.

@@ -18,7 +18,6 @@
  */
 package pt.ua.dicoogle.server.web.utils.types;
 
-import java.util.Arrays;
 import java.util.HashMap;
 
 import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;

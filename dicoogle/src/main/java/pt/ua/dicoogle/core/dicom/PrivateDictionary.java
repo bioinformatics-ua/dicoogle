@@ -21,9 +21,6 @@ package pt.ua.dicoogle.core.dicom;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pt.ua.dicoogle.sdk.utils.TagValue;
@@ -36,7 +33,6 @@ import pt.ua.dicoogle.sdk.utils.TagsStruct;
 public class PrivateDictionary {
 
     public void parse(String file) {
-        String NL = System.getProperty("line.separator");
         Scanner scanner = null;
         try {
             scanner = new Scanner(new FileInputStream(file));
