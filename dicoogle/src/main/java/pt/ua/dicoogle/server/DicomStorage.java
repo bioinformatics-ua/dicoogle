@@ -78,6 +78,7 @@ public class DicomStorage extends StorageService {
     private BlockingQueue<ImageElement> queue = new PriorityBlockingQueue<>();
     private NetworkApplicationEntity[] naeArr = null;
     private AtomicLong seqNum = new AtomicLong(0L);
+    private static boolean ASYNC_INDEX = Boolean.valueOf(System.getProperty("dicoogle.index.async", "true"));
 
     /**
      *
@@ -371,7 +372,10 @@ public class DicomStorage extends StorageService {
                     // Fetch an element by the queue taking into account the priorities.
                     ImageElement element = queue.take();
                     URI exam = element.getUri();
-                    PluginController.getInstance().indexBlocking(exam);
+                    if (ASYNC_INDEX)
+                        PluginController.getInstance().index(exam);
+                    else
+                        PluginController.getInstance().indexBlocking(exam);
                 } catch (InterruptedException ex) {
                     LoggerFactory.getLogger(DicomStorage.class).error("Could not take instance to index", ex);
                 }
