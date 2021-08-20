@@ -21,6 +21,8 @@ package pt.ua.dicoogle.server.users;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
+
 import javax.crypto.*;
 import java.io.*;
 import java.nio.file.Files;
@@ -56,15 +58,23 @@ public class UserFileHandle {
     public UserFileHandle() throws IOException {
         filename = Paths.get("users");
         keyFile = Paths.get("users.key");
-        boolean doEncrypt = false;
-        // user file encryption is on by default. If the users file already exists, the program
-        // will not generate a new key. if there is no key file, or the creation of a new key
-        // fails, encryption is disabled.
+        boolean doEncrypt = ServerSettingsManager.getSettings().getArchiveSettings().isEncryptUsersFile();
+
+        if (!doEncrypt) {
+            // stop here
+            this.encrypt = false;
+            return;
+        }
+
+        // If there is neither a key file nor users file,
+        // the program will generate a new key.
+        // If there is no key file for an existing users file,
+        // or the creation of a new key fails,
+        // encryption is disabled and an error is logged.
         try {
             try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(keyFile))) {
                 key = (Key) in.readObject();
-                // encryption key read succesfully, encryption is enabled
-                doEncrypt = true;
+                // encryption key read succesfully
             } catch (NoSuchFileException ex) {
                 if (!Files.exists(filename)) {
                     logger.info("Generating new user credential encryption key...");
@@ -88,12 +98,15 @@ public class UserFileHandle {
                     }
 
                     // a new key was successfully created
-                    doEncrypt = true;
+                } else {
+                    logger.error("No key to decrypt users file, encryption disabled");
+                    doEncrypt = false;
                 }
             }
         } catch (NoSuchAlgorithmException | ClassNotFoundException | ClassCastException ex) {
-            logger.error("Failed to get encryption key", ex);
+            logger.error("Failed to get encryption key, user file encryption disabled", ex);
             key = null;
+            doEncrypt = false;
         }
         this.encrypt = doEncrypt;
     }
