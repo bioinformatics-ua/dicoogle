@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react';
 import {ResultsSelected} from '../../stores/resultSelected';
 import dicoogleClient from 'dicoogle-client';
+
 const Dicoogle = dicoogleClient();
 
 export default class PluginFormModal extends React.Component {
@@ -21,6 +22,7 @@ export default class PluginFormModal extends React.Component {
     super(props);
     this.handleMounted = this.handleMounted.bind(this);
     this.handleHideSignal = this.handleHideSignal.bind(this);
+    this.handlePluginLoad = this.handlePluginLoad.bind(this);
   }
 
   onConfirm() {
@@ -31,6 +33,7 @@ export default class PluginFormModal extends React.Component {
     if (component) {
       const node = component;
       node.addEventListener('hide', this.handleHideSignal);
+      node.addEventListener('plugin-load', this.handlePluginLoad);
       Dicoogle.emitSlotSignal(node, 'result-selection-ready', ResultsSelected.get());
     }
   }
@@ -38,7 +41,14 @@ export default class PluginFormModal extends React.Component {
   handleHideSignal({target}) {
       console.log('Plugin requested to hide');
       target.removeEventListener('hide', this.handleHideSignal);
+      target.removeEventListener('plugin-load', this.handlePluginLoad);
       this.props.onHide();
+  }
+
+  handlePluginLoad({target}){
+    if (target) {
+      Dicoogle.emitSlotSignal(target, 'result-selection-ready', ResultsSelected.get());
+    }
   }
 
   render() {
