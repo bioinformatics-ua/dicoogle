@@ -112,7 +112,10 @@ const ImageView = React.createClass({
       return (<div></div>);
   },
 
-    handleSelect(item){
+    handleSelect(item, event){
+
+        event.stopPropagation();
+
         let {sopInstanceUID} = item;
         // ResultSelectActions.select(item);
         let value = this.refsClone[sopInstanceUID].getChecked();
@@ -131,7 +134,7 @@ const ImageView = React.createClass({
     let classNameForIt = "advancedOptions " + sopInstanceUID;
     return (<div className={classNameForIt}>
               <Input type="checkbox" label=""
-                    onChange={this.handleSelect.bind(this, item)}
+                     onChange={(e) => this.handleSelect(item, e)}
                     ref={this.handleRefs.bind(this, sopInstanceUID)}/>
             </div>
     );

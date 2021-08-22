@@ -85,7 +85,10 @@ const StudyView = React.createClass({
       }
       return (<div></div>);
   },
-    handleSelect(item){
+    handleSelect(item, event){
+
+        event.stopPropagation();
+
         let {studyInstanceUID} = item;
         // ResultSelectActions.select(item);
         let value = this.refsClone[studyInstanceUID].getChecked();
@@ -104,7 +107,7 @@ const StudyView = React.createClass({
     let classNameForIt = "advancedOptions " + studyInstanceUID;
     return (<div className={classNameForIt}>
               <Input type="checkbox" label=""
-                    onChange={this.handleSelect.bind(this, item)}
+                     onChange={(e) => this.handleSelect(item, e)}
                     ref={this.handleRefs.bind(this, studyInstanceUID)}/>
             </div>
     );
