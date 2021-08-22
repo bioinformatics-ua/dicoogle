@@ -83,7 +83,8 @@ public class PluginController{
     private final WebUIPluginManager webUI;
     private final DicooglePlatformProxy proxy;
     private TaskManager taskManager = new TaskManager(Integer.parseInt(System.getProperty("dicoogle.taskManager.nThreads", "4")));
-    
+    private TaskManager taskManagerQueries = new TaskManager(Integer.parseInt(System.getProperty("dicoogle.taskManager.nQueryThreads", "4")));
+
     public PluginController(File pathToPluginDirectory) {
     	logger.info("Creating PluginController Instance");
         pluginFolder = pathToPluginDirectory;
@@ -450,7 +451,7 @@ public class PluginController{
     
     public Task<Iterable<SearchResult>> query(String querySource, final String query, final Object ... parameters){
         Task<Iterable<SearchResult>> t = getTaskForQuery(querySource, query, parameters);       
-        taskManager.dispatch(t);
+        taskManagerQueries.dispatch(t);
         //logger.info("Fired Query Task: "+querySource +" QueryString:"+query);
         
         return t;//returns the handler to obtain the computation results
@@ -469,7 +470,7 @@ public class PluginController{
 
         //and executes said task asynchronously
         for(Task<?> t : tasks)
-        	taskManager.dispatch(t);
+            taskManagerQueries.dispatch(t);
 
         //logger.info("Fired Query Tasks: "+Arrays.toString(querySources.toArray()) +" QueryString:"+query);
         return holder;//returns the handler to obtain the computation results
