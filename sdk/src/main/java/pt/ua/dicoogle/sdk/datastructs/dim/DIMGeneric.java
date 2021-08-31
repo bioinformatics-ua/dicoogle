@@ -361,6 +361,7 @@ public class DIMGeneric {
             JSONArray studies = new JSONArray();
             for (Study s : p.getStudies()) {
                 JSONObject study = new JSONObject();
+                study.put("studyInstanceUID", s.getStudyInstanceUID());
                 study.put("studyDate", s.getStudyData());
                 study.put("studyDescription", s.getStudyDescription());
                 study.put("institutionName", s.getInstitutuionName());
