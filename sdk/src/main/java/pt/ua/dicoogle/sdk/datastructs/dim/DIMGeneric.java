@@ -198,8 +198,6 @@ public class DIMGeneric {
             sopInstUID = "no uid";
         }
 
-        logger.debug("StudyDescription: " + StudyDescription);
-
         // This is a quick fix for changing the parameters for the query.
         if ((StudyDescription == null || StudyDescription.equals("") || StudyDescription.toLowerCase().contains("fuji"))
                 && this.tags != null) {
@@ -345,18 +343,72 @@ public class DIMGeneric {
         }
     }
 
+    /** Obtain the full DIM tree as JSON.
+     */
     public String getJSON() {
+        return this.getJSON(4, 0, 0);
+    }
+
+    /** Obtain the full DIM tree as JSON, with the requested properties.
+     * @param depth the depth of the tree from 1 to 4
+     * @param offset the number of patient records to skip
+     * @param psize the number of patient records to return, 0 or less means all
+     */
+    public String getJSON(int depth, int offset, int psize) {
+        return this.getJSONObject(depth, offset, psize).toString();
+    }
+
+    /** Obtain a JSON representation of the collected DIM tree.
+     * 
+     * This method enables specifying the depth of information
+     * made available in the JSON output,
+     * in the following fashion:
+     * 
+     * - depth = 0: only the number of patient records is given, in `numResults`
+     * - depth = 1: patient records are provided without details of their studies
+     * - depth = 2: study records in patients are provided, but no series-level records
+     * - depth = 3: series records in studies are provided, but no instance-level records
+     * - depth = 4: all information is provided
+     * 
+     * @param depth the depth of the tree from 0 (patient) to 4 (images)
+     * @param offset the number of patient records to skip
+     * @param psize the number of patient records to return, 0 or less means all
+     * @return an in-memory JSON object containing information in the DIM tree. 
+     */
+    public JSONObject getJSONObject(int depth, int offset, int psize) {
         JSONObject result = new JSONObject();
         result.put("numResults", this.patients.size());
-        JSONArray patients = new JSONArray();
 
+        if (depth == 0) {
+            return result;
+        }
+
+        JSONArray patients = new JSONArray();
+        if (psize <= 0) {
+            psize = this.patients.size();
+        }
+
+        int patientCount = 0;
         for (Patient p : this.patients) {
+            patientCount += 1;
+            if (patientCount <= offset) {
+                continue;
+            }
+            if (patientCount > (offset + psize)) {
+                break;
+            }
+
             JSONObject patient = new JSONObject();
             patient.put("id", p.getPatientID());
             patient.put("name", p.getPatientName());
             patient.put("gender", p.getPatientSex());
             patient.put("nStudies", p.getStudies().size());
             patient.put("birthdate", p.getPatientBirthDate());
+
+            if (depth < 2) {
+                patients.add(patient);
+                continue;
+            }
 
             JSONArray studies = new JSONArray();
             for (Study s : p.getStudies()) {
@@ -366,49 +418,51 @@ public class DIMGeneric {
                 study.put("studyDescription", s.getStudyDescription());
                 study.put("institutionName", s.getInstitutuionName());
 
-                JSONArray modalities = new JSONArray();
                 JSONArray series = new JSONArray();
 
                 Set<String> modalitiesSet = new HashSet<>();
                 for (Series serie : s.getSeries()) {
                     modalitiesSet.add(serie.getModality());
-                    modalities.add(serie.getModality());
 
-                    JSONObject _serie = new JSONObject();
-                    _serie.put("serieNumber", serie.getSeriesNumber());
-                    _serie.put("serieInstanceUID", serie.getSeriesInstanceUID());
-                    _serie.put("serieDescription", serie.getSeriesDescription());
-                    _serie.put("serieModality", serie.getModality());
-
-                    JSONArray _sopInstanceUID = new JSONArray();
-                    for (int i = 0; i < serie.getSOPInstanceUIDList().size(); i++) {
-                        JSONObject image = new JSONObject();
-                        image.put("sopInstanceUID", serie.getSOPInstanceUIDList().get(i));
-                        String rawPath = serie.getImageList().get(i).getRawPath();
-                        image.put("rawPath", rawPath);
-                        image.put("uri", serie.getImageList().get(i).toString());
-                        image.put("filename", rawPath.substring(rawPath.lastIndexOf("/") + 1, rawPath.length()));
-
-                        _sopInstanceUID.add(image);
+                    if (depth < 3) {
+                        continue;
                     }
-                    _serie.put("images", _sopInstanceUID);
 
-                    series.add(_serie);
+                    JSONObject seriesObj = new JSONObject();
+                    seriesObj.put("serieNumber", serie.getSeriesNumber());
+                    seriesObj.put("serieInstanceUID", serie.getSeriesInstanceUID());
+                    seriesObj.put("serieDescription", serie.getSeriesDescription());
+                    seriesObj.put("serieModality", serie.getModality());
+
+                    if (depth >= 4) {
+                        JSONArray instances = new JSONArray();
+                        for (int i = 0; i < serie.getSOPInstanceUIDList().size(); i++) {
+                            JSONObject image = new JSONObject();
+                            image.put("sopInstanceUID", serie.getSOPInstanceUIDList().get(i));
+                            String rawPath = serie.getImageList().get(i).getRawPath();
+                            image.put("rawPath", rawPath);
+                            image.put("uri", serie.getImageList().get(i).toString());
+                            image.put("filename", rawPath.substring(rawPath.lastIndexOf("/") + 1, rawPath.length()));
+
+                            instances.add(image);
+                        }
+                        seriesObj.put("images", instances);
+                    }
+                    series.add(seriesObj);
                 }
                 study.put("modalities", StringUtils.join(modalitiesSet, ","));
-                study.put("series", series);
 
+                if (depth >= 3) {
+                    study.put("series", series);
+                }
                 studies.add(study);
-
             }
             patient.put("studies", studies);
-
             patients.add(patient);
         }
 
         result.put("results", patients);
-
-        return result.toString();
+        return result;
     }
 
     public String getXML() {
