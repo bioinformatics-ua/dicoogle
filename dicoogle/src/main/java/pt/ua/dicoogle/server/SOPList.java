@@ -144,6 +144,9 @@ public class SOPList {
     private SOPList() {
         table = new Hashtable<>();
 
+        // TODO#498.4 Add the extras on SOP from getSettings()
+        // ...
+
         for (String sop : SOP) {
             table.put(sop, new TransfersStorage());
         }

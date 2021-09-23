@@ -184,6 +184,15 @@ public class SOPClassSettings {
         transferSettingsIndex.put(UID.JPEG2000, 11);
         transferSettingsIndex.put(UID.RLELossless, 12);
         transferSettingsIndex.put(UID.MPEG2, 13);
+
+        // TODO#498.5 sopClasses: put the UIDs and their alias as it is in confs/server.xml's <additional-sop-classes>
+        // ...
+
+        // TODO#498.6.1 transferSettings: put the UIDs and their alias as it is in confs/server.xml's <additional-transfer-syntaxes>
+        // ...
+
+        // TODO#498.6.2 transferSettingsIndex: put the TSs in some adequate order and sequential index
+        // ...
     }
 
     /**

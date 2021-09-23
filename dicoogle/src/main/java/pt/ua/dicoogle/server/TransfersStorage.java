@@ -30,6 +30,7 @@ import org.dcm4che2.data.UID;
 public class TransfersStorage {
     private boolean accepted;
     private boolean[] TS;
+    // TODO add in this class the additions as well
 
     /*  [0] ImplicitVRLittleEndian
      *  [1] ExplicitVRLittleEndian
@@ -65,6 +66,9 @@ public class TransfersStorage {
         aMap.put(11, "JPEG2000");
         aMap.put(12, "RLELossless");
         aMap.put(13, "MPEG2");
+        // TODO#498.7.1 add extras here (or after global? I think before, because
+        //  "these records cannot be removed" - #498)
+        // ...
         globalTransferMap = Collections.unmodifiableMap(aMap);
         Map<String, String> uidsNameMapping = new HashMap<>();
 
@@ -82,6 +86,9 @@ public class TransfersStorage {
         uidsNameMapping.put(UID.JPEG2000, "JPEG2000");
         uidsNameMapping.put(UID.RLELossless, "RLELossless");
         uidsNameMapping.put(UID.MPEG2, "MPEG2");
+        // TODO#498.7.2 add extras and their aliases here (or after global? I think before, because
+        //  "these records cannot be removed" - #498)
+        // ...
         globalTransferUIDsMap = Collections.unmodifiableMap(uidsNameMapping);
 
     }

@@ -93,6 +93,17 @@ public class ServerSettingsManager {
         } else {
             // use main configuration file
             inner = loadSettingsAt(MAIN_CONFIG_PATH);
+            // TODO#498.1 check which new UIDs from "additional*" tags are valid (SOP Class UIDs can skip this if
+            //  they are already present in the transfer options: e.g. in SOPList) and filter them
+            // use org.dcm4che2.data.UIDUtils.isValid(uid)...
+            // TODO#498.2 SOP classes recognition (skip for now, as it's probably not needed)
+            // TODO#498.2.1 Filter only the SOP UIDs present dcm4che2 mkuiddic's key list
+            // ...
+            // TODO#498.3 TS recognition
+            // TODO#498.3.1 Filter UIDs existing in Dicoogle's list
+            // ...
+            // TODO#498.3.2 Declare valid UIDs with data.TransferSyntax ( TransferSyntax.add(newTS) )
+            // ...
         }
     }
 
