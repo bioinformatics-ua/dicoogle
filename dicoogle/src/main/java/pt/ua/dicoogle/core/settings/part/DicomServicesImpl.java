@@ -21,6 +21,8 @@ package pt.ua.dicoogle.core.settings.part;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import pt.ua.dicoogle.sdk.datastructs.AdditionalSOPClass;
+import pt.ua.dicoogle.sdk.datastructs.AdditionalTransferSyntax;
 import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.sdk.datastructs.SOPClass;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
@@ -118,6 +120,12 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
     @JsonProperty("sop-classes")
     private Collection<SOPClass> sopClasses = Collections.emptyList();
 
+    @JsonProperty("additional-sop-classes")
+    private Collection<AdditionalSOPClass> additionalSOPClasses = Collections.emptyList();
+
+    @JsonProperty("additional-transfer-syntaxes")
+    private Collection<AdditionalTransferSyntax> additionalTransferSyntaxes = Collections.emptyList();
+
     @JacksonXmlElementWrapper(localName = "move-destinations")
     private List<MoveDestination> moveDestinations;
 
@@ -210,6 +218,34 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
     @JsonSetter("sop-classes")
     public void setSOPClasses(Collection<SOPClass> sopClasses) {
         this.sopClasses = sopClasses;
+    }
+
+    @Override
+    @JsonSetter("additional-sop-classes")
+    public Collection<AdditionalSOPClass> getAdditionalSOPClasses() {
+        List<AdditionalSOPClass> l = new ArrayList<>();
+        for(AdditionalSOPClass ac: this.additionalSOPClasses) {
+            l.add(ac);// subject to change (withDefaultTS)
+        }
+        return l;
+    }
+
+    @Override
+    @JsonSetter("additional-sop-classes")
+    public void setAdditionalSOPClasses(Collection<AdditionalSOPClass> additionalSOPClasses) {
+        this.additionalSOPClasses = additionalSOPClasses;
+    }
+
+    @Override
+    @JsonGetter("additional-transfer-syntaxes")
+    public Collection<AdditionalTransferSyntax> getAdditionalTransferSyntaxes() {
+        return new ArrayList<>(this.additionalTransferSyntaxes);
+    }
+
+    @Override
+    @JsonSetter("additional-transfer-syntaxes")
+    public void setAdditionalTransferSyntaxes(Collection<AdditionalTransferSyntax> additionalTransferSyntaxes) {
+        this.additionalTransferSyntaxes = additionalTransferSyntaxes;
     }
 
     @Override

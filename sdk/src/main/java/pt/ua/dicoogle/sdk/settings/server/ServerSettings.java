@@ -20,6 +20,8 @@ package pt.ua.dicoogle.sdk.settings.server;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import pt.ua.dicoogle.sdk.datastructs.AdditionalSOPClass;
+import pt.ua.dicoogle.sdk.datastructs.AdditionalTransferSyntax;
 import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.sdk.datastructs.SOPClass;
 
@@ -93,6 +95,10 @@ public interface ServerSettings extends ServerSettingsReader {
         void setAllowedHostnames(Collection<String> hostnames);
 
         void setSOPClasses(Collection<SOPClass> sopClasses);
+
+        void setAdditionalSOPClasses(Collection<AdditionalSOPClass> additionalSOPClasses);
+
+        void setAdditionalTransferSyntaxes(Collection<AdditionalTransferSyntax> additionalTransferSyntaxes);
 
         @JsonGetter("storage")
         ServiceBase getStorageSettings();
