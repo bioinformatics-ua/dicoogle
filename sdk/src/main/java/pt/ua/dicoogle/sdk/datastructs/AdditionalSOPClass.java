@@ -17,20 +17,6 @@ public final class AdditionalSOPClass {
     @JacksonXmlProperty(isAttribute = true, localName = "alias")
     private final String alias;
 
-//    // Imported Functions (adapted from SOPClass')
-//    /** Create a new, independent SOP class with the transfer syntax collection replaced.
-//     */
-//    public AdditionalSOPClass withTS(Collection<String> ts) {
-//        return new SOPClass(this.uid, this.alias, ts);
-//    }
-//
-//    /** Retrieve an SOP class with the transfer syntax collection replaced only if this SOP class
-//     * has no transfer syntaxes specified, return itself otherwise.
-//     */
-//    public AdditionalSOPClass withDefaultTS(Collection<String> ts) {
-//        return this.ts.isEmpty() ? this.withTS(ts) : this;
-//    }
-
 
     // Generated functions
     public AdditionalSOPClass(String uid, String alias) {
@@ -48,8 +34,10 @@ public final class AdditionalSOPClass {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof AdditionalSOPClass)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof AdditionalSOPClass))
+            return false;
         AdditionalSOPClass that = (AdditionalSOPClass) o;
         return Objects.equals(getUid(), that.getUid()) && Objects.equals(getAlias(), that.getAlias());
     }
@@ -61,9 +49,7 @@ public final class AdditionalSOPClass {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", AdditionalSOPClass.class.getSimpleName() + "[", "]")
-                .add("uid='" + uid + "'")
-                .add("alias='" + alias + "'")
-                .toString();
+        return new StringJoiner(", ", AdditionalSOPClass.class.getSimpleName() + "[", "]").add("uid='" + uid + "'")
+                .add("alias='" + alias + "'").toString();
     }
 }

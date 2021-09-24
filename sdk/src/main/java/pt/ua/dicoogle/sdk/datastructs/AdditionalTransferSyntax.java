@@ -64,8 +64,10 @@ public final class AdditionalTransferSyntax {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof AdditionalTransferSyntax)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof AdditionalTransferSyntax))
+            return false;
         AdditionalTransferSyntax that = (AdditionalTransferSyntax) o;
         return getUid().equals(that.getUid()) && getAlias().equals(that.getAlias());
     }
@@ -78,9 +80,6 @@ public final class AdditionalTransferSyntax {
     @Override
     public String toString() {
         return new StringJoiner(", ", AdditionalTransferSyntax.class.getSimpleName() + "[", "]")
-                .add("uid='" + uid + "'")
-                .add("alias='" + alias + "'")
-                .add("format='" + format + "'")
-                .toString();
+                .add("uid='" + uid + "'").add("alias='" + alias + "'").add("format='" + format + "'").toString();
     }
 }

@@ -110,10 +110,10 @@ public class ServerSettingsManager {
                             additionalTransferSyntax -> UIDUtils.isValidUID(additionalTransferSyntax.getUid())
                     ).collect(Collectors.toList())
             );
-            // TODO#498.2 SOP classes recognition (skip for now, as it's probably not needed)
-            // TODO#498.2.1 Filter only the SOP UIDs present dcm4che2 mkuiddic's key list
+            // TODO#498 SOP classes recognition (skip for now, as it's probably not needed)
+            //  Filter only the SOP UIDs present dcm4che2 mkuiddic's key list
             // ...
-            // TODO#498.3.2 Declare valid UIDs with data.TransferSyntax ( TransferSyntax.add(newTS) )
+            // TODO#498 Declare valid UIDs with data.TransferSyntax ( TransferSyntax.add(newTS) )
             // ...
         }
     }
