@@ -23,10 +23,14 @@ import net.sf.json.JSONObject;
 import org.dcm4che2.data.UID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
+import pt.ua.dicoogle.sdk.datastructs.AdditionalSOPClass;
 import pt.ua.dicoogle.sdk.datastructs.SOPClass;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 import pt.ua.dicoogle.server.web.management.SOPClassSettings;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Support class for keeping SOPClass/TransferSyntax association
@@ -144,10 +148,23 @@ public class SOPList {
     private SOPList() {
         table = new Hashtable<>();
 
-        // TODO#498.4 Add the extras on SOP from getSettings()
-        // ...
+        // Add the extras on SOP from getSettings()
+        ServerSettings settings = ServerSettingsManager.getSettings();
+        // Get all new SOP classes' UID
+        Collection<String> newSOPs = settings.getDicomServicesSettings().getAdditionalSOPClasses().stream().map(
+                AdditionalSOPClass::getUid
+        ).collect(Collectors.toList());
+        // Remove UIDs already existing in String[] SOP
+        newSOPs = newSOPs.stream().filter(newSOP ->
+                !Arrays.asList(SOP).contains(newSOP)
+        ).collect(Collectors.toList());
 
+        // Hardcoded (pre-#498) SOPs
         for (String sop : SOP) {
+            table.put(sop, new TransfersStorage());
+        }
+        // Add "Additional" SOPs to table
+        for (String sop : newSOPs) {
             table.put(sop, new TransfersStorage());
         }
     }

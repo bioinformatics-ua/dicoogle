@@ -24,7 +24,9 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
+import org.dcm4che2.util.UIDUtils;
 import pt.ua.dicoogle.core.XMLSupport;
+import pt.ua.dicoogle.server.SOPList;
 import pt.ua.dicoogle.utils.Platform;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
@@ -34,6 +36,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author Eduardo Pinho <eduardopinho@ua.pt>
@@ -93,14 +96,22 @@ public class ServerSettingsManager {
         } else {
             // use main configuration file
             inner = loadSettingsAt(MAIN_CONFIG_PATH);
-            // TODO#498.1 check which new UIDs from "additional*" tags are valid (SOP Class UIDs can skip this if
+            // Check which new UIDs from "additional*" tags are valid (SOP Class UIDs can skip this if
             //  they are already present in the transfer options: e.g. in SOPList) and filter them
-            // use org.dcm4che2.data.UIDUtils.isValid(uid)...
+            // Validate and filter SOP Classes
+            inner.getDicomServicesSettings().setAdditionalSOPClasses(
+                    inner.getDicomServicesSettings().getAdditionalSOPClasses().stream().filter(
+                            additionalSOPClass -> UIDUtils.isValidUID(additionalSOPClass.getUid())
+                    ).collect(Collectors.toList())
+            );
+            // Validate and filter Transfer Syntaxes
+            inner.getDicomServicesSettings().setAdditionalTransferSyntaxes(
+                    inner.getDicomServicesSettings().getAdditionalTransferSyntaxes().stream().filter(
+                            additionalTransferSyntax -> UIDUtils.isValidUID(additionalTransferSyntax.getUid())
+                    ).collect(Collectors.toList())
+            );
             // TODO#498.2 SOP classes recognition (skip for now, as it's probably not needed)
             // TODO#498.2.1 Filter only the SOP UIDs present dcm4che2 mkuiddic's key list
-            // ...
-            // TODO#498.3 TS recognition
-            // TODO#498.3.1 Filter UIDs existing in Dicoogle's list
             // ...
             // TODO#498.3.2 Declare valid UIDs with data.TransferSyntax ( TransferSyntax.add(newTS) )
             // ...

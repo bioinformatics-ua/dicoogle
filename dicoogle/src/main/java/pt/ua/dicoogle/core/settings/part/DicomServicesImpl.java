@@ -223,11 +223,7 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
     @Override
     @JsonSetter("additional-sop-classes")
     public Collection<AdditionalSOPClass> getAdditionalSOPClasses() {
-        List<AdditionalSOPClass> l = new ArrayList<>();
-        for(AdditionalSOPClass ac: this.additionalSOPClasses) {
-            l.add(ac);// subject to change (withDefaultTS)
-        }
-        return l;
+        return new ArrayList<>(this.additionalSOPClasses);
     }
 
     @Override
