@@ -41,3 +41,11 @@ export function toHumanReadable(timeValue) {
     .map((v, i) => v + suffix[i])
     .reduceRight((pval, cval) => pval + " " + cval);
 }
+
+/** Converts Date object to human-readable text
+ * @param {Date} dateTime a Date object
+ * @return {string} a text representing time and date of the Date object
+ */
+export function dateTimeToHumanReadable(dateTime) {
+  return dateTime.toLocaleDateString() + " " + dateTime.toLocaleTimeString();
+}

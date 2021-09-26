@@ -26,6 +26,7 @@ import pt.ua.dicoogle.sdk.datastructs.IndexReport;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.task.Task;
 
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -136,6 +137,7 @@ public class RunningIndexTasks {
         entry.put("taskUid", task.getUid());
         entry.put("taskName", task.getName());
         entry.put("taskProgress", task.getProgress());
+        entry.put("taskTimeCreated", task.getTimeCreated().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
 
         if (task.isDone() && !task.isCancelled()) {
             entry.put("complete", true);
