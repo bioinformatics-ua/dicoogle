@@ -21,7 +21,9 @@ package pt.ua.dicoogle.sdk.datastructs;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import org.dcm4che2.data.TransferSyntax;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.StringJoiner;
 
@@ -59,6 +61,14 @@ public final class AdditionalTransferSyntax {
         // Examples: 0010, 1011.
 
         return matches("[01]{4}", format);
+    }
+
+    public TransferSyntax toTransferSyntax() {
+        boolean explicitVR = format.charAt(0) != '0',
+                bigEndian = format.charAt(1) != '0',
+                deflated = format.charAt(2) != '0',
+                encapsulated = format.charAt(3) != '0'; // "Cast" 0 or 1 to the boolean correspondents
+        return new TransferSyntax(uid, explicitVR, bigEndian, deflated, encapsulated);
     }
 
     // Generated functions

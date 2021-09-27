@@ -165,8 +165,8 @@ public class SOPClassSettings {
         // sopClasses: put the UIDs and their alias as it is in confs/server.xml's <additional-sop-classes>
         // Get setting's additional SOPs (uid and alias) not already existing in sopClasses list
         Collection<AdditionalSOPClass> additionalSOPClasses = dicomServices.getAdditionalSOPClasses();
-        additionalSOPClasses = additionalSOPClasses.stream().filter(additionalSOPClass ->
-                !sopClasses.containsKey(additionalSOPClass.getUid()))
+        additionalSOPClasses = additionalSOPClasses.stream()
+                .filter(additionalSOPClass -> !sopClasses.containsKey(additionalSOPClass.getUid()))
                 .collect(Collectors.toList());
         // Add additional SOPs to hashMap sopClasses
         additionalSOPClasses.forEach(elem -> sopClasses.put(elem.getUid(), elem.getAlias()));
@@ -189,9 +189,9 @@ public class SOPClassSettings {
         // transferSettings: put the UIDs and their alias as it is in confs/server.xml's <additional-transfer-syntaxes>
         Collection<AdditionalTransferSyntax> additionalTransferSyntaxes = dicomServices.getAdditionalTransferSyntaxes();
         // Get additional TSs not already present in the hardcoded list (transferSettings)
-        additionalTransferSyntaxes = additionalTransferSyntaxes.stream().filter(additionalTransferSyntax ->
-                !transferSettings.containsKey(additionalTransferSyntax.getUid())
-        ).collect(Collectors.toList());
+        additionalTransferSyntaxes = additionalTransferSyntaxes.stream()
+                .filter(additionalTransferSyntax -> !transferSettings.containsKey(additionalTransferSyntax.getUid()))
+                .collect(Collectors.toList());
         // Add all
         additionalTransferSyntaxes.forEach(elem -> transferSettings.put(elem.getUid(), elem.getAlias()));
 
