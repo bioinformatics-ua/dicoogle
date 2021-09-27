@@ -19,10 +19,13 @@
 package pt.ua.dicoogle.core.settings;
 
 import com.fasterxml.jackson.annotation.*;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.dcm4che2.data.UID;
 import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.core.XMLSupport;
+import pt.ua.dicoogle.sdk.datastructs.AdditionalSOPClass;
+import pt.ua.dicoogle.sdk.datastructs.AdditionalTransferSyntax;
 import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.sdk.datastructs.SOPClass;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
@@ -664,8 +667,35 @@ public class LegacyServerSettings implements ServerSettings {
                 + " in legacy configuration file \"config.xml\". Please upgrade your server to use the latest format.");
     }
 
+    public void setAdditionalSOPClasses(Collection<AdditionalSOPClass> classes) {
+        Objects.requireNonNull(classes);
+        LoggerFactory.getLogger(LegacyServerSettings.class)
+                .warn("Configuring DICOM additional SOP classes is unsupported "
+                        + " in legacy configuration file \"config.xml\". Please upgrade your server to use the latest format.");
+    }
+
+    public void setAdditionalTransferSyntaxes(Collection<AdditionalTransferSyntax> syntaxes) {
+        Objects.requireNonNull(syntaxes);
+        LoggerFactory.getLogger(LegacyServerSettings.class)
+                .warn("Configuring DICOM additional Transfer Syntaxes is unsupported "
+                        + " in legacy configuration file \"config.xml\". Please upgrade your server to use the latest format.");
+    }
+
     public List<SOPClass> getSOPClasses() {
         return SOPList.getInstance().asSOPClassList();
+    }
+
+    public List<AdditionalSOPClass> getAdditionalSOPClass() {
+        LoggerFactory.getLogger(LegacyServerSettings.class).warn("Reading DICOM additional SOP Classes is unsupported "
+                + " in legacy configuration file \"config.xml\". Please upgrade your server to use the latest format.");
+        return new ArrayList<>();
+    }
+
+    public List<AdditionalTransferSyntax> getAdditionalTransferSyntax() {
+        LoggerFactory.getLogger(LegacyServerSettings.class)
+                .warn("Reading DICOM additional Transfer Syntaxes is unsupported "
+                        + " in legacy configuration file \"config.xml\". Please upgrade your server to use the latest format.");
+        return new ArrayList<>();
     }
 
     public void setDIMSERspTimeout(int timeout) {
@@ -1270,6 +1300,7 @@ public class LegacyServerSettings implements ServerSettings {
     @JsonAutoDetect(isGetterVisibility = JsonAutoDetect.Visibility.NONE,
             getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
     protected class StubDicomServices implements DicomServices {
+
         @Override
         public void setAETitle(String aetitle) {
             LegacyServerSettings.this.setAETitle(aetitle);
@@ -1321,6 +1352,16 @@ public class LegacyServerSettings implements ServerSettings {
         }
 
         @Override
+        public void setAdditionalSOPClasses(Collection<AdditionalSOPClass> additionalSOPClasses) {
+            LegacyServerSettings.this.setAdditionalSOPClasses(additionalSOPClasses);
+        }
+
+        @Override
+        public void setAdditionalTransferSyntaxes(Collection<AdditionalTransferSyntax> additionalTransferSyntaxes) {
+            LegacyServerSettings.this.setAdditionalTransferSyntaxes(additionalTransferSyntaxes);
+        }
+
+        @Override
         public ServiceBase getStorageSettings() {
             return LegacyServerSettings.this.getStorageSettings();
         }
@@ -1363,6 +1404,16 @@ public class LegacyServerSettings implements ServerSettings {
         @Override
         public Collection<SOPClass> getSOPClasses() {
             return LegacyServerSettings.this.getSOPClasses();
+        }
+
+        @Override
+        public Collection<AdditionalSOPClass> getAdditionalSOPClasses() {
+            return LegacyServerSettings.this.getAdditionalSOPClass();
+        }
+
+        @Override
+        public Collection<AdditionalTransferSyntax> getAdditionalTransferSyntaxes() {
+            return LegacyServerSettings.this.getAdditionalTransferSyntax();
         }
 
         @Override
