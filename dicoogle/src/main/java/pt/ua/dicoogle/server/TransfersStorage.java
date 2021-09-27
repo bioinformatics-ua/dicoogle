@@ -21,6 +21,7 @@ package pt.ua.dicoogle.server;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.dcm4che2.data.TransferSyntax;
 import org.dcm4che2.data.UID;
 import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.sdk.datastructs.AdditionalTransferSyntax;
@@ -53,14 +54,17 @@ public class TransfersStorage {
 
     public static final Map<Integer, String> globalTransferMap;
     public static final Map<String, String> globalTransferUIDsMap;
+    // public static final Map<String, AdditionalTransferSyntax> globalAdditionalTransferUIDsMap;
     static {
 
         // Get additional transfer syntaxes (not present in the hardcoded list)
-        Collection<AdditionalTransferSyntax> additionalTransferSyntaxes = ServerSettingsManager.getSettings()
-                .getDicomServicesSettings().getAdditionalTransferSyntaxes();
-        additionalTransferSyntaxes = additionalTransferSyntaxes.stream().filter(additionalTransferSyntax ->
-                SOPClassSettings.getInstance().getTransferSettings().containsKey(additionalTransferSyntax.getUid())
-        ).collect(Collectors.toList());
+        // Collection<AdditionalTransferSyntax> additionalTransferSyntaxes =
+        // ServerSettingsManager.getSettings().getDicomServicesSettings().getAdditionalTransferSyntaxes();
+        // additionalTransferSyntaxes = additionalTransferSyntaxes.stream().filter(
+        // additionalTransferSyntax -> SOPClassSettings.getInstance().getTransferSettings().containsKey(
+        // additionalTransferSyntax.getUid()
+        // )
+        // ).collect(Collectors.toList());
         // --
 
         Map<Integer, String> aMap = new HashMap<>();
@@ -78,11 +82,11 @@ public class TransfersStorage {
         aMap.put(11, "JPEG2000");
         aMap.put(12, "RLELossless");
         aMap.put(13, "MPEG2");
-        // Extras (indexed AdditionalTransferSyntaxes)
-        int index = 13;
-        for(AdditionalTransferSyntax elem : additionalTransferSyntaxes) {
-            aMap.put(++index, elem.getAlias());
-        }
+        // // Extras (indexed AdditionalTransferSyntaxes)
+        // int index = 13;
+        // for (AdditionalTransferSyntax elem : additionalTransferSyntaxes) {
+        // aMap.put(++index, elem.getAlias());
+        // }
         globalTransferMap = Collections.unmodifiableMap(aMap);
         Map<String, String> uidsNameMapping = new HashMap<>();
 
@@ -101,9 +105,7 @@ public class TransfersStorage {
         uidsNameMapping.put(UID.RLELossless, "RLELossless");
         uidsNameMapping.put(UID.MPEG2, "MPEG2");
         // Extras (AdditionalTransferSyntaxes with aliases)
-        additionalTransferSyntaxes.forEach(
-                elem -> uidsNameMapping.put(elem.getUid(), elem.getAlias())
-        );
+        // additionalTransferSyntaxes.forEach(elem -> uidsNameMapping.put(elem.getUid(), elem.getAlias()));
         globalTransferUIDsMap = Collections.unmodifiableMap(uidsNameMapping);
 
     }

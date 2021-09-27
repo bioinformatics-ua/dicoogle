@@ -20,6 +20,7 @@ package pt.ua.dicoogle.server;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang.NotImplementedException;
 import org.dcm4che2.data.UID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +49,7 @@ public class SOPList {
     private Hashtable<String, TransfersStorage> table;
 
     private String[] SOP = {
-        UID.BasicStudyContentNotificationSOPClassRetired, 
+        UID.BasicStudyContentNotificationSOPClassRetired,
         UID.StoredPrintStorageSOPClassRetired,
         UID.BasicStudyContentNotificationSOPClassRetired,
         UID.StoredPrintStorageSOPClassRetired,
@@ -97,7 +98,7 @@ public class SOPList {
         UID.SpatialFiducialsStorage,
         UID.RealWorldValueMappingStorage,
         UID.SecondaryCaptureImageStorage,
-        UID.MultiFrameSingleBitSecondaryCaptureImageStorage,        
+        UID.MultiFrameSingleBitSecondaryCaptureImageStorage,
         UID.MultiFrameGrayscaleByteSecondaryCaptureImageStorage,
         UID.MultiFrameGrayscaleWordSecondaryCaptureImageStorage,
         UID.MultiFrameTrueColorSecondaryCaptureImageStorage,
@@ -148,23 +149,8 @@ public class SOPList {
     private SOPList() {
         table = new Hashtable<>();
 
-        // Add the extras on SOP from getSettings()
-        ServerSettings settings = ServerSettingsManager.getSettings();
-        // Get all new SOP classes' UID
-        Collection<String> newSOPs = settings.getDicomServicesSettings().getAdditionalSOPClasses().stream().map(
-                AdditionalSOPClass::getUid
-        ).collect(Collectors.toList());
-        // Remove UIDs already existing in String[] SOP
-        newSOPs = newSOPs.stream().filter(newSOP ->
-                !Arrays.asList(SOP).contains(newSOP)
-        ).collect(Collectors.toList());
-
         // Hardcoded (pre-#498) SOPs
         for (String sop : SOP) {
-            table.put(sop, new TransfersStorage());
-        }
-        // Add "Additional" SOPs to table
-        for (String sop : newSOPs) {
             table.put(sop, new TransfersStorage());
         }
     }
@@ -376,4 +362,28 @@ public class SOPList {
         }
         return l;
     }
+
+    public void updateList() {
+        try {
+            // Add the extras on SOP from getSettings()
+            ServerSettings settings = ServerSettingsManager.getSettings();
+            // Get all new SOP classes' UID
+            Collection<String> newSOPs = settings.getDicomServicesSettings().getAdditionalSOPClasses().stream()
+                    .map(AdditionalSOPClass::getUid).collect(Collectors.toList());
+            // Remove UIDs already existing in String[] SOP
+            newSOPs = newSOPs.stream().filter(newSOP -> !Arrays.asList(SOP).contains(newSOP))
+                    .collect(Collectors.toList());
+            // Add "Additional" SOPs to table
+            for (String sop : newSOPs) {
+                table.put(sop, new TransfersStorage());
+            }
+        } catch (NotImplementedException exception) {
+            logger.debug("Settings not yet initialized. List cannot yet be updated with extended data");
+        }
+    }
+
+    public void updateList(Collection<AdditionalSOPClass> additionalSOPClasses) {
+        additionalSOPClasses.forEach(elem -> table.put(elem.getUid(), new TransfersStorage()));
+    }
+
 }
