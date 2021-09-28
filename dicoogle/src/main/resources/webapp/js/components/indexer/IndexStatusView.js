@@ -83,7 +83,7 @@ const IndexStatusView = createReactClass({
     } else {
       items = this.state.data.tasks.sort((item1, item2) => {
         // Sorts tasks from latest to first
-        return item2.taskTimeCreated - item1.taskTimeCreated;
+        return new Date(item2.taskTimeCreated).getTime() - new Date(item1.taskTimeCreated).getTime();
       }).map(item => (
         <TaskStatus
           key={item.taskUid}

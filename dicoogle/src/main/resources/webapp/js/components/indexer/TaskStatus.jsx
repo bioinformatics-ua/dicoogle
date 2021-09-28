@@ -15,7 +15,7 @@ class TaskStatus extends React.Component {
         complete: PropTypes.bool,
         canceled: PropTypes.bool,
         taskProgress: PropTypes.number,
-        taskTimeCreated: PropTypes.number,
+        taskTimeCreated: PropTypes.string,
         elapsedTime: PropTypes.number,
         nIndexed: PropTypes.number,
         nErrors: PropTypes.number
