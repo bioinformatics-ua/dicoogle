@@ -6,7 +6,7 @@ import { ActionCreators } from "../../../actions/searchActions";
 import ConfirmModal from "./confirmModal";
 import { Endpoints } from "../../../constants/endpoints";
 import { DumpStore } from "../../../stores/dumpStore";
-import ImageLoader from "react-load-image";
+import ImageLoader from 'react-imageloader';
 import PluginView from "../../plugin/pluginView";
 import { DumpActions } from "../../../actions/dumpActions";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
@@ -476,6 +476,7 @@ var PopOverImageViewer = createReactClass({
           {url && (
             <ImageLoader
               src={url}
+              imgProps={{ className: 'img-responsive' }}
               style={{ width: "100%" }}
               wrapper={React.DOM.div}
             >

@@ -58,7 +58,7 @@
     "react-bootstrap-table": "^4.3.1",
     "react-dom": "^15",
     "react-font-awesome": "https://github.com/tkurki/react-font-awesome/tarball/master",
-    "react-load-image": "^0.1.7",
+    "react-imageloader": "^3.0.0",
     "react-router": "^3.2.5",
     "react-router-bootstrap": "^0.20.1",
     "react-select": "^v1.2.0",
