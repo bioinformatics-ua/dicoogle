@@ -221,26 +221,31 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
     }
 
     @Override
-    @JsonSetter("additional-sop-classes")
+    @JsonGetter("additional-sop-classes")
     public Collection<AdditionalSOPClass> getAdditionalSOPClasses() {
-        return new ArrayList<>(this.additionalSOPClasses);
+        return this.additionalSOPClasses;
     }
 
     @Override
     @JsonSetter("additional-sop-classes")
     public void setAdditionalSOPClasses(Collection<AdditionalSOPClass> additionalSOPClasses) {
+        if (additionalSOPClasses == null)
+            return; // Keep default emptyList value
+
         this.additionalSOPClasses = additionalSOPClasses;
     }
 
     @Override
     @JsonGetter("additional-transfer-syntaxes")
     public Collection<AdditionalTransferSyntax> getAdditionalTransferSyntaxes() {
-        return new ArrayList<>(this.additionalTransferSyntaxes);
+        return this.additionalTransferSyntaxes;
     }
 
     @Override
     @JsonSetter("additional-transfer-syntaxes")
     public void setAdditionalTransferSyntaxes(Collection<AdditionalTransferSyntax> additionalTransferSyntaxes) {
+        if (additionalTransferSyntaxes == null)
+            return; // Keep default emptyList value
         this.additionalTransferSyntaxes = additionalTransferSyntaxes;
     }
 
@@ -290,10 +295,14 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
 
     @Override
     public String toString() {
-        return "DicomServicesImpl{" + "aetitle='" + aetitle + '\'' + ", deviceDescription='" + deviceDescription + '\''
-                + ", allowedAETitles=" + allowedAETitles + ", priorityAETitles=" + priorityAETitles
-                + ", allowedLocalInterfaces=" + allowedLocalInterfaces + ", allowedHosts=" + allowedHosts
-                + ", defaultTS=" + defaultTS + ", sopClasses=" + sopClasses + ", moveDestinations=" + moveDestinations
-                + ", storage=" + storage + ", queryRetrieve=" + queryRetrieve + '}';
+        return new StringJoiner(", ", DicomServicesImpl.class.getSimpleName() + "[", "]")
+                .add("aetitle='" + aetitle + "'").add("deviceDescription='" + deviceDescription + "'")
+                .add("allowedAETitles=" + allowedAETitles).add("priorityAETitles=" + priorityAETitles)
+                .add("allowedLocalInterfaces=" + allowedLocalInterfaces).add("allowedHosts=" + allowedHosts)
+                .add("defaultTS=" + defaultTS).add("sopClasses=" + sopClasses)
+                .add("additionalSOPClasses=" + additionalSOPClasses)
+                .add("additionalTransferSyntaxes=" + additionalTransferSyntaxes)
+                .add("moveDestinations=" + moveDestinations).add("storage=" + storage)
+                .add("queryRetrieve=" + queryRetrieve).toString();
     }
 }

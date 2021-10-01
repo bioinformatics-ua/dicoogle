@@ -19,16 +19,20 @@
 package pt.ua.dicoogle.sdk.datastructs;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import org.dcm4che2.data.TransferSyntax;
+import org.dcm4che2.util.UIDUtils;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.StringJoiner;
 
 import static java.util.regex.Pattern.matches;
 
+/**
+ * @author André Almeida <almeida.a@ua.pt>
+ */
 @JsonRootName("additional-transfer-syntax")
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
 public final class AdditionalTransferSyntax {
@@ -39,44 +43,52 @@ public final class AdditionalTransferSyntax {
     private final String alias;
     /**
      * This field is to contain coded data to be parsed into
-     * useful information for the TS declaration constructor of org.dcm4che2.data.TransferSyntax.
+     *  useful information for the TS declaration constructor of org.dcm4che2.data.TransferSyntax.
      * Digits:
      *  1. ExplicitVR
      *  2. Big Endian
      *  3. Deflated
      *  4. Encapsulated
-     *  For example, 1000 would mean: explicitVR, little endian, not deflated or encapsulated
+     *  For example, 1000 would mean: explicitVR, little endian, not deflated nor encapsulated
      * */
     @JacksonXmlProperty(isAttribute = true, localName = "format")
     private final String format;
 
 
-
-    /**
-     * Checks whether the transfer syntax's format field is valid
-     * */
-    public static boolean validFormat(String format) {
-
-        // Valid: length=4 and binary characters (either 0 or 1)
-        // Examples: 0010, 1011.
-
-        return matches("[01]{4}", format);
-    }
-
-    public TransferSyntax toTransferSyntax() {
-        boolean explicitVR = format.charAt(0) != '0',
-                bigEndian = format.charAt(1) != '0',
-                deflated = format.charAt(2) != '0',
-                encapsulated = format.charAt(3) != '0'; // "Cast" 0 or 1 to the boolean correspondents
-        return new TransferSyntax(uid, explicitVR, bigEndian, deflated, encapsulated);
-    }
-
-    // Generated functions
-    public AdditionalTransferSyntax(String uid, String alias, String format) {
+    public AdditionalTransferSyntax(@JsonProperty("uid") String uid, @JsonProperty("alias") String alias,
+            @JsonProperty("format") String format) {
         this.uid = uid;
         this.alias = alias;
         this.format = format;
     }
+
+    /**
+     * Checks whether the transfer syntax is valid in a general sense
+     */
+    public static boolean isValid(AdditionalTransferSyntax ats) {
+        if (ats == null || ats.uid == null)
+            return false;
+        return ats.hasValidFormat() && UIDUtils.isValidUID(ats.uid) && (ats.alias != null && !ats.alias.equals(""));
+    }
+
+    /**
+     * Checks whether the transfer syntax's format field is valid
+     * */
+    private boolean hasValidFormat() {
+        // Valid: length=4 and binary characters (either 0 or 1)
+        // Examples: 0010, 1011.
+        return format != null && matches("[01]{4}", format);
+    }
+
+    public TransferSyntax toTransferSyntax() {
+        if (!hasValidFormat())
+            return null;
+        boolean explicitVR = format.charAt(0) != '0', bigEndian = format.charAt(1) != '0',
+                deflated = format.charAt(2) != '0', encapsulated = format.charAt(3) != '0'; // "Cast" 0 or 1 to the boolean correspondents
+        return new TransferSyntax(uid, explicitVR, bigEndian, deflated, encapsulated);
+    }
+
+    // Generated functions
 
     public String getUid() {
         return uid;

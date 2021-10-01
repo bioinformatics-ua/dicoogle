@@ -22,6 +22,8 @@ import org.junit.Before;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
 import pt.ua.dicoogle.core.settings.part.DicomServicesImpl;
+import pt.ua.dicoogle.sdk.datastructs.AdditionalSOPClass;
+import pt.ua.dicoogle.sdk.datastructs.AdditionalTransferSyntax;
 import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.sdk.datastructs.SOPClass;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
@@ -46,6 +48,7 @@ public class ServerSettingsTest {
     private URL testConfig;
     private URL testConfigDIM;
     private URL testConfigSopClasses;
+    private URL testConfigAdditionals;
     private URL legacyConfig;
 
     @Before
@@ -53,6 +56,7 @@ public class ServerSettingsTest {
         this.testConfig = this.getClass().getResource("test-config-new.xml");
         this.testConfigDIM = this.getClass().getResource("test-config-multi-dim.xml");
         this.testConfigSopClasses = this.getClass().getResource("test-config-sopclasses.xml");
+        this.testConfigAdditionals = this.getClass().getResource("test-config-additionals.xml");
         this.legacyConfig = this.getClass().getResource("test-config.xml");
     }
 
@@ -338,6 +342,35 @@ public class ServerSettingsTest {
         assertSameContent(defaultTS, ((DicomServicesImpl) ds).getDefaultTransferSyntaxes());
 
 
+    }
+
+    @Test
+    public void testAdditionals() throws IOException {
+        // read the settings from our test config file
+        ServerSettings settings = ServerSettingsManager.loadSettingsAt(this.testConfigAdditionals);
+        final ServerSettings.DicomServices ds = settings.getDicomServicesSettings();
+        assertTrue(settings instanceof ServerSettingsImpl);
+
+        // Filter (as in init)
+        ds.setAdditionalSOPClasses(
+                ds.getAdditionalSOPClasses().stream().filter(AdditionalSOPClass::isValid).collect(Collectors.toList()));
+        ds.setAdditionalTransferSyntaxes(ds.getAdditionalTransferSyntaxes().stream()
+                .filter(AdditionalTransferSyntax::isValid).collect(Collectors.toList()));
+
+        // assertions follow
+
+        // assert the parsed additional transfer options are expected
+        // SOP classes
+        Collection<AdditionalSOPClass> additionalSOPClasses = new ArrayList<>();
+        additionalSOPClasses
+                .add(new AdditionalSOPClass("1.2.840.10008.5.1.4.1.1.131", "BasicStructuredDisplayStorage"));
+        assertSameContent(additionalSOPClasses, ds.getAdditionalSOPClasses());
+
+        // Transfer Syntaxes
+        Collection<AdditionalTransferSyntax> additionalTransferSyntaxes = new ArrayList<>();
+        additionalTransferSyntaxes
+                .add(new AdditionalTransferSyntax("1.2.840.10008.1.2.4.95", "JPIPReferencedDeflated", "1010"));
+        assertSameContent(additionalTransferSyntaxes, ds.getAdditionalTransferSyntaxes());
     }
 
 

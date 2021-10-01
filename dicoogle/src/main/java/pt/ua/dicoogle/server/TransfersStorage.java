@@ -21,6 +21,9 @@ package pt.ua.dicoogle.server;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.BidiMap;
+import org.apache.commons.collections.MapIterator;
+import org.apache.commons.collections.bidimap.DualHashBidiMap;
 import org.dcm4che2.data.TransferSyntax;
 import org.dcm4che2.data.UID;
 import pt.ua.dicoogle.core.settings.ServerSettingsManager;
@@ -52,22 +55,21 @@ public class TransfersStorage {
      * [13] MPEG2
      */
 
-    public static final Map<Integer, String> globalTransferMap;
-    public static final Map<String, String> globalTransferUIDsMap;
-    // public static final Map<String, AdditionalTransferSyntax> globalAdditionalTransferUIDsMap;
+    private static Map<Integer, String> globalTransferMap;
+    private static Map<String, String> globalTransferUIDsMap;
+
+    public static Map<Integer, String> getGlobalTransferMap() {
+        return globalTransferMap;
+    }
+
+    public static Map<String, String> getGlobalTransferUIDsMap() {
+        return globalTransferUIDsMap;
+    }
+
+    private static final Map<Integer, String> aMap = new HashMap<>();
+    private static final Map<String, String> uidsNameMapping = new HashMap<>();
     static {
 
-        // Get additional transfer syntaxes (not present in the hardcoded list)
-        // Collection<AdditionalTransferSyntax> additionalTransferSyntaxes =
-        // ServerSettingsManager.getSettings().getDicomServicesSettings().getAdditionalTransferSyntaxes();
-        // additionalTransferSyntaxes = additionalTransferSyntaxes.stream().filter(
-        // additionalTransferSyntax -> SOPClassSettings.getInstance().getTransferSettings().containsKey(
-        // additionalTransferSyntax.getUid()
-        // )
-        // ).collect(Collectors.toList());
-        // --
-
-        Map<Integer, String> aMap = new HashMap<>();
         aMap.put(0, "ImplicitVRLittleEndian");
         aMap.put(1, "ExplicitVRLittleEndian");
         aMap.put(2, "DeflatedExplicitVRLittleEndian");
@@ -82,13 +84,8 @@ public class TransfersStorage {
         aMap.put(11, "JPEG2000");
         aMap.put(12, "RLELossless");
         aMap.put(13, "MPEG2");
-        // // Extras (indexed AdditionalTransferSyntaxes)
-        // int index = 13;
-        // for (AdditionalTransferSyntax elem : additionalTransferSyntaxes) {
-        // aMap.put(++index, elem.getAlias());
-        // }
+
         globalTransferMap = Collections.unmodifiableMap(aMap);
-        Map<String, String> uidsNameMapping = new HashMap<>();
 
         uidsNameMapping.put(UID.ImplicitVRLittleEndian, "ImplicitVRLittleEndian");
         uidsNameMapping.put(UID.ExplicitVRLittleEndian, "ExplicitVRLittleEndian");
@@ -104,19 +101,16 @@ public class TransfersStorage {
         uidsNameMapping.put(UID.JPEG2000, "JPEG2000");
         uidsNameMapping.put(UID.RLELossless, "RLELossless");
         uidsNameMapping.put(UID.MPEG2, "MPEG2");
-        // Extras (AdditionalTransferSyntaxes with aliases)
-        // additionalTransferSyntaxes.forEach(elem -> uidsNameMapping.put(elem.getUid(), elem.getAlias()));
+
         globalTransferUIDsMap = Collections.unmodifiableMap(uidsNameMapping);
 
     }
 
     public TransfersStorage() {
-        int i;
         accepted = false;
-        TS = new boolean[14];
-        for (i = 0; i < TS.length; i++) {
-            TS[i] = false;
-        }
+        // TODO#498 think how to deal with the globalTM resizing in completeList() function, because the TransfersStorage
+        // objects pre-completion and post-completion have different number of TSs
+        TS = new boolean[globalTransferMap == null ? aMap.size() : globalTransferMap.size()];
     }
 
     public void setAccepted(boolean status) {
@@ -130,7 +124,7 @@ public class TransfersStorage {
     public int setTS(boolean[] status) {
         int i;
 
-        if (status.length != 14) {
+        if (status.length != TS.length) {
             return -1;
         }
 
@@ -144,7 +138,7 @@ public class TransfersStorage {
     public int setTS(boolean status, int index) {
         int i;
 
-        if (index < 0 || index > 13) {
+        if (index < 0 || index > TS.length - 1) {
             return -1;
         }
         TS[index] = status;
@@ -167,9 +161,14 @@ public class TransfersStorage {
     }
 
     public String[] getVerboseTS() {
+
         int i, count = 0;
+        // Map reverse of uidsNameMapping
+        // TODO#498 consider "upgrading" the bidimap to static class variable for optimal efficiency
+        BidiMap namesUidMapping = new DualHashBidiMap(uidsNameMapping);
+
         String[] return_value = new String[0];
-        for (i = 0; i < 14; i++) {
+        for (i = 0; i < TS.length; i++) {
             if (TS[i]) {
                 count++;
             }
@@ -177,61 +176,11 @@ public class TransfersStorage {
         if (count > 0) {
             i = 0;
             return_value = new String[count];
-            if (TS[0]) {
-                return_value[i] = UID.ImplicitVRLittleEndian;
-                i++;
-            }
-            if (TS[1]) {
-                return_value[i] = UID.ExplicitVRLittleEndian;
-                i++;
-            }
-            if (TS[2]) {
-                return_value[i] = UID.DeflatedExplicitVRLittleEndian;
-                i++;
-            }
-            if (TS[3]) {
-                return_value[i] = UID.ExplicitVRBigEndian;
-                i++;
-            }
-            if (TS[4]) {
-                return_value[i] = UID.JPEGLossless;
-                i++;
-            }
-            if (TS[5]) {
-                return_value[i] = UID.JPEGLSLossless;
-                i++;
-            }
-            if (TS[6]) {
-                return_value[i] = UID.JPEGLosslessNonHierarchical14;
-                i++;
-            }
-            if (TS[7]) {
-                return_value[i] = UID.JPEG2000LosslessOnly;
-                i++;
-            }
-            if (TS[8]) {
-                return_value[i] = UID.JPEGBaseline1;
-                i++;
-            }
-            if (TS[9]) {
-                return_value[i] = UID.JPEGExtended24;
-                i++;
-            }
-            if (TS[10]) {
-                return_value[i] = UID.JPEGLSLossyNearLossless;
-                i++;
-            }
-            if (TS[11]) {
-                return_value[i] = UID.JPEG2000;
-                i++;
-            }
-            if (TS[12]) {
-                return_value[i] = UID.RLELossless;
-                i++;
-            }
-            if (TS[13]) {
-                return_value[i] = UID.MPEG2;
-                i++;
+            for (int j = 0; j < TS.length; j++) {
+                if (TS[j]) {
+                    return_value[i] = (String) (namesUidMapping.getKey(globalTransferMap.get(j)));
+                    i++;
+                }
             }
         }
         return return_value;
@@ -239,5 +188,35 @@ public class TransfersStorage {
 
     public List<String> asList() {
         return Arrays.asList(this.getVerboseTS());
+    }
+
+    public static void completeList() {
+
+        // Get additional transfer syntaxes (not present in the hardcoded list)
+        Collection<AdditionalTransferSyntax> additionalTransferSyntaxes =
+                ServerSettingsManager.getSettings().getDicomServicesSettings().getAdditionalTransferSyntaxes();
+        additionalTransferSyntaxes =
+                additionalTransferSyntaxes
+                        .stream().filter(additionalTransferSyntax -> SOPClassSettings.getInstance()
+                                .getTransferSettings().containsKey(additionalTransferSyntax.getUid()))
+                        .collect(Collectors.toList());
+        // --
+        // Extras (indexed AdditionalTransferSyntaxes)
+        int index = aMap.size();
+        for (AdditionalTransferSyntax elem : additionalTransferSyntaxes) {
+            aMap.put(index++, elem.getAlias());
+        }
+
+        // Extras (AdditionalTransferSyntaxes with aliases)
+        additionalTransferSyntaxes.forEach(elem -> {
+            // Collect the additional transfer syntaxes statically
+            TransferSyntax.add(Objects.requireNonNull(elem.toTransferSyntax()));
+            uidsNameMapping.put(elem.getUid(), elem.getAlias());
+        });
+
+        // Assign to globalTS the map vars, locking the list
+        globalTransferMap = Collections.unmodifiableMap(aMap);
+        globalTransferUIDsMap = Collections.unmodifiableMap(uidsNameMapping);
+
     }
 }

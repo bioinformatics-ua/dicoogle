@@ -26,10 +26,12 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 import org.dcm4che2.util.UIDUtils;
 import pt.ua.dicoogle.core.XMLSupport;
+import pt.ua.dicoogle.sdk.datastructs.AdditionalSOPClass;
+import pt.ua.dicoogle.sdk.datastructs.AdditionalTransferSyntax;
 import pt.ua.dicoogle.server.SOPList;
+import pt.ua.dicoogle.server.TransfersStorage;
 import pt.ua.dicoogle.utils.Platform;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
-import pt.ua.dicoogle.core.settings.part.DicomServicesImpl;
 
 import java.io.*;
 import java.net.URL;
@@ -97,26 +99,21 @@ public class ServerSettingsManager {
         } else {
             // use main configuration file
             inner = loadSettingsAt(MAIN_CONFIG_PATH);
-            // Check which new UIDs from "additional*" tags are valid (SOP Class UIDs can skip this if
-            // they are already present in the transfer options: e.g. in SOPList) and filter them
-            // Validate and filter SOP Classes; add them to SOPList
+            /*
+             TODO#498 export this following block of code to somewhere more fitting
+             Check which new UIDs from "additional*" tags are valid (SOP Class UIDs can skip this if
+             they are already present in the transfer options: e.g. in SOPList) and filter them
+             Validate and filter SOP Classes; add them to SOPList
+            */
             inner.getDicomServicesSettings()
                     .setAdditionalSOPClasses(inner.getDicomServicesSettings().getAdditionalSOPClasses().stream()
-                            .filter(additionalSOPClass -> UIDUtils.isValidUID(additionalSOPClass.getUid()))
-                            .collect(Collectors.toList()));
+                            .filter(AdditionalSOPClass::isValid).collect(Collectors.toList()));
             SOPList.getInstance().updateList();
-            // Validate and filter Transfer Syntaxes; TODO#498 check if it should be done the same
-            // (equivalent in SOPList)
+            // Validate and filter Transfer Syntaxes;
             inner.getDicomServicesSettings()
                     .setAdditionalTransferSyntaxes(inner.getDicomServicesSettings().getAdditionalTransferSyntaxes()
-                            .stream()
-                            .filter(additionalTransferSyntax -> UIDUtils.isValidUID(additionalTransferSyntax.getUid()))
-                            .collect(Collectors.toList()));
-            // TODO#498 SOP classes recognition (skip for now, as it's probably not needed)
-            // Filter only the SOP UIDs present dcm4che2 mkuiddic's key list
-            // ...
-            // TODO#498 Declare valid UIDs with data.TransferSyntax ( TransferSyntax.add(newTS) )
-            // ...
+                            .stream().filter(AdditionalTransferSyntax::isValid).collect(Collectors.toList()));
+            TransfersStorage.completeList();
         }
     }
 

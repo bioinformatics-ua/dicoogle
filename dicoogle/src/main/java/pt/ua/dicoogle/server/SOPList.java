@@ -214,7 +214,7 @@ public class SOPList {
 
 
     public int updateTSFieldByTsUID(String sopUID, String tsUID, boolean value) {
-        return updateTSField(sopUID, TransfersStorage.globalTransferUIDsMap.get(tsUID), value);
+        return updateTSField(sopUID, TransfersStorage.getGlobalTransferUIDsMap().get(tsUID), value);
     }
 
 
@@ -232,8 +232,8 @@ public class SOPList {
         TS = table.get(UID);
 
         int index = -1;
-        for (int i = 0; i < TransfersStorage.globalTransferMap.size(); i++) {
-            if (TransfersStorage.globalTransferMap.get(i).equals(name)) {
+        for (int i = 0; i < TransfersStorage.getGlobalTransferMap().size(); i++) {
+            if (TransfersStorage.getGlobalTransferMap().get(i).equals(name)) {
                 index = i;
                 break;
             }
@@ -340,7 +340,7 @@ public class SOPList {
             TransfersStorage ts = getTS(uid);
             for (int i = 0; i < ts.getTS().length; i++) {
                 JSONObject tsobj = new JSONObject();
-                String name = ts.globalTransferMap.get(i);
+                String name = TransfersStorage.getGlobalTransferMap().get(i);
                 boolean value = ts.getTS()[i];
                 tsobj.put("name", name);
                 tsobj.put("value", value);

@@ -19,29 +19,43 @@
 package pt.ua.dicoogle.sdk.datastructs;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import org.dcm4che2.data.TransferSyntax;
+import org.dcm4che2.util.UIDUtils;
 
-import java.util.Collection;
 import java.util.Objects;
 import java.util.StringJoiner;
 
+/**
+ * @author André Almeida <almeida.a@ua.pt>
+ */
 @JsonRootName("additional-sop-class")
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
 public final class AdditionalSOPClass {
 
-    @JacksonXmlProperty(isAttribute = true, localName = "uid")
+    // @JacksonXmlProperty(isAttribute = true, localName = "uid")
+    @JsonProperty("uid")
     private final String uid;
-    @JacksonXmlProperty(isAttribute = true, localName = "alias")
+    // @JacksonXmlProperty(isAttribute = true, localName = "alias")
+    @JsonProperty("alias")
     private final String alias;
 
-
-    // Generated functions
-    public AdditionalSOPClass(String uid, String alias) {
+    @JsonCreator
+    public AdditionalSOPClass(@JsonProperty("uid") String uid, @JsonProperty("alias") String alias) {
         this.uid = uid;
         this.alias = alias;
     }
 
+    public static boolean isValid(AdditionalSOPClass a) {
+        if (a == null || a.uid == null)
+            return false;
+        return UIDUtils.isValidUID(a.uid) && (a.alias != null && !a.alias.equals(""));
+    }
+
+    // Generated functions
     public String getUid() {
         return uid;
     }
