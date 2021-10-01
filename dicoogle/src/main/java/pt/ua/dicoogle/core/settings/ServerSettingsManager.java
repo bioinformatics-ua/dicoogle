@@ -103,17 +103,17 @@ public class ServerSettingsManager {
              TODO#498 export this following block of code to somewhere more fitting
              Check which new UIDs from "additional*" tags are valid (SOP Class UIDs can skip this if
              they are already present in the transfer options: e.g. in SOPList) and filter them
-             Validate and filter SOP Classes; add them to SOPList
+             Validate and filter Transfer Syntaxes;
             */
-            inner.getDicomServicesSettings()
-                    .setAdditionalSOPClasses(inner.getDicomServicesSettings().getAdditionalSOPClasses().stream()
-                            .filter(AdditionalSOPClass::isValid).collect(Collectors.toList()));
-            SOPList.getInstance().updateList();
-            // Validate and filter Transfer Syntaxes;
             inner.getDicomServicesSettings()
                     .setAdditionalTransferSyntaxes(inner.getDicomServicesSettings().getAdditionalTransferSyntaxes()
                             .stream().filter(AdditionalTransferSyntax::isValid).collect(Collectors.toList()));
             TransfersStorage.completeList();
+            // Validate and filter SOP Classes; add them to SOPList
+            inner.getDicomServicesSettings()
+                    .setAdditionalSOPClasses(inner.getDicomServicesSettings().getAdditionalSOPClasses().stream()
+                            .filter(AdditionalSOPClass::isValid).collect(Collectors.toList()));
+            SOPList.getInstance().updateList();
         }
     }
 

@@ -352,10 +352,10 @@ public class ServerSettingsTest {
         assertTrue(settings instanceof ServerSettingsImpl);
 
         // Filter (as in init)
-        ds.setAdditionalSOPClasses(
-                ds.getAdditionalSOPClasses().stream().filter(AdditionalSOPClass::isValid).collect(Collectors.toList()));
         ds.setAdditionalTransferSyntaxes(ds.getAdditionalTransferSyntaxes().stream()
                 .filter(AdditionalTransferSyntax::isValid).collect(Collectors.toList()));
+        ds.setAdditionalSOPClasses(
+                ds.getAdditionalSOPClasses().stream().filter(AdditionalSOPClass::isValid).collect(Collectors.toList()));
 
         // assertions follow
 

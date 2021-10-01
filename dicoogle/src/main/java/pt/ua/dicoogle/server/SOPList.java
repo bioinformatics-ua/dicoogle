@@ -374,9 +374,11 @@ public class SOPList {
             newSOPs = newSOPs.stream().filter(newSOP -> !Arrays.asList(SOP).contains(newSOP))
                     .collect(Collectors.toList());
             // Add "Additional" SOPs to table
-            for (String sop : newSOPs) {
-                table.put(sop, new TransfersStorage());
-            }
+            newSOPs.forEach(sop -> table.put(sop, new TransfersStorage()));
+            // Add them to SOP
+            newSOPs.addAll(Arrays.asList(SOP));
+            SOP = newSOPs.toArray(new String[0]);
+
         } catch (NotImplementedException exception) {
             logger.debug("Settings not yet initialized. List cannot yet be updated with extended data");
         }
