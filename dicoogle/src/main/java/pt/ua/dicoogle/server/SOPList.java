@@ -379,7 +379,11 @@ public class SOPList {
                 table.put(sop, new TransfersStorage());
             });
             // Add "Additional" SOPs to table
-            newSOPs.forEach(sop -> table.put(sop, new TransfersStorage()));
+            newSOPs.forEach(sop -> {
+                TransfersStorage ts = new TransfersStorage();
+                ts.setDefaultSettings();
+                table.put(sop, ts);
+            });
             // Add them to SOP
             newSOPs.addAll(Arrays.asList(SOP));
             SOP = newSOPs.toArray(new String[0]);
