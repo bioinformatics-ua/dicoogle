@@ -373,6 +373,11 @@ public class SOPList {
             // Remove UIDs already existing in String[] SOP
             newSOPs = newSOPs.stream().filter(newSOP -> !Arrays.asList(SOP).contains(newSOP))
                     .collect(Collectors.toList());
+            // Refresh hardcoded SOPs (outdated TransfersStorage)
+            Arrays.asList(SOP).forEach(sop -> {
+                table.remove(sop);
+                table.put(sop, new TransfersStorage());
+            });
             // Add "Additional" SOPs to table
             newSOPs.forEach(sop -> table.put(sop, new TransfersStorage()));
             // Add them to SOP
