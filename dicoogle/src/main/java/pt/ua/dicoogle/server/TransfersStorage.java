@@ -18,17 +18,16 @@
  */
 package pt.ua.dicoogle.server;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import org.apache.commons.collections.BidiMap;
-import org.apache.commons.collections.MapIterator;
 import org.apache.commons.collections.bidimap.DualHashBidiMap;
 import org.dcm4che2.data.TransferSyntax;
 import org.dcm4che2.data.UID;
 import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.sdk.datastructs.AdditionalTransferSyntax;
 import pt.ua.dicoogle.server.web.management.SOPClassSettings;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -53,6 +52,7 @@ public class TransfersStorage {
      * [11] JPEG2000
      * [12] RLELossless
      * [13] MPEG2
+     * [14-] Additional transfer syntaxes (added in target/confs/server.xml)
      */
 
     private static Map<Integer, String> globalTransferMap;
@@ -68,6 +68,9 @@ public class TransfersStorage {
 
     private static final Map<Integer, String> aMap = new HashMap<>();
     private static final Map<String, String> uidsNameMapping = new HashMap<>();
+    // Map reverse of uidsNameMapping. This introduces some redundancy with uidsNameMapping, for its double direction,
+    // but for now the HashMap is not to be deprecated for the reason of possible compatibility breaks.
+    private static BidiMap namesUidMapping;
     static {
 
         aMap.put(0, "ImplicitVRLittleEndian");
@@ -103,12 +106,12 @@ public class TransfersStorage {
         uidsNameMapping.put(UID.MPEG2, "MPEG2");
 
         globalTransferUIDsMap = Collections.unmodifiableMap(uidsNameMapping);
+        namesUidMapping = new DualHashBidiMap(uidsNameMapping);
 
     }
 
     public TransfersStorage() {
         accepted = false;
-        // TODO#498 think how to deal with the globalTM resizing in completeList() function, because the TransfersStorage
         // objects pre-completion and post-completion have different number of TSs
         TS = new boolean[globalTransferMap == null ? aMap.size() : globalTransferMap.size()];
     }
@@ -163,9 +166,6 @@ public class TransfersStorage {
     public String[] getVerboseTS() {
 
         int i, count = 0;
-        // Map reverse of uidsNameMapping
-        // TODO#498 consider "upgrading" the bidimap to static class variable for optimal efficiency
-        BidiMap namesUidMapping = new DualHashBidiMap(uidsNameMapping);
 
         String[] return_value = new String[0];
         for (i = 0; i < TS.length; i++) {
@@ -217,6 +217,7 @@ public class TransfersStorage {
         // Assign to globalTS the map vars, locking the list
         globalTransferMap = Collections.unmodifiableMap(aMap);
         globalTransferUIDsMap = Collections.unmodifiableMap(uidsNameMapping);
+        namesUidMapping = new DualHashBidiMap(uidsNameMapping);
 
     }
 }

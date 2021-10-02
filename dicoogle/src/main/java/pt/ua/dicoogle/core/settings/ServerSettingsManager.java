@@ -24,14 +24,13 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
-import org.dcm4che2.util.UIDUtils;
 import pt.ua.dicoogle.core.XMLSupport;
 import pt.ua.dicoogle.sdk.datastructs.AdditionalSOPClass;
 import pt.ua.dicoogle.sdk.datastructs.AdditionalTransferSyntax;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 import pt.ua.dicoogle.server.SOPList;
 import pt.ua.dicoogle.server.TransfersStorage;
 import pt.ua.dicoogle.utils.Platform;
-import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
 import java.io.*;
 import java.net.URL;
@@ -100,7 +99,7 @@ public class ServerSettingsManager {
             // use main configuration file
             inner = loadSettingsAt(MAIN_CONFIG_PATH);
             /*
-             TODO#498 export this following block of code to somewhere more fitting
+             TODO#498 (feedback needed) export this following block of code to somewhere more fitting
              Check which new UIDs from "additional*" tags are valid (SOP Class UIDs can skip this if
              they are already present in the transfer options: e.g. in SOPList) and filter them
              Validate and filter Transfer Syntaxes;
