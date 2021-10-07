@@ -19,7 +19,6 @@
 package pt.ua.dicoogle.core.settings;
 
 import com.fasterxml.jackson.annotation.*;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.dcm4che2.data.UID;
 import org.slf4j.LoggerFactory;
@@ -668,17 +667,11 @@ public class LegacyServerSettings implements ServerSettings {
     }
 
     public void setAdditionalSOPClasses(Collection<AdditionalSOPClass> classes) {
-        Objects.requireNonNull(classes);
-        LoggerFactory.getLogger(LegacyServerSettings.class)
-                .warn("Configuring DICOM additional SOP classes is unsupported "
-                        + " in legacy configuration file \"config.xml\". Please upgrade your server to use the latest format.");
+        // No-op
     }
 
     public void setAdditionalTransferSyntaxes(Collection<AdditionalTransferSyntax> syntaxes) {
-        Objects.requireNonNull(syntaxes);
-        LoggerFactory.getLogger(LegacyServerSettings.class)
-                .warn("Configuring DICOM additional Transfer Syntaxes is unsupported "
-                        + " in legacy configuration file \"config.xml\". Please upgrade your server to use the latest format.");
+        // No-op
     }
 
     public List<SOPClass> getSOPClasses() {
@@ -686,16 +679,13 @@ public class LegacyServerSettings implements ServerSettings {
     }
 
     public List<AdditionalSOPClass> getAdditionalSOPClass() {
-        LoggerFactory.getLogger(LegacyServerSettings.class).warn("Reading DICOM additional SOP Classes is unsupported "
-                + " in legacy configuration file \"config.xml\". Please upgrade your server to use the latest format.");
-        return new ArrayList<>();
+        // No-op
+        return null;
     }
 
     public List<AdditionalTransferSyntax> getAdditionalTransferSyntax() {
-        LoggerFactory.getLogger(LegacyServerSettings.class)
-                .warn("Reading DICOM additional Transfer Syntaxes is unsupported "
-                        + " in legacy configuration file \"config.xml\". Please upgrade your server to use the latest format.");
-        return new ArrayList<>();
+        // No-op
+        return null;
     }
 
     public void setDIMSERspTimeout(int timeout) {
