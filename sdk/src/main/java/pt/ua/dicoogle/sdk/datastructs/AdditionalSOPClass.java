@@ -25,6 +25,8 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import org.dcm4che2.data.TransferSyntax;
 import org.dcm4che2.util.UIDUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -36,6 +38,8 @@ import java.util.StringJoiner;
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
 public final class AdditionalSOPClass {
 
+    private static int counter = 1;
+    private int id = 1;
     // @JacksonXmlProperty(isAttribute = true, localName = "uid")
     @JsonProperty("uid")
     private final String uid;
@@ -45,24 +49,45 @@ public final class AdditionalSOPClass {
 
     @JsonCreator
     public AdditionalSOPClass(@JsonProperty("uid") String uid, @JsonProperty("alias") String alias) {
+        id = counter++;
         this.uid = uid;
         this.alias = alias;
     }
 
-    public static boolean isValid(AdditionalSOPClass a) {
-        if (a == null || a.uid == null)
+    /**
+     * Checks whether the transfer syntax is valid in a general sense
+     */
+    public static boolean isValid(AdditionalSOPClass asc, Logger logger) {
+        boolean returnVal = true;
+        Objects.requireNonNull(asc);
+        if (asc.uid == null) {
+            if (asc.alias == null || asc.alias.equals(""))
+                logger.warn("Additional SOP Class no.{} is undefined.", asc.id);
+            else
+                logger.warn("Additional SOP Class no.{}'s UID not set.", asc.id);
             return false;
-        return UIDUtils.isValidUID(a.uid) && (a.alias != null && !a.alias.equals(""));
+        }
+        if (asc.alias == null || asc.alias.equals("")) {
+            logger.warn("Additional SOP Class no.{}'s alias not set.", asc.id);
+            returnVal = false;
+        }
+        if (!UIDUtils.isValidUID(asc.uid)) {
+            logger.warn("Additional SOP Class no.{}'s UID not valid.", asc.id);
+            returnVal = false;
+        }
+
+        return returnVal;
+    }
+
+    /**
+     * Overload isValid
+     */
+    public static boolean isValid(AdditionalSOPClass asc) {
+        Logger logger = LoggerFactory.getLogger(AdditionalSOPClass.class);
+        return isValid(asc, logger);
     }
 
     // Generated functions
-    public String getUid() {
-        return uid;
-    }
-
-    public String getAlias() {
-        return alias;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -79,9 +104,15 @@ public final class AdditionalSOPClass {
         return Objects.hash(getUid(), getAlias());
     }
 
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", AdditionalSOPClass.class.getSimpleName() + "[", "]").add("uid='" + uid + "'")
-                .add("alias='" + alias + "'").toString();
+    public int getId() {
+        return id;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public String getAlias() {
+        return alias;
     }
 }

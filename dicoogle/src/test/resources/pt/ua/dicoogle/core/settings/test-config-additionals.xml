@@ -52,7 +52,10 @@
         <additional-transfer-syntaxes>
             <additional-transfer-syntax uid="1.2.840.10008.1.2.4.95"
                                         alias="JPIPReferencedDeflated"
-                                        format="1010"/><!-- Format attribute's value may not be correct -->
+                                        deflated="true"/>
+            <additional-transfer-syntax alias="TsNoId"/>
+            <additional-transfer-syntax uid="invalid"/>
+            <additional-transfer-syntax uid="1.2.840.10008.1.2.4.95"/>
             <additional-transfer-syntax/>
         </additional-transfer-syntaxes>
         <move-destinations>

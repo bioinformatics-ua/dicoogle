@@ -368,8 +368,8 @@ public class ServerSettingsTest {
 
         // Transfer Syntaxes
         Collection<AdditionalTransferSyntax> additionalTransferSyntaxes = new ArrayList<>();
-        additionalTransferSyntaxes
-                .add(new AdditionalTransferSyntax("1.2.840.10008.1.2.4.95", "JPIPReferencedDeflated", "1010"));
+        additionalTransferSyntaxes.add(new AdditionalTransferSyntax("1.2.840.10008.1.2.4.95", "JPIPReferencedDeflated",
+                null, false, null, true));
         assertSameContent(additionalTransferSyntaxes, ds.getAdditionalTransferSyntaxes());
     }
 

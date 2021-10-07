@@ -24,11 +24,11 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import org.dcm4che2.data.TransferSyntax;
 import org.dcm4che2.util.UIDUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 import java.util.StringJoiner;
-
-import static java.util.regex.Pattern.matches;
 
 /**
  * @author André Almeida <almeida.a@ua.pt>
@@ -37,6 +37,8 @@ import static java.util.regex.Pattern.matches;
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
 public final class AdditionalTransferSyntax {
 
+    private static int counter = 1;
+    private final int id;
     @JacksonXmlProperty(isAttribute = true, localName = "uid")
     private final String uid;
     @JacksonXmlProperty(isAttribute = true, localName = "alias")
@@ -51,44 +53,73 @@ public final class AdditionalTransferSyntax {
      *  4. Encapsulated
      *  For example, 1000 would mean: explicitVR, little endian, not deflated nor encapsulated
      * */
-    @JacksonXmlProperty(isAttribute = true, localName = "format")
-    private final String format;
+    @JacksonXmlProperty(isAttribute = true, localName = "bigEndian")
+    private final Boolean bigEndian;
+    @JacksonXmlProperty(isAttribute = true, localName = "explicitVR")
+    private final Boolean explicitVR;
+    @JacksonXmlProperty(isAttribute = true, localName = "encapsuled")
+    private final Boolean encapsulated;
+    @JacksonXmlProperty(isAttribute = true, localName = "deflated")
+    private final Boolean deflated;
+
 
 
     public AdditionalTransferSyntax(@JsonProperty("uid") String uid, @JsonProperty("alias") String alias,
-            @JsonProperty("format") String format) {
+            @JsonProperty("bigEndian") Boolean bigEndian, @JsonProperty("explicitVR") Boolean explicitVR,
+            @JsonProperty("encapsulated") Boolean encapsulated, @JsonProperty("deflated") Boolean deflated) {
+        this.id = counter++;
         this.uid = uid;
         this.alias = alias;
-        this.format = format;
+        this.bigEndian = bigEndian != null ? bigEndian : false;
+        this.explicitVR = explicitVR != null ? explicitVR : false;
+        this.encapsulated = encapsulated != null ? encapsulated : false;
+        this.deflated = deflated != null ? deflated : false;
     }
 
     /**
      * Checks whether the transfer syntax is valid in a general sense
      */
-    public static boolean isValid(AdditionalTransferSyntax ats) {
-        if (ats == null || ats.uid == null)
+    public static boolean isValid(AdditionalTransferSyntax ats, Logger logger) {
+        boolean returnVal = true;
+        Objects.requireNonNull(ats);
+        if (ats.uid == null) {
+            if (ats.alias == null || ats.alias.equals(""))
+                logger.warn("Additional Transfer Syntax no.{} is undefined.", ats.id);
+            else
+                logger.warn("Additional Transfer Syntax no.{}'s UID not set.", ats.id);
             return false;
-        return ats.hasValidFormat() && UIDUtils.isValidUID(ats.uid) && (ats.alias != null && !ats.alias.equals(""));
+        }
+        if (ats.alias == null || ats.alias.equals("")) {
+            logger.warn("Additional Transfer syntax no.{}'s alias not set.", ats.id);
+            returnVal = false;
+        }
+        if (!UIDUtils.isValidUID(ats.uid)) {
+            logger.warn("Additional Transfer syntax no.{}'s UID not valid.", ats.id);
+            returnVal = false;
+        }
+
+        return returnVal;
     }
 
     /**
-     * Checks whether the transfer syntax's format field is valid
-     * */
-    private boolean hasValidFormat() {
-        // Valid: length=4 and binary characters (either 0 or 1)
-        // Examples: 0010, 1011.
-        return format != null && matches("[01]{4}", format);
+     * Overload isValid
+     */
+    public static boolean isValid(AdditionalTransferSyntax ats) {
+        Logger logger = LoggerFactory.getLogger(AdditionalTransferSyntax.class);
+        return isValid(ats, logger);
     }
 
+    /**
+     * Creates a dcm4che2 TransferSyntax object equivalent to the referenced object
+     * */
     public TransferSyntax toTransferSyntax() {
-        if (!hasValidFormat())
-            return null;
-        boolean explicitVR = format.charAt(0) != '0', bigEndian = format.charAt(1) != '0',
-                deflated = format.charAt(2) != '0', encapsulated = format.charAt(3) != '0'; // "Cast" 0 or 1 to the boolean correspondents
         return new TransferSyntax(uid, explicitVR, bigEndian, deflated, encapsulated);
     }
 
     // Generated functions
+    public int getId() {
+        return id;
+    }
 
     public String getUid() {
         return uid;
@@ -98,8 +129,20 @@ public final class AdditionalTransferSyntax {
         return alias;
     }
 
-    public String getFormat() {
-        return format;
+    public Boolean getBigEndian() {
+        return bigEndian;
+    }
+
+    public Boolean getExplicitVR() {
+        return explicitVR;
+    }
+
+    public Boolean getEncapsulated() {
+        return encapsulated;
+    }
+
+    public Boolean getDeflated() {
+        return deflated;
     }
 
     @Override
@@ -109,17 +152,22 @@ public final class AdditionalTransferSyntax {
         if (!(o instanceof AdditionalTransferSyntax))
             return false;
         AdditionalTransferSyntax that = (AdditionalTransferSyntax) o;
-        return getUid().equals(that.getUid()) && getAlias().equals(that.getAlias());
+        return Objects.equals(getUid(), that.getUid()) && Objects.equals(getAlias(), that.getAlias())
+                && getBigEndian().equals(that.getBigEndian()) && getExplicitVR().equals(that.getExplicitVR())
+                && getEncapsulated().equals(that.getEncapsulated()) && getDeflated().equals(that.getDeflated());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUid(), getAlias());
+        return Objects.hash(getId(), getUid(), getAlias(), getBigEndian(), getExplicitVR(), getEncapsulated(),
+                getDeflated());
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", AdditionalTransferSyntax.class.getSimpleName() + "[", "]")
-                .add("uid='" + uid + "'").add("alias='" + alias + "'").add("format='" + format + "'").toString();
+        return new StringJoiner(", ", AdditionalTransferSyntax.class.getSimpleName() + "[", "]").add("id=" + id)
+                .add("uid='" + uid + "'").add("alias='" + alias + "'").add("bigEndian=" + bigEndian)
+                .add("explicitVR=" + explicitVR).add("encapsuled=" + encapsulated).add("deflated=" + deflated)
+                .toString();
     }
 }
