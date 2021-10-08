@@ -38,8 +38,6 @@ import java.util.StringJoiner;
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
 public final class AdditionalSOPClass {
 
-    private static int counter = 1;
-    private int id = 1;
     // @JacksonXmlProperty(isAttribute = true, localName = "uid")
     @JsonProperty("uid")
     private final String uid;
@@ -49,7 +47,6 @@ public final class AdditionalSOPClass {
 
     @JsonCreator
     public AdditionalSOPClass(@JsonProperty("uid") String uid, @JsonProperty("alias") String alias) {
-        id = counter++;
         this.uid = uid;
         this.alias = alias;
     }
@@ -58,25 +55,26 @@ public final class AdditionalSOPClass {
      * Checks whether the transfer syntax is valid in a general sense
      */
     public static boolean isValid(AdditionalSOPClass asc, Logger logger) {
-        boolean returnVal = true;
         Objects.requireNonNull(asc);
         if (asc.uid == null) {
             if (asc.alias == null || asc.alias.equals(""))
-                logger.warn("Additional SOP Class no.{} is undefined.", asc.id);
+                logger.warn("An additional SOP class is undefined.");
             else
-                logger.warn("Additional SOP Class no.{}'s UID not set.", asc.id);
+                logger.warn("Additional SOP class \"{}\": UID not set.", asc.alias);
             return false;
         }
         if (asc.alias == null || asc.alias.equals("")) {
-            logger.warn("Additional SOP Class no.{}'s alias not set.", asc.id);
-            returnVal = false;
+            if (!UIDUtils.isValidUID(asc.uid))
+                logger.warn("Additional SOP class: uid \"{}\" is not valid.", asc.uid);
+            else
+                logger.warn("Additional SOP class with uid \"{}\": alias not set.", asc.uid);
+            return false;
         }
         if (!UIDUtils.isValidUID(asc.uid)) {
-            logger.warn("Additional SOP Class no.{}'s UID not valid.", asc.id);
-            returnVal = false;
+            logger.warn("Additional SOP class \"{}\": UID not valid.", asc.alias);
+            return false;
         }
-
-        return returnVal;
+        return true;
     }
 
     /**
@@ -102,10 +100,6 @@ public final class AdditionalSOPClass {
     @Override
     public int hashCode() {
         return Objects.hash(getUid(), getAlias());
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getUid() {

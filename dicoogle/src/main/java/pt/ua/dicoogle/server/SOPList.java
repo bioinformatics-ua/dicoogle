@@ -314,30 +314,24 @@ public class SOPList {
     }
 
     public void updateList() {
-        try {
-            // Add the extras on SOP from getSettings()
-            ServerSettings settings = ServerSettingsManager.getSettings();
-            // Get all new SOP classes' UID
-            Collection<String> newSOPs = settings.getDicomServicesSettings().getAdditionalSOPClasses().stream()
-                    .map(AdditionalSOPClass::getUid).collect(Collectors.toList());
-            // Remove UIDs already existing in String[] SOP
-            newSOPs = newSOPs.stream().filter(newSOP -> !Arrays.asList(SOP).contains(newSOP))
-                    .collect(Collectors.toList());
-            // Refresh hardcoded SOPs (outdated TransfersStorage)
-            Arrays.asList(SOP).forEach(sop -> table.put(sop, new TransfersStorage()));
-            // Add "Additional" SOPs to table w/ default transfer syntaxes
-            newSOPs.forEach(sop -> {
-                TransfersStorage ts = new TransfersStorage();
-                ts.setDefaultSettings();
-                table.put(sop, ts);
-            });
-            // Add them to SOP
-            newSOPs.addAll(Arrays.asList(SOP));
-            SOP = newSOPs.toArray(new String[0]);
 
-        } catch (NotImplementedException exception) {
-            logger.debug("Settings not yet initialized. List cannot yet be updated with extended data");
-        }
+        // Add the extras on SOP from getSettings()
+        ServerSettings settings = ServerSettingsManager.getSettings();
+        // Get all new SOP classes' UID (not existing in String[] SOP)
+        Collection<String> newSOPs =
+                settings.getDicomServicesSettings().getAdditionalSOPClasses().stream().map(AdditionalSOPClass::getUid)
+                        .filter(newSOPUID -> !Arrays.asList(SOP).contains(newSOPUID)).collect(Collectors.toList());
+        // Refresh hardcoded SOPs (outdated TransfersStorage)
+        Arrays.asList(SOP).forEach(sop -> table.put(sop, new TransfersStorage()));
+        // Add "Additional" SOPs to table w/ default transfer syntaxes
+        newSOPs.forEach(sop -> {
+            TransfersStorage ts = new TransfersStorage();
+            ts.setDefaultSettings();
+            table.put(sop, ts);
+        });
+        // Add them to SOP
+        newSOPs.addAll(Arrays.asList(SOP));
+        SOP = newSOPs.toArray(new String[0]);
     }
 
     public void updateList(Collection<AdditionalSOPClass> additionalSOPClasses) {

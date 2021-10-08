@@ -21,7 +21,6 @@ package pt.ua.dicoogle.sdk.datastructs;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import org.dcm4che2.data.TransferSyntax;
 import org.dcm4che2.util.UIDUtils;
 import org.slf4j.Logger;
@@ -37,42 +36,39 @@ import java.util.StringJoiner;
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
 public final class AdditionalTransferSyntax {
 
-    private static int counter = 1;
-    private final int id;
-    @JacksonXmlProperty(isAttribute = true, localName = "uid")
+    // @JacksonXmlProperty(isAttribute = true, localName = "uid")
+    @JsonProperty("uid")
     private final String uid;
-    @JacksonXmlProperty(isAttribute = true, localName = "alias")
-    private final String alias;
-    /**
-     * This field is to contain coded data to be parsed into
-     *  useful information for the TS declaration constructor of org.dcm4che2.data.TransferSyntax.
-     * Digits:
-     *  1. ExplicitVR
-     *  2. Big Endian
-     *  3. Deflated
-     *  4. Encapsulated
-     *  For example, 1000 would mean: explicitVR, little endian, not deflated nor encapsulated
-     * */
-    @JacksonXmlProperty(isAttribute = true, localName = "bigEndian")
-    private final Boolean bigEndian;
-    @JacksonXmlProperty(isAttribute = true, localName = "explicitVR")
-    private final Boolean explicitVR;
-    @JacksonXmlProperty(isAttribute = true, localName = "encapsuled")
-    private final Boolean encapsulated;
-    @JacksonXmlProperty(isAttribute = true, localName = "deflated")
-    private final Boolean deflated;
 
+    // @JacksonXmlProperty(isAttribute = true, localName = "alias")
+    @JsonProperty("alias")
+    private final String alias;
+
+    // @JacksonXmlProperty(isAttribute = true, localName = "bigEndian")
+    @JsonProperty("bigEndian")
+    private final boolean bigEndian;
+
+    // @JacksonXmlProperty(isAttribute = true, localName = "explicitVR")
+    @JsonProperty("explicitVR")
+    private final boolean explicitVR;
+
+    // @JacksonXmlProperty(isAttribute = true, localName = "encapsulated")
+    @JsonProperty("encapsulated")
+    private final boolean encapsulated;
+
+    // @JacksonXmlProperty(isAttribute = true, localName = "deflated")
+    @JsonProperty("deflated")
+    private final boolean deflated;
 
 
     public AdditionalTransferSyntax(@JsonProperty("uid") String uid, @JsonProperty("alias") String alias,
             @JsonProperty("bigEndian") Boolean bigEndian, @JsonProperty("explicitVR") Boolean explicitVR,
             @JsonProperty("encapsulated") Boolean encapsulated, @JsonProperty("deflated") Boolean deflated) {
-        this.id = counter++;
         this.uid = uid;
         this.alias = alias;
         this.bigEndian = bigEndian != null ? bigEndian : false;
-        this.explicitVR = explicitVR != null ? explicitVR : false;
-        this.encapsulated = encapsulated != null ? encapsulated : false;
+        this.explicitVR = explicitVR != null ? explicitVR : true;
+        this.encapsulated = encapsulated != null ? encapsulated : true;
         this.deflated = deflated != null ? deflated : false;
     }
 
@@ -80,25 +76,26 @@ public final class AdditionalTransferSyntax {
      * Checks whether the transfer syntax is valid in a general sense
      */
     public static boolean isValid(AdditionalTransferSyntax ats, Logger logger) {
-        boolean returnVal = true;
         Objects.requireNonNull(ats);
         if (ats.uid == null) {
             if (ats.alias == null || ats.alias.equals(""))
-                logger.warn("Additional Transfer Syntax no.{} is undefined.", ats.id);
+                logger.warn("An additional Transfer Syntax is undefined.");
             else
-                logger.warn("Additional Transfer Syntax no.{}'s UID not set.", ats.id);
+                logger.warn("Additional Transfer Syntax \"{}\": UID not set.", ats.alias);
             return false;
         }
         if (ats.alias == null || ats.alias.equals("")) {
-            logger.warn("Additional Transfer syntax no.{}'s alias not set.", ats.id);
-            returnVal = false;
+            if (!UIDUtils.isValidUID(ats.uid))
+                logger.warn("Additional Transfer syntax: uid \"{}\" is not valid.", ats.uid);
+            else
+                logger.warn("Additional Transfer Syntax with uid \"{}\": alias not set.", ats.uid);
+            return false;
         }
         if (!UIDUtils.isValidUID(ats.uid)) {
-            logger.warn("Additional Transfer syntax no.{}'s UID not valid.", ats.id);
-            returnVal = false;
+            logger.warn("Additional Transfer syntax \"{}\": UID not valid.", ats.alias);
+            return false;
         }
-
-        return returnVal;
+        return true;
     }
 
     /**
@@ -117,9 +114,6 @@ public final class AdditionalTransferSyntax {
     }
 
     // Generated functions
-    public int getId() {
-        return id;
-    }
 
     public String getUid() {
         return uid;
@@ -129,20 +123,20 @@ public final class AdditionalTransferSyntax {
         return alias;
     }
 
-    public Boolean getBigEndian() {
-        return bigEndian;
+    public boolean isBigEndian() {
+        return this.bigEndian;
     }
 
-    public Boolean getExplicitVR() {
-        return explicitVR;
+    public boolean isExplicitVR() {
+        return this.explicitVR;
     }
 
-    public Boolean getEncapsulated() {
-        return encapsulated;
+    public boolean isEncapsulated() {
+        return this.encapsulated;
     }
 
-    public Boolean getDeflated() {
-        return deflated;
+    public boolean isDeflated() {
+        return this.deflated;
     }
 
     @Override
@@ -152,22 +146,21 @@ public final class AdditionalTransferSyntax {
         if (!(o instanceof AdditionalTransferSyntax))
             return false;
         AdditionalTransferSyntax that = (AdditionalTransferSyntax) o;
-        return Objects.equals(getUid(), that.getUid()) && Objects.equals(getAlias(), that.getAlias())
-                && getBigEndian().equals(that.getBigEndian()) && getExplicitVR().equals(that.getExplicitVR())
-                && getEncapsulated().equals(that.getEncapsulated()) && getDeflated().equals(that.getDeflated());
+        return isBigEndian() == that.isBigEndian() && isExplicitVR() == that.isExplicitVR()
+                && isEncapsulated() == that.isEncapsulated() && isDeflated() == that.isDeflated()
+                && getUid().equals(that.getUid()) && getAlias().equals(that.getAlias());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getUid(), getAlias(), getBigEndian(), getExplicitVR(), getEncapsulated(),
-                getDeflated());
+        return Objects.hash(getUid(), getAlias(), isBigEndian(), isExplicitVR(), isEncapsulated(), isDeflated());
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", AdditionalTransferSyntax.class.getSimpleName() + "[", "]").add("id=" + id)
+        return new StringJoiner(", ", AdditionalTransferSyntax.class.getSimpleName() + "[", "]")
                 .add("uid='" + uid + "'").add("alias='" + alias + "'").add("bigEndian=" + bigEndian)
-                .add("explicitVR=" + explicitVR).add("encapsuled=" + encapsulated).add("deflated=" + deflated)
+                .add("explicitVR=" + explicitVR).add("encapsulated=" + encapsulated).add("deflated=" + deflated)
                 .toString();
     }
 }

@@ -52,6 +52,7 @@
         <additional-transfer-syntaxes>
             <additional-transfer-syntax uid="1.2.840.10008.1.2.4.95"
                                         alias="JPIPReferencedDeflated"
+                                        explicitVR="false"
                                         deflated="true"/>
             <additional-transfer-syntax alias="TsNoId"/>
             <additional-transfer-syntax uid="invalid"/>

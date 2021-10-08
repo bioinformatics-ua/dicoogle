@@ -680,12 +680,12 @@ public class LegacyServerSettings implements ServerSettings {
 
     public List<AdditionalSOPClass> getAdditionalSOPClass() {
         // No-op
-        return null;
+        return Collections.emptyList();
     }
 
     public List<AdditionalTransferSyntax> getAdditionalTransferSyntax() {
         // No-op
-        return null;
+        return Collections.emptyList();
     }
 
     public void setDIMSERspTimeout(int timeout) {
