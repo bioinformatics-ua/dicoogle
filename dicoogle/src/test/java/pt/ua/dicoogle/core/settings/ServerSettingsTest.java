@@ -118,16 +118,11 @@ public class ServerSettingsTest {
         assertTrue(web.isAutostart());
         assertEquals(8282, web.getPort());
         assertEquals("test.dicoogle.com", web.getAllowedOrigins());
-        /*
-        Map<String, String> modalityCFind = new HashMap<>();
-        modalityCFind.put("find", "Study Root Query/Retrieve Info Model");
-        modalityCFind.put("1.2.840.10008.5.1.4.1.2.1.1", "Patient Root Query/Retrieve Info Model");
-        modalityCFind.put("1.2.840.10008.5.1.4.1.2.2.1", "Study Root Query/Retrieve Info Model");
-        assertEquals(modalityCFind, settings.getModalityFind());
-        */
-        // complex stuff
-        List<MoveDestination> destinations = Collections.singletonList(
-                new MoveDestination("ANOTHER-STORAGE", "192.168.42.42", 6666, false, "Our test storage"));
+
+        // Known C-MOVE destinations
+        List<MoveDestination> destinations =
+                Arrays.asList(new MoveDestination("ANOTHER-STORAGE", "192.168.42.42", 6666, false, "Our test storage"),
+                        new MoveDestination("BACKUP-STORAGE", "192.168.42.46", 104, false, "Backup storage"));
         assertSameContent(destinations, dcm.getMoveDestinations());
     }
 
