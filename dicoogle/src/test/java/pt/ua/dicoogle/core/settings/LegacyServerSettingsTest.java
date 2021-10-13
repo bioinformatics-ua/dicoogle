@@ -42,7 +42,7 @@ public class LegacyServerSettingsTest {
 
     @Before
     public void init() {
-        this.testConfig = this.getClass().getResource("test-config.xml");
+        this.testConfig = this.getClass().getResource("test-config-legacy.xml");
     }
 
     @Test
