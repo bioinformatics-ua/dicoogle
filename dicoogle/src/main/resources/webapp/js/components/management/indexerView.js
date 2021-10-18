@@ -147,7 +147,6 @@ const IndexerView = createReactClass({
     saveIndexOptions(
       document.getElementById("mon_path").value,
       document.getElementById("watcher").checked,
-      document.getElementById("zip").checked,
       document.getElementById("save").checked,
       document.getElementById("effort_range").value,
       document.getElementById("tsize").value
