@@ -61,7 +61,7 @@ public class CFindServiceSCP extends CFindService {
     private DicomNetwork service = null;
     private LuceneQueryACLManager luke = null;
 
-    private boolean superSpeed = false;
+    private boolean loggingDICOM = false;
     
 
     public CFindServiceSCP(String[] multiSop, Executor e) {
@@ -155,7 +155,7 @@ public class CFindServiceSCP extends CFindService {
                     queryParams += ElementDictionary.getDictionary().nameOf(element.tag()) + " - " + element.getValueAsString(new SpecificCharacterSet("UTF-8"), 0) + " ";
             }
         }
-        if (!superSpeed)
+        if (loggingDICOM)
         {
             LogLine ll = new LogLine("cfind", getDateTime(), as.getCallingAET(),
                     as.toString() + " -- " + add, queryParams);
