@@ -45,7 +45,7 @@
     "bootstrap": "^3.4.1",
     "core-js": "^2.6.11",
     "create-react-class": "^15.7.0",
-    "dicoogle-client": "^5.0.1",
+    "dicoogle-client": "^5.1.0",
     "dicoogle-webcore": "file:../../../../../webcore",
     "document-register-element": "^1.14.3",
     "history": "^3.3.0",
