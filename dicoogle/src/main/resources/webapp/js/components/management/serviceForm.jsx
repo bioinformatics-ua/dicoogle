@@ -26,12 +26,6 @@ export default class ServiceForm extends React.Component {
     super(props);
     this.handlePortChange = this.handlePortChange.bind(this);
     this.handlePortKeyPress = this.handlePortKeyPress.bind(this);
-    this.drawStatusCircle = this.drawStatusCircle.bind(this);
-    this.captureStatusCanvas = this.captureStatusCanvas.bind(this);
-  }
-
-  componentDidUpdate() {
-    this.drawStatusCircle();
   }
 
   isPortValid() {
@@ -54,8 +48,16 @@ export default class ServiceForm extends React.Component {
     }
   }
 
-  captureStatusCanvas(input) {
-    this._canvas = input;
+  statusStyle() {
+    return {
+      display: "block",
+      width: "28px",
+      height: "28px",
+      borderRadius: "50%",
+      border: "1px solid #333",
+      margin: "4px",
+      backgroundColor: this.props.running ? "#0a0" : "red",
+    };
   }
 
   render() {
@@ -63,7 +65,7 @@ export default class ServiceForm extends React.Component {
       <div className="row">
         <div className="col-xs-4">
           <p>{this.props.caption}</p>
-          <canvas ref={this.captureStatusCanvas} width={30} height={30} />
+          <div style={this.statusStyle()} />
         </div>
         <div className="col-xs-4">
           <div className="data-table">
@@ -132,20 +134,5 @@ export default class ServiceForm extends React.Component {
         </div>
       </div>
     );
-  }
-
-  drawStatusCircle() {
-    const context = this._canvas.getContext("2d");
-    const centerX = this._canvas.width / 2;
-    const centerY = this._canvas.height / 2;
-    const radius = 13;
-
-    context.beginPath();
-    context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-    context.fillStyle = this.props.running ? "green" : "red";
-    context.fill();
-    context.lineWidth = 1;
-    context.strokeStyle = "#003300";
-    context.stroke();
   }
 }
