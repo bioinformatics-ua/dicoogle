@@ -31,6 +31,7 @@ import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.utils.Platform;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 import pt.ua.dicoogle.sdk.utils.TagsStruct;
+import pt.ua.dicoogle.server.web.auth.Authentication;
 
 import javax.swing.*;
 import java.awt.*;
@@ -164,6 +165,10 @@ public class Main {
         TransferSyntax.add(new TransferSyntax("1.2.840.10008.1.2.4.70", true, false, false, true));
         TransferSyntax.add(new TransferSyntax("1.2.840.10008.1.2.5.50", false, false, false, true));
 
+        // Initialize authentication and authorization system
+        Authentication.getInstance();
+
+        // Initialize platform controller
         PluginController.getInstance();
 
         // Start the initial Services of Dicoogle
