@@ -59,6 +59,7 @@ public class LegacyServerSettingsTest {
         assertEquals("/tmp", a.getWatchDirectory());
         assertEquals(97, a.getIndexerEffort());
         assertEquals("dicoogle-old", a.getNodeName());
+        assertEquals(true, a.isEncryptUsersFile());
 
         assertEquals("TEST-STORAGE", settings.getDicomServicesSettings().getAETitle());
 
