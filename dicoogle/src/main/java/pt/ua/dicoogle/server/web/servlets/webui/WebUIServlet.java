@@ -96,8 +96,8 @@ public class WebUIServlet extends HttpServlet {
             }
 
             final RolesStruct roles = RolesStruct.getInstance();
-            boolean pluginOk = PERMISSIVE_WEBUI || user.isAdmin() || plugin.getRoles().isEmpty();
-            if (!pluginOk) {
+            boolean pluginOk = PERMISSIVE_WEBUI || plugin.getRoles().isEmpty() || (user != null && user.isAdmin());
+            if (!pluginOk && user != null) {
                 for (String r : plugin.getRoles()) {
                     Role rr = roles.getRole(r);
 
