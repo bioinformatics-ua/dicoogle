@@ -22,8 +22,8 @@ package pt.ua.dicoogle.server.web.servlets.plugins;
 import net.sf.json.JSONObject;
 import org.json.JSONException;
 import org.json.JSONWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.plugins.DeadPlugin;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.*;
@@ -43,7 +43,6 @@ import java.util.*;
  * @author Eduardo Pinho
  */
 public class PluginsServlet extends HttpServlet {
-    private static final Logger logger = LoggerFactory.getLogger(PluginsServlet.class);
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -67,6 +66,9 @@ public class PluginsServlet extends HttpServlet {
             return;
         }
 
+        List<String> dimProviders = ServerSettingsManager.getSettings().getArchiveSettings().getDIMProviders();
+        List<String> defaultStorage = ServerSettingsManager.getSettings().getArchiveSettings().getDefaultStorage();
+
         final PluginController pc = PluginController.getInstance();
 
         try {
@@ -81,7 +83,8 @@ public class PluginsServlet extends HttpServlet {
                     // Query Plugins
                     List<QueryInterface> qlist = sorted(pc.getQueryPlugins(false));
                     for (QueryInterface p : qlist) {
-                        writeQueryPlugin(writer, p);
+                        writeQueryPlugin(writer, p,
+                                dimProviders == null || dimProviders.isEmpty() || dimProviders.contains(p.getName()));
                     }
                 }
 
@@ -89,7 +92,8 @@ public class PluginsServlet extends HttpServlet {
                     // Indexer Plugins
                     List<IndexerInterface> ilist = sorted(pc.getIndexingPlugins(false));
                     for (IndexerInterface p : ilist) {
-                        writeIndexPlugin(writer, p);
+                        writeIndexPlugin(writer, p,
+                                dimProviders == null || dimProviders.isEmpty() || dimProviders.contains(p.getName()));
                     }
                 }
 
@@ -97,7 +101,8 @@ public class PluginsServlet extends HttpServlet {
                     // Storage Plugins
                     List<StorageInterface> slist = sorted(pc.getStoragePlugins(false));
                     for (StorageInterface p : slist) {
-                        writeStoragePlugin(writer, p);
+                        writeStoragePlugin(writer, p, defaultStorage == null || defaultStorage.isEmpty()
+                                || defaultStorage.contains(p.getName()));
                     }
                 }
 
@@ -211,21 +216,24 @@ public class PluginsServlet extends HttpServlet {
                 .value(plugin.isEnabled());
     }
 
-    private static JSONWriter writeQueryPlugin(JSONWriter writer, QueryInterface plugin) throws JSONException {
-        return writeBaseProps(writer.object(), plugin, "query").key("dim").value(null).endObject();
+    private static JSONWriter writeQueryPlugin(JSONWriter writer, QueryInterface plugin, boolean dim)
+            throws JSONException {
+        return writeBaseProps(writer.object(), plugin, "query").key("dim").value(dim).endObject();
     }
 
-    private static JSONWriter writeIndexPlugin(JSONWriter writer, IndexerInterface plugin) throws JSONException {
-        return writeBaseProps(writer.object(), plugin, "index").key("dim").value(null).endObject();
+    private static JSONWriter writeIndexPlugin(JSONWriter writer, IndexerInterface plugin, boolean dim)
+            throws JSONException {
+        return writeBaseProps(writer.object(), plugin, "index").key("dim").value(dim).endObject();
     }
 
-    private static JSONWriter writeStoragePlugin(JSONWriter writer, StorageInterface plugin) throws JSONException {
+    private static JSONWriter writeStoragePlugin(JSONWriter writer, StorageInterface plugin, boolean isDefault)
+            throws JSONException {
         return writeBaseProps(writer.object(), plugin, "storage").key("scheme").value(plugin.getScheme()).key("default")
-                .value(null).endObject();
+                .value(isDefault).endObject();
     }
 
     private static JSONWriter writeServletPlugin(JSONWriter writer, JettyPluginInterface plugin) throws JSONException {
-        return writeBaseProps(writer.object(), plugin, "servlet").key("endpoints").value(null).endObject();
+        return writeBaseProps(writer.object(), plugin, "servlet").endObject();
     }
 
     private List<String> sanitizedSubpathParts(HttpServletRequest req) {
