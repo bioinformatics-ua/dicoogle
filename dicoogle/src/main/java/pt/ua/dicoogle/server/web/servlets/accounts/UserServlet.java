@@ -21,8 +21,6 @@ package pt.ua.dicoogle.server.web.servlets.accounts;
 
 import java.io.IOException;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import pt.ua.dicoogle.server.users.HashService;
 import pt.ua.dicoogle.server.users.User;
 import pt.ua.dicoogle.server.users.UsersStruct;
 import pt.ua.dicoogle.server.web.utils.ResponseUtil;

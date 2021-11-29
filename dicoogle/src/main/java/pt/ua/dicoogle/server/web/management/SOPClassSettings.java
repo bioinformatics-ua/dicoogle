@@ -153,6 +153,7 @@ public class SOPClassSettings {
         sopClasses.put(UID.SiemensCSANonImageStorage, "SiemensCSANonImageStorage");
         sopClasses.put(UID.VLWholeSlideMicroscopyImageStorage, "VLWholeSlideMicroscopyImageStorage");
         sopClasses.put(UID.BreastTomosynthesisImageStorage, "BreastTomosynthesisImageStorage");
+        sopClasses.put(UID.XRayRadiationDoseSRStorage, "XRayRadiationDoseSRStorage");
 
         transferSettings.put(UID.ImplicitVRLittleEndian, "ImplicitVRLittleEndian");
         transferSettings.put(UID.ExplicitVRLittleEndian, "ExplicitVRLittleEndian");

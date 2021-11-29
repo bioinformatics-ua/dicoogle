@@ -26,13 +26,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
 import com.google.common.collect.ImmutableList;
-import jdk.nashorn.internal.ir.annotations.Immutable;
 import net.sf.json.JSONArray;
-import org.apache.commons.collections.ArrayStack;
 import org.json.JSONException;
 import org.json.JSONWriter;
 import org.slf4j.Logger;

@@ -19,18 +19,9 @@
 package pt.ua.dicoogle.core.auth;
 
 import org.junit.*;
-import pt.ua.dicoogle.server.users.HashService;
 import pt.ua.dicoogle.server.users.User;
-import pt.ua.dicoogle.server.users.UsersStruct;
-import pt.ua.dicoogle.server.users.UsersXML;
-import pt.ua.dicoogle.server.web.auth.Authentication;
-import pt.ua.dicoogle.server.web.auth.LoggedIn;
 
-import java.util.Collection;
-
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static pt.ua.dicoogle.server.web.servlets.webui.WebUIServlet.camelize;
 
 /**
  * Created by bastiao on 23/01/16.

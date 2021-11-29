@@ -42,7 +42,7 @@ public class LegacyServerSettingsTest {
 
     @Before
     public void init() {
-        this.testConfig = this.getClass().getResource("test-config.xml");
+        this.testConfig = this.getClass().getResource("test-config-legacy.xml");
     }
 
     @Test
@@ -59,6 +59,7 @@ public class LegacyServerSettingsTest {
         assertEquals("/tmp", a.getWatchDirectory());
         assertEquals(97, a.getIndexerEffort());
         assertEquals("dicoogle-old", a.getNodeName());
+        assertEquals(true, a.isEncryptUsersFile());
 
         assertEquals("TEST-STORAGE", settings.getDicomServicesSettings().getAETitle());
 

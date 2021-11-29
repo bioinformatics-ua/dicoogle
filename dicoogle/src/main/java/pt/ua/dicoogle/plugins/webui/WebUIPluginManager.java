@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -38,6 +39,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
+import pt.ua.dicoogle.server.users.RolesStruct;
+
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -107,6 +110,16 @@ public class WebUIPluginManager {
             try {
                 WebUIPlugin plugin = this.load(f);
                 logger.info("Loaded web plugin: {}", plugin.getName());
+
+                for (Iterator<String> it = plugin.getRoles().iterator(); it.hasNext();) {
+                    String pluginRole = it.next();
+                    if (RolesStruct.getInstance().getRole(pluginRole) == null) {
+                        logger.warn("Web UI plugin {} mentions unregistered role {}; Please update roles.xml",
+                                plugin.getName(), pluginRole);
+                        it.remove();
+                    }
+                }
+
             } catch (IOException ex) {
                 logger.error("Attempt to load plugin at {} failed", f.getName(), ex);
             } catch (PluginFormatException ex) {

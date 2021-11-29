@@ -73,6 +73,9 @@ public class ArchiveImpl implements ServerSettings.Archive {
     @JsonProperty("watch-directory")
     private String watchDirectory;
 
+    @JsonProperty(value = "encrypt-users-file", defaultValue = "false")
+    private boolean encryptUsersFile;
+
     @Override
     public String getMainDirectory() {
         return mainDirectory;
@@ -161,5 +164,15 @@ public class ArchiveImpl implements ServerSettings.Archive {
                 + ", indexerEffort=" + indexerEffort + ", dimProviders=" + dimProviders + ", defaultStorage="
                 + defaultStorage + ", dirWatcherEnabled=" + dirWatcherEnabled + ", watchDirectory='" + watchDirectory
                 + '\'' + ", mainDirectory='" + mainDirectory + '\'' + ", nodeName='" + nodeName + '\'' + '}';
+    }
+
+    @Override
+    public boolean isEncryptUsersFile() {
+        return this.encryptUsersFile;
+    }
+
+    @Override
+    public void setEncryptUsersFile(boolean encrypt) {
+        this.encryptUsersFile = encrypt;
     }
 }

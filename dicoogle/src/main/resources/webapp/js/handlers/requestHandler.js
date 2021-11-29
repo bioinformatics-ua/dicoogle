@@ -129,7 +129,6 @@ export function setSaveT(state, callback) {
 export function saveIndexOptions(
   path,
   watcher,
-  zip,
   thumbnail,
   effort,
   thumbnailSize
@@ -138,7 +137,6 @@ export function saveIndexOptions(
     {
       path,
       watcher,
-      zip,
       thumbnail,
       effort,
       thumbnailSize

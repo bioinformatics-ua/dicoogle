@@ -51,22 +51,37 @@ public class ServerStorageServlet extends HttpServlet {
         String type = req.getParameter("type");
         String ip = req.getParameter("ip");
         String aetitle = req.getParameter("aetitle");
-        String port = req.getParameter("port");
-        int _port = Integer.parseInt(port);
+        String publicParam = req.getParameter("public");
+        String portParam = req.getParameter("port");
+        try {
+            boolean isPublic = publicParam != null ? publicParam.isEmpty() || Boolean.parseBoolean(publicParam) : false;
+            int port = Integer.parseInt(portParam);
 
-        switch (type) {
-            case "add":
-                ServerSettingsManager.getSettings().getDicomServicesSettings()
-                        .addMoveDestination(new MoveDestination(aetitle, ip, _port));
-                ResponseUtil.simpleResponse(resp, "added", true);
-                break;
-            case "remove":
-                ResponseUtil.simpleResponse(resp, "removed",
-                        ServerSettingsManager.getSettings().getDicomServicesSettings().removeMoveDestination(aetitle));
-                break;
+            if (port <= 0 || port > 65535) {
+                throw new NumberFormatException();
+            }
+
+            String description = req.getParameter("description");
+
+            switch (type) {
+                case "add":
+                    ServerSettingsManager.getSettings().getDicomServicesSettings()
+                            .addMoveDestination(new MoveDestination(aetitle, ip, port, isPublic, description));
+                    ResponseUtil.simpleResponse(resp, "added", true);
+                    break;
+                case "remove":
+                    ResponseUtil.simpleResponse(resp, "removed", ServerSettingsManager.getSettings()
+                            .getDicomServicesSettings().removeMoveDestination(aetitle));
+                    break;
+                default:
+                    ResponseUtil.sendError(resp, 400, "Illegal type parameter: must be either \"add\" or \"remove\"");
+                    return;
+            }
+
+            ServerSettingsManager.saveSettings();
+        } catch (NumberFormatException _ex) {
+            ResponseUtil.sendError(resp, 400, "Illegal port parameter: must be a valid TCP port");
         }
-
-        ServerSettingsManager.saveSettings();
     }
 
 }

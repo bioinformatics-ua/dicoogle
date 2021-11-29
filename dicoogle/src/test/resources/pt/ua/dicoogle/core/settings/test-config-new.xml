@@ -14,6 +14,7 @@
         <default-storages>
             <default-storage>filestorage</default-storage>
         </default-storages>
+        <encrypt-users-file>true</encrypt-users-file>
         <enable-watch-directory>true</enable-watch-directory>
         <watch-directory>/opt/my-data/watched</watch-directory>
         <node-name>dicoogle01</node-name>
@@ -46,12 +47,18 @@
             </sop-class>
         </sop-classes>
         <move-destinations>
+            <move-destination
+                aetitle="ANOTHER-STORAGE"
+                address="192.168.42.42"
+                port="6666"
+                public="false"
+                description="Our test storage"/>
             <move-destination>
-                <aetitle>ANOTHER-STORAGE</aetitle>
-                <address>192.168.42.42</address>
-                <port>6666</port>
-                <description>Our test storage</description>
+                <aetitle>BACKUP-STORAGE</aetitle>
+                <address>192.168.42.46</address>
+                <port>104</port>
                 <public>false</public>
+                <description>Backup storage</description>
             </move-destination>
         </move-destinations>
 

@@ -123,7 +123,7 @@ public class IndexerSettingsServlet extends HttpServlet {
                 result = ServerSettingsManager.getSettings().getArchiveSettings().getMainDirectory();
                 break;
             case zip:
-                result = "false"; // String.valueOf(ServerSettingsManager.getSettings().isGzipStorage());
+                result = "false";
                 break;
             case effort:
                 result = String.valueOf(ServerSettingsManager.getSettings().getArchiveSettings().getIndexerEffort());
@@ -141,7 +141,7 @@ public class IndexerSettingsServlet extends HttpServlet {
             case all:
                 JSONObject allresponse = new JSONObject();
                 allresponse.put("path", ServerSettingsManager.getSettings().getArchiveSettings().getMainDirectory());
-                allresponse.put("zip", "false"); // ServerSettingsManager.getSettings().isGzipStorage());
+                allresponse.put("zip", false);
                 allresponse.put("effort",
                         String.valueOf(ServerSettingsManager.getSettings().getArchiveSettings().getIndexerEffort()));
                 allresponse.put("thumbnail",

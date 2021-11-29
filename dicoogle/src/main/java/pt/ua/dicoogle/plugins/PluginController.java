@@ -27,9 +27,6 @@ import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
 import pt.ua.dicoogle.plugins.webui.WebUIPluginManager;
 import pt.ua.dicoogle.sdk.*;
-import pt.ua.dicoogle.sdk.Utils.TaskQueue;
-import pt.ua.dicoogle.sdk.Utils.TaskRequest;
-import pt.ua.dicoogle.sdk.core.PlatformCommunicatorInterface;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.datastructs.dim.DimLevel;
@@ -42,7 +39,6 @@ import pt.ua.dicoogle.server.web.DicoogleWeb;
 import pt.ua.dicoogle.taskManager.RunningIndexTasks;
 import pt.ua.dicoogle.taskManager.TaskManager;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -81,20 +77,22 @@ public class PluginController {
     private final Collection<PluginSet> pluginSets;
     private final Collection<DeadPlugin> deadPluginSets;
     private File pluginFolder;
-    private TaskQueue tasks = null;
     private final PluginPreparer preparer;
 
     private PluginSet remoteQueryPlugins = null;
     private final WebUIPluginManager webUI;
     private final DicooglePlatformProxy proxy;
+    // Task manager for index processes
     private TaskManager taskManager =
             new TaskManager(Integer.parseInt(System.getProperty("dicoogle.taskManager.nThreads", "4")));
+    // Task Managers for Queries
+    private TaskManager taskManagerQueries =
+            new TaskManager(Integer.parseInt(System.getProperty("dicoogle.taskManager.nQueryThreads", "4")));
+
 
     public PluginController(File pathToPluginDirectory) {
         logger.info("Creating PluginController Instance");
         pluginFolder = pathToPluginDirectory;
-
-        tasks = new TaskQueue();
 
         // the plugin directory does not exist. lets create it
         if (!pathToPluginDirectory.exists()) {
@@ -435,12 +433,6 @@ public class PluginController {
         return queriers;
     }
 
-    public void addTask(TaskRequest task) {
-        this.tasks.addTask(task);
-    }
-
-
-
     public List<String> getQueryProvidersName(boolean enabled) {
         Collection<QueryInterface> plugins = getQueryPlugins(enabled);
         List<String> names = new ArrayList<>(plugins.size());
@@ -535,7 +527,7 @@ public class PluginController {
 
     public Task<Iterable<SearchResult>> query(String querySource, final String query, final Object... parameters) {
         Task<Iterable<SearchResult>> t = getTaskForQuery(querySource, query, parameters);
-        taskManager.dispatch(t);
+        taskManagerQueries.dispatch(t);
         return t;
 
     }
@@ -544,7 +536,7 @@ public class PluginController {
     public Task<Iterable<SearchResult>> query(String querySource, final String query, final DimLevel level,
             final Object... parameters) {
         Task<Iterable<SearchResult>> t = getTaskForQueryDim(querySource, query, level, parameters);
-        taskManager.dispatch(t);
+        taskManagerQueries.dispatch(t);
         // logger.info("Fired Query Task: "+querySource +" QueryString:"+query);
 
         return t;// returns the handler to obtain the computation results
@@ -564,7 +556,7 @@ public class PluginController {
 
         // and executes said task asynchronously
         for (Task<?> t : tasks)
-            taskManager.dispatch(t);
+            taskManagerQueries.dispatch(t);
 
         // logger.info("Fired Query Tasks: "+Arrays.toString(querySources.toArray()) +" QueryString:"+query);
         return holder;// returns the handler to obtain the computation results
@@ -584,7 +576,7 @@ public class PluginController {
 
         // and executes said task asynchronously
         for (Task<?> t : tasks)
-            taskManager.dispatch(t);
+            taskManagerQueries.dispatch(t);
 
         // logger.info("Fired Query Tasks: "+Arrays.toString(querySources.toArray()) +" QueryString:"+query);
         return holder;// returns the handler to obtain the computation results
@@ -866,24 +858,5 @@ public class PluginController {
             logger.error("Failed to retrieve module", ex);
             return null;
         }
-    }
-
-    // METHODS FOR SERVICE:JAVA
-    /**
-     *
-     * TODO: REVIEW! BELOW
-     *
-     * Checks if the plugin exists and has advanced/internal settings.
-     *
-     * @param pluginName the name of the plugin.
-     * @return true if the plugin exists and has at least one advance/internal
-     * settings, false otherwise.
-     */
-    public boolean hasAdvancedSettings(String pluginName) {
-        return false;
-    }
-
-    public HashMap<String, String> getAdvancedSettingsHelp(String pluginName) {
-        return null;
     }
 }
