@@ -10,11 +10,7 @@
     <parent>
         <groupId>pt.ua.ieeta</groupId>
         <artifactId>dicoogle-all</artifactId>
-<<<<<<< HEAD
-        <version>3.0.2</version>
-=======
         <version>3.0.3-SNAPSHOT</version>
->>>>>>> e3b75f5be20774473a909ede235063722150697a
         <relativePath>../pom.xml</relativePath>
     </parent>
 
