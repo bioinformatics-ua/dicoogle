@@ -9,7 +9,7 @@ This document intends to keep track of the changes performed on the various rele
 - Fix: DICOM storage priority improvement (#468)
 - Fix: Added missing SOPClasses UIDs for VLWholeSlideMicroscopyImageStorage, BreastTomosynthesisImageStorage and XRayRadiationDoseSRStorage (#474)
 - Fix: Add missing StudyInstanceUID in DIMGeneric JSON output (#507)
-- Fix: Async DICOM Storage SCP indexing + independent task manager for queries (#503)
+- Fix: Async DICOM Storage SCP indexing + independent task pool for queries (#503)
 - Fix: Add encrypt-users-file to server settings (#504)
 - Fix: Fix zip settings property and remove it from UI (#515)
 - Fix: Fix server error on /webui without user session (#517)
