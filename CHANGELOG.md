@@ -3,6 +3,27 @@ This document intends to keep track of the changes performed on the various rele
 
 ## 3.0
 
+### 3.0.3 (2021-11-29)
+
+- Fix: Make WebUI plugins visible to admin (#497)
+- Fix: DICOM storage priority improvement (#468)
+- Fix: Added missing SOPClasses UIDs for VLWholeSlideMicroscopyImageStorage, BreastTomosynthesisImageStorage and XRayRadiationDoseSRStorage (#474)
+- Fix: Add missing StudyInstanceUID in DIMGeneric JSON output (#507)
+- Fix: Async DICOM Storage SCP indexing + independent task manager for queries (#503)
+- Fix: Add encrypt-users-file to server settings (#504)
+- Fix: Fix zip settings property and remove it from UI (#515)
+- Fix: Fix server error on /webui without user session (#517)
+- Fix: Consider all properties of move destination in web API (#526)
+- Fix: Add missing plugin info properties in /plugins (#529)
+- Fix: Replace service status signal implementation  (#521)
+- Fix: Save move destination properties as XML attributes (#525)
+- Fix: Check roles before loading plugins, warn about missing roles (#518)
+- Fix: Remove sdk-ext (#493)
+- Fix: Fix the image loader when the thumbnail is a larger image (#514)
+- Chore: Use HTTPS URLs to Maven repositories (#461)
+- Chore: Update important dependencies (dicoogle-client, devdeps) (#523)
+- Chore: Server code cleanup (#500)
+
 ### 3.0.2 (2021-04-03)
 
 - Fix: exportToCSV modal on webapp (#450)
