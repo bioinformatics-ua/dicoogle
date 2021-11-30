@@ -74,7 +74,12 @@ public class ServerSettingsManager {
     /// load the appropriate settings into the manager.
     public static void init() throws IOException {
 
-        Files.createDirectories(MAIN_CONFIG_PATH.getParent());
+        // check whether the confs directory exists first,
+        // so as to make it accept a symlink
+        Path configParent = MAIN_CONFIG_PATH.getParent();
+        if (!Files.isDirectory(configParent)) {
+            Files.createDirectories(configParent);
+        }
 
         // check whether the old config.xml exists and the new one doesn't
         if (!Files.exists(MAIN_CONFIG_PATH)) {
