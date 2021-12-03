@@ -1,0 +1,19 @@
+{
+    "name": "test1",
+    "version": "0.1.0",
+    "private": true,
+    "license": "GPL-3.0+",
+    "main": "module.js",
+    "files": [
+        "module.js"
+    ],
+    "dicoogle": {
+        "slot-id": "menu",
+        "caption": "Test Plugin 1",
+        "module-file": "module.js"
+    },
+    "keywords": [
+        "dicoogle",
+        "dicoogle-plugin"
+    ]
+}
