@@ -140,7 +140,7 @@ public class WebUIPluginManager {
         String packageJSONTxt = IOUtils.toString(Files.newInputStream(packageJSON), StandardCharsets.UTF_8);
         WebUIPlugin plugin = WebUIPlugin.fromPackageJSON((JSONObject) JSONSerializer.toJSON(packageJSONTxt));
         Path moduleFile = directory.toPath().resolve(plugin.getModuleFile());
-        if (Files.isReadable(moduleFile)) {
+        if (!Files.isReadable(moduleFile)) {
             throw new IOException("Module file " + plugin.getModuleFile() + " does not exist or is not readable");
         }
         this.plugins.put(plugin.getName(), new WebUIEntry(plugin, dirname));
