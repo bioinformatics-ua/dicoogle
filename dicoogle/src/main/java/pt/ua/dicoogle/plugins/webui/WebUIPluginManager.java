@@ -18,14 +18,13 @@
  */
 package pt.ua.dicoogle.plugins.webui;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -42,6 +41,7 @@ import net.sf.json.JSONSerializer;
 import pt.ua.dicoogle.server.users.RolesStruct;
 
 import org.slf4j.LoggerFactory;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 
 /** A class type for managing web UI plugins.
@@ -73,13 +73,17 @@ public class WebUIPluginManager {
             return this.zipPath != null;
         }
 
-        public InputStream readFile(String file) throws IOException {
+        /** 
+         * Reads the contents of the requested file as UTF-8 text.
+         */
+        public String readToString(String file) throws IOException {
             if (this.isZipped()) {
-                ZipFile zip = new ZipFile(this.zipPath);
-                return zip.getInputStream(zip.getEntry(this.directory + File.separatorChar + file));
+                try (ZipFile zip = new ZipFile(this.zipPath)) {
+                    InputStream istream = zip.getInputStream(zip.getEntry(this.directory + "/" + file));
+                    return IOUtils.toString(istream, StandardCharsets.UTF_8);
+                }
             } else {
-                File f = new File(this.directory + File.separatorChar + file);
-                return new FileInputStream(f);
+                return IOUtils.toString(Files.newInputStream(Paths.get(this.directory, file)), StandardCharsets.UTF_8);
             }
         }
 
@@ -132,22 +136,16 @@ public class WebUIPluginManager {
         assert directory != null;
         assert directory.isDirectory();
         final String dirname = directory.getCanonicalPath();
-        File packageJSON = new File(dirname + File.separatorChar + "package.json");
-        try (BufferedReader reader = new BufferedReader(new FileReader(packageJSON))) {
-            String acc = "";
-            String line;
-            while ((line = reader.readLine()) != null) {
-                acc += line;
-            }
-            WebUIPlugin plugin = WebUIPlugin.fromPackageJSON((JSONObject) JSONSerializer.toJSON(acc));
-            File moduleFile = new File(directory.getAbsolutePath() + File.separatorChar + plugin.getModuleFile());
-            if (!moduleFile.canRead()) {
-                throw new IOException("Module file " + moduleFile.getName() + " cannot be read");
-            }
-            this.plugins.put(plugin.getName(), new WebUIEntry(plugin, dirname));
-            this.justPlugins.add(plugin);
-            return plugin;
+        Path packageJSON = directory.toPath().resolve("package.json");
+        String packageJSONTxt = IOUtils.toString(Files.newInputStream(packageJSON), StandardCharsets.UTF_8);
+        WebUIPlugin plugin = WebUIPlugin.fromPackageJSON((JSONObject) JSONSerializer.toJSON(packageJSONTxt));
+        Path moduleFile = directory.toPath().resolve(plugin.getModuleFile());
+        if (Files.isReadable(moduleFile)) {
+            throw new IOException("Module file " + plugin.getModuleFile() + " does not exist or is not readable");
         }
+        this.plugins.put(plugin.getName(), new WebUIEntry(plugin, dirname));
+        this.justPlugins.add(plugin);
+        return plugin;
     }
 
     /** Load all web plugins from a zip or jar file.
@@ -166,13 +164,9 @@ public class WebUIPluginManager {
             if (pckDescrMatcher.matcher(e.getName()).matches()) {
                 String dirname = e.getName().substring(0, e.getName().length() - DIRNAME_TAIL);
                 logger.info("Found web UI plugin in {} at \"{}\"", pluginZip.getName(), dirname);
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(pluginZip.getInputStream(e)))) {
-                    String acc = "";
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        acc += line;
-                    }
-                    WebUIPlugin plugin = WebUIPlugin.fromPackageJSON((JSONObject) JSONSerializer.toJSON(acc));
+                try {
+                    String jsonTxt = IOUtils.toString(pluginZip.getInputStream(e), StandardCharsets.UTF_8);
+                    WebUIPlugin plugin = WebUIPlugin.fromPackageJSON((JSONObject) JSONSerializer.toJSON(jsonTxt));
                     this.plugins.put(plugin.getName(), new WebUIEntry(plugin, dirname, pluginZip.getName()));
                     this.justPlugins.add(plugin);
                 } catch (PluginFormatException ex) {
@@ -197,48 +191,18 @@ public class WebUIPluginManager {
      * @throws IOException on error reading "package.json"
      */
     public JSONObject retrieveJSON(String name) throws IOException {
-        return retrieveJSON(readFile(name, "package.json"));
-    }
-
-    /** Retrieve and return the original JSON object of the plugin.
-     * @param reader a reader providing the JSON object
-     * @return a JSON object of the original "package.json"
-     * @throws IOException on error reading "package.json"
-     */
-    private JSONObject retrieveJSON(Reader reader) throws IOException {
-        try (BufferedReader bufreader = new BufferedReader(reader)) {
-            String acc = "";
-            String line;
-            while ((line = bufreader.readLine()) != null) {
-                acc += line;
-            }
-            try {
-                return (JSONObject) JSONSerializer.toJSON(acc);
-            } catch (ClassCastException ex) {
-                throw new IOException("Not a JSON object", ex);
-            }
+        String txt = this.readFile(name, "package.json");
+        try {
+            return (JSONObject) JSONSerializer.toJSON(txt);
+        } catch (ClassCastException ex) {
+            throw new IOException("Not a JSON object", ex);
         }
-    }
-
-    /** Retrieve and return the original JSON object of the plugin.
-     * @param istream an input stream providing the JSON object
-     * @return a JSON object of the original "package.json"
-     * @throws IOException on error reading "package.json"
-     */
-    private JSONObject retrieveJSON(InputStream istream) throws IOException {
-        return retrieveJSON(new InputStreamReader(istream));
     }
 
     public String retrieveModuleJS(String name) throws IOException {
         String moduleFile = this.plugins.get(name).plugin.getModuleFile();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(readFile(name, moduleFile)))) {
-            String acc = "";
-            String line;
-            while ((line = reader.readLine()) != null) {
-                acc += line + '\n';
-            }
-            return acc;
-        }
+
+        return readFile(name, moduleFile);
     }
 
     public Collection<WebUIPlugin> pluginSet() {
@@ -248,19 +212,13 @@ public class WebUIPluginManager {
     public void loadSettings(File settingsFolder) {
         for (WebUIPlugin plugin : pluginSet()) {
             try {
-                File pluginSettingsFile =
-                        new File(settingsFolder.getPath() + File.separatorChar + plugin.getName() + ".json");
-                if (!pluginSettingsFile.exists()) {
+                Path pluginSettingsPath = settingsFolder.toPath().resolve(plugin.getName() + ".json");
+                if (!Files.exists(pluginSettingsPath)) {
                     logger.info("Web plugin {} has no settings file", plugin.getName());
                     continue;
                 }
-                BufferedReader reader = new BufferedReader(new FileReader(pluginSettingsFile));
-                String acc = "";
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    acc += line;
-                }
-                JSONObject settings = (JSONObject) JSONSerializer.toJSON(acc);
+                String jsonTxt = IOUtils.toString(Files.newInputStream(pluginSettingsPath), StandardCharsets.UTF_8);
+                JSONObject settings = (JSONObject) JSONSerializer.toJSON(jsonTxt);
                 plugin.setSettings(settings);
             } catch (IOException ex) {
                 logger.error("Failed to load web plugin settings", ex);
@@ -268,18 +226,18 @@ public class WebUIPluginManager {
         }
     }
 
-    /** Read a file from an installed plugin's directory.
+    /** Read all contents of a file from an installed plugin's directory.
      * 
      * @param pluginName the name of the plugin
      * @param filename the relative path of the file
-     * @return an input stream with the file's content
+     * @return a string with the file's content, interpreted as UTF-8 text
      * @throws IOException if the file does not exist or can not be read
      */
-    private InputStream readFile(String pluginName, String filename) throws IOException {
+    private String readFile(String pluginName, String filename) throws IOException {
         WebUIEntry e = this.plugins.get(pluginName);
         if (e == null) {
             throw new IllegalArgumentException("No such web UI plugin");
         }
-        return e.readFile(filename);
+        return e.readToString(filename);
     }
 }
