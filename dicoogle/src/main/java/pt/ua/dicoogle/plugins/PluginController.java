@@ -617,7 +617,7 @@ public class PluginController {
         Task<Iterable<SearchResult>> queryTask = new Task<>(uid, querySource, new Callable<Iterable<SearchResult>>() {
             @Override
             public Iterable<SearchResult> call() throws Exception {
-                if (queryEngine == null || !(queryEngine instanceof QueryInterface))
+                if (queryEngine == null || !(queryEngine instanceof QueryDimInterface))
                     return Collections.emptyList();
                 try {
                     return queryEngine.query(query, level, parameters);
