@@ -3,6 +3,12 @@ This document intends to keep track of the changes performed on the various rele
 
 ## 3.0
 
+### 3.0.4 (2021-12-06)
+
+- Fix Queries using the platform for query plugins that implements QueryInterface (#541)
+- Fix: Check whether confs dir exists before creating (#538)
+- Enhancement: improve web UI manager asset fetching (#540)
+
 ### 3.0.3 (2021-11-29)
 
 - Fix: Make WebUI plugins visible to admin (#497)
