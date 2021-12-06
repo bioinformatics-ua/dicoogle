@@ -133,7 +133,7 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
 
     @Override
     public Task<Iterable<SearchResult>> query(String querySource, String query, Object... parameters) {
-        return pluginController.query(querySource, query, DimLevel.INSTANCE, parameters);
+        return pluginController.query(querySource, query, parameters);
     }
 
     @Override
