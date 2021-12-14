@@ -34,7 +34,9 @@ The web application can be tested separately without having it embedded in a jar
 1. Start Dicoogle, locally or on a server: `java -jar dicoogle.jar -s`. The jar file does not need to contain the web application in this case. You may also need to change your configuration in the `confs/server.xml` file, so as to enable cross-origin requests:
 
 ```xml
-<allowed-origins>*</allowed-origins>
+<web-server autostart="true" port="8080">
+  <allowed-origins>*</allowed-origins>
+</web-server>
 ```
 
 2. Navigate to the webapp's source code. Define the URL to Dicoogle's base endpoint using the `DICOOGLE_BASE_URL` environment variable, and run the webpack development server:
