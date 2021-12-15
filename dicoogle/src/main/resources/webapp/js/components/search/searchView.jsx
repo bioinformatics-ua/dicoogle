@@ -278,7 +278,8 @@ const Search = createReactClass({
 
     const text = this.state.queryText;
     const provider = this.state.selectedProviders;
-    const params = { text, provider };
+    const keyword = this.isKeyword(text);
+    const params = { text, provider, keyword };
     this.triggerSearch(params);
   },
   triggerSearch: function(params) {

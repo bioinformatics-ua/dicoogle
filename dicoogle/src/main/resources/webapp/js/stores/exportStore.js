@@ -38,7 +38,7 @@ const ExportStore = Reflux.createStore({
   },
 
   onExportCSV: function(data, fields) {
-    let { text, keyword, provider } = data;
+    let { text, provider, keyword } = data;
     const self = this;
 
     if (text.length === 0) {
