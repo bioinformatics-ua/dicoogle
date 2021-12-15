@@ -3,9 +3,10 @@ This document intends to keep track of the changes performed on the various rele
 
 ## 3.0
 
-### 3.0.5 (2021-12-14)
+### 3.0.5 (2021-12-15)
 
-- Chore: Bump log4j-core to 2.16.0 in (#546)
+- Fix: ExportCSVToFILEServlet query expansion handling (#550)
+- Chore: Bump log4j-core to 2.16.0 (#546) 
 
 ### 3.0.4 (2021-12-06)
 
