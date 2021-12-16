@@ -57,7 +57,7 @@ public class ServerSettingsTest {
         this.testConfigDIM = this.getClass().getResource("test-config-multi-dim.xml");
         this.testConfigSopClasses = this.getClass().getResource("test-config-sopclasses.xml");
         this.testConfigAdditionals = this.getClass().getResource("test-config-additionals.xml");
-        this.legacyConfig = this.getClass().getResource("test-config.xml");
+        this.legacyConfig = this.getClass().getResource("test-config-legacy.xml");
     }
 
     @Test
