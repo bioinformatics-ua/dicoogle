@@ -43,7 +43,7 @@
     "eslint-plugin-import": "^2.18.2"
   },
   "dependencies": {
-    "dicoogle-client": "^4.1.2",
+    "dicoogle-client": "^5.0.1",
     "events": "^3.0.0"
   }
 }

@@ -25,7 +25,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -100,7 +99,6 @@ public class ExportCSVToFILEServlet extends HttpServlet {
         Map<String, String> fields = new HashMap<>();
         String queryString = null;
         String[] arr;
-        boolean keyword;
 
         try {
             queryString = req.getParameter("query");
@@ -121,7 +119,6 @@ public class ExportCSVToFILEServlet extends HttpServlet {
                 fields.put(f.toString(), f.toString());
                 orderedFields.add(f.toString());
             }
-            keyword = Boolean.parseBoolean(req.getParameter("keyword"));
 
             arr = req.getParameterValues("providers");
         } catch (JSONException ex) {
@@ -129,7 +126,11 @@ public class ExportCSVToFILEServlet extends HttpServlet {
             return;
         }
 
-        if (!keyword) {
+        String pExpand = req.getParameter("expand");
+        boolean expand = pExpand != null && (pExpand.isEmpty() || Boolean.parseBoolean(pExpand));
+
+        // perform query expansion only if requested
+        if (expand) {
             QueryExpressionBuilder q = new QueryExpressionBuilder(queryString);
             queryString = q.getQueryString();
         }

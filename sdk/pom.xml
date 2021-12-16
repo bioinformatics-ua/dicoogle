@@ -10,7 +10,7 @@
     <parent>
         <groupId>pt.ua.ieeta</groupId>
         <artifactId>dicoogle-all</artifactId>
-        <version>3.0.3-SNAPSHOT</version>
+        <version>3.0.5</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -38,7 +38,7 @@
         <repository>
             <id>maven-restlet</id>
             <name>Public online Restlet repository</name>
-            <url>https://maven.restlet.com</url>
+            <url>https://maven.restlet.talend.com</url>
         </repository>
 
         <repository>
@@ -230,17 +230,4 @@
         </dependency>
     </dependencies>
 
-    <distributionManagement>
-        <!-- Versioned releases are published to the releases repository -->
-        <repository>
-            <id>mi</id>
-            <url>https://bioinformatics.ua.pt/maven/content/repositories/mi</url>
-        </repository>
-
-        <!-- Snapshot releases are published to the snapshots repository -->
-        <snapshotRepository>
-            <id>mi</id>
-            <url>https://bioinformatics.ua.pt/maven/content/repositories/mi-snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
 </project>

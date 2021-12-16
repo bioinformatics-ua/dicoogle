@@ -70,6 +70,9 @@ public interface ServerSettingsReader {
         @JsonGetter("main-directory")
         String getMainDirectory();
 
+        @JsonGetter("encrypt-users-file")
+        boolean isEncryptUsersFile();
+
         @JsonGetter("enable-watch-directory")
         boolean isDirectoryWatcherEnabled();
 

@@ -94,16 +94,7 @@ const IndexerView = createReactClass({
                   placeholder="/path/to/directory"
                 />
               </ConfigurationEntry>
-              <ConfigurationEntry description="Index Zip Files">
-                <input
-                  id="zip"
-                  type="checkbox"
-                  aria-label="..."
-                  defaultChecked={this.state.data.zip}
-                  onChange={this.onZipClicked}
-                />
-              </ConfigurationEntry>
-              <ConfigurationEntry description="Indexation Effort">
+              <ConfigurationEntry description="Indexing Effort">
                 <input
                   className="bar"
                   type="range"
@@ -156,7 +147,6 @@ const IndexerView = createReactClass({
     saveIndexOptions(
       document.getElementById("mon_path").value,
       document.getElementById("watcher").checked,
-      document.getElementById("zip").checked,
       document.getElementById("save").checked,
       document.getElementById("effort_range").value,
       document.getElementById("tsize").value

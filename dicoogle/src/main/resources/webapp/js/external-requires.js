@@ -12,8 +12,7 @@ const EXTERNAL_MODULES = {
   "react-bootstrap": require("react-bootstrap"),
   "react-router-bootstrap": require("react-router-bootstrap"),
   "react-bootstrap-table": require("react-bootstrap-table"),
-  "react-load-image": require("react-load-image"),
-  "react-imageloader": require("react-load-image"),
+  "react-imageloader": require("react-imageloader"),
   "react-dom": require("react-dom")
 };
 

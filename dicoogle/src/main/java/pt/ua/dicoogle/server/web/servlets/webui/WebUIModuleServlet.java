@@ -105,6 +105,9 @@ public class WebUIModuleServlet extends HttpServlet {
         }
         writer.append(module);
         if (process) {
+            if (!module.endsWith("\n")) {
+                writer.append("\n");
+            }
             writer.append("});\n");
         }
     }

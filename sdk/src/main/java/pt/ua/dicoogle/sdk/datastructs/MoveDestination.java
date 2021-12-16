@@ -19,6 +19,7 @@
 package pt.ua.dicoogle.sdk.datastructs;
 
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -32,16 +33,16 @@ import java.util.Objects;
 public class MoveDestination implements Serializable {
     static final long serialVersionUID = 2L;
 
-    @JsonProperty("aetitle")
+    @JacksonXmlProperty(isAttribute = true, localName = "aetitle")
     private final String AETitle;
-    @JsonProperty("address")
+    @JacksonXmlProperty(isAttribute = true, localName = "address")
     private final String ipAddrs;
-    @JsonProperty("port")
+    @JacksonXmlProperty(isAttribute = true, localName = "port")
     private final int port;
 
-    @JsonProperty("description")
+    @JacksonXmlProperty(isAttribute = true, localName = "description")
     private final String description;
-    @JsonProperty("public")
+    @JacksonXmlProperty(isAttribute = true, localName = "public")
     private final boolean isPublic;
 
     @JsonCreator
