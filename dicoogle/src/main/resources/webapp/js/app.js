@@ -23,7 +23,6 @@ import * as UserActions from "./actions/userActions";
 import UserStore from "./stores/userStore";
 
 import "@ungap/custom-elements-builtin";
-import "core-js/shim";
 import "bootstrap";
 
 class App extends React.Component {
