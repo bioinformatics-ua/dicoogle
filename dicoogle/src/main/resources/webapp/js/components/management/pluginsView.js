@@ -51,14 +51,23 @@ const PluginsView = createReactClass({
     }
 
     if (data.data.length !== 0) {
-      let type = data.data[0].type;
-      let plugins = this.state.plugins;
-
+      let plugins = {};
+      
       // apply this structure: plugins[query]: [...] ; plugins[storage]: [...] ; ...
-      plugins[type] = data.data;
+      for (const p of data.data) {
+        let type = p.type;
+        if (!plugins[type]) {
+          plugins[type] = [];
+        }
+        plugins[type].push(p);
+      }
 
+      // let new plugin lists override the old ones
       this.setState({
-        plugins: plugins
+        plugins: {
+          ...this.state.plugins,
+          ...plugins
+        }
       });
     }
 
