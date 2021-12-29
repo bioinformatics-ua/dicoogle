@@ -265,7 +265,11 @@ public class PluginController {
      */
     public void shutdown() {
         for (PluginSet plugin : pluginSets) {
-            plugin.shutdown();
+            try {
+                plugin.shutdown();
+            } catch (Exception e) {
+                logger.warn("An error occurred on {} shutdown", plugin.getName(), e);
+            }
         }
     }
 
