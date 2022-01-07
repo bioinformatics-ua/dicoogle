@@ -52,6 +52,7 @@ import pt.ua.dicoogle.server.web.servlets.management.ServerStorageServlet;
 import pt.ua.dicoogle.server.web.servlets.management.ServicesServlet;
 import pt.ua.dicoogle.server.web.servlets.management.TransferOptionsServlet;
 
+import pt.ua.dicoogle.server.web.servlets.mlprovider.*;
 
 import java.io.File;
 import java.net.URL;
@@ -222,7 +223,13 @@ public class DicoogleWeb {
                 createServletHandler(new RunningTasksServlet(), "/index/task"),
                 createServletHandler(new ExportServlet(ExportType.EXPORT_CVS), "/export/cvs"),
                 createServletHandler(new ExportServlet(ExportType.LIST), "/export/list"),
-                createServletHandler(new ServerStorageServlet(), "/management/settings/storage/dicom"), webpages};
+                createServletHandler(new ServerStorageServlet(), "/management/settings/storage/dicom"),
+
+                //ml provider servlets
+                createServletHandler(new CreateDatasetServlet(), "/mlprovider/createDataset"),
+                createServletHandler(new MakePredictionServlet(), "/mlprovider/makePrediction"),
+                createServletHandler(new MakeBulkPredictionServlet(), "/mlprovider/makeBulkPrediction"),
+                webpages};
 
         // setup the server
         server = new Server(port);
