@@ -12,8 +12,8 @@ const PluginStore = Reflux.createStore({
   },
 
   onGet: function(type) {
-    Dicoogle.getPlugins().then((response) => {
-        this._contents[type] = response.plugins;
+    Dicoogle.request(['plugins', type]).then((response) => {
+        this._contents[type] = response.body.plugins;
         this.trigger({
           data: this._contents[type],
           success: true
