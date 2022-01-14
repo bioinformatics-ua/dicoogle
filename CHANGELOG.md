@@ -3,6 +3,14 @@ This document intends to keep track of the changes performed on the various rele
 
 ## 3.0
 
+
+### 3.0.6 (2022-01-14)
+
+- Fix: categorization of plugins in management page (#554)
+- Enhancement: Adjust webapp readme for Dicoogle 3 (#548)
+- Chore: Update log4j to 2.17.1 (#556)
+- Chore: Drop console.log in webapp js bundle (#551)
+
 ### 3.0.5 (2021-12-15)
 
 - Fix: ExportCSVToFILEServlet query expansion handling (#550)
