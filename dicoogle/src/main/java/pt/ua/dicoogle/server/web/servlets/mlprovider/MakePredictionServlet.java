@@ -14,7 +14,5 @@ public class MakePredictionServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MakePredictionServlet.class);
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-    }
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {}
 }
