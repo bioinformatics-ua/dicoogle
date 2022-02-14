@@ -25,7 +25,7 @@ import net.xeoh.plugins.base.Plugin;
 
 import org.restlet.resource.ServerResource;
 
-import pt.ua.dicoogle.sdk.mlprovider.MachineLearningProvider;
+import pt.ua.dicoogle.sdk.mlprovider.MLProviderInterface;
 import pt.ua.dicoogle.sdk.settings.ConfigurationHolder;
 
 /**
@@ -102,9 +102,9 @@ public interface PluginSet extends Plugin {
      * Obtains a collection of MachineLearningProvider plugins, so as to integrate Machine Learning providers in Dicoogle.
      * This collection must be immutable.
      * @return a collection of MachineLearningProvider plugins to the core application
-     * @see MachineLearningProvider
+     * @see MLProviderInterface
      */
-    public default Collection<? extends MachineLearningProvider> getMLPlugins() {
+    public default Collection<? extends MLProviderInterface> getMLPlugins() {
         return Collections.EMPTY_LIST;
     }
 

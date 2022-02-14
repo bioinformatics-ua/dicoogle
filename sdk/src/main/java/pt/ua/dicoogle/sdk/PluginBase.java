@@ -18,7 +18,7 @@
  */
 package pt.ua.dicoogle.sdk;
 
-import pt.ua.dicoogle.sdk.mlprovider.MachineLearningProvider;
+import pt.ua.dicoogle.sdk.mlprovider.MLProviderInterface;
 import pt.ua.dicoogle.sdk.settings.ConfigurationHolder;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public abstract class PluginBase implements PluginSet, PlatformCommunicatorInter
     protected List<QueryInterface> queryPlugins = new ArrayList<>();
     protected List<JettyPluginInterface> jettyPlugins = new ArrayList<>();
     protected List<StorageInterface> storagePlugins = new ArrayList<>();
-    protected List<MachineLearningProvider> mlPlugins = new ArrayList<>();
+    protected List<MLProviderInterface> mlPlugins = new ArrayList<>();
     protected List<ServerResource> services = new ArrayList<>();
     protected ConfigurationHolder settings = null;
 
@@ -85,7 +85,7 @@ public abstract class PluginBase implements PluginSet, PlatformCommunicatorInter
     }
 
     @Override
-    public Collection<MachineLearningProvider> getMLPlugins() {
+    public Collection<MLProviderInterface> getMLPlugins() {
         return mlPlugins;
     }
 
