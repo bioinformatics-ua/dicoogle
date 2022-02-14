@@ -14,7 +14,7 @@ import java.util.Set;
  *
  * @author Rui Jesus
  */
-public abstract class MachineLearningProvider implements DicooglePlugin {
+public abstract class MLProviderInterface implements DicooglePlugin {
 
     protected Set<ML_DATA_TYPE> acceptedDataTypes;
 
@@ -22,7 +22,7 @@ public abstract class MachineLearningProvider implements DicooglePlugin {
      * This method creates and uploads a dataset to the machine learning provider.
      * A dataset is defined as a set of labelled images or a labelled CSV file with one column used to label the entries.
      */
-    public abstract void createDataset();
+    public abstract void createDataset(MLDataset dataset);
 
     /**
      * This method creates a model using a specific dataset

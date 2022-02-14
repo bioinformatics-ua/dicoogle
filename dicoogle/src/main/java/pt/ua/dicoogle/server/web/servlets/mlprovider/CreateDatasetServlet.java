@@ -14,8 +14,26 @@ public class CreateDatasetServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(CreateDatasetServlet.class);
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+        String dataString = IOUtils.toString(req.getReader());
+        if (dataString == null) {
+            resp.sendError(404, "Empty POST body");
+            return;
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        CreateDatasetRequest datasetRequest;
+        try {
+            datasetRequest = mapper.readValue(dataString, CreateDatasetRequest.class);
+            /*
+            if(PluginController.getInstance().getMachineLearningProviderByName(datasetRequest.getProviderName(), true) == null){
+                resp.sendError(404, "The requested provider does not exist");
+            }*/
+            PluginController.getInstance().prepareMLDataset(datasetRequest);
+        } catch (Exception e) {
+            log.error("Error parsing json string", e);
+            resp.sendError(404, "Malformed request");
+        }
     }
 }
