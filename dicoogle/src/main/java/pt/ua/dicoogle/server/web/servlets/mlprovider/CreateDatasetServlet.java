@@ -1,7 +1,11 @@
 package pt.ua.dicoogle.server.web.servlets.mlprovider;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pt.ua.dicoogle.core.mlprovider.CreateDatasetRequest;
+import pt.ua.dicoogle.plugins.PluginController;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
