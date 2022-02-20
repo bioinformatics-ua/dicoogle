@@ -18,6 +18,7 @@
  */
 package pt.ua.dicoogle.sdk;
 
+import pt.ua.dicoogle.sdk.imageworker.ImageWorkerInterface;
 import pt.ua.dicoogle.sdk.settings.ConfigurationHolder;
 
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public abstract class PluginBase implements PluginSet, PlatformCommunicatorInter
     protected List<QueryInterface> queryPlugins = new ArrayList<>();
     protected List<JettyPluginInterface> jettyPlugins = new ArrayList<>();
     protected List<StorageInterface> storagePlugins = new ArrayList<>();
+    protected List<ImageWorkerInterface> imageWorkerPlugins = new ArrayList<>();
     protected List<ServerResource> services = new ArrayList<>();
     protected ConfigurationHolder settings = null;
 
@@ -80,6 +82,11 @@ public abstract class PluginBase implements PluginSet, PlatformCommunicatorInter
     @Override
     public Collection<StorageInterface> getStoragePlugins() {
         return storagePlugins;
+    }
+
+    @Override
+    public Collection<ImageWorkerInterface> getImageWorkerPlugins() {
+        return imageWorkerPlugins;
     }
 
     @Override
