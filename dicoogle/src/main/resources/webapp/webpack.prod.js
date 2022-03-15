@@ -1,6 +1,6 @@
 /* eslint-env node */
 
-const merge = require("webpack-merge");
+const {merge} = require("webpack-merge");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 

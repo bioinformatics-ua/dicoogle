@@ -26,7 +26,13 @@
     "curly": 0,
     "new-cap": 0,
     "camelcase": 0,
-    "no-unused-vars": 1,
+    "no-unused-vars": [1, {
+      "vars": "all",
+      "args": "none",
+      "varsIgnorePattern": "^_",
+      "argsIgnorePattern": "^_",
+      "ignoreRestSiblings": true
+    }],
     "comma-dangle": 1,
     "no-extra-semi": 1,
     "key-spacing": 1,
