@@ -96,7 +96,8 @@
     "precommit": "lint-staged",
     "build-debug": "webpack --config webpack.dev.js --progress",
     "clean": "rimraf dist/* index.html",
-    "webpack": "webpack --config webpack.prod.js --progress"
+    "webpack": "webpack --config webpack.prod.js --progress",
+    "postinstall": "cd ../../../../../webcore && npm install --production --no-fund"
   },
   "lint-staged": {
     "js/*.{js,jsx}": [
