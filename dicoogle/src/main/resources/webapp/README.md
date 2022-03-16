@@ -40,7 +40,7 @@ You can also run one of the other scripts available and deploy a static server o
 
 ```
 DICOOGLE_BASE_URL=http://localhost:8080 npm run build-debug
-./run_server
+npx static-http .
 ```
 
 See the **Building** section above for more scripts.
@@ -51,3 +51,8 @@ Running `npm start` is the recommended way to serve the webapp for development p
 But if you wish to serve the webapp separately from Dicoogle,
 you can build it against a different Dicoogle endpoint (see above)
 and use any other static HTTP server to serve this folder.
+
+```sh
+DICOOGLE_BASE_URL=http://«dicoogle-hostname»:8080 npm run build
+npx static-http .
+```
