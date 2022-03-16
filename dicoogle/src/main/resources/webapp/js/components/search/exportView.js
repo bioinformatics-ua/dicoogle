@@ -237,7 +237,8 @@ const ExportView = createReactClass({
 
     return fields;
   },
-  handleSavePresetClicked: function() {
+  handleSavePresetClicked: function(ev) {
+    ev.preventDefault();
     let fields = this.__getSelectedFields();
     ExportActions.savePresets(this.state.exportPresetName, fields);
 
@@ -247,7 +248,8 @@ const ExportView = createReactClass({
     });
   },
 
-  handleExportClicked: function() {
+  handleExportClicked: function(ev) {
+    ev.preventDefault();
     let fields = this.__getSelectedFields();
     let query = this.props.query;
     ExportActions.exportCSV(query, fields);
