@@ -172,12 +172,13 @@ Project committers
 Maintainers:
 
 * Luís Bastião (BMD Software - development leader) - [@bastiao](https://github.com/bastiao)
-* Eduardo Pinho (BMD Software) - [@Enet4](https://github.com/Enet4)
-* Rui Lebre (UA.PT Bioinformatics) - [@rlebre](https://github.com/rlebre)
+* Eduardo Pinho (BMD Software - co-leader) - [@Enet4](https://github.com/Enet4)
+* Rui Lebre (UA.PT Bioinformatics - core, elearning) - [@rlebre](https://github.com/rlebre)
 
 Contributors:
 
-* Jorge Miguel Silva (UA.PT Bioinformatics)
+* Rui Jesus (BMD Software) - [@Rui-Jesus](https://github.com/Rui-Jesus)
+* Tibério Baptista (BMD Software) - [@Tiberio-Baptista](https://github.com/Tiberio-Baptista)
 
 Past developers:
 
@@ -186,6 +187,7 @@ Past developers:
 * Eriksson Monteiro
 * Frederico Silva
 * Frederico Valente
+* Jorge Miguel Silva
 * Leonardo Oliveira
 * Luis Ribeiro
 * Renato Pinho
