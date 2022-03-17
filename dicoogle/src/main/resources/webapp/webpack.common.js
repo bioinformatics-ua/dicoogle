@@ -3,6 +3,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -15,12 +16,14 @@ module.exports = {
     global: false
   },
   plugins: [
+    new webpack.EnvironmentPlugin({
+      'NODE_ENV': 'development',
+      'DICOOGLE_BASE_URL': '',
+      'GUEST_USERNAME': '',
+      'GUEST_PASSWORD': '',
+    }),
     new webpack.DefinePlugin({
-      "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
-      "process.env.DICOOGLE_BASE_URL": JSON.stringify(
-        process.env.DICOOGLE_BASE_URL
-      ),
-      'global': 'window',
+        'global': 'window',
     }),
     new MiniCssExtractPlugin({
       filename: "dist/[name].css",
@@ -29,19 +32,13 @@ module.exports = {
     new webpack.ProvidePlugin({
       // required for Bootstrap to work
       jQuery: "jquery"
-    })
+    }),
+    new ESLintPlugin({
+      extensions: ['js', 'jsx'],
+    }),
   ],
   module: {
     rules: [
-      {
-        enforce: "pre",
-        test: /\.jsx?$/,
-        exclude: /node_modules/,
-        loader: "eslint-loader",
-        options: {
-          failOnError: true
-        }
-      },
       {
         test: /\.jsx?$/i,
         include: path.resolve(__dirname, "js"),
@@ -51,9 +48,7 @@ module.exports = {
         test: /\.s[ac]ss$/i,
         include: path.resolve(__dirname, "sass"),
         use: [
-          // Creates `style` nodes from JS strings
-          "style-loader",
-          // Minifies CSS
+          // Loads CSS and minifies it
           MiniCssExtractPlugin.loader,
           // Translates CSS into CommonJS
           "css-loader",
