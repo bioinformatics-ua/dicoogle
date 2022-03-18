@@ -3,6 +3,11 @@ This document intends to keep track of the changes performed on the various rele
 
 ## 3.0
 
+### 3.0.7 (2022-03-17)
+
+Fix: [UI] Prevent default on export modal button click (#568)
+Chore: Update webapp dependencies (#569)
+Chore: Update contributors in README (#565)
 
 ### 3.0.6 (2022-01-14)
 
