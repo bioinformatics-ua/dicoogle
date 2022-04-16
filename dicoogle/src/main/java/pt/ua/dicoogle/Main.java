@@ -22,7 +22,6 @@ import org.dcm4che2.data.TransferSyntax;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
-import pt.ua.dicoogle.DicomLog.LogDICOM;
 import pt.ua.dicoogle.DicomLog.LogXML;
 import pt.ua.dicoogle.core.AsyncIndex;
 import pt.ua.dicoogle.core.TagsXML;
@@ -30,7 +29,6 @@ import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.utils.Platform;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
-import pt.ua.dicoogle.sdk.utils.TagsStruct;
 import pt.ua.dicoogle.server.web.auth.Authentication;
 
 import javax.swing.*;
@@ -129,15 +127,15 @@ public class Main {
         }
         ServerSettings settings = ServerSettingsManager.getSettings();
 
+        // load tags listings
         try {
-            TagsStruct _tags = new TagsXML().getXML();
-
-            // load DICOM Services Log
-            LogDICOM ll = new LogXML().getXML();
-
+            new TagsXML().getXML();
         } catch (SAXException | IOException ex) {
             logger.error(ex.getMessage(), ex);
         }
+
+        // FIXME remove in Dicoogle 4, this loads legacy DICOM Services Log
+        new LogXML().getXML();
 
         /** Verify if it have a defined node */
         if (settings.getArchiveSettings().getNodeName() == null) {
