@@ -32,6 +32,7 @@ import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.UnindexReport;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.datastructs.dim.DimLevel;
+import pt.ua.dicoogle.sdk.imageworker.ImageWorkerInterface;
 import pt.ua.dicoogle.sdk.mlprovider.MLDataset;
 import pt.ua.dicoogle.sdk.mlprovider.MLProviderInterface;
 import pt.ua.dicoogle.sdk.settings.ConfigurationHolder;
@@ -381,6 +382,19 @@ public class PluginController {
         return plugins;
     }
 
+    public Collection<ImageWorkerInterface> getImageWorkerPlugins(boolean onlyEnabled) {
+        List<ImageWorkerInterface> plugins = new ArrayList<>();
+        for (PluginSet pSet : pluginSets) {
+            for (ImageWorkerInterface i : pSet.getImageWorkerPlugins()) {
+                if (!i.isEnabled() && onlyEnabled) {
+                    continue;
+                }
+                plugins.add(i);
+            }
+        }
+        return plugins;
+    }
+
     public Collection<String> getPluginSetNames() {
         Collection<String> l = new ArrayList<>();
         for (PluginSet s : this.pluginSets) {
@@ -556,6 +570,17 @@ public class PluginController {
         return null;
     }
 
+    public ImageWorkerInterface getImageWorkerInterfaceByName(String name, boolean onlyEnabled) {
+        Collection<ImageWorkerInterface> plugins = getImageWorkerPlugins(onlyEnabled);
+        for (ImageWorkerInterface p : plugins) {
+            if (p.getName().equalsIgnoreCase(name)) {
+                // logger.info("Retrived Query Provider: "+name);
+                return p;
+            }
+        }
+        logger.debug("No image worker matching name {} for onlyEnabled = {}", name, onlyEnabled);
+        return null;
+    }
 
     public JointQueryTask queryAll(JointQueryTask holder, final String query, final Object... parameters) {
         List<String> providers = this.getQueryProvidersName(true);
