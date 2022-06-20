@@ -94,6 +94,10 @@ public class Series implements SeriesInterface {
         this.instanceNumbers.add(instanceNumber);
     }
 
+    /**
+     * @deprecated Dangerous method, do not use.
+     */
+    @Deprecated
     public void removeImage(URI imagePath) {
         this.imageList.remove(imagePath);
     }
