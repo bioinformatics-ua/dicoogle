@@ -206,11 +206,19 @@ const ImageView = createReactClass({
         >
           <TableHeaderColumn
             dataAlign="left"
+            dataField="number"
+            dataSort
+            width="100"
+          >
+            Instance #
+          </TableHeaderColumn>
+          <TableHeaderColumn
+            dataAlign="left"
             dataField="fileName"
             isKey
             dataFormat={this.formatFileName}
             dataSort
-            width="20%"
+            width="25%"
           >
             File Name
           </TableHeaderColumn>
