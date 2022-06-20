@@ -71,7 +71,6 @@ const ImageView = createReactClass({
           src={thumbUrl}
           style={{ width: "64px", cursor: "pointer" }}
         >
-          <img />
           <img src="assets/image-not-found.png" width="64px" />
           {this._preloader()}
         </ImageLoader>
