@@ -139,6 +139,7 @@ const ImageView = createReactClass({
               type: "image",
               uri: item.uri,
               uid: item.sopInstanceUID,
+              instanceNumber: item.number,
               // deprecated data properties
               "data-result-type": "image",
               "data-result-uri": item.uri,
