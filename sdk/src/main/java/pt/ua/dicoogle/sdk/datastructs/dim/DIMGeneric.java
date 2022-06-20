@@ -447,7 +447,15 @@ public class DIMGeneric {
                             image.put("filename", rawPath.substring(rawPath.lastIndexOf("/") + 1, rawPath.length()));
                             String instanceNum = serie.getInstanceNumberList().get(i);
                             if (instanceNum != null) {
-                                image.put("number", instanceNum);
+                                if (instanceNum.endsWith(".0")) {
+                                    instanceNum = instanceNum.substring(0, instanceNum.length() - 2);
+                                }
+                                try {
+                                    long instanceNumLong = Long.parseLong(instanceNum);
+                                    image.put("number", instanceNumLong);
+                                } catch (NumberFormatException e) {
+                                    // not a number, do not include
+                                }
                             }
     
                             instances.add(image);
