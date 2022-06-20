@@ -36,6 +36,7 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
@@ -122,7 +123,7 @@ public class RolesXML extends DefaultHandler {
     public void printXML() {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try (PrintWriter pw = new PrintWriter(out)) {
+        try (PrintWriter pw = new PrintWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8))) {
             StreamResult streamResult = new StreamResult(pw);
 
             SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();

@@ -38,7 +38,9 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -157,7 +159,7 @@ public class UsersXML extends DefaultHandler {
         serializer.setOutputProperty(OutputKeys.INDENT, "yes");
         serializer.setOutputProperty(OutputKeys.STANDALONE, "yes");
 
-        try (PrintWriter pw = new PrintWriter(out)) {
+        try (PrintWriter pw = new PrintWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8))) {
             StreamResult streamResult = new StreamResult(pw);
             hd.setResult(streamResult);
             hd.startDocument();
