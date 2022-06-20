@@ -291,7 +291,7 @@ public class DIMGeneric {
             series.setViewCodeSequence_CodingSchemeDesignator(ViewCodeSequence_CodingSchemeDesignator);
             series.setViewCodeSequence_CodingSchemeVersion(ViewCodeSequence_CodingSchemeVersion);
 
-            series.addImage(uri, sopInstUID);
+            series.addImage(uri, sopInstUID, instanceNumber);
             s.addSerie(series);
             p.addStudy(s);
 
