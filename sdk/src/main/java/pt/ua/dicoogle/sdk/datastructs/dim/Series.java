@@ -71,12 +71,25 @@ public class Series implements SeriesInterface {
     }
 
 
-    public void addImage(URI ImagePath, String sopUid) {
-        this.addImage(ImagePath, sopUid, null);
+    /** Add an instance to the end of the series' instance lists.
+     * Instance Number is left empty.
+     * 
+     * @param imageURI the URI of the instance
+     * @param sopUid the SOP Instance UID
+     * @see #addInstance(String, String, String)
+     */
+    public void addImage(URI imageURI, String sopUid) {
+        this.addImage(imageURI, sopUid, null);
     }
 
-    public void addImage(URI ImagePath, String sopUid, String instanceNumber) {
-        this.imageList.add(ImagePath);
+    /** Add an instance to the end of the series' instance lists.
+     * 
+     * @param imageURI the URI of the instance
+     * @param sopUid the SOP Instance UID
+     * @param instanceNumber the instance number
+     */
+    public void addImage(URI imageURI, String sopUid, String instanceNumber) {
+        this.imageList.add(imageURI);
         this.UIDList.add(sopUid);
         this.instanceNumbers.add(instanceNumber);
     }
@@ -115,16 +128,38 @@ public class Series implements SeriesInterface {
     }
 
     /**
-     * @return the imageList
+     * Gets the underlying URI list of the images in the series.
+     * It is recommended that the list is not modified from the outside.
+     *
+     * @return the underlying list of image URIs,
+     * in order of appearance
      */
     public ArrayList<URI> getImageList() {
         return imageList;
     }
 
+    /**
+     * Gets the underlying list of SOP instance UIDs
+     * of the images in the series.
+     * It is recommended that the list is not modified from the outside.
+     *
+     * @return the underlying list of SOP Instance UIDs,
+     * in order of appearance.
+     */
     public ArrayList<String> getSOPInstanceUIDList() {
         return UIDList;
     }
 
+    /**
+     * Gets the underlying list of instance number values
+     * of the images in the series.
+     * Note that the list may contain null values.
+     * 
+     * It is recommended that the list is not modified from the outside.
+     * 
+     * @return the underlying list of Instance Numbers,
+     * in order of appearance.
+     */
     public ArrayList<String> getInstanceNumberList() {
         return instanceNumbers;
     }
