@@ -24,7 +24,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import javax.xml.transform.OutputKeys;
@@ -203,7 +205,7 @@ public class TagsXML extends DefaultHandler {
         } catch (FileNotFoundException ex) {
             LoggerFactory.getLogger(TagsXML.class).error(ex.getMessage(), ex);
         }
-        PrintWriter pw = new PrintWriter(out);
+        PrintWriter pw = new PrintWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));
         StreamResult streamResult = new StreamResult(pw);
         SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
         // SAX2.0 ContentHandler.
