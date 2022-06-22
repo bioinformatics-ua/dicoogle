@@ -1,5 +1,5 @@
 import React from "react";
-import { toHumanReadable } from "../../utils/time";
+import { dateTimeToHumanReadable, toHumanReadable } from "../../utils/time";
 import * as PropTypes from "prop-types";
 
 class TaskStatus extends React.Component {
@@ -15,6 +15,7 @@ class TaskStatus extends React.Component {
         complete: PropTypes.bool,
         canceled: PropTypes.bool,
         taskProgress: PropTypes.number,
+        taskTimeCreated: PropTypes.string,
         elapsedTime: PropTypes.number,
         nIndexed: PropTypes.number,
         nErrors: PropTypes.number
@@ -32,6 +33,7 @@ class TaskStatus extends React.Component {
       complete || canceled || unknownPercentage
         ? "100%"
         : Math.round(item.taskProgress * 100) + "%";
+    const timeCreated = new Date(item.taskTimeCreated);
 
     let barstate = "indexprogress progress-bar progress-bar-striped";
     if (item.nErrors > 0 && item.nIndexed > 0) {
@@ -81,6 +83,9 @@ class TaskStatus extends React.Component {
           </p>
           <p>
             <b>Name: </b> {item.taskName}
+          </p>
+          <p>
+            <b>Time created: </b> {dateTimeToHumanReadable(timeCreated)}
           </p>
           <div style={{ visibility: item.complete ? "" : "hidden" }}>
             {typeof item.elapsedTime === "number" && (
