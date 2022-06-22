@@ -71,7 +71,6 @@ const ImageView = createReactClass({
           src={thumbUrl}
           style={{ width: "64px", cursor: "pointer" }}
         >
-          <img />
           <img src="assets/image-not-found.png" width="64px" />
           {this._preloader()}
         </ImageLoader>
@@ -139,6 +138,7 @@ const ImageView = createReactClass({
               type: "image",
               uri: item.uri,
               uid: item.sopInstanceUID,
+              instanceNumber: item.number,
               // deprecated data properties
               "data-result-type": "image",
               "data-result-uri": item.uri,
@@ -206,11 +206,19 @@ const ImageView = createReactClass({
         >
           <TableHeaderColumn
             dataAlign="left"
+            dataField="number"
+            dataSort
+            width="100"
+          >
+            Instance #
+          </TableHeaderColumn>
+          <TableHeaderColumn
+            dataAlign="left"
             dataField="fileName"
             isKey
             dataFormat={this.formatFileName}
             dataSort
-            width="20%"
+            width="25%"
           >
             File Name
           </TableHeaderColumn>

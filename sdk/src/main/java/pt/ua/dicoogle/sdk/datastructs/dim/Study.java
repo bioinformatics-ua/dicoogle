@@ -95,17 +95,21 @@ public class Study implements StudyInterface {
     }
 
 
-
+    /** Add or extend a DICOM series into this study.
+     * 
+     * @param s a series object
+     */
     public void addSerie(Series s) {
         if (this.seriesHash.containsKey(s.getSeriesInstanceUID())) {
 
             Series existSeries = this.seriesHash.get(s.getSeriesInstanceUID());
             ArrayList<URI> img = s.getImageList();
             ArrayList<String> uid = s.getSOPInstanceUIDList();
+            ArrayList<String> instanceNum = s.getInstanceNumberList();
 
             int size = img.size();
             for (int i = 0; i < size; i++) {
-                existSeries.addImage(img.get(i), uid.get(i));
+                existSeries.addImage(img.get(i), uid.get(i), instanceNum.get(i));
             }
         } else {
             this.series.add(s);
