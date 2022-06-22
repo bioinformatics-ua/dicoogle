@@ -18,9 +18,6 @@
  */
 package pt.ua.dicoogle.server.queryretrieve;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.concurrent.Executor;
 
@@ -138,27 +135,22 @@ public class CFindServiceSCP extends CFindService {
                 }
             }
 
-            LogLine ll =
-                    new LogLine("cfind", getDateTime(), as.getCallingAET(), as.toString() + " -- " + add, queryParams);
+            LogLine ll = new LogLine("cfind", as.getCallingAET(), as.toString() + " -- " + add, queryParams);
             LogDICOM.getInstance().addLine(ll);
 
-            synchronized (LogDICOM.getInstance()) {
-                LogXML l = new LogXML();
-                try {
-                    l.printXML();
-                } catch (TransformerConfigurationException ex) {
-                    ex.printStackTrace();
+            if (LogDICOM.getInstance().isPersistent()) {
+                synchronized (LogDICOM.getInstance()) {
+                    LogXML l = new LogXML();
+                    try {
+                        l.printXML();
+                    } catch (TransformerConfigurationException ex) {
+                        ex.printStackTrace();
+                    }
                 }
             }
 
         }
         return replay;
-    }
-
-    private String getDateTime() {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        return dateFormat.format(date);
     }
 
     /**

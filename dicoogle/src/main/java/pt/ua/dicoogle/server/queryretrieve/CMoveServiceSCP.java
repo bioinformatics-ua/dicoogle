@@ -201,17 +201,19 @@ public class CMoveServiceSCP extends CMoveService {
             }
 
 
-            LogLine ll = new LogLine("cmove", LogLine.getDateTime(), destination,
+            LogLine ll = new LogLine("cmove", destination,
                     "Files: " + files.size() + " -- (" + hostDest + ":" + portAddr + ")",
                     "studyUID=" + data.getString(Tag.StudyInstanceUID));
             LogDICOM.getInstance().addLine(ll);
 
-            synchronized (LogDICOM.getInstance()) {
-                try {
-                    LogXML l = new LogXML();
-                    l.printXML();
-                } catch (TransformerConfigurationException ex) {
-                    LoggerFactory.getLogger(CMoveServiceSCP.class).error(ex.getMessage(), ex);
+            if (LogDICOM.getInstance().isPersistent()) {
+                synchronized (LogDICOM.getInstance()) {
+                    try {
+                        LogXML l = new LogXML();
+                        l.printXML();
+                    } catch (TransformerConfigurationException ex) {
+                        LoggerFactory.getLogger(CMoveServiceSCP.class).error(ex.getMessage(), ex);
+                    }
                 }
             }
 

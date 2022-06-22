@@ -20,23 +20,28 @@
 package pt.ua.dicoogle.DicomLog;
 
 import java.util.ArrayList;
+
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.xml.transform.TransformerConfigurationException;
 
 /**
+ * DICOM network event logging.
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class LogDICOM {
+public final class LogDICOM {
 
     private static LogDICOM instance = null;
 
-    private ArrayList<LogLine> ll = new ArrayList<LogLine>();
+    // only persist in memory if XML logging is enabled
+    private final boolean persist = Boolean.parseBoolean(System.getProperty("dicoogle.dicom.xmlLog", "false"));
+    private final ArrayList<LogLine> ll = new ArrayList<>();
+
+    private final Logger log = LoggerFactory.getLogger(LogDICOM.class);
 
     private LogDICOM() {
         // Nothing to do.
     }
-
 
     public static synchronized LogDICOM getInstance() {
         if (instance == null) {
@@ -45,36 +50,37 @@ public class LogDICOM {
         return instance;
     }
 
-
-    public void addLine(LogLine l) {
-        this.getLl().add(l);
+    /** Check whether the DICOM event logger is persisting log events in memory,
+     * which is required for the legacy XML logger to work.
+     * 
+     * @deprecated XML logging will be removed in Dicoogle,
+     * making it as if it would always return `false`
+     */
+    @Deprecated
+    public boolean isPersistent() {
+        return persist;
     }
 
-    public void clearLog() {
-        this.getLl().clear();
+    /** Records a DICOM event, same as `getInstance().addLine(line)` */
+    public static void log(LogLine line) {
+        getInstance().addLine(line);
+    }
 
-        try {
-            LogXML log = new LogXML();
-            log.printXML();
-        } catch (TransformerConfigurationException ex) {
-            LoggerFactory.getLogger(LogDICOM.class.getName()).error(ex.getMessage(), ex);
+    /** Records a DICOM event. */
+    public void addLine(LogLine l) {
+        log.info("[{}] {} {} {}", l.getAe(), l.getType(), l.getAdd(), l.getParams());
+        if (persist) {
+            ll.add(l);
         }
     }
 
-    /**
-     * @return the ll
+    /** Retrieves the full list of recorded DICOM events.
+     * 
+     * @deprecated the feature that depended on this (XML logging)
+     * will be removed in Dicoogle 4
      */
+    @Deprecated
     public ArrayList<LogLine> getLl() {
         return ll;
     }
-
-    /**
-     * @param ll the ll to set
-     */
-    public void setLl(ArrayList<LogLine> ll) {
-        this.ll = ll;
-    }
-
-
-
 }
