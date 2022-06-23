@@ -24,5 +24,12 @@ jobs:
       with:
         distribution: 'zulu'
         java-version: ${{ matrix.java-version }}
+    - name: Cache local Maven repo
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-java${{ matrix.java-version }}-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-java${{ matrix.java-version }}-
     - name: Build with Maven
       run: mvn -B package license:check -Dskip.installnodenpm -Dskip.npm -Dskip.format --file pom.xml
