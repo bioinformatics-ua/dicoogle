@@ -25,4 +25,4 @@ jobs:
         distribution: 'zulu'
         java-version: ${{ matrix.java-version }}
     - name: Build with Maven
-      run: mvn -B package -Dskip.installnodenpm -Dskip.npm --file pom.xml
+      run: mvn -B package license:check -Dskip.installnodenpm -Dskip.npm -Dskip.format --file pom.xml
