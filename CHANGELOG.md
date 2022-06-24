@@ -1,13 +1,26 @@
 # CHANGELOG
 This document intends to keep track of the changes performed on the various releases of Dicoogle.
 
+## 3.1
+
+### 3.1.0 (2022-06-24)
+
+- Enhancement: Bring back depth and paging to searchDIM (#509)
+- Enhancement: Add Instance Number to search results (#584)
+- Enhancement: Add creation time to running tasks (#511)
+- Enhancement: Encode text files and server text responses in UTF-8 (#583)
+- Enhancement: Change DICOM logging and deprecate XML log (#577)
+- Enhancement: Update commons-collections4 to 4.4 (#561)
+- Fix: Set key in dicoogle-slot element (#587)
+- Chore: Improve CI Java Maven workflow (#588)
+
 ## 3.0
 
 ### 3.0.7 (2022-03-17)
 
-Fix: [UI] Prevent default on export modal button click (#568)
-Chore: Update webapp dependencies (#569)
-Chore: Update contributors in README (#565)
+- Fix: [UI] Prevent default on export modal button click (#568)
+- Chore: Update webapp dependencies (#569)
+- Chore: Update contributors in README (#565)
 
 ### 3.0.6 (2022-01-14)
 
