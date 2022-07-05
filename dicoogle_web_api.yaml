@@ -19,7 +19,7 @@ info:
     <p>- <a href="https://bioinformatics-ua.github.io/dicoogle-api/javadoc/">Dicoogle Javadoc</a> </p>
     <p>- <a href="https://github.com/bioinformatics-ua/dicoogle-client-js">Dicoogle Javascript Client</a> </p>
     <br>
-  version: 3.0.0
+  version: 3.1.0
   title: Dicoogle
   contact:
     name: Support
@@ -1069,13 +1069,13 @@ components:
         uri:
           type: string
           format: uri
-          example: file:/1bf65303-88a6-4c7e-bbd3-95cd3d2901a7
+          example: file:/root/CT/P9850721e/1.dcm
         fields:
           type: object
           properties:
             PatientID:
               type: string
-              example: 9850721e-27bf-4e8c-a9cd-00680c3c83d7
+              example: P9850721e
             SeriesDate:
               type: string
               example: "20150120"
@@ -1084,19 +1084,19 @@ components:
               example: "20150120"
             PatientName:
               type: string
-              example: e8344a6c-3385-497f-bf47-01a89914d572
+              example: Doe^John
             StudyInstanceUID:
               type: string
-              example: 0c69d902-6cb1-4df5-8d1b-c17051d96c9a
+              example: "1.2.345678.9999"
             SOPInstanceUID:
               type: string
-              example: bd6ac908-a061-4ed4-9083-5a5dfb12e7f4
+              example: "1.2.345678.9999.1.1"
             Modality:
               type: string
               example: CT
             SeriesInstanceUID:
               type: string
-              example: fd76f30b-2ee2-46ad-ac40-856266e6a396
+              example: "1.2.345678.9999.1"
     Results:
       type: object
       properties:
@@ -1110,21 +1110,135 @@ components:
         numResults:
           type: integer
           example: 5
-    DIMResult:
+    DIMPatient:
       type: object
+      required:
+        - "id"
+        - "name"
+        - "birthdate"
+        - "gender"
+        - "nStudies"
+        - "studies"
+      properties:
+        id:
+          type: string
+          description: The DICOM Patient ID
+          example: "P123"
+        name:
+          type: string
+          description: The DICOM Patient Name
+        birthdate:
+          type: string
+          example: "19781023"
+        gender:
+          type: string
+          description: The DICOM Patient Sex
+          example: F
+        nStudies:
+          type: number
+          format: i32
+          example: 1
+        studies:
+          type: array
+          items:
+            $ref: "#/components/schemas/DIMStudy"
+    DIMStudy:
+      type: object
+      required:
+        - "institutionName"
+        - "modalities"
+        - "studyDate"
+        - "studyDescription"
+        - "series"
+      properties:
+        institutionName:
+          type: string
+          description: The DICOM Institution Name
+        modalities:
+          type: string
+          example: "MG,US"
+        studyDate:
+          type: string
+          description: The DICOM Study Date
+          example: "20141029"
+        studyDescription:
+          type: string
+          description: The DICOM Study Description
+          example: "Routine scan"
+        studyInstanceUID:
+          type: string
+          description: The DICOM Study Instance UID
+          example: "1.2.876543.9999"
+        series:
+          type: array
+          items:
+            $ref: "#/components/schemas/DIMSeries"
+    DIMSeries:
+      type: object
+      required:
+        - "serieModality"
+        - "serieInstanceUID"
+        - "serieNumber"
+        - "serieDescription"
+        - "images"
+      properties:
+        serieModality:
+          type: string
+          description: The DICOM Modality
+          example: "MG"
+        serieInstanceUID:
+          type: string
+          description: The DICOM Series Instance UID
+          example: "1.2.876543.9999.1"
+        serieNumber:
+          type: number
+          description: The DICOM Series Number
+          example: 1
+        serieDescription:
+          type: string
+          description: The DICOM Series Description
+          example: "routine breast x-ray scan"
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/DIMInstance"
+    DIMInstance:
+      type: object
+      required:
+        - "uri"
+        - "filename"
+        - "rawPath"
+        - "sopInstanceUID"
+      properties:
+        filename:
+          type: string
+          example: "1_1.dcm"
+        number:
+          type: number
+          example: 1
+        rawPath:
+          type: string
+          example: "/root/MG/123/1_1.dcm"
+        sopInstanceUID:
+          type: string
+          description: The DICOM SOP Instance UID
+          example: "1.2.876543.9999.1.1"
+        uri:
+          type: string
+          example: "file:/root/MG/123/1_1.dcm"
     DIMResults:
       type: object
       properties:
         results:
           type: array
           items:
-            $ref: "#/components/schemas/DIMResult"
+            $ref: "#/components/schemas/DIMPatient"
         elapsedTime:
           type: integer
           example: 5
         numResults:
           type: integer
-          example: 5
+          example: 1
     IndexSettings:
       type: object
       properties:
@@ -1240,6 +1354,9 @@ components:
         taskName:
           type: string
           example: "[lucene]index"
+        taskTimeCreated:
+          type: string
+          example: "2022-07-05T14:48:50.49"
         taskProgress:
           type: number
           example: 1.0
