@@ -724,10 +724,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  tasks:
-                    $ref: "#/components/schemas/ServiceStatus"
+                $ref: "#/components/schemas/ServiceStatus"
     post:
       tags:
         - Management
@@ -735,7 +732,7 @@ paths:
       operationId: setStorageStatus
       parameters:
         - in: query
-          name: isRunning
+          name: running
           description: whether the service runs or not
           required: false
           schema:
@@ -771,10 +768,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  tasks:
-                    $ref: "#/components/schemas/ServiceStatus"
+                $ref: "#/components/schemas/ServiceStatus"
     post:
       tags:
         - Management
@@ -782,7 +776,7 @@ paths:
       operationId: setQueryStatus
       parameters:
         - in: query
-          name: isRunning
+          name: running
           description: whether the service runs or not
           required: false
           schema:
@@ -818,10 +812,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  tasks:
-                    $ref: "#/components/schemas/AETitle"
+                $ref: "#/components/schemas/AETitle"
     put:
       tags:
         - Management
@@ -832,8 +823,9 @@ paths:
           name: aetitle
           description: a valid AE title for the PACS archive
           required: true
+          example: MY-STORAGE
           schema:
-            type: boolean
+            type: string
       responses:
         "200":
           description: Successful operation
@@ -1143,14 +1135,15 @@ components:
           type: boolean
           example: false
         effort:
-          type: integer
-          example: false
+          type: string
+          description: "Indexing effort, as an integer between 0 and 100"
+          example: "100"
         thumbnail:
           type: boolean
           example: true
         thumbnailSize:
-          type: integer
-          example: 64
+          type: string
+          example: "64"
         watcher:
           type: boolean
           example: false
@@ -1204,12 +1197,15 @@ components:
       type: object
       properties:
         isRunning:
+          description: Whether the service is running
           type: boolean
           example: true
         port:
+          description: TCP port that the service is listening to
           type: integer
           example: 6666
         autostart:
+          description: Whether this service starts on boot
           type: boolean
           example: true
     AETitle:
@@ -1217,6 +1213,8 @@ components:
       properties:
         aetitle:
           type: string
+          description: Application Entity title
+          example: DICOOGLE-STORAGE
     Plugin:
       type: object
       properties:
@@ -1244,10 +1242,10 @@ components:
           example: "[lucene]index"
         taskProgress:
           type: number
-          example: 0.1
+          example: 1.0
         complete:
           type: boolean
-          example: false
+          example: true
         elapsedTime:
           type: integer
           example: 9
@@ -1266,6 +1264,7 @@ components:
             $ref: "#/components/schemas/TaskResult"
         count:
           type: integer
+          example: 1
     RemoteServer:
       type: object
       properties:
