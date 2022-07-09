@@ -404,7 +404,8 @@ var PopOverView = createReactClass({
           <b>{key}:</b> {obj[key]}
         </p>
       );
-      fields.push({ att: key, field: obj[key] });
+      // Using capital letter in _A_ttribute and _V_alue to keep consistency in CSV Header Export.
+      fields.push({ Attribute: key, Value: obj[key] });
     });
 
     var selectRowProp = {
@@ -447,7 +448,7 @@ var PopOverView = createReactClass({
           >
             <TableHeaderColumn
               dataAlign="right"
-              dataField="att"
+              dataField="Attribute"
               width="20%"
               isKey
               dataSort
@@ -456,12 +457,12 @@ var PopOverView = createReactClass({
             </TableHeaderColumn>
             <TableHeaderColumn
               dataAlign="left"
-              dataField="field"
+              dataField="Value"
               width="40%"
               isKey={false}
               dataSort
             >
-              Field
+              Value
             </TableHeaderColumn>
           </BootstrapTable>
         </div>
