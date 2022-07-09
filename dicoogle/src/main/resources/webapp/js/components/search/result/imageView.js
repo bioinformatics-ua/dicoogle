@@ -402,6 +402,9 @@ var PopOverView = createReactClass({
       fields.push({ att: key, field: obj[key] });
     });
 
+    // Add URI as location definition of the DICOM resource.
+    fields.push({ att: "URI", field:this.state.data.data.results.uri });
+
     var selectRowProp = {
       clickToSelect: true,
       mode: "none",
@@ -448,6 +451,7 @@ var PopOverView = createReactClass({
               dataField="field"
               width="40%"
               isKey={false}
+              tdStyle={{ whiteSpace: 'normal', wordWrap: 'break-word' }} // To avoid shorten the field text 
               dataSort
             >
               Field
