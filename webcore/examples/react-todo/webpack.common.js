@@ -8,13 +8,16 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /src\/.*\.jsx?$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         use: [
           {
             loader: 'babel-loader',
             options: {
-              presets: [["@babel/env",{"targets":{"browsers":["> 1%","last 2 versions"]}}],"@babel/react"]
+              presets: [
+                "@babel/preset-react",
+                ["@babel/env",{"targets":{"browsers":["> 1%","last 2 versions"]}}]
+              ]
             }
           }
         ]

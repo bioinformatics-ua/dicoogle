@@ -29,7 +29,10 @@ Plugin web components will be attached to a div in the `<dicoogle-slot>` with it
 will have a class `"dicoogle-webcore-<slotid>"`. The Dicoogle web application may use these classes to style these
 additional UI elements.
 
-A few examples of web pages using the Dicoogle Web Core are available in "test/TC".
+The [Dicoogle web application][webapp]
+can be inspected to see how the Dicoogle Web Core is installed there.
+
+[webapp]: ../dicoogle/src/main/resources/webapp
 
 ### Runtime Dependencies
 

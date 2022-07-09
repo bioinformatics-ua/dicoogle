@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 /* global Dicoogle */
 
 function TodoItems(props) {
@@ -12,6 +13,9 @@ class TodoApp extends React.Component {
     constructor(props) {
       super(props);
       this.state = {items: [], text: ''};
+
+      this.onChange = this.onChange.bind(this);
+      this.handleSubmit = this.handleSubmit.bind(this);
     }
     onChange(e) {
       this.setState({text: e.target.value});
@@ -48,6 +52,6 @@ export default class MyPlugin {
      */
     render(parent, slot) {
         this.r = <TodoApp />;
-        React.render(this.r, parent);
+        ReactDOM.render(this.r, parent);
     }
 }
