@@ -369,7 +369,11 @@ var PopOverView = createReactClass({
     this.setState({ data: null });
     this.props.onHide();
   },
-
+  createCustomExportCSVButton : function(onClick) {
+    return (
+      <button className="btn btn_dicoogle" onClick={ onClick }><i className="fa fa-download"></i>Export CSV</button>
+    );
+  },
   render: function() {
     if (this.state.data === null) {
       return (
@@ -393,6 +397,7 @@ var PopOverView = createReactClass({
     var rows = [];
 
     var fields = [];
+    
     Object.keys(obj).forEach(function(key, i) {
       rows.push(
         <p key={i}>
@@ -407,6 +412,9 @@ var PopOverView = createReactClass({
       mode: "none",
       bgColor: "rgb(163, 210, 216)",
       onSelect: this.onRowSelect
+    };
+    const options = {
+      exportCSVBtn: this.createCustomExportCSVButton
     };
     return (
       <Modal
@@ -427,6 +435,9 @@ var PopOverView = createReactClass({
             data={fields}
             selectRow={selectRowProp}
             condensed
+            options={options}
+            exportCSV
+            csvFileName={`${this.props.uid}.csv`}
             pagination
             striped
             hover
