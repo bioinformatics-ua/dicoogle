@@ -371,7 +371,7 @@ var PopOverView = createReactClass({
   },
   createCustomExportCSVButton : function(onClick) {
     return (
-      <button className="btn btn_dicoogle" onClick={ onClick }><i className="fa fa-download"></i>Export CSV</button>
+      <button className="btn btn_dicoogle" onClick={ onClick }><i className="fa fa-download"></i> Export CSV</button>
     );
   },
   render: function() {
