@@ -451,6 +451,7 @@ var PopOverView = createReactClass({
               dataField="field"
               width="40%"
               isKey={false}
+              tdStyle={{ whiteSpace: 'normal', wordWrap: 'break-word' }} // To avoid shorten the field text 
               dataSort
             >
               Field
