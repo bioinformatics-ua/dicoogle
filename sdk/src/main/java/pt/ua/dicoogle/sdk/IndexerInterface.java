@@ -19,6 +19,8 @@
 package pt.ua.dicoogle.sdk;
 
 import java.net.URI;
+import java.util.Collection;
+
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.task.Task;
 
@@ -51,7 +53,6 @@ public interface IndexerInterface extends DicooglePlugin {
      */
     public Task<Report> index(Iterable<StorageInputStream> files, Object... parameters);
 
-
     /**
      * Checks whether the file in the given path can be indexed by this indexer. The indexer should verify if
      * the file holds compatible content (e.g. a DICOM file). If this method returns false, the file will not
@@ -67,8 +68,34 @@ public interface IndexerInterface extends DicooglePlugin {
     /**
      * Removes the indexed file at the given path from the database.
      * 
+     * This operation is synchronous.
+     * 
      * @param path the URI of the document
      * @return whether it was successfully deleted from the database
      */
     public boolean unindex(URI path);
+
+    /**
+     * Removes indexed files from the database in bulk.
+     *
+     * The default implementation unindexes each item one by one
+     * in a non-specified order via {@linkplain #unindex(URI)},
+     * but indexers may implement this as
+     * one or more individual operations in batch,
+     * thus becoming faster than unindexing each item individually.
+     * 
+     * This operation is synchronous.
+     * Consider running long unindexing tasks in a separate thread.
+     *
+     * @param uris the URIs of the items to unindex
+     * @return the number of files successfully unindexed,
+     *         in the event that some entries were not found in the database
+     */
+    public default int unindex(Collection<URI> uris) {
+        int unindexed = 0;
+        for (URI uri : uris) {
+            unindexed += unindex(uri) ? 1 : 0;
+        }
+        return unindexed;
+    }
 }
