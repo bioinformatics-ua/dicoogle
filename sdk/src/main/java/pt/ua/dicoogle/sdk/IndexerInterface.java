@@ -25,41 +25,58 @@ import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.task.Task;
 
 /**
- * Index Interface Plugin. Indexers analyze documents for performing queries. They may index
- * documents by DICOM metadata for instance, but other document processing procedures may be involved.
+ * Indexing plugin interface.
+ * 
+ * Indexers analyze and record documents for future retrieval.
+ * They are primarily designed to index DICOM meta-data,
+ * which in that case they are accompanied by a query plugin,
+ * and both plugins are called <em>DIM providers</em>.
+ * However, indexers are not restricted to processing DICOM files,
+ * or to retrieving and indexing meta-data.
  *
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @author Luís A. Bastião Silva <bastiao@bmd-software.com>
  * @author Frederico Valente <fmvalente@ua.pt>
  */
 public interface IndexerInterface extends DicooglePlugin {
 
     /**
-     * Indexes the file path to the database. Indexation procedures are asynchronous, and will return
+     * Indexes the file path to the database. Indexing procedures are asynchronous, and will return
      * immediately after the call. The outcome is a report that can be retrieved from the given task
      * as a future.
      *
      * @param file directory or file to index
-     * @return a representation of the asynchronous indexation task
+     * @return a representation of the asynchronous indexing task
      */
     public Task<Report> index(StorageInputStream file, Object... parameters);
 
     /**
-     * Indexes multiple file paths to the database. Indexation procedures are asynchronous, and will return
+     * Indexes multiple file paths to the database. Indexing procedures are asynchronous, and will return
      * immediately after the call. The outcomes are aggregated into a single report and can be retrieved from
      * the given task as a future.
      *
      * @param files a collection of directories and/or files to index
-     * @return a representation of the asynchronous indexation task
+     * @return a representation of the asynchronous indexing task
      */
     public Task<Report> index(Iterable<StorageInputStream> files, Object... parameters);
 
     /**
-     * Checks whether the file in the given path can be indexed by this indexer. The indexer should verify if
-     * the file holds compatible content (e.g. a DICOM file). If this method returns false, the file will not
-     * be indexed.
-     *
+     * Checks whether the file in the given path can be indexed by this indexer.
+     * 
+     * The method should return <code>false</code> <em>if and only if</em>
+     * it is sure that the file cannot be indexed,
+     * by observation of its URI.
+     * This method exists in order to filter out files
+     * that are obviously incompatible for the indexer.
+     * However, there are situations where this is not reliable,
+     * since the storage is free to establish its own file naming rules,
+     * and that can affect the file extension.
+     * In case of doubt, it is recommended to leave the default implementation,
+     * which returns true unconditionally.
+     * Attempts to read invalid files can instead
+     * be handled gracefully by the indexer by capturing exceptions.
+     * 
      * @param path a URI to the file to check
-     * @return whether the indexer can handle the file at the given path
+     * @return whether the item at the given URI path can be fed to this indexer
      */
     public default boolean handles(URI path) {
         return true;
