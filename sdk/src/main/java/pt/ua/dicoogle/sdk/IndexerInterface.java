@@ -18,10 +18,16 @@
  */
 package pt.ua.dicoogle.sdk;
 
+import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 import pt.ua.dicoogle.sdk.datastructs.Report;
+import pt.ua.dicoogle.sdk.datastructs.UnindexReport;
+import pt.ua.dicoogle.sdk.datastructs.UnindexReport.FailedUnindex;
 import pt.ua.dicoogle.sdk.task.Task;
 
 /**
@@ -105,14 +111,25 @@ public interface IndexerInterface extends DicooglePlugin {
      * Consider running long unindexing tasks in a separate thread.
      *
      * @param uris the URIs of the items to unindex
-     * @return the number of files successfully unindexed,
-     *         in the event that some entries were not found in the database
+     * @return a report containing which files were not unindexed,
+     *         and whether some of them were not found in the database
+     * @throws IOException if an error occurred
+     *         before the unindexing operation could start,
+     *         such as when failing to access or open the database
      */
-    public default int unindex(Collection<URI> uris) {
-        int unindexed = 0;
+    public default UnindexReport unindex(Collection<URI> uris) throws IOException {
+        Objects.requireNonNull(uris);
+        List<FailedUnindex> failures = new ArrayList<>();
         for (URI uri : uris) {
-            unindexed += unindex(uri) ? 1 : 0;
+            try {
+                if (!unindex(uri)) {
+                    // failed to unindex, reason unknown
+                    failures.add(new FailedUnindex(uri, null));
+                }
+            } catch (Exception ex) {
+                failures.add(new FailedUnindex(uri, ex));
+            }
         }
-        return unindexed;
+        return UnindexReport.withFailures(failures);
     }
 }
