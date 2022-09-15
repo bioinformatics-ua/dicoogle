@@ -222,7 +222,7 @@ public class CMoveServiceSCP extends CMoveService {
                 return null;
             }
             try {
-                System.out.println("Destination: " + destination);
+                logger.debug("Destination: {}", destination);
                 new CallDCMSend(files, portAddr, hostDest, destination, CMoveID);
             } catch (Exception ex) {
                 logger.error("Error Sending files to Storage Server! ", ex);
