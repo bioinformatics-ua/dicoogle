@@ -108,7 +108,8 @@ paths:
         - dicoogle_auth:
             - user
   /user:
-    put:
+    # Was PUT in Dicoogle 2
+    post:
       tags:
         - User
       summary: Create a user in the system
@@ -151,13 +152,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Users"
+  /user/{username}:
     delete:
       tags:
         - User
       summary: Remove a user from the system
       operationId: deleteUser
       parameters:
-        - in: query
+        - in: path
           name: username
           description: The unique user name for the client
           required: true
@@ -165,7 +167,7 @@ paths:
             type: string
       responses:
         "200":
-          description: Successful operation
+          description: Operation done, returns whether a user with that name was deleted
           content:
             application/json:
               schema:
