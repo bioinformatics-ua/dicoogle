@@ -70,6 +70,8 @@ public interface ServerSettings extends ServerSettingsReader {
         void setDefaultStorage(List<String> storages);
 
         void setNodeName(String nodeName);
+
+        void setCallShutdown(boolean shutdown);
     }
 
     @JsonGetter("dicom-services")

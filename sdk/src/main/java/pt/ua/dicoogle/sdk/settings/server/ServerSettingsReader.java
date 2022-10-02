@@ -87,6 +87,12 @@ public interface ServerSettingsReader {
 
         @JsonGetter("node-name")
         String getNodeName();
+
+        /**
+         * Whether to call the shutdown routine for installed plugin sets.
+         */
+        @JsonGetter("call-shutdown")
+        boolean isCallShutdown();
     }
 
     @JsonGetter("archive")

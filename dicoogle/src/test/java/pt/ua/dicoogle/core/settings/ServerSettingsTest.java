@@ -73,6 +73,7 @@ public class ServerSettingsTest {
         assertEquals("/opt/my-data/watched", ar.getWatchDirectory());
         assertEquals("dicoogle01", ar.getNodeName());
         assertEquals(true, ar.isEncryptUsersFile());
+        assertEquals(true, ar.isCallShutdown());
 
         assertSameContent(Collections.singleton("lucene"), ar.getDIMProviders());
         assertSameContent(Collections.singleton("filestorage"), ar.getDefaultStorage());
@@ -143,6 +144,7 @@ public class ServerSettingsTest {
         assertEquals(100, ar.getIndexerEffort());
         assertEquals("", ar.getWatchDirectory());
         assertEquals(null, ar.getNodeName());
+        assertEquals(false, ar.isCallShutdown());
 
         assertEquals("DICOOGLE-STORAGE", dcm.getAETitle());
 

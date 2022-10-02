@@ -44,6 +44,9 @@ public class ArchiveImpl implements ServerSettings.Archive {
         a.dirWatcherEnabled = false;
         a.watchDirectory = "";
 
+        // Note: make it `true` in Dicoogle 4
+        a.callShutdown = false;
+
         a.dimProviders = Collections.EMPTY_LIST;
         a.defaultStorage = Collections.EMPTY_LIST;
 
@@ -91,6 +94,9 @@ public class ArchiveImpl implements ServerSettings.Archive {
 
     @JsonProperty("node-name")
     private String nodeName;
+
+    @JsonProperty("call-shutdown")
+    private boolean callShutdown;
 
     public boolean getSaveThumbnails() {
         return saveThumbnails;
@@ -159,11 +165,13 @@ public class ArchiveImpl implements ServerSettings.Archive {
     }
 
     @Override
-    public String toString() {
-        return "ArchiveImpl{" + "saveThumbnails=" + saveThumbnails + ", thumbnailSize=" + thumbnailSize
-                + ", indexerEffort=" + indexerEffort + ", dimProviders=" + dimProviders + ", defaultStorage="
-                + defaultStorage + ", dirWatcherEnabled=" + dirWatcherEnabled + ", watchDirectory='" + watchDirectory
-                + '\'' + ", mainDirectory='" + mainDirectory + '\'' + ", nodeName='" + nodeName + '\'' + '}';
+    public boolean isCallShutdown() {
+        return this.callShutdown;
+    }
+
+    @Override
+    public void setCallShutdown(boolean callShutdown) {
+        this.callShutdown = callShutdown;
     }
 
     @Override
@@ -174,5 +182,14 @@ public class ArchiveImpl implements ServerSettings.Archive {
     @Override
     public void setEncryptUsersFile(boolean encrypt) {
         this.encryptUsersFile = encrypt;
+    }
+
+    @Override
+    public String toString() {
+        return "ArchiveImpl{" + "saveThumbnails=" + saveThumbnails + ", thumbnailSize=" + thumbnailSize
+                + ", indexerEffort=" + indexerEffort + ", dimProviders=" + dimProviders + ", defaultStorage="
+                + defaultStorage + ", dirWatcherEnabled=" + dirWatcherEnabled + ", watchDirectory='" + watchDirectory
+                + '\'' + ", mainDirectory='" + mainDirectory + '\'' + ", nodeName='" + nodeName + '\''
+                + ", callShutdown=" + callShutdown + ", encryptUsersFile=" + encryptUsersFile + '}';
     }
 }
