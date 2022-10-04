@@ -44,8 +44,6 @@ public class SOPList {
     private Hashtable<String, TransfersStorage> table;
 
     private String[] SOP = {
-        UID.BasicStudyContentNotificationSOPClassRetired, 
-        UID.StoredPrintStorageSOPClassRetired,
         UID.BasicStudyContentNotificationSOPClassRetired,
         UID.StoredPrintStorageSOPClassRetired,
         UID.HardcopyGrayscaleImageStorageSOPClassRetired,
