@@ -91,7 +91,7 @@ public class SOPList {
         UID.SpatialFiducialsStorage,
         UID.RealWorldValueMappingStorage,
         UID.SecondaryCaptureImageStorage,
-        UID.MultiFrameSingleBitSecondaryCaptureImageStorage,        
+        UID.MultiFrameSingleBitSecondaryCaptureImageStorage,
         UID.MultiFrameGrayscaleByteSecondaryCaptureImageStorage,
         UID.MultiFrameGrayscaleWordSecondaryCaptureImageStorage,
         UID.MultiFrameTrueColorSecondaryCaptureImageStorage,
