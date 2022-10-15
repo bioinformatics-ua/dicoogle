@@ -181,7 +181,7 @@ public class Main {
 
         // set up shutdown hook
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            boolean shutdownPlugins = true;
+            boolean shutdownPlugins = settings.getArchiveSettings().isCallShutdown();
 
             if (shutdownPlugins) {
                 logger.debug("Initiating plugin shutdown sequence...");
