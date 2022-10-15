@@ -22,8 +22,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.UnindexReport;
@@ -91,7 +94,9 @@ public interface IndexerInterface extends DicooglePlugin {
     /**
      * Removes the indexed file at the given path from the database.
      * 
-     * This operation is synchronous.
+     * Unlike the other indexing tasks,
+     * this operation is synchronous
+     * and will only return when the operation is done.
      * 
      * @param path the URI of the document
      * @return whether it was successfully deleted from the database
@@ -107,29 +112,44 @@ public interface IndexerInterface extends DicooglePlugin {
      * one or more individual operations in batch,
      * thus becoming faster than unindexing each item individually.
      * 
-     * This operation is synchronous.
-     * Consider running long unindexing tasks in a separate thread.
+     * Like {@linkplain index},
+     * this operation is asynchronous.
+     * One can keep track of the unindexing task's progress
+     * by passing a callback function as the second parameter.
      *
      * @param uris the URIs of the items to unindex
+     * @param progressCallback an optional function (can be `null`),
+     *        called for every batch of items successfully unindexed
+     *        to indicate early progress
+     *        and inform consumers that
+     *        it is safe to remove or exclude the unindexed item
      * @return a report containing which files were not unindexed,
      *         and whether some of them were not found in the database
      * @throws IOException if an error occurred
      *         before the unindexing operation could start,
      *         such as when failing to access or open the database
      */
-    public default UnindexReport unindex(Collection<URI> uris) throws IOException {
+    public default Task<UnindexReport> unindex(Collection<URI> uris, Consumer<Collection<URI>> progressCallback)
+            throws IOException {
         Objects.requireNonNull(uris);
-        List<FailedUnindex> failures = new ArrayList<>();
-        for (URI uri : uris) {
-            try {
-                if (!unindex(uri)) {
-                    // failed to unindex, reason unknown
-                    failures.add(new FailedUnindex(uri, null));
+        return new Task<>(() -> {
+            List<FailedUnindex> failures = new ArrayList<>();
+            for (URI uri : uris) {
+                try {
+                    if (unindex(uri)) {
+                        // unindexed successfully
+                        if (progressCallback != null) {
+                            progressCallback.accept(Collections.singleton(uri));
+                        }
+                    } else {
+                        // failed to unindex, reason unknown
+                        failures.add(new FailedUnindex(uri, null));
+                    }
+                } catch (Exception ex) {
+                    failures.add(new FailedUnindex(uri, ex));
                 }
-            } catch (Exception ex) {
-                failures.add(new FailedUnindex(uri, ex));
             }
-        }
-        return UnindexReport.withFailures(failures);
+            return UnindexReport.withFailures(failures);
+        });
     }
 }
