@@ -9,7 +9,8 @@ Dicoogle is an extensible, platform-independent and open-source PACS archive sof
 
 The architecture of Dicoogle is described in the following articles:
 
-- Lebre, L., Pinho, E., Silva, J.M., Costa, C. _Dicoogle Framework for Medical Imaging Teaching and Research_. 2020 IEEE Symposium on Computers and Communications (ISCC) [[link](https://www.researchgate.net/publication/337703675_Dicoogle_Framework_for_Medical_Imaging_Teaching_and_Research)]
+- Lebre, R., Pinho, E., Jesus, R. , Silva, L.A.B., Costa, C. _Dicoogle Open Source: The Establishment of a New Paradigm in Medical Imaging_. 2022 Journal of Medical Systems 46: 77. doi:10.1007/s10916-022-01867-3 [[link](https://link.springer.com/article/10.1007/s10916-022-01867-3)]
+- Lebre, R., Pinho, E., Silva, J.M., Costa, C. _Dicoogle Framework for Medical Imaging Teaching and Research_. 2020 IEEE Symposium on Computers and Communications (ISCC) [[link](https://www.researchgate.net/publication/337703675_Dicoogle_Framework_for_Medical_Imaging_Teaching_and_Research)]
 - Valente, F., Silva, L.A.B., Godinho, T.M., Costa, C. _Anatomy of an Extensible Open Source PACS_. J Digit Imaging (2016) 29: 284. doi:10.1007/s10278-015-9834-0 [[link](https://link.springer.com/article/10.1007/s10278-015-9834-0)]
 
 Our official website is at https://www.dicoogle.com. A few essential plugins for Dicoogle are available to download there, as well as a built jar of the Dicoogle platform. To learn how to use Dicoogle, please see our [Learning Pack](https://bioinformatics-ua.github.io/dicoogle-learning-pack). To build the core platform yourself, please see the section on [Building Dicoogle](#building-dicoogle) below. The learning pack also has a page on [Building Dicoogle](https://bioinformatics-ua.github.io/dicoogle-learning-pack/docs/building/).
