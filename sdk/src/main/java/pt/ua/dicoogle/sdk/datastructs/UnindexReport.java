@@ -43,7 +43,7 @@ public final class UnindexReport implements Serializable {
          * when no cause is specified.
          */
         public final Exception cause;
-        
+
         /** Creates a failed unindex description
          * due to the file not being found in the database.
          * 
@@ -54,9 +54,9 @@ public final class UnindexReport implements Serializable {
             Objects.requireNonNull(uri);
             this.uri = uri;
             this.cause = cause;
-        }   
+        }
     }
-    
+
     /** URIs of files which were not found. */
     private final Collection<URI> notFound;
     private final Collection<FailedUnindex> failures;
@@ -66,7 +66,7 @@ public final class UnindexReport implements Serializable {
      * in which case is equivalent to passing an empty collection.
      * @param notFound the URIs of files which were not found
      * @param failures the error reports of files which could not be unindexed
-     */    
+     */
     public UnindexReport(Collection<URI> notFound, Collection<FailedUnindex> failures) {
         if (notFound == null) {
             notFound = Collections.emptyList();
