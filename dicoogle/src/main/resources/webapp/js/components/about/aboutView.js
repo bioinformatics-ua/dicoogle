@@ -30,25 +30,28 @@ const AboutView = createReactClass({
           <Panel.Heading>
             <h4>Dicoogle, version {versionNumber}</h4>
           </Panel.Heading>
-          Dicoogle is an open-source PACS archive software that replaces the
-          traditional database model with an extensible indexing and retrieval
-          framework and provides easy expansion of functionalities through the
-          use of plug-ins. It was designed to accommodate automatic information
-          extraction, indexing, and storage of all meta-data detected in medical
-          images, without re-engineering or reconfiguration requirements, thus
-          overcoming the limitations of traditional DICOM query services. By
-          presenting the technical assets for plugin development such as a
-          Software Development Kit (SDK), developers are free to expand the
-          archive independently and non-exclusively, without changes to the core
-          platform. This extensible architecture of Dicoogle has enabled its use
-          in research and the healthcare industry, as many use cases can be
-          fulfilled in the same deployment.
+          <div className="aboutBoxes"> 
+            Dicoogle is an open-source PACS archive software that replaces the
+            traditional database model with an extensible indexing and retrieval
+            framework and provides easy expansion of functionalities through the
+            use of plug-ins. It was designed to accommodate automatic information
+            extraction, indexing, and storage of all meta-data detected in medical
+            images, without re-engineering or reconfiguration requirements, thus
+            overcoming the limitations of traditional DICOM query services. By
+            presenting the technical assets for plugin development such as a
+            Software Development Kit (SDK), developers are free to expand the
+            archive independently and non-exclusively, without changes to the core
+            platform. This extensible architecture of Dicoogle has enabled its use
+            in research and the healthcare industry, as many use cases can be
+            fulfilled in the same deployment.
+          </div>
           <br />
         </Panel>
         <Panel bsStyle="primary">
           <Panel.Heading>
             <h4>Main third party components</h4>
           </Panel.Heading>
+          <div className="aboutBoxes"> 
           <Grid>
             <Row className="show-grid">
               <Col className="gridAbout" xs={2} md={2}>
@@ -67,12 +70,14 @@ const AboutView = createReactClass({
           </Grid>
           Note: Although these are not the only components used, these are
           considered the main ones.
+          </div>
         </Panel>
 
         <Panel bsStyle="primary">
           <Panel.Heading>
             <h4>Disclaimer</h4>
           </Panel.Heading>
+          <div className="aboutBoxes"> 
           This software is provided by the copyright holders and contributors
           "as is" and any express or implied warranties, including, but not
           limited to, the implied warranties of merchantability and fitness for
@@ -84,11 +89,13 @@ const AboutView = createReactClass({
           theory of liability, whether in contract, strict liability, or tort
           (including negligence or otherwise) arising in any way out of the use
           of this software, even if advised of the possibility of such damage.
+          </div>
         </Panel>
         <Panel bsStyle="primary">
           <Panel.Heading>
             <h4>Developers</h4>
           </Panel.Heading>
+          <div className="aboutBoxes"> 
           As an open source software, Dicoogle can accept contributions from
           developers around the world. Dicoogle OSS is led and supported by
           Bioinformatics UA and{" "}
@@ -139,6 +146,7 @@ const AboutView = createReactClass({
                 style={{ height: "4em", margin: 5 }}
               />
             </a>
+          </div>
           </div>
         </Panel>
       </div>
