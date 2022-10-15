@@ -278,7 +278,7 @@ public class PluginController {
                 logger.debug("Plugin set {} is shutting down", plugin.getName());
                 plugin.shutdown();
             } catch (Exception ex) {
-                logger.warn("Plugin set {} did not shutdown gracefully", plugin.getName(), ex);
+                logger.error("Plugin set {} did not shutdown gracefully", plugin.getName(), ex);
             }
         }
     }
