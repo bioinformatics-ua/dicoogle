@@ -1270,6 +1270,17 @@ public class LegacyServerSettings implements ServerSettings {
         public boolean isEncryptUsersFile() {
             return LegacyServerSettings.this.isEncryptUsersFile();
         }
+
+        @JsonGetter("call-shutdown")
+        @Override
+        public boolean isCallShutdown() {
+            return false;
+        }
+
+        @Override
+        public void setCallShutdown(boolean shutdown) {
+            // no-op, not supported
+        }
     }
 
     @JsonGetter("archive")

@@ -18,6 +18,7 @@
         <enable-watch-directory>true</enable-watch-directory>
         <watch-directory>/opt/my-data/watched</watch-directory>
         <node-name>dicoogle01</node-name>
+        <call-shutdown>true</call-shutdown>
     </archive>
     <dicom-services>
         <aetitle>TEST-STORAGE</aetitle>

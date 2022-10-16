@@ -92,7 +92,7 @@ public class Main {
                 System.out.println("-w : Start the server and load web application in default browser (default)");
             }
         }
-        /** Register System Exceptions Hook */
+        // Register System Exceptions Hook
         ExceptionHandler.registerExceptionHandler();
     }
 
@@ -167,7 +167,7 @@ public class Main {
         Authentication.getInstance();
 
         // Initialize platform controller
-        PluginController.getInstance();
+        PluginController pluginController = PluginController.getInstance();
 
         // Start the initial Services of Dicoogle
         pt.ua.dicoogle.server.ControlServices.getInstance();
@@ -178,5 +178,17 @@ public class Main {
         if (settings.getArchiveSettings().isDirectoryWatcherEnabled()) {
             AsyncIndex asyncIndex = new AsyncIndex();
         }
+
+        // set up shutdown hook
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            boolean shutdownPlugins = settings.getArchiveSettings().isCallShutdown();
+
+            if (shutdownPlugins) {
+                logger.debug("Initiating plugin shutdown sequence...");
+                // call shutdown routines
+                pluginController.shutdown();
+                logger.debug("Plugins were shut down.");
+            }
+        }));
     }
 }
