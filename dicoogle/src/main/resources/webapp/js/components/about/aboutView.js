@@ -28,7 +28,7 @@ const AboutView = createReactClass({
       <div className="about">
         <Panel bsStyle="primary">
           <Panel.Heading>
-            <h4>Dicoogle, version {versionNumber}</h4>
+            <h4>Dicoogle version {versionNumber}</h4>
           </Panel.Heading>
           <div className="aboutBoxes"> 
             Dicoogle is an open-source PACS archive software that replaces the
