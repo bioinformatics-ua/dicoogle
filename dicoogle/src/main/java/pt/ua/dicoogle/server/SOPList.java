@@ -20,7 +20,6 @@ package pt.ua.dicoogle.server;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.commons.lang.NotImplementedException;
 import org.dcm4che2.data.UID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

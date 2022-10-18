@@ -19,8 +19,10 @@
 package pt.ua.dicoogle.sdk.datastructs;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import org.dcm4che2.data.TransferSyntax;
 import org.dcm4che2.util.UIDUtils;
 import org.slf4j.Logger;
@@ -36,28 +38,22 @@ import java.util.StringJoiner;
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
 public final class AdditionalTransferSyntax {
 
-    // @JacksonXmlProperty(isAttribute = true, localName = "uid")
-    @JsonProperty("uid")
+    @JacksonXmlProperty(isAttribute = true, localName = "uid")
     private final String uid;
 
-    // @JacksonXmlProperty(isAttribute = true, localName = "alias")
-    @JsonProperty("alias")
+    @JacksonXmlProperty(isAttribute = true, localName = "alias")
     private final String alias;
 
-    // @JacksonXmlProperty(isAttribute = true, localName = "bigEndian")
-    @JsonProperty("bigEndian")
+    @JacksonXmlProperty(isAttribute = true, localName = "bigEndian")
     private final boolean bigEndian;
 
-    // @JacksonXmlProperty(isAttribute = true, localName = "explicitVR")
-    @JsonProperty("explicitVR")
+    @JacksonXmlProperty(isAttribute = true, localName = "explicitVR")
     private final boolean explicitVR;
 
-    // @JacksonXmlProperty(isAttribute = true, localName = "encapsulated")
-    @JsonProperty("encapsulated")
+    @JacksonXmlProperty(isAttribute = true, localName = "encapsulated")
     private final boolean encapsulated;
 
-    // @JacksonXmlProperty(isAttribute = true, localName = "deflated")
-    @JsonProperty("deflated")
+    @JacksonXmlProperty(isAttribute = true, localName = "deflated")
     private final boolean deflated;
 
 
@@ -114,27 +110,32 @@ public final class AdditionalTransferSyntax {
     }
 
     // Generated functions
-
+    @JsonIgnore
     public String getUid() {
         return uid;
     }
 
+    @JsonIgnore
     public String getAlias() {
         return alias;
     }
 
+    @JsonIgnore
     public boolean isBigEndian() {
         return this.bigEndian;
     }
 
+    @JsonIgnore
     public boolean isExplicitVR() {
         return this.explicitVR;
     }
 
+    @JsonIgnore
     public boolean isEncapsulated() {
         return this.encapsulated;
     }
 
+    @JsonIgnore
     public boolean isDeflated() {
         return this.deflated;
     }

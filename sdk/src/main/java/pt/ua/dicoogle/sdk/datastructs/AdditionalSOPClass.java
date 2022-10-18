@@ -23,13 +23,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import org.dcm4che2.data.TransferSyntax;
 import org.dcm4che2.util.UIDUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
-import java.util.StringJoiner;
 
 /**
  * @author André Almeida <almeida.a@ua.pt>
@@ -38,11 +36,10 @@ import java.util.StringJoiner;
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
 public final class AdditionalSOPClass {
 
-    // @JacksonXmlProperty(isAttribute = true, localName = "uid")
-    @JsonProperty("uid")
+    @JacksonXmlProperty(isAttribute = true, localName = "uid")
     private final String uid;
-    // @JacksonXmlProperty(isAttribute = true, localName = "alias")
-    @JsonProperty("alias")
+
+    @JacksonXmlProperty(isAttribute = true, localName = "alias")
     private final String alias;
 
     @JsonCreator
