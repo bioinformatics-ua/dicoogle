@@ -21,6 +21,8 @@ package pt.ua.dicoogle.core.settings;
 import org.junit.Before;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.helpers.NOPLogger;
 import pt.ua.dicoogle.core.settings.part.DicomServicesImpl;
 import pt.ua.dicoogle.sdk.datastructs.AdditionalSOPClass;
 import pt.ua.dicoogle.sdk.datastructs.AdditionalTransferSyntax;
@@ -347,11 +349,14 @@ public class ServerSettingsTest {
         final ServerSettings.DicomServices ds = settings.getDicomServicesSettings();
         assertTrue(settings instanceof ServerSettingsImpl);
 
+        Logger logger = NOPLogger.NOP_LOGGER;
         // Filter (as in init)
         ds.setAdditionalTransferSyntaxes(ds.getAdditionalTransferSyntaxes().stream()
-                .filter(AdditionalTransferSyntax::isValid).collect(Collectors.toList()));
-        ds.setAdditionalSOPClasses(
-                ds.getAdditionalSOPClasses().stream().filter(AdditionalSOPClass::isValid).collect(Collectors.toList()));
+                .filter(ats -> AdditionalTransferSyntax.isValid(ats, logger))
+                .collect(Collectors.toList()));
+        ds.setAdditionalSOPClasses(ds.getAdditionalSOPClasses().stream()
+                .filter(asc -> AdditionalSOPClass.isValid(asc, logger))
+                .collect(Collectors.toList()));
 
         // assertions follow
 
