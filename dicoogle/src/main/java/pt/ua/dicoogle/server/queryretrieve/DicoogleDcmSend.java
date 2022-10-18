@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
-import java.util.zip.GZIPInputStream;
 
 
 import org.dcm4che2.data.BasicDicomObject;
@@ -62,50 +61,25 @@ import org.dcm4che2.net.service.StorageCommitmentService;
 import org.dcm4che2.util.CloseUtils;
 import org.dcm4che2.util.StringUtils;
 import org.dcm4che2.util.UIDUtils;
-import pt.ua.dicoogle.core.settings.ServerSettingsManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
+import pt.ua.dicoogle.sdk.StorageInputStream;
+
+/** A DICOM object sender for Dicoogle.
+ * 
+ * Adapted from DcmSnd.java.
+ * 
  * @author gunter zeilinger(gunterze@gmail.com)
  * @version $Revision: 10933 $ $Date: 2009-04-21 01:48:38 +0100 (Ter, 21 Abr 2009) $
  * @since Oct 13, 2005
  */
-public class DcmSnd extends StorageCommitmentService {
+public class DicoogleDcmSend extends StorageCommitmentService {
 
-    private static final int KB = 1024;
-
-    private static final int MB = KB * KB;
+    private static final Logger LOGGER = LoggerFactory.getLogger(DicoogleDcmSend.class);
 
     private static final int PEEK_LEN = 1024;
-
-    private static final String USAGE = "dcmsnd [Options] <aet>[@<host>[:<port>]] <file>|<directory>...";
-
-    private static final String DESCRIPTION =
-            "\nLoad composite DICOM Object(s) from specified DICOM file(s) and send it "
-                    + "to the specified remote Application Entity. If a directory is specified,"
-                    + "DICOM Object in files under that directory and further sub-directories "
-                    + "are sent. If <port> is not specified, DICOM default port 104 is assumed. "
-                    + "If also no <host> is specified, localhost is assumed. Optionally, a "
-                    + "Storage Commitment Request for successfully tranferred objects is sent "
-                    + "to the remote Application Entity after the storage. The Storage Commitment "
-                    + "result is accepted on the same association or - if a local port is "
-                    + "specified by option -L - in a separate association initiated by the "
-                    + "remote Application Entity\n" + "OPTIONS:";
-
-    private static final String EXAMPLE =
-            "\nExample: dcmsnd -stgcmt -L DCMSND:11113 STORESCP@localhost:11112 image.dcm \n"
-                    + "=> Start listening on local port 11113 for receiving Storage Commitment "
-                    + "results, send DICOM object image.dcm to Application Entity STORESCP, "
-                    + "listening on local port 11112, and request Storage Commitment in same association.";
-
-    private static String[] TLS1 = {"TLSv1"};
-
-    private static String[] SSL3 = {"SSLv3"};
-
-    private static String[] NO_TLS1 = {"SSLv3", "SSLv2Hello"};
-
-    private static String[] NO_SSL2 = {"TLSv1", "SSLv3"};
-
-    private static String[] NO_SSL3 = {"TLSv1", "SSLv2Hello"};
 
     private static char[] SECRET = {'s', 'e', 'c', 'r', 'e', 't'};
 
@@ -141,9 +115,9 @@ public class DcmSnd extends StorageCommitmentService {
 
     private NetworkConnection conn = new NetworkConnection();
 
-    private Map<String, Set<String>> as2ts = new HashMap<String, Set<String>>();
+    private Map<String, Set<String>> as2ts = new HashMap<>();
 
-    private ArrayList<FileInfo> files = new ArrayList<FileInfo>();
+    private ArrayList<FileInfo> files = new ArrayList<>();
 
     private Association assoc;
 
@@ -161,8 +135,6 @@ public class DcmSnd extends StorageCommitmentService {
 
     private long shutdownDelay = 1000L;
 
-    private DicomObject stgCmtResult;
-
     private String keyStoreURL = "resource:tls/test_sys_1.p12";
 
     private char[] keyStorePassword = SECRET;
@@ -175,7 +147,7 @@ public class DcmSnd extends StorageCommitmentService {
 
     private String MoveOriginatorMessageID = null;
 
-    public DcmSnd() {
+    public DicoogleDcmSend() {
         remoteAE.setInstalled(true);
         remoteAE.setAssociationAcceptor(true);
         remoteAE.setNetworkConnection(new NetworkConnection[] {remoteConn});
@@ -376,122 +348,44 @@ public class DcmSnd extends StorageCommitmentService {
         return files;
     }
 
-
-    private static void promptStgCmt(DicomObject cmtrslt, float seconds) {
-
-        DicomElement refSOPSq = cmtrslt.get(Tag.ReferencedSOPSequence);
-        System.out.print(refSOPSq.countItems());
-        System.out.println(" successful");
-        DicomElement failedSOPSq = cmtrslt.get(Tag.FailedSOPSequence);
-        if (failedSOPSq != null) {
-            System.out.print(failedSOPSq.countItems());
-            System.out.println(" FAILED!");
-        }
-    }
-
-    private synchronized DicomObject waitForStgCmtResult() throws InterruptedException {
-        while (stgCmtResult == null)
-            wait();
-        return stgCmtResult;
-    }
-
-    private static void prompt(DcmSnd dcmsnd, float seconds) {
-        System.out.print("\nSent ");
-        System.out.print(dcmsnd.getNumberOfFilesSent());
-        System.out.print(" objects (=");
-        promptBytes(dcmsnd.getTotalSizeSent());
-        System.out.print(") in ");
-        System.out.print(seconds);
-        System.out.print("s (=");
-        promptBytes(dcmsnd.getTotalSizeSent() / seconds);
-        System.out.println("/s)");
-    }
-
-    private static void promptBytes(float totalSizeSent) {
-        if (totalSizeSent > MB) {
-            System.out.print(totalSizeSent / MB);
-            System.out.print("MB");
-        } else {
-            System.out.print(totalSizeSent / KB);
-            System.out.print("KB");
-        }
-    }
-
-    private static int toPort(String port) {
-        return port != null ? parseInt(port, "illegal port number", 1, 0xffff) : 104;
-    }
-
-    private static String[] split(String s, char delim) {
-        String[] s2 = {s, null};
-        int pos = s.indexOf(delim);
-        if (pos != -1) {
-            s2[0] = s.substring(0, pos);
-            s2[1] = s.substring(pos + 1);
-        }
-        return s2;
-    }
-
-    private static void exit(String msg) {
-        System.err.println(msg);
-        System.err.println("Try 'dcmsnd -h' for more information.");
-        System.exit(1);
-    }
-
-    private static int parseInt(String s, String errPrompt, int min, int max) {
+    public synchronized void addFile(StorageInputStream item) {
+        final FileInfo info;
+        final InputStream inStream;
         try {
-            int i = Integer.parseInt(s);
-            if (i >= min && i <= max)
-                return i;
-        } catch (NumberFormatException e) {
-            // parameter is not a valid integer; fall through to exit
-        }
-        exit(errPrompt);
-        throw new RuntimeException();
-    }
-
-    public void addFile(File f) {
-        if (f.isDirectory()) {
-            File[] fs = f.listFiles();
-            for (int i = 0; i < fs.length; i++)
-                addFile(fs[i]);
+            info = new FileInfo(item);
+            inStream = info.getInputStream();
+        } catch (IOException e) {
+            LOGGER.error("Failed to fetch file {} - skipped.", item.getURI(), e);
             return;
         }
-        FileInfo info = new FileInfo(f);
         DicomObject dcmObj = new BasicDicomObject();
         DicomInputStream in = null;
         try {
-            if (f.getAbsolutePath().endsWith(".gz")) {
-                in = new DicomInputStream(new GZIPInputStream(new BufferedInputStream(new FileInputStream(f), 256)));
-            } else {
-                in = new DicomInputStream(f);
-            }
+            in = new DicomInputStream(inStream);
             in.setHandler(new StopTagInputHandler(Tag.StudyDate));
             in.readDicomObject(dcmObj, PEEK_LEN);
             info.tsuid = in.getTransferSyntax().uid();
             info.fmiEndPos = in.getEndOfFileMetaInfoPosition();
         } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("WARNING: Failed to parse " + f + " - skipped.");
-            System.out.print('F');
+            LOGGER.warn("Failed to parse file {} - skipped.", item.getURI(), e);
             return;
         } finally {
             CloseUtils.safeClose(in);
         }
+
         info.cuid = dcmObj.getString(Tag.SOPClassUID);
         if (info.cuid == null) {
-            System.err.println("WARNING: Missing SOP Class UID in " + f + " - skipped.");
-            System.out.print('F');
+            LOGGER.warn("Missing SOP Class UID in {} - skipped.", item.getURI());
             return;
         }
         info.iuid = dcmObj.getString(Tag.SOPInstanceUID);
         if (info.iuid == null) {
-            System.err.println("WARNING: Missing SOP Instance UID in " + f + " - skipped.");
-            System.out.print('F');
+            LOGGER.warn("Missing SOP Instance UID in {} - skipped.", item.getURI());
             return;
         }
+
         addTransferCapability(info.cuid, info.tsuid);
         files.add(info);
-        System.out.print('.');
     }
 
     public void addTransferCapability(String cuid, String tsuid) {
@@ -532,7 +426,7 @@ public class DcmSnd extends StorageCommitmentService {
     public void start() throws IOException {
         if (conn.isListening()) {
             conn.bind(executor);
-            System.out.println("Start Server listening on port " + conn.getPort());
+            LOGGER.debug("Start Server listening on port {}", conn.getPort());
         }
     }
 
@@ -561,10 +455,10 @@ public class DcmSnd extends StorageCommitmentService {
             FileInfo info = files.get(i);
             TransferCapability tc = assoc.getTransferCapabilityAsSCU(info.cuid);
             if (tc == null) {
-                System.out.println();
-                System.out.println(
-                        UIDDictionary.getDictionary().prompt(info.cuid) + " not supported by " + remoteAE.getAETitle());
-                System.out.println("skip file " + info.f);
+                LOGGER.warn("{} not supported by {}, skip file {}",
+                        UIDDictionary.getDictionary().prompt(info.cuid),
+                        remoteAE.getAETitle(),
+                        info.item.getURI());
                 continue;
             }
 
@@ -572,11 +466,11 @@ public class DcmSnd extends StorageCommitmentService {
             String tsuid =
                     selectTransferSyntax(tc.getTransferSyntax(), fileref ? DCM4CHEE_URI_REFERENCED_TS_UID : info.tsuid);
             if (tsuid == null) {
-                System.out.println();
-                System.out.println(UIDDictionary.getDictionary().prompt(info.cuid) + " with "
-                        + UIDDictionary.getDictionary().prompt(fileref ? DCM4CHEE_URI_REFERENCED_TS_UID : info.tsuid)
-                        + " not supported by " + remoteAE.getAETitle());
-                System.out.println("skip file " + info.f);
+                LOGGER.warn("{} with {} not supported by {}, skip file {}",
+                        UIDDictionary.getDictionary().prompt(info.cuid),
+                        UIDDictionary.getDictionary().prompt(fileref ? DCM4CHEE_URI_REFERENCED_TS_UID : info.tsuid),
+                        remoteAE.getAETitle(),
+                        info.item.getURI());
                 continue;
             }
 
@@ -584,7 +478,7 @@ public class DcmSnd extends StorageCommitmentService {
                 DimseRSPHandler rspHandler = new DimseRSPHandler() {
                     @Override
                     public void onDimseRSP(Association as, DicomObject cmd, DicomObject data) {
-                        DcmSnd.this.onDimseRSP(cmd);
+                        DicoogleDcmSend.this.onDimseRSP(cmd);
                     }
                 };
 
@@ -601,12 +495,9 @@ public class DcmSnd extends StorageCommitmentService {
                 // assoc.cstore(info.cuid, info.iuid, priority, assoc.getCallingAET(), priority, new DataWriter(info), tsuid, rspHandler);
 
             } catch (NoPresentationContextException e) {
-                System.err.println("WARNING: " + e.getMessage() + " - cannot send " + info.f);
-                System.out.print('F');
+                LOGGER.warn("Cannot send {}: {}", info.item.getURI(), e.getMessage());
             } catch (IOException e) {
-                e.printStackTrace();
-                System.err.println("ERROR: Failed to send - " + info.f + ": " + e.getMessage());
-                System.out.print('F');
+                LOGGER.error("Failed to send {}", info.item.getURI(), e);
             } catch (InterruptedException e) {
                 // should not happen
                 e.printStackTrace();
@@ -637,7 +528,6 @@ public class DcmSnd extends StorageCommitmentService {
             }
         }
         try {
-            stgCmtResult = null;
             DimseRSP rsp =
                     assoc.naction(UID.StorageCommitmentPushModelSOPClass, UID.StorageCommitmentPushModelSOPInstance,
                             STG_CMT_ACTION_TYPE, actionInfo, UID.ImplicitVRLittleEndian);
@@ -647,14 +537,12 @@ public class DcmSnd extends StorageCommitmentService {
             if (status == 0) {
                 return true;
             }
-            System.err.println(
-                    "WARNING: Storage Commitment request failed with status: " + StringUtils.shortToHex(status) + "H");
-            System.err.println(cmd.toString());
+            LOGGER.error("Storage Commitment request failed with status: {}H", StringUtils.shortToHex(status));
+            LOGGER.error("Command: {}", cmd);
         } catch (NoPresentationContextException e) {
-            System.err.println("WARNING: " + e.getMessage() + " - cannot request Storage Commitment");
+            LOGGER.warn("Cannot request Storage Commitment: {}", e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("ERROR: Failed to send Storage Commitment request: " + e.getMessage());
+            LOGGER.warn("Failed to send Storage Commitment request", e);
         } catch (InterruptedException e) {
             // should not happen
             e.printStackTrace();
@@ -705,8 +593,9 @@ public class DcmSnd extends StorageCommitmentService {
         this.MoveOriginatorMessageID = MoveOriginatorMessageID;
     }
 
+    /** A descriptor for a DICOM object to be sent. */
     public static final class FileInfo {
-        File f;
+        StorageInputStream item;
 
         String cuid;
 
@@ -722,13 +611,21 @@ public class DcmSnd extends StorageCommitmentService {
 
         int status;
 
-        public FileInfo(File f) {
-            this.f = f;
-            this.length = f.length();
+        public FileInfo(StorageInputStream item) throws IOException {
+            this.item = item;
+            this.length = item.getSize();
+        }
+
+        public InputStream getInputStream() throws IOException {
+            InputStream iStream = this.item.getInputStream();
+            // if marking is supported, then it is likely already buffered
+            if (iStream.markSupported()) {
+                return iStream;
+            }
+            return new BufferedInputStream(iStream);
         }
 
     }
-
 
 
     private class DataWriter implements org.dcm4che2.net.DataWriter {
@@ -741,48 +638,29 @@ public class DcmSnd extends StorageCommitmentService {
 
         public void writeTo(PDVOutputStream out, String tsuid) throws IOException {
             if (tsuid.equals(info.tsuid)) {
-                InputStream fis = null;
-                if (info.f.getAbsolutePath().endsWith(".gz"))
-                    fis = new GZIPInputStream(new BufferedInputStream(new FileInputStream(info.f), 256));
-                else
-                    fis = new FileInputStream(info.f);
-
-                try {
+                try (InputStream fis = info.getInputStream()) {
                     long skip = info.fmiEndPos;
                     while (skip > 0)
                         skip -= fis.skip(skip);
+
                     out.copyFrom(fis);
-                } finally {
-                    fis.close();
                 }
             } else if (tsuid.equals(DCM4CHEE_URI_REFERENCED_TS_UID)) {
-                DicomObject attrs;
-                DicomInputStream dis = null;
-                if (info.f.getAbsolutePath().endsWith(".gz")) {
-                    dis = new DicomInputStream(
-                            new GZIPInputStream(new BufferedInputStream(new FileInputStream(info.f), 256)));
-                } else {
-                    dis = new DicomInputStream(info.f);
-                }
 
+                DicomObject attrs;
+                DicomInputStream dis = new DicomInputStream(info.getInputStream());
                 try {
                     dis.setHandler(new StopTagInputHandler(Tag.PixelData));
                     attrs = dis.readDicomObject();
                 } finally {
                     dis.close();
                 }
-                DicomOutputStream dos = new DicomOutputStream(out);
-                attrs.putString(Tag.RetrieveURI, VR.UT, info.f.toURI().toString());
-
-                dos.writeDataset(attrs, tsuid);
-            } else {
-                DicomInputStream dis = null;
-                if (info.f.getAbsolutePath().endsWith(".gz")) {
-                    dis = new DicomInputStream(
-                            new GZIPInputStream(new BufferedInputStream(new FileInputStream(info.f), 256)));
-                } else {
-                    dis = new DicomInputStream(info.f);
+                try (DicomOutputStream dos = new DicomOutputStream(out)) {
+                    attrs.putString(Tag.RetrieveURI, VR.UT, info.toString());
+                    dos.writeDataset(attrs, tsuid);
                 }
+            } else {
+                DicomInputStream dis = new DicomInputStream(info.getInputStream());
                 try {
                     DicomOutputStream dos = new DicomOutputStream(out);
                     dos.setTransferSyntax(tsuid);
@@ -797,10 +675,16 @@ public class DcmSnd extends StorageCommitmentService {
 
     }
 
+    private void promptWarnRSP(String prefix, int status, FileInfo info, DicomObject cmd) {
+        LOGGER.warn("{} {}H for {}, cuid={}, tsuid={} (Command: {})",
+                prefix, StringUtils.shortToHex(status),
+                info.item.getURI(), info.cuid, info.tsuid, cmd);
+    }
+
     private void promptErrRSP(String prefix, int status, FileInfo info, DicomObject cmd) {
-        System.err.println(prefix + StringUtils.shortToHex(status) + "H for " + info.f + ", cuid=" + info.cuid
-                + ", tsuid=" + info.tsuid);
-        System.err.println(cmd.toString());
+        LOGGER.error("{} {}H for {}, cuid={}, tsuid={} (Command: {})",
+                prefix, StringUtils.shortToHex(status),
+                info.item.getURI(), info.cuid, info.tsuid, cmd);
     }
 
     private void onDimseRSP(DicomObject cmd) {
@@ -813,7 +697,6 @@ public class DcmSnd extends StorageCommitmentService {
                 info.transferred = true;
                 totalSize += info.length;
                 ++filesSent;
-                System.out.print('.');
                 break;
             case 0xB000:
             case 0xB006:
@@ -821,19 +704,16 @@ public class DcmSnd extends StorageCommitmentService {
                 info.transferred = true;
                 totalSize += info.length;
                 ++filesSent;
-                promptErrRSP("WARNING: Received RSP with Status ", status, info, cmd);
-                System.out.print('W');
+                promptWarnRSP("Received RSP with Status ", status, info, cmd);
                 break;
             default:
-                promptErrRSP("ERROR: Received RSP with Status ", status, info, cmd);
-                System.out.print('F');
+                promptErrRSP("Received RSP with Status ", status, info, cmd);
         }
     }
 
     @Override
     protected synchronized void onNEventReportRSP(Association as, int pcid, DicomObject rq, DicomObject info,
             DicomObject rsp) {
-        stgCmtResult = info;
         notifyAll();
     }
 
@@ -856,7 +736,7 @@ public class DcmSnd extends StorageCommitmentService {
 
     private static InputStream openFileOrURL(String url) throws IOException {
         if (url.startsWith("resource:")) {
-            return DcmSnd.class.getClassLoader().getResourceAsStream(url.substring(9));
+            return DicoogleDcmSend.class.getClassLoader().getResourceAsStream(url.substring(9));
         }
         try {
             return new URL(url).openStream();
