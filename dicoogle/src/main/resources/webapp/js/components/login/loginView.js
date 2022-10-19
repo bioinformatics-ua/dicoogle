@@ -3,7 +3,6 @@ import createReactClass from "create-react-class";
 import * as PropTypes from "prop-types";
 import * as UserActions from "../../actions/userActions";
 import UserStore from "../../stores/userStore";
-import { Panel } from "react-bootstrap";
 
 const LoginView = createReactClass({
   contextTypes: {

@@ -219,12 +219,12 @@ $borderRadiusVal: 0.25em;
 /*no inset arrow for first item*/
 .wizardbar-item:first-of-type {
   border-radius: $borderRadiusVal 0 0 $borderRadiusVal;
-  padding-left: $paddingSide + ($arrowLength/2);
+  padding-left: $paddingSide + calc($arrowLength/2);
 }
 /*no protruding arrow for last item*/
 .wizardbar-item:last-of-type {
   border-radius: 0 $borderRadiusVal $borderRadiusVal 0;
-  padding-right: $paddingSide + ($arrowLength/2);
+  padding-right: $paddingSide + calc($arrowLength/2);
 }
 
 .label-border {

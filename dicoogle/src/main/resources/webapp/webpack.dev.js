@@ -1,6 +1,7 @@
 /* eslint-env node */
 
-const merge = require("webpack-merge");
+const path = require('path');
+const {merge} = require("webpack-merge");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 process.env.NODE_ENV = "development";
@@ -10,7 +11,27 @@ module.exports = merge(common, {
   devtool: "eval-source-map",
   output: {
     filename: "dist/bundle.js",
-    path: __dirname
+    path: __dirname,
+  },
+  devServer: {
+    static: [
+      {
+        directory: path.join(__dirname, 'assets'),
+        publicPath: '/assets',
+      },
+      {
+        directory: path.join(__dirname, 'bootstrap'),
+        publicPath: '/bootstrap',
+      },
+      {
+        directory: path.join(__dirname, 'fonts'),
+        publicPath: '/fonts',
+      },
+      {
+        directory: path.join(__dirname, 'css'),
+        publicPath: '/css',
+      },
+    ],
   },
   plugins: [
     new HtmlWebpackPlugin({

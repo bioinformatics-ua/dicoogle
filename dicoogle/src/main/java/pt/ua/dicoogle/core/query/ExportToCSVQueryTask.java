@@ -19,7 +19,9 @@
 package pt.ua.dicoogle.core.query;
 
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -51,7 +53,7 @@ public class ExportToCSVQueryTask extends JointQueryTask {
         super();
         this.tagsOrder = tagsOrder;
         this.latch = new CountDownLatch(1);
-        writter = new PrintWriter(outputStream);
+        writter = new PrintWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
 
         printFirstLine();
     }

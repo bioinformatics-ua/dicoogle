@@ -18,6 +18,7 @@
  */
 package pt.ua.dicoogle.sdk.task;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -35,6 +36,7 @@ public class Task<Type> extends FutureTask<Type> {
     private String taskName;
     private Callable callable;
     private ArrayList<Runnable> toRunWhenComplete;
+    private LocalDateTime timeCreated;
 
     /** Create a new task with a randomly generated ID. */
     public Task(Callable<Type> c) {
@@ -52,6 +54,7 @@ public class Task<Type> extends FutureTask<Type> {
         this.uid = uid;
         taskName = name;
         toRunWhenComplete = new ArrayList<>();
+        this.timeCreated = LocalDateTime.now();
     }
 
     @Override
@@ -92,6 +95,14 @@ public class Task<Type> extends FutureTask<Type> {
             return ((ProgressCallable) this.callable).getProgress();
         }
         return -1;
+    }
+
+    /**
+     * Gets the time this task was created.
+     * @return Time the task was created.
+     */
+    public LocalDateTime getTimeCreated() {
+        return this.timeCreated;
     }
 
     private static String generateUID() {

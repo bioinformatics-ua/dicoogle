@@ -29,18 +29,22 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- *
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * A log line representing a DICOM event.
  */
 public class LogLine implements Serializable {
     static final long serialVersionUID = 1L;
 
-    private String type;
-    private String date;
-    private String ae;
-    private String add;
-    private String params;
+    private final String type;
+    @Deprecated
+    private final String date;
+    private final String ae;
+    private final String add;
+    private final String params;
 
+    /**
+     * @deprecated Discard the `date` parameter.
+     */
+    @Deprecated
     public LogLine(String type, String date, String ae, String add, String params) {
         this.type = type;
         this.date = date;
@@ -49,13 +53,25 @@ public class LogLine implements Serializable {
         this.params = params;
     }
 
-    public static String getDateTime() {
+    /**
+     * @param type the type of event
+     * @param ae the peer AE title
+     * @param add the additional information about the operation
+     * @param params the parameters of the operation
+     */
+    public LogLine(String type, String ae, String add, String params) {
+        this.type = type;
+        this.date = getDateTime();
+        this.ae = ae;
+        this.add = add;
+        this.params = params;
+    }
+
+    private static String getDateTime() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
         return dateFormat.format(date);
     }
-
-
 
     /**
      * @return the type
@@ -65,60 +81,34 @@ public class LogLine implements Serializable {
     }
 
     /**
-     * @param type the type to set
+     * @return the date and time of the event
+     * 
+     * @deprecated Will be removed in Dicoogle 4 in favor of
+     * letting the logger record the date and time of the event.
      */
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    /**
-     * @return the date
-     */
+    @Deprecated
     public String getDate() {
         return date;
     }
 
     /**
-     * @param date the date to set
-     */
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    /**
-     * @return the ae
+     * @return the AE title
      */
     public String getAe() {
         return ae;
     }
 
     /**
-     * @param ae the ae to set
-     */
-    public void setAe(String ae) {
-        this.ae = ae;
-    }
-
-    /**
-     * @return the add
+     * @return the additional information
      */
     public String getAdd() {
         return add;
     }
 
     /**
-     * @param add the add to set
+     * @return the additional parameters
      */
-    public void setAdd(String add) {
-        this.add = add;
-    }
-
-
     public String getParams() {
         return params;
-    }
-
-    public void setParams(String params) {
-        this.params = params;
     }
 }

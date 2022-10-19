@@ -26,6 +26,8 @@ import pt.ua.dicoogle.sdk.datastructs.IndexReport;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.task.Task;
 
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -64,7 +66,7 @@ public class RunningIndexTasks {
 
     public void addTask(String taskUid, Task<Report> task) {
         taskRunningList.put(taskUid, task);
-        if (ENABLE_HOOK && !cleaning.compareAndSet(false, true)){
+        if (ENABLE_HOOK && !cleaning.compareAndSet(false, true)) {
             // will execute cleaning process
             hookRemoveRunningTasks();
             cleaning.set(false); // already cleaned
@@ -136,6 +138,7 @@ public class RunningIndexTasks {
         entry.put("taskUid", task.getUid());
         entry.put("taskName", task.getName());
         entry.put("taskProgress", task.getProgress());
+        entry.put("taskTimeCreated", task.getTimeCreated().format(DateTimeFormatter.ISO_DATE_TIME));
 
         if (task.isDone() && !task.isCancelled()) {
             entry.put("complete", true);

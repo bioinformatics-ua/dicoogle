@@ -1,4 +1,7 @@
+// import styles
 import "../sass/dicoogle.scss";
+
+// main application
 import React from "react";
 import * as PropTypes from "prop-types";
 import ReactDOM from "react-dom";
@@ -23,7 +26,7 @@ import * as UserActions from "./actions/userActions";
 import UserStore from "./stores/userStore";
 
 import "@ungap/custom-elements-builtin";
-import "core-js/shim";
+import "core-js/stable";
 import "bootstrap";
 
 class App extends React.Component {

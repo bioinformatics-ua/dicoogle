@@ -43,7 +43,10 @@ import org.xml.sax.XMLReader;
 /**
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
+ * @see LogDICOM
+ * @deprecated Legacy functionality, use only `LogDICOM` to log DICOM events.
  */
+@Deprecated
 public class LogXML extends DefaultHandler {
 
     // private final String filename = Platform.homePath() + "DICOM_Services_Log.xml";
@@ -91,6 +94,11 @@ public class LogXML extends DefaultHandler {
     }
 
     public LogDICOM getXML() {
+        if (!logs.isPersistent()) {
+            // Disable XML logs
+            return logs;
+        }
+
         try {
             File file = new File(filename);
             if (!file.exists()) {
@@ -111,7 +119,10 @@ public class LogXML extends DefaultHandler {
     }
 
     public void printXML() throws TransformerConfigurationException {
-
+        if (!logs.isPersistent()) {
+            // Disable XML logs
+            return;
+        }
 
         FileOutputStream out = null;
 

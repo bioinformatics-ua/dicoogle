@@ -10,13 +10,13 @@
     <parent>
         <groupId>pt.ua.ieeta</groupId>
         <artifactId>dicoogle-all</artifactId>
-        <version>3.0.5</version>
+        <version>3.1.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <log4j.version>2.16.0</log4j.version>
+        <log4j.version>2.17.1</log4j.version>
         <maven.build.timestamp.format>yyyyMMdd_HHmm</maven.build.timestamp.format>
         <buildNumber>${maven.build.timestamp}</buildNumber>
     </properties>
@@ -166,7 +166,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>2.7</version>
+                <version>3.2.0</version>
                 <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
@@ -186,6 +186,27 @@
                                         <include>version.txt</include>
                                     </includes>
                                     <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <!-- Replace jetty encoding.properties -->
+                    <execution>
+                        <id>replace-encoding-properties</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/org/eclipse/jetty/http</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/src/main/resources</directory>
+                                    <includes>
+                                        <include>encoding.properties</include>
+                                    </includes>
+                                    <filtering>false</filtering>
                                 </resource>
                             </resources>
                         </configuration>

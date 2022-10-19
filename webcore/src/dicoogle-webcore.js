@@ -550,7 +550,7 @@ export const webUISlot = m.webUISlot;
           }
         }
 
-        attributeChangedCallback(attrName, oldValue, newValue) {
+        attributeChangedCallback(attrName, _oldValue, _newValue) {
           // console.log('[CALLBACK] Dicoogle attribute changed');
           if (attrName === 'data-slot-id' || attrName === 'data-plugin-name') {
             m.updateSlot(this);

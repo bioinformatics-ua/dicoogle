@@ -71,7 +71,6 @@ const ImageView = createReactClass({
           src={thumbUrl}
           style={{ width: "64px", cursor: "pointer" }}
         >
-          <img />
           <img src="assets/image-not-found.png" width="64px" />
           {this._preloader()}
         </ImageLoader>
@@ -139,6 +138,7 @@ const ImageView = createReactClass({
               type: "image",
               uri: item.uri,
               uid: item.sopInstanceUID,
+              instanceNumber: item.number,
               // deprecated data properties
               "data-result-type": "image",
               "data-result-uri": item.uri,
@@ -206,11 +206,19 @@ const ImageView = createReactClass({
         >
           <TableHeaderColumn
             dataAlign="left"
+            dataField="number"
+            dataSort
+            width="100"
+          >
+            Instance #
+          </TableHeaderColumn>
+          <TableHeaderColumn
+            dataAlign="left"
             dataField="fileName"
             isKey
             dataFormat={this.formatFileName}
             dataSort
-            width="20%"
+            width="25%"
           >
             File Name
           </TableHeaderColumn>
@@ -361,7 +369,11 @@ var PopOverView = createReactClass({
     this.setState({ data: null });
     this.props.onHide();
   },
-
+  createCustomExportCSVButton : function(onClick) {
+    return (
+      <button className="btn btn_dicoogle" onClick={ onClick }><i className="fa fa-download"></i> Export CSV</button>
+    );
+  },
   render: function() {
     if (this.state.data === null) {
       return (
@@ -385,20 +397,28 @@ var PopOverView = createReactClass({
     var rows = [];
 
     var fields = [];
+    
     Object.keys(obj).forEach(function(key, i) {
       rows.push(
         <p key={i}>
           <b>{key}:</b> {obj[key]}
         </p>
       );
-      fields.push({ att: key, field: obj[key] });
+      // Using capital letter in _A_ttribute and _V_alue to keep consistency in CSV Header Export.
+      fields.push({ Attribute: key, Value: obj[key] });
     });
+
+    // Add URI as location definition of the DICOM resource.
+    fields.push({ att: "URI", field:this.state.data.data.results.uri });
 
     var selectRowProp = {
       clickToSelect: true,
       mode: "none",
       bgColor: "rgb(163, 210, 216)",
       onSelect: this.onRowSelect
+    };
+    const options = {
+      exportCSVBtn: this.createCustomExportCSVButton
     };
     return (
       <Modal
@@ -419,6 +439,9 @@ var PopOverView = createReactClass({
             data={fields}
             selectRow={selectRowProp}
             condensed
+            options={options}
+            exportCSV
+            csvFileName={`${this.props.uid}.csv`}
             pagination
             striped
             hover
@@ -428,7 +451,7 @@ var PopOverView = createReactClass({
           >
             <TableHeaderColumn
               dataAlign="right"
-              dataField="att"
+              dataField="Attribute"
               width="20%"
               isKey
               dataSort
@@ -437,12 +460,13 @@ var PopOverView = createReactClass({
             </TableHeaderColumn>
             <TableHeaderColumn
               dataAlign="left"
-              dataField="field"
+              dataField="Value"
               width="40%"
               isKey={false}
+              tdStyle={{ whiteSpace: 'normal', wordWrap: 'break-word' }} // To avoid shorten the field text 
               dataSort
             >
-              Field
+              Value
             </TableHeaderColumn>
           </BootstrapTable>
         </div>

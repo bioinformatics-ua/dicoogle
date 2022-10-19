@@ -2,7 +2,7 @@
   "extends": [
     "eslint:recommended"
   ],
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "parserOptions": {
     "ecmaVersion": 6,
     "sourceType": "module",
@@ -50,7 +50,13 @@
     "semi-spacing": 0,
     "eqeqeq": 1,
     "no-alert": 1,
-    "no-unused-vars": [1, {"vars": "all", "args": "none"}],
+    "no-unused-vars": [1, {
+      "vars": "all",
+      "args": "none",
+      "varsIgnorePattern": "^_",
+      "argsIgnorePattern": "^_",
+      "ignoreRestSiblings": true
+    }],
     "no-extra-semi": 1,
     "eol-last": 1,
     "no-empty": 1,

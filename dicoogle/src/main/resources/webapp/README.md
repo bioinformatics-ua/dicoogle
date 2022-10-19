@@ -16,17 +16,6 @@ To build and watch for changes, you can run the webpack development server via t
 
     npm start
 
-## Running as a standalone server
-
-We have included a script for running a static server containing the standalone webapp.
-If you already have Python installed, execute:
-
-```sh
-./run_server
-```
-
-But other static HTTP servers may be used as well.
-
 ## Debugging the webapp
 
 The web application can be tested separately without having it embedded in a jar file. The steps are simple:
@@ -51,7 +40,19 @@ You can also run one of the other scripts available and deploy a static server o
 
 ```
 DICOOGLE_BASE_URL=http://localhost:8080 npm run build-debug
-./run_server
+npx static-http .
 ```
 
 See the **Building** section above for more scripts.
+
+## Running as a standalone server
+
+Running `npm start` is the recommended way to serve the webapp for development purposes.
+But if you wish to serve the webapp separately from Dicoogle,
+you can build it against a different Dicoogle endpoint (see above)
+and use any other static HTTP server to serve this folder.
+
+```sh
+DICOOGLE_BASE_URL=http://«dicoogle-hostname»:8080 npm run build
+npx static-http .
+```

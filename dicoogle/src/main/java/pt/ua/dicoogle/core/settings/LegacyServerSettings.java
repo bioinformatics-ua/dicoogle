@@ -1225,10 +1225,10 @@ public class LegacyServerSettings implements ServerSettings {
         public void setNodeName(String nodeName) {
             LegacyServerSettings.this.setNodeName(nodeName);
         }
-      
+
         @Override
         public void setEncryptUsersFile(boolean encrypt) {
-          LegacyServerSettings.this.setEncryptUsersFile(encrypt); 
+            LegacyServerSettings.this.setEncryptUsersFile(encrypt);
         }
 
         @JsonGetter("save-thumbnails")
@@ -1284,11 +1284,22 @@ public class LegacyServerSettings implements ServerSettings {
         public String getNodeName() {
             return LegacyServerSettings.this.getNodeName();
         }
-      
+        
         @JsonGetter("encrypt-users-file")
         @Override
         public boolean isEncryptUsersFile() {
-          return LegacyServerSettings.this.isEncryptUsersFile();
+            return LegacyServerSettings.this.isEncryptUsersFile();
+        }
+
+        @JsonGetter("call-shutdown")
+        @Override
+        public boolean isCallShutdown() {
+            return false;
+        }
+
+        @Override
+        public void setCallShutdown(boolean shutdown) {
+            // no-op, not supported
         }
     }
 

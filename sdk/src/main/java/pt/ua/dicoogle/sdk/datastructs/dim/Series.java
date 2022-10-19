@@ -54,6 +54,7 @@ public class Series implements SeriesInterface {
 
     private ArrayList<URI> imageList = new ArrayList<>();
     private ArrayList<String> UIDList = new ArrayList<>();
+    private ArrayList<String> instanceNumbers = new ArrayList<>();
 
     public Series(Study study, String SeriesInstanceUID, String modality) {
         this.parent = study;
@@ -70,11 +71,33 @@ public class Series implements SeriesInterface {
     }
 
 
-    public void addImage(URI ImagePath, String sopUid) {
-        this.imageList.add(ImagePath);
-        this.UIDList.add(sopUid);
+    /** Add an instance to the end of the series' instance lists.
+     * Instance Number is left empty.
+     * 
+     * @param imageURI the URI of the instance
+     * @param sopUid the SOP Instance UID
+     * @see #addInstance(String, String, String)
+     */
+    public void addImage(URI imageURI, String sopUid) {
+        this.addImage(imageURI, sopUid, null);
     }
 
+    /** Add an instance to the end of the series' instance lists.
+     * 
+     * @param imageURI the URI of the instance
+     * @param sopUid the SOP Instance UID
+     * @param instanceNumber the instance number
+     */
+    public void addImage(URI imageURI, String sopUid, String instanceNumber) {
+        this.imageList.add(imageURI);
+        this.UIDList.add(sopUid);
+        this.instanceNumbers.add(instanceNumber);
+    }
+
+    /**
+     * @deprecated Dangerous method, do not use.
+     */
+    @Deprecated
     public void removeImage(URI imagePath) {
         this.imageList.remove(imagePath);
     }
@@ -109,14 +132,40 @@ public class Series implements SeriesInterface {
     }
 
     /**
-     * @return the imageList
+     * Gets the underlying URI list of the images in the series.
+     * It is recommended that the list is not modified from the outside.
+     *
+     * @return the underlying list of image URIs,
+     * in order of appearance
      */
     public ArrayList<URI> getImageList() {
         return imageList;
     }
 
+    /**
+     * Gets the underlying list of SOP instance UIDs
+     * of the images in the series.
+     * It is recommended that the list is not modified from the outside.
+     *
+     * @return the underlying list of SOP Instance UIDs,
+     * in order of appearance.
+     */
     public ArrayList<String> getSOPInstanceUIDList() {
         return UIDList;
+    }
+
+    /**
+     * Gets the underlying list of instance number values
+     * of the images in the series.
+     * Note that the list may contain null values.
+     * 
+     * It is recommended that the list is not modified from the outside.
+     * 
+     * @return the underlying list of Instance Numbers,
+     * in order of appearance.
+     */
+    public ArrayList<String> getInstanceNumberList() {
+        return instanceNumbers;
     }
 
     /**
@@ -125,6 +174,10 @@ public class Series implements SeriesInterface {
     public void setImageList(ArrayList<URI> imageList, ArrayList<String> sops) {
         this.imageList = imageList;
         this.UIDList = sops;
+    }
+
+    public void setInstanceNumberList(ArrayList<String> list) {
+        this.instanceNumbers = list;
     }
 
     /**

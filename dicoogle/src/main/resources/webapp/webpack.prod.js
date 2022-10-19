@@ -1,7 +1,8 @@
 /* eslint-env node */
 
-const merge = require("webpack-merge");
+const {merge} = require("webpack-merge");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 
 process.env.NODE_ENV = "production";
 const common = require("./webpack.common");
@@ -30,5 +31,17 @@ module.exports = merge(common, {
       },
       hash: false
     })
-  ]
+  ],
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: true,
+          },
+        },
+      })
+    ]
+  }
 });

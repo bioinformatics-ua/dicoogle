@@ -60,7 +60,7 @@ public class SearchServlet extends HttpServlet {
 
     private final Collection<String> DEFAULT_FIELDS = Arrays.asList("SOPInstanceUID", "StudyInstanceUID",
             "SeriesInstanceUID", "PatientID", "PatientName", "PatientSex", "Modality", "StudyDate", "StudyID",
-            "StudyDescription", "SeriesNumber", "SeriesDescription", "InstitutionName", "uri");
+            "StudyDescription", "SeriesNumber", "SeriesDescription", "InstitutionName", "InstanceNumber", "uri");
 
     public enum SearchType {
         ALL, PATIENT;
@@ -225,9 +225,10 @@ public class SearchServlet extends HttpServlet {
             if (this.searchType == SearchType.PATIENT) {
                 try {
                     DIMGeneric dimModel = new DIMGeneric(ImmutableList.copyOf(results));
+                    JSONObject obj = dimModel.getJSONObject(depth, offset, psize);
                     elapsedTime = System.currentTimeMillis() - elapsedTime;
-                    response.getWriter().write(dimModel.getJSON());
-                    // dimModel.writeJSON(response.getWriter(), elapsedTime, depth, offset, psize);
+                    obj.put("elapsedTime", elapsedTime);
+                    response.getWriter().write(obj.toString());
                 } catch (Exception e) {
                     logger.warn("Failed to get DIM", e);
                 }

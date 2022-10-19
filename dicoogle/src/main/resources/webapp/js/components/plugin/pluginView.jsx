@@ -67,6 +67,7 @@ export default class PluginView extends React.Component {
           <div>{this.state.elements[plugin]}</div>
         ) : (
           <dicoogle-slot
+            key={`${this.props.slotId}.${plugin}`}
             {...this.props.data}
             ref={this.handleMounted}
             data-slot-id={this.props.slotId}
