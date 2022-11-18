@@ -23,14 +23,7 @@ import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
 import pt.ua.dicoogle.sdk.utils.TagsStruct;
 import pt.ua.dicoogle.server.web.rest.VersionResource;
-import pt.ua.dicoogle.server.web.servlets.RestletHttpServlet;
-import pt.ua.dicoogle.server.web.servlets.ExportToCSVServlet;
-import pt.ua.dicoogle.server.web.servlets.SettingsServlet;
-import pt.ua.dicoogle.server.web.servlets.TagsServlet;
-import pt.ua.dicoogle.server.web.servlets.ExportCSVToFILEServlet;
-import pt.ua.dicoogle.server.web.servlets.SearchHolderServlet;
-import pt.ua.dicoogle.server.web.servlets.IndexerServlet;
-import pt.ua.dicoogle.server.web.servlets.ImageServlet;
+import pt.ua.dicoogle.server.web.servlets.*;
 import pt.ua.dicoogle.server.web.servlets.plugins.PluginsServlet;
 import pt.ua.dicoogle.server.web.servlets.management.*;
 import pt.ua.dicoogle.server.web.servlets.search.*;
@@ -143,6 +136,9 @@ public class DicoogleWeb {
         final ServletContextHandler dic2png = createServletHandler(new ImageServlet(cache), "/dic2png");
         cache.start(); // start the caching system
 
+        // setup the ROI extractor
+        final ServletContextHandler roiExtractor = createServletHandler(new ROIServlet(cache), "/roi");
+
         // setup the DICOM to PNG image servlet
         final ServletContextHandler dictags = createServletHandler(new TagsServlet(), "/dictags");
 
@@ -181,7 +177,7 @@ public class DicoogleWeb {
         PluginRestletApplication.attachRestPlugin(new VersionResource());
 
         // list the all the handlers mounted above
-        Handler[] handlers = new Handler[] {pluginHandler, legacyHandler, dic2png, dictags,
+        Handler[] handlers = new Handler[] {pluginHandler, legacyHandler, dic2png, roiExtractor, dictags,
                 createServletHandler(new IndexerServlet(), "/indexer"), // DEPRECATED
                 createServletHandler(new SettingsServlet(), "/settings"), csvServletHolder,
                 createServletHandler(new LoginServlet(), "/login"),
