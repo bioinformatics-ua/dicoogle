@@ -45,7 +45,6 @@ const AboutView = createReactClass({
             in research and the healthcare industry, as many use cases can be
             fulfilled in the same deployment.
           </div>
-          <br />
         </Panel>
         <Panel bsStyle="primary">
           <Panel.Heading>
