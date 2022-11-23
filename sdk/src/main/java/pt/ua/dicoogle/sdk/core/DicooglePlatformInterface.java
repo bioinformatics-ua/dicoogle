@@ -29,7 +29,6 @@ import pt.ua.dicoogle.sdk.StorageInterface;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.datastructs.dim.DimLevel;
-import pt.ua.dicoogle.sdk.imageworker.ImageWorkerInterface;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettingsReader;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
@@ -213,21 +212,6 @@ public interface DicooglePlatformInterface {
      * @return a list of reports, one for each provider
      */
     public List<Report> indexBlocking(URI path);
-
-    /** Gets the image worker with the given name.
-     *
-     * @param name the unique name of the worker
-     * @param onlyEnabled whether only enabled plugins should be retrieved (all are retrieved if {@code false})
-     * @return the image worker with the given name or null if it doesn't exist
-     */
-    public ImageWorkerInterface getImageWorkerByName(String name, boolean onlyEnabled);
-
-    /** Gets all the image workers available.
-     *
-     * @param onlyEnabled whether only enabled plugins should be retrieved (all are retrieved if {@code false})
-     * @return a collection with all image workers available
-     */
-    public Collection<ImageWorkerInterface> getImageWorkers(boolean onlyEnabled);
 
     /** Obtain access to the server's settings.
      * @return an object for read-only access to the settings

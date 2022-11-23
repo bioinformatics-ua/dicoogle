@@ -32,7 +32,6 @@ import pt.ua.dicoogle.sdk.core.DicooglePlatformInterface;
 import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.datastructs.dim.DimLevel;
-import pt.ua.dicoogle.sdk.imageworker.ImageWorkerInterface;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettingsReader;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
@@ -161,16 +160,6 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
     @Override
     public List<Report> indexBlocking(URI path) {
         return pluginController.indexBlocking(path);
-    }
-
-    @Override
-    public ImageWorkerInterface getImageWorkerByName(String name, boolean onlyEnabled) {
-        return pluginController.getImageWorkerInterfaceByName(name, onlyEnabled);
-    }
-
-    @Override
-    public Collection<ImageWorkerInterface> getImageWorkers(boolean onlyEnabled) {
-        return pluginController.getImageWorkerPlugins(onlyEnabled);
     }
 
     @Override

@@ -30,18 +30,15 @@ public class ROIServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(ROIServlet.class);
     private static final long serialVersionUID = 1L;
 
-    private final LocalImageCache cache;
     private final String queryProvider;
     private final ROIExtractor roiExtractor;
     private HashMap<String, String> extraFields;
 
     /**
-     * Creates an image servlet.
+     * Creates ROI servlet servlet.
      *
-     * @param cache the local image caching system, can be null and if so no caching mechanism will be used.
      */
-    public ROIServlet(LocalImageCache cache) {
-        this.cache = cache;
+    public ROIServlet() {
         this.roiExtractor = new ROIExtractor();
         List<String> dicomProviders = ServerSettingsManager.getSettings().getArchiveSettings().getDIMProviders();
         queryProvider = dicomProviders.iterator().next();
