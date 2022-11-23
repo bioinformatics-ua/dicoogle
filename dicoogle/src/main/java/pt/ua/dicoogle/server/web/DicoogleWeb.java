@@ -137,7 +137,7 @@ public class DicoogleWeb {
         cache.start(); // start the caching system
 
         // setup the ROI extractor
-        final ServletContextHandler roiExtractor = createServletHandler(new ROIServlet(cache), "/roi");
+        final ServletContextHandler roiExtractor = createServletHandler(new ROIServlet(), "/roi");
 
         // setup the DICOM to PNG image servlet
         final ServletContextHandler dictags = createServletHandler(new TagsServlet(), "/dictags");
