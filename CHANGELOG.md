@@ -1,6 +1,23 @@
 # CHANGELOG
 This document intends to keep track of the changes performed on the various releases of Dicoogle.
 
+## 3.2
+
+### 3.2.0 (2022-11-23)
+
+- New: Add opt-in `call-shutdown` setting to call plugin shutdown routines on Dicoogle shutdown (#606)
+- Enhancement: Replace DcmSend with custom DICOM sender (#604)
+- Enhancement: Fix and update OpenAPI specification (#591)
+- Enhancement: [webcore] Update example webplugins (#585)
+- Enhancement: [webapp] Added capability to export dump of metadata to CSV  (#593)
+- Enhancement: [webapp] Show URI on image meta-data dump  (#592)
+- Enhancement: [webapp] Improve aligments in the about page (#616)
+- Enhancement: Remove duplicate SOP classes in transfer options (#607)
+- [openapi] Fix user management endpoint API specification (#603)
+- Chore: Update npm dependencies (#608, #570, #612, #613, #614, #596)
+- Chore: Update README/remove not used files (#611, #615)
+
+
 ## 3.1
 
 ### 3.1.0 (2022-06-24)
