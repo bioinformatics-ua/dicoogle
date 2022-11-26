@@ -1,47 +1,35 @@
 package pt.ua.dicoogle.server.web.dicom;
 
-import org.dcm4che3.data.Attributes;
 import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
 import org.dcm4che3.imageio.plugins.dcm.DicomImageReader;
 import org.dcm4che3.imageio.plugins.dcm.DicomMetaData;
-import org.dcm4che3.io.BulkDataDescriptor;
-import org.dcm4che3.io.DicomInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pt.ua.dicoogle.sdk.StorageInputStream;
 import pt.ua.dicoogle.sdk.datastructs.dim.BulkAnnotation;
 import pt.ua.dicoogle.sdk.datastructs.dim.Point2D;
 import pt.ua.dicoogle.sdk.datastructs.wsi.WSIFrame;
 import pt.ua.dicoogle.sdk.datastructs.wsi.WSISopDescriptor;
+import pt.ua.dicoogle.server.web.utils.cache.WSICache;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
 
 public class ROIExtractor {
 
     private static final Logger logger = LoggerFactory.getLogger(ROIExtractor.class);
-    private static final String EXTENSION_GZIP = ".gz";
-    private static final int BUFFER_SIZE = 8192;
 
-    public BufferedImage extractROI(StorageInputStream sis, BulkAnnotation bulkAnnotation) {
+    public BufferedImage extractROI(DicomMetaData dicomMetaData, BulkAnnotation bulkAnnotation) {
 
         ImageReader imageReader = getImageReader();
 
-        DicomMetaData dicomMetaData;
-        try {
-            dicomMetaData = getDicomMetadata(sis);
-        } catch (IOException e) {
-            logger.error("Error reading DICOM file", e);
+        if(imageReader == null)
             return null;
-        }
 
         DicomImageReadParam param;
         try{
@@ -63,8 +51,6 @@ public class ROIExtractor {
 
         return null;
     }
-
-
 
     private static ImageReader getImageReader() {
         Iterator<ImageReader> iter = ImageIO.getImageReadersByFormatName("DICOM");
@@ -206,30 +192,4 @@ public class ROIExtractor {
         g.dispose();
         return combined;
     }
-
-    private DicomMetaData getDicomMetadata(StorageInputStream sis) throws IOException{
-        Attributes fmi;
-        Attributes dataset;
-        DicomInputStream dis;
-
-        if(sis == null){
-            logger.info("Storage == null");
-            throw new InvalidParameterException("Could not find the desired URI");
-        }
-
-        String filePath = sis.getURI().getPath();
-        if (filePath.endsWith(EXTENSION_GZIP)){
-            InputStream inStream = new GZIPInputStream(new BufferedInputStream(new FileInputStream(filePath), BUFFER_SIZE));
-            dis = new DicomInputStream(inStream);
-        }
-        else {
-            dis = new DicomInputStream(new File(filePath));
-        }
-        dis.setIncludeBulkData(DicomInputStream.IncludeBulkData.URI);
-        dis.setBulkDataDescriptor(BulkDataDescriptor.PIXELDATA);
-        fmi = dis.readFileMetaInformation();
-        dataset = dis.readDataset(-1, -1);
-        return new DicomMetaData(fmi, dataset);
-    }
-
 }
