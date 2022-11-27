@@ -1,6 +1,5 @@
 package pt.ua.dicoogle.server.web.servlets;
 
-import org.dcm4che3.imageio.plugins.dcm.DicomMetaData;
 import org.restlet.data.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,6 @@ public class ROIServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(ROIServlet.class);
     private static final long serialVersionUID = 1L;
 
-    private final WSICache wsiCache;
     private final ROIExtractor roiExtractor;
 
     /**
@@ -33,7 +31,6 @@ public class ROIServlet extends HttpServlet {
      */
     public ROIServlet() {
         this.roiExtractor = new ROIExtractor();
-        this.wsiCache = WSICache.getInstance();
     }
 
     @Override
@@ -53,20 +50,6 @@ public class ROIServlet extends HttpServlet {
 
         if(x == null || x.isEmpty() || y == null || y.isEmpty() || width == null || width.isEmpty() || height == null || height.isEmpty()){
             response.sendError(Status.CLIENT_ERROR_BAD_REQUEST.getCode(), "ROI provided was invalid");
-            return;
-        }
-
-        DicomMetaData dicomMetaData;
-        try {
-            dicomMetaData = getDicomMetadata(sopInstanceUID);
-        } catch (IOException e) {
-            logger.error("Error reading DICOM file", e);
-            response.sendError(Status.SERVER_ERROR_INTERNAL.getCode(), "There was an error reading the file");
-            return;
-        }
-
-        if(dicomMetaData == null){
-            response.sendError(Status.CLIENT_ERROR_NOT_FOUND.getCode(), String.format("No instances exist with SOPInstanceUID: %s", sopInstanceUID));
             return;
         }
 
@@ -90,7 +73,7 @@ public class ROIServlet extends HttpServlet {
             return;
         }
 
-        BufferedImage bi = roiExtractor.extractROI(dicomMetaData, annotation);
+        BufferedImage bi = roiExtractor.extractROI(sopInstanceUID, annotation);
 
         if(bi != null){
             response.setContentType("image/jpeg");
@@ -101,10 +84,6 @@ public class ROIServlet extends HttpServlet {
         }
 
         response.sendError(Status.CLIENT_ERROR_NOT_FOUND.getCode(), "Could not build ROI with the provided UID");
-    }
-
-    private DicomMetaData getDicomMetadata(String sop) throws IOException{
-        return wsiCache.get(sop);
     }
 
 }
