@@ -25,6 +25,7 @@ import java.util.zip.GZIPInputStream;
 
 /**
  * Cache used to store DicomMetadata objects temporarily, as they are quite heavy to build on-demand
+ * @author Rui Jesus <r.jesus@ua.pt>
  */
 public class WSICache extends MemoryCache<DicomMetaData>{
 
@@ -56,11 +57,11 @@ public class WSICache extends MemoryCache<DicomMetaData>{
     private class WsiDcmLoader extends CacheLoader<String, DicomMetaData> {
 
         @Override
-        public DicomMetaData load(String key) throws Exception {
+        public DicomMetaData load(String sopInstanceUID) throws Exception {
 
             queryInterface = PluginController.getInstance().getQueryProviderByName(queryProvider, false);
 
-            URI uri = retrieveURI(key);
+            URI uri = retrieveURI(sopInstanceUID);
             if(uri == null){
                 logger.info("URI == null");
                 throw new InvalidParameterException("Could not find the desired URI");
