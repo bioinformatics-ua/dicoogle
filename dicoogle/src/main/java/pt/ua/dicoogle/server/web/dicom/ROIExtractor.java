@@ -23,13 +23,30 @@ import java.util.List;
 public class ROIExtractor {
 
     private static final Logger logger = LoggerFactory.getLogger(ROIExtractor.class);
+    private final WSICache wsiCache;
 
-    public BufferedImage extractROI(DicomMetaData dicomMetaData, BulkAnnotation bulkAnnotation) {
+    public ROIExtractor() {
+        this.wsiCache = WSICache.getInstance();
+    }
+
+    public BufferedImage extractROI(String sopInstanceUID, BulkAnnotation bulkAnnotation) {
 
         ImageReader imageReader = getImageReader();
 
         if(imageReader == null)
             return null;
+
+        DicomMetaData dicomMetaData;
+        try {
+            dicomMetaData = getDicomMetadata(sopInstanceUID);
+        } catch (IOException e) {
+            logger.error("Error reading DICOM file", e);
+            return null;
+        }
+
+        if(dicomMetaData == null){
+            return null;
+        }
 
         DicomImageReadParam param;
         try{
@@ -72,26 +89,26 @@ public class ROIExtractor {
     private List<List<WSIFrame>> getFrameMatrixFromAnnotation(WSISopDescriptor descriptor, BulkAnnotation annotation) {
 
         //Number of tiles along the x direction, number of columns in the frame matrix
-        int nx_tiles = (int) Math.ceil(descriptor.getTotalPixelMatrixColumns() / descriptor.getTileWidth());
+        int nx_tiles = (int) Math.ceil((descriptor.getTotalPixelMatrixColumns() * 1.0) / descriptor.getTileWidth());
 
         //Number of tiles along the y direction, number of rows in the frame matrix
-        int ny_tiles = (int) Math.ceil(descriptor.getTotalPixelMatrixRows() / descriptor.getTileHeight());
+        int ny_tiles = (int) Math.ceil((descriptor.getTotalPixelMatrixRows() * 1.0) / descriptor.getTileHeight());
 
         List<List<WSIFrame>> matrix = new ArrayList<>();
 
         switch (annotation.getAnnotationType()) {
             case RECTANGLE:
                 // Calculate the starting position of the annotation in frame coordinates
-                int x_c = (int) Math.floor(annotation.getPoints().get(0).getX() / descriptor.getTileWidth());
-                int y_c = (int) Math.floor(annotation.getPoints().get(0).getY() / descriptor.getTileHeight());
+                int x_c = annotation.getPoints().get(0).getX() / descriptor.getTileWidth();
+                int y_c = annotation.getPoints().get(0).getY() / descriptor.getTileHeight();
 
                 //Annotation is completely out of bounds, no intersection possible
                 if(x_c > nx_tiles || y_c > ny_tiles)
                     return matrix;
 
                 // Calculate the ending position of the annotation in frame coordinates
-                int x_e = (int) Math.floor(annotation.getPoints().get(3).getX() / descriptor.getTileWidth());
-                int y_e = (int) Math.floor(annotation.getPoints().get(3).getY() / descriptor.getTileHeight());
+                int x_e = annotation.getPoints().get(3).getX() / descriptor.getTileWidth();
+                int y_e = annotation.getPoints().get(3).getY() / descriptor.getTileHeight();
 
                 //Annotation might be out of bonds, adjust that
                 if(x_e > (nx_tiles - 1))
@@ -115,12 +132,13 @@ public class ROIExtractor {
 
     /**
      * Given an annotation and an image, return the section of the image the annotation intersects.
-     * @param annotation
-     * @param descriptor
+     * It only works with rectangle type annotations.
+     * @param annotation the annotation to intersect
+     * @param descriptor descriptor of the WSI pyramid, contains information about the dimmensions of the image.
      * @param imageReader
      * @param param
-     * @return
-     * @throws IllegalArgumentException
+     * @return the intersection of the annotation on the image.
+     * @throws IllegalArgumentException when the annotation is not one of the supported types.
      */
     private BufferedImage getROIFromAnnotation(BulkAnnotation annotation, WSISopDescriptor descriptor, ImageReader imageReader, DicomImageReadParam param) throws IllegalArgumentException {
         if(annotation.getAnnotationType() != BulkAnnotation.AnnotationType.RECTANGLE){
@@ -191,5 +209,9 @@ public class ROIExtractor {
 
         g.dispose();
         return combined;
+    }
+
+    private DicomMetaData getDicomMetadata(String sop) throws IOException{
+        return wsiCache.get(sop);
     }
 }
