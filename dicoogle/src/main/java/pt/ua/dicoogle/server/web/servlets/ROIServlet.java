@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.sdk.datastructs.dim.BulkAnnotation;
 import pt.ua.dicoogle.sdk.datastructs.dim.Point2D;
 import pt.ua.dicoogle.server.web.dicom.ROIExtractor;
-import pt.ua.dicoogle.server.web.utils.cache.WSICache;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
