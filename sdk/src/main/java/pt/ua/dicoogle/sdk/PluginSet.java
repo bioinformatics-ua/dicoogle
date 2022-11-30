@@ -25,7 +25,6 @@ import net.xeoh.plugins.base.Plugin;
 
 import org.restlet.resource.ServerResource;
 
-import pt.ua.dicoogle.sdk.imageworker.ImageWorkerInterface;
 import pt.ua.dicoogle.sdk.mlprovider.MLProviderInterface;
 import pt.ua.dicoogle.sdk.settings.ConfigurationHolder;
 
@@ -106,16 +105,6 @@ public interface PluginSet extends Plugin {
      * @see MLProviderInterface
      */
     public default Collection<? extends MLProviderInterface> getMLPlugins() {
-        return Collections.EMPTY_LIST;
-    }
-
-    /**
-     * Obtains a collection of ImageWorker plugins, so as to integrate Image Worker plugins such as ROI extraction plugins in Dicoogle.
-     * This collection must be immutable.
-     * @return a collection of ImageWorker plugins to the core application
-     * @see ImageWorkerInterface
-     */
-    public default Collection<? extends ImageWorkerInterface> getImageWorkerPlugins() {
         return Collections.EMPTY_LIST;
     }
 
