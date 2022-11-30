@@ -32,7 +32,9 @@ import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.UnindexReport;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.datastructs.dim.DimLevel;
+import pt.ua.dicoogle.sdk.datastructs.dim.ImageROI;
 import pt.ua.dicoogle.sdk.mlprovider.MLDataset;
+import pt.ua.dicoogle.sdk.mlprovider.MLPrediction;
 import pt.ua.dicoogle.sdk.mlprovider.MLProviderInterface;
 import pt.ua.dicoogle.sdk.settings.ConfigurationHolder;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
@@ -44,6 +46,8 @@ import pt.ua.dicoogle.core.mlprovider.CreateDatasetRequest;
 import pt.ua.dicoogle.taskManager.RunningIndexTasks;
 import pt.ua.dicoogle.taskManager.TaskManager;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -574,7 +578,6 @@ public class PluginController {
 
     }
 
-
     public Task<Iterable<SearchResult>> query(String querySource, final String query, final DimLevel level,
             final Object... parameters) {
         Task<Iterable<SearchResult>> t = getTaskForQueryDim(querySource, query, level, parameters);
@@ -876,12 +879,22 @@ public class PluginController {
     }
 
     /**
-     * This method creates a {@link PrepareDatasetTask}.
-     * The task is responsible for creating a directory where the processed dataset will be placed.
-     * After the task is finished, the chosen mlProvider will be invoked to upload the dataset.
-     * @param datasetRequest the dataset to upload.
+     * This method orders a prediction on the selected image, using the selected provider.
+     * @param bos image to classify.
+     * @param provider provider to use.
      * @return the created task
      */
+    public Task<MLPrediction> makePredictionOverImage(final ByteArrayOutputStream bos, final String provider) {
+        MLProviderInterface providerInterface = this.getMachineLearningProviderByName(provider, true);
+        if(providerInterface == null)
+            return null;
+
+        String taskName = "MLPredictionTask" + UUID.randomUUID();
+        Task<MLPrediction> result = providerInterface.makePredictionOverImage(bos);
+        result.setName(taskName);
+        return result;
+    }
+
     public Task<MLDataset> prepareMLDataset(final CreateDatasetRequest datasetRequest) {
         String uuid = UUID.randomUUID().toString();
         Task<MLDataset> prepareTask =
