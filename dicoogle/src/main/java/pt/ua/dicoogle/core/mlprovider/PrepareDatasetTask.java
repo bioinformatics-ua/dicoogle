@@ -1,14 +1,10 @@
 package pt.ua.dicoogle.core.mlprovider;
 
-import org.dcm4che3.io.DicomInputStream;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.imageworker.ImageROI;
-import pt.ua.dicoogle.sdk.imageworker.ImageWorkerInterface;
 import pt.ua.dicoogle.sdk.mlprovider.MLDataset;
 import pt.ua.dicoogle.sdk.mlprovider.MLImageDataset;
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
