@@ -1,5 +1,6 @@
 package pt.ua.dicoogle.server.web.servlets.mlprovider;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.restlet.data.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,13 +91,20 @@ public class MakePredictionServlet extends HttpServlet {
         ImageIO.write(bi, "jpg", bos);
 
         Task<MLPrediction> task = PluginController.getInstance().makePredictionOverImage(bos, provider);
+        if(task == null){
+            response.sendError(Status.SERVER_ERROR_INTERNAL.getCode(), "Could not create prediction task");
+            return;
+        }
+
         task.onCompletion(() -> {
             try {
                 MLPrediction prediction = task.get();
-                response.setContentType("text/html");
+                ObjectMapper mapper = new ObjectMapper();
+                response.setContentType("application/json");
                 PrintWriter out = response.getWriter();
-                out.append("This is a test");
+                mapper.writeValue(out, prediction);
                 out.close();
+                out.flush();
             } catch (InterruptedException | ExecutionException e) {
                 log.error("Could not make prediction", e);
                 try {
@@ -109,5 +117,6 @@ public class MakePredictionServlet extends HttpServlet {
             }
         });
 
+        task.run();
     }
 }
