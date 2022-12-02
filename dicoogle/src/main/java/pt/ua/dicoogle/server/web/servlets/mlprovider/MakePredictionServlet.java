@@ -78,13 +78,13 @@ public class MakePredictionServlet extends HttpServlet {
             }
         }
 
-        int nX, nY, nWidth, nHeight;
+        double nX, nY, nWidth, nHeight;
 
         try{
-            nX = Integer.parseInt(x);
-            nY = Integer.parseInt(y);
-            nWidth = Integer.parseInt(width);
-            nHeight = Integer.parseInt(height);
+            nX = Double.parseDouble(x);
+            nY = Double.parseDouble(y);
+            nWidth = Double.parseDouble(width);
+            nHeight = Double.parseDouble(height);
         } catch (NumberFormatException e){
             response.sendError(Status.CLIENT_ERROR_BAD_REQUEST.getCode(), "ROI provided was invalid");
             return;
@@ -164,7 +164,7 @@ public class MakePredictionServlet extends HttpServlet {
      * @param scale to transform coordinates
      * @return the ml prediction with the converted coordinates.
      */
-    private void convertCoordinates(MLPrediction prediction, int x, int y, double scale){
+    private void convertCoordinates(MLPrediction prediction, double x, double y, double scale){
         for(BulkAnnotation ann : prediction.getAnnotations()){
             for(Point2D p : ann.getPoints()){
                 p.setX((p.getX() + x)/scale);

@@ -124,7 +124,7 @@ public class ROIExtractor {
                     matrix.add(new ArrayList<>());
                     for (int j = x_c; j <= x_e; j++) {
                         WSIFrame frame = new WSIFrame(descriptor.getTileWidth(), descriptor.getTileHeight(), j, i, i * nx_tiles + j);
-                        matrix.get(i).add(frame);
+                        matrix.get(i-y_c).add(frame);
                     }
                 }
                 break;
