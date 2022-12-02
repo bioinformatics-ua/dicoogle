@@ -31,4 +31,12 @@ public class MLPrediction {
     public void setAnnotations(List<BulkAnnotation> annotations) {
         this.annotations = annotations;
     }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 }
