@@ -552,7 +552,6 @@ public class PluginController {
         Collection<MLProviderInterface> plugins = getMLPlugins(onlyEnabled);
         for (MLProviderInterface p : plugins) {
             if (p.getName().equalsIgnoreCase(name)) {
-                // logger.info("Retrived Query Provider: "+name);
                 return p;
             }
         }
