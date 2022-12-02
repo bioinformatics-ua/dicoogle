@@ -1,15 +1,18 @@
 package pt.ua.dicoogle.server.web.servlets.mlprovider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.dcm4che3.imageio.plugins.dcm.DicomMetaData;
 import org.restlet.data.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.dim.BulkAnnotation;
 import pt.ua.dicoogle.sdk.datastructs.dim.Point2D;
+import pt.ua.dicoogle.sdk.datastructs.wsi.WSISopDescriptor;
 import pt.ua.dicoogle.sdk.mlprovider.MLPrediction;
 import pt.ua.dicoogle.sdk.task.Task;
 import pt.ua.dicoogle.server.web.dicom.ROIExtractor;
+import pt.ua.dicoogle.server.web.utils.cache.WSICache;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
@@ -30,11 +33,14 @@ public class MakePredictionServlet extends HttpServlet {
 
     private final ROIExtractor roiExtractor;
 
+    private final WSICache wsiCache;
+
     /**
      * Creates ROI servlet servlet.
      *
      */
     public MakePredictionServlet() {
+        this.wsiCache = WSICache.getInstance();
         this.roiExtractor = new ROIExtractor();
     }
 
@@ -47,6 +53,8 @@ public class MakePredictionServlet extends HttpServlet {
         String width = request.getParameter("width");
         String height = request.getParameter("height");
         String provider = request.getParameter("provider");
+        String wsi = request.getParameter("wsi");
+        final String baseSopInstanceUID = request.getParameter("baseUID");
 
         if(sopInstanceUID == null || sopInstanceUID.isEmpty()){
             response.sendError(Status.CLIENT_ERROR_BAD_REQUEST.getCode(), "SOPInstanceUID provided was invalid");
@@ -63,27 +71,38 @@ public class MakePredictionServlet extends HttpServlet {
             return;
         }
 
-        BulkAnnotation annotation;
+        if(wsi != null && wsi.equals("true")){
+            if(baseSopInstanceUID == null || baseSopInstanceUID.isEmpty()){
+                response.sendError(Status.CLIENT_ERROR_BAD_REQUEST.getCode(), "WSI was selected but a valid base SopInstanceUID was not provided");
+                return;
+            }
+        }
+
+        int nX, nY, nWidth, nHeight;
+
         try{
-            int nX = Integer.parseInt(x);
-            int nY = Integer.parseInt(y);
-            int nWidth = Integer.parseInt(width);
-            int nHeight = Integer.parseInt(height);
-            annotation = new BulkAnnotation();
-            Point2D tl = new Point2D(nX, nY);
-            Point2D tr = new Point2D(nX + nWidth, nY);
-            Point2D bl = new Point2D(nX, nY + nHeight);
-            Point2D br = new Point2D(nX + nWidth, nY + nHeight);
-            List<Point2D> points = new ArrayList<>();
-            points.add(tl); points.add(tr); points.add(bl); points.add(br);
-            annotation.setPoints(points);
-            annotation.setAnnotationType(BulkAnnotation.AnnotationType.RECTANGLE);
+            nX = Integer.parseInt(x);
+            nY = Integer.parseInt(y);
+            nWidth = Integer.parseInt(width);
+            nHeight = Integer.parseInt(height);
         } catch (NumberFormatException e){
             response.sendError(Status.CLIENT_ERROR_BAD_REQUEST.getCode(), "ROI provided was invalid");
             return;
         }
 
-        BufferedImage bi = roiExtractor.extractROI(sopInstanceUID, annotation);
+        BulkAnnotation annotation = new BulkAnnotation();
+        Point2D tl = new Point2D(nX, nY);
+        Point2D tr = new Point2D(nX + nWidth, nY);
+        Point2D bl = new Point2D(nX, nY + nHeight);
+        Point2D br = new Point2D(nX + nWidth, nY + nHeight);
+        List<Point2D> points = new ArrayList<>();
+        points.add(tl); points.add(tr); points.add(bl); points.add(br);
+        annotation.setPoints(points);
+        annotation.setAnnotationType(BulkAnnotation.AnnotationType.RECTANGLE);
+
+        DicomMetaData dicomMetaData = this.getDicomMetadata(sopInstanceUID);
+
+        BufferedImage bi = roiExtractor.extractROI(dicomMetaData, annotation);
 
         // mount the resulting memory stream
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -99,6 +118,20 @@ public class MakePredictionServlet extends HttpServlet {
         task.onCompletion(() -> {
             try {
                 MLPrediction prediction = task.get();
+
+                // Coordinates need to be converted if we're working with WSI
+                if(wsi.equals("true")){
+                    WSISopDescriptor descriptor = new WSISopDescriptor();
+                    descriptor.extractData(dicomMetaData.getAttributes());
+                    DicomMetaData base = this.getDicomMetadata(baseSopInstanceUID);
+                    WSISopDescriptor baseDescriptor = new WSISopDescriptor();
+                    baseDescriptor.extractData(base.getAttributes());
+                    double scale = (descriptor.getTotalPixelMatrixRows() * 1.0) / baseDescriptor.getTotalPixelMatrixRows();
+                    if(scale != 1){ // scale will be 1 if the levels match, no conversion needed
+                        convertCoordinates(prediction, nX, nY, scale);
+                    }
+                }
+
                 ObjectMapper mapper = new ObjectMapper();
                 response.setContentType("application/json");
                 PrintWriter out = response.getWriter();
@@ -118,5 +151,25 @@ public class MakePredictionServlet extends HttpServlet {
         });
 
         task.run();
+    }
+
+    private DicomMetaData getDicomMetadata(String sop) throws IOException{
+        return wsiCache.get(sop);
+    }
+
+    /**
+     * When working with WSI, it is convenient to have coordinates relative to the base of the pyramid.
+     * This method takes care of that.
+     * @param prediction
+     * @param scale to transform coordinates
+     * @return the ml prediction with the converted coordinates.
+     */
+    private void convertCoordinates(MLPrediction prediction, int x, int y, double scale){
+        for(BulkAnnotation ann : prediction.getAnnotations()){
+            for(Point2D p : ann.getPoints()){
+                p.setX((p.getX() + x)/scale);
+                p.setY((p.getY() + y)/scale);
+            }
+        }
     }
 }
