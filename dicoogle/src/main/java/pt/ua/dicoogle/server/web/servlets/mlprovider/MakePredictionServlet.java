@@ -127,9 +127,7 @@ public class MakePredictionServlet extends HttpServlet {
                     WSISopDescriptor baseDescriptor = new WSISopDescriptor();
                     baseDescriptor.extractData(base.getAttributes());
                     double scale = (descriptor.getTotalPixelMatrixRows() * 1.0) / baseDescriptor.getTotalPixelMatrixRows();
-                    if(scale != 1){ // scale will be 1 if the levels match, no conversion needed
-                        convertCoordinates(prediction, nX, nY, scale);
-                    }
+                    convertCoordinates(prediction, nX, nY, scale);
                 }
 
                 ObjectMapper mapper = new ObjectMapper();
