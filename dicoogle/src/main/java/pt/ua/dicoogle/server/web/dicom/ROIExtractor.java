@@ -1,5 +1,6 @@
 package pt.ua.dicoogle.server.web.dicom;
 
+import javafx.scene.shape.Ellipse;
 import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
 import org.dcm4che3.imageio.plugins.dcm.DicomImageReader;
 import org.dcm4che3.imageio.plugins.dcm.DicomMetaData;
@@ -100,7 +101,7 @@ public class ROIExtractor {
             throw new IllegalArgumentException("Trying to build a ROI with an unsupported annotation type");
         }
 
-        List<Point2D> constructionPoints = getOuterRectangle(annotation); //Points that will be used to construct the ROI.
+        List<Point2D> constructionPoints = annotation.getBoundingBox(); //Points that will be used to construct the ROI.
 
         Point2D annotationPoint1 = constructionPoints.get(0);
         Point2D annotationPoint2 = constructionPoints.get(3);
@@ -115,7 +116,7 @@ public class ROIExtractor {
         BufferedImage combined = new BufferedImage(annotationWidth, annotationHeight, BufferedImage.TYPE_INT_RGB);
         Graphics g = combined.getGraphics();
 
-        // We need to perform clipping
+        // We need to perform clipping if annotation is not a rectangle
         Shape clippingShape = null;
         if(annotation.getAnnotationType() != BulkAnnotation.AnnotationType.RECTANGLE){
             clippingShape = getClippingShape(annotation, constructionPoints.get(0));
@@ -179,51 +180,6 @@ public class ROIExtractor {
     }
 
     /**
-     * From a bulk annotation, find its outer rectangle. Only applicable to shape annotations.
-     * @param annotation
-     * @return a list of 4 points, representing a rectangle that contains the provided annotation.
-     */
-    private List<Point2D> getOuterRectangle(BulkAnnotation annotation){
-
-        double minX = Double.MAX_VALUE;
-        double minY = Double.MAX_VALUE;
-        double maxX = Double.MIN_VALUE;
-        double maxY = Double.MIN_VALUE;
-
-        switch (annotation.getAnnotationType()){
-            case RECTANGLE:
-                return annotation.getPoints();
-            case POLYGON:
-            case POLYLINE:
-                for(Point2D p : annotation.getPoints()){
-                    if(p.getX() > maxX)
-                        maxX = p.getX();
-                    if(p.getX() < minX)
-                        minX = p.getX();
-
-                    if(p.getY() > maxY)
-                        maxY = p.getY();
-                    if(p.getY() < minY)
-                        minY = p.getY();
-                }
-                break;
-            case ELLIPSE:
-                minX = annotation.getPoints().get(0).getX();
-                maxX = annotation.getPoints().get(1).getX();
-                minY = annotation.getPoints().get(2).getY();
-                maxY = annotation.getPoints().get(3).getY();
-                break;
-        }
-
-        Point2D tl = new Point2D(minX, minY);
-        Point2D tr = new Point2D(maxX, minY);
-        Point2D bl = new Point2D(minX, maxY);
-        Point2D br = new Point2D(maxX, maxY);
-
-        return Arrays.asList(tl, tr, bl, br);
-    }
-
-    /**
      * Given an annotation, get it as a Shape to apply as a clipping shape for the ROIs.
      * The points of this shape are normalized according to the starting point.
      * This is only needed when dealing with non-rectangle annotations.
@@ -247,7 +203,7 @@ public class ROIExtractor {
                 double minY = annotation.getPoints().get(2).getY();
                 double maxY = annotation.getPoints().get(3).getY();
 
-                return new Ellipse2D.Double(minX, minY, Math.abs(maxX - minX), Math.abs(maxY - minY));
+                return new Ellipse2D.Double(minX - startingPoint.getX(), minY - startingPoint.getY(), Math.abs(maxX - minX), Math.abs(maxY - minY));
 
             default:
                 return null;
