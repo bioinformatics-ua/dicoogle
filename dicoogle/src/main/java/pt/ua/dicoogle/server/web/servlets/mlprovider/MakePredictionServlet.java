@@ -99,15 +99,22 @@ public class MakePredictionServlet extends HttpServlet {
             try {
                 MLPrediction prediction = task.get();
 
+                if(prediction == null){
+                    log.error("Provider returned null prediction");
+                    response.sendError(Status.SERVER_ERROR_INTERNAL.getCode(), "Could not make prediction");
+                    return;
+                }
+
                 // Coordinates need to be converted if we're working with WSI
-                if(wsi){
+                if(wsi && !prediction.getAnnotations().isEmpty()){
                     WSISopDescriptor descriptor = new WSISopDescriptor();
                     descriptor.extractData(dicomMetaData.getAttributes());
                     DicomMetaData base = this.getDicomMetadata(baseSopInstanceUID);
                     WSISopDescriptor baseDescriptor = new WSISopDescriptor();
                     baseDescriptor.extractData(base.getAttributes());
                     double scale = (descriptor.getTotalPixelMatrixRows() * 1.0) / baseDescriptor.getTotalPixelMatrixRows();
-                    convertCoordinates(prediction, points.get(0).getX(), points.get(0).getY(), scale);
+                    Point2D tl = annotation.getBoundingBox().get(0);
+                    convertCoordinates(prediction, tl, scale);
                 }
 
                 response.setContentType("application/json");
@@ -138,14 +145,15 @@ public class MakePredictionServlet extends HttpServlet {
      * When working with WSI, it is convenient to have coordinates relative to the base of the pyramid.
      * This method takes care of that.
      * @param prediction
+     * @param tl top left corner of the bounding box of the annotation
      * @param scale to transform coordinates
      * @return the ml prediction with the converted coordinates.
      */
-    private void convertCoordinates(MLPrediction prediction, double x, double y, double scale){
+    private void convertCoordinates(MLPrediction prediction, Point2D tl, double scale){
         for(BulkAnnotation ann : prediction.getAnnotations()){
             for(Point2D p : ann.getPoints()){
-                p.setX((p.getX() + x)/scale);
-                p.setY((p.getY() + y)/scale);
+                p.setX((p.getX() + tl.getX())/scale);
+                p.setY((p.getY() + tl.getY())/scale);
             }
         }
     }
