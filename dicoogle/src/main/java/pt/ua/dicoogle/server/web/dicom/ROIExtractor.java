@@ -1,6 +1,5 @@
 package pt.ua.dicoogle.server.web.dicom;
 
-import javafx.scene.shape.Ellipse;
 import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
 import org.dcm4che3.imageio.plugins.dcm.DicomImageReader;
 import org.dcm4che3.imageio.plugins.dcm.DicomMetaData;
