@@ -33,7 +33,7 @@ import org.dcm4che2.net.Association;
 import org.dcm4che2.net.CommandUtils;
 import org.dcm4che2.net.Device;
 import org.dcm4che2.net.DicomServiceException;
-
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dcm4che2.net.NetworkApplicationEntity;
@@ -61,10 +61,12 @@ import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
 public class DicomStorage extends StorageService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DicomStorage.class);
+
     private SOPList list;
     private ServerSettings settings;
 
-    private Executor executor = new NewThreadExecutor("DicoogleStorage");
+    private Executor executor = new LoggingExecutor(new NewThreadExecutor("DicoogleStorage"), LOG);
     private Device device = new Device("DicoogleStorage");
     private NetworkApplicationEntity nae = new NetworkApplicationEntity();
     private NetworkConnection nc = new NetworkConnection();
@@ -235,7 +237,9 @@ public class DicomStorage extends StorageService {
      */
     public void cstore(final Association as, final int pcid, DicomObject rq, PDVInputStream dataStream, String tsuid)
             throws DicomServiceException, IOException {
-        // DebugManager.getSettings().debug(":: Verify Permited AETs @??C-Store Request ");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Checking permission for {} to store {}", as.getCallingAET(), rq.getString(Tag.SOPInstanceUID));
+        }
 
         boolean permited = false;
         Collection<String> allowedAETitles =
@@ -247,8 +251,7 @@ public class DicomStorage extends StorageService {
         }
 
         if (!permited) {
-            // DebugManager.getSettings().debug("Client association NOT permited: " + as.getCallingAET() + "!");
-            LoggerFactory.getLogger(DicomStorage.class).warn("Client association with {} NOT permitted!", as.getCallingAET());
+            LOG.warn("Client association with {} NOT permitted!", as.getCallingAET());
             as.abort();
 
             return;
@@ -257,7 +260,6 @@ public class DicomStorage extends StorageService {
         final DicomObject rsp = CommandUtils.mkRSP(rq, CommandUtils.SUCCESS);
         onCStoreRQ(as, pcid, rq, dataStream, tsuid, rsp);
         as.writeDimseRSP(pcid, rsp);
-        // onCStoreRSP(as, pcid, rq, dataStream, tsuid, rsp);
     }
 
     @Override
@@ -288,7 +290,8 @@ public class DicomStorage extends StorageService {
                 }
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
+            LOG.error("DICOM storage service failure:", e);
             throw new DicomServiceException(rq, Status.ProcessingFailure, e.getMessage());
         }
     }
@@ -377,11 +380,11 @@ public class DicomStorage extends StorageService {
                     else
                         PluginController.getInstance().indexBlocking(exam);
                 } catch (InterruptedException ex) {
-                    LoggerFactory.getLogger(DicomStorage.class).error("Could not take instance to index", ex);
+                    LOG.error("Could not take instance to index", ex);
+                } catch (Exception ex) {
+                    LOG.error("Unexpected error in storage index actor", ex);
                 }
-
             }
-
         }
     }
 
