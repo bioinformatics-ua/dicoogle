@@ -18,8 +18,6 @@
  */
 package pt.ua.dicoogle.server.queryretrieve;
 
-import aclmanager.core.LuceneQueryACLManager;
-import aclmanager.models.Principal;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -57,18 +55,14 @@ public class CMoveServiceSCP extends CMoveService {
 
 
     private DicomNetwork service = null;
-    private LuceneQueryACLManager luke;
 
-    public CMoveServiceSCP(String[] sopClasses, Executor executor, LuceneQueryACLManager luke) {
+    public CMoveServiceSCP(String[] sopClasses, Executor executor) {
         super(sopClasses, executor);
-        this.luke = luke;
     }
 
     public CMoveServiceSCP(String sopClass, Executor executor) {
         super(sopClass, executor);
-        this.luke = null;
     }
-
 
     @Override
 
@@ -152,12 +146,6 @@ public class CMoveServiceSCP extends CMoveService {
         }
         String query = cfind.getQueryString();
 
-        if (luke != null) {
-            String filterQuery = luke.produceQueryFilter(new Principal("AETitle", as.getCallingAET()));
-            if (query.length() > 0)
-                query += filterQuery;
-        }
-        // TODO: FIlter Query;
         SearchDicomResult search = new SearchDicomResult(query, true, extrafields, SearchDicomResult.QUERYLEVEL.IMAGE);
         ArrayList<URI> files = new ArrayList<URI>();
 

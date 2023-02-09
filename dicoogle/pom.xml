@@ -382,13 +382,6 @@
             <artifactId>dcm4che-imageio</artifactId>
             <version>${dcm4che.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.bmd.archive</groupId>
-            <artifactId>aclmanager</artifactId>
-            <version>1.2.0</version>
-        </dependency>
-
         <dependency>
             <groupId>pt.ua.ieeta</groupId>
             <artifactId>dicoogle-sdk</artifactId>

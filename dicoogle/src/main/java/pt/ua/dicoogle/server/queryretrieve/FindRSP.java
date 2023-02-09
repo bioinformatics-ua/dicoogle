@@ -26,9 +26,6 @@
  */
 package pt.ua.dicoogle.server.queryretrieve;
 
-import aclmanager.core.LuceneQueryACLManager;
-import aclmanager.models.Principal;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import org.slf4j.LoggerFactory;
@@ -64,14 +61,12 @@ public class FindRSP implements DimseRSP {
     SearchDicomResult search = null;
 
     private String callingAET;
-    private LuceneQueryACLManager luke;
 
-    public FindRSP(DicomObject keys, DicomObject rsp, String callingAET, LuceneQueryACLManager luke) {
+    public FindRSP(DicomObject keys, DicomObject rsp, String callingAET) {
         this.rsp = rsp;
         this.keys = keys;
 
         this.callingAET = callingAET;
-        this.luke = luke;
 
 
         /** Debug - show keys, rsp, index */
@@ -201,14 +196,6 @@ public class FindRSP implements DimseRSP {
     }
 
     private String applyQueryFilter(String normalQuery) {
-        if (luke == null)
-            return normalQuery;
-        // LuceneQueryACLManager luke = new LuceneQueryACLManager(manager);
-
-        String query = luke.produceQueryFilter(new Principal("AETitle", callingAET));
-        if (query.length() > 0)
-            return normalQuery + query;
-
         return normalQuery;
     }
 

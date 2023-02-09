@@ -33,7 +33,6 @@ import org.dcm4che2.net.DicomServiceException;
 import org.dcm4che2.net.DimseRSP;
 import org.dcm4che2.net.service.CFindService;
 
-import aclmanager.core.LuceneQueryACLManager;
 import pt.ua.dicoogle.DicomLog.LogDICOM;
 import pt.ua.dicoogle.DicomLog.LogLine;
 import pt.ua.dicoogle.DicomLog.LogXML;
@@ -52,19 +51,12 @@ public class CFindServiceSCP extends CFindService {
             ServerSettingsManager.getSettings().getDicomServicesSettings().getQueryRetrieveSettings().getRspDelay();
 
     private DicomNetwork service = null;
-    private LuceneQueryACLManager luke = null;
 
     private boolean superSpeed = false;
 
 
     public CFindServiceSCP(String[] multiSop, Executor e) {
         super(multiSop, e);
-        this.luke = null;
-    }
-
-    public CFindServiceSCP(String[] multiSop, Executor e, LuceneQueryACLManager luke) {
-        super(multiSop, e);
-        this.luke = luke;
     }
 
     /*** CFIND */
@@ -113,7 +105,7 @@ public class CFindServiceSCP extends CFindService {
          * Search information at Lucene Indexer
          * So the FindRSP will fill the DimRSP
          */
-        replay = new FindRSP(keys, rsp, as.getCallingAET(), luke);
+        replay = new FindRSP(keys, rsp, as.getCallingAET());
 
 
         if (!superSpeed) {
