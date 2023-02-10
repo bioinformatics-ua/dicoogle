@@ -3,6 +3,10 @@ This document intends to keep track of the changes performed on the various rele
 
 ## 3.2
 
+### 3.2.1 (2023-02-08)
+
+- Enhancement: DicomStorage - add guards on unexpected exceptions (#637)
+
 ### 3.2.0 (2022-11-23)
 
 - New: Add opt-in `call-shutdown` setting to call plugin shutdown routines on Dicoogle shutdown (#606)
