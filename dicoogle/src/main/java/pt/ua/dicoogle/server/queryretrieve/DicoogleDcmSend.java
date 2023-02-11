@@ -34,6 +34,7 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 
 
+import com.google.common.io.ByteStreams;
 import org.dcm4che2.data.BasicDicomObject;
 import org.dcm4che2.data.DicomElement;
 import org.dcm4che2.data.DicomObject;
@@ -618,6 +619,15 @@ public class DicoogleDcmSend extends StorageCommitmentService {
 
         public InputStream getInputStream() throws IOException {
             InputStream iStream = this.item.getInputStream();
+            // Put data in memory because stream may not support skip (e.g. CipherInputStream)
+            // and may cause an infinite look in writeTo method.
+            // Use markSupported method may also return true (stream wrappering)
+            if (iStream.available() == 0) {
+                byte[] byteArr = ByteStreams.toByteArray(new DicomInputStream(iStream));
+                InputStream fisRescue = new BufferedInputStream(new ByteArrayInputStream(byteArr));
+                return fisRescue;
+            }
+
             // if marking is supported, then it is likely already buffered
             if (iStream.markSupported()) {
                 return iStream;
