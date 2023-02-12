@@ -100,6 +100,8 @@ public class DicoogleDcmSend extends StorageCommitmentService {
     /** TransferSyntax: DCM4CHE URI Referenced */
     private static final String DCM4CHEE_URI_REFERENCED_TS_UID = "1.2.40.0.13.1.1.2.4.94";
 
+    private static final boolean FILE_READ_GUARD = System.getProperty("dicoogle.store.fileReadGuard", "").equalsIgnoreCase("true");
+
     private Executor executor = new NewThreadExecutor("DCMSND");
 
     private NetworkApplicationEntity remoteAE = new NetworkApplicationEntity();
@@ -619,13 +621,16 @@ public class DicoogleDcmSend extends StorageCommitmentService {
 
         public InputStream getInputStream() throws IOException {
             InputStream iStream = this.item.getInputStream();
-            // Put data in memory because stream may not support skip (e.g. CipherInputStream)
-            // and may cause an infinite look in writeTo method.
-            // Use markSupported method may also return true (stream wrappering)
-            if (iStream.available() == 0) {
-                byte[] byteArr = ByteStreams.toByteArray(new DicomInputStream(iStream));
-                InputStream fisRescue = new BufferedInputStream(new ByteArrayInputStream(byteArr));
-                return fisRescue;
+
+            if (FILE_READ_GUARD) {
+                // Put data in memory because some streams get stuck on skip (e.g. CipherInputStream)
+                // and may cause an infinite look in writeTo method.
+                // Use markSupported method may also return true (stream wrapping)
+                if (iStream.available() == 0) {
+                    byte[] byteArr = ByteStreams.toByteArray(new DicomInputStream(iStream));
+                    InputStream fisRescue = new BufferedInputStream(new ByteArrayInputStream(byteArr));
+                    return fisRescue;
+                }
             }
 
             // if marking is supported, then it is likely already buffered
