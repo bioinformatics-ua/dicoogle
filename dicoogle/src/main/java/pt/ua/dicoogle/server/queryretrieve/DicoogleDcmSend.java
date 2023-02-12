@@ -655,8 +655,7 @@ public class DicoogleDcmSend extends StorageCommitmentService {
             if (tsuid.equals(info.tsuid)) {
                 try (InputStream fis = info.getInputStream()) {
                     long skip = info.fmiEndPos;
-                    while (skip > 0)
-                        skip -= fis.skip(skip);
+                    skipExactly(fis, skip);
 
                     out.copyFrom(fis);
                 }
@@ -736,6 +735,26 @@ public class DicoogleDcmSend extends StorageCommitmentService {
         KeyStore keyStore = loadKeyStore(keyStoreURL, keyStorePassword);
         KeyStore trustStore = loadKeyStore(trustStoreURL, trustStorePassword);
         device.initTLS(keyStore, keyPassword != null ? keyPassword : keyStorePassword, trustStore);
+    }
+
+    private static void skipExactly(InputStream inputStream, long skip) throws IOException {
+        while (skip > 0) {
+            long skipped = inputStream.skip(skip);
+            if (skipped > 0) {
+                skip -= skipped;
+            } else {
+                // force a read so that we can continue skipping
+                byte[] buf = new byte[(int) (0x7FFF_FFFF & skip)];
+                int bytesRead = inputStream.read(buf);
+                if (bytesRead == -1) {
+                    // end of stream
+                    return;
+                }
+                if (bytesRead > 0) {
+                    skip -= bytesRead;
+                }
+            }
+        }
     }
 
     private static KeyStore loadKeyStore(String url, char[] password) throws GeneralSecurityException, IOException {
