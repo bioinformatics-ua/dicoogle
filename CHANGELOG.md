@@ -3,6 +3,10 @@ This document intends to keep track of the changes performed on the various rele
 
 ## 3.2
 
+## 3.2.2  (2023-02-13)
+
+- Fix: [C-MOVE] Fix problem related with infinite loop if skip IS returns zero
+
 ### 3.2.1 (2023-02-08)
 
 - Enhancement: DicomStorage - add guards on unexpected exceptions (#637)
