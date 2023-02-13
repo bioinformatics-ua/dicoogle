@@ -34,6 +34,7 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 
 
+import com.google.common.io.ByteStreams;
 import org.dcm4che2.data.BasicDicomObject;
 import org.dcm4che2.data.DicomElement;
 import org.dcm4che2.data.DicomObject;
@@ -98,6 +99,8 @@ public class DicoogleDcmSend extends StorageCommitmentService {
 
     /** TransferSyntax: DCM4CHE URI Referenced */
     private static final String DCM4CHEE_URI_REFERENCED_TS_UID = "1.2.40.0.13.1.1.2.4.94";
+
+    private static final boolean FILE_READ_GUARD = System.getProperty("dicoogle.store.fileReadGuard", "").equalsIgnoreCase("true");
 
     private Executor executor = new NewThreadExecutor("DCMSND");
 
@@ -618,6 +621,18 @@ public class DicoogleDcmSend extends StorageCommitmentService {
 
         public InputStream getInputStream() throws IOException {
             InputStream iStream = this.item.getInputStream();
+
+            if (FILE_READ_GUARD) {
+                // Put data in memory because some streams get stuck on skip (e.g. CipherInputStream)
+                // and may cause an infinite look in writeTo method.
+                // Use markSupported method may also return true (stream wrapping)
+                if (iStream.available() == 0) {
+                    byte[] byteArr = ByteStreams.toByteArray(new DicomInputStream(iStream));
+                    InputStream fisRescue = new BufferedInputStream(new ByteArrayInputStream(byteArr));
+                    return fisRescue;
+                }
+            }
+
             // if marking is supported, then it is likely already buffered
             if (iStream.markSupported()) {
                 return iStream;
@@ -640,8 +655,7 @@ public class DicoogleDcmSend extends StorageCommitmentService {
             if (tsuid.equals(info.tsuid)) {
                 try (InputStream fis = info.getInputStream()) {
                     long skip = info.fmiEndPos;
-                    while (skip > 0)
-                        skip -= fis.skip(skip);
+                    skipExactly(fis, skip);
 
                     out.copyFrom(fis);
                 }
@@ -721,6 +735,26 @@ public class DicoogleDcmSend extends StorageCommitmentService {
         KeyStore keyStore = loadKeyStore(keyStoreURL, keyStorePassword);
         KeyStore trustStore = loadKeyStore(trustStoreURL, trustStorePassword);
         device.initTLS(keyStore, keyPassword != null ? keyPassword : keyStorePassword, trustStore);
+    }
+
+    private static void skipExactly(InputStream inputStream, long skip) throws IOException {
+        while (skip > 0) {
+            long skipped = inputStream.skip(skip);
+            if (skipped > 0) {
+                skip -= skipped;
+            } else {
+                // force a read so that we can continue skipping
+                byte[] buf = new byte[(int) (0x7FFF_FFFF & skip)];
+                int bytesRead = inputStream.read(buf);
+                if (bytesRead == -1) {
+                    // end of stream
+                    return;
+                }
+                if (bytesRead > 0) {
+                    skip -= bytesRead;
+                }
+            }
+        }
     }
 
     private static KeyStore loadKeyStore(String url, char[] password) throws GeneralSecurityException, IOException {
