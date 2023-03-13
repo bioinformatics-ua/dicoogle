@@ -26,11 +26,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
-import org.apache.commons.codec.digest.DigestUtils;
+import com.google.common.hash.Hashing;
+
 import pt.ua.dicoogle.server.web.dicom.Convert2PNG;
 
 /**
@@ -227,7 +229,7 @@ public class LocalImageCache extends Thread implements ImageRetriever {
 
     protected static String toFileName(String imageUri, int frameNumber, boolean thumbnail) {
         String filecode = imageUri + ':' + frameNumber + ':' + (thumbnail ? '1' : '0');
-        return DigestUtils.sha256Hex(filecode) + ".png";
+        return Hashing.sha256().hashString(filecode, StandardCharsets.UTF_8).toString() + ".png";
     }
 
     @Override
