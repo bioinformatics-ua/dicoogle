@@ -18,7 +18,6 @@
  */
 package pt.ua.dicoogle.server.web;
 
-import org.apache.commons.codec.digest.Md5Crypt;
 import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
@@ -56,6 +55,7 @@ import pt.ua.dicoogle.server.web.servlets.management.TransferOptionsServlet;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.EnumSet;
 
@@ -78,6 +78,8 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlets.GzipFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.hash.Hashing;
 
 import pt.ua.dicoogle.server.LegacyRestletApplication;
 import pt.ua.dicoogle.server.web.servlets.accounts.LogoutServlet;
@@ -254,7 +256,7 @@ public class DicoogleWeb {
                 if (WebUIModuleServlet.isPrerelease(plugin.getVersion())) {
                     // pre-release, use hash (to facilitate development)
                     String fingerprint = PluginController.getInstance().getWebUIModuleJS(name);
-                    return '"' + Md5Crypt.md5Crypt(fingerprint.getBytes()) + '"';
+                    return '"' + Hashing.murmur3_32().hashString(fingerprint, StandardCharsets.UTF_8).toString() + '"';
                 } else {
                     // normal release, use weak ETag
                     String pProcess = req.getParameter("process");
