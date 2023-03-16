@@ -19,11 +19,6 @@
 package pt.ua.dicoogle.server.queryretrieve;
 
 
-import aclmanager.core.ACLManagerInterface;
-import aclmanager.core.ACLXMLParser;
-import aclmanager.core.LuceneQueryACLManager;
-import aclmanager.exceptions.CannotParseFileException;
-
 import java.io.File;
 import java.util.Collection;
 import java.util.concurrent.Executor;
@@ -94,8 +89,6 @@ public class QueryRetrieve extends DicomNetwork {
     private static String[] moveSop =
             {UID.StudyRootQueryRetrieveInformationModelMOVE, UID.PatientRootQueryRetrieveInformationModelMOVE};
 
-    private LuceneQueryACLManager luke;
-
     public QueryRetrieve() {
 
         super("DICOOGLE-QUERYRETRIEVE");
@@ -138,19 +131,8 @@ public class QueryRetrieve extends DicomNetwork {
         this.localAE.setMaxPDULengthReceive(s.getMaxPDULengthReceive() + 1000);
         this.localAE.setMaxPDULengthSend(s.getMaxPDULengthSend() + 1000);
 
-        try {// TODO: HERE IIII XD
-            File xmlFile = new File(Platform.homePath() + "aetitleFilter.xml");
-
-            if (xmlFile.exists()) {
-                ACLManagerInterface manager = ACLXMLParser.parseFromFile(xmlFile);
-                this.luke = new LuceneQueryACLManager(manager);
-            }
-        } catch (CannotParseFileException ex) {
-            LoggerFactory.getLogger(CFindServiceSCP.class).error(ex.getMessage(), ex);
-        }
-
-        this.localAE.register(new CMoveServiceSCP(moveSop, executor, luke));
-        this.localAE.register(new CFindServiceSCP(multiSop, executor, luke));
+        this.localAE.register(new CMoveServiceSCP(moveSop, executor));
+        this.localAE.register(new CFindServiceSCP(multiSop, executor));
         this.localAE.register(new VerificationService());
 
         this.localConn.setPort(s.getPort());
