@@ -9,6 +9,7 @@ on:
     paths:
      - 'dicoogle/src/main/resources/webapp/**'
      - 'webcore/**'
+     - '.github/workflows/node.yml'
 
 jobs:
   build:

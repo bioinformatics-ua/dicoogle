@@ -12,6 +12,7 @@ on:
      - 'short-license.txt'
      - 'dicoogle/**'
      - 'sdk/**'
+     - '.github/workflows/maven.yml'
      - '!dicoogle/src/main/resources/webapp/**'
 
 jobs:
