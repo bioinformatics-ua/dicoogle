@@ -6,6 +6,9 @@ on:
     branches: [ dev ]
   pull_request:
     branches: [ dev ]
+    paths:
+     - 'dicoogle/src/main/resources/webapp/**'
+     - 'webcore/**'
 
 jobs:
   build:
@@ -14,7 +17,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 16.x]
+        node-version: [16.x, lts/*, latest]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
         # Recommended versions to include:
         # - minimum supported version
@@ -22,12 +25,14 @@ jobs:
         # - latest stable
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
+        cache: 'npm'
     - working-directory: ./dicoogle/src/main/resources/webapp
       run: npm ci
-    - working-directory: ./dicoogle/src/main/resources/webapp
+    - name: Build webapp
+      working-directory: ./dicoogle/src/main/resources/webapp
       run: npm run build
