@@ -33,6 +33,6 @@ jobs:
         cache: 'npm'
     - working-directory: ./dicoogle/src/main/resources/webapp
       run: npm ci
-    - name: Build webapp
+    - name: Check & build webapp
       working-directory: ./dicoogle/src/main/resources/webapp
-      run: npm run build
+      run: npm run check && npm run build
