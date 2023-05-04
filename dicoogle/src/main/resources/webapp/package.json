@@ -91,6 +91,7 @@
     "webpack-merge": "^5.8.0"
   },
   "scripts": {
+    "check": "eslint js/**",
     "build": "webpack --config webpack.prod.js",
     "start": "webpack-dev-server --open --config webpack.dev.js",
     "precommit": "lint-staged",
