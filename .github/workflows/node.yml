@@ -32,9 +32,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        cache-dependency-path:
-         - 'dicoogle/src/main/resources/webapp'
-         - 'webcore'
+        cache-dependency-path: 'dicoogle/src/main/resources/webapp,webcore'
     - working-directory: ./dicoogle/src/main/resources/webapp
       run: npm ci
     - name: Check & build webapp
