@@ -605,7 +605,7 @@ public class PluginController {
                     return queryEngine.query(query, parameters);
                 } catch (RuntimeException ex) {
                     logger.warn("Query plugin {} failed unexpectedly", querySource, ex);
-                    return Collections.EMPTY_LIST;
+                    return Collections.emptyList();
                 }
 
             }
@@ -618,19 +618,30 @@ public class PluginController {
     private Task<Iterable<SearchResult>> getTaskForQueryDim(final String querySource, final String query,
             final DimLevel level, final Object... parameters) {
 
-        final QueryInterface queryEngine = getQueryProviderByName(querySource, true);
+        final QueryDimInterface queryEngine;
+        QueryDimInterface tmpQueryDimInterface;
+        try {
+            tmpQueryDimInterface = (QueryDimInterface) getQueryProviderByName(querySource, true);
+        } catch (NullPointerException ignored) {
+            tmpQueryDimInterface = null;
+        }
+
+        queryEngine = tmpQueryDimInterface;
+
         // returns a tasks that runs the query from the selected query engine
         String uid = UUID.randomUUID().toString();
         Task<Iterable<SearchResult>> queryTask = new Task<>(uid, querySource, new Callable<Iterable<SearchResult>>() {
             @Override
-            public Iterable<SearchResult> call() throws Exception {
-                if (queryEngine == null || !(queryEngine instanceof QueryDimInterface))
+            public Iterable<SearchResult> call() {
+                if (queryEngine == null) {
+                    logger.warn("Query plugin {} did not produce valid DIM query provider", querySource);
                     return Collections.emptyList();
+                }
                 try {
                     return queryEngine.query(query, level, parameters);
                 } catch (RuntimeException ex) {
                     logger.warn("Query plugin {} failed unexpectedly", querySource, ex);
-                    return Collections.EMPTY_LIST;
+                    return Collections.emptyList();
                 }
 
             }
