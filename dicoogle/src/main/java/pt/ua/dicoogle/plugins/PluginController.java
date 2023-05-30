@@ -619,14 +619,13 @@ public class PluginController {
             final DimLevel level, final Object... parameters) {
 
         final QueryDimInterface queryEngine;
-        QueryDimInterface tmpQueryDimInterface;
-        try {
-            tmpQueryDimInterface = (QueryDimInterface) getQueryProviderByName(querySource, true);
-        } catch (NullPointerException ignored) {
-            tmpQueryDimInterface = null;
+        QueryInterface tmpQueryDimInterface = getQueryProviderByName(querySource, true);
+        if (tmpQueryDimInterface instanceof QueryDimInterface) {
+            queryEngine = (QueryDimInterface) tmpQueryDimInterface;
+        } else {
+            logger.warn("Query plugin {} is not a DIM query provider", querySource);
+            queryEngine = null;
         }
-
-        queryEngine = tmpQueryDimInterface;
 
         // returns a tasks that runs the query from the selected query engine
         String uid = UUID.randomUUID().toString();
@@ -634,7 +633,8 @@ public class PluginController {
             @Override
             public Iterable<SearchResult> call() {
                 if (queryEngine == null) {
-                    logger.warn("Query plugin {} did not produce valid DIM query provider", querySource);
+                    logger.warn("Could not query provider {} as a DIM source", querySource);
+
                     return Collections.emptyList();
                 }
                 try {
