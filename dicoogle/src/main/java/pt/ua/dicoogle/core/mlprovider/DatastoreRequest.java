@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Java object to represent create dataset requests
+ * Java object to represent datastore requests
  * @author Rui Jesus
  */
-public class CreateDatasetRequest {
+public class DatastoreRequest {
 
     /**
      * The name of the ML Provider plugin to update the dataset to.

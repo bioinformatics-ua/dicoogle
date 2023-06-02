@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pt.ua.dicoogle.core.mlprovider.CreateDatasetRequest;
+import pt.ua.dicoogle.core.mlprovider.DatastoreRequest;
 import pt.ua.dicoogle.plugins.PluginController;
 
 import javax.servlet.ServletException;
@@ -13,9 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class CreateDatasetServlet extends HttpServlet {
+public class DatastoreServlet extends HttpServlet {
 
-    private static final Logger log = LoggerFactory.getLogger(CreateDatasetServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(DatastoreServlet.class);
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -27,9 +27,9 @@ public class CreateDatasetServlet extends HttpServlet {
         }
 
         ObjectMapper mapper = new ObjectMapper();
-        CreateDatasetRequest datasetRequest;
+        DatastoreRequest datasetRequest;
         try {
-            datasetRequest = mapper.readValue(dataString, CreateDatasetRequest.class);
+            datasetRequest = mapper.readValue(dataString, DatastoreRequest.class);
             /*
             if(PluginController.getInstance().getMachineLearningProviderByName(datasetRequest.getProviderName(), true) == null){
                 resp.sendError(404, "The requested provider does not exist");
