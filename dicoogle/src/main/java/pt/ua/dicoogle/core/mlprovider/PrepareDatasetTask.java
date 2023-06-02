@@ -2,21 +2,19 @@ package pt.ua.dicoogle.core.mlprovider;
 
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
-import pt.ua.dicoogle.sdk.datastructs.dim.ImageROI;
 import pt.ua.dicoogle.sdk.mlprovider.MLDataset;
 import pt.ua.dicoogle.sdk.mlprovider.MLImageDataset;
 import pt.ua.dicoogle.server.web.dicom.ROIExtractor;
 import pt.ua.dicoogle.server.web.utils.cache.WSICache;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
 public class PrepareDatasetTask implements Callable<MLDataset> {
 
-    private final CreateDatasetRequest request;
+    private final DatastoreRequest request;
     private final PluginController controller;
     private String dataset;
 
@@ -24,7 +22,7 @@ public class PrepareDatasetTask implements Callable<MLDataset> {
 
     private final WSICache wsiCache;
 
-    public PrepareDatasetTask(PluginController controller, CreateDatasetRequest request) {
+    public PrepareDatasetTask(PluginController controller, DatastoreRequest request) {
         this.controller = controller;
         this.request = request;
         this.dataset = UUID.randomUUID().toString();
