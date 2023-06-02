@@ -23,6 +23,7 @@ import org.apache.commons.io.FileUtils;
 import org.restlet.resource.ServerResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pt.ua.dicoogle.core.mlprovider.DatastoreRequest;
 import pt.ua.dicoogle.core.mlprovider.PrepareDatasetTask;
 import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
@@ -32,9 +33,9 @@ import pt.ua.dicoogle.sdk.datastructs.Report;
 import pt.ua.dicoogle.sdk.datastructs.UnindexReport;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.datastructs.dim.DimLevel;
-import pt.ua.dicoogle.sdk.datastructs.dim.ImageROI;
 import pt.ua.dicoogle.sdk.mlprovider.MLDataset;
 import pt.ua.dicoogle.sdk.mlprovider.MLPrediction;
+import pt.ua.dicoogle.sdk.mlprovider.MLPredictionRequest;
 import pt.ua.dicoogle.sdk.mlprovider.MLProviderInterface;
 import pt.ua.dicoogle.sdk.settings.ConfigurationHolder;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
@@ -42,12 +43,9 @@ import pt.ua.dicoogle.sdk.task.Task;
 import pt.ua.dicoogle.server.ControlServices;
 import pt.ua.dicoogle.server.PluginRestletApplication;
 import pt.ua.dicoogle.server.web.DicoogleWeb;
-import pt.ua.dicoogle.core.mlprovider.CreateDatasetRequest;
 import pt.ua.dicoogle.taskManager.RunningIndexTasks;
 import pt.ua.dicoogle.taskManager.TaskManager;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -879,23 +877,22 @@ public class PluginController {
 
     /**
      * This method orders a prediction on the selected image, using the selected provider.
-     * @param bos image to classify.
      * @param provider provider to use.
-     * @param modelID the model identifier of the provider to use.
+     * @param predictionRequest
      * @return the created task
      */
-    public Task<MLPrediction> makePredictionOverImage(final ByteArrayOutputStream bos, final String provider, final String modelID) {
+    public Task<MLPrediction> makePredictionOverImage(final String provider, final MLPredictionRequest predictionRequest) {
         MLProviderInterface providerInterface = this.getMachineLearningProviderByName(provider, true);
         if(providerInterface == null)
             return null;
 
         String taskName = "MLPredictionTask" + UUID.randomUUID();
-        Task<MLPrediction> result = providerInterface.makePredictionOverImage(bos, modelID);
+        Task<MLPrediction> result = providerInterface.makePrediction(predictionRequest);
         result.setName(taskName);
         return result;
     }
 
-    public Task<MLDataset> prepareMLDataset(final CreateDatasetRequest datasetRequest) {
+    public Task<MLDataset> prepareMLDataset(final DatastoreRequest datasetRequest) {
         String uuid = UUID.randomUUID().toString();
         Task<MLDataset> prepareTask =
                 new Task<>("MLPrepareDatasetTask" + uuid, new PrepareDatasetTask(this, datasetRequest));
@@ -905,7 +902,7 @@ public class PluginController {
                 logger.error("MLProvider with name {} not found", prepareTask.getName());
             } else {
                 try {
-                    mlInterface.createDataset(prepareTask.get());
+                    mlInterface.dataStore(prepareTask.get());
                 } catch (InterruptedException | ExecutionException e) {
                     logger.error("Task {} failed execution", prepareTask.getName(), e);
                 }

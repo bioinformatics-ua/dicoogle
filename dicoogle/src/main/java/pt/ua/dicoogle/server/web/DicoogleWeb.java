@@ -225,7 +225,7 @@ public class DicoogleWeb {
                 createServletHandler(new ServerStorageServlet(), "/management/settings/storage/dicom"),
 
                 // ml provider servlets
-                createServletHandler(new CreateDatasetServlet(), "/ml/createDataset"),
+                createServletHandler(new DatastoreServlet(), "/ml/createDataset"),
                 createServletHandler(new MakePredictionServlet(), "/ml/makePrediction"),
                 createServletHandler(new ListAllModelsServlet(), "/ml/listAllModels"),
                 createServletHandler(new MakeBulkPredictionServlet(), "/ml/makeBulkPrediction"), webpages};
