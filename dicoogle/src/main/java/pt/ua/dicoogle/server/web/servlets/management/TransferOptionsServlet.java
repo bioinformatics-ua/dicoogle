@@ -97,7 +97,7 @@ public class TransferOptionsServlet extends HttpServlet {
         public static TransferenceOptionsResponse fromBooleanList(boolean[] tsList) {
             TransferenceOptionsResponse tor = new TransferenceOptionsResponse();
             for (int i = 0; i < tsList.length; i++) {
-                tor.options.add(new Option(TransfersStorage.globalTransferMap.get(i), tsList[i]));
+                tor.options.add(new Option(TransfersStorage.getGlobalTransferMap().get(i), tsList[i]));
             }
             return tor;
         }

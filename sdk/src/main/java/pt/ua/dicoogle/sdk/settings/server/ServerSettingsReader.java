@@ -22,6 +22,8 @@ package pt.ua.dicoogle.sdk.settings.server;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import pt.ua.dicoogle.sdk.datastructs.AdditionalSOPClass;
+import pt.ua.dicoogle.sdk.datastructs.AdditionalTransferSyntax;
 import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.sdk.datastructs.SOPClass;
 
@@ -124,6 +126,12 @@ public interface ServerSettingsReader {
 
         @JsonGetter("sop-classes")
         Collection<SOPClass> getSOPClasses();
+
+        @JsonGetter("additional-sop-classes")
+        Collection<AdditionalSOPClass> getAdditionalSOPClasses();
+
+        @JsonGetter("additional-transfer-syntaxes")
+        Collection<AdditionalTransferSyntax> getAdditionalTransferSyntaxes();
 
         @JsonGetter("move-destinations")
         List<MoveDestination> getMoveDestinations();

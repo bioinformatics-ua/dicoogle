@@ -21,6 +21,8 @@ package pt.ua.dicoogle.core.settings.part;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import pt.ua.dicoogle.sdk.datastructs.AdditionalSOPClass;
+import pt.ua.dicoogle.sdk.datastructs.AdditionalTransferSyntax;
 import pt.ua.dicoogle.sdk.datastructs.MoveDestination;
 import pt.ua.dicoogle.sdk.datastructs.SOPClass;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
@@ -118,6 +120,12 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
     @JsonProperty("sop-classes")
     private Collection<SOPClass> sopClasses = Collections.emptyList();
 
+    @JsonProperty("additional-sop-classes")
+    private Collection<AdditionalSOPClass> additionalSOPClasses = Collections.emptyList();
+
+    @JsonProperty("additional-transfer-syntaxes")
+    private Collection<AdditionalTransferSyntax> additionalTransferSyntaxes = Collections.emptyList();
+
     @JacksonXmlElementWrapper(localName = "move-destinations")
     private List<MoveDestination> moveDestinations;
 
@@ -213,6 +221,35 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
     }
 
     @Override
+    @JsonGetter("additional-sop-classes")
+    public Collection<AdditionalSOPClass> getAdditionalSOPClasses() {
+        return this.additionalSOPClasses;
+    }
+
+    @Override
+    @JsonSetter("additional-sop-classes")
+    public void setAdditionalSOPClasses(Collection<AdditionalSOPClass> additionalSOPClasses) {
+        if (additionalSOPClasses == null)
+            return; // Keep default emptyList value
+
+        this.additionalSOPClasses = additionalSOPClasses;
+    }
+
+    @Override
+    @JsonGetter("additional-transfer-syntaxes")
+    public Collection<AdditionalTransferSyntax> getAdditionalTransferSyntaxes() {
+        return this.additionalTransferSyntaxes;
+    }
+
+    @Override
+    @JsonSetter("additional-transfer-syntaxes")
+    public void setAdditionalTransferSyntaxes(Collection<AdditionalTransferSyntax> additionalTransferSyntaxes) {
+        if (additionalTransferSyntaxes == null)
+            return; // Keep default emptyList value
+        this.additionalTransferSyntaxes = additionalTransferSyntaxes;
+    }
+
+    @Override
     @JsonGetter("move-destinations")
     public List<MoveDestination> getMoveDestinations() {
         return Collections.unmodifiableList(moveDestinations);
@@ -258,10 +295,14 @@ public class DicomServicesImpl implements ServerSettings.DicomServices {
 
     @Override
     public String toString() {
-        return "DicomServicesImpl{" + "aetitle='" + aetitle + '\'' + ", deviceDescription='" + deviceDescription + '\''
-                + ", allowedAETitles=" + allowedAETitles + ", priorityAETitles=" + priorityAETitles
-                + ", allowedLocalInterfaces=" + allowedLocalInterfaces + ", allowedHosts=" + allowedHosts
-                + ", defaultTS=" + defaultTS + ", sopClasses=" + sopClasses + ", moveDestinations=" + moveDestinations
-                + ", storage=" + storage + ", queryRetrieve=" + queryRetrieve + '}';
+        return new StringJoiner(", ", DicomServicesImpl.class.getSimpleName() + "[", "]")
+                .add("aetitle='" + aetitle + "'").add("deviceDescription='" + deviceDescription + "'")
+                .add("allowedAETitles=" + allowedAETitles).add("priorityAETitles=" + priorityAETitles)
+                .add("allowedLocalInterfaces=" + allowedLocalInterfaces).add("allowedHosts=" + allowedHosts)
+                .add("defaultTS=" + defaultTS).add("sopClasses=" + sopClasses)
+                .add("additionalSOPClasses=" + additionalSOPClasses)
+                .add("additionalTransferSyntaxes=" + additionalTransferSyntaxes)
+                .add("moveDestinations=" + moveDestinations).add("storage=" + storage)
+                .add("queryRetrieve=" + queryRetrieve).toString();
     }
 }

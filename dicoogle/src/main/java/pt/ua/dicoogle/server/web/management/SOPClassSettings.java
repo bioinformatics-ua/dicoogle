@@ -19,11 +19,17 @@
 package pt.ua.dicoogle.server.web.management;
 
 import org.dcm4che2.data.UID;
+import pt.ua.dicoogle.core.settings.ServerSettingsManager;
+import pt.ua.dicoogle.sdk.datastructs.AdditionalSOPClass;
+import pt.ua.dicoogle.sdk.datastructs.AdditionalTransferSyntax;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 import pt.ua.dicoogle.server.SOPList;
 import pt.ua.dicoogle.server.TransfersStorage;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Holds and provides information about the accepted SOP Classes and
@@ -59,6 +65,8 @@ public class SOPClassSettings {
         sopClasses = new HashMap<String, String>();
         transferSettings = new HashMap<String, String>();
         transferSettingsIndex = new HashMap<String, Integer>();
+
+        ServerSettings.DicomServices dicomServices = ServerSettingsManager.getSettings().getDicomServicesSettings();
 
         sopClasses.put(UID.BasicStudyContentNotificationSOPClassRetired, "BasicStudyContentNotification (Retired)");
         sopClasses.put(UID.StoredPrintStorageSOPClassRetired, "StoredPrintStorage (Retired)");
@@ -154,6 +162,15 @@ public class SOPClassSettings {
         sopClasses.put(UID.VLWholeSlideMicroscopyImageStorage, "VLWholeSlideMicroscopyImageStorage");
         sopClasses.put(UID.BreastTomosynthesisImageStorage, "BreastTomosynthesisImageStorage");
         sopClasses.put(UID.XRayRadiationDoseSRStorage, "XRayRadiationDoseSRStorage");
+        // sopClasses: put the UIDs and their alias as it is in confs/server.xml's <additional-sop-classes>
+        // Get setting's additional SOPs (uid and alias) not already existing in sopClasses list
+        Collection<AdditionalSOPClass> additionalSOPClasses = dicomServices.getAdditionalSOPClasses();
+        additionalSOPClasses = additionalSOPClasses.stream()
+                .filter(additionalSOPClass -> !sopClasses.containsKey(additionalSOPClass.getUid()))
+                .collect(Collectors.toList());
+        // Add additional SOPs to hashMap sopClasses
+        additionalSOPClasses.forEach(elem -> sopClasses.put(elem.getUid(), elem.getAlias()));
+
 
         transferSettings.put(UID.ImplicitVRLittleEndian, "ImplicitVRLittleEndian");
         transferSettings.put(UID.ExplicitVRLittleEndian, "ExplicitVRLittleEndian");
@@ -169,6 +186,15 @@ public class SOPClassSettings {
         transferSettings.put(UID.JPEG2000, "JPEG2000");
         transferSettings.put(UID.RLELossless, "RLE Lossless");
         transferSettings.put(UID.MPEG2, "MPEG2");
+        // transferSettings: put the UIDs and their alias as it is in confs/server.xml's <additional-transfer-syntaxes>
+        Collection<AdditionalTransferSyntax> additionalTransferSyntaxes = dicomServices.getAdditionalTransferSyntaxes();
+        // Get additional TSs not already present in the hardcoded list (transferSettings)
+        additionalTransferSyntaxes = additionalTransferSyntaxes.stream()
+                .filter(additionalTransferSyntax -> !transferSettings.containsKey(additionalTransferSyntax.getUid()))
+                .collect(Collectors.toList());
+        // Add all
+        additionalTransferSyntaxes.forEach(elem -> transferSettings.put(elem.getUid(), elem.getAlias()));
+
 
         transferSettingsIndex.put(UID.ImplicitVRLittleEndian, 0);
         transferSettingsIndex.put(UID.ExplicitVRLittleEndian, 1);
@@ -184,6 +210,11 @@ public class SOPClassSettings {
         transferSettingsIndex.put(UID.JPEG2000, 11);
         transferSettingsIndex.put(UID.RLELossless, 12);
         transferSettingsIndex.put(UID.MPEG2, 13);
+        // transferSettingsIndex: put the TSs in some adequate order and sequential index
+        int index = 13;
+        for (AdditionalTransferSyntax elem : additionalTransferSyntaxes) {
+            transferSettingsIndex.put(elem.getUid(), ++index);
+        }
     }
 
     /**
