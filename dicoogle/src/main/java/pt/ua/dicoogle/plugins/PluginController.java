@@ -24,7 +24,7 @@ import org.restlet.resource.ServerResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.core.mlprovider.DatastoreRequest;
-import pt.ua.dicoogle.core.mlprovider.PrepareDatasetTask;
+import pt.ua.dicoogle.core.mlprovider.PrepareDatastoreTask;
 import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
 import pt.ua.dicoogle.plugins.webui.WebUIPluginManager;
@@ -892,12 +892,12 @@ public class PluginController {
         return result;
     }
 
-    public Task<MLDataset> prepareMLDataset(final DatastoreRequest datasetRequest) {
+    public Task<MLDataset> datastore(final DatastoreRequest datasetRequest) {
         String uuid = UUID.randomUUID().toString();
         Task<MLDataset> prepareTask =
-                new Task<>("MLPrepareDatasetTask" + uuid, new PrepareDatasetTask(this, datasetRequest));
+                new Task<>("MLPrepareDatastoreTask" + uuid, new PrepareDatastoreTask(this, datasetRequest));
         prepareTask.onCompletion(() -> {
-            MLProviderInterface mlInterface = getMachineLearningProviderByName(datasetRequest.getProviderName(), true);
+            MLProviderInterface mlInterface = getMachineLearningProviderByName(datasetRequest.getProvider(), true);
             if (mlInterface == null) {
                 logger.error("MLProvider with name {} not found", prepareTask.getName());
             } else {

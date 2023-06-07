@@ -139,10 +139,6 @@ public class DicoogleWeb {
         // setup the ROI extractor
         final ServletContextHandler roiExtractor = createServletHandler(new ROIServlet(), "/roi");
 
-        // setup the ml endpoints
-        final ServletContextHandler makePrediction = createServletHandler(new MakePredictionServlet(), "/makePrediction");
-        final ServletContextHandler listAllModels = createServletHandler(new ListAllModelsServlet(), "/listAllModels");
-
         // setup the DICOM to PNG image servlet
         final ServletContextHandler dictags = createServletHandler(new TagsServlet(), "/dictags");
 
@@ -181,7 +177,7 @@ public class DicoogleWeb {
         PluginRestletApplication.attachRestPlugin(new VersionResource());
 
         // list the all the handlers mounted above
-        Handler[] handlers = new Handler[] {pluginHandler, legacyHandler, dic2png, roiExtractor, makePrediction, dictags, listAllModels,
+        Handler[] handlers = new Handler[] {pluginHandler, legacyHandler, dic2png, roiExtractor, dictags,
                 createServletHandler(new IndexerServlet(), "/indexer"), // DEPRECATED
                 createServletHandler(new SettingsServlet(), "/settings"), csvServletHolder,
                 createServletHandler(new LoginServlet(), "/login"),
@@ -225,8 +221,9 @@ public class DicoogleWeb {
                 createServletHandler(new ServerStorageServlet(), "/management/settings/storage/dicom"),
 
                 // ml provider servlets
-                createServletHandler(new DatastoreServlet(), "/ml/createDataset"),
+                createServletHandler(new DatastoreServlet(), "/ml/datastore"),
                 createServletHandler(new MakePredictionServlet(), "/ml/makePrediction"),
+                createServletHandler(new TrainServlet(), "/ml/trainModel"),
                 createServletHandler(new ListAllModelsServlet(), "/ml/listAllModels"),
                 createServletHandler(new MakeBulkPredictionServlet(), "/ml/makeBulkPrediction"), webpages};
 
