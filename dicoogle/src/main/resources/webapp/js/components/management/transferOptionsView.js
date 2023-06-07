@@ -1,33 +1,54 @@
 import React from "react";
-import createReactClass from "create-react-class";
 
 import { TransferStore } from "../../stores/transferStore";
-import { TransferActions } from "../../actions/transferActions";
+import * as TransferActions from "../../actions/transferActions";
 
-const TransferOptionsView = createReactClass({
-  getInitialState() {
+/**
+ * @typedef {Object} SOPClassTransferRecord
+ * @property {string} uid
+ * @property {string} sop_name
+ * @property {Array<TransferSyntaxRecord>} options
+ */
+
+/**
+ * @typedef {Object} TransferSyntaxRecord
+ * @property {string} uid
+ * @property {string} sop_name
+ */
+
+class TransferOptionsView extends React.Component {
+
+  constructor(props) {
+    super(props);
     this.selectAllOn = true;
-    return {
-      data: [],
+    this.selectSOPOn = true;
+    this.state = {
+      /** @type {{data: Array<SOPClassTransferRecord>}} */
+      data: {},
       status: "loading",
       selectedIndex: 0
     };
-  },
-  componentDidMount() {
-    console.log("componentdidmount: get");
+    
+    this._onChange = this._onChange.bind(this);
+    this.handleSelectSop = this.handleSelectSop.bind(this);
+    this.handleSelectAll = this.handleSelectAll.bind(this);
+    this.onSopSelected = this.onSopSelected.bind(this);
+  }
 
+  componentDidMount() {
     TransferActions.get();
-  },
+  }
+
   componentWillMount() {
     // Subscribe to the store.
-    console.log("subscribe listener");
     this.unsubscribe = TransferStore.listen(this._onChange);
-  },
+  }
+
   componentWillUnmount() {
     this.unsubscribe();
-  },
+  }
+
   _onChange(data) {
-    //console.log(data);
     if (!data.success) {
       this.props.showToastMessage("error", {
         title: "Error",
@@ -38,7 +59,8 @@ const TransferOptionsView = createReactClass({
     }
 
     this.setState({ data: data, status: "done" });
-  },
+  }
+
   render() {
     if (this.state.status === "loading") {
       return (
@@ -50,9 +72,8 @@ const TransferOptionsView = createReactClass({
       );
     }
 
-    var array = this.state.data;
-    console.log("array", array);
-    var options = array.data[this.state.selectedIndex].options.map(
+    let array = this.state.data.data;
+    let options = array[this.state.selectedIndex].options.map(
       (item, index) => {
         return (
           <div key={index} className="data-table-row">
@@ -64,14 +85,14 @@ const TransferOptionsView = createReactClass({
                 checked={item.value}
                 onChange={this.handleChange.bind(this, item.name, index)}
               />
-              {item.name}
+              {item.name} -- {item.uid}
             </label>
           </div>
         );
       }
     );
 
-    var sopclasses = array.data.map((item, index) => {
+    var sopclasses = array.map((item, index) => {
       return (
         <option key={index}>
           {item.sop_name} -- {item.uid}
@@ -99,11 +120,8 @@ const TransferOptionsView = createReactClass({
                 </select>
                 <li className="list-group-item list-group-item-management">
                   <div className="row">
-                    <div className="col-xs-6 col-sm-4">
-                      Global Transfer Storage
-                    </div>
                     <div className="col-xs-6 col-sm-8">
-                      <div id="GlobalTransferStorage" className="data-table">
+                      <div id="GlobalTransferStorage" className="data-table manage-ts-options">
                         {options}
                       </div>
                     </div>
@@ -113,9 +131,16 @@ const TransferOptionsView = createReactClass({
               <div>
                 <button
                   className="btn btn_dicoogle"
+                  onClick={this.handleSelectSop}
+                >
+                  {this.selectSOPOn ? "Select all for this SOP class" : "Unselect all for this SOP class"}
+                </button>
+
+                <button
+                  className="btn btn_dicoogle"
                   onClick={this.handleSelectAll}
                 >
-                  {this.selectAllOn ? "Select all" : "Unselect all"}
+                  {this.selectAllOn ? "Select all for ALL SOP classes" : "Unselect all for ALL SOP classes"}
                 </button>
               </div>
             </div>
@@ -123,14 +148,26 @@ const TransferOptionsView = createReactClass({
         </div>
       </div>
     );
-  },
+  }
 
   handleSelectAll() {
     if (this.selectAllOn) TransferActions.selectAll();
     else TransferActions.unSelectAll();
 
     this.selectAllOn = !this.selectAllOn;
-  },
+  }
+
+  handleSelectSop(e) {
+    let sop = this.state.data.data[this.state.selectedIndex]
+    let sopClassUid = sop.uid;
+    if (this.selectSOPOn) {
+      TransferActions.selectAllSOP(sopClassUid);
+    } else {
+      TransferActions.unSelectAllSOP(sopClassUid);
+    }
+
+    this.selectSOPOn = !this.selectSOPOn;
+  }
 
   handleChange(id, index) {
     let uid = this.state.data.data[
@@ -138,13 +175,12 @@ const TransferOptionsView = createReactClass({
     ].uid;
     let value = document.getElementById(id).checked;
     TransferActions.set(this.state.selectedIndex, index, uid, id, value);
-  },
+  }
 
   onSopSelected() {
-    var selectedId = document.getElementById("sop_select").selectedIndex;
-
+    let selectedId = document.getElementById("sop_select").selectedIndex;
     this.setState({ selectedIndex: selectedId });
   }
-});
+}
 
 export { TransferOptionsView };
