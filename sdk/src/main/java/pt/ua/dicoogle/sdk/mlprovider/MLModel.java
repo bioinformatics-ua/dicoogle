@@ -23,6 +23,8 @@ public class MLModel {
         this.id = id;
         this.type = "";
         labels = new TreeSet<>();
+        dataType = ML_DATA_TYPE.IMAGE;
+        creationDate = new Date();
     }
 
     public String getName() {
