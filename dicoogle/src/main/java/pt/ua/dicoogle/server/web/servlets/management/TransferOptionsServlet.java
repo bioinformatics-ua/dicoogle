@@ -50,7 +50,7 @@ public class TransferOptionsServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         String UID = req.getParameter("uid");
         String option = req.getParameter("option");
@@ -76,6 +76,11 @@ public class TransferOptionsServlet extends HttpServlet {
         SOPList.getInstance().updateTSField(UID, option, value);
         ServerSettingsManager.saveSettings();
         ResponseUtil.simpleResponse(resp, "success", true);
+    }
+    
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        this.doPut(req, resp);
     }
 
     public static class TransferenceOptionsResponse {
