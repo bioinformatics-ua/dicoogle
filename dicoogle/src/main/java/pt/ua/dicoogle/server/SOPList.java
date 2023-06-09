@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 public class SOPList {
 
     private static SOPList instance = null;
-    private static Logger logger = LoggerFactory.getLogger(SOPList.class);
+    private static final Logger logger = LoggerFactory.getLogger(SOPList.class);
 
     private Hashtable<String, TransfersStorage> table;
 
@@ -260,8 +260,8 @@ public class SOPList {
      * Removes selected services that do not have accepted transfers syntaxes 
      */
     public synchronized void CleanList() {
-        List l = new ArrayList();
-        Enumeration e = table.keys();
+        List<String> l = new ArrayList<>();
+        Enumeration<?> e = table.keys();
         TransfersStorage TS;
         boolean[] p;
         boolean unused;
@@ -293,9 +293,9 @@ public class SOPList {
      * Get the name of all the SOP Classes used in list
      * @return List with all the identifiers of SOP Class currently in use
      */
-    public synchronized List getKeys() {
-        List l = new ArrayList();
-        Enumeration e = table.keys();
+    public synchronized List<String> getKeys() {
+        List<String> l = new ArrayList<>();
+        Enumeration<?> e = table.keys();
 
         while (e.hasMoreElements()) {
             l.add(e.nextElement().toString());
@@ -308,9 +308,9 @@ public class SOPList {
      * @return The number of SOP Classes that are actually marked as accepted
      */
     public synchronized int getAccepted() {
-        List l = new ArrayList();
+        List<String> l = new ArrayList<>();
         TransfersStorage local;
-        Enumeration e = table.keys();
+        Enumeration<?> e = table.keys();
 
         while (e.hasMoreElements()) {
             l.add(e.nextElement().toString());
