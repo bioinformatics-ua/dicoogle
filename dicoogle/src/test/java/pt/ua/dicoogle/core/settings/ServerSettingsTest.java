@@ -18,7 +18,7 @@
  */
 package pt.ua.dicoogle.core.settings;
 
-import org.junit.Before;
+import org.dcm4che2.data.UID;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -31,6 +31,7 @@ import pt.ua.dicoogle.sdk.datastructs.SOPClass;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettingsReader;
 import pt.ua.dicoogle.server.SOPList;
+import pt.ua.dicoogle.server.TransfersStorage;
 
 import java.io.IOException;
 import java.net.URL;
@@ -47,23 +48,15 @@ import static org.junit.Assert.*;
  */
 public class ServerSettingsTest {
 
-    private URL testConfig;
-    private URL testConfigDIM;
-    private URL testConfigSopClasses;
-    private URL testConfigAdditionals;
-    private URL legacyConfig;
-
-    @Before
-    public void init() {
-        this.testConfig = this.getClass().getResource("test-config-new.xml");
-        this.testConfigDIM = this.getClass().getResource("test-config-multi-dim.xml");
-        this.testConfigSopClasses = this.getClass().getResource("test-config-sopclasses.xml");
-        this.testConfigAdditionals = this.getClass().getResource("test-config-additionals.xml");
-        this.legacyConfig = this.getClass().getResource("test-config-legacy.xml");
-    }
+    private final URL testConfig = this.getClass().getResource("test-config-new.xml");
+    private final URL testConfigDIM = this.getClass().getResource("test-config-multi-dim.xml");
+    private final URL testConfigTs = this.getClass().getResource("test-config-ts.xml");
+    private final URL testConfigSopClasses = this.getClass().getResource("test-config-sopclasses.xml");
+    private final URL testConfigAdditionals = this.getClass().getResource("test-config-additionals.xml");
+    private final URL legacyConfig = this.getClass().getResource("test-config-legacy.xml");
 
     @Test
-    public void test() throws IOException {
+    public void testLoadConfig1() throws IOException {
         // read the settings from our test config file
         ServerSettings settings = ServerSettingsManager.loadSettingsAt(this.testConfig);
         final ServerSettings.Archive ar = settings.getArchiveSettings();
@@ -94,10 +87,18 @@ public class ServerSettingsTest {
         assertSameContent(defaultTS, ((DicomServicesImpl) dcm).getDefaultTransferSyntaxes());
 
         Collection<SOPClass> sopClasses =
-                Arrays.asList(new SOPClass("1.2.840.10008.5.1.4.1.1.88.40", Collections.EMPTY_LIST),
-                        new SOPClass("1.2.840.10008.5.1.4.1.1.77.1.1", Collections.EMPTY_LIST),
+                Arrays.asList(
+                        // CT Image Storage
+                        new SOPClass("1.2.840.10008.5.1.4.1.1.2", Collections.emptyList()),
+                        // Enhanced CT Image Storage
+                        new SOPClass("1.2.840.10008.5.1.4.1.1.2.1", Collections.emptyList()),
+                        // Enhanced CT Image Storage
                         new SOPClass("1.2.840.10008.5.1.4.1.1.12.1.1",
-                                Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.5")));
+                                Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.5")),
+                        // Ultrasound Multi-frame Image Storage
+                        new SOPClass("1.2.840.10008.5.1.4.1.1.3.1",
+                                Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.4.50", "1.2.840.10008.1.2.4.70"))
+                        );
         Collection<SOPClass> sopClassesFromSettings = ((DicomServicesImpl) dcm).getRawSOPClasses();
         assertSameContent(sopClasses, sopClassesFromSettings);
 
@@ -242,6 +243,143 @@ public class ServerSettingsTest {
 
         // clean up
         Files.delete(target);
+    }
+
+    /** Test that transfer options are well loaded from the settings file
+     * and installed on the global SOP list correctly.
+     */
+    @Test
+    public void testLoadTransferOptions() throws IOException {
+        // Load default settings and update transfer options
+
+        // read the settings from our test config file
+        ServerSettings settings = ServerSettingsManager.loadSettingsAt(this.testConfigTs);
+        ServerSettings.DicomServices dcm = settings.getDicomServicesSettings();
+
+        // should distinguish between an empty list and missing list
+        for (SOPClass sopClass: dcm.getSOPClasses()) {
+            switch (sopClass.getUID()) {
+                case UID.CTImageStorage:
+                    assertEquals(
+                        Arrays.asList(
+                            "1.2.840.10008.1.2",
+                            "1.2.840.10008.1.2.1"
+                        ),
+                        sopClass.getTransferSyntaxes());
+                    break;
+                case UID.UltrasoundMultiFrameImageStorage:
+                    assertEquals(
+                        Arrays.asList(
+                            "1.2.840.10008.1.2",
+                            "1.2.840.10008.1.2.1",
+                            "1.2.840.10008.1.2.4.50",
+                            "1.2.840.10008.1.2.4.70"
+                        ),
+                        sopClass.getTransferSyntaxes());
+                    break;
+                case UID.UltrasoundMultiFrameImageStorageRetired:
+                    // no transfer syntaxes here,
+                    // and no default transfer syntaxes,
+                    // means no acceptable transfer syntax
+                    assertEquals(
+                        Collections.emptyList(),
+                        sopClass.getTransferSyntaxes());
+                    break;
+                default:
+            }
+        }
+
+        // update global SOP list based on settings
+        SOPList list = SOPList.getInstance();
+        list.readFromSettings(settings);
+
+        // see that the SOP list has been updated accordingly
+
+        assertEquals(
+            Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1"),
+            list.getTS(UID.CTImageStorage).asList()
+        );
+        assertEquals(
+            Arrays.asList(
+                "1.2.840.10008.1.2",
+                "1.2.840.10008.1.2.1",
+                "1.2.840.10008.1.2.4.70",
+                "1.2.840.10008.1.2.4.50"
+            ),
+            list.getTS(UID.UltrasoundMultiFrameImageStorage).asList()
+        );
+        assertEquals(
+            Collections.emptyList(),
+            list.getTS(UID.UltrasoundMultiFrameImageStorageRetired).asList()
+        );
+
+        // unmentioned SOP classes default to
+        // accepting the default transfer syntaxes
+        // (in this case, empty)
+        assertEquals(
+            Collections.emptyList(),
+            list.getTS(UID.BreastTomosynthesisImageStorage).asList()
+        );
+    }
+
+    @Test
+    public void testUpdateTransferOptions() throws IOException {
+        // Load default settings and update transfer options
+
+        // read the settings from our test config file
+        ServerSettings settings = ServerSettingsManager.loadSettingsAt(this.testConfigTs);
+
+        // update global SOP list based on settings
+        SOPList list = SOPList.getInstance();
+        list.readFromSettings(settings);
+
+        SOPList sopList = SOPList.getInstance();
+
+        TransfersStorage ts = sopList.getTS(UID.CTImageStorage);
+        // make changes so that this SOP class is never accepted
+        for (int i = 0; i < ts.getTS().length; i++) {
+            ts.setTS(false, i);
+        }
+        // write changes back to settings
+        sopList.writeToSettings(settings);
+
+        // inspect changes
+        final ServerSettings.DicomServices dcm = settings.getDicomServicesSettings();
+
+        Collection<SOPClass> sopClasses = dcm.getSOPClasses();
+        for (SOPClass sopClass : sopClasses) {
+            Collection<String> tses = sopClass.getTransferSyntaxes();
+            
+            switch (sopClass.getUID()) {
+                case UID.CTImageStorage:
+                    assertEquals(Collections.emptyList(), tses);
+                    break;
+                case UID.EnhancedXAImageStorage:
+                    assertEquals(
+                        Arrays.asList(
+                            "1.2.840.10008.1.2",
+                            "1.2.840.10008.1.2.1",
+                            "1.2.840.10008.1.2.5"
+                        ),
+                        tses
+                    );
+                    break;
+                case UID.EnhancedCTImageStorage:
+                // fallthrough (same settings)
+                case UID.UltrasoundMultiFrameImageStorage:
+                    assertEquals(
+                        Arrays.asList(
+                            "1.2.840.10008.1.2",
+                            "1.2.840.10008.1.2.1",
+                            "1.2.840.10008.1.2.4.70",
+                            "1.2.840.10008.1.2.4.50"
+                        ),
+                        tses);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     @Test

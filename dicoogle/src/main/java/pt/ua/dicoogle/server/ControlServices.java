@@ -117,9 +117,7 @@ public class ControlServices {
 
 
             SOPList list = SOPList.getInstance();
-            settings.getDicomServicesSettings().getSOPClasses().forEach(sopClass -> sopClass.getTransferSyntaxes()
-                    .forEach(ts -> list.updateTSFieldByTsUID(sopClass.getUID(), ts, true)));
-
+            list.readFromSettings(settings);
 
             int i;
 

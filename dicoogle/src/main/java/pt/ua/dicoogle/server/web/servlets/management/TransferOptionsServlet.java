@@ -73,7 +73,9 @@ public class TransferOptionsServlet extends HttpServlet {
 
         boolean value = Boolean.parseBoolean(valueS);
 
-        SOPList.getInstance().updateTSField(UID, option, value);
+        SOPList sopList = SOPList.getInstance();
+        sopList.updateTSField(UID, option, value);
+        sopList.writeToSettings();
         ServerSettingsManager.saveSettings();
         ResponseUtil.simpleResponse(resp, "success", true);
     }
