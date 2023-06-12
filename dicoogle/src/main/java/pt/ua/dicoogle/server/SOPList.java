@@ -145,11 +145,19 @@ public class SOPList {
      * Creates a new list 
      */
     private SOPList() {
-        table = new Hashtable<>();
+        this.reset();
+    }
+
+    /** Reset the SOP list to an empty slate.
+     *
+     * This is not recommended unless you know what you're doing.
+     */
+    public final void reset() {
+        this.table = new Hashtable<>();
 
         // Hardcoded (pre-#498) SOPs
         for (String sop : SOP) {
-            table.put(sop, new TransfersStorage());
+            this.table.put(sop, new TransfersStorage());
         }
     }
 

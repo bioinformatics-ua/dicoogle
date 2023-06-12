@@ -109,6 +109,9 @@ public class LegacyServerSettingsTest {
 
     @Test
     public void testMigrate() throws IOException {
+        // clean up SOP list from past tests
+        SOPList.getInstance().reset();
+
         Path newconf = Files.createTempFile("conf", ".xml");
 
         // load legacy server settings
