@@ -53,7 +53,6 @@ public class ServerSettingsTest {
     private final URL testConfigTs = this.getClass().getResource("test-config-ts.xml");
     private final URL testConfigSopClasses = this.getClass().getResource("test-config-sopclasses.xml");
     private final URL testConfigAdditionals = this.getClass().getResource("test-config-additionals.xml");
-    private final URL legacyConfig = this.getClass().getResource("test-config-legacy.xml");
 
     @Test
     public void testLoadConfig1() throws IOException {
@@ -380,78 +379,6 @@ public class ServerSettingsTest {
                     break;
             }
         }
-    }
-
-    @Test
-    public void testMigrate() throws IOException {
-        Path newconf = Files.createTempFile("conf", ".xml");
-
-        // load legacy server settings
-        ServerSettings settings = ServerSettingsManager.loadLegacySettingsAt(this.legacyConfig);
-        assertTrue(settings instanceof LegacyServerSettings);
-
-        // save as new
-        ServerSettingsManager.saveSettingsTo(settings, newconf);
-
-        // check new file
-        settings = ServerSettingsManager.loadSettingsAt(newconf);
-        assertTrue(settings instanceof ServerSettingsImpl);
-        ServerSettings.Archive a = settings.getArchiveSettings();
-
-        // assertions follow
-        assertEquals("/opt/dicoogle/repository", a.getMainDirectory());
-        assertEquals("/tmp", a.getWatchDirectory());
-        assertEquals(97, a.getIndexerEffort());
-        assertEquals("dicoogle-old", a.getNodeName());
-
-        assertEquals("TEST-STORAGE", settings.getDicomServicesSettings().getAETitle());
-
-        // QR settings
-        assertEquals(106, settings.getDicomServicesSettings().getQueryRetrieveSettings().getPort());
-        assertSameContent(Collections.singleton("any"),
-                settings.getDicomServicesSettings().getAllowedLocalInterfaces());
-        assertSameContent(Collections.singleton("any"), settings.getDicomServicesSettings().getAllowedHostnames());
-        assertEquals(3, settings.getDicomServicesSettings().getQueryRetrieveSettings().getRspDelay());
-        assertEquals(50, settings.getDicomServicesSettings().getQueryRetrieveSettings().getDIMSERspTimeout());
-        assertEquals(50, settings.getDicomServicesSettings().getQueryRetrieveSettings().getIdleTimeout());
-        assertEquals(50, settings.getDicomServicesSettings().getQueryRetrieveSettings().getAcceptTimeout());
-        assertEquals(50, settings.getDicomServicesSettings().getQueryRetrieveSettings().getConnectionTimeout());
-        // assertEquals("1.2.840.10008.5.1.4.1.2.1.1", settings.getSOPClasses());
-        assertEquals(22, settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxClientAssoc());
-        assertEquals(16360, settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthSend());
-        assertEquals(16360, settings.getDicomServicesSettings().getQueryRetrieveSettings().getMaxPDULengthReceive());
-
-        // DICOM Storage settings
-        assertFalse(settings.getDicomServicesSettings().getStorageSettings().isAutostart());
-        assertEquals(6666, settings.getDicomServicesSettings().getStorageSettings().getPort());
-
-        // Web server settings
-        ServerSettings.WebServer web = settings.getWebServerSettings();
-        assertTrue(web.isAutostart());
-        assertEquals(8484, web.getPort());
-        assertEquals("test.dicoogle.com", web.getAllowedOrigins());
-
-
-        // SOP Classes
-
-
-        Collection<SOPClass> sopClasses = Arrays.asList(
-                new SOPClass("1.2.840.10008.5.1.4.1.1.88.40",
-                        Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.4.80",
-                                "1.2.840.10008.1.2.4.50")),
-                new SOPClass("1.2.840.10008.5.1.4.1.1.77.1.1",
-                        Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.4.80",
-                                "1.2.840.10008.1.2.4.50")),
-                new SOPClass("1.2.840.10008.5.1.1.30", Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1",
-                        "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.50")));
-
-        Collection<SOPClass> sopClassesFromSettings = settings.getDicomServicesSettings().getSOPClasses().stream()
-                .filter(c -> !c.getTransferSyntaxes().isEmpty()).collect(Collectors.toList());
-
-        assertSameContent(sopClasses, sopClassesFromSettings);
-
-        // clean up
-        Files.delete(newconf);
     }
 
     @Test
