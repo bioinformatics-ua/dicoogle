@@ -34,11 +34,34 @@ public abstract class MLProviderInterface implements DicooglePlugin {
      */
     public abstract MLModel createModel();
 
+
+    /**
+     * This method deploys a model
+     */
+    public abstract void deployModel();
+
+    /**
+     * This method lists the models created on this provider.
+     */
+    public abstract List<MLModel> listModels();
+
+    /**
+     * This method lists the models created on this provider.
+     * @param modelID model identifier
+     */
+    public abstract MLModelTrainInfo modelInfo(String modelID);
+
     /**
      * This method orders the training of a model.
      * @param modelID the unique model identifier within the provider.
      */
-    public abstract boolean trainModel(String modelID);
+    public abstract MLTrainTask trainModel(String modelID);
+
+    /**
+     * This method orders the training of a model.
+     * @param trainingTaskID the unique training task identifier.
+     */
+    public abstract boolean stopTraining(String trainingTaskID);
 
     /**
      * This method creates a endpoint that exposes a service
@@ -54,16 +77,6 @@ public abstract class MLProviderInterface implements DicooglePlugin {
      * This method deletes a endpoint
      */
     public abstract void deleteEndpoint();
-
-    /**
-     * This method deploys a model
-     */
-    public abstract void deployModel();
-
-    /**
-     * This method lists the models created on this provider.
-     */
-    public abstract List<MLModel> listModels();
 
     /**
      * This method deletes a model
