@@ -27,6 +27,7 @@ import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.sdk.datastructs.AdditionalSOPClass;
 import pt.ua.dicoogle.sdk.datastructs.SOPClass;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
+import pt.ua.dicoogle.sdk.settings.server.ServerSettings.DicomServices;
 import pt.ua.dicoogle.server.web.management.SOPClassSettings;
 
 import java.util.*;
@@ -43,7 +44,7 @@ import java.util.stream.Collectors;
 public class SOPList {
 
     private static SOPList instance = null;
-    private static Logger logger = LoggerFactory.getLogger(SOPList.class);
+    private static final Logger logger = LoggerFactory.getLogger(SOPList.class);
 
     private Hashtable<String, TransfersStorage> table;
 
@@ -144,11 +145,19 @@ public class SOPList {
      * Creates a new list 
      */
     private SOPList() {
-        table = new Hashtable<>();
+        this.reset();
+    }
+
+    /** Reset the SOP list to an empty slate.
+     *
+     * This is not recommended unless you know what you're doing.
+     */
+    public final void reset() {
+        this.table = new Hashtable<>();
 
         // Hardcoded (pre-#498) SOPs
         for (String sop : SOP) {
-            table.put(sop, new TransfersStorage());
+            this.table.put(sop, new TransfersStorage());
         }
     }
 
@@ -259,8 +268,8 @@ public class SOPList {
      * Removes selected services that do not have accepted transfers syntaxes 
      */
     public synchronized void CleanList() {
-        List l = new ArrayList();
-        Enumeration e = table.keys();
+        List<String> l = new ArrayList<>();
+        Enumeration<?> e = table.keys();
         TransfersStorage TS;
         boolean[] p;
         boolean unused;
@@ -292,9 +301,9 @@ public class SOPList {
      * Get the name of all the SOP Classes used in list
      * @return List with all the identifiers of SOP Class currently in use
      */
-    public synchronized List getKeys() {
-        List l = new ArrayList();
-        Enumeration e = table.keys();
+    public synchronized List<String> getKeys() {
+        List<String> l = new ArrayList<>();
+        Enumeration<?> e = table.keys();
 
         while (e.hasMoreElements()) {
             l.add(e.nextElement().toString());
@@ -307,9 +316,9 @@ public class SOPList {
      * @return The number of SOP Classes that are actually marked as accepted
      */
     public synchronized int getAccepted() {
-        List l = new ArrayList();
+        List<String> l = new ArrayList<>();
         TransfersStorage local;
-        Enumeration e = table.keys();
+        Enumeration<?> e = table.keys();
 
         while (e.hasMoreElements()) {
             l.add(e.nextElement().toString());
@@ -353,7 +362,7 @@ public class SOPList {
         return sopList.toString();
     }
 
-    public List<SOPClass> asSOPClassList() {
+    public synchronized List<SOPClass> asSOPClassList() {
         List<SOPClass> l = new ArrayList<>();
         for (Map.Entry<String, TransfersStorage> e : this.table.entrySet()) {
             l.add(new SOPClass(e.getKey(), e.getValue().asList()));
@@ -361,10 +370,18 @@ public class SOPList {
         return l;
     }
 
-    public void updateList() {
-
+    /** Register additional SOP classes from the given server settings
+     * into the archive's DICOM services.
+     */
+    public synchronized void updateList() {
         // Add the extras on SOP from getSettings()
-        ServerSettings settings = ServerSettingsManager.getSettings();
+        updateList(ServerSettingsManager.getSettings());
+    }
+
+    /** Register additional SOP classes from the active server settings
+     * into the archive's DICOM services.
+     */
+    public synchronized void updateList(ServerSettings settings) {
         // Get all new SOP classes' UID (not existing in String[] SOP)
         Collection<String> newSOPs = settings.getDicomServicesSettings().getAdditionalSOPClasses().stream()
                 .map(AdditionalSOPClass::getUid)
@@ -383,8 +400,46 @@ public class SOPList {
         SOP = newSOPs.toArray(new String[0]);
     }
 
-    public void updateList(Collection<AdditionalSOPClass> additionalSOPClasses) {
+    /** Register the given additional SOP classes into the archive's DICOM services.
+     */
+    public synchronized void updateList(Collection<AdditionalSOPClass> additionalSOPClasses) {
         additionalSOPClasses.forEach(elem -> table.put(elem.getUid(), new TransfersStorage()));
     }
 
+    /** Read the DICOM service settings from the active server settings
+     * and update the archive's SOP list and storage transfer options accordingly.
+     */
+    public synchronized void readFromSettings() {
+        readFromSettings(ServerSettingsManager.getSettings());
+    }
+
+    /** Read the DICOM service settings from the given settings object
+     * and update the archive's SOP list and storage transfer options accordingly.
+     */
+    public synchronized void readFromSettings(ServerSettings settings) {
+        settings.getDicomServicesSettings()
+            .getSOPClasses()
+            .forEach(sopClass -> sopClass.getTransferSyntaxes()
+                .forEach(ts -> this.updateTSFieldByTsUID(sopClass.getUID(), ts, true))
+            );
+    }
+
+    /** Save any changes made to the SOP transfer options listings
+     * to a specific server settings object.
+     * 
+     * @param settings the server settings
+     */
+    public void writeToSettings(ServerSettings settings) {
+        DicomServices dicomServicesSettings = settings.getDicomServicesSettings();
+
+        // Save SOP classes
+        dicomServicesSettings.setSOPClasses(this.asSOPClassList());
+    }
+
+    /** Save any changes made to the SOP transfer options listings
+     * to the active server settings object.
+     */
+    public void writeToSettings() {
+        writeToSettings(ServerSettingsManager.getSettings());
+    }
 }

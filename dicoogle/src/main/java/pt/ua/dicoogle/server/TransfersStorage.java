@@ -194,6 +194,7 @@ public class TransfersStorage {
         return Arrays.asList(this.getVerboseTS());
     }
 
+    /** Read the active server settings and record additional transfer syntaxes. */
     public static void completeList() {
 
         // Get additional transfer syntaxes (not present in the hardcoded list)
