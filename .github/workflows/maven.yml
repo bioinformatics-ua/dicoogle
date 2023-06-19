@@ -7,6 +7,13 @@ on:
     branches: [ dev ]
   pull_request:
     branches: [ dev ]
+    paths:
+     - 'pom.xml'
+     - 'short-license.txt'
+     - 'dicoogle/**'
+     - 'sdk/**'
+     - '.github/workflows/maven.yml'
+     - '!dicoogle/src/main/resources/webapp/**'
 
 jobs:
   build:
@@ -18,18 +25,12 @@ jobs:
         java-version: ['8', '11']
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK 1.8
+    - uses: actions/checkout@v3
+    - name: Set up Java (JDK ${{ matrix.java-version }})
       uses: actions/setup-java@v2
       with:
         distribution: 'zulu'
         java-version: ${{ matrix.java-version }}
-    - name: Cache local Maven repo
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-java${{ matrix.java-version }}-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-java${{ matrix.java-version }}-
+        cache: 'maven'
     - name: Build with Maven
       run: mvn -B package license:check -Dskip.installnodenpm -Dskip.npm -Dskip.format --file pom.xml
