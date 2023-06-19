@@ -28,8 +28,8 @@
         </repository>
 
         <repository>
-            <id>mi</id>
-            <url>https://bioinformatics.ua.pt/maven/content/repositories/mi</url>
+            <id>dicoogle-public</id>
+            <url>https://dev.bmd-software.com/nexus/content/repositories/dicoogle-public</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
