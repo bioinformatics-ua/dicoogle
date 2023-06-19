@@ -25,8 +25,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 import pt.ua.dicoogle.core.XMLSupport;
-import pt.ua.dicoogle.utils.Platform;
+import pt.ua.dicoogle.sdk.datastructs.AdditionalSOPClass;
+import pt.ua.dicoogle.sdk.datastructs.AdditionalTransferSyntax;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
+import pt.ua.dicoogle.server.SOPList;
+import pt.ua.dicoogle.server.TransfersStorage;
+import pt.ua.dicoogle.utils.Platform;
 
 import java.io.*;
 import java.net.URL;
@@ -34,6 +38,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author Eduardo Pinho <eduardopinho@ua.pt>
@@ -98,6 +103,21 @@ public class ServerSettingsManager {
         } else {
             // use main configuration file
             inner = loadSettingsAt(MAIN_CONFIG_PATH);
+            /*
+             TODO#498 (feedback needed) export this following block of code to somewhere more fitting
+             Check which new UIDs from "additional*" tags are valid (SOP Class UIDs can skip this if
+             they are already present in the transfer options: e.g. in SOPList) and filter them
+             Validate and filter Transfer Syntaxes;
+            */
+            inner.getDicomServicesSettings()
+                    .setAdditionalTransferSyntaxes(inner.getDicomServicesSettings().getAdditionalTransferSyntaxes()
+                            .stream().filter(AdditionalTransferSyntax::isValid).collect(Collectors.toList()));
+            TransfersStorage.completeList();
+            // Validate and filter SOP Classes; add them to SOPList
+            inner.getDicomServicesSettings()
+                    .setAdditionalSOPClasses(inner.getDicomServicesSettings().getAdditionalSOPClasses().stream()
+                            .filter(AdditionalSOPClass::isValid).collect(Collectors.toList()));
+            SOPList.getInstance().updateList();
         }
     }
 
