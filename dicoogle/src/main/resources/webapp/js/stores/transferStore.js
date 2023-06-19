@@ -53,6 +53,28 @@ const TransferStore = Reflux.createStore({
     this.select(false);
   },
 
+  onSelectAllSOP(sopClassOption) {
+    this.selectSOP(sopClassOption, true);
+  },
+
+  onUnSelectAllSOP(sopClassOption) {
+    this.selectSOP(sopClassOption, false);
+  },
+
+  selectSOP(sopClassUid, value) {
+    let sop = this._contents.find((sop) => sop.uid === sopClassUid);
+    
+    Promise.all(sop.options.map((tsOptions) => {
+      tsOptions.value = value;
+      return this.request(sop.uid, tsOptions.name, tsOptions.value);
+    })).then(() => {
+      this.trigger({
+        data: this._contents,
+        success: true
+      });
+    });
+  },
+
   select(value) {
     for (let index of this._contents) {
       for (let indexOptions of index.options) {
@@ -66,12 +88,8 @@ const TransferStore = Reflux.createStore({
     });
   },
 
-  request(uid, id, value) {
-    this.dicoogle.setTransferSyntaxOption(uid, id, value, error => {
-      if (error) {
-        console.error("Dicoogle service error", error);
-      }
-    });
+  async request(uid, id, value) {
+    await this.dicoogle.setTransferSyntaxOption(uid, id, value);
   },
 
   onSet(index, indexOption, uid, id, value) {
