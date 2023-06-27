@@ -604,7 +604,7 @@ public class PluginController {
                 try {
                     return queryEngine.query(query, parameters);
                 } catch (RuntimeException ex) {
-                    logger.warn("Query plugin {} unable to query at {} level", querySource, level);
+                    logger.warn("Query plugin {} failed unexpectedly", querySource, ex);
                     return Collections.EMPTY_LIST;
                 }
 
