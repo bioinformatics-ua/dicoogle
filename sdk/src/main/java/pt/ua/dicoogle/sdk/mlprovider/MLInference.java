@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.dcm4che2.io.DicomInputStream;
 import pt.ua.dicoogle.sdk.datastructs.dim.BulkAnnotation;
 
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class MLInference {
     private String resourcesFolder;
 
     @JsonIgnore
-    private DicomInputStream dicomSEG;
+    private Path dicomSEG;
 
     public HashMap<String, String> getMetrics() {
         return metrics;
@@ -49,11 +50,11 @@ public class MLInference {
         this.resourcesFolder = resourcesFolder;
     }
 
-    public DicomInputStream getDicomSEG() {
+    public Path getDicomSEG() {
         return dicomSEG;
     }
 
-    public void setDicomSEG(DicomInputStream dicomSEG) {
+    public void setDicomSEG(Path dicomSEG) {
         this.dicomSEG = dicomSEG;
     }
 
@@ -63,5 +64,9 @@ public class MLInference {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public boolean hasResults(){
+        return metrics != null || annotations != null;
     }
 }
