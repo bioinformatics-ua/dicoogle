@@ -27,9 +27,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -194,7 +193,14 @@ public class MakePredictionServlet extends HttpServlet {
                         return;
                     }
 
-                    if(prediction.getDicomSEG() != null){
+                    if((prediction.getDicomSEG() != null) && !prediction.hasResults()){
+                        response.setContentType("application/dicom");
+                        ServletOutputStream out = response.getOutputStream();
+                        try (InputStream fi = Files.newInputStream(prediction.getDicomSEG())) {
+                            IOUtils.copy(fi, out);
+                            out.flush();
+                        }
+                    } else if((prediction.getDicomSEG() != null) && prediction.hasResults()){
                         // We have a file to send, got to build a multi part response
                         String boundary = UUID.randomUUID().toString();
                         response.setContentType("multipart/form-data; boundary=" + boundary);
@@ -213,14 +219,19 @@ public class MakePredictionServlet extends HttpServlet {
                         out.println();
                         out.print("Content-Disposition: form-data; name=\"dicomseg\"; filename=\"dicomseg.dcm\"");
                         out.println();
-                        out.print("Content-Type: application/octet-stream");
+                        out.print("Content-Type: application/dicom");
                         out.println(); out.println();
 
-                        byte[] targetArray = new byte[prediction.getDicomSEG().available()];
-                        prediction.getDicomSEG().read(targetArray);
-                        out.write(targetArray);
+                        try (InputStream fi = Files.newInputStream(prediction.getDicomSEG())) {
+                            IOUtils.copy(fi, out);
+                            out.flush();
+                        }
+
+                        out.println();
+                        out.print("--" + boundary + "--");
                         out.flush();
                         out.close();
+
                     } else {
                         response.setContentType("application/json");
                         PrintWriter out = response.getWriter();
