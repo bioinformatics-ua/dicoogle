@@ -60,7 +60,7 @@ public class SearchServlet extends HttpServlet {
 
     private final Collection<String> DEFAULT_FIELDS = Arrays.asList("SOPInstanceUID", "StudyInstanceUID",
             "SeriesInstanceUID", "PatientID", "PatientName", "PatientSex", "Modality", "StudyDate", "StudyID",
-            "StudyDescription", "SeriesNumber", "SeriesDescription", "InstitutionName", "InstanceNumber", "uri");
+            "StudyDescription", "SeriesNumber", "SeriesDescription", "InstitutionName", "InstanceNumber");
 
     public enum SearchType {
         ALL, PATIENT;
