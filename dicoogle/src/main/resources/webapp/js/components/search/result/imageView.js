@@ -409,7 +409,7 @@ var PopOverView = createReactClass({
     });
 
     // Add URI as location definition of the DICOM resource.
-    fields.push({ att: "URI", field:this.state.data.data.results.uri });
+    fields.push({ Attribute: "URI", Value:this.state.data.data.results.uri });
 
     var selectRowProp = {
       clickToSelect: true,
