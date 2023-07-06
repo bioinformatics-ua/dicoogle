@@ -1,6 +1,21 @@
 # CHANGELOG
 This document intends to keep track of the changes performed on the various releases of Dicoogle.
 
+## 3.3
+
+## 3.3.0  (2023-07-06)
+
+- New: extensions to the SOP classes and Transfer Syntaxes hardcoded lists (#516)
+- Enhancement: Transfer Options - improve web service and UI (#649)
+- Enhancement: Save transfer options to server settings (#650)
+- Chore: Update logging dependencies and add jul-to-slf4j (#643)
+- Enhancement: URI from default search servlet fields (#644)
+- Fix: URI can be dumped in meta table (#655)
+- Chore: Remove aclmanager (#640)
+- Chore: Remove dependency on commons-codec (#639)
+- Chore: Switch to new maven repo dicoogle-public (#647)
+- Chore: Update CI workflows (#645)
+
 ## 3.2
 
 ## 3.2.2  (2023-02-13)
