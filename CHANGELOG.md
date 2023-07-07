@@ -3,6 +3,10 @@ This document intends to keep track of the changes performed on the various rele
 
 ## 3.3
 
+## 3.3.1  (2023-07-07)
+
+- Fix: QueryInterface to QueryDimInterface (#646)
+
 ## 3.3.0  (2023-07-06)
 
 - New: extensions to the SOP classes and Transfer Syntaxes hardcoded lists (#516)
