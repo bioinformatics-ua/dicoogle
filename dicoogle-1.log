@@ -1,0 +1,69 @@
+2023-07-12 12:45:33 | INFO  [main] (ServerSettingsManager.java:95) - Creating server settings file confs\server.xml ...
+2023-07-12 12:45:37 | INFO  [main] (RolesXML.java:111) - User roles file not found, a new empty list will be created.
+2023-07-12 12:45:38 | INFO  [main] (UserFileHandle.java:235) - No users file ".\users.xml", will create one with default settings.
+2023-07-12 12:45:38 | INFO  [main] (PluginController.java:94) - Creating PluginController Instance
+2023-07-12 12:45:39 | INFO  [main] (LucenePluginSet.java:45) - Loading lucene plugin set
+2023-07-12 12:45:39 | INFO  [main] (LuceneIndexer.java:106) - Created Lucene Indexer Plugin
+2023-07-12 12:45:39 | INFO  [main] (PluginController.java:111) - Loaded Local Plugins
+2023-07-12 12:45:39 | INFO  [main] (PluginController.java:146) - Creating Local Settings Folder
+2023-07-12 12:45:39 | INFO  [main] (PluginController.java:154) - Loading plugin: file-storage
+2023-07-12 12:45:39 | WARN  [main] (FileStoragePlugin.java:80) - File storage root directory is not configured! All stored data will be sent to temporary storage.
+2023-07-12 12:45:39 | WARN  [main] (FileStoragePlugin.java:81) - Please enter the file storage configuration file and modify the "root-dir" property.
+2023-07-12 12:45:39 | INFO  [main] (PluginController.java:154) - Loading plugin: luceneset
+2023-07-12 12:45:39 | INFO  [main] (PluginController.java:116) - Added default storage plugin
+2023-07-12 12:45:39 | INFO  [main] (PluginController.java:229) - Initializing plugin rest interfaces
+2023-07-12 12:45:39 | INFO  [main] (PluginController.java:243) - Finished initializing rest interfaces
+2023-07-12 12:45:39 | INFO  [main] (PluginController.java:247) - Initializing jetty interface
+2023-07-12 12:45:39 | INFO  [main] (ControlServices.java:135) - Starting DICOM Storage SCP
+2023-07-12 12:45:39 | INFO  [DicoogleStorage-1] (NetworkConnection.java:631) - Start listening on 0.0.0.0/0.0.0.0:6666
+2023-07-12 12:45:39 | INFO  [main] (ControlServices.java:160) - Starting DICOM QueryRetrieve
+2023-07-12 12:45:39 | INFO  [DICOOGLE-STORAGE-2] (NetworkConnection.java:631) - Start listening on 0.0.0.0/0.0.0.0:1045
+2023-07-12 12:45:39 | INFO  [main] (ControlServices.java:182) - Starting WebServer
+2023-07-12 12:45:39 | INFO  [main] (DicoogleWeb.java:127) - Starting Web Services in DicoogleWeb. Port: 8080
+2023-07-12 12:45:39 | INFO  [main] (Server.java:284) - jetty-9.0.z-SNAPSHOT
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@399c408c{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@99223ac{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@4a5fab78{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@77a85e76{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@2cebf82f{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@34fc315d{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@34f48d1{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@36a1fd20{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@45f8415b{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@10dbf660{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@69ab2d6a{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@505a8582{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@57afe44b{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@18887028{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@28f8ce2e{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@2c0a3826{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@4af0c50{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@5ffd35dd{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@311a09b2{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@4cacccbf{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@301d84f6{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@6f80cf5{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@674ed201{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@4dad2363{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@114b2414{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@57920d6c{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@465d1345{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@62cf86d6{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@2a6c751f{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@6dd2e453{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@433b1597{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@5d5cd210{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@14d18029{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@6edb1e9c{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@75d7297d{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@6071631f{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@2ca132ad{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@6706da3d{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@7438c3d5{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@1fba3fd6{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@3aab42d6{/,null,AVAILABLE}
+2023-07-12 12:45:39 | INFO  [main] (StandardDescriptorProcessor.java:275) - NO JSP Support for /, did not find org.apache.jasper.servlet.JspServlet
+2023-07-12 12:45:39 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.w.WebAppContext@4ba1c1a2{/,file:/C:/Users/ACER/AppData/Local/Temp/jetty-0.0.0.0-8080-webapp-_-any-/webapp/,AVAILABLE}{jar:file:/C:/Users/ACER/DicoogleDir/dicoogle.jar!/webapp}
+2023-07-12 12:45:39 | INFO  [main] (AbstractConnector.java:265) - Started ServerConnector@656c5818{HTTP/1.1}{0.0.0.0:8080}
+2023-07-12 12:45:39 | INFO  [main] (ControlServices.java:189) - Starting Dicoogle Web
+2023-07-12 12:45:39 | INFO  [main] (PluginController.java:124) - Initialized plugins

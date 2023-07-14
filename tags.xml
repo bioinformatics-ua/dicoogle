@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Tags>
+    <DIM>
+        <tag id="00081070" alias="OperatorName"/>
+        <tag id="00201208" alias="NumberOfStudyRelatedInstances"/>
+        <tag id="00080070" alias="Manufacturer"/>
+        <tag id="00081030" alias="StudyDescription"/>
+        <tag id="00080030" alias="StudyTime"/>
+        <tag id="00080061" alias="ModalitiesInStudy"/>
+        <tag id="0020000d" alias="StudyInstanceUID"/>
+        <tag id="0020000e" alias="SeriesInstanceUID"/>
+        <tag id="001021c0" alias="PregnancyStatus"/>
+        <tag id="00200010" alias="StudyID"/>
+        <tag id="00100040" alias="PatientSex"/>
+        <tag id="00200011" alias="SeriesNumber"/>
+        <tag id="0008103e" alias="SeriesDescription"/>
+        <tag id="00080080" alias="InstitutionName"/>
+        <tag id="00081040" alias="InstitutionDepartmentName"/>
+        <tag id="00000700" alias="Priority"/>
+        <tag id="00100030" alias="PatientBirthDate"/>
+        <tag id="00400243" alias="PerformedLocation"/>
+        <tag id="00102154" alias="PatientTelephoneNumbers"/>
+        <tag id="00081050" alias="PerformingPhysicianName"/>
+        <tag id="00080050" alias="AccessionNumber"/>
+        <tag id="00081090" alias="ManufacturerModelName"/>
+        <tag id="00080090" alias="ReferringPhysicianName"/>
+        <tag id="00100020" alias="PatientID"/>
+        <tag id="00080020" alias="StudyDate"/>
+        <tag id="00080060" alias="Modality"/>
+        <tag id="00101010" alias="PatientAge"/>
+        <tag id="00100010" alias="PatientName"/>
+        <tag id="00080018" alias="SOPInstanceUID"/>
+    </DIM>
+    <others/>
+    <modalities enable="true" all="false">
+        <modality enable="true" all="false" id="CT"/>
+        <modality id="MR"/>
+        <modality id="XA"/>
+        <modality id="MG"/>
+        <modality id="US"/>
+    </modalities>
+    <dictionaries/>
+</Tags>

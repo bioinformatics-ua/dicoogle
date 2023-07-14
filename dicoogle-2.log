@@ -1,0 +1,592 @@
+2023-07-12 12:46:53 | INFO  [main] (PluginController.java:94) - Creating PluginController Instance
+2023-07-12 12:46:55 | INFO  [main] (LucenePluginSet.java:45) - Loading lucene plugin set
+2023-07-12 12:46:55 | INFO  [main] (LuceneIndexer.java:106) - Created Lucene Indexer Plugin
+2023-07-12 12:46:55 | INFO  [main] (PluginController.java:111) - Loaded Local Plugins
+2023-07-12 12:46:55 | INFO  [main] (PluginController.java:154) - Loading plugin: file-storage
+2023-07-12 12:46:55 | INFO  [main] (PluginController.java:154) - Loading plugin: luceneset
+2023-07-12 12:46:55 | INFO  [main] (PluginController.java:116) - Added default storage plugin
+2023-07-12 12:46:55 | INFO  [main] (PluginController.java:229) - Initializing plugin rest interfaces
+2023-07-12 12:46:55 | INFO  [main] (PluginController.java:243) - Finished initializing rest interfaces
+2023-07-12 12:46:55 | INFO  [main] (PluginController.java:247) - Initializing jetty interface
+2023-07-12 12:46:55 | INFO  [main] (ControlServices.java:135) - Starting DICOM Storage SCP
+2023-07-12 12:46:55 | INFO  [DicoogleStorage-1] (NetworkConnection.java:631) - Start listening on 0.0.0.0/0.0.0.0:6666
+2023-07-12 12:46:55 | INFO  [main] (ControlServices.java:160) - Starting DICOM QueryRetrieve
+2023-07-12 12:46:55 | INFO  [DICOOGLE-STORAGE-2] (NetworkConnection.java:631) - Start listening on 0.0.0.0/0.0.0.0:1045
+2023-07-12 12:46:55 | INFO  [main] (ControlServices.java:182) - Starting WebServer
+2023-07-12 12:46:55 | INFO  [main] (DicoogleWeb.java:127) - Starting Web Services in DicoogleWeb. Port: 8080
+2023-07-12 12:46:55 | INFO  [main] (Server.java:284) - jetty-9.0.z-SNAPSHOT
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@e7e455d{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@33e8e146{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@1f4d38f9{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@18463720{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@64eeddd8{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@10f8e2d2{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@66048ac4{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@4f525e13{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@5d404a3c{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@af9dd34{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@48692405{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@151659dd{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@4a58e0e9{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@e8c84eb{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@f44d033{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@283bb8b7{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@25e95af1{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@4fa8297b{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@6644bdf5{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@13cf5f8a{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@7c9ea1d0{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@72f3acc9{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@319b1c77{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@584136c1{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@51d88c38{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@3ea2f72e{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@57b33c29{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@615ef20{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@13390a96{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@3a8b9458{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@7497a554{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@5dd23809{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@664f49f{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@60ab895f{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@295f2d1b{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@78bd02c8{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@28dacf31{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@47e60b71{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@795faad{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@17ae13d5{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.s.ServletContextHandler@69f3e556{/,null,AVAILABLE}
+2023-07-12 12:46:55 | INFO  [main] (StandardDescriptorProcessor.java:275) - NO JSP Support for /, did not find org.apache.jasper.servlet.JspServlet
+2023-07-12 12:46:55 | INFO  [main] (ContextHandler.java:727) - Started o.e.j.w.WebAppContext@4ffa078d{/,file:/C:/Users/ACER/AppData/Local/Temp/jetty-0.0.0.0-8080-webapp-_-any-/webapp/,AVAILABLE}{jar:file:/C:/Users/ACER/DicoogleDir/dicoogle.jar!/webapp}
+2023-07-12 12:46:55 | INFO  [main] (AbstractConnector.java:265) - Started ServerConnector@2c154508{HTTP/1.1}{0.0.0.0:8080}
+2023-07-12 12:46:55 | INFO  [main] (ControlServices.java:189) - Starting Dicoogle Web
+2023-07-12 12:46:55 | INFO  [main] (PluginController.java:124) - Initialized plugins
+2023-07-12 12:55:16 | INFO  [qtp1438936769-109] (PluginController.java:645) - Starting Indexing procedure for file:C:/Users/ACER/DicoogleDir/storage
+2023-07-12 12:55:16 | WARN  [qtp1438936769-109] (PluginController.java:675) - Indexer lucene failed unexpectedly
+java.lang.IllegalArgumentException: URI is not hierarchical
+	at sun.nio.fs.WindowsUriSupport.fromUri(WindowsUriSupport.java:123) ~[?:?]
+	at sun.nio.fs.WindowsFileSystemProvider.getPath(WindowsFileSystemProvider.java:97) ~[?:?]
+	at java.nio.file.Path.of(Path.java:203) ~[?:?]
+	at java.nio.file.Paths.get(Paths.java:97) ~[?:?]
+	at pt.ua.ieeta.filestorageplugin.utils.AbsolutePathTranslator.toPath(AbsolutePathTranslator.java:37) ~[?:?]
+	at pt.ua.ieeta.filestorageplugin.FileStoragePlugin.at(FileStoragePlugin.java:245) ~[?:?]
+	at pt.ua.dicoogle.plugins.PluginController.index(PluginController.java:659) [dicoogle.jar:3.1.0]
+	at pt.ua.dicoogle.server.web.servlets.management.ForceIndexing.doPost(ForceIndexing.java:82) [dicoogle.jar:3.1.0]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:755) [dicoogle.jar:3.1.0]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:848) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:681) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:452) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:211) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1083) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:379) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:175) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1017) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:136) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:258) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.Server.handle(Server.java:445) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:260) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:225) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.io.AbstractConnection$ReadCallback.run(AbstractConnection.java:358) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:596) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:527) [dicoogle.jar:3.1.0]
+	at java.lang.Thread.run(Thread.java:834) [?:?]
+2023-07-12 12:55:16 | INFO  [qtp1438936769-109] (PluginController.java:678) - Finished firing all indexing plugins for file:C:/Users/ACER/DicoogleDir/storage
+2023-07-12 12:55:17 | INFO  [qtp1438936769-109] (PluginController.java:645) - Starting Indexing procedure for file:C:/Users/ACER/DicoogleDir/storage
+2023-07-12 12:55:17 | WARN  [qtp1438936769-109] (PluginController.java:675) - Indexer lucene failed unexpectedly
+java.lang.IllegalArgumentException: URI is not hierarchical
+	at sun.nio.fs.WindowsUriSupport.fromUri(WindowsUriSupport.java:123) ~[?:?]
+	at sun.nio.fs.WindowsFileSystemProvider.getPath(WindowsFileSystemProvider.java:97) ~[?:?]
+	at java.nio.file.Path.of(Path.java:203) ~[?:?]
+	at java.nio.file.Paths.get(Paths.java:97) ~[?:?]
+	at pt.ua.ieeta.filestorageplugin.utils.AbsolutePathTranslator.toPath(AbsolutePathTranslator.java:37) ~[?:?]
+	at pt.ua.ieeta.filestorageplugin.FileStoragePlugin.at(FileStoragePlugin.java:245) ~[?:?]
+	at pt.ua.dicoogle.plugins.PluginController.index(PluginController.java:659) [dicoogle.jar:3.1.0]
+	at pt.ua.dicoogle.server.web.servlets.management.ForceIndexing.doPost(ForceIndexing.java:82) [dicoogle.jar:3.1.0]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:755) [dicoogle.jar:3.1.0]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:848) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:681) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:452) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:211) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1083) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:379) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:175) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1017) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:136) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:258) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.Server.handle(Server.java:445) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:260) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:225) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.io.AbstractConnection$ReadCallback.run(AbstractConnection.java:358) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:596) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:527) [dicoogle.jar:3.1.0]
+	at java.lang.Thread.run(Thread.java:834) [?:?]
+2023-07-12 12:55:17 | INFO  [qtp1438936769-109] (PluginController.java:678) - Finished firing all indexing plugins for file:C:/Users/ACER/DicoogleDir/storage
+2023-07-12 12:56:17 | INFO  [qtp1438936769-109] (PluginController.java:645) - Starting Indexing procedure for file:C:/Users/ACER/DicoogleDir/storage/FELIX
+2023-07-12 12:56:17 | WARN  [qtp1438936769-109] (PluginController.java:675) - Indexer lucene failed unexpectedly
+java.lang.IllegalArgumentException: URI is not hierarchical
+	at sun.nio.fs.WindowsUriSupport.fromUri(WindowsUriSupport.java:123) ~[?:?]
+	at sun.nio.fs.WindowsFileSystemProvider.getPath(WindowsFileSystemProvider.java:97) ~[?:?]
+	at java.nio.file.Path.of(Path.java:203) ~[?:?]
+	at java.nio.file.Paths.get(Paths.java:97) ~[?:?]
+	at pt.ua.ieeta.filestorageplugin.utils.AbsolutePathTranslator.toPath(AbsolutePathTranslator.java:37) ~[?:?]
+	at pt.ua.ieeta.filestorageplugin.FileStoragePlugin.at(FileStoragePlugin.java:245) ~[?:?]
+	at pt.ua.dicoogle.plugins.PluginController.index(PluginController.java:659) [dicoogle.jar:3.1.0]
+	at pt.ua.dicoogle.server.web.servlets.management.ForceIndexing.doPost(ForceIndexing.java:82) [dicoogle.jar:3.1.0]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:755) [dicoogle.jar:3.1.0]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:848) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:681) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:452) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:211) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1083) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:379) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:175) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1017) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:136) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:258) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.Server.handle(Server.java:445) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:260) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:225) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.io.AbstractConnection$ReadCallback.run(AbstractConnection.java:358) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:596) [dicoogle.jar:3.1.0]
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:527) [dicoogle.jar:3.1.0]
+	at java.lang.Thread.run(Thread.java:834) [?:?]
+2023-07-12 12:56:17 | INFO  [qtp1438936769-109] (PluginController.java:678) - Finished firing all indexing plugins for file:C:/Users/ACER/DicoogleDir/storage/FELIX
+2023-07-12 12:56:23 | INFO  [qtp1438936769-109] (PluginController.java:645) - Starting Indexing procedure for C:/Users/ACER/DicoogleDir/storage/FELIX
+2023-07-12 12:56:23 | WARN  [qtp1438936769-109] (PluginController.java:404) - Could not get storage for scheme: C:/Users/ACER/DicoogleDir/storage/FELIX
+2023-07-12 12:56:23 | ERROR [qtp1438936769-109] (PluginController.java:649) - No storage plugin detected
+2023-07-12 13:05:50 | INFO  [qtp1438936769-117] (PluginController.java:645) - Starting Indexing procedure for file:/C:/Users/ACER/DicoogleDir/storage
+2023-07-12 13:05:50 | INFO  [qtp1438936769-117] (PluginController.java:678) - Finished firing all indexing plugins for file:/C:/Users/ACER/DicoogleDir/storage
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,1,file:///C:/Users/ACER/DicoogleDir/storage/FELIX/IM-0001-0074.dcmfe2f32c2-0564-45a2-9aa7-6c71c6a6913d.dcm,IndexReport [nIndexedFiles=1, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,2,file:///C:/Users/ACER/DicoogleDir/storage/FELIX/IM-0001-0075.dcm102c269a-fea2-4006-a8b5-b44abef428e8.dcm,IndexReport [nIndexedFiles=2, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,3,file:///C:/Users/ACER/DicoogleDir/storage/FELIX/IM-0001-0075.dcm3a5738c1-6dfb-4fc0-b038-3f46ad7dcc5b.dcm,IndexReport [nIndexedFiles=3, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,4,file:///C:/Users/ACER/DicoogleDir/storage/FELIX/IM-0001-0075.dcm4763272c-307c-4f43-9fcf-b819bf13eef8.dcm,IndexReport [nIndexedFiles=4, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,5,file:///C:/Users/ACER/DicoogleDir/storage/FELIX/IM-0001-0075.dcm607a5bb9-1ca5-4c85-83ef-8b3d3c6f9de0.dcm,IndexReport [nIndexedFiles=5, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,6,file:///C:/Users/ACER/DicoogleDir/storage/FELIX/IM-0001-0075.dcmfaf20448-a0ee-46ff-9d3e-f0280bbefcce.dcm,IndexReport [nIndexedFiles=6, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,7,file:///C:/Users/ACER/DicoogleDir/storage/FELIX/IM-0001-0076.dcm101b9457-8d87-47f6-8171-90a74ce48dd9.dcm,IndexReport [nIndexedFiles=7, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,8,file:///C:/Users/ACER/DicoogleDir/storage/FELIX/IM-0001-0076.dcm2b9a5f98-1f42-4698-be6f-e4edd0653dce.dcm,IndexReport [nIndexedFiles=8, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,9,file:///C:/Users/ACER/DicoogleDir/storage/FELIX/IM-0001-0076.dcm9b205fe0-f50f-4b20-9594-ea06651d04b0.dcm,IndexReport [nIndexedFiles=9, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,10,file:///C:/Users/ACER/DicoogleDir/storage/FELIX/IM-0001-0076.dcm9d5a9a20-2bf3-4de1-84a1-ea625537f2bc.dcm,IndexReport [nIndexedFiles=10, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,11,file:///C:/Users/ACER/DicoogleDir/storage/Gastrit/IM-0001-0119.dcm50de05c9-9884-4504-8469-7a5ea8520c28.dcm,IndexReport [nIndexedFiles=11, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,12,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0001.dcm0735123d-96e2-4e12-8062-812bd37f922c.dcm,IndexReport [nIndexedFiles=12, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,13,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0001.dcmdf5e3a2c-5a50-4b69-916f-aff22c7d56c2.dcm,IndexReport [nIndexedFiles=13, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,14,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0001.dcmf379f52b-bd48-409f-bead-1d170d66fddd.dcm,IndexReport [nIndexedFiles=14, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,15,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0001.dcmfdb26136-7047-4ba2-a290-4ee00427f5df.dcm,IndexReport [nIndexedFiles=15, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,16,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0002.dcm2d6c9a40-907c-4eae-953c-281e21d2a0a0.dcm,IndexReport [nIndexedFiles=16, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,17,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0002.dcm5381d19f-8c89-4da9-ba28-0927618ba6d4.dcm,IndexReport [nIndexedFiles=17, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,18,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0002.dcm56500d66-7951-4f49-bf43-0e580b53ac81.dcm,IndexReport [nIndexedFiles=18, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,19,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0002.dcm6129f51f-8bf6-42df-9a7b-310e412af771.dcm,IndexReport [nIndexedFiles=19, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,20,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0002.dcm88c3bb29-ce31-4b9b-bb88-ec6a247731e5.dcm,IndexReport [nIndexedFiles=20, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,21,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0002.dcm9b81674a-47eb-4548-9237-e6ef9d5b59d2.dcm,IndexReport [nIndexedFiles=21, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,22,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0002.dcmac42a6f7-ddab-4066-b353-3070e1ae3b3e.dcm,IndexReport [nIndexedFiles=22, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,23,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0002.dcmcb3a9a92-4eb9-4cc4-841b-875a4b7b2cd5.dcm,IndexReport [nIndexedFiles=23, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,24,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0003.dcm0f7b99ca-0f03-4189-8669-4446c41f7fa7.dcm,IndexReport [nIndexedFiles=24, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,25,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0003.dcm18c2236a-4266-4277-b5bc-20027b076d34.dcm,IndexReport [nIndexedFiles=25, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 2 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,26,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0003.dcm5edb2a2f-dbb2-41b4-baf5-f00148632051.dcm,IndexReport [nIndexedFiles=26, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,27,file:///C:/Users/ACER/DicoogleDir/storage/Thyroid/IM-0001-0001.dcm0a117e34-be84-4fa8-993d-249927b41af9.dcm,IndexReport [nIndexedFiles=27, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,28,file:///C:/Users/ACER/DicoogleDir/storage/Thyroid/IM-0001-0001.dcm29405e25-2956-4cc6-a87a-017a50d7850f.dcm,IndexReport [nIndexedFiles=28, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,29,file:///C:/Users/ACER/DicoogleDir/storage/Thyroid/IM-0001-0001.dcm8acd9fa5-71bd-4355-a494-1f07448edf5b.dcm,IndexReport [nIndexedFiles=29, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,30,file:///C:/Users/ACER/DicoogleDir/storage/Thyroid/IM-0001-0002.dcme3cbbe6b-2d21-4798-a27a-10226c1ccc3e.dcm,IndexReport [nIndexedFiles=30, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:217) - Finished Indexing: 1602488290,31,file:///C:/Users/ACER/DicoogleDir/storage/Thyroid/IM-0001-0003.dcma8cf5740-b518-4e91-be5e-3b6cdbd43872.dcm,IndexReport [nIndexedFiles=31, nErrors=0, elapsedTime=1689147350295]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (LuceneIndexer.java:229) - Finished Index Task: 1602488290,IndexReport [nIndexedFiles=31, nErrors=0, elapsedTime=214]
+2023-07-12 13:05:50 | INFO  [pool-2-thread-1] (PluginController.java:667) - Task [6bae6803-2e4e-4e55-80a2-d935074ba50c] complete: file:/C:/Users/ACER/DicoogleDir/storage is indexed
+2023-07-12 13:08:21 | INFO  [qtp1438936769-120] (PluginController.java:645) - Starting Indexing procedure for file:/C:/Users/ACER/DicoogleDir/storage
+2023-07-12 13:08:21 | INFO  [qtp1438936769-120] (PluginController.java:678) - Finished firing all indexing plugins for file:/C:/Users/ACER/DicoogleDir/storage
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 8 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.2.13.20561.30010005042219430807800001386
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,1,file:///C:/Users/ACER/DicoogleDir/storage/FELIX/IM-0001-0074.dcmfe2f32c2-0564-45a2-9aa7-6c71c6a6913d.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.2.13.20561.30010005042220220107800000075
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,2,file:///C:/Users/ACER/DicoogleDir/storage/FELIX/IM-0001-0075.dcm102c269a-fea2-4006-a8b5-b44abef428e8.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.6.1.123.6.0.39420489272624
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,3,file:///C:/Users/ACER/DicoogleDir/storage/FELIX/IM-0001-0075.dcm3a5738c1-6dfb-4fc0-b038-3f46ad7dcc5b.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.6.1.1234.1110.0.1166501656203075
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,4,file:///C:/Users/ACER/DicoogleDir/storage/FELIX/IM-0001-0075.dcm4763272c-307c-4f43-9fcf-b819bf13eef8.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.2.13.20561.30000005042216091690600002654
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,5,file:///C:/Users/ACER/DicoogleDir/storage/FELIX/IM-0001-0075.dcm607a5bb9-1ca5-4c85-83ef-8b3d3c6f9de0.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.2.13.20561.30010005042219430807800001387
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,6,file:///C:/Users/ACER/DicoogleDir/storage/FELIX/IM-0001-0075.dcmfaf20448-a0ee-46ff-9d3e-f0280bbefcce.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.6.1.1234.1110.0.1166116110792025
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,7,file:///C:/Users/ACER/DicoogleDir/storage/FELIX/IM-0001-0076.dcm101b9457-8d87-47f6-8171-90a74ce48dd9.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.2.13.20561.30010005042220220107800000076
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,8,file:///C:/Users/ACER/DicoogleDir/storage/FELIX/IM-0001-0076.dcm2b9a5f98-1f42-4698-be6f-e4edd0653dce.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.2.13.20561.30000005042216091690600002653
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,9,file:///C:/Users/ACER/DicoogleDir/storage/FELIX/IM-0001-0076.dcm9b205fe0-f50f-4b20-9594-ea06651d04b0.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.6.1.123.6.0.39421222037537
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,10,file:///C:/Users/ACER/DicoogleDir/storage/FELIX/IM-0001-0076.dcm9d5a9a20-2bf3-4de1-84a1-ea625537f2bc.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.0.0.123.410.0.111340923889217
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,11,file:///C:/Users/ACER/DicoogleDir/storage/Gastrit/IM-0001-0119.dcm50de05c9-9884-4504-8469-7a5ea8520c28.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.2.30.25016.30000004111615400092100003887
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,12,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0001.dcm0735123d-96e2-4e12-8062-812bd37f922c.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.2.30.25016.30000004111615400092100002726
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,13,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0001.dcmdf5e3a2c-5a50-4b69-916f-aff22c7d56c2.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.2.30.25016.30000004111615400092100004694
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,14,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0001.dcmf379f52b-bd48-409f-bead-1d170d66fddd.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.2.30.25016.30000004111615400092100002699
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,15,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0001.dcmfdb26136-7047-4ba2-a290-4ee00427f5df.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.2.30.25016.30000004111615400092100002700
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,16,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0002.dcm2d6c9a40-907c-4eae-953c-281e21d2a0a0.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.2.30.25016.30000004111615400092100003920
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,17,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0002.dcm5381d19f-8c89-4da9-ba28-0927618ba6d4.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.2.30.25016.30000004111615400092100002403
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,18,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0002.dcm56500d66-7951-4f49-bf43-0e580b53ac81.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.2.30.25016.30000004111615400092100002430
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,19,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0002.dcm6129f51f-8bf6-42df-9a7b-310e412af771.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.2.30.25016.30000004111615400092100002835
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,20,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0002.dcm88c3bb29-ce31-4b9b-bb88-ec6a247731e5.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.2.30.25016.30000004111615400092100002727
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,21,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0002.dcm9b81674a-47eb-4548-9237-e6ef9d5b59d2.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.2.30.25016.30000004111615400092100004695
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,22,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0002.dcmac42a6f7-ddab-4066-b353-3070e1ae3b3e.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.2.30.25016.30000004111615400092100002592
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,23,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0002.dcmcb3a9a92-4eb9-4cc4-841b-875a4b7b2cd5.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.2.30.25016.30000004111615400092100002593
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,24,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0003.dcm0f7b99ca-0f03-4189-8669-4446c41f7fa7.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.2.30.25016.30000004111615400092100002836
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,25,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0003.dcm18c2236a-4266-4277-b5bc-20027b076d34.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.2.30.25016.30000004111615400092100002728
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,26,file:///C:/Users/ACER/DicoogleDir/storage/PNEUMATIX/IM-0001-0003.dcm5edb2a2f-dbb2-41b4-baf5-f00148632051.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.6.1.123.24412.0.231019730551383
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,27,file:///C:/Users/ACER/DicoogleDir/storage/Thyroid/IM-0001-0001.dcm0a117e34-be84-4fa8-993d-249927b41af9.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.6.1.123.24412.0.231015282982602
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,28,file:///C:/Users/ACER/DicoogleDir/storage/Thyroid/IM-0001-0001.dcm29405e25-2956-4cc6-a87a-017a50d7850f.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.6.1.123.24412.0.231620613052095
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,29,file:///C:/Users/ACER/DicoogleDir/storage/Thyroid/IM-0001-0001.dcm8acd9fa5-71bd-4355-a494-1f07448edf5b.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 1 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.6.1.123.24412.0.231616112282440
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,30,file:///C:/Users/ACER/DicoogleDir/storage/Thyroid/IM-0001-0002.dcme3cbbe6b-2d21-4798-a27a-10226c1ccc3e.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneQuery.java:143) - Finished opening result stream in 0 ms
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:328) - SOPInstanceUID already exists, ignoring: 1.3.12.2.1107.5.6.1.123.24412.0.231081423202127
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:217) - Finished Indexing: 342348048,31,file:///C:/Users/ACER/DicoogleDir/storage/Thyroid/IM-0001-0003.dcma8cf5740-b518-4e91-be5e-3b6cdbd43872.dcm,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=1689147501130]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (LuceneIndexer.java:229) - Finished Index Task: 342348048,IndexReport [nIndexedFiles=0, nErrors=0, elapsedTime=75]
+2023-07-12 13:08:21 | INFO  [pool-2-thread-2] (PluginController.java:667) - Task [18328b37-18d7-445f-a536-4a7bafe6e6f9] complete: file:/C:/Users/ACER/DicoogleDir/storage is indexed
+2023-07-12 13:14:41 | INFO  [pool-3-thread-1] (LuceneQuery.java:119) - Finished opening result stream, Query: 0,9,curl -X POST "http://localhost:8080/user?username=johndoe&password=secret"
+2023-07-12 13:14:49 | INFO  [pool-3-thread-2] (LuceneQuery.java:119) - Finished opening result stream, Query: 0,2,P001
+2023-07-12 13:15:01 | INFO  [pool-3-thread-3] (LuceneQuery.java:119) - Finished opening result stream, Query: 0,2,PatientID:P001
+2023-07-12 13:15:02 | INFO  [pool-3-thread-4] (LuceneQuery.java:119) - Finished opening result stream, Query: 0,2,PatientID:P001
+2023-07-12 13:15:06 | ERROR [pool-3-thread-1] (LuceneQuery.java:112) - Error parsing query
+org.apache.lucene.queryparser.classic.ParseException: Cannot parse 'PatientID:': Encountered "<EOF>" at line 1, column 10.
+Was expecting one of:
+    <BAREOPER> ...
+    "(" ...
+    "*" ...
+    <QUOTED> ...
+    <TERM> ...
+    <PREFIXTERM> ...
+    <WILDTERM> ...
+    <REGEXPTERM> ...
+    "[" ...
+    "{" ...
+    <NUMBER> ...
+    
+	at org.apache.lucene.queryparser.classic.QueryParserBase.parse(QueryParserBase.java:116) ~[lucene-3.1.0.jar:?]
+	at dicoogle.lucene.GenericQueryParser.parse(GenericQueryParser.java:71) ~[lucene-3.1.0.jar:?]
+	at dicoogle.lucene.LuceneQuery.query(LuceneQuery.java:110) [lucene-3.1.0.jar:?]
+	at pt.ua.dicoogle.plugins.PluginController$1.call(PluginController.java:598) [dicoogle.jar:3.1.0]
+	at pt.ua.dicoogle.plugins.PluginController$1.call(PluginController.java:592) [dicoogle.jar:3.1.0]
+	at java.util.concurrent.FutureTask.run(FutureTask.java:264) [?:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515) [?:?]
+	at java.util.concurrent.FutureTask.run(FutureTask.java:264) [?:?]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128) [?:?]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628) [?:?]
+	at java.lang.Thread.run(Thread.java:834) [?:?]
+Caused by: org.apache.lucene.queryparser.classic.ParseException: Encountered "<EOF>" at line 1, column 10.
+Was expecting one of:
+    <BAREOPER> ...
+    "(" ...
+    "*" ...
+    <QUOTED> ...
+    <TERM> ...
+    <PREFIXTERM> ...
+    <WILDTERM> ...
+    <REGEXPTERM> ...
+    "[" ...
+    "{" ...
+    <NUMBER> ...
+    
+	at org.apache.lucene.queryparser.classic.QueryParser.generateParseException(QueryParser.java:932) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParser.jj_consume_token(QueryParser.java:814) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParser.Clause(QueryParser.java:373) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParser.Query(QueryParser.java:244) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParser.TopLevelQuery(QueryParser.java:215) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParserBase.parse(QueryParserBase.java:111) ~[lucene-3.1.0.jar:?]
+	... 10 more
+2023-07-12 13:15:20 | ERROR [pool-3-thread-2] (LuceneQuery.java:112) - Error parsing query
+org.apache.lucene.queryparser.classic.ParseException: Cannot parse 'PerformedLocation:': Encountered "<EOF>" at line 1, column 18.
+Was expecting one of:
+    <BAREOPER> ...
+    "(" ...
+    "*" ...
+    <QUOTED> ...
+    <TERM> ...
+    <PREFIXTERM> ...
+    <WILDTERM> ...
+    <REGEXPTERM> ...
+    "[" ...
+    "{" ...
+    <NUMBER> ...
+    
+	at org.apache.lucene.queryparser.classic.QueryParserBase.parse(QueryParserBase.java:116) ~[lucene-3.1.0.jar:?]
+	at dicoogle.lucene.GenericQueryParser.parse(GenericQueryParser.java:71) ~[lucene-3.1.0.jar:?]
+	at dicoogle.lucene.LuceneQuery.query(LuceneQuery.java:110) [lucene-3.1.0.jar:?]
+	at pt.ua.dicoogle.plugins.PluginController$1.call(PluginController.java:598) [dicoogle.jar:3.1.0]
+	at pt.ua.dicoogle.plugins.PluginController$1.call(PluginController.java:592) [dicoogle.jar:3.1.0]
+	at java.util.concurrent.FutureTask.run(FutureTask.java:264) [?:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515) [?:?]
+	at java.util.concurrent.FutureTask.run(FutureTask.java:264) [?:?]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128) [?:?]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628) [?:?]
+	at java.lang.Thread.run(Thread.java:834) [?:?]
+Caused by: org.apache.lucene.queryparser.classic.ParseException: Encountered "<EOF>" at line 1, column 18.
+Was expecting one of:
+    <BAREOPER> ...
+    "(" ...
+    "*" ...
+    <QUOTED> ...
+    <TERM> ...
+    <PREFIXTERM> ...
+    <WILDTERM> ...
+    <REGEXPTERM> ...
+    "[" ...
+    "{" ...
+    <NUMBER> ...
+    
+	at org.apache.lucene.queryparser.classic.QueryParser.generateParseException(QueryParser.java:932) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParser.jj_consume_token(QueryParser.java:814) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParser.Clause(QueryParser.java:373) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParser.Query(QueryParser.java:244) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParser.TopLevelQuery(QueryParser.java:215) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParserBase.parse(QueryParserBase.java:111) ~[lucene-3.1.0.jar:?]
+	... 10 more
+2023-07-12 13:15:21 | ERROR [pool-3-thread-3] (LuceneQuery.java:112) - Error parsing query
+org.apache.lucene.queryparser.classic.ParseException: Cannot parse 'PerformedLocation:': Encountered "<EOF>" at line 1, column 18.
+Was expecting one of:
+    <BAREOPER> ...
+    "(" ...
+    "*" ...
+    <QUOTED> ...
+    <TERM> ...
+    <PREFIXTERM> ...
+    <WILDTERM> ...
+    <REGEXPTERM> ...
+    "[" ...
+    "{" ...
+    <NUMBER> ...
+    
+	at org.apache.lucene.queryparser.classic.QueryParserBase.parse(QueryParserBase.java:116) ~[lucene-3.1.0.jar:?]
+	at dicoogle.lucene.GenericQueryParser.parse(GenericQueryParser.java:71) ~[lucene-3.1.0.jar:?]
+	at dicoogle.lucene.LuceneQuery.query(LuceneQuery.java:110) [lucene-3.1.0.jar:?]
+	at pt.ua.dicoogle.plugins.PluginController$1.call(PluginController.java:598) [dicoogle.jar:3.1.0]
+	at pt.ua.dicoogle.plugins.PluginController$1.call(PluginController.java:592) [dicoogle.jar:3.1.0]
+	at java.util.concurrent.FutureTask.run(FutureTask.java:264) [?:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515) [?:?]
+	at java.util.concurrent.FutureTask.run(FutureTask.java:264) [?:?]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128) [?:?]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628) [?:?]
+	at java.lang.Thread.run(Thread.java:834) [?:?]
+Caused by: org.apache.lucene.queryparser.classic.ParseException: Encountered "<EOF>" at line 1, column 18.
+Was expecting one of:
+    <BAREOPER> ...
+    "(" ...
+    "*" ...
+    <QUOTED> ...
+    <TERM> ...
+    <PREFIXTERM> ...
+    <WILDTERM> ...
+    <REGEXPTERM> ...
+    "[" ...
+    "{" ...
+    <NUMBER> ...
+    
+	at org.apache.lucene.queryparser.classic.QueryParser.generateParseException(QueryParser.java:932) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParser.jj_consume_token(QueryParser.java:814) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParser.Clause(QueryParser.java:373) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParser.Query(QueryParser.java:244) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParser.TopLevelQuery(QueryParser.java:215) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParserBase.parse(QueryParserBase.java:111) ~[lucene-3.1.0.jar:?]
+	... 10 more
+2023-07-12 13:15:21 | ERROR [pool-3-thread-4] (LuceneQuery.java:112) - Error parsing query
+org.apache.lucene.queryparser.classic.ParseException: Cannot parse 'PerformedLocation:': Encountered "<EOF>" at line 1, column 18.
+Was expecting one of:
+    <BAREOPER> ...
+    "(" ...
+    "*" ...
+    <QUOTED> ...
+    <TERM> ...
+    <PREFIXTERM> ...
+    <WILDTERM> ...
+    <REGEXPTERM> ...
+    "[" ...
+    "{" ...
+    <NUMBER> ...
+    
+	at org.apache.lucene.queryparser.classic.QueryParserBase.parse(QueryParserBase.java:116) ~[lucene-3.1.0.jar:?]
+	at dicoogle.lucene.GenericQueryParser.parse(GenericQueryParser.java:71) ~[lucene-3.1.0.jar:?]
+	at dicoogle.lucene.LuceneQuery.query(LuceneQuery.java:110) [lucene-3.1.0.jar:?]
+	at pt.ua.dicoogle.plugins.PluginController$1.call(PluginController.java:598) [dicoogle.jar:3.1.0]
+	at pt.ua.dicoogle.plugins.PluginController$1.call(PluginController.java:592) [dicoogle.jar:3.1.0]
+	at java.util.concurrent.FutureTask.run(FutureTask.java:264) [?:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515) [?:?]
+	at java.util.concurrent.FutureTask.run(FutureTask.java:264) [?:?]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128) [?:?]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628) [?:?]
+	at java.lang.Thread.run(Thread.java:834) [?:?]
+Caused by: org.apache.lucene.queryparser.classic.ParseException: Encountered "<EOF>" at line 1, column 18.
+Was expecting one of:
+    <BAREOPER> ...
+    "(" ...
+    "*" ...
+    <QUOTED> ...
+    <TERM> ...
+    <PREFIXTERM> ...
+    <WILDTERM> ...
+    <REGEXPTERM> ...
+    "[" ...
+    "{" ...
+    <NUMBER> ...
+    
+	at org.apache.lucene.queryparser.classic.QueryParser.generateParseException(QueryParser.java:932) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParser.jj_consume_token(QueryParser.java:814) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParser.Clause(QueryParser.java:373) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParser.Query(QueryParser.java:244) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParser.TopLevelQuery(QueryParser.java:215) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParserBase.parse(QueryParserBase.java:111) ~[lucene-3.1.0.jar:?]
+	... 10 more
+2023-07-12 13:15:21 | ERROR [pool-3-thread-1] (LuceneQuery.java:112) - Error parsing query
+org.apache.lucene.queryparser.classic.ParseException: Cannot parse 'PerformedLocation:': Encountered "<EOF>" at line 1, column 18.
+Was expecting one of:
+    <BAREOPER> ...
+    "(" ...
+    "*" ...
+    <QUOTED> ...
+    <TERM> ...
+    <PREFIXTERM> ...
+    <WILDTERM> ...
+    <REGEXPTERM> ...
+    "[" ...
+    "{" ...
+    <NUMBER> ...
+    
+	at org.apache.lucene.queryparser.classic.QueryParserBase.parse(QueryParserBase.java:116) ~[lucene-3.1.0.jar:?]
+	at dicoogle.lucene.GenericQueryParser.parse(GenericQueryParser.java:71) ~[lucene-3.1.0.jar:?]
+	at dicoogle.lucene.LuceneQuery.query(LuceneQuery.java:110) [lucene-3.1.0.jar:?]
+	at pt.ua.dicoogle.plugins.PluginController$1.call(PluginController.java:598) [dicoogle.jar:3.1.0]
+	at pt.ua.dicoogle.plugins.PluginController$1.call(PluginController.java:592) [dicoogle.jar:3.1.0]
+	at java.util.concurrent.FutureTask.run(FutureTask.java:264) [?:?]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515) [?:?]
+	at java.util.concurrent.FutureTask.run(FutureTask.java:264) [?:?]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128) [?:?]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628) [?:?]
+	at java.lang.Thread.run(Thread.java:834) [?:?]
+Caused by: org.apache.lucene.queryparser.classic.ParseException: Encountered "<EOF>" at line 1, column 18.
+Was expecting one of:
+    <BAREOPER> ...
+    "(" ...
+    "*" ...
+    <QUOTED> ...
+    <TERM> ...
+    <PREFIXTERM> ...
+    <WILDTERM> ...
+    <REGEXPTERM> ...
+    "[" ...
+    "{" ...
+    <NUMBER> ...
+    
+	at org.apache.lucene.queryparser.classic.QueryParser.generateParseException(QueryParser.java:932) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParser.jj_consume_token(QueryParser.java:814) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParser.Clause(QueryParser.java:373) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParser.Query(QueryParser.java:244) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParser.TopLevelQuery(QueryParser.java:215) ~[lucene-3.1.0.jar:?]
+	at org.apache.lucene.queryparser.classic.QueryParserBase.parse(QueryParserBase.java:111) ~[lucene-3.1.0.jar:?]
+	... 10 more
