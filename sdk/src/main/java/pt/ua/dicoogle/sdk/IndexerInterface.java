@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
 import pt.ua.dicoogle.sdk.datastructs.Report;
@@ -123,7 +122,8 @@ public interface IndexerInterface extends DicooglePlugin {
      *        to indicate early progress
      *        and inform consumers that
      *        it is safe to remove or exclude the unindexed item
-     * @return a report containing which files were not unindexed,
+     * @return an asynchronous task object returning
+     *         a report containing which files were not unindexed,
      *         and whether some of them were not found in the database
      * @throws IOException if an error occurred
      *         before the unindexing operation could start,
