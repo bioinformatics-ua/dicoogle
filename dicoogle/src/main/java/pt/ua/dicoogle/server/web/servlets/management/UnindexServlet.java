@@ -21,12 +21,13 @@ package pt.ua.dicoogle.server.web.servlets.management;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import javax.servlet.ServletException;
@@ -42,6 +43,7 @@ import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.QueryInterface;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
+import pt.ua.dicoogle.sdk.datastructs.UnindexReport;
 import pt.ua.dicoogle.sdk.task.JointQueryTask;
 import pt.ua.dicoogle.sdk.task.Task;
 
@@ -81,26 +83,50 @@ public class UnindexServlet extends HttpServlet {
                     "No arguments provided; must include either one of `uri`, `SOPInstanceUID`, `SeriesInstanceUID` or `StudyInstanceUID`");
             return;
         }
+        
+        PluginController pc = PluginController.getInstance();
 
         long indexed = 0;
         long failed = 0;
+        long notfound = 0;
 
-        Collection<String> uris = resolveURIs(paramUri, paramSop, paramSeries, paramStudy);
+        Collection<URI> uris = resolveURIs(paramUri, paramSop, paramSeries, paramStudy);
 
-        // unindex
-        for (String strUri : uris) {
-            try {
-                URI uri = new URI(strUri);
+        // if only one entry, do it inline
+        if (uris.size() <= 1) {
+            for (URI uri : uris) {
                 try {
-                    PluginController.getInstance().unindex(uri, providers);
+                    pc.unindex(uri, providers);
                     indexed += 1;
                 } catch (RuntimeException ex) {
                     logger.error("Failed to unindex {}", uri, ex);
                     failed += 1;
                 }
-            } catch (URISyntaxException ex) {
-                logger.warn("Received bad URI", ex);
-                failed += 1;
+            }
+
+        } else {
+            // if many, use bulk unindexing
+            List<Task<UnindexReport>> tasks = new ArrayList<>();
+
+            if (providers == null) {
+                providers = pc.getIndexingPlugins(true).stream()
+                    .map(p -> p.getName())
+                    .collect(Collectors.toList());
+            }
+            for (String indexProvider: providers) {
+                tasks.add(pc.unindex(indexProvider, uris, null));
+            }
+
+            int i = 0;
+            for (Task<UnindexReport> task: tasks) {
+                try {
+                    UnindexReport report = task.get();
+                    indexed = uris.size() - report.errorCount();
+                    failed = report.getUnindexFailures().size();
+                    notfound = report.getNotFound().size();
+                } catch (Exception ex) {
+                    logger.error("Task to unindex items in {} failed", providers.get(i), ex);
+                }
             }
         }
 
@@ -109,15 +135,18 @@ public class UnindexServlet extends HttpServlet {
         JSONObject obj = new JSONObject();
         obj.put("indexed", indexed);
         obj.put("failed", failed);
+        obj.put("notFound", notfound);
         resp.setStatus(200);
         resp.getWriter().write(obj.toString());
     }
 
     /// Convert the given parameters into a list of URIs
-    private static Collection<String> resolveURIs(String[] paramUri, String[] paramSop, String[] paramSeries,
+    private static Collection<URI> resolveURIs(String[] paramUri, String[] paramSop, String[] paramSeries,
             String[] paramStudy) {
         if (paramUri != null) {
-            return Arrays.asList(paramUri);
+            return Stream.of(paramUri)
+                .map(URI::create)
+                .collect(Collectors.toList());
         }
         String attribute = null;
         if (paramSop != null) {
@@ -142,11 +171,11 @@ public class UnindexServlet extends HttpServlet {
                 };
                 try {
                     return StreamSupport.stream(PluginController.getInstance()
-                            .queryAll(holder, dcmAttribute + ":" + uid).get().spliterator(), false);
+                            .queryAll(holder, dcmAttribute + ":\"" + uid + '"').get().spliterator(), false);
                 } catch (InterruptedException | ExecutionException ex) {
                     throw new RuntimeException(ex);
                 }
-            }).map(r -> r.getURI().toString()).collect(Collectors.toList());
+            }).map(r -> r.getURI()).collect(Collectors.toList());
 
         }
         String dicomProvider = dicomProviders.iterator().next();
@@ -154,7 +183,7 @@ public class UnindexServlet extends HttpServlet {
             // translate to URIs
             QueryInterface dicom = PluginController.getInstance().getQueryProviderByName(dicomProvider, false);
 
-            return StreamSupport.stream(dicom.query(dcmAttribute + ":" + uid).spliterator(), false);
-        }).map(r -> r.getURI().toString()).collect(Collectors.toList());
+            return StreamSupport.stream(dicom.query(dcmAttribute + ":\"" + uid + '"').spliterator(), false);
+        }).map(r -> r.getURI()).collect(Collectors.toList());
     }
 }
