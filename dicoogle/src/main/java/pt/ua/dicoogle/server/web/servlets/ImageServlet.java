@@ -127,13 +127,13 @@ public class ImageServlet extends HttpServlet {
                 // get the image file by the URI
                 URI imgUri = new URI(uri);
                 StorageInterface storageInt = PluginController.getInstance().getStorageForSchema(imgUri);
-                Iterator<StorageInputStream> storages = storageInt.at(imgUri).iterator();
+                StorageInputStream storageItem = storageInt.get(imgUri);
                 // take the first valid storage
-                if (!storages.hasNext()) {
+                if (storageItem == null) {
                     ResponseUtil.sendError(response, 404, "No image file for supplied URI");
                     return;
                 }
-                imgFile = storages.next();
+                imgFile = storageItem;
 
             } catch (URISyntaxException ex) {
                 ResponseUtil.sendError(response, 400, "Bad URI syntax");
@@ -220,7 +220,6 @@ public class ImageServlet extends HttpServlet {
 
     private static StorageInputStream getFileFromSOPInstanceUID(String sopInstanceUID, List<String> providers)
             throws IOException {
-        // TODO use only DIM sources?
         JointQueryTask qt = new JointQueryTask() {
             @Override
             public void onCompletion() {}
@@ -229,24 +228,32 @@ public class ImageServlet extends HttpServlet {
             public void onReceive(Task<Iterable<SearchResult>> e) {}
         };
         try {
+            PluginController pc = PluginController.getInstance();
             if (providers == null) {
-                providers = PluginController.getInstance().getQueryProvidersName(true);
+                // use only DIM sources
+                providers = ServerSettingsManager.getSettings().getArchiveSettings().getDIMProviders();
+                // exclude unknown query providers
+                providers.removeIf(pName -> pc.getQueryProviderByName(pName, true) == null);
+                if (providers.isEmpty()) {
+                    // fallback to all query providers
+                    providers = pc.getQueryProvidersName(true);
+                }
             }
-            Iterator<SearchResult> it = PluginController.getInstance()
-                    .query(qt, providers, "SOPInstanceUID:" + sopInstanceUID).get().iterator();
+            Iterator<SearchResult> it = pc
+                    .query(qt, providers, "SOPInstanceUID:\"" + sopInstanceUID + '"').get().iterator();
             if (!it.hasNext()) {
                 throw new IOException("No such image of SOPInstanceUID " + sopInstanceUID);
             }
             SearchResult res = it.next();
-            StorageInterface storage = PluginController.getInstance().getStorageForSchema(res.getURI());
+            StorageInterface storage = pc.getStorageForSchema(res.getURI());
             if (storage == null) {
                 throw new IOException("Unsupported file scheme");
             }
-            Iterator<StorageInputStream> store = storage.at(res.getURI()).iterator();
-            if (!store.hasNext()) {
+            StorageInputStream item = storage.get(res.getURI());
+            if (item == null) {
                 throw new IOException("No storage item found");
             }
-            return store.next();
+            return item;
         } catch (InterruptedException | ExecutionException ex) {
             throw new IOException(ex);
         }

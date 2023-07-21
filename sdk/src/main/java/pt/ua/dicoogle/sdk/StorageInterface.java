@@ -75,6 +75,41 @@ public interface StorageInterface extends DicooglePlugin {
     public Iterable<StorageInputStream> at(URI location, Object... parameters);
 
     /**
+     * Obtains an item stored at the exact location specified.
+     *
+     * The provided scheme is not relevant at this point,
+     * but the developer must avoid calling this method
+     * with a path of a different schema.
+     *
+     * <pre>
+     * URI uri = URI.create("file://dataset/CT/001.dcm");
+     * StorageInputStream item = storagePlugin.get(uri);
+     * if (item != null) {
+     *      System.err.println("Item at " + dicomObj.getURI() + " is available");
+     * }
+     * </pre>
+     *
+     * The default implementation calls {@linkplain #at}
+     * and returns the first item if its URI matches the location requested.
+     * Implementations may wish to override this method for performance reasons.
+     *
+     * @param location the URI of the item to retrieve
+     * @param parameters a variable list of extra retrieval parameters
+     * @return a storage item if it was found, <code>null</code> otherwise
+     * @see StorageInputStream
+     */
+    default public StorageInputStream get(URI location, Object... parameters) {
+        for (StorageInputStream sis : this.at(location, parameters)) {
+            if (Objects.equals(sis.getURI(), location)) {
+                return sis;
+            }
+            // don't try any further
+            break;
+        }
+        return null;
+    }
+
+    /**
      * Stores a DICOM object into the storage.
      *
      * @param dicomObject Object to be Stored
