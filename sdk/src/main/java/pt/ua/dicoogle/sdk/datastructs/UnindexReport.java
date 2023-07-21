@@ -122,4 +122,11 @@ public final class UnindexReport implements Serializable {
     public Collection<URI> getNotFound() {
         return Collections.unmodifiableCollection(this.notFound);
     }
+
+    /** Return the total count of files which were requested to be unindexed,
+     * but were either not found or failed to unindex.
+     */
+    public long errorCount() {
+        return this.failures.size() + this.notFound.size();
+    }
 }
