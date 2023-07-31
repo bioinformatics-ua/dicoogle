@@ -85,7 +85,7 @@ public class WSICache extends MemoryCache<DicomMetaData>{
 
             URI uri = retrieveURI(sopInstanceUID);
             if(uri == null){
-                throw new InvalidParameterException("Could not find the desired URI");
+                throw new IllegalArgumentException("Could not find the desired URI");
             }
 
             Attributes fmi;
@@ -97,7 +97,7 @@ public class WSICache extends MemoryCache<DicomMetaData>{
                 throw new InvalidParameterException("Could not find the desired URI");
             }
 
-            dis = new BufferedInputStream(sis.getInputStream());
+            dis = new DicomInputStream(sis.getInputStream());
 
             dis.setIncludeBulkData(DicomInputStream.IncludeBulkData.URI);
             dis.setBulkDataDescriptor(BulkDataDescriptor.PIXELDATA);
