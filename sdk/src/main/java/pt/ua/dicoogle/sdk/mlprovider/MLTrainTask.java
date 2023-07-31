@@ -25,22 +25,42 @@ package pt.ua.dicoogle.sdk.mlprovider;
  */
 public class MLTrainTask {
 
-    public enum TRAINING_STATUS {
+    /**
+     * Status of a training task request/job.
+     * It is used to identify the status of training tasks in execution but also training requests.
+     */
+    public enum TrainingStatus {
+        /**
+         * A training task was successfully submitted.
+         * A corresponding identifier should be generated to track the progress.
+         */
         SUBMITTED,
+        /**
+         * A training job identified by a ID is currently running
+         */
         RUNNING,
+        /**
+         * A training job identified by an ID was cancelled.
+         */
         CANCELLED,
+        /**
+         * A training request was not processed because the service cannot process more training requests.
+         */
         BUSY,
+        /**
+         * A training request was not processed because the request was malformed or some other error occured.
+         */
         REJECTED
     }
 
-    public MLTrainTask(String taskID, TRAINING_STATUS status) {
+    public MLTrainTask(String taskID, TrainingStatus  status) {
         this.taskID = taskID;
         this.status = status;
     }
 
     private String taskID;
 
-    private TRAINING_STATUS status;
+    private TrainingStatus  status;
 
     public String getTaskID() {
         return taskID;
@@ -50,11 +70,11 @@ public class MLTrainTask {
         this.taskID = taskID;
     }
 
-    public TRAINING_STATUS getStatus() {
+    public TrainingStatus  getStatus() {
         return status;
     }
 
-    public void setStatus(TRAINING_STATUS status) {
+    public void setStatus(TrainingStatus  status) {
         this.status = status;
     }
 }
