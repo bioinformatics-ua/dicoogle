@@ -85,7 +85,6 @@ public class WSICache extends MemoryCache<DicomMetaData>{
 
             URI uri = retrieveURI(sopInstanceUID);
             if(uri == null){
-                logger.info("URI == null");
                 throw new InvalidParameterException("Could not find the desired URI");
             }
 
@@ -98,14 +97,7 @@ public class WSICache extends MemoryCache<DicomMetaData>{
                 throw new InvalidParameterException("Could not find the desired URI");
             }
 
-            String filePath = sis.getURI().getPath();
-            if (filePath.endsWith(EXTENSION_GZIP)){
-                InputStream inStream = new GZIPInputStream(new BufferedInputStream(new FileInputStream(filePath), BUFFER_SIZE));
-                dis = new DicomInputStream(inStream);
-            }
-            else {
-                dis = new DicomInputStream(new File(filePath));
-            }
+            dis = new BufferedInputStream(sis.getInputStream());
 
             dis.setIncludeBulkData(DicomInputStream.IncludeBulkData.URI);
             dis.setBulkDataDescriptor(BulkDataDescriptor.PIXELDATA);
@@ -117,13 +109,17 @@ public class WSICache extends MemoryCache<DicomMetaData>{
     }
 
     /**
-     * Helper method to retrieve the URI from SOPInstanceUID in lucene.
+     * Helper method to retrieve the URI to
+     * the file with the given SOP Instance UID
+     * from the archive's DIM provider.
+
      *
      * @param sop SopInstanceUID
      * @return uri of the SopInstance
      */
     private URI retrieveURI(String sop){
-        String query = "SOPInstanceUID:" + sop;
+        String query = "SOPInstanceUID:\"" + sop + '"';
+
 
         Iterable<SearchResult> results;
         try {
