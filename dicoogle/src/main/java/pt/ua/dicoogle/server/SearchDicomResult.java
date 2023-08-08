@@ -279,7 +279,7 @@ public class SearchDicomResult implements Iterator<DicomObject> {
 
                 result.putString(Tag.Modality, VR.CS, (String) sR.get("Modality"));
 
-                result.putString(Tag.SeriesNumber, VR.IS, "" + (String) sR.get("SeriesNumber"));
+                result.putString(Tag.SeriesNumber, VR.IS, "" + sR.get("SeriesNumber"));
 
 
                 return result;
