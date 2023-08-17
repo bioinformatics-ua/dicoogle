@@ -401,6 +401,12 @@ public class DicomStorage extends StorageService {
     public void start() throws IOException {
         device.startListening(executor);
         indexer.start();
+
+        indexer.setUncaughtExceptionHandler((Thread t, Throwable e) -> {
+            LOG.error("Fatal error in indexer queue worker", e);
+            ControlServices.getInstance().stopStorage();
+            LOG.warn("DICOM storage service was taken down to prevent further errors");
+        });
     }
 
     /**
