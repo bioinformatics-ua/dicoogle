@@ -383,9 +383,9 @@ public class DicomStorage extends StorageService {
                     else
                         PluginController.getInstance().indexBlocking(exam);
                 } catch (InterruptedException ex) {
-                    LOG.error("Could not take instance to index", ex);
+                    LOG.warn("Indexer queue worker thread interrupted", ex);
                 } catch (Exception ex) {
-                    LOG.error("Unexpected error in storage index actor", ex);
+                    LOG.error("Unexpected error in indexer queue worker", ex);
                 }
             }
             LOG.debug("Indexer queue worker exiting by request");
