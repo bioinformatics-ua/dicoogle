@@ -80,6 +80,8 @@ public class DicomStorage extends StorageService {
     private BlockingQueue<ImageElement> queue = new PriorityBlockingQueue<>();
     private NetworkApplicationEntity[] naeArr = null;
     private AtomicLong seqNum = new AtomicLong(0L);
+    private volatile boolean workerShouldExit = false;
+
     private static boolean ASYNC_INDEX = Boolean.valueOf(System.getProperty("dicoogle.index.async", "true"));
 
     /**
@@ -366,11 +368,12 @@ public class DicomStorage extends StorageService {
         return Long.compare(thisSeqNumber, otherSeqNumber);
     }
 
-    class Indexer extends Thread {
+    class IndexerQueueWorker implements Runnable {
         public Collection<IndexerInterface> plugins;
 
+        @Override
         public void run() {
-            while (true) {
+            while (!workerShouldExit) {
                 try {
                     // Fetch an element by the queue taking into account the priorities.
                     ImageElement element = queue.take();
@@ -380,15 +383,16 @@ public class DicomStorage extends StorageService {
                     else
                         PluginController.getInstance().indexBlocking(exam);
                 } catch (InterruptedException ex) {
-                    LOG.error("Could not take instance to index", ex);
+                    LOG.warn("Indexer queue worker thread interrupted", ex);
                 } catch (Exception ex) {
-                    LOG.error("Unexpected error in storage index actor", ex);
+                    LOG.error("Unexpected error in indexer queue worker", ex);
                 }
             }
+            LOG.debug("Indexer queue worker exiting by request");
         }
     }
 
-    private Indexer indexer = new Indexer();
+    private Thread indexer = new Thread(new IndexerQueueWorker(), "indexer-queue-worker");
 
     /*
      * Start the Storage Service
@@ -397,6 +401,12 @@ public class DicomStorage extends StorageService {
     public void start() throws IOException {
         device.startListening(executor);
         indexer.start();
+
+        indexer.setUncaughtExceptionHandler((Thread t, Throwable e) -> {
+            LOG.error("Fatal error in indexer queue worker", e);
+            ControlServices.getInstance().stopStorage();
+            LOG.warn("DICOM storage service was taken down to prevent further errors");
+        });
     }
 
     /**
@@ -404,5 +414,7 @@ public class DicomStorage extends StorageService {
      */
     public void stop() {
         device.stopListening();
+        workerShouldExit = true;
+        indexer.interrupt();
     }
 }
