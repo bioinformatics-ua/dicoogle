@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import org.slf4j.LoggerFactory;
 
-import org.dcm4che2.data.DicomElement;
 import org.dcm4che2.data.DicomObject;
 import org.dcm4che2.data.Tag;
 import org.dcm4che2.data.VR;
@@ -67,17 +66,6 @@ public class FindRSP implements DimseRSP {
         this.keys = keys;
 
         this.callingAET = callingAET;
-
-
-        /** Debug - show keys, rsp, index */
-        if (keys != null) {
-            // DebugManager.getSettings().debug("keys object: ");
-            // DebugManager.getSettings().debug(keys.toString());
-        }
-        if (rsp != null) {
-            // DebugManager.getSettings().debug("Rsp object");
-            // DebugManager.getSettings().debug(rsp.toString());
-        }
 
         /** 
          * Get object to search
@@ -130,28 +118,8 @@ public class FindRSP implements DimseRSP {
         // System.out.println("OLD Query: "+query);
         query = applyQueryFilter(query);
 
-        System.out.println("NEW Query: " + query);
-
-        /** 
-         * Search results
-         * TODO: 
-         * - Get Search String Query?
-         * - Is A Network Search?
-         * - How works extrafields?
-         */
-
-        SearchDicomResult.QUERYLEVEL level = null;
-        /*
-        if (CFindBuilder.isPatientRoot(rsp))
-        {
-            level = SearchDicomResult.QUERYLEVEL.PATIENT;
-        }
-        else if (CFindBuilder.isStudyRoot(rsp))
-        {
-            level = SearchDicomResult.QUERYLEVEL.STUDY;
-        }*/
-        DicomElement elem = keys.get(Integer.parseInt("00080052", 16));
-        String levelStr = new String(elem.getBytes());
+        final SearchDicomResult.QUERYLEVEL level;
+        String levelStr = keys.getString(Tag.QueryRetrieveLevel, VR.CS, "");
 
         if (levelStr.contains("PATIENT")) {
             level = SearchDicomResult.QUERYLEVEL.PATIENT;
@@ -161,16 +129,14 @@ public class FindRSP implements DimseRSP {
             level = SearchDicomResult.QUERYLEVEL.SERIE;
         } else if (levelStr.contains("IMAGE")) {
             level = SearchDicomResult.QUERYLEVEL.IMAGE;
+        } else {
+            // illegal query-retrieve level, reject request
+            this.rsp.putInt(Tag.Status, VR.US, 0xA900);
+            this.rsp.putInt(Tag.OffendingElement, VR.AT, Tag.QueryRetrieveLevel);
+            this.rsp.putString(Tag.ErrorComment, VR.LO, "Query/Retrieve Level invalid or missing");
+            return;
         }
-        System.out.println("Charset: " + this.keys.get(Tag.SpecificCharacterSet));
         search = new SearchDicomResult(query, true, extrafields, level);
-
-
-
-        if (search == null) {
-            // DebugManager.getSettings().debug(">> Search is null, so" +
-            // " somethig is wrong ");
-        }
 
         // always return Specific Character Set
         if (!keys.contains(Tag.SpecificCharacterSet)) {
