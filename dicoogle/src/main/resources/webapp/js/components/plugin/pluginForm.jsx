@@ -42,12 +42,10 @@ export default class PluginForm extends React.Component {
       Webcore.emitSlotSignal(
           node,
           "result-selection-ready",
-          ResultsSelected.get()
-      );
-      Webcore.emitSlotSignal(
-          node,
-          "result",
-          SearchStore.get()
+          {
+            "selected": ResultsSelected.get(),
+            "search": SearchStore.get()
+          }
       );
     }
   }
