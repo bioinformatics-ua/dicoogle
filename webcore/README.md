@@ -181,7 +181,7 @@ This section documents each possible type of web UI plugin. Note that not all of
 - **result-option**: Result option plugins are used to provide advanced operations to a result entry. If the user activates
   _"Advanced Options"_ in the search results view, these plugins will be attached into a new column, one for each visible result entry.
 - **result-batch**: Result batch plugins are used to provide advanced operations over an existing list of results. These plugins will
-  attach a button (named with the plugin's caption property), which will pop-up a division below the search result view.
+  attach a button (named with the plugin's caption property), which appear in a division below the search result view.
 - **settings**: Settings plugins can be used to provide addition management information and control. These plugins will be attached to
   the _"Plugins & Services"_ tab in the _Management_ menu.
 - **query**: _(currently unsupported)_ Create different query user interfaces. Once supported, they will be
@@ -257,6 +257,7 @@ Full list of events that can be used by plugins and the webapp. _(Work in Progre
 
  - "load" : Emitted when a plugin package is retrieved.
  - "result" : Emitted when a list of search results is obtained from the search interface.
+ - "result-selection-ready" : Emitted on plugin mount for "result-batch" plugins. Provides current list of search results and selected entries.
 
 ## Installing Plugins
 

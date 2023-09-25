@@ -92,6 +92,12 @@ const SearchStore = Reflux.createStore({
       data: this._contents,
       success: true
     });
+  },
+
+  get: function() {
+    return {
+      data: this._contents
+    };
   }
 });
 

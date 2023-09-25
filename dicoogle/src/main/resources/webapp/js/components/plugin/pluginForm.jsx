@@ -1,6 +1,7 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 import { ResultsSelected } from "../../stores/resultSelected";
+import { SearchStore } from "../../stores/searchStore";
 import Webcore from "dicoogle-webcore";
 
 export default class PluginForm extends React.Component {
@@ -39,9 +40,12 @@ export default class PluginForm extends React.Component {
       node.addEventListener("hide", this.handleHideSignal);
 
       Webcore.emitSlotSignal(
-        node,
-        "result-selection-ready",
-        ResultsSelected.get()
+          node,
+          "result-selection-ready",
+          {
+            "selected": ResultsSelected.get(),
+            "search": SearchStore.get()
+          }
       );
     }
   }
