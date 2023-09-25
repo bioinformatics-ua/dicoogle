@@ -3,6 +3,26 @@ This document intends to keep track of the changes performed on the various rele
 
 ## 3.3
 
+## 3.3.2 (2023-09-25)
+
+- New: Provide full search results on result-batch plugin mount event (#666)
+   - **This is a Web UI plugin API change!** Upon a `result-selection-ready` event
+     (plugins for the `result-batch` slot only),
+     the additional event argument is now an object with
+     both the full list of results and the list of results selected by the user
+     (rather than just the latter):
+     ```jsonc
+     {
+        "selected": [ /* selected results */ ],
+        "search": [ /* all results */ ]
+     }
+     ```
+- Fix: Fix cast in SeriesNumber mostly affecting C-FIND and C-MOVE services (#662)
+- Enhancement: Improve indexer queue worker thread handling (#664)
+- Enhancement: Make Find SCP resilient to missing query-retrievel level (#665)
+- Chore: Bump word-wrap from 1.2.3 to 1.2.4 in `/webcore`` (#659)
+- Chore: [CI] Update setup-java action in maven.yml (#661)
+
 ## 3.3.1  (2023-07-07)
 
 - Fix: QueryInterface to QueryDimInterface (#646)
