@@ -38,7 +38,9 @@ import pt.ua.dicoogle.sdk.task.Task;
 /**
  * @author Frederico Silva <fredericosilva@ua.pt>
  * @todo
+ * @deprecated Incomplete implementation, to be removed in Dicoogle 4
  */
+@Deprecated
 public class WadoServlet extends HttpServlet {
 
     @Override
