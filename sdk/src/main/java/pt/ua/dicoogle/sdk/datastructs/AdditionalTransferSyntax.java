@@ -23,8 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import org.dcm4che2.data.TransferSyntax;
-import org.dcm4che2.util.UIDUtils;
+import org.dcm4che3.util.UIDUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +31,9 @@ import java.util.Objects;
 import java.util.StringJoiner;
 
 /**
+ * A class to represent an additional transfer syntax
+ * to be presented in the transfer options.
+ * 
  * @author André Almeida <almeida.a@ua.pt>
  */
 @JsonRootName("additional-transfer-syntax")
@@ -45,18 +47,22 @@ public final class AdditionalTransferSyntax {
     private final String alias;
 
     @JacksonXmlProperty(isAttribute = true, localName = "bigEndian")
+    @Deprecated
     private final boolean bigEndian;
 
     @JacksonXmlProperty(isAttribute = true, localName = "explicitVR")
+    @Deprecated
     private final boolean explicitVR;
 
     @JacksonXmlProperty(isAttribute = true, localName = "encapsulated")
+    @Deprecated
     private final boolean encapsulated;
 
     @JacksonXmlProperty(isAttribute = true, localName = "deflated")
+    @Deprecated
     private final boolean deflated;
 
-
+    @Deprecated
     public AdditionalTransferSyntax(@JsonProperty("uid") String uid, @JsonProperty("alias") String alias,
             @JsonProperty("bigEndian") Boolean bigEndian, @JsonProperty("explicitVR") Boolean explicitVR,
             @JsonProperty("encapsulated") Boolean encapsulated, @JsonProperty("deflated") Boolean deflated) {
@@ -66,6 +72,15 @@ public final class AdditionalTransferSyntax {
         this.explicitVR = explicitVR != null ? explicitVR : true;
         this.encapsulated = encapsulated != null ? encapsulated : true;
         this.deflated = deflated != null ? deflated : false;
+    }
+
+    public AdditionalTransferSyntax(@JsonProperty("uid") String uid, @JsonProperty("alias") String alias) {
+        this.uid = uid;
+        this.alias = alias;
+        this.bigEndian = false;
+        this.explicitVR = true;
+        this.encapsulated = true;
+        this.deflated = false;
     }
 
     /**
@@ -81,13 +96,13 @@ public final class AdditionalTransferSyntax {
             return false;
         }
         if (ats.alias == null || ats.alias.equals("")) {
-            if (!UIDUtils.isValidUID(ats.uid))
+            if (!UIDUtils.isValid(ats.uid))
                 logger.warn("Additional Transfer syntax: uid \"{}\" is not valid.", ats.uid);
             else
                 logger.warn("Additional Transfer Syntax with uid \"{}\": alias not set.", ats.uid);
             return false;
         }
-        if (!UIDUtils.isValidUID(ats.uid)) {
+        if (!UIDUtils.isValid(ats.uid)) {
             logger.warn("Additional Transfer syntax \"{}\": UID not valid.", ats.alias);
             return false;
         }
@@ -102,13 +117,6 @@ public final class AdditionalTransferSyntax {
         return isValid(ats, logger);
     }
 
-    /**
-     * Creates a dcm4che2 TransferSyntax object equivalent to the referenced object
-     * */
-    public TransferSyntax toTransferSyntax() {
-        return new TransferSyntax(uid, explicitVR, bigEndian, deflated, encapsulated);
-    }
-
     // Generated functions
     @JsonIgnore
     public String getUid() {
@@ -121,21 +129,25 @@ public final class AdditionalTransferSyntax {
     }
 
     @JsonIgnore
+    @Deprecated
     public boolean isBigEndian() {
         return this.bigEndian;
     }
 
     @JsonIgnore
+    @Deprecated
     public boolean isExplicitVR() {
         return this.explicitVR;
     }
 
     @JsonIgnore
+    @Deprecated
     public boolean isEncapsulated() {
         return this.encapsulated;
     }
 
     @JsonIgnore
+    @Deprecated
     public boolean isDeflated() {
         return this.deflated;
     }

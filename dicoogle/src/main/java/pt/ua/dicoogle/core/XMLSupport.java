@@ -54,7 +54,7 @@ import java.util.List;
 import javax.swing.DefaultListModel;
 
 import org.xml.sax.XMLReader;
-import org.dcm4che2.data.UID;
+import org.dcm4che3.data.UID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -214,7 +214,7 @@ public class XMLSupport extends DefaultHandler {
         } else if (localName.equals("Path")) {
             isPath = true;
         } else if (localName.equals("Service")) {
-            currentService = resolveAttrib(uri, localName, attribs, UID.VerificationSOPClass);
+            currentService = resolveAttrib(uri, localName, attribs, UID.Verification);
         } else if (localName.equals("TS")) {
             isTS = true;
         }
@@ -657,23 +657,23 @@ public class XMLSupport extends DefaultHandler {
                 LocalTS.setTS(true, 5);
                 return;
             }
-            if (UID.JPEGLosslessNonHierarchical14.equals(sTS)) {
+            if (UID.JPEGLosslessSV1.equals(sTS)) {
                 LocalTS.setTS(true, 6);
                 return;
             }
-            if (UID.JPEG2000LosslessOnly.equals(sTS)) {
+            if (UID.JPEG2000Lossless.equals(sTS)) {
                 LocalTS.setTS(true, 7);
                 return;
             }
-            if (UID.JPEGBaseline1.equals(sTS)) {
+            if (UID.JPEGBaseline8Bit.equals(sTS)) {
                 LocalTS.setTS(true, 8);
                 return;
             }
-            if (UID.JPEGExtended24.equals(sTS)) {
+            if (UID.JPEGExtended12Bit.equals(sTS)) {
                 LocalTS.setTS(true, 9);
                 return;
             }
-            if (UID.JPEGLSLossyNearLossless.equals(sTS)) {
+            if (UID.JPEGLSNearLossless.equals(sTS)) {
                 LocalTS.setTS(true, 10);
                 return;
             }
@@ -685,7 +685,7 @@ public class XMLSupport extends DefaultHandler {
                 LocalTS.setTS(true, 12);
                 return;
             }
-            if (UID.MPEG2.equals(sTS)) {
+            if (UID.MPEG2MPML.equals(sTS)) {
                 LocalTS.setTS(true, 13);
                 return;
             }
@@ -1133,29 +1133,29 @@ public class XMLSupport extends DefaultHandler {
                     }
                     if (TS[6]) {
                         hd.startElement("", "", "TS", atts);
-                        hd.characters(UID.JPEGLosslessNonHierarchical14.toCharArray(), 0,
-                                UID.JPEGLosslessNonHierarchical14.length());
+                        hd.characters(UID.JPEGLosslessSV1.toCharArray(), 0,
+                                UID.JPEGLosslessSV1.length());
                         hd.endElement("", "", "TS");
                     }
                     if (TS[7]) {
                         hd.startElement("", "", "TS", atts);
-                        hd.characters(UID.JPEG2000LosslessOnly.toCharArray(), 0, UID.JPEG2000LosslessOnly.length());
+                        hd.characters(UID.JPEG2000Lossless.toCharArray(), 0, UID.JPEG2000Lossless.length());
                         hd.endElement("", "", "TS");
                     }
                     if (TS[8]) {
                         hd.startElement("", "", "TS", atts);
-                        hd.characters(UID.JPEGBaseline1.toCharArray(), 0, UID.JPEGBaseline1.length());
+                        hd.characters(UID.JPEGBaseline8Bit.toCharArray(), 0, UID.JPEGBaseline8Bit.length());
                         hd.endElement("", "", "TS");
                     }
                     if (TS[9]) {
                         hd.startElement("", "", "TS", atts);
-                        hd.characters(UID.JPEGExtended24.toCharArray(), 0, UID.JPEGExtended24.length());
+                        hd.characters(UID.JPEGExtended12Bit.toCharArray(), 0, UID.JPEGExtended12Bit.length());
                         hd.endElement("", "", "TS");
                     }
                     if (TS[10]) {
                         hd.startElement("", "", "TS", atts);
-                        hd.characters(UID.JPEGLSLossyNearLossless.toCharArray(), 0,
-                                UID.JPEGLSLossyNearLossless.length());
+                        hd.characters(UID.JPEGLSNearLossless.toCharArray(), 0,
+                                UID.JPEGLSNearLossless.length());
                         hd.endElement("", "", "TS");
                     }
                     if (TS[11]) {
@@ -1170,7 +1170,7 @@ public class XMLSupport extends DefaultHandler {
                     }
                     if (TS[13]) {
                         hd.startElement("", "", "TS", atts);
-                        hd.characters(UID.MPEG2.toCharArray(), 0, UID.MPEG2.length());
+                        hd.characters(UID.MPEG2MPML.toCharArray(), 0, UID.MPEG2MPML.length());
                         hd.endElement("", "", "TS");
                     }
                     hd.endElement("", "", "Service");

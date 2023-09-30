@@ -32,36 +32,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
-
+import java.util.concurrent.Executors;
 
 import com.google.common.io.ByteStreams;
-import org.dcm4che2.data.BasicDicomObject;
-import org.dcm4che2.data.DicomElement;
-import org.dcm4che2.data.DicomObject;
-import org.dcm4che2.data.Tag;
-import org.dcm4che2.data.UID;
-import org.dcm4che2.data.UIDDictionary;
-import org.dcm4che2.data.VR;
-import org.dcm4che2.io.DicomInputStream;
-import org.dcm4che2.io.DicomOutputStream;
-import org.dcm4che2.io.StopTagInputHandler;
-import org.dcm4che2.io.TranscoderInputHandler;
-import org.dcm4che2.net.Association;
-import org.dcm4che2.net.ConfigurationException;
-import org.dcm4che2.net.Device;
-import org.dcm4che2.net.DimseRSP;
-import org.dcm4che2.net.DimseRSPHandler;
-import org.dcm4che2.net.NetworkApplicationEntity;
-import org.dcm4che2.net.NetworkConnection;
-import org.dcm4che2.net.NewThreadExecutor;
-import org.dcm4che2.net.NoPresentationContextException;
-import org.dcm4che2.net.PDVOutputStream;
-import org.dcm4che2.net.TransferCapability;
-import org.dcm4che2.net.UserIdentity;
-import org.dcm4che2.net.service.StorageCommitmentService;
-import org.dcm4che2.util.CloseUtils;
-import org.dcm4che2.util.StringUtils;
-import org.dcm4che2.util.UIDUtils;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
+import org.dcm4che3.data.Attributes;
+import org.dcm4che3.data.Tag;
+import org.dcm4che3.data.UID;
+import org.dcm4che3.data.VR;
+import org.dcm4che3.io.DicomInputStream;
+import org.dcm4che3.io.DicomOutputStream;
+import org.dcm4che3.io.TranscoderInputHandler;
+import org.dcm4che3.net.Association;
+import org.dcm4che3.net.Device;
+import org.dcm4che3.net.DimseRSP;
+import org.dcm4che3.net.DimseRSPHandler;
+import org.dcm4che3.net.ApplicationEntity;
+import org.dcm4che3.net.Connection;
+import org.dcm4che3.net.NoPresentationContextException;
+import org.dcm4che3.net.PDVOutputStream;
+import org.dcm4che3.net.TransferCapability;
+import org.dcm4che3.net.UserIdentityNegotiator;
+import org.dcm4che3.util.CloseUtils;
+import org.dcm4che3.util.StringUtils;
+import org.dcm4che3.util.UIDUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +71,7 @@ import pt.ua.dicoogle.sdk.StorageInputStream;
  * @version $Revision: 10933 $ $Date: 2009-04-21 01:48:38 +0100 (Ter, 21 Abr 2009) $
  * @since Oct 13, 2005
  */
-public class DicoogleDcmSend extends StorageCommitmentService {
+public class DicoogleDcmSend extends org.dcm4che3.net.service.AbstractDicomService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DicoogleDcmSend.class);
 
@@ -103,21 +98,21 @@ public class DicoogleDcmSend extends StorageCommitmentService {
     private static final boolean FILE_READ_GUARD =
             System.getProperty("dicoogle.store.fileReadGuard", "").equalsIgnoreCase("true");
 
-    private Executor executor = new NewThreadExecutor("DCMSND");
+    private Executor executor = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("DCMSND").build());
 
-    private NetworkApplicationEntity remoteAE = new NetworkApplicationEntity();
+    private ApplicationEntity remoteAE = new ApplicationEntity();
 
-    private NetworkApplicationEntity remoteStgcmtAE;
+    private ApplicationEntity remoteStgcmtAE;
 
-    private NetworkConnection remoteConn = new NetworkConnection();
+    private Connection remoteConn = new Connection();
 
-    private NetworkConnection remoteStgcmtConn = new NetworkConnection();
+    private Connection remoteStgcmtConn = new Connection();
 
     private Device device = new Device("DCMSND");
 
-    private NetworkApplicationEntity ae = new NetworkApplicationEntity();
+    private ApplicationEntity ae = new ApplicationEntity();
 
-    private NetworkConnection conn = new NetworkConnection();
+    private Connection conn = new Connection();
 
     private Map<String, Set<String>> as2ts = new HashMap<>();
 
@@ -154,11 +149,11 @@ public class DicoogleDcmSend extends StorageCommitmentService {
     public DicoogleDcmSend() {
         remoteAE.setInstalled(true);
         remoteAE.setAssociationAcceptor(true);
-        remoteAE.setNetworkConnection(new NetworkConnection[] {remoteConn});
+        remoteAE.setConnection(new Connection[] {remoteConn});
 
-        device.setNetworkApplicationEntity(ae);
-        device.setNetworkConnection(conn);
-        ae.setNetworkConnection(conn);
+        device.setApplicationEntity(ae);
+        device.setConnection(conn);
+        ae.setConnection(conn);
         ae.setAssociationInitiator(true);
         ae.setAssociationAcceptor(true);
         ae.register(this);
@@ -264,10 +259,10 @@ public class DicoogleDcmSend extends StorageCommitmentService {
     }
 
     public final void setStgcmtCalledAET(String called) {
-        remoteStgcmtAE = new NetworkApplicationEntity();
+        remoteStgcmtAE = new ApplicationEntity();
         remoteStgcmtAE.setInstalled(true);
         remoteStgcmtAE.setAssociationAcceptor(true);
-        remoteStgcmtAE.setNetworkConnection(new NetworkConnection[] {remoteStgcmtConn});
+        remoteStgcmtAE.setConnection(new Connection[] {remoteStgcmtConn});
         remoteStgcmtAE.setAETitle(called);
     }
 
@@ -362,7 +357,7 @@ public class DicoogleDcmSend extends StorageCommitmentService {
             LOGGER.error("Failed to fetch file {} - skipped.", item.getURI(), e);
             return;
         }
-        DicomObject dcmObj = new BasicDicomObject();
+        DicomObject dcmObj = new Attributes();
         DicomInputStream in = null;
         try {
             in = new DicomInputStream(inStream);
@@ -513,14 +508,14 @@ public class DicoogleDcmSend extends StorageCommitmentService {
     }
 
     public boolean commit() {
-        DicomObject actionInfo = new BasicDicomObject();
+        DicomObject actionInfo = new Attributes();
         actionInfo.putString(Tag.TransactionUID, VR.UI, UIDUtils.createUID());
 
         DicomElement refSOPSq = actionInfo.putSequence(Tag.ReferencedSOPSequence);
         for (int i = 0, n = files.size(); i < n; ++i) {
             FileInfo info = files.get(i);
             if (info.transferred) {
-                BasicDicomObject refSOP = new BasicDicomObject();
+                Attributes refSOP = new Attributes();
 
                 refSOP.putString(Tag.ReferencedSOPClassUID, VR.UI, info.cuid);
                 refSOP.putString(Tag.ReferencedSOPInstanceUID, VR.UI, info.iuid);
@@ -641,7 +636,7 @@ public class DicoogleDcmSend extends StorageCommitmentService {
     }
 
 
-    private class DataWriter implements org.dcm4che2.net.DataWriter {
+    private class DataWriter implements org.dcm4che3.net.DataWriter {
 
         private FileInfo info;
 
@@ -649,6 +644,7 @@ public class DicoogleDcmSend extends StorageCommitmentService {
             this.info = info;
         }
 
+        @Override
         public void writeTo(PDVOutputStream out, String tsuid) throws IOException {
             if (tsuid.equals(info.tsuid)) {
                 try (InputStream fis = info.getInputStream()) {
@@ -660,27 +656,21 @@ public class DicoogleDcmSend extends StorageCommitmentService {
             } else if (tsuid.equals(DCM4CHEE_URI_REFERENCED_TS_UID)) {
 
                 DicomObject attrs;
-                DicomInputStream dis = new DicomInputStream(info.getInputStream());
-                try {
+                try (DicomInputStream dis = new DicomInputStream(info.getInputStream())) {
                     dis.setHandler(new StopTagInputHandler(Tag.PixelData));
                     attrs = dis.readDicomObject();
-                } finally {
-                    dis.close();
                 }
                 try (DicomOutputStream dos = new DicomOutputStream(out)) {
                     attrs.putString(Tag.RetrieveURI, VR.UT, info.toString());
                     dos.writeDataset(attrs, tsuid);
                 }
             } else {
-                DicomInputStream dis = new DicomInputStream(info.getInputStream());
-                try {
+                try (DicomInputStream dis = new DicomInputStream(info.getInputStream())) {
                     DicomOutputStream dos = new DicomOutputStream(out);
                     dos.setTransferSyntax(tsuid);
                     TranscoderInputHandler h = new TranscoderInputHandler(dos, transcoderBufferSize);
                     dis.setHandler(h);
                     dis.readDicomObject();
-                } finally {
-                    dis.close();
                 }
             }
         }
@@ -755,11 +745,8 @@ public class DicoogleDcmSend extends StorageCommitmentService {
 
     private static KeyStore loadKeyStore(String url, char[] password) throws GeneralSecurityException, IOException {
         KeyStore key = KeyStore.getInstance(toKeyStoreType(url));
-        InputStream in = openFileOrURL(url);
-        try {
+        try (InputStream in = openFileOrURL(url)) {
             key.load(in, password);
-        } finally {
-            in.close();
         }
         return key;
     }

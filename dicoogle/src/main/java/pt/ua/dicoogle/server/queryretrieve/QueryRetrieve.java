@@ -22,18 +22,18 @@ package pt.ua.dicoogle.server.queryretrieve;
 import java.io.File;
 import java.util.Collection;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 
-import org.dcm4che2.data.UID;
-import org.dcm4che2.net.CommandUtils;
-import org.dcm4che2.net.Device;
-import org.dcm4che2.net.NetworkApplicationEntity;
-import org.dcm4che2.net.NetworkConnection;
-import org.dcm4che2.net.NewThreadExecutor;
-import org.dcm4che2.net.TransferCapability;
-import org.dcm4che2.net.service.VerificationService;
+import org.dcm4che3.data.UID;
+import org.dcm4che3.net.Device;
+import org.dcm4che3.net.ApplicationEntity;
+import org.dcm4che3.net.Connection;
+import org.dcm4che3.net.TransferCapability;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import pt.ua.dicoogle.utils.Platform;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
@@ -59,15 +59,15 @@ public class QueryRetrieve extends DicomNetwork {
     /* DEFAULT Implemented module name */
     private static final String MODULE_NAME = "DICOOGLE-STORAGE";
     /* Remote Application Entity (client) */
-    private final NetworkApplicationEntity remoteAE = new NetworkApplicationEntity();
+    private final ApplicationEntity remoteAE = new ApplicationEntity();
     /* Remote connection associated with remoteAE */
-    private final NetworkConnection remoteConn = new NetworkConnection();
+    private final Connection remoteConn = new Connection();
     /* Module device */
     private final Device device = new Device(MODULE_NAME);
     /* Local Application Entity (this server) 'ea' */
-    private final NetworkApplicationEntity localAE = new NetworkApplicationEntity();
+    private final ApplicationEntity localAE = new ApplicationEntity();
     /* Local connection associated with localAE 'conn' */
-    private final NetworkConnection localConn = new NetworkConnection();
+    private final Connection localConn = new Connection();
     /* True if server is allready started */
     private boolean started = false;
     /* True if server is allready started as a Windows Service*/
@@ -77,17 +77,19 @@ public class QueryRetrieve extends DicomNetwork {
 
 
     /* Module executor  -  Server thread */
-    private static Executor executor = new NewThreadExecutor(MODULE_NAME);
+    private static Executor executor = Executors.newCachedThreadPool(
+        new ThreadFactoryBuilder().setNameFormat(MODULE_NAME).build()
+    );
 
     private Collection<String> transfCap = s.getTransferCapabilities();
     private TransferCapability[] tc = new TransferCapability[5];
 
-    private static String[] multiSop = {UID.StudyRootQueryRetrieveInformationModelFIND,
+    private static String[] multiSop = {UID.StudyRootQueryRetrieveInformationModelFind,
 
-            UID.PatientRootQueryRetrieveInformationModelFIND};
+            UID.PatientRootQueryRetrieveInformationModelFind};
 
     private static String[] moveSop =
-            {UID.StudyRootQueryRetrieveInformationModelMOVE, UID.PatientRootQueryRetrieveInformationModelMOVE};
+            {UID.StudyRootQueryRetrieveInformationModelMove, UID.PatientRootQueryRetrieveInformationModelMove};
 
     public QueryRetrieve() {
 
@@ -107,13 +109,13 @@ public class QueryRetrieve extends DicomNetwork {
         String[] arr = new String[transfCap.size()];
         transfCap.toArray(arr);
 
-        tc[0] = new TransferCapability(UID.StudyRootQueryRetrieveInformationModelFIND, arr, TransferCapability.SCP);
-        tc[1] = new TransferCapability(UID.StudyRootQueryRetrieveInformationModelMOVE, arr, TransferCapability.SCP);
+        tc[0] = new TransferCapability("Study Root Query/Retrieve C-Find", UID.StudyRootQueryRetrieveInformationModelFind, TransferCapability.Role.SCP, arr);
+        tc[1] = new TransferCapability("Study Root Query/Retrieve C-Move", UID.StudyRootQueryRetrieveInformationModelMove, TransferCapability.Role.SCP, arr);
 
-        tc[2] = new TransferCapability(UID.PatientRootQueryRetrieveInformationModelFIND, arr, TransferCapability.SCP);
-        tc[3] = new TransferCapability(UID.PatientRootQueryRetrieveInformationModelMOVE, arr, TransferCapability.SCP);
-        String[] Verification = {UID.ImplicitVRLittleEndian, UID.ExplicitVRLittleEndian, UID.ExplicitVRBigEndian};
-        tc[4] = new TransferCapability(UID.VerificationSOPClass, Verification, TransferCapability.SCP);
+        tc[2] = new TransferCapability("Patient Root Query/Retrieve C-Find", UID.PatientRootQueryRetrieveInformationModelFind, TransferCapability.Role.SCP, arr);
+        tc[3] = new TransferCapability("Patient Root Query/Retrieve C-Move", UID.PatientRootQueryRetrieveInformationModelMove, TransferCapability.Role.SCP, arr);
+        String[] verificationTS = { UID.ImplicitVRLittleEndian, UID.ExplicitVRLittleEndian };
+        tc[4] = new TransferCapability("Verification", UID.Verification, TransferCapability.Role.SCP, verificationTS);
 
         this.verifService = null;
         /* server */
@@ -123,7 +125,7 @@ public class QueryRetrieve extends DicomNetwork {
         this.localAE.setInstalled(true);
         this.localAE.setAssociationAcceptor(true);
         this.localAE.setAssociationInitiator(false);
-        this.localAE.setNetworkConnection(this.localConn);
+        this.localAE.setConnection(this.localConn);
         this.localAE.setAETitle(ServerSettingsManager.getSettings().getDicomServicesSettings().getAETitle());
         this.localAE.setTransferCapability(tc);
         this.localAE.setDimseRspTimeout(s.getDIMSERspTimeout());
@@ -142,8 +144,8 @@ public class QueryRetrieve extends DicomNetwork {
 
         this.device
                 .setDescription(ServerSettingsManager.getSettings().getDicomServicesSettings().getDeviceDescription());
-        this.device.setNetworkApplicationEntity(this.localAE);
-        this.device.setNetworkConnection(this.localConn);
+        this.device.setApplicationEntity(this.localAE);
+        this.device.setConnection(this.localConn);
     }
 
 

@@ -66,7 +66,7 @@ public class ImageLoader {
             } else {
                 image = reader.read(0);
             }
-        } catch (org.dcm4che2.data.ConfigurationError | IOException ex) {
+        } catch (Exception ex) {
             LoggerFactory.getLogger(ImageLoader.class)
                     .debug("Failed to load image reader, attempting special DICOM reading mechanism", ex);
             image = loadDICOMImage(inputStream);

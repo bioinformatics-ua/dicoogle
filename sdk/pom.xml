@@ -183,13 +183,13 @@
         </dependency>
 
         <dependency>
-            <groupId>dcm4che</groupId>
+            <groupId>org.dcm4che</groupId>
             <artifactId>dcm4che-core</artifactId>
             <version>${dcm4che.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>dcm4che</groupId>
+            <groupId>org.dcm4che</groupId>
             <artifactId>dcm4che-net</artifactId>
             <version>${dcm4che.version}</version>
         </dependency>

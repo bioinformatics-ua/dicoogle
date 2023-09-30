@@ -23,15 +23,16 @@ import java.util.concurrent.Executor;
 
 import javax.xml.transform.TransformerConfigurationException;
 
-import org.dcm4che2.data.DicomElement;
-import org.dcm4che2.data.DicomObject;
-import org.dcm4che2.data.ElementDictionary;
-import org.dcm4che2.data.SpecificCharacterSet;
-import org.dcm4che2.data.Tag;
-import org.dcm4che2.net.Association;
-import org.dcm4che2.net.DicomServiceException;
-import org.dcm4che2.net.DimseRSP;
-import org.dcm4che2.net.service.CFindService;
+import org.dcm4che3.data.ElementDictionary;
+import org.dcm4che3.data.SpecificCharacterSet;
+import org.dcm4che3.data.Tag;
+import org.dcm4che3.net.Association;
+import org.dcm4che3.net.Dimse;
+import org.dcm4che3.net.service.DicomServiceException;
+import org.dcm4che3.net.DimseRSP;
+import org.dcm4che3.net.pdu.PresentationContext;
+import org.dcm4che3.net.service.AbstractDicomService;
+import org.dcm4che3.net.service.BasicCFindSCP;
 
 import pt.ua.dicoogle.DicomLog.LogDICOM;
 import pt.ua.dicoogle.DicomLog.LogLine;
@@ -44,7 +45,7 @@ import pt.ua.dicoogle.server.DicomNetwork;
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class CFindServiceSCP extends CFindService {
+public class CFindServiceSCP extends AbstractDicomService {
 
     private ServerSettings s = ServerSettingsManager.getSettings();
     private int rspdelay =
@@ -60,9 +61,8 @@ public class CFindServiceSCP extends CFindService {
     }
 
     /*** CFIND */
-    @Override
-    protected synchronized DimseRSP doCFind(Association as, int pcid, DicomObject cmd, DicomObject keys,
-            DicomObject rsp) throws DicomServiceException {
+    protected synchronized DimseRSP doCFind(Association as, PresentationContext pc, Dimse dimse,
+            Attributes rq, Attributes keys) throws DicomServiceException {
 
         // DebugManager.getSettings().debug("doCFind? -- > working on it");
 
@@ -121,9 +121,9 @@ public class CFindServiceSCP extends CFindService {
                 DicomElement element = iterator.next();
 
                 if (!element.isEmpty()) {
-                    if (!ElementDictionary.getDictionary().nameOf(element.tag()).contains("Sequence"))
-                        queryParams += ElementDictionary.getDictionary().nameOf(element.tag()) + " - "
-                                + element.getValueAsString(new SpecificCharacterSet("UTF-8"), 0) + " ";
+                    if (!ElementDictionary.getStandardElementDictionary().nameOf(element.tag()).contains("Sequence"))
+                        queryParams += ElementDictionary.getStandardElementDictionary().nameOf(element.tag()) + " - "
+                                + element.getValueAsString(SpecificCharacterSet.valueOf("UTF-8"), 0) + " ";
                 }
             }
 

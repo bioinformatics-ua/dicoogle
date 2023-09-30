@@ -18,7 +18,6 @@
  */
 package pt.ua.dicoogle;
 
-import org.dcm4che2.data.TransferSyntax;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -158,10 +157,6 @@ public class Main {
             // Save settings
             ServerSettingsManager.saveSettings();
         }
-
-        TransferSyntax.add(new TransferSyntax("1.2.826.0.1.3680043.2.682.1.40", false, false, false, true));
-        TransferSyntax.add(new TransferSyntax("1.2.840.10008.1.2.4.70", true, false, false, true));
-        TransferSyntax.add(new TransferSyntax("1.2.840.10008.1.2.5.50", false, false, false, true));
 
         // Initialize authentication and authorization system
         Authentication.getInstance();

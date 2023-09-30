@@ -20,7 +20,7 @@ package pt.ua.dicoogle.core.settings;
 
 import com.fasterxml.jackson.annotation.*;
 import org.apache.commons.lang3.StringUtils;
-import org.dcm4che2.data.UID;
+import org.dcm4che3.data.UID;
 import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.core.XMLSupport;
 import pt.ua.dicoogle.sdk.datastructs.AdditionalSOPClass;
@@ -478,7 +478,7 @@ public class LegacyServerSettings implements ServerSettings {
         this.transfCAP = UID.ImplicitVRLittleEndian + "|" + UID.ExplicitVRBigEndian + "|" + UID.ExplicitVRLittleEndian;
 
         this.sopClass =
-                UID.StudyRootQueryRetrieveInformationModelFIND + "|" + UID.PatientRootQueryRetrieveInformationModelFIND;
+                UID.StudyRootQueryRetrieveInformationModelFind + "|" + UID.PatientRootQueryRetrieveInformationModelFind;
 
         fillModalityFindDefault();
         this.maxClientAssocs = 20;
@@ -656,8 +656,8 @@ public class LegacyServerSettings implements ServerSettings {
     }
 
     public List<String> getQRSOPClass() {
-        return Arrays.asList(UID.StudyRootQueryRetrieveInformationModelFIND,
-                UID.PatientRootQueryRetrieveInformationModelFIND);
+        return Arrays.asList(UID.StudyRootQueryRetrieveInformationModelFind,
+                UID.PatientRootQueryRetrieveInformationModelFind);
     }
 
     public void setSOPClasses(Collection<SOPClass> classes) {

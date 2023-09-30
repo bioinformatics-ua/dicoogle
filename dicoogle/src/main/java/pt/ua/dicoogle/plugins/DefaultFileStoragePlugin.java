@@ -35,8 +35,8 @@ import java.util.stream.Stream;
 
 import metal.utils.fileiterator.FileIterator;
 
-import org.dcm4che2.data.DicomObject;
-import org.dcm4che2.io.DicomInputStream;
+import org.dcm4che3.data.Attributes;
+import org.dcm4che3.io.DicomInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +104,7 @@ public class DefaultFileStoragePlugin extends PluginBase implements StorageInter
     }
 
     @Override
-    public URI store(DicomObject dicomObject, Object... args) {
+    public URI store(Attributes dicomObject, Object... args) {
         return null;
     }
 

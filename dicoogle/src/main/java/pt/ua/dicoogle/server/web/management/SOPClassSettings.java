@@ -18,7 +18,7 @@
  */
 package pt.ua.dicoogle.server.web.management;
 
-import org.dcm4che2.data.UID;
+import org.dcm4che3.data.UID;
 import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.sdk.datastructs.AdditionalSOPClass;
 import pt.ua.dicoogle.sdk.datastructs.AdditionalTransferSyntax;
@@ -68,10 +68,10 @@ public class SOPClassSettings {
 
         ServerSettings.DicomServices dicomServices = ServerSettingsManager.getSettings().getDicomServicesSettings();
 
-        sopClasses.put(UID.BasicStudyContentNotificationSOPClassRetired, "BasicStudyContentNotification (Retired)");
-        sopClasses.put(UID.StoredPrintStorageSOPClassRetired, "StoredPrintStorage (Retired)");
-        sopClasses.put(UID.HardcopyGrayscaleImageStorageSOPClassRetired, "HardcopyGrayscaleImageStorage (Retired)");
-        sopClasses.put(UID.HardcopyColorImageStorageSOPClassRetired, "HardcopyColorImageStorage (Retired)");
+        sopClasses.put(UID.BasicStudyContentNotification, "BasicStudyContentNotification (Retired)");
+        sopClasses.put(UID.StoredPrintStorage, "StoredPrintStorage (Retired)");
+        sopClasses.put(UID.HardcopyGrayscaleImageStorage, "HardcopyGrayscaleImageStorage (Retired)");
+        sopClasses.put(UID.HardcopyColorImageStorage, "HardcopyColorImageStorage (Retired)");
         sopClasses.put(UID.ComputedRadiographyImageStorage, "ComputedRadiographyImageStorage");
         sopClasses.put(UID.DigitalXRayImageStorageForPresentation, "DigitalXRayImageStorageForPresentation");
         sopClasses.put(UID.DigitalXRayImageStorageForProcessing, "DigitalXRayImageStorageForProcessing");
@@ -83,23 +83,23 @@ public class SOPClassSettings {
                 "DigitalIntraoralXRayImageStorageForPresentation");
         sopClasses.put(UID.DigitalIntraOralXRayImageStorageForProcessing,
                 "DigitalIntraoralXRayImageStorageForProcessing");
-        sopClasses.put(UID.StandaloneModalityLUTStorageRetired, "StandaloneModalityLUTStorage (Retired)");
+        sopClasses.put(UID.StandaloneModalityLUTStorage, "StandaloneModalityLUTStorage (Retired)");
         sopClasses.put(UID.EncapsulatedPDFStorage, "EncapsulatedPDFStorage");
-        sopClasses.put(UID.StandaloneVOILUTStorageRetired, "StandaloneVOILUTStorage (Retired)");
-        sopClasses.put(UID.GrayscaleSoftcopyPresentationStateStorageSOPClass,
+        sopClasses.put(UID.StandaloneVOILUTStorage, "StandaloneVOILUTStorage (Retired)");
+        sopClasses.put(UID.GrayscaleSoftcopyPresentationStateStorage,
                 "GrayscaleSoftcopyPresentationStateStorage");
-        sopClasses.put(UID.ColorSoftcopyPresentationStateStorageSOPClass, "ColorSoftcopyPresentationStateStorage");
-        sopClasses.put(UID.PseudoColorSoftcopyPresentationStateStorageSOPClass,
+        sopClasses.put(UID.ColorSoftcopyPresentationStateStorage, "ColorSoftcopyPresentationStateStorage");
+        sopClasses.put(UID.PseudoColorSoftcopyPresentationStateStorage,
                 "PseudoColorSoftcopyPresentationStateStorage");
-        sopClasses.put(UID.BlendingSoftcopyPresentationStateStorageSOPClass,
+        sopClasses.put(UID.BlendingSoftcopyPresentationStateStorage,
                 "BlendingSoftcopyPresentationStateStorage");
         sopClasses.put(UID.XRayAngiographicImageStorage, "XRayAngiographicImageStorage");
         sopClasses.put(UID.EnhancedXAImageStorage, "EnhancedXAImageStorage");
         sopClasses.put(UID.XRayRadiofluoroscopicImageStorage, "XRayRadiofluoroscopicImageStorage");
         sopClasses.put(UID.EnhancedXRFImageStorage, "EnhancedXRFImageStorage");
-        sopClasses.put(UID.XRayAngiographicBiPlaneImageStorageRetired, "XRayAngiographicBiPlaneImageStorage (Retired)");
+        sopClasses.put(UID.XRayAngiographicBiPlaneImageStorage, "XRayAngiographicBiPlaneImageStorage (Retired)");
         sopClasses.put(UID.PositronEmissionTomographyImageStorage, "PositronEmissionTomographyImageStorage");
-        sopClasses.put(UID.StandalonePETCurveStorageRetired, "StandalonePETCurveStorage (Retired)");
+        sopClasses.put(UID.StandalonePETCurveStorage, "StandalonePETCurveStorage (Retired)");
         sopClasses.put(UID.CTImageStorage, "CTImageStorage");
         sopClasses.put(UID.EnhancedCTImageStorage, "EnhancedCTImageStorage");
         sopClasses.put(UID.NuclearMedicineImageStorage, "NuclearMedicineImageStorage");
@@ -131,7 +131,7 @@ public class SOPClassSettings {
                 "MultiframeGrayscaleWordSecondaryCaptureImageStorage");
         sopClasses.put(UID.MultiFrameTrueColorSecondaryCaptureImageStorage,
                 "MultiframeTrueColorSecondaryCaptureImageStorage");
-        sopClasses.put(UID.VLImageStorageTrialRetired, "VLImageStorage (Retired)");
+        sopClasses.put(UID.VLImageStorageTrial, "VLImageStorage (Retired)");
         sopClasses.put(UID.VLEndoscopicImageStorage, "VLEndoscopicImageStorage");
         sopClasses.put(UID.VideoEndoscopicImageStorage, "VideoEndoscopicImageStorage");
         sopClasses.put(UID.VLMicroscopicImageStorage, "VLMicroscopicImageStorage");
@@ -142,8 +142,8 @@ public class SOPClassSettings {
         sopClasses.put(UID.OphthalmicPhotography8BitImageStorage, "OphthalmicPhotography8BitImageStorage");
         sopClasses.put(UID.OphthalmicPhotography16BitImageStorage, "OphthalmicPhotography16BitImageStorage");
         sopClasses.put(UID.StereometricRelationshipStorage, "StereometricRelationshipStorage");
-        sopClasses.put(UID.VLMultiFrameImageStorageTrialRetired, "VLMultiframeImageStorage (Retired)");
-        sopClasses.put(UID.StandaloneOverlayStorageRetired, "StandaloneOverlayStorage (Retired)");
+        sopClasses.put(UID.VLMultiFrameImageStorageTrial, "VLMultiframeImageStorage (Retired)");
+        sopClasses.put(UID.StandaloneOverlayStorage, "StandaloneOverlayStorage (Retired)");
         sopClasses.put(UID.BasicTextSRStorage, "BasicTextSR");
         sopClasses.put(UID.EnhancedSRStorage, "EnhancedSR");
         sopClasses.put(UID.ComprehensiveSRStorage, "ComprehensiveSR");
@@ -151,14 +151,13 @@ public class SOPClassSettings {
         sopClasses.put(UID.MammographyCADSRStorage, "MammographyCADSR");
         sopClasses.put(UID.KeyObjectSelectionDocumentStorage, "KeyObjectSelectionDocument");
         sopClasses.put(UID.ChestCADSRStorage, "ChestCADSR");
-        sopClasses.put(UID.StandaloneCurveStorageRetired, "StandaloneCurveStorage (Retired)");
+        sopClasses.put(UID.StandaloneCurveStorage, "StandaloneCurveStorage (Retired)");
         sopClasses.put(UID.GeneralECGWaveformStorage, "GeneralECGWaveformStorage");
         sopClasses.put(UID.AmbulatoryECGWaveformStorage, "AmbulatoryECGWaveformStorage");
         sopClasses.put(UID.HemodynamicWaveformStorage, "HemodynamicWaveformStorage");
         sopClasses.put(UID.CardiacElectrophysiologyWaveformStorage, "CardiacElectrophysiologyWaveformStorage");
         sopClasses.put(UID.BasicVoiceAudioWaveformStorage, "BasicVoiceAudioWaveformStorage");
         sopClasses.put(UID.HangingProtocolStorage, "HangingProtocolStorage");
-        sopClasses.put(UID.SiemensCSANonImageStorage, "SiemensCSANonImageStorage");
         sopClasses.put(UID.VLWholeSlideMicroscopyImageStorage, "VLWholeSlideMicroscopyImageStorage");
         sopClasses.put(UID.BreastTomosynthesisImageStorage, "BreastTomosynthesisImageStorage");
         sopClasses.put(UID.XRayRadiationDoseSRStorage, "XRayRadiationDoseSRStorage");
@@ -172,20 +171,20 @@ public class SOPClassSettings {
         additionalSOPClasses.forEach(elem -> sopClasses.put(elem.getUid(), elem.getAlias()));
 
 
-        transferSettings.put(UID.ImplicitVRLittleEndian, "ImplicitVRLittleEndian");
-        transferSettings.put(UID.ExplicitVRLittleEndian, "ExplicitVRLittleEndian");
-        transferSettings.put(UID.DeflatedExplicitVRLittleEndian, "DeflatedExplicitVRLittleEndian");
-        transferSettings.put(UID.ExplicitVRBigEndian, "ExplicitVRBigEndian");
+        transferSettings.put(UID.ImplicitVRLittleEndian, "Implicit VR Little Endian");
+        transferSettings.put(UID.ExplicitVRLittleEndian, "Explicit VR Little Endian");
+        transferSettings.put(UID.DeflatedExplicitVRLittleEndian, "Deflated Explicit VR Little Endian");
+        transferSettings.put(UID.ExplicitVRBigEndian, "Explicit VR Big Endian");
         transferSettings.put(UID.JPEGLossless, "JPEG Lossless");
-        transferSettings.put(UID.JPEGLSLossless, "JPEG Lossless LS");
-        transferSettings.put(UID.JPEGLosslessNonHierarchical14, "JPEG Lossless, Non-Hierarchical (Process 14) ");
-        transferSettings.put(UID.JPEG2000LosslessOnly, "JPEG2000 Lossless Only");
-        transferSettings.put(UID.JPEGBaseline1, "JPEG Baseline 1");
-        transferSettings.put(UID.JPEGExtended24, "JPEG Extended (Process 2 & 4)");
-        transferSettings.put(UID.JPEGLSLossyNearLossless, "JPEG LS Lossy Near Lossless");
-        transferSettings.put(UID.JPEG2000, "JPEG2000");
+        transferSettings.put(UID.JPEGLSLossless, "JPEG-LS Lossless");
+        transferSettings.put(UID.JPEGLosslessSV1, "JPEG Lossless, Non-Hierarchical (Process 14), First Order Prediction");
+        transferSettings.put(UID.JPEG2000Lossless, "JPEG2000 Lossless Only");
+        transferSettings.put(UID.JPEGBaseline8Bit, "JPEG Baseline (Process 1)");
+        transferSettings.put(UID.JPEGExtended12Bit, "JPEG Extended (Process 2 & 4)");
+        transferSettings.put(UID.JPEGLSNearLossless, "JPEG-LS Near Lossless");
+        transferSettings.put(UID.JPEG2000, "JPEG 2000");
         transferSettings.put(UID.RLELossless, "RLE Lossless");
-        transferSettings.put(UID.MPEG2, "MPEG2");
+        transferSettings.put(UID.MPEG2MPML, "MPEG2 Main Profile / Main Level");
         // transferSettings: put the UIDs and their alias as it is in confs/server.xml's <additional-transfer-syntaxes>
         Collection<AdditionalTransferSyntax> additionalTransferSyntaxes = dicomServices.getAdditionalTransferSyntaxes();
         // Get additional TSs not already present in the hardcoded list (transferSettings)
@@ -202,14 +201,14 @@ public class SOPClassSettings {
         transferSettingsIndex.put(UID.ExplicitVRBigEndian, 3);
         transferSettingsIndex.put(UID.JPEGLossless, 4);
         transferSettingsIndex.put(UID.JPEGLSLossless, 5);
-        transferSettingsIndex.put(UID.JPEGLosslessNonHierarchical14, 6);
-        transferSettingsIndex.put(UID.JPEG2000LosslessOnly, 7);
-        transferSettingsIndex.put(UID.JPEGBaseline1, 8);
-        transferSettingsIndex.put(UID.JPEGExtended24, 9);
-        transferSettingsIndex.put(UID.JPEGLSLossyNearLossless, 10);
+        transferSettingsIndex.put(UID.JPEGLosslessSV1, 6);
+        transferSettingsIndex.put(UID.JPEG2000Lossless, 7);
+        transferSettingsIndex.put(UID.JPEGBaseline8Bit, 8);
+        transferSettingsIndex.put(UID.JPEGExtended12Bit, 9);
+        transferSettingsIndex.put(UID.JPEGLSNearLossless, 10);
         transferSettingsIndex.put(UID.JPEG2000, 11);
         transferSettingsIndex.put(UID.RLELossless, 12);
-        transferSettingsIndex.put(UID.MPEG2, 13);
+        transferSettingsIndex.put(UID.MPEG2MPML, 13);
         // transferSettingsIndex: put the TSs in some adequate order and sequential index
         int index = 13;
         for (AdditionalTransferSyntax elem : additionalTransferSyntaxes) {
@@ -274,7 +273,7 @@ public class SOPClassSettings {
      */
     public synchronized void setAllSOPClassesSettings(Boolean accepted, HashMap<String, Boolean> allowedTransStore) {
         // for all the sop classes
-        List keys = sopList.getKeys();
+        List<String> keys = sopList.getKeys();
         for (int i = 0; i < keys.size(); i++) {
             // get the sop class uid
             String sopClassUID = (String) keys.get(i);

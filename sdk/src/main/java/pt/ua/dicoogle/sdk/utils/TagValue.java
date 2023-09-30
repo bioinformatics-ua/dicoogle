@@ -21,8 +21,8 @@ package pt.ua.dicoogle.sdk.utils;
 import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
-import org.dcm4che2.data.BasicDicomObject;
-import org.dcm4che2.data.VR;
+import org.dcm4che3.data.StandardElementDictionary;
+import org.dcm4che3.data.VR;
 
 /**
  *
@@ -52,7 +52,7 @@ public class TagValue implements Serializable {
         this.name = alias;
         this.alias = alias;
 
-        VR tagVR = (new BasicDicomObject()).vrOf(tag);
+        VR tagVR = StandardElementDictionary.INSTANCE.vrOf(tag);
 
         if (tagVR != null)
             tgVR = tagVR.toString();

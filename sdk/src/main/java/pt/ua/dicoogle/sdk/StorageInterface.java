@@ -25,8 +25,8 @@ import java.nio.file.NotDirectoryException;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import org.dcm4che2.data.DicomObject;
-import org.dcm4che2.io.DicomInputStream;
+import org.dcm4che3.data.Attributes;
+import org.dcm4che3.io.DicomInputStream;
 
 /** Storage plugin interface. These types of plugins provide an abstraction to reading and writing from
  * files or data blobs.
@@ -117,17 +117,17 @@ public interface StorageInterface extends DicooglePlugin {
     /**
      * Stores a DICOM object into the storage.
      *
-     * @param dicomObject Object to be Stored
-     * @param parameters a variable list of extra parameters for the retrieve
+     * @param dicomDataset the DICOM data set to be stored
+     * @param parameters a variable list of custom storage parameters
      * @return The URI of the previously stored Object.
      */
-    public URI store(DicomObject dicomObject, Object... parameters);
+    public URI store(Attributes dicomDataset, Object... parameters);
 
     /**
      * Stores a new element into the storage.
      *
      * @param inputStream an input stream with the contents to be stored
-     * @param parameters a variable list of extra parameters for the retrieve
+     * @param parameters a variable list of extra parameters for the retrieval
      * @return the URI of the stored data
      * @throws IOException if an I/O error occurs
      */

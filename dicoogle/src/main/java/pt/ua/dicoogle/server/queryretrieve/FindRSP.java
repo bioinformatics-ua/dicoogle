@@ -18,7 +18,7 @@
  */
 /**
  * 
- * The Goal of this class is based on DicomObject 
+ * The Goal of this class is based on Attributes 
  * send FindRSP to destination entity 
  * 
  * It will search data at Index of Lucene 
@@ -30,12 +30,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import org.slf4j.LoggerFactory;
 
-import org.dcm4che2.data.DicomObject;
-import org.dcm4che2.data.Tag;
-import org.dcm4che2.data.VR;
-import org.dcm4che2.net.Association;
-import org.dcm4che2.net.DimseRSP;
-import org.dcm4che2.net.Status;
+import org.dcm4che3.data.Attributes;
+import org.dcm4che3.data.Tag;
+import org.dcm4che3.data.VR;
+import org.dcm4che3.net.Association;
+import org.dcm4che3.net.DimseRSP;
+import org.dcm4che3.net.Status;
 
 
 import pt.ua.dicoogle.core.exceptions.CFindNotSupportedException;
@@ -47,21 +47,21 @@ import pt.ua.dicoogle.server.SearchDicomResult;
  */
 public class FindRSP implements DimseRSP {
 
-    private DicomObject rsp;
-    private DicomObject keys;
+    private Attributes rsp;
+    private Attributes keys;
 
 
 
     /** 
      * Each moment in timeline we're getting a item
      */
-    private DicomObject mwl = null;
+    private Attributes mwl = null;
 
     SearchDicomResult search = null;
 
     private String callingAET;
 
-    public FindRSP(DicomObject keys, DicomObject rsp, String callingAET) {
+    public FindRSP(Attributes keys, Attributes rsp, String callingAET) {
         this.rsp = rsp;
         this.keys = keys;
 
@@ -131,9 +131,9 @@ public class FindRSP implements DimseRSP {
             level = SearchDicomResult.QUERYLEVEL.IMAGE;
         } else {
             // illegal query-retrieve level, reject request
-            this.rsp.putInt(Tag.Status, VR.US, 0xA900);
-            this.rsp.putInt(Tag.OffendingElement, VR.AT, Tag.QueryRetrieveLevel);
-            this.rsp.putString(Tag.ErrorComment, VR.LO, "Query/Retrieve Level invalid or missing");
+            this.rsp.setInt(Tag.Status, VR.US, 0xA900);
+            this.rsp.setInt(Tag.OffendingElement, VR.AT, Tag.QueryRetrieveLevel);
+            this.rsp.setString(Tag.ErrorComment, VR.LO, "Query/Retrieve Level invalid or missing");
             return;
         }
         search = new SearchDicomResult(query, true, extrafields, level);
@@ -149,7 +149,7 @@ public class FindRSP implements DimseRSP {
 
 
 
-    private String getQueryString(DicomObject keys, DicomObject rsp) {
+    private String getQueryString(Attributes keys, Attributes rsp) {
         String result = "";
         try {
             CFindBuilder c = new CFindBuilder(keys, rsp);
@@ -169,12 +169,12 @@ public class FindRSP implements DimseRSP {
 
     /**
      * 
-     * Verify if have a next DicomObject and set 
-     * the pointer of DicomObject with correct paraments
-     * It also apply the filter to verify if the DicomObject matches
-     * with query and if it is not search for the next DicomObject.
+     * Verify if have a next Attributes and set 
+     * the pointer of Attributes with correct paraments
+     * It also apply the filter to verify if the Attributes matches
+     * with query and if it is not search for the next Attributes.
      * 
-     * @return true if there is a next DicomObject
+     * @return true if there is a next Attributes
      * @throws java.io.IOException
      * @throws java.lang.InterruptedException
      */
@@ -214,17 +214,17 @@ public class FindRSP implements DimseRSP {
      * @return
      */
     @Override
-    public DicomObject getCommand() {
+    public Attributes getCommand() {
         return this.rsp;
     }
 
 
     /**
-     * This method see the current DicomObject and return it
-     * @return null or DicomObject
+     * This method see the current Attributes and return it
+     * @return null or Attributes
      */
     @Override
-    public DicomObject getDataset() {
+    public Attributes getDataset() {
         // DebugManager.getSettings().debug("Get Data Set");
         return this.mwl != null ? this.mwl.subSet(this.keys) : null;
     }

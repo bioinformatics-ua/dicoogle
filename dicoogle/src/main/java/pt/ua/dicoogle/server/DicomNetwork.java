@@ -37,9 +37,9 @@ package pt.ua.dicoogle.server;
 import pt.ua.dicoogle.server.callbacks.LogEvent;
 import pt.ua.dicoogle.server.callbacks.LogEventAfter;
 import pt.ua.dicoogle.server.callbacks.LogEventBefore;
-import org.dcm4che2.net.Device;
-import org.dcm4che2.net.NetworkApplicationEntity;
-import org.dcm4che2.net.NetworkConnection;
+import org.dcm4che3.net.Device;
+import org.dcm4che3.net.ApplicationEntity;
+import org.dcm4che3.net.Connection;
 
 /**
  *
@@ -48,11 +48,11 @@ import org.dcm4che2.net.NetworkConnection;
 public abstract class DicomNetwork {
 
 
-    private NetworkApplicationEntity remoteAE = new NetworkApplicationEntity();
-    private NetworkConnection remoteConn = new NetworkConnection();
+    private ApplicationEntity remoteAE = new ApplicationEntity();
+    private Connection remoteConn = new Connection();
     private Device device = null;
-    private NetworkApplicationEntity localAE = new NetworkApplicationEntity();
-    private NetworkConnection localConn = new NetworkConnection();
+    private ApplicationEntity localAE = new ApplicationEntity();
+    private Connection localConn = new Connection();
 
 
     // AETitle of Service
@@ -154,28 +154,28 @@ public abstract class DicomNetwork {
     /**
      * @return the remoteAE
      */
-    public NetworkApplicationEntity getRemoteAE() {
+    public ApplicationEntity getRemoteAE() {
         return remoteAE;
     }
 
     /**
      * @param remoteAE the remoteAE to set
      */
-    public void setRemoteAE(NetworkApplicationEntity remoteAE) {
+    public void setRemoteAE(ApplicationEntity remoteAE) {
         this.remoteAE = remoteAE;
     }
 
     /**
      * @return the remoteConn
      */
-    public NetworkConnection getRemoteConn() {
+    public Connection getRemoteConn() {
         return remoteConn;
     }
 
     /**
      * @param remoteConn the remoteConn to set
      */
-    public void setRemoteConn(NetworkConnection remoteConn) {
+    public void setRemoteConn(Connection remoteConn) {
         this.remoteConn = remoteConn;
     }
 
@@ -196,28 +196,28 @@ public abstract class DicomNetwork {
     /**
      * @return the localAE
      */
-    public NetworkApplicationEntity getLocalAE() {
+    public ApplicationEntity getLocalAE() {
         return localAE;
     }
 
     /**
      * @param localAE the localAE to set
      */
-    public void setLocalAE(NetworkApplicationEntity localAE) {
+    public void setLocalAE(ApplicationEntity localAE) {
         this.localAE = localAE;
     }
 
     /**
      * @return the localConn
      */
-    public NetworkConnection getLocalConn() {
+    public Connection getLocalConn() {
         return localConn;
     }
 
     /**
      * @param localConn the localConn to set
      */
-    public void setLocalConn(NetworkConnection localConn) {
+    public void setLocalConn(Connection localConn) {
         this.localConn = localConn;
     }
 

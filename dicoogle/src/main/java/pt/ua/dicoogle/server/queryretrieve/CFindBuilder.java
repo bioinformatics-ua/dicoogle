@@ -26,9 +26,9 @@ import pt.ua.dicoogle.core.exceptions.CFindNotSupportedException;
 
 import java.util.Iterator;
 
-import org.dcm4che2.data.DicomElement;
-import org.dcm4che2.data.DicomObject;
-import org.dcm4che2.data.Tag;
+import org.dcm4che3.data.DicomElement;
+import org.dcm4che3.data.DicomObject;
+import org.dcm4che3.data.Tag;
 
 import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.sdk.utils.TagValue;

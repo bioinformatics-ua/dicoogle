@@ -22,7 +22,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Iterator;
 import org.slf4j.LoggerFactory;
-import org.dcm4che2.data.Tag;
+import org.dcm4che3.data.Tag;
 
 /**
  *
@@ -59,6 +59,7 @@ public class DictionaryAccess {
         return this.tagListByTag.get(tag);
     }
 
+    @Override
     public String toString() {
         String str = "";
         Iterator<String> it = (Iterator<String>) getTagList().keySet().iterator();

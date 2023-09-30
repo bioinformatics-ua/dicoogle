@@ -26,19 +26,19 @@ package pt.ua.dicoogle.server.queryretrieve;
 
 import java.io.IOException;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
+import org.dcm4che3.data.Attributes;
+import org.dcm4che3.net.Association;
+import org.dcm4che3.data.UID;
+import org.dcm4che3.net.Device;
+import org.dcm4che3.net.ApplicationEntity;
+import org.dcm4che3.net.Connection;
+import org.dcm4che3.net.TransferCapability;
+import org.dcm4che3.net.service.BasicCEchoSCP;
 
-import org.dcm4che2.data.DicomObject;
-import org.dcm4che2.net.Association;
-import org.dcm4che2.data.UID;
-import org.dcm4che2.net.CommandUtils;
-import org.dcm4che2.net.Device;
-import org.dcm4che2.net.NetworkApplicationEntity;
-import org.dcm4che2.net.NetworkConnection;
-import org.dcm4che2.net.NewThreadExecutor;
-import org.dcm4che2.net.TransferCapability;
-import org.dcm4che2.net.UserIdentity;
-import org.dcm4che2.net.service.VerificationService;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
 import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
@@ -51,7 +51,7 @@ import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
  * @since Nov 21, 2008
  *
  */
-public class DicomEchoReply extends VerificationService {
+public class DicomEchoReply extends BasicCEchoSCP {
 
 
     /** Settings */
@@ -61,7 +61,7 @@ public class DicomEchoReply extends VerificationService {
             {UID.ImplicitVRLittleEndian, UID.ExplicitVRBigEndian, UID.ExplicitVRLittleEndian};
 
     /* Implemented SOP Class */
-    private static final String SOP_CLASS = UID.VerificationSOPClass;
+    private static final String SOP_CLASS = UID.Verification;
 
     private static final int PORT_OFFSET = 100;
 
@@ -71,23 +71,23 @@ public class DicomEchoReply extends VerificationService {
     /**** Class Atributes ****/
 
     private static final String MODULE_NAME = "DICOMWLS_EchoReply"; /* DEFAULT Implemented module name */
-    private final NetworkApplicationEntity remoteAE =
-            new NetworkApplicationEntity(); /* Remote Application Entity (client) */
-    private final NetworkConnection remoteConn =
-            new NetworkConnection(); /* Remote connection associated with remoteAE */
+    private final ApplicationEntity remoteAE =
+            new ApplicationEntity(); /* Remote Application Entity (client) */
+    private final Connection remoteConn =
+            new Connection(); /* Remote connection associated with remoteAE */
     private final Device device = new Device(MODULE_NAME); /* Module device */
-    private final NetworkApplicationEntity localAE =
-            new NetworkApplicationEntity(); /* Local Application Entity (this server) 'ea' */
-    private final NetworkConnection localConn =
-            new NetworkConnection(); /* Local connection associated with localAE 'conn' */
+    private final ApplicationEntity localAE =
+            new ApplicationEntity(); /* Local Application Entity (this server) 'ea' */
+    private final Connection localConn =
+            new Connection(); /* Local connection associated with localAE 'conn' */
     private boolean started = false; /* True if server is allready started */
     private int port = 0;
 
 
 
     /* Module executor */
-    private static final Executor executor = (Executor) new NewThreadExecutor(MODULE_NAME); /* Server thread */
-
+    private static final Executor executor =
+        Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat(MODULE_NAME + "-%d").build());
 
 
     public DicomEchoReply() {
@@ -98,7 +98,7 @@ public class DicomEchoReply extends VerificationService {
         /* clients */
         this.remoteAE.setInstalled(true);
         this.remoteAE.setAssociationInitiator(true);
-        this.remoteAE.setNetworkConnection(this.remoteConn);
+        this.remoteAE.addConnection(this.remoteConn);
 
 
 
@@ -107,14 +107,12 @@ public class DicomEchoReply extends VerificationService {
         this.localAE.setInstalled(true);
         this.localAE.setAssociationAcceptor(true);
         this.localAE.setAssociationInitiator(false);
-        this.localAE.setNetworkConnection(this.localConn);
+        this.localAE.addConnection(this.localConn);
         this.localAE.setAETitle(s.getDicomServicesSettings().getAETitle() + DicomEchoReply.SERVICE_LABEL);
-        this.localAE.register(new VerificationService());
+        this.localAE.register(new BasicCEchoSCP());
         this.localAE.register(this);
 
-        TransferCapability[] tc =
-                {new TransferCapability(DicomEchoReply.SOP_CLASS, DicomEchoReply.TRANSF_CAP, TransferCapability.SCP)};
-        this.localAE.setTransferCapability(tc);
+        this.localAE.addTransferCapability(new TransferCapability("Verification", DicomEchoReply.SOP_CLASS, TransferCapability.Role.SCP, DicomEchoReply.TRANSF_CAP));
 
         /*        this.localAE.setDIMSERspTimeout(confs.getWlsConfigs().getDIMSE_RSP_TIMEOUT());
         this.localAE.setIdleTimeout(confs.getWlsConfigs().getIDLE_TIMEOUT());*/
@@ -132,8 +130,8 @@ public class DicomEchoReply extends VerificationService {
 
 
         // this.device.setDescription(confs.getWlsConfigs().getDEVICE_DESCRIPTION());
-        this.device.setNetworkApplicationEntity(this.localAE);
-        this.device.setNetworkConnection(this.localConn);
+        this.device.addApplicationEntity(this.localAE);
+        this.device.addConnection(this.localConn);
         /*this.device.setDeviceName(DicomWLS.MODULE_NAME);*/
 
     }
@@ -345,9 +343,7 @@ public class DicomEchoReply extends VerificationService {
      * @param ts
      */
     public void setTransferSyntax(String[] ts) {
-        TransferCapability[] tc =
-                {new TransferCapability(UID.ModalityWorklistInformationModelFIND, ts, TransferCapability.SCU)};
-        this.localAE.setTransferCapability(tc);
+        this.localAE.addTransferCapability(new TransferCapability("Modality Worklist C-Find", UID.ModalityWorklistInformationModelFind, TransferCapability.Role.SCU, ts));
     }
 
     /**
@@ -365,13 +361,12 @@ public class DicomEchoReply extends VerificationService {
      *
      * @return
      * @throws java.io.IOException
-     * @throws org.dcm4che2.net.ConfigurationException
+     * @throws org.dcm4che3.net.ConfigurationException
      * @throws java.lang.InterruptedException
      */
     public boolean startListening() {
         if (this.device != null) {
             try {
-                CommandUtils.setIncludeUIDinRSP(true);
                 this.device.startListening(DicomEchoReply.executor);
             } catch (Exception ex) {
                 return false;
@@ -388,7 +383,7 @@ public class DicomEchoReply extends VerificationService {
      *
      * @return
      * @throws java.io.IOException
-     * @throws org.dcm4che2.net.ConfigurationException
+     * @throws org.dcm4che3.net.ConfigurationException
      * @throws java.lang.InterruptedException
      */
     public boolean stopListening() {
@@ -412,24 +407,9 @@ public class DicomEchoReply extends VerificationService {
     }
 
     @Override
-    public void cecho(Association as, int pcid, DicomObject cmd) throws IOException {
+    public void cecho(Association as, int pcid, Attributes cmd) throws IOException {
         super.cecho(as, pcid, cmd);
 
-    }
-
-
-    private static String strVectConcat(String[] stVectIN, String sep) {
-
-        if (stVectIN == null)
-            return new String("[any]");
-
-        String temp = new String("");
-        for (int i = 0; i < stVectIN.length - 1; i++)
-            temp = temp + stVectIN[i] + sep;
-
-        temp = temp + stVectIN[stVectIN.length - 1];
-
-        return temp;
     }
 
 }

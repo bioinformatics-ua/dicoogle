@@ -33,9 +33,6 @@
         <repository>
             <id>dcm4che</id>
             <url>https://www.dcm4che.org/maven2/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
         </repository>
 
         <repository>
@@ -377,7 +374,7 @@
         </dependency>
 
         <dependency>
-            <groupId>dcm4che</groupId>
+            <groupId>org.dcm4che</groupId>
             <artifactId>dcm4che-imageio</artifactId>
             <version>${dcm4che.version}</version>
         </dependency>

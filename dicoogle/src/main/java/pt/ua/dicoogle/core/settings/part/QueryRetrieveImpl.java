@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import org.dcm4che2.data.UID;
+import org.dcm4che3.data.UID;
 import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
 
 import java.util.Arrays;
@@ -53,8 +53,8 @@ public class QueryRetrieveImpl implements ServerSettings.DicomServices.QueryRetr
         qr.connectionTimeout = 60;
         qr.transferCapabilities =
                 Arrays.asList(UID.ImplicitVRLittleEndian, UID.ExplicitVRLittleEndian, UID.ExplicitVRBigEndian);
-        qr.sopClasses = Arrays.asList(UID.StudyRootQueryRetrieveInformationModelFIND,
-                UID.PatientRootQueryRetrieveInformationModelFIND);
+        qr.sopClasses = Arrays.asList(UID.StudyRootQueryRetrieveInformationModelFind,
+                UID.PatientRootQueryRetrieveInformationModelFind);
         qr.maxClientAssocs = 20;
         qr.maxPduLengthReceive = 16364;
         qr.maxPduLengthSend = 16364;
@@ -94,98 +94,122 @@ public class QueryRetrieveImpl implements ServerSettings.DicomServices.QueryRetr
     @JsonProperty("max-pdu-length-send")
     private int maxPduLengthSend;
 
+    @Override
     public boolean isAutostart() {
         return autostart;
     }
 
+    @Override
     public void setAutostart(boolean autostart) {
         this.autostart = autostart;
     }
 
+    @Override
     public int getPort() {
         return port;
     }
 
+    @Override
     public void setPort(int port) {
         this.port = port;
     }
 
+    @Override
     public int getRspDelay() {
         return rspDelay;
     }
 
+    @Override
     public void setRspDelay(int rspDelay) {
         this.rspDelay = rspDelay;
     }
 
+    @Override
     public int getDIMSERspTimeout() {
         return dimseRspTimeout;
     }
 
+    @Override
     public void setDIMSERspTimeout(int dimseRspTimeout) {
         this.dimseRspTimeout = dimseRspTimeout;
     }
 
+    @Override
     public int getIdleTimeout() {
         return idleTimeout;
     }
 
+    @Override
     public void setIdleTimeout(int idleTimeout) {
         this.idleTimeout = idleTimeout;
     }
 
+    @Override
     public int getAcceptTimeout() {
         return acceptTimeout;
     }
 
+    @Override
     public void setAcceptTimeout(int acceptTimeout) {
         this.acceptTimeout = acceptTimeout;
     }
 
+    @Override
     public int getConnectionTimeout() {
         return connectionTimeout;
     }
 
+    @Override
     public void setConnectionTimeout(int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
 
+    @Override
     public Collection<String> getTransferCapabilities() {
         return transferCapabilities;
     }
 
+    @Override
     public void setTransferCapabilities(Collection<String> transferCapabilities) {
         this.transferCapabilities = transferCapabilities;
     }
 
+    @Override
     public Collection<String> getSOPClass() {
         return sopClasses;
     }
 
+    @Override
     public void setSOPClass(Collection<String> sopClasses) {
         this.sopClasses = sopClasses;
     }
 
+    @Override
     public int getMaxClientAssoc() {
         return maxClientAssocs;
     }
 
+    @Override
     public void setMaxClientAssoc(int maxClientAssocs) {
         this.maxClientAssocs = maxClientAssocs;
     }
 
+    @Override
     public int getMaxPDULengthReceive() {
         return maxPduLengthReceive;
     }
 
+    @Override
     public void setMaxPDULengthReceive(int maxPduLengthReceive) {
         this.maxPduLengthReceive = maxPduLengthReceive;
     }
 
+    @Override
     public int getMaxPDULengthSend() {
         return maxPduLengthSend;
     }
 
+    @Override
     public void setMaxPDULengthSend(int maxPduLengthSend) {
         this.maxPduLengthSend = maxPduLengthSend;
     }

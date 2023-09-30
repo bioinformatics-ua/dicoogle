@@ -19,22 +19,21 @@
 package pt.ua.dicoogle.server.queryretrieve;
 
 import java.io.IOException;
-import org.dcm4che2.data.DicomObject;
-import org.dcm4che2.net.Association;
-import org.dcm4che2.net.DicomServiceException;
-import org.dcm4che2.net.service.CMoveSCP;
-import org.dcm4che2.net.service.DicomService;
+import org.dcm4che3.data.Attributes;
+import org.dcm4che3.net.Association;
+import org.dcm4che3.net.service.DicomServiceException;
+import org.dcm4che3.net.service.AbstractDicomService;
+import org.dcm4che3.net.service.DicomService;
 import java.util.concurrent.Executor;
-import org.dcm4che2.net.CommandUtils;
-import org.dcm4che2.net.DimseRSP;
-import org.dcm4che2.net.SingleDimseRSP;
-import org.dcm4che2.net.Status;
+import org.dcm4che3.net.DimseRSP;
+import org.dcm4che3.net.pdu.SingleDimseRSP;
+import org.dcm4che3.net.Status;
 
 /**
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class CMoveService extends DicomService implements CMoveSCP {
+public class CMoveService extends AbstractDicomService {
 
 
     private final Executor executor;
@@ -50,12 +49,12 @@ public class CMoveService extends DicomService implements CMoveSCP {
     }
 
     @Override
-    public void cmove(Association as, int pcid, DicomObject rq, DicomObject data)
+    public void cmove(Association as, int pcid, Attributes rq, Attributes data)
             throws DicomServiceException, IOException {
         // DebugManager.getInstance().debug("just cmove");
 
         // DebugManager.getInstance().debug(CommandUtils.toString(rq, pcid, "1.2.2.2.2.2.2.0"));
-        DicomObject cmdrsp = CommandUtils.mkRSP(rq, CommandUtils.SUCCESS);
+        Attributes cmdrsp = CommandUtils.mkRSP(rq, CommandUtils.SUCCESS);
         DimseRSP rsp = doCMove(as, pcid, rq, data, cmdrsp);
         try {
             rsp.next();
@@ -71,7 +70,7 @@ public class CMoveService extends DicomService implements CMoveSCP {
         }
     }
 
-    protected DimseRSP doCMove(Association as, int pcid, DicomObject cmd, DicomObject data, DicomObject rsp)
+    protected DimseRSP doCMove(Association as, int pcid, Attributes cmd, Attributes data, Attributes rsp)
             throws DicomServiceException {
         return new SingleDimseRSP(rsp);
     }

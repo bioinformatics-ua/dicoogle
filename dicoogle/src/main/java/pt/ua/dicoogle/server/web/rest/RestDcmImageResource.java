@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import org.dcm4che2.imageio.plugins.dcm.DicomImageReadParam;
+import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
 import org.restlet.data.MediaType;
 import org.restlet.representation.ByteArrayRepresentation;
 import org.restlet.resource.Get;

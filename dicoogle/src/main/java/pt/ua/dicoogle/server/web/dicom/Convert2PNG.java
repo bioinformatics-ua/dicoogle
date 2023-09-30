@@ -25,7 +25,7 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 
-import org.dcm4che2.imageio.plugins.dcm.DicomImageReadParam;
+import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
 
 import pt.ua.dicoogle.sdk.StorageInputStream;
 

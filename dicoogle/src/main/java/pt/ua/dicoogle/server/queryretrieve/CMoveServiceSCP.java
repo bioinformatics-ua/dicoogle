@@ -24,17 +24,16 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
 
-import org.dcm4che2.data.Tag;
+import org.dcm4che3.data.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.transform.TransformerConfigurationException;
-import org.dcm4che2.data.DicomElement;
-import org.dcm4che2.data.DicomObject;
-import org.dcm4che2.net.Association;
-import org.dcm4che2.net.DicomServiceException;
-import org.dcm4che2.net.DimseRSP;
-import org.dcm4che2.net.Status;
+import org.dcm4che3.data.Attributes;
+import org.dcm4che3.net.Association;
+import org.dcm4che3.net.service.DicomServiceException;
+import org.dcm4che3.net.DimseRSP;
+import org.dcm4che3.net.Status;
 import pt.ua.dicoogle.core.exceptions.CFindNotSupportedException;
 
 import pt.ua.dicoogle.DicomLog.LogDICOM;
@@ -66,7 +65,7 @@ public class CMoveServiceSCP extends CMoveService {
 
     @Override
 
-    protected DimseRSP doCMove(Association as, int pcid, DicomObject cmd, DicomObject data, DicomObject rsp)
+    protected DimseRSP doCMove(Association as, int pcid, Attributes cmd, Attributes data, Attributes rsp)
             throws DicomServiceException {
         DimseRSP replay = null;
 
@@ -108,15 +107,15 @@ public class CMoveServiceSCP extends CMoveService {
         /** Get the port to move */
         int portAddr = as.getSocket().getPort();
 
-        String destination = cmd.getString(org.dcm4che2.data.Tag.MoveDestination);
+        String destination = cmd.getString(org.dcm4che3.data.Tag.MoveDestination);
 
         /** Verify if it have the field destination */
         if (destination == null) {
-            throw new DicomServiceException(cmd, Status.UnrecognizedOperation, "Missing Move Destination");
+            throw new DicomServiceException(Status.UnrecognizedOperation, "Missing Move Destination");
         }
 
-        String SOPUID = new String(data.get(Integer.parseInt("0020000D", 16)).getBytes());
-        String CMoveID = cmd.getString(org.dcm4che2.data.Tag.MessageID);
+        String SOPUID = data.getString(0x0020_000D);
+        String CMoveID = cmd.getString(org.dcm4che3.data.Tag.MessageID);
 
         /**
          * Get object to search
@@ -151,7 +150,7 @@ public class CMoveServiceSCP extends CMoveService {
 
         if (search != null) {
             while (search.hasNext()) {
-                DicomObject obj = search.next();
+                Attributes obj = search.next();
                 DicomElement e = obj.get(Integer.parseInt("0020000D", 16));
                 String tmp = null;
                 if (e != null) {

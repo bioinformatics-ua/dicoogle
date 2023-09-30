@@ -24,12 +24,12 @@ package pt.ua.dicoogle.server.queryretrieve;
 
 import java.io.IOException;
 
-import org.dcm4che2.data.DicomObject;
-import org.dcm4che2.data.Tag;
-import org.dcm4che2.data.VR;
-import org.dcm4che2.net.Association;
-import org.dcm4che2.net.DimseRSP;
-import org.dcm4che2.net.Status;
+import org.dcm4che3.data.Attributes;
+import org.dcm4che3.data.Tag;
+import org.dcm4che3.data.VR;
+import org.dcm4che3.net.Association;
+import org.dcm4che3.net.DimseRSP;
+import org.dcm4che3.net.Status;
 
 
 import pt.ua.dicoogle.server.SearchDicomResult;
@@ -39,14 +39,14 @@ import pt.ua.dicoogle.server.SearchDicomResult;
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class MoveRSP implements DimseRSP {
-    DicomObject rsp = null;
-    DicomObject keys = null;
+    Attributes rsp = null;
+    Attributes keys = null;
 
-    DicomObject current = null;
+    Attributes current = null;
     SearchDicomResult search = null;
 
 
-    public MoveRSP(DicomObject keys, DicomObject rsp) {
+    public MoveRSP(Attributes keys, Attributes rsp) {
         /* Save args */
         this.rsp = rsp;
         this.keys = keys;
@@ -67,7 +67,7 @@ public class MoveRSP implements DimseRSP {
             // DebugManager.getInstance().debug(rsp.toString());
         }
 
-        this.rsp.putInt(Tag.Status, VR.US, Status.Success);
+        this.rsp.setInt(Tag.Status, VR.US, Status.Success);
 
     }
 
@@ -75,7 +75,7 @@ public class MoveRSP implements DimseRSP {
     public boolean next() throws IOException, InterruptedException {
 
         /** Sucess */
-        this.rsp.putInt(Tag.Status, VR.US, Status.Success);
+        this.rsp.setInt(Tag.Status, VR.US, Status.Success);
         /** Clean pointers */
         this.current = null;
         return true;
@@ -83,12 +83,12 @@ public class MoveRSP implements DimseRSP {
     }
 
     @Override
-    public DicomObject getCommand() {
+    public Attributes getCommand() {
         return this.rsp;
     }
 
     @Override
-    public DicomObject getDataset() {
+    public Attributes getDataset() {
         return this.current != null ? this.current.subSet(this.keys) : null;
     }
 

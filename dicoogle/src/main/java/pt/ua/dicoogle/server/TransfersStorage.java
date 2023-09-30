@@ -20,8 +20,7 @@ package pt.ua.dicoogle.server;
 
 import org.apache.commons.collections.BidiMap;
 import org.apache.commons.collections.bidimap.DualHashBidiMap;
-import org.dcm4che2.data.TransferSyntax;
-import org.dcm4che2.data.UID;
+import org.dcm4che3.data.UID;
 import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 import pt.ua.dicoogle.sdk.datastructs.AdditionalTransferSyntax;
 import pt.ua.dicoogle.server.web.management.SOPClassSettings;
@@ -90,20 +89,20 @@ public class TransfersStorage {
 
         globalTransferMap = Collections.unmodifiableMap(aMap);
 
-        uidsNameMapping.put(UID.ImplicitVRLittleEndian, "ImplicitVRLittleEndian");
-        uidsNameMapping.put(UID.ExplicitVRLittleEndian, "ExplicitVRLittleEndian");
-        uidsNameMapping.put(UID.DeflatedExplicitVRLittleEndian, "DeflatedExplicitVRLittleEndian");
-        uidsNameMapping.put(UID.ExplicitVRBigEndian, "ExplicitVRBigEndian");
-        uidsNameMapping.put(UID.JPEGLossless, "JPEGLossless");
-        uidsNameMapping.put(UID.JPEGLSLossless, "JPEGLSLossless");
-        uidsNameMapping.put(UID.JPEGLosslessNonHierarchical14, "JPEGLosslessNonHierarchical14");
-        uidsNameMapping.put(UID.JPEG2000LosslessOnly, "JPEG2000LosslessOnly");
-        uidsNameMapping.put(UID.JPEGBaseline1, "JPEGBaseline1");
-        uidsNameMapping.put(UID.JPEGExtended24, "JPEGExtended24");
-        uidsNameMapping.put(UID.JPEGLSLossyNearLossless, "JPEGLSLossyNearLossless");
-        uidsNameMapping.put(UID.JPEG2000, "JPEG2000");
-        uidsNameMapping.put(UID.RLELossless, "RLELossless");
-        uidsNameMapping.put(UID.MPEG2, "MPEG2");
+        uidsNameMapping.put(UID.ImplicitVRLittleEndian, "Implicit VR Little Endian");
+        uidsNameMapping.put(UID.ExplicitVRLittleEndian, "Explicit VR Little Endian");
+        uidsNameMapping.put(UID.DeflatedExplicitVRLittleEndian, "Deflated Explicit VR Little Endian");
+        uidsNameMapping.put(UID.ExplicitVRBigEndian, "Explicit VR Big Endian");
+        uidsNameMapping.put(UID.JPEGLossless, "JPEG Lossless");
+        uidsNameMapping.put(UID.JPEGLSLossless, "JPEG-LS Lossless");
+        uidsNameMapping.put(UID.JPEGLosslessSV1, "JPEG Lossless Non-Hierarchical First Order Prediction");
+        uidsNameMapping.put(UID.JPEG2000Lossless, "JPEG 2000 Lossless Only");
+        uidsNameMapping.put(UID.JPEGBaseline8Bit, "JPEG Baseline (8-bit)");
+        uidsNameMapping.put(UID.JPEGExtended12Bit, "JPEG Extended (12-bit)");
+        uidsNameMapping.put(UID.JPEGLSNearLossless, "JPEG-LS Near-Lossless");
+        uidsNameMapping.put(UID.JPEG2000, "JPEG 2000");
+        uidsNameMapping.put(UID.RLELossless, "RLE Lossless");
+        uidsNameMapping.put(UID.MPEG2MPML, "MPEG2 Main Profile / Main Level");
 
         globalTransferUIDsMap = Collections.unmodifiableMap(uidsNameMapping);
         namesUidMapping = new DualHashBidiMap(uidsNameMapping);
@@ -139,8 +138,6 @@ public class TransfersStorage {
     }
 
     public int setTS(boolean status, int index) {
-        int i;
-
         if (index < 0 || index > TS.length - 1) {
             return -1;
         }
@@ -215,7 +212,6 @@ public class TransfersStorage {
         // Extras (AdditionalTransferSyntaxes with aliases)
         additionalTransferSyntaxes.forEach(elem -> {
             // Collect the additional transfer syntaxes statically
-            TransferSyntax.add(Objects.requireNonNull(elem.toTransferSyntax()));
             uidsNameMapping.put(elem.getUid(), elem.getAlias());
         });
 

@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import org.dcm4che2.util.UIDUtils;
+import org.dcm4che3.util.UIDUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,13 +61,13 @@ public final class AdditionalSOPClass {
             return false;
         }
         if (asc.alias == null || asc.alias.equals("")) {
-            if (!UIDUtils.isValidUID(asc.uid))
+            if (!UIDUtils.isValid(asc.uid))
                 logger.warn("Additional SOP class: uid \"{}\" is not valid.", asc.uid);
             else
                 logger.warn("Additional SOP class with uid \"{}\": alias not set.", asc.uid);
             return false;
         }
-        if (!UIDUtils.isValidUID(asc.uid)) {
+        if (!UIDUtils.isValid(asc.uid)) {
             logger.warn("Additional SOP class \"{}\": UID not valid.", asc.alias);
             return false;
         }

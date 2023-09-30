@@ -18,7 +18,7 @@
  */
 package pt.ua.dicoogle.core.settings;
 
-import org.dcm4che2.data.UID;
+import org.dcm4che3.data.UID;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
 import org.slf4j.Logger;

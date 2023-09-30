@@ -26,24 +26,24 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.dcm4che2.data.DicomObject;
-import org.dcm4che2.data.Tag;
-import org.dcm4che2.data.UID;
-import org.dcm4che2.net.Association;
-import org.dcm4che2.net.CommandUtils;
-import org.dcm4che2.net.Device;
-import org.dcm4che2.net.DicomServiceException;
+import org.dcm4che3.data.Attributes;
+import org.dcm4che3.data.Tag;
+import org.dcm4che3.data.UID;
+import org.dcm4che3.data.Attributes.UpdatePolicy;
+import org.dcm4che3.net.Association;
+import org.dcm4che3.net.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dcm4che2.net.NetworkApplicationEntity;
-import org.dcm4che2.net.NetworkConnection;
-import org.dcm4che2.net.NewThreadExecutor;
-import org.dcm4che2.net.PDVInputStream;
-import org.dcm4che2.net.Status;
-import org.dcm4che2.net.TransferCapability;
-import org.dcm4che2.net.service.StorageService;
-import org.dcm4che2.net.service.VerificationService;
+import org.dcm4che3.net.ApplicationEntity;
+import org.dcm4che3.net.Connection;
+import org.dcm4che3.net.PDVInputStream;
+import org.dcm4che3.net.Status;
+import org.dcm4che3.net.TransferCapability;
+import org.dcm4che3.net.pdu.PresentationContext;
+import org.dcm4che3.net.service.BasicCStoreSCP;
+import org.dcm4che3.net.service.DicomServiceException;
+import org.dcm4che3.net.service.BasicCEchoSCP;
 
 
 import pt.ua.dicoogle.plugins.PluginController;
@@ -59,17 +59,17 @@ import pt.ua.dicoogle.sdk.settings.server.ServerSettings;
  * @author Marco Pereira
  */
 
-public class DicomStorage extends StorageService {
+public class DicomStorage extends BasicCStoreSCP {
 
     private static final Logger LOG = LoggerFactory.getLogger(DicomStorage.class);
 
     private SOPList list;
     private ServerSettings settings;
 
-    private Executor executor = new LoggingExecutor(new NewThreadExecutor("DicoogleStorage"), LOG);
+    private Executor executor = new LoggingExecutor(Executors.newCachedThreadPool(), LOG);
     private Device device = new Device("DicoogleStorage");
-    private NetworkApplicationEntity nae = new NetworkApplicationEntity();
-    private NetworkConnection nc = new NetworkConnection();
+    private ApplicationEntity nae = new ApplicationEntity();
+    private Connection nc = new Connection();
 
     private String path;
 
@@ -77,7 +77,7 @@ public class DicomStorage extends StorageService {
     private Set<String> priorityAETs = new HashSet<>();
 
     // Changed to support priority queue.
-    private NetworkApplicationEntity[] naeArr = null;
+    private ApplicationEntity[] naeArr = null;
     private AtomicLong seqNum = new AtomicLong(0L);
 
     /**
@@ -105,15 +105,15 @@ public class DicomStorage extends StorageService {
         this.priorityAETs = new HashSet<>(settings.getDicomServicesSettings().getPriorityAETitles());
         LoggerFactory.getLogger(DicomStorage.class).debug("Priority C-STORE: {}", this.priorityAETs);
 
-        device.setNetworkApplicationEntity(nae);
+        device.addApplicationEntity(nae);
 
-        device.setNetworkConnection(nc);
-        nae.setNetworkConnection(nc);
+        device.addConnection(nc);
+        nae.addConnection(nc);
 
         // we accept assoociations, this is a server
         nae.setAssociationAcceptor(true);
         // we support the VerificationServiceSOP
-        nae.register(new VerificationService());
+        nae.register(new BasicCEchoSCP());
         // and the StorageServiceSOP
         nae.register(this);
 
@@ -124,7 +124,7 @@ public class DicomStorage extends StorageService {
 
 
         this.nae.setInstalled(true);
-        this.nc.setMaxScpAssociations(Integer.parseInt(System.getProperty("dicoogle.cstore.maxScpAssociations", "50")));
+        //this.nc.setMaxScpAssociations(Integer.parseInt(System.getProperty("dicoogle.cstore.maxScpAssociations", "50")));
         this.nc.setAcceptTimeout(Integer.parseInt(System.getProperty("dicoogle.cstore.acceptTimeout", "5000")));
         this.nc.setConnectTimeout(Integer.parseInt(System.getProperty("dicoogle.cstore.connectTimeout", "5000")));
 
@@ -148,15 +148,15 @@ public class DicomStorage extends StorageService {
 
         // Added alternative AETitles.
 
-        naeArr = new NetworkApplicationEntity[alternativeAETs.size() + 1];
+        naeArr = new ApplicationEntity[alternativeAETs.size() + 1];
         // Just adding the first AETitle
         naeArr[0] = nae;
 
         int k = 1;
 
         for (String alternativeAET : alternativeAETs) {
-            NetworkApplicationEntity nae2 = new NetworkApplicationEntity();
-            nae2.setNetworkConnection(nc);
+            ApplicationEntity nae2 = new ApplicationEntity();
+            nae2.addConnection(nc);
             nae2.setDimseRspTimeout(
                     Integer.parseInt(System.getProperty("dicoogle.cstore.dimseRspTimeout", "18000000")));
             nae2.setIdleTimeout(Integer.parseInt(System.getProperty("dicoogle.cstore.idleTimeout", "18000000")));
@@ -170,7 +170,7 @@ public class DicomStorage extends StorageService {
             // we accept assoociations, this is a server
             nae2.setAssociationAcceptor(true);
             // we support the VerificationServiceSOP
-            nae2.register(new VerificationService());
+            nae2.register(new BasicCEchoSCP());
             // and the StorageServiceSOP
             nae2.register(this);
             nae2.setAETitle(alternativeAET);
@@ -179,7 +179,7 @@ public class DicomStorage extends StorageService {
             if (!caet.isEmpty()) {
                 String[] array = new String[caet.size()];
                 caet.toArray(array);
-                nae2.setPreferredCallingAETitle(array);
+                nae2.setPreferredCallingAETitles(array);
             }
             naeArr[k] = nae2;
             k++;
@@ -187,7 +187,9 @@ public class DicomStorage extends StorageService {
         }
 
         // Just set the Network Application Entity array - which accepts a set of AEs.
-        device.setNetworkApplicationEntity(naeArr);
+        for (ApplicationEntity ae: naeArr) {
+            device.addApplicationEntity(ae);
+        }
 
 
         initTS(Services);
@@ -205,7 +207,7 @@ public class DicomStorage extends StorageService {
         String[] TS;
         TransfersStorage local;
 
-        tc[0] = new TransferCapability(UID.VerificationSOPClass, Verification, TransferCapability.SCP);
+        tc[0] = new TransferCapability("Verification", UID.Verification, TransferCapability.Role.SCP, Verification);
         int j = 0;
         for (int i = 0; i < Services.length; i++) {
             count = 0;
@@ -214,27 +216,32 @@ public class DicomStorage extends StorageService {
                 TS = local.getVerboseTS();
                 if (TS != null) {
 
-                    tc[j + 1] = new TransferCapability(Services[i], TS, TransferCapability.SCP);
+                    tc[j + 1] = new TransferCapability("", Services[i], TransferCapability.Role.SCP, TS);
                     j++;
                 }
             }
         }
 
-        // Setting the TS in all NetworkApplicationEntitys
-        for (int i = 0; i < naeArr.length; i++) {
-
-            naeArr[i].setTransferCapability(tc);
+        // Setting the TS in all ApplicationEntitys
+        for (ApplicationEntity nae: naeArr) {
+            
+            for (int i = 0; i < tc.length; i++) {
+                nae.addTransferCapability(tc[i]);
+            }
         }
-        nae.setTransferCapability(tc);
+        for (int i = 0; i < tc.length; i++) {
+            nae.addTransferCapability(tc[i]);
+        }
     }
 
-    @Override
     /**
      * Called when a C-Store Request has been accepted
      * Parameters defined by dcm4che2
      */
-    public void cstore(final Association as, final int pcid, DicomObject rq, PDVInputStream dataStream, String tsuid)
-            throws DicomServiceException, IOException {
+    @Override
+    protected void store(Association as, PresentationContext pc, Attributes rq,
+            PDVInputStream data, Attributes rsp) throws IOException {
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Checking permission for {} to store {}", as.getCallingAET(), rq.getString(Tag.SOPInstanceUID));
         }
@@ -255,27 +262,24 @@ public class DicomStorage extends StorageService {
             return;
         }
 
-        final DicomObject rsp = CommandUtils.mkRSP(rq, CommandUtils.SUCCESS);
-        onCStoreRQ(as, pcid, rq, dataStream, tsuid, rsp);
-        as.writeDimseRSP(pcid, rsp);
+        final Attributes rsp = CommandUtils.mkRSP(rq, CommandUtils.SUCCESS);
+        onCStoreRQ(as, pc, rq, data, rsp);
+        as.writeDimseRSP(pc, rsp);
     }
 
-    @Override
     /**
-     * Actually do the job of saving received file on disk
-     * on this server with extras such as Lucene indexing
-     * and DICOMDIR update
+     * Actually do the job of saving the  file onto storage
+     * and dispatching indexing tasks.
      */
-    protected void onCStoreRQ(Association as, int pcid, DicomObject rq, PDVInputStream dataStream, String tsuid,
-            DicomObject rsp) throws IOException, DicomServiceException {
+    protected void onCStoreRQ(Association as, PresentationContext pc, Attributes rq, PDVInputStream dataStream, Attributes rsp) throws IOException, DicomServiceException {
         try {
 
             String cuid = rq.getString(Tag.AffectedSOPClassUID);
             String iuid = rq.getString(Tag.AffectedSOPInstanceUID);
 
-            DicomObject d = dataStream.readDataset();
+            Attributes d = dataStream.readDataset(pc.getTransferSyntax());
 
-            d.initFileMetaInformation(cuid, iuid, tsuid);
+            d.addAll(Attributes.createFileMetaInformation(cuid, iuid, pc.getTransferSyntax()));
 
             Iterable<StorageInterface> plugins = PluginController.getInstance().getStoragePlugins(true);
 
@@ -290,7 +294,7 @@ public class DicomStorage extends StorageService {
 
         } catch (Exception e) {
             LOG.error("DICOM storage service failure:", e);
-            throw new DicomServiceException(rq, Status.ProcessingFailure, e.getMessage());
+            throw new DicomServiceException(Status.ProcessingFailure, e.getMessage());
         }
     }
 

@@ -20,7 +20,7 @@ package pt.ua.dicoogle.server;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.dcm4che2.data.UID;
+import org.dcm4che3.data.UID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.core.settings.ServerSettingsManager;
@@ -48,18 +48,18 @@ public class SOPList {
 
     private Hashtable<String, TransfersStorage> table;
 
-    private String[] SOP = {UID.BasicStudyContentNotificationSOPClassRetired, UID.StoredPrintStorageSOPClassRetired,
-            UID.HardcopyGrayscaleImageStorageSOPClassRetired, UID.HardcopyColorImageStorageSOPClassRetired,
+    private String[] SOP = {UID.BasicStudyContentNotification, UID.StoredPrintStorage,
+            UID.HardcopyGrayscaleImageStorage, UID.HardcopyColorImageStorage,
             UID.ComputedRadiographyImageStorage, UID.DigitalXRayImageStorageForPresentation,
             UID.DigitalXRayImageStorageForProcessing, UID.DigitalMammographyXRayImageStorageForPresentation,
             UID.DigitalIntraOralXRayImageStorageForPresentation, UID.DigitalIntraOralXRayImageStorageForProcessing,
-            UID.StandaloneModalityLUTStorageRetired, UID.EncapsulatedPDFStorage, UID.StandaloneVOILUTStorageRetired,
-            UID.GrayscaleSoftcopyPresentationStateStorageSOPClass, UID.ColorSoftcopyPresentationStateStorageSOPClass,
-            UID.PseudoColorSoftcopyPresentationStateStorageSOPClass,
-            UID.BlendingSoftcopyPresentationStateStorageSOPClass, UID.XRayAngiographicImageStorage,
+            UID.StandaloneModalityLUTStorage, UID.EncapsulatedPDFStorage, UID.StandaloneVOILUTStorage,
+            UID.GrayscaleSoftcopyPresentationStateStorage, UID.ColorSoftcopyPresentationStateStorage,
+            UID.PseudoColorSoftcopyPresentationStateStorage,
+            UID.BlendingSoftcopyPresentationStateStorage, UID.XRayAngiographicImageStorage,
             UID.EnhancedXAImageStorage, UID.XRayRadiofluoroscopicImageStorage, UID.EnhancedXRFImageStorage,
-            UID.XRayAngiographicBiPlaneImageStorageRetired, UID.PositronEmissionTomographyImageStorage,
-            UID.StandalonePETCurveStorageRetired, UID.CTImageStorage, UID.EnhancedCTImageStorage,
+            UID.XRayAngiographicBiPlaneImageStorage, UID.PositronEmissionTomographyImageStorage,
+            UID.StandalonePETCurveStorage, UID.CTImageStorage, UID.EnhancedCTImageStorage,
             UID.NuclearMedicineImageStorage, UID.UltrasoundMultiFrameImageStorageRetired,
             UID.UltrasoundMultiFrameImageStorage, UID.MRImageStorage, UID.EnhancedMRImageStorage,
             UID.MRSpectroscopyStorage, UID.RTImageStorage, UID.RTDoseStorage, UID.RTStructureSetStorage,
@@ -70,19 +70,18 @@ public class SOPList {
             UID.SecondaryCaptureImageStorage, UID.MultiFrameSingleBitSecondaryCaptureImageStorage,
             UID.MultiFrameGrayscaleByteSecondaryCaptureImageStorage,
             UID.MultiFrameGrayscaleWordSecondaryCaptureImageStorage,
-            UID.MultiFrameTrueColorSecondaryCaptureImageStorage, UID.VLImageStorageTrialRetired,
+            UID.MultiFrameTrueColorSecondaryCaptureImageStorage, UID.VLImageStorageTrial,
             UID.VLEndoscopicImageStorage, UID.VideoEndoscopicImageStorage, UID.VLMicroscopicImageStorage,
             UID.VideoMicroscopicImageStorage, UID.VLSlideCoordinatesMicroscopicImageStorage,
             UID.VLPhotographicImageStorage, UID.VideoPhotographicImageStorage,
             UID.OphthalmicPhotography8BitImageStorage, UID.OphthalmicPhotography16BitImageStorage,
-            UID.StereometricRelationshipStorage, UID.VLMultiFrameImageStorageTrialRetired,
-            UID.StandaloneOverlayStorageRetired, UID.BasicTextSRStorage, UID.EnhancedSRStorage,
+            UID.StereometricRelationshipStorage, UID.VLMultiFrameImageStorageTrial,
+            UID.StandaloneOverlayStorage, UID.BasicTextSRStorage, UID.EnhancedSRStorage,
             UID.ComprehensiveSRStorage, UID.ProcedureLogStorage, UID.MammographyCADSRStorage,
-            UID.KeyObjectSelectionDocumentStorage, UID.ChestCADSRStorage, UID.StandaloneCurveStorageRetired,
-            // UID._12leadECGWaveformStorage,
+            UID.KeyObjectSelectionDocumentStorage, UID.ChestCADSRStorage, UID.StandaloneCurveStorage,
             UID.GeneralECGWaveformStorage, UID.AmbulatoryECGWaveformStorage, UID.HemodynamicWaveformStorage,
             UID.CardiacElectrophysiologyWaveformStorage, UID.BasicVoiceAudioWaveformStorage, UID.HangingProtocolStorage,
-            UID.SiemensCSANonImageStorage, UID.VLWholeSlideMicroscopyImageStorage, UID.BreastTomosynthesisImageStorage,
+            UID.VLWholeSlideMicroscopyImageStorage, UID.BreastTomosynthesisImageStorage,
             UID.XRayRadiationDoseSRStorage};
 
     public static synchronized SOPList getInstance() {

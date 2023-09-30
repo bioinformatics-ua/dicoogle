@@ -29,7 +29,7 @@ import pt.ua.dicoogle.sdk.datastructs.dim.Series;
 
 import java.io.*;
 
-import org.dcm4che2.data.*;
+import org.dcm4che3.data.*;
 import org.slf4j.Logger;
 import pt.ua.dicoogle.core.settings.ServerSettingsManager;
 
@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import org.slf4j.LoggerFactory;
 
-import org.dcm4che2.io.DicomInputStream;
+import org.dcm4che3.io.DicomInputStream;
 
 
 import pt.ua.dicoogle.plugins.PluginController;
@@ -54,7 +54,9 @@ import pt.ua.dicoogle.sdk.task.Task;
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @since 17 Fev 2009
  */
-public class SearchDicomResult implements Iterator<DicomObject> {
+public class SearchDicomResult implements Iterator<Attributes> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SearchDicomResult.class);
 
     public enum QUERYLEVEL {
         PATIENT, STUDY, SERIE, IMAGE
@@ -136,9 +138,10 @@ public class SearchDicomResult implements Iterator<DicomObject> {
             while (it.hasNext()) {
                 list.add((SearchResult) it.next());
             }
-        } catch (InterruptedException | ExecutionException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        } catch (InterruptedException e1) {
+            LOG.error("Failed to retrieve DICOM search results", e1);
+        } catch (ExecutionException e1) {
+            LOG.error("Failed to retrieve DICOM search results", e1.getCause());
         }
 
         if (list != null)
@@ -153,7 +156,7 @@ public class SearchDicomResult implements Iterator<DicomObject> {
                     dimModel = new DIMGeneric(concatTags, list);
 
             } catch (Exception ex) {
-                ex.printStackTrace();
+                LOG.error("Failed to create DIM tree", ex);
             }
 
             ArrayList<Patient> listPatients = dimModel.getPatients();
@@ -202,15 +205,8 @@ public class SearchDicomResult implements Iterator<DicomObject> {
     }
 
     @Override
-    public DicomObject next() {
+    public Attributes next() {
 
-        // TODO: this code need to be refactored
-        // C-FIND RSP should be builded based on Search Result,
-        // instead opening the file to build DicomObject.
-
-        /** 
-         * Get the fullpath of images 
-         */
         String path = ServerSettingsManager.getSettings().getArchiveSettings().getMainDirectory();
 
         // DebugManager.getSettings().debug("Path of DICOM: "+path);
@@ -224,66 +220,27 @@ public class SearchDicomResult implements Iterator<DicomObject> {
 
                 path = sR.getURI().toString();
                 currentFile = path;
-                // DebugManager.getSettings().debug("-> Next::: " + next.toString());
-                DicomInputStream din = null;
-                /*try
-                {
-                    if (path.endsWith(".gz"))
-                        din = new DicomInputStream(new GZIPInputStream(new BufferedInputStream(new FileInputStream(new File(path)), 256)));
-                    else
-                        din = new DicomInputStream(new File(path));
-                   
-                    
-                    URI uri = new URI(path);
-                    //System.out.println("Trying to find Plugin for: "+uri.toString());
-                    StorageInterface plug = PluginController.getSettings().getStorageForSchema(uri);
-                    
-                    if(plug != null){
-                        //System.out.println("Found Plugin For: "+uri.toString());
-                        
-                        Iterable<StorageInputStream> stream = plug.at(uri);
-                        for(StorageInputStream str : stream)
-                            
-                            try {
-                                din = new DicomInputStream(str.getInputStream());
-                            } catch (IOException ex) {
-                                LoggerFactory.getLogger(SearchDicomResult.class).error(ex.getMessage(), ex);
-                            }
-                    }
-                    
-                    //DebugManager.getSettings().debug("Imagem: "+path+"..."+next);
-                } catch (URISyntaxException ex) {
-                    LoggerFactory.getLogger(SearchDicomResult.class).error(ex.getMessage(), ex);
-                }
-                */
 
-                /** This code is refactored in a experimental branch
-                 * Building a BasicDicomObject based on Indexing
-                 * It will increase the performace
-                 */
-                BasicDicomObject result = new BasicDicomObject();
+                Attributes result = new Attributes();
 
                 // Fill fields of study now
+                result.setString(Tag.InstitutionName, VR.CS, (String) sR.get("InstitutionName"));
 
+                result.setString(Tag.StudyInstanceUID, VR.UI, (String) sR.get("StudyInstanceUID"));
+                result.setString(Tag.SeriesInstanceUID, VR.UI, (String) sR.get("SeriesInstanceUID"));
+                result.setString(Tag.SOPInstanceUID, VR.UI, (String) sR.get("SOPInstanceUID"));
+                result.setString(Tag.SeriesDescription, VR.LO, (String) sR.get("SeriesDescription"));
+                result.setString(Tag.SeriesDate, VR.TM, (String) sR.get("SeriesDate"));
+                result.setString(Tag.SeriesTime, VR.TM, (String) sR.get("SeriesTime"));
+                result.setString(Tag.QueryRetrieveLevel, VR.LO, "IMAGE");
 
-                // System.out.println("Series : "+ serieTmp);
-                result.putString(Tag.InstitutionName, VR.CS, (String) sR.get("InstitutionName"));
-
-                result.putString(Tag.StudyInstanceUID, VR.UI, (String) sR.get("StudyInstanceUID"));
-                result.putString(Tag.SeriesInstanceUID, VR.UI, (String) sR.get("SeriesInstanceUID"));
-                result.putString(Tag.SOPInstanceUID, VR.UI, (String) sR.get("SOPInstanceUID"));
-                result.putString(Tag.SeriesDescription, VR.LO, (String) sR.get("SeriesDescription"));
-                result.putString(Tag.SeriesDate, VR.TM, (String) sR.get("SeriesDate"));
-                result.putString(Tag.SeriesTime, VR.TM, (String) sR.get("SeriesTime"));
-                result.putString(Tag.QueryRetrieveLevel, VR.LO, "IMAGE");
-
-                result.putString(Tag.Modality, VR.CS, (String) sR.get("Modality"));
+                result.setString(Tag.Modality, VR.CS, (String) sR.get("Modality"));
 
                 String seriesNumber = String.valueOf(sR.get("SeriesNumber"));
                 if (seriesNumber.endsWith(".0")) {
                     seriesNumber = seriesNumber.substring(0, seriesNumber.length() - 2);
                 }
-                result.putString(Tag.SeriesNumber, VR.IS, seriesNumber);
+                result.setString(Tag.SeriesNumber, VR.IS, seriesNumber);
 
 
                 return result;
@@ -291,44 +248,41 @@ public class SearchDicomResult implements Iterator<DicomObject> {
             } else if (queryLevel == QUERYLEVEL.STUDY || queryLevel == QUERYLEVEL.PATIENT) {
 
                 Study studyTmp = (Study) next;
-                BasicDicomObject result = new BasicDicomObject();
+                Attributes result = new Attributes();
                 String patientName = studyTmp.getParent().getPatientName();
 
                 try {
-                    patientName =
-                            new String(studyTmp.getParent().getPatientName().getBytes("ISO-8859-1"), "ISO-8859-1");
+                    patientName = studyTmp.getParent().getPatientName();
                 } catch (Exception ex) {
-                    LoggerFactory.getLogger(SearchDicomResult.class).error(ex.getMessage(), ex);
+                    LOG.error(ex.getMessage(), ex);
                 }
                 try {
-                    result.putBytes(Tag.PatientName, VR.PN, patientName.getBytes("ISO-8859-1"));
+                    result.setString(Tag.PatientName, VR.PN, patientName);
                 } catch (Exception ex) {
                     LoggerFactory.getLogger(SearchDicomResult.class).error(ex.getMessage(), ex);
                 }
 
-                // System.out.println("PatientName:"+patientName);
-                result.putString(Tag.SpecificCharacterSet, VR.CS, "ISO_IR 100");
-                result.putString(Tag.PatientSex, VR.LO, studyTmp.getParent().getPatientSex());
-                result.putString(Tag.PatientID, VR.LO, studyTmp.getParent().getPatientID());
-                result.putString(Tag.PatientBirthDate, VR.DA, studyTmp.getParent().getPatientBirthDate());
-                result.putString(Tag.StudyDate, VR.DA, studyTmp.getStudyData());
-                result.putString(Tag.StudyID, VR.SH, studyTmp.getStudyID());
-                result.putString(Tag.StudyTime, VR.TM, studyTmp.getStudyTime());
-                result.putString(Tag.AccessionNumber, VR.SH, studyTmp.getAccessionNumber());
-                result.putString(Tag.StudyInstanceUID, VR.UI, studyTmp.getStudyInstanceUID());
-                result.putString(Tag.StudyDescription, VR.LO, studyTmp.getStudyDescription());
+                result.setString(Tag.PatientSex, VR.LO, studyTmp.getParent().getPatientSex());
+                result.setString(Tag.PatientID, VR.LO, studyTmp.getParent().getPatientID());
+                result.setString(Tag.PatientBirthDate, VR.DA, studyTmp.getParent().getPatientBirthDate());
+                result.setString(Tag.StudyDate, VR.DA, studyTmp.getStudyData());
+                result.setString(Tag.StudyID, VR.SH, studyTmp.getStudyID());
+                result.setString(Tag.StudyTime, VR.TM, studyTmp.getStudyTime());
+                result.setString(Tag.AccessionNumber, VR.SH, studyTmp.getAccessionNumber());
+                result.setString(Tag.StudyInstanceUID, VR.UI, studyTmp.getStudyInstanceUID());
+                result.setString(Tag.StudyDescription, VR.LO, studyTmp.getStudyDescription());
                 String modality = studyTmp.getSeries().get(0).getModality(); // Point of Failure, fix me
-                result.putString(Tag.ModalitiesInStudy, VR.CS, modality);
-                result.putString(Tag.Modality, VR.CS, modality);
-                result.putString(Tag.InstitutionName, VR.CS, studyTmp.getInstitutuionName());
+                result.setString(Tag.ModalitiesInStudy, VR.CS, modality);
+                result.setString(Tag.Modality, VR.CS, modality);
+                result.setString(Tag.InstitutionName, VR.CS, studyTmp.getInstitutuionName());
 
                 int instances = 0;
                 for (Series seriesTmp : studyTmp.getSeries()) {
                     instances += seriesTmp.getImageList().size();
                 }
 
-                result.putString(Tag.NumberOfStudyRelatedInstances, VR.IS, "" + instances);
-                result.putString(Tag.NumberOfSeriesRelatedInstances, VR.IS, "" + studyTmp.getSeries().size());
+                result.setString(Tag.NumberOfStudyRelatedInstances, VR.IS, "" + instances);
+                result.setString(Tag.NumberOfSeriesRelatedInstances, VR.IS, "" + studyTmp.getSeries().size());
 
 
                 return result;
@@ -337,55 +291,49 @@ public class SearchDicomResult implements Iterator<DicomObject> {
                 // Series
 
                 Series seriesTmp = (Series) next;
-                BasicDicomObject result = new BasicDicomObject();
+                Attributes result = new Attributes();
                 // System.out.println("Series : "+ seriesTmp);
-                result.putString(Tag.InstitutionName, VR.CS, seriesTmp.getParent().getInstitutuionName());
+                result.setString(Tag.InstitutionName, VR.CS, seriesTmp.getParent().getInstitutuionName());
 
-                result.putString(Tag.StudyInstanceUID, VR.UI, seriesTmp.getParent().getStudyInstanceUID());
-                result.putString(Tag.SeriesInstanceUID, VR.UI, seriesTmp.getSeriesInstanceUID());
-                result.putString(Tag.SeriesDescription, VR.LO, seriesTmp.getSeriesDescription());
-                result.putString(Tag.SeriesDate, VR.TM, seriesTmp.getSeriesDate());
-                result.putString(Tag.QueryRetrieveLevel, VR.LO, "SERIES");
+                result.setString(Tag.StudyInstanceUID, VR.UI, seriesTmp.getParent().getStudyInstanceUID());
+                result.setString(Tag.SeriesInstanceUID, VR.UI, seriesTmp.getSeriesInstanceUID());
+                result.setString(Tag.SeriesDescription, VR.LO, seriesTmp.getSeriesDescription());
+                result.setString(Tag.SeriesDate, VR.TM, seriesTmp.getSeriesDate());
+                result.setString(Tag.QueryRetrieveLevel, VR.LO, "SERIES");
                 String modality = seriesTmp.getModality(); // Point of Failure, fix me
-                result.putString(Tag.Modality, VR.CS, modality);
+                result.setString(Tag.Modality, VR.CS, modality);
 
-                result.putString(Tag.SeriesNumber, VR.IS, "" + seriesTmp.getSeriesNumber());
+                result.setString(Tag.SeriesNumber, VR.IS, "" + seriesTmp.getSeriesNumber());
 
 
-                result.putString(Tag.Modality, VR.CS, modality);
+                result.setString(Tag.Modality, VR.CS, modality);
                 if (seriesTmp.getModality().equals("MG") || seriesTmp.getModality().equals("CR")) {
 
-                    result.putString(Tag.ViewPosition, null, seriesTmp.getViewPosition());
-                    result.putString(Tag.ImageLaterality, null, seriesTmp.getImageLaterality());
-                    result.putString(Tag.AcquisitionDeviceProcessingDescription, VR.AE,
+                    result.setString(Tag.ViewPosition, null, seriesTmp.getViewPosition());
+                    result.setString(Tag.ImageLaterality, null, seriesTmp.getImageLaterality());
+                    result.setString(Tag.AcquisitionDeviceProcessingDescription, VR.AE,
                             seriesTmp.getAcquisitionDeviceProcessingDescription());
-                    DicomElement viewCodeSequence = result.putSequence(Tag.ViewCodeSequence);
-                    DicomObject viewCodeSequenceObj = new BasicDicomObject();
-                    viewCodeSequenceObj.setParent(result);
-                    viewCodeSequenceObj.putString(Tag.CodeValue, null, seriesTmp.getViewCodeSequence_CodeValue());
-                    viewCodeSequenceObj.putString(Tag.CodingSchemeDesignator, null,
+                    Sequence viewCodeSequence = result.newSequence(Tag.ViewCodeSequence, 1);
+                    Attributes viewCodeSequenceObj = new Attributes();
+                    viewCodeSequenceObj.setString(Tag.CodeValue, null, seriesTmp.getViewCodeSequence_CodeValue());
+                    viewCodeSequenceObj.setString(Tag.CodingSchemeDesignator, null,
                             seriesTmp.getViewCodeSequence_CodingSchemeDesignator());
-                    viewCodeSequenceObj.putString(Tag.CodingSchemeVersion, null,
+                    viewCodeSequenceObj.setString(Tag.CodingSchemeVersion, null,
                             seriesTmp.getViewCodeSequence_CodingSchemeVersion());
-                    viewCodeSequenceObj.putString(Tag.CodeMeaning, null, seriesTmp.getViewCodeSequence_CodeMeaning());
-
-                    viewCodeSequence.addDicomObject(viewCodeSequenceObj);
-                    result.putNestedDicomObject(Tag.ViewCodeSequence, viewCodeSequenceObj);
+                    viewCodeSequenceObj.setString(Tag.CodeMeaning, null, seriesTmp.getViewCodeSequence_CodeMeaning());
+                    viewCodeSequence.add(viewCodeSequenceObj);
                 }
-                result.putString(Tag.NumberOfSeriesRelatedInstances, VR.IS, "" + seriesTmp.getImageList().size());
+                result.setString(Tag.NumberOfSeriesRelatedInstances, VR.IS, String.valueOf(seriesTmp.getImageList().size()));
 
-
-                result.putString(Tag.SeriesNumber, VR.IS, "" + seriesTmp.getSeriesNumber());
-                result.putString(Tag.ProtocolName, VR.LO, "" + seriesTmp.getProtocolName());
-                result.putString(Tag.BodyPartThickness, VR.LO, "" + seriesTmp.getBodyPartThickness());
-
+                result.setString(Tag.SeriesNumber, VR.IS, String.valueOf(seriesTmp.getSeriesNumber()));
+                result.setString(Tag.ProtocolName, VR.LO, seriesTmp.getProtocolName());
+                result.setString(Tag.BodyPartThickness, VR.DS, String.valueOf(seriesTmp.getBodyPartThickness()));
 
                 return result;
 
             } else {
-                System.err.println("ERROR: WRONG QUERY LEVEL!");
+                logger.warn("Wrong query level {}", queryLevel);
             }
-
 
         }
         return null;
