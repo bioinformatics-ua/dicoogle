@@ -100,7 +100,8 @@ public class DicoogleDcmSend extends StorageCommitmentService {
     /** TransferSyntax: DCM4CHE URI Referenced */
     private static final String DCM4CHEE_URI_REFERENCED_TS_UID = "1.2.40.0.13.1.1.2.4.94";
 
-    private static final boolean FILE_READ_GUARD = System.getProperty("dicoogle.store.fileReadGuard", "").equalsIgnoreCase("true");
+    private static final boolean FILE_READ_GUARD =
+            System.getProperty("dicoogle.store.fileReadGuard", "").equalsIgnoreCase("true");
 
     private Executor executor = new NewThreadExecutor("DCMSND");
 
@@ -458,10 +459,8 @@ public class DicoogleDcmSend extends StorageCommitmentService {
             FileInfo info = files.get(i);
             TransferCapability tc = assoc.getTransferCapabilityAsSCU(info.cuid);
             if (tc == null) {
-                LOGGER.warn("{} not supported by {}, skip file {}",
-                        UIDDictionary.getDictionary().prompt(info.cuid),
-                        remoteAE.getAETitle(),
-                        info.item.getURI());
+                LOGGER.warn("{} not supported by {}, skip file {}", UIDDictionary.getDictionary().prompt(info.cuid),
+                        remoteAE.getAETitle(), info.item.getURI());
                 continue;
             }
 
@@ -472,8 +471,7 @@ public class DicoogleDcmSend extends StorageCommitmentService {
                 LOGGER.warn("{} with {} not supported by {}, skip file {}",
                         UIDDictionary.getDictionary().prompt(info.cuid),
                         UIDDictionary.getDictionary().prompt(fileref ? DCM4CHEE_URI_REFERENCED_TS_UID : info.tsuid),
-                        remoteAE.getAETitle(),
-                        info.item.getURI());
+                        remoteAE.getAETitle(), info.item.getURI());
                 continue;
             }
 
@@ -690,14 +688,12 @@ public class DicoogleDcmSend extends StorageCommitmentService {
     }
 
     private void promptWarnRSP(String prefix, int status, FileInfo info, DicomObject cmd) {
-        LOGGER.warn("{} {}H for {}, cuid={}, tsuid={} (Command: {})",
-                prefix, StringUtils.shortToHex(status),
+        LOGGER.warn("{} {}H for {}, cuid={}, tsuid={} (Command: {})", prefix, StringUtils.shortToHex(status),
                 info.item.getURI(), info.cuid, info.tsuid, cmd);
     }
 
     private void promptErrRSP(String prefix, int status, FileInfo info, DicomObject cmd) {
-        LOGGER.error("{} {}H for {}, cuid={}, tsuid={} (Command: {})",
-                prefix, StringUtils.shortToHex(status),
+        LOGGER.error("{} {}H for {}, cuid={}, tsuid={} (Command: {})", prefix, StringUtils.shortToHex(status),
                 info.item.getURI(), info.cuid, info.tsuid, cmd);
     }
 

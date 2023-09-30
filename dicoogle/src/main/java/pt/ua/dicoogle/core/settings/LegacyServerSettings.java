@@ -1284,7 +1284,7 @@ public class LegacyServerSettings implements ServerSettings {
         public String getNodeName() {
             return LegacyServerSettings.this.getNodeName();
         }
-        
+
         @JsonGetter("encrypt-users-file")
         @Override
         public boolean isEncryptUsersFile() {

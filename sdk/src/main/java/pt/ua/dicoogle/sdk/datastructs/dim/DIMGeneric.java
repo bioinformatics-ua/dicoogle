@@ -457,7 +457,7 @@ public class DIMGeneric {
                                     // not a number, do not include
                                 }
                             }
-    
+
                             instances.add(image);
                         }
                         seriesObj.put("images", instances);

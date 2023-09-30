@@ -85,19 +85,17 @@ public class ServerSettingsTest {
                 "1.2.840.10008.1.2.4.80", "1.2.840.10008.1.2.4.50");
         assertSameContent(defaultTS, ((DicomServicesImpl) dcm).getDefaultTransferSyntaxes());
 
-        Collection<SOPClass> sopClasses =
-                Arrays.asList(
-                        // CT Image Storage
-                        new SOPClass("1.2.840.10008.5.1.4.1.1.2", Collections.emptyList()),
-                        // Enhanced CT Image Storage
-                        new SOPClass("1.2.840.10008.5.1.4.1.1.2.1", Collections.emptyList()),
-                        // Enhanced CT Image Storage
-                        new SOPClass("1.2.840.10008.5.1.4.1.1.12.1.1",
-                                Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.5")),
-                        // Ultrasound Multi-frame Image Storage
-                        new SOPClass("1.2.840.10008.5.1.4.1.1.3.1",
-                                Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.4.50", "1.2.840.10008.1.2.4.70"))
-                        );
+        Collection<SOPClass> sopClasses = Arrays.asList(
+                // CT Image Storage
+                new SOPClass("1.2.840.10008.5.1.4.1.1.2", Collections.emptyList()),
+                // Enhanced CT Image Storage
+                new SOPClass("1.2.840.10008.5.1.4.1.1.2.1", Collections.emptyList()),
+                // Enhanced CT Image Storage
+                new SOPClass("1.2.840.10008.5.1.4.1.1.12.1.1",
+                        Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.5")),
+                // Ultrasound Multi-frame Image Storage
+                new SOPClass("1.2.840.10008.5.1.4.1.1.3.1", Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1",
+                        "1.2.840.10008.1.2.4.50", "1.2.840.10008.1.2.4.70")));
         Collection<SOPClass> sopClassesFromSettings = ((DicomServicesImpl) dcm).getRawSOPClasses();
         assertSameContent(sopClasses, sopClassesFromSettings);
 
@@ -256,33 +254,21 @@ public class ServerSettingsTest {
         ServerSettings.DicomServices dcm = settings.getDicomServicesSettings();
 
         // should distinguish between an empty list and missing list
-        for (SOPClass sopClass: dcm.getSOPClasses()) {
+        for (SOPClass sopClass : dcm.getSOPClasses()) {
             switch (sopClass.getUID()) {
                 case UID.CTImageStorage:
-                    assertEquals(
-                        Arrays.asList(
-                            "1.2.840.10008.1.2",
-                            "1.2.840.10008.1.2.1"
-                        ),
-                        sopClass.getTransferSyntaxes());
+                    assertEquals(Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1"),
+                            sopClass.getTransferSyntaxes());
                     break;
                 case UID.UltrasoundMultiFrameImageStorage:
-                    assertEquals(
-                        Arrays.asList(
-                            "1.2.840.10008.1.2",
-                            "1.2.840.10008.1.2.1",
-                            "1.2.840.10008.1.2.4.50",
-                            "1.2.840.10008.1.2.4.70"
-                        ),
-                        sopClass.getTransferSyntaxes());
+                    assertEquals(Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.4.50",
+                            "1.2.840.10008.1.2.4.70"), sopClass.getTransferSyntaxes());
                     break;
                 case UID.UltrasoundMultiFrameImageStorageRetired:
                     // no transfer syntaxes here,
                     // and no default transfer syntaxes,
                     // means no acceptable transfer syntax
-                    assertEquals(
-                        Collections.emptyList(),
-                        sopClass.getTransferSyntaxes());
+                    assertEquals(Collections.emptyList(), sopClass.getTransferSyntaxes());
                     break;
                 default:
             }
@@ -294,31 +280,16 @@ public class ServerSettingsTest {
 
         // see that the SOP list has been updated accordingly
 
-        assertEquals(
-            Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1"),
-            list.getTS(UID.CTImageStorage).asList()
-        );
-        assertEquals(
-            Arrays.asList(
-                "1.2.840.10008.1.2",
-                "1.2.840.10008.1.2.1",
-                "1.2.840.10008.1.2.4.70",
-                "1.2.840.10008.1.2.4.50"
-            ),
-            list.getTS(UID.UltrasoundMultiFrameImageStorage).asList()
-        );
-        assertEquals(
-            Collections.emptyList(),
-            list.getTS(UID.UltrasoundMultiFrameImageStorageRetired).asList()
-        );
+        assertEquals(Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1"),
+                list.getTS(UID.CTImageStorage).asList());
+        assertEquals(Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.4.70",
+                "1.2.840.10008.1.2.4.50"), list.getTS(UID.UltrasoundMultiFrameImageStorage).asList());
+        assertEquals(Collections.emptyList(), list.getTS(UID.UltrasoundMultiFrameImageStorageRetired).asList());
 
         // unmentioned SOP classes default to
         // accepting the default transfer syntaxes
         // (in this case, empty)
-        assertEquals(
-            Collections.emptyList(),
-            list.getTS(UID.BreastTomosynthesisImageStorage).asList()
-        );
+        assertEquals(Collections.emptyList(), list.getTS(UID.BreastTomosynthesisImageStorage).asList());
     }
 
     @Test
@@ -348,32 +319,20 @@ public class ServerSettingsTest {
         Collection<SOPClass> sopClasses = dcm.getSOPClasses();
         for (SOPClass sopClass : sopClasses) {
             Collection<String> tses = sopClass.getTransferSyntaxes();
-            
+
             switch (sopClass.getUID()) {
                 case UID.CTImageStorage:
                     assertEquals(Collections.emptyList(), tses);
                     break;
                 case UID.EnhancedXAImageStorage:
-                    assertEquals(
-                        Arrays.asList(
-                            "1.2.840.10008.1.2",
-                            "1.2.840.10008.1.2.1",
-                            "1.2.840.10008.1.2.5"
-                        ),
-                        tses
-                    );
+                    assertEquals(Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.5"),
+                            tses);
                     break;
                 case UID.EnhancedCTImageStorage:
-                // fallthrough (same settings)
+                    // fallthrough (same settings)
                 case UID.UltrasoundMultiFrameImageStorage:
-                    assertEquals(
-                        Arrays.asList(
-                            "1.2.840.10008.1.2",
-                            "1.2.840.10008.1.2.1",
-                            "1.2.840.10008.1.2.4.70",
-                            "1.2.840.10008.1.2.4.50"
-                        ),
-                        tses);
+                    assertEquals(Arrays.asList("1.2.840.10008.1.2", "1.2.840.10008.1.2.1", "1.2.840.10008.1.2.4.70",
+                            "1.2.840.10008.1.2.4.50"), tses);
                     break;
                 default:
                     break;
@@ -419,11 +378,9 @@ public class ServerSettingsTest {
         Logger logger = NOPLogger.NOP_LOGGER;
         // Filter (as in init)
         ds.setAdditionalTransferSyntaxes(ds.getAdditionalTransferSyntaxes().stream()
-                .filter(ats -> AdditionalTransferSyntax.isValid(ats, logger))
-                .collect(Collectors.toList()));
+                .filter(ats -> AdditionalTransferSyntax.isValid(ats, logger)).collect(Collectors.toList()));
         ds.setAdditionalSOPClasses(ds.getAdditionalSOPClasses().stream()
-                .filter(asc -> AdditionalSOPClass.isValid(asc, logger))
-                .collect(Collectors.toList()));
+                .filter(asc -> AdditionalSOPClass.isValid(asc, logger)).collect(Collectors.toList()));
 
         // assertions follow
 

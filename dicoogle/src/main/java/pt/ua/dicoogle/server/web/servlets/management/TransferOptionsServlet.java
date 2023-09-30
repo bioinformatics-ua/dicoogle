@@ -79,7 +79,7 @@ public class TransferOptionsServlet extends HttpServlet {
         ServerSettingsManager.saveSettings();
         ResponseUtil.simpleResponse(resp, "success", true);
     }
-    
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         this.doPut(req, resp);
