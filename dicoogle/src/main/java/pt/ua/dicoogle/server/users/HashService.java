@@ -18,6 +18,8 @@
  */
 package pt.ua.dicoogle.server.users;
 
+import org.slf4j.LoggerFactory;
+
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import at.favre.lib.crypto.bcrypt.LongPasswordStrategies;
 
@@ -27,9 +29,24 @@ import at.favre.lib.crypto.bcrypt.LongPasswordStrategies;
 public class HashService {
 
     /**
-     * Hardcoded cost for the password hashing algorithm.
+     * The cost for the password hashing algorithm.
+     * 
+     * Can be configured via JVM variable `dicoogle.user.hashStrength`.
+     * Default is 10.
      */
-    private static final int HASH_STRENGTH = 10;
+    private static final int HASH_STRENGTH;
+
+    static {
+        int strength;
+        try {
+            strength = Integer.parseInt(System.getProperty("dicoogle.user.hashStrength", "10"));
+        } catch (NumberFormatException e) {
+            LoggerFactory.getLogger(HashService.class)
+                    .warn("Invalid value for dicoogle.user.hashStrength, using default value");
+            strength = 10;
+        }
+        HASH_STRENGTH = strength;
+    }
 
     /**
      * Hash a password.
