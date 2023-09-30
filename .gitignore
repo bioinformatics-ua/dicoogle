@@ -1,22 +1,26 @@
+/target
+/dicoogle/.classpath
+/dicoogle/.settings/*
+/sdk-ext/.classpath
+/sdk-ext/.settings/*
+/sdk/.classpath
+/sdk/.project
+/sdk/.settings/*
+/webcore/lib/
 node_modules/
-dist
+**/webapp/dist
 .tmp
 .sass-cache/
-app/bower_components
 
 #eclipse
 .project
 .settings/*
-dicoogle/.classpath
-dicoogle/.settings/*
-sdk-ext/.classpath
-sdk-ext/.settings/*
-sdk/.classpath
-sdk/.project
-sdk/.settings/*
-webcore/lib/
+# IDEA
 .idea
+
+# Visual Studio Code
 .vscode/
+
 *.iml
 
 
