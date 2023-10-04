@@ -6,16 +6,19 @@ const RequestStore = Reflux.createStore({
   listenables: RequestActions,
 
   init: function() {
-    this._contents = "";
+    this._query = "";
+    this._provider = "";
   },
 
-  onQuery: function(data) {
-    this._contents = data
+  onQuery: function(query, provider) {
+    this._query = query
+    this._provider = provider
   },
 
   get: function() {
     return {
-      contents: this._contents
+      query: this._query,
+      provider: this._provider
     };
   }
 });

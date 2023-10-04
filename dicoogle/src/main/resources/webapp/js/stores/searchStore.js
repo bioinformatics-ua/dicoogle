@@ -23,7 +23,7 @@ const SearchStore = Reflux.createStore({
   onSearch: function(data) {
     var self = this;
 
-    RequestActions.query(data.text)
+    RequestActions.query(data.text, data.provider)
 
     getPatients(
       data.text,

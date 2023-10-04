@@ -44,7 +44,7 @@ export default class PluginForm extends React.Component {
           node,
           "result-selection-ready",
           {
-            "query": RequestStore.get(),
+            "request": RequestStore.get(),
             "selected": ResultsSelected.get(),
             "search": SearchStore.get()
           }
