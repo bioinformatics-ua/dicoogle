@@ -228,7 +228,6 @@ public class SearchServlet extends HttpServlet {
                     JSONObject obj = dimModel.getJSONObject(depth, offset, psize);
                     elapsedTime = System.currentTimeMillis() - elapsedTime;
                     obj.put("elapsedTime", elapsedTime);
-                    obj.put("query", query);
                     response.getWriter().write(obj.toString());
                 } catch (Exception e) {
                     logger.warn("Failed to get DIM", e);
