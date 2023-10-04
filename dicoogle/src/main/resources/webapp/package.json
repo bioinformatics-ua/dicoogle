@@ -37,8 +37,8 @@
     "index.html"
   ],
   "engines": {
-    "node": ">=12.22",
-    "npm": ">=5.0.0"
+    "node": ">=16",
+    "npm": ">=7"
   },
   "dependencies": {
     "@ungap/custom-elements-builtin": "^0.1.2",
