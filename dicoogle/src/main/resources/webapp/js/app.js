@@ -25,7 +25,7 @@ import LoginView from "./components/login/loginView";
 import * as UserActions from "./actions/userActions";
 import UserStore from "./stores/userStore";
 
-import "@ungap/custom-elements-builtin";
+import "@ungap/custom-elements";
 import "core-js/stable";
 import "bootstrap";
 
