@@ -6,6 +6,8 @@ import { getPatients } from "../handlers/requestHandler";
 import { unindex } from "../handlers/requestHandler";
 import { remove } from "../handlers/requestHandler";
 
+import { RequestActions } from "../actions/requestActions";
+
 const SearchStore = Reflux.createStore({
   listenables: ActionCreators,
   init: function() {
@@ -20,6 +22,9 @@ const SearchStore = Reflux.createStore({
 
   onSearch: function(data) {
     var self = this;
+
+    RequestActions.query(data.text)
+
     getPatients(
       data.text,
       undefined,
