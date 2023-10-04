@@ -76,8 +76,6 @@
     "eslint-plugin-react": "^7.31.8",
     "eslint-webpack-plugin": "^4.0.1",
     "html-webpack-plugin": "^5.5.0",
-    "husky": "^0.14.3",
-    "lint-staged": "^7.1.2",
     "mini-css-extract-plugin": "^2.6.1",
     "prettier": "1.12.1",
     "rimraf": "^5.0.5",
@@ -94,25 +92,10 @@
     "check": "eslint js/**",
     "build": "webpack --config webpack.prod.js",
     "start": "webpack-dev-server --open --config webpack.dev.js",
-    "precommit": "lint-staged",
+    "format": "prettier --write js/**/*.{js,jsx} *.js sass/**/*.scss",
     "build-debug": "webpack --config webpack.dev.js --progress",
     "clean": "rimraf dist/* index.html",
     "webpack": "webpack --config webpack.prod.js --progress",
     "postinstall": "cd ../../../../../webcore && npm install --production --no-fund"
-  },
-  "lint-staged": {
-    "js/*.{js,jsx}": [
-      "eslint --fix js",
-      "prettier --write js/**/*.{js,jsx}",
-      "git add"
-    ],
-    "*.{js}": [
-      "prettier --write *.{js}",
-      "git add"
-    ],
-    "sass/*.scss": [
-      "prettier --write sass/**/*.scss",
-      "git add"
-    ]
   }
 }
