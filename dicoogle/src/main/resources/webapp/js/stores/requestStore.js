@@ -11,9 +11,6 @@ const RequestStore = Reflux.createStore({
 
   onQuery: function(data) {
     this._contents = data
-    self.trigger({
-      contents: this._contents
-    });
   },
 
   get: function() {
@@ -24,5 +21,3 @@ const RequestStore = Reflux.createStore({
 });
 
 export { RequestStore };
-
-window.store = RequestStore;
