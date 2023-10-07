@@ -18,7 +18,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.11.0</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
@@ -28,15 +28,22 @@
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>2.4</version>
+                <version>4.3</version>
                 <configuration>
-                    <header>short-license.txt</header>
-                    <includes>
-                        <include>**/*.java</include>
-                    </includes>
-                    <excludes>
-                        <exclude>**/package-info.java</exclude>
-                    </excludes>
+                    <mapping>
+                        <java>JAVADOC_STYLE</java>
+                    </mapping>
+                    <licenseSets>
+                        <licenseSet>
+                            <header>short-license.txt</header>
+                            <includes>
+                                <include>**/*.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/package-info.java</exclude>
+                            </excludes>
+                        </licenseSet>
+                    </licenseSets>
                 </configuration>
 
                 <executions>
@@ -51,9 +58,10 @@
             <plugin>
                 <groupId>net.revelc.code.formatter</groupId>
                 <artifactId>formatter-maven-plugin</artifactId>
-                <version>2.11.0</version>
+                <version>2.16.0</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
+                    <lineEnding>KEEP</lineEnding>
                     <includes>
                         <include>**/*.java</include>
                     </includes>

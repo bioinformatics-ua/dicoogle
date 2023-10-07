@@ -185,7 +185,7 @@ public class TransfersStorage {
         }
         return return_value;
     }
-    
+
     public static String convertTsNameToUID(String name) {
         return namesUidMapping.getKey(name).toString();
     }

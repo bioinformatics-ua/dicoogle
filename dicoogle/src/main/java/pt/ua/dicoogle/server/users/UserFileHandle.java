@@ -89,7 +89,7 @@ public class UserFileHandle {
             } else if (Files.exists(users)) {
                 // (2) users, encrypted
                 logger.warn("File `users` will be interpreted as an encrypted users file. "
-                    + "If this is correct, please rename to `users.xml.enc`");
+                        + "If this is correct, please rename to `users.xml.enc`");
                 filename = users;
                 shouldEncrypt = true;
             } else if (Files.exists(usersXml)) {
@@ -115,7 +115,7 @@ public class UserFileHandle {
             if (Files.exists(users)) {
                 // (4) users, no encryption
                 logger.warn("File `users` will be interpreted as an plain XML users file. "
-                    + "If this is correct, please rename to `users.xml`");
+                        + "If this is correct, please rename to `users.xml`");
                 filename = users;
                 shouldEncrypt = false;
             } else if (encryptUsersFile) {
