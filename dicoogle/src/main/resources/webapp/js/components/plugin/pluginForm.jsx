@@ -1,6 +1,7 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 import { ResultsSelected } from "../../stores/resultSelected";
+import { RequestStore } from "../../stores/requestStore";
 import { SearchStore } from "../../stores/searchStore";
 import Webcore from "dicoogle-webcore";
 
@@ -43,6 +44,7 @@ export default class PluginForm extends React.Component {
           node,
           "result-selection-ready",
           {
+            "request": RequestStore.get(),
             "selected": ResultsSelected.get(),
             "search": SearchStore.get()
           }
