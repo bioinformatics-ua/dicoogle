@@ -52,7 +52,7 @@ public class WebUIModuleServlet extends HttpServlet {
 
         String process = req.getParameter("process");
 
-        resp.setContentType("application/javascript");
+        resp.setContentType("text/javascript");
         boolean doProcess = process == null || Boolean.parseBoolean(process);
 
         WebUIPlugin plugin = PluginController.getInstance().getWebUIPlugin(name);
