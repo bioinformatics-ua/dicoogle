@@ -3,6 +3,13 @@ This document intends to keep track of the changes performed on the various rele
 
 ## 3.3
 
+## 3.3.3 (2023-10-23)
+
+* New: Include submitted query and provider in "result-selection-ready" event (#673)
+* Enhancement: Remove advanced search UI (#672)
+* Chore: Update Maven plugins (#669)
+* Chore: Update Bcrypt dependency and password hash service (#670)
+
 ## 3.3.2 (2023-09-25)
 
 - New: Provide full search results on result-batch plugin mount event (#666)
