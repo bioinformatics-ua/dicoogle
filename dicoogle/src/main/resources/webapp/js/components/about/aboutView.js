@@ -98,16 +98,16 @@ const AboutView = createReactClass({
             As an open source software, Dicoogle can accept contributions from
             developers around the world. Dicoogle OSS is led and supported by
             Bioinformatics UA and{" "}
-            <a target="_new" href="http://www.bmd-software.com">
+            <a target="_new" href="https://www.bmd-software.com">
               BMD Software
             </a>. Please check{" "}
-            <a target="_new" href="http://www.dicoogle.com">
+            <a target="_new" href="https://www.dicoogle.com">
               the Dicoogle website
             </a>{" "}
             or our{" "}
             <a
               target="_new"
-              href="http://www.github.com/bioinformatics-ua/dicoogle"
+              href="https://www.github.com/bioinformatics-ua/dicoogle"
             >
               GitHub repository
             </a>{" "}

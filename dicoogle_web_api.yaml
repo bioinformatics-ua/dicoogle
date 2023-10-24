@@ -13,7 +13,7 @@ info:
     and documented in detail in <a href="https://bioinformatics-ua.github.io/dicoogle-client-js/">GitHub Pages</a>.</p>
 
     <p>Useful external links:</p>
-    <p>- <a href="http://www.dicoogle.com">Dicoogle Website</a> </p>
+    <p>- <a href="https://www.dicoogle.com">Dicoogle Website</a> </p>
     <p>- <a href="https://github.com/bioinformatics-ua/dicoogle">Dicoogle GitHub</a> </p>
     <p>- <a href="https://bioinformatics-ua.github.io/dicoogle-learning-pack/">Dicoogle Learning Pack</a> </p>
     <p>- <a href="https://bioinformatics-ua.github.io/dicoogle-api/javadoc/">Dicoogle Javadoc</a> </p>
@@ -23,12 +23,12 @@ info:
   title: Dicoogle
   contact:
     name: Support
-    url: http://dicoogle.com/about/
+    url: https://dicoogle.com/about/
   license:
     name: GNU General Public License v3.0
     url: https://www.gnu.org/licenses/gpl-3.0.en.html
 servers:
-  - url: http://demo.dicoogle.com/
+  - url: https://demo.dicoogle.com/
   - url: http://localhost:8080/
   - url: http://yourdicooglehost/
 externalDocs:
