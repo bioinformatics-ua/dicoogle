@@ -2,7 +2,7 @@
   "name": "dicoogle-webcore",
   "version": "0.15.0",
   "private": true,
-  "author": "Universidade de Aveiro, DETI/IEETA, Bioinformatics Group (http://bioinformatics.ua.pt/)",
+  "author": "Universidade de Aveiro, DETI/IEETA, Bioinformatics Group (https://bioinformatics.ua.pt/)",
   "maintainers": [
     "Eduardo Pinho <eduardopinho@bmd-software.com>"
   ],

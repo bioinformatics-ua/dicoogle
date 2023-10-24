@@ -110,12 +110,12 @@ const LoginView = createReactClass({
           <footer id="footer">
             <div style={{ width: "100%", textAlign: "center" }}>
               Community information and Learning Pack available on the{" "}
-              <a target="_new" href="http://www.dicoogle.com">
+              <a target="_new" href="https://www.dicoogle.com">
                 {" "}
                 the Dicoogle website
               </a>.{" "}
               Commercial support, by
-              <a target="_new" href="http://www.bmd-software.com">
+              <a target="_new" href="https://www.bmd-software.com">
                 {" "}
                 BMD Software
               </a>.
@@ -125,25 +125,25 @@ const LoginView = createReactClass({
               className="footercontainer"
             >
               <div style={{ display: "inline-block", width: "100%" }}>
-                <a href="http://bioinformatics.ua.pt">
+                <a href="https://bioinformatics.ua.pt">
                   <img
                     src="assets/logos/logobio.png"
                     style={{ height: 40, margin: 5 }}
                   />
                 </a>
-                <a href="http://bmd-software.com/">
+                <a href="https://bmd-software.com/">
                   <img
                     src="assets/logos/logo.png"
                     style={{ height: 40, padding: 5, margin: 5 }}
                   />
                 </a>
-                <a href="http://www.ieeta.pt/">
+                <a href="https://www.ieeta.pt/">
                   <img
                     src="assets/logos/logo-ieeta.png"
                     style={{ height: 60, margin: 5 }}
                   />
                 </a>
-                <a href="http://www.ua.pt/">
+                <a href="https://www.ua.pt/">
                   <img
                     src="assets/logos/logo-ua.png"
                     style={{ height: 60, margin: 5 }}

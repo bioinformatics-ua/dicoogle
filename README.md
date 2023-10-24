@@ -94,31 +94,31 @@ Brief Documentation
 
        Query: `"StudyDate:[20050329 TO 20050329]"`
        
-       URL: `http://demo.dicoogle.com/search?query=StudyDate:[20050329%20TO%2020050329]`
+       URL: `https://demo.dicoogle.com/search?query=StudyDate:[20050329%20TO%2020050329]`
     
     * Access images in date 2005/03/29 and CT (Computer Tomography) modality
         
        Query: `"Modality:CT AND StudyDate:[20050329 TO 20050329]"`
        
-       URL: `http://demo.dicoogle.com/search?query=Modality:CT%20AND%20StudyDate:[20050329%20TO%2020050329]`
+       URL: `https://demo.dicoogle.com/search?query=Modality:CT%20AND%20StudyDate:[20050329%20TO%2020050329]`
 
     * Free text search, looking for CT keyword
 
        Query: `CT`
        
-       URL: `http://demo.dicoogle.com/search?query=CT`
+       URL: `https://demo.dicoogle.com/search?query=CT`
 
   * Access the list of attributes of an image (by SOPInstanceUID)
 
-     URL: `http://demo.dicoogle.com/dump?uid=1.3.12.2.1107.5.1.4.54023.30000005032914013107800000965`
+     URL: `https://demo.dicoogle.com/dump?uid=1.3.12.2.1107.5.1.4.54023.30000005032914013107800000965`
   
   * Get a DICOM File
 
-     URL: `http://demo.dicoogle.com/legacy/file?uid=1.3.12.2.1107.5.1.4.54023.30000005032914013107800000965`
+     URL: `https://demo.dicoogle.com/legacy/file?uid=1.3.12.2.1107.5.1.4.54023.30000005032914013107800000965`
 
   * Return documents from particular query providers (useful for queries that do not follow the typical Lucene query format)
   
-    URL: `http://demo.dicoogle.com/search?query=Modality:NM&provider=lucene&provider=mongo`
+    URL: `https://demo.dicoogle.com/search?query=Modality:NM&provider=lucene&provider=mongo`
     
     Parameters:
       - query : Query String
@@ -128,7 +128,7 @@ Brief Documentation
 
   * Force Dicoogle to index a given Resource. (useful when conventional notification systems (DICOM Services, DirectoryMonitoring, Human Interface) fail to start the index procedure)
 
-    URL: `http://demo.dicoogle.com/management/tasks/index?uri=file:/tmp/dataset-ieeta/`
+    URL: `https://demo.dicoogle.com/management/tasks/index?uri=file:/tmp/dataset-ieeta/`
     
     - Method: `POST`
     - Parameters:
@@ -158,7 +158,7 @@ Before building, please make sure that your system contains the following tools:
 Contributing
 ------------
 
-The open source project is maintained by [UA.PT Bioinformatics](http://bioinformatics.ua.pt/) and [BMD Software](https://www.bmd-software.com/). Your contributions to the software are also welcome. Dicoogle is sought to be useful for R&D and the industry alike. You may find our [Development Guidelines](https://github.com/bioinformatics-ua/dicoogle/wiki#development-guidelines) in the wiki. Issues containing the [`easy`](https://github.com/bioinformatics-ua/dicoogle/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) label should be the most suitable for first open source contributions. For tech support, please prefer contacting the maintainers instead of creating an issue.
+The open source project is maintained by [UA.PT Bioinformatics](https://bioinformatics.ua.pt/) and [BMD Software](https://www.bmd-software.com/). Your contributions to the software are also welcome. Dicoogle is sought to be useful for R&D and the industry alike. You may find our [Development Guidelines](https://github.com/bioinformatics-ua/dicoogle/wiki#development-guidelines) in the wiki. Issues containing the [`easy`](https://github.com/bioinformatics-ua/dicoogle/issues?q=is%3Aissue+is%3Aopen+label%3Aeasy) label should be the most suitable for first open source contributions. For tech support, please prefer contacting the maintainers instead of creating an issue.
 
 
 ## Support and consulting
