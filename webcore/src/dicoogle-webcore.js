@@ -328,13 +328,14 @@ export const fetchModules = m.fetchModules;
     pluginInstance.Name = name;
     pluginInstance.SlotId = slotId;
     pluginInstance.Caption = thisPackage.dicoogle.caption || name;
+    pluginInstance.Settings = thisPackage.settings;
     plugins[name] = pluginInstance;
     if (slots[slotId]) {
       for (let slot of slots[slotId]) {
         slot.attachPlugin(pluginInstance);
       }
     }
-    const eventData = {name, slotId, caption: pluginInstance.Caption};
+    const eventData = {name, slotId, caption: pluginInstance.Caption, settings: pluginInstance.Settings};
     event_hub.emit('load', eventData);
   };
 export const onRegister = m.onRegister;
