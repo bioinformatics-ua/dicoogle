@@ -109,7 +109,8 @@ const SeriesView = createReactClass({
               uid: item.serieInstanceUID,
               // deprecated data fields
               "data-result-type": "series",
-              "data-result-uid": item.serieInstanceUID
+              "data-result-uid": item.serieInstanceUID,
+              "data-result-studyuid": item.studyuid
             }}
           />
         </div>
@@ -155,6 +156,10 @@ const SeriesView = createReactClass({
     const self = this;
 
     var resultArray = this.props.study.series;
+
+    for (let i = 0; i < resultArray.length; i++){
+      resultArray[i]['studyuid'] = this.props.study.studyInstanceUID;
+    }
 
     var selectRowProp = {
       clickToSelect: true,
