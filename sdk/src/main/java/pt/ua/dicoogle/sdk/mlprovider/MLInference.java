@@ -22,8 +22,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import pt.ua.dicoogle.sdk.datastructs.dim.BulkAnnotation;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This object maps inferences done by the AI algorithms.
@@ -31,7 +33,7 @@ import java.util.List;
  */
 public class MLInference {
 
-    private HashMap<String, String> metrics;
+    private Map<String, String> metrics;
 
     private String version;
 
@@ -43,11 +45,16 @@ public class MLInference {
     @JsonIgnore
     private Path dicomSEG;
 
-    public HashMap<String, String> getMetrics() {
+    public MLInference(){
+        this.metrics = new HashMap<>();
+        this.annotations = new ArrayList<>();
+    }
+
+    public Map<String, String> getMetrics() {
         return metrics;
     }
 
-    public void setMetrics(HashMap<String, String> metrics) {
+    public void setMetrics(Map<String, String> metrics) {
         this.metrics = metrics;
     }
 
