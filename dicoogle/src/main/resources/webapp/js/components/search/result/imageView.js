@@ -143,7 +143,7 @@ const ImageView = createReactClass({
               "data-result-type": "image",
               "data-result-uri": item.uri,
               "data-result-uid": item.sopInstanceUID,
-              "data-result-serieuid": item.serieuid
+              "data-result-seriesuid": item.serieuid
             }}
           />
         </div>
