@@ -89,7 +89,11 @@ public class WebUIServlet extends HttpServlet {
         List<String> pkgList = new ArrayList<>(plugins.size());
         for (WebUIPlugin plugin : plugins) {
 
-            String pkg = PluginController.getInstance().getWebUIPackageJSON(plugin.getName());
+            JSONObject pkgObject =
+                    JSONObject.fromObject(PluginController.getInstance().getWebUIPackageJSON(plugin.getName()));
+            pkgObject.put("settings", plugin.getSettings());
+
+            String pkg = pkgObject.toString();
             if (pkg == null) {
                 logger.warn("Ignoring web plugin {}", plugin.getName());
                 continue;

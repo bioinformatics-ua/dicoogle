@@ -142,7 +142,8 @@ const ImageView = createReactClass({
               // deprecated data properties
               "data-result-type": "image",
               "data-result-uri": item.uri,
-              "data-result-uid": item.sopInstanceUID
+              "data-result-uid": item.sopInstanceUID,
+              "data-result-seriesuid": item.serieuid
             }}
           />
         </div>
@@ -183,7 +184,13 @@ const ImageView = createReactClass({
 
   render: function() {
     let self = this;
+
     var resultArray = this.props.serie.images;
+
+    for (let i = 0; i < resultArray.length; i++){
+      resultArray[i]['serieuid'] = this.props.serie.serieInstanceUID;
+    }
+
 
     var selectRowProp = {
       clickToSelect: true,

@@ -102,7 +102,8 @@ const StudyView = createReactClass({
               uid: item.studyInstanceUID,
               // deprecated data fields
               "data-result-type": "study",
-              "data-result-uid": item.studyInstanceUID
+              "data-result-uid": item.studyInstanceUID,
+              "data-result-patientid": item.patientid
             }}
           />
         </div>
@@ -140,6 +141,9 @@ const StudyView = createReactClass({
   render: function() {
     var self = this;
     var resultArray = this.props.patient.studies;
+
+    for (let i = 0; i < resultArray.length; i++)
+      resultArray[i]['patientid'] = this.props.patient.id;
 
     var selectRowProp = {
       clickToSelect: true,
