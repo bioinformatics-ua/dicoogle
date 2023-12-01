@@ -15,6 +15,10 @@
     "src/*.js"
   ],
   "main": "src/dicoogle-webcore.js",
+  "engines": {
+    "node": ">=16",
+    "npm": ">=7"
+  },
   "browserify": {
     "transform": [
       [
@@ -42,7 +46,7 @@
     "eslint-plugin-import": "^2.26.0"
   },
   "dependencies": {
-    "dicoogle-client": "^5.2.3",
+    "dicoogle-client": "~5.2.4",
     "events": "^3.3.0"
   }
 }
