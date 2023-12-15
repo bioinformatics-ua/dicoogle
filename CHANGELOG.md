@@ -3,14 +3,14 @@ This document intends to keep track of the changes performed on the various rele
 
 ## 3.3
 
-## 3.3.3 (2023-10-23)
+### 3.3.3 (2023-10-23)
 
 * New: Include submitted query and provider in "result-selection-ready" event (#673)
 * Enhancement: Remove advanced search UI (#672)
 * Chore: Update Maven plugins (#669)
 * Chore: Update Bcrypt dependency and password hash service (#670)
 
-## 3.3.2 (2023-09-25)
+### 3.3.2 (2023-09-25)
 
 - New: Provide full search results on result-batch plugin mount event (#666)
    - **This is a Web UI plugin API change!** Upon a `result-selection-ready` event
@@ -30,11 +30,11 @@ This document intends to keep track of the changes performed on the various rele
 - Chore: Bump word-wrap from 1.2.3 to 1.2.4 in `/webcore`` (#659)
 - Chore: [CI] Update setup-java action in maven.yml (#661)
 
-## 3.3.1  (2023-07-07)
+### 3.3.1  (2023-07-07)
 
 - Fix: QueryInterface to QueryDimInterface (#646)
 
-## 3.3.0  (2023-07-06)
+### 3.3.0  (2023-07-06)
 
 - New: extensions to the SOP classes and Transfer Syntaxes hardcoded lists (#516)
 - Enhancement: Transfer Options - improve web service and UI (#649)
@@ -49,7 +49,7 @@ This document intends to keep track of the changes performed on the various rele
 
 ## 3.2
 
-## 3.2.2  (2023-02-13)
+### 3.2.2  (2023-02-13)
 
 - Fix: [C-MOVE] Fix problem related with infinite loop if skip IS returns zero
 
