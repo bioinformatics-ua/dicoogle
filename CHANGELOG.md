@@ -3,6 +3,12 @@ This document intends to keep track of the changes performed on the various rele
 
 ## 3.3
 
+### 3.3.4 (2023-12-15)
+
+- New (webui): Pass Web UI Plugin settings to webapp and expose identifiers in study view entries (#680)
+- Chore: Update links to use scheme https (#678)
+- Chore: Webapp maintenance (#674)
+
 ### 3.3.3 (2023-10-23)
 
 * New: Include submitted query and provider in "result-selection-ready" event (#673)
