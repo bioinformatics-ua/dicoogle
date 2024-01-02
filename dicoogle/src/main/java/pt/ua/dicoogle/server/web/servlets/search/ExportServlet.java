@@ -39,7 +39,7 @@ public class ExportServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(ExportServlet.class);
 
     public enum ExportType {
-        LIST, EXPORT_CVS;
+        LIST, EXPORT_CSV;
     }
 
     private ExportType type;
@@ -54,8 +54,8 @@ public class ExportServlet extends HttpServlet {
             case LIST:
                 doGetTagList(req, resp);
                 break;
-            case EXPORT_CVS:
-                doGetExportCvs(req, resp);
+            case EXPORT_CSV:
+                doGetExportCsv(req, resp);
                 break;
         }
     }
@@ -79,7 +79,7 @@ public class ExportServlet extends HttpServlet {
         resp.getWriter().write(array.toString());
     }
 
-    private void doGetExportCvs(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void doGetExportCsv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setHeader("Content-disposition", "attachment; filename=QueryResultsExport.csv");
         String queryString = req.getParameter("query");
         String[] fields = req.getParameterValues("fields");

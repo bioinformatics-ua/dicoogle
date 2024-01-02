@@ -906,7 +906,7 @@ paths:
           description: Successful operation
         "400":
           description: Invalid supplied parameters
-  /export/cvs:
+  /export/csv:
     get:
       tags:
         - Misc

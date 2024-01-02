@@ -220,7 +220,7 @@ public class DicoogleWeb {
                 createServletHandler(new WebUIServlet(), "/webui"), createWebUIModuleServletHandler(),
                 createServletHandler(new LoggerServlet(), "/logger"),
                 createServletHandler(new RunningTasksServlet(), "/index/task"),
-                createServletHandler(new ExportServlet(ExportType.EXPORT_CVS), "/export/cvs"),
+                createServletHandler(new ExportServlet(ExportType.EXPORT_CSV), "/export/csv"),
                 createServletHandler(new ExportServlet(ExportType.LIST), "/export/list"),
                 createServletHandler(new ServerStorageServlet(), "/management/settings/storage/dicom"), webpages};
 
