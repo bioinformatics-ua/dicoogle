@@ -80,6 +80,10 @@ public class DicomStorage extends StorageService {
     private BlockingQueue<ImageElement> queue = new PriorityBlockingQueue<>();
     private NetworkApplicationEntity[] naeArr = null;
     private AtomicLong seqNum = new AtomicLong(0L);
+    /**
+     * Whether the index worker thread
+     * should exit once it finishes processing the queue.
+     */
     private volatile boolean workerShouldExit = false;
 
     private static boolean ASYNC_INDEX = Boolean.valueOf(System.getProperty("dicoogle.index.async", "true"));
@@ -373,9 +377,12 @@ public class DicomStorage extends StorageService {
 
         @Override
         public void run() {
-            while (!workerShouldExit) {
+            while (true) {
                 try {
                     // Fetch an element by the queue taking into account the priorities.
+                    if (workerShouldExit && queue.isEmpty()) {
+                        break;
+                    }
                     ImageElement element = queue.take();
                     URI exam = element.getUri();
                     if (ASYNC_INDEX)
@@ -415,6 +422,5 @@ public class DicomStorage extends StorageService {
     public void stop() {
         device.stopListening();
         workerShouldExit = true;
-        indexer.interrupt();
     }
 }
