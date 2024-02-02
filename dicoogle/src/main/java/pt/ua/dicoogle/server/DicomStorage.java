@@ -379,11 +379,15 @@ public class DicomStorage extends StorageService {
         public void run() {
             while (true) {
                 try {
-                    // Fetch an element by the queue taking into account the priorities.
                     if (workerShouldExit && queue.isEmpty()) {
                         break;
                     }
-                    ImageElement element = queue.take();
+                    // Fetch an element from the priority queue
+                    // with a timeout so that the thread can exit
+                    ImageElement element = queue.poll(3, TimeUnit.SECONDS);
+                    if (element == null) {
+                        continue;
+                    }
                     URI exam = element.getUri();
                     if (ASYNC_INDEX)
                         PluginController.getInstance().index(exam);
@@ -395,7 +399,7 @@ public class DicomStorage extends StorageService {
                     LOG.error("Unexpected error in indexer queue worker", ex);
                 }
             }
-            LOG.debug("Indexer queue worker exiting by request");
+            LOG.info("DICOM storage finished processing files");
         }
     }
 
@@ -422,5 +426,6 @@ public class DicomStorage extends StorageService {
     public void stop() {
         device.stopListening();
         workerShouldExit = true;
+        LOG.debug("Indexer queue worker will exit");
     }
 }
