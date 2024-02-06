@@ -77,16 +77,8 @@ public class DicomStorage extends StorageService {
     private Set<String> priorityAETs = new HashSet<>();
 
     // Changed to support priority queue.
-    private BlockingQueue<ImageElement> queue = new PriorityBlockingQueue<>();
     private NetworkApplicationEntity[] naeArr = null;
     private AtomicLong seqNum = new AtomicLong(0L);
-    /**
-     * Whether the index worker thread
-     * should exit once it finishes processing the queue.
-     */
-    private volatile boolean workerShouldExit = false;
-
-    private static boolean ASYNC_INDEX = Boolean.valueOf(System.getProperty("dicoogle.index.async", "true"));
 
     /**
      *
@@ -292,7 +284,7 @@ public class DicomStorage extends StorageService {
                 if (uri != null) {
                     // enqueue to index
                     ImageElement element = new ImageElement(uri, as.getCallingAET(), seqNum.getAndIncrement());
-                    queue.add(element);
+                    IndexQueueWorker.getInstance().addElement(element);
                 }
             }
 
@@ -372,52 +364,13 @@ public class DicomStorage extends StorageService {
         return Long.compare(thisSeqNumber, otherSeqNumber);
     }
 
-    class IndexerQueueWorker implements Runnable {
-        public Collection<IndexerInterface> plugins;
-
-        @Override
-        public void run() {
-            while (true) {
-                try {
-                    if (workerShouldExit && queue.isEmpty()) {
-                        break;
-                    }
-                    // Fetch an element from the priority queue
-                    // with a timeout so that the thread can exit
-                    ImageElement element = queue.poll(3, TimeUnit.SECONDS);
-                    if (element == null) {
-                        continue;
-                    }
-                    URI exam = element.getUri();
-                    if (ASYNC_INDEX)
-                        PluginController.getInstance().index(exam);
-                    else
-                        PluginController.getInstance().indexBlocking(exam);
-                } catch (InterruptedException ex) {
-                    LOG.warn("Indexer queue worker thread interrupted", ex);
-                } catch (Exception ex) {
-                    LOG.error("Unexpected error in indexer queue worker", ex);
-                }
-            }
-            LOG.info("DICOM storage finished processing files");
-        }
-    }
-
-    private Thread indexer = new Thread(new IndexerQueueWorker(), "indexer-queue-worker");
-
     /*
      * Start the Storage Service
      * @throws java.io.IOException
      */
     public void start() throws IOException {
         device.startListening(executor);
-        indexer.start();
-
-        indexer.setUncaughtExceptionHandler((Thread t, Throwable e) -> {
-            LOG.error("Fatal error in indexer queue worker", e);
-            ControlServices.getInstance().stopStorage();
-            LOG.warn("DICOM storage service was taken down to prevent further errors");
-        });
+        IndexQueueWorker.getInstance().start();
     }
 
     /**
@@ -425,7 +378,5 @@ public class DicomStorage extends StorageService {
      */
     public void stop() {
         device.stopListening();
-        workerShouldExit = true;
-        LOG.debug("Indexer queue worker will exit");
     }
 }
