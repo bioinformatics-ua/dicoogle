@@ -22,4 +22,26 @@ public abstract class MLDataset {
 
     protected String name;
 
+    protected MLDataType dataType;
+
+    public MLDataset(String name, MLDataType dataType) {
+        this.name = name;
+        this.dataType = dataType;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public MLDataType getDataType() {
+        return dataType;
+    }
+
+    public void setDataType(MLDataType dataType) {
+        this.dataType = dataType;
+    }
 }

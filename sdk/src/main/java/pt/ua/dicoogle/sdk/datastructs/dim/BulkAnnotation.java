@@ -18,6 +18,8 @@
  */
 package pt.ua.dicoogle.sdk.datastructs.dim;
 
+import pt.ua.dicoogle.sdk.mlprovider.MLlabel;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -69,7 +71,7 @@ public class BulkAnnotation {
 
     private AnnotationType annotationType;
 
-    private String label;
+    private MLlabel label;
 
     private List<Point2D> points;
 
@@ -99,11 +101,11 @@ public class BulkAnnotation {
         this.annotationType = annotationType;
     }
 
-    public String getLabel() {
+    public MLlabel getLabel() {
         return label;
     }
 
-    public void setLabel(String label) {
+    public void setLabel(MLlabel label) {
         this.label = label;
     }
 
