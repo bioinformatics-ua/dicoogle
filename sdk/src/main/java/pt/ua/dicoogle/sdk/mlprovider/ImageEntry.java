@@ -18,40 +18,51 @@
  */
 package pt.ua.dicoogle.sdk.mlprovider;
 
-import java.util.HashMap;
+import org.dcm4che2.data.DicomObject;
+
+import java.net.URI;
+import java.util.Objects;
 
 /**
- * An ML dataset of image objects.
- * Optionally an array of labels can be given to create a labelled dataset.
+ * Used to map the metadata of regions of interest.
  */
-public class MLImageDataset extends MLDataset {
+public class ImageEntry {
 
-    private HashMap<ImageEntry, MLlabel> dataset;
+    private DicomObject object;
 
-    private boolean multiClass;
+    private URI file;
 
-    public MLImageDataset() {
-        super("name", MLDataType.IMAGE);
+    public ImageEntry(DicomObject object, URI file) {
+        this.object = object;
+        this.file = file;
     }
 
-    public MLImageDataset(HashMap<ImageEntry, MLlabel> dataset) {
-        super("", MLDataType.IMAGE);
-        this.dataset = dataset;
+    public DicomObject getObject() {
+        return object;
     }
 
-    public HashMap<ImageEntry, MLlabel> getDataset() {
-        return dataset;
+    public void setObject(DicomObject object) {
+        this.object = object;
     }
 
-    public void setDataset(HashMap<ImageEntry, MLlabel> dataset) {
-        this.dataset = dataset;
+    public URI getFile() {
+        return file;
     }
 
-    public boolean isMultiClass() {
-        return multiClass;
+    public void setFile(URI file) {
+        this.file = file;
     }
 
-    public void setMultiClass(boolean multiClass) {
-        this.multiClass = multiClass;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ImageEntry that = (ImageEntry) o;
+        return object.equals(that.object) && file.equals(that.file);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(file);
     }
 }

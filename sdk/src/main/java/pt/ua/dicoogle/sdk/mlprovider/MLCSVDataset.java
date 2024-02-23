@@ -24,4 +24,7 @@ public class MLCSVDataset extends MLDataset {
 
     private InputStream csvFile;
 
+    public MLCSVDataset(){
+        super("", MLDataType.CSV);
+    }
 }
