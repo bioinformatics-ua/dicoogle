@@ -156,6 +156,25 @@ public class InferServlet extends HttpServlet {
 
         try {
             DicomMetaData dicomMetaData = this.getDicomMetadata(uid);
+            DicomMetaData baseDicomMetaData = this.getDicomMetadata(baseSopInstanceUID);
+
+            WSISopDescriptor descriptor = new WSISopDescriptor();
+            descriptor.extractData(dicomMetaData.getAttributes());
+
+            WSISopDescriptor baseDescriptor = new WSISopDescriptor();
+            baseDescriptor.extractData(baseDicomMetaData.getAttributes());
+
+            double scale = (descriptor.getTotalPixelMatrixRows() * 1.0) / baseDescriptor.getTotalPixelMatrixRows();
+
+            if(!uid.equals(baseSopInstanceUID)){
+                scaleAnnotation(annotation, scale);
+            }
+
+            // Verify dimensions of annotation, reject if too big. In the future, adopt a sliding window strategy to process large processing windows.
+            double area = annotation.getArea();
+            if(area > 16000000) // This equates to a maximum of 4000x4000 which represents in RGB an image of 48MB
+                return null;
+
             BufferedImage bi = roiExtractor.extractROI(dicomMetaData, annotation);
             predictionRequest.setRoi(bi);
             Task<MLInference> task = PluginController.getInstance().infer(provider, predictionRequest);
@@ -172,12 +191,6 @@ public class InferServlet extends HttpServlet {
 
                         // Coordinates need to be converted if we're working with WSI
                         if(!prediction.getAnnotations().isEmpty()){
-                            WSISopDescriptor descriptor = new WSISopDescriptor();
-                            descriptor.extractData(dicomMetaData.getAttributes());
-                            DicomMetaData base = this.getDicomMetadata(baseSopInstanceUID);
-                            WSISopDescriptor baseDescriptor = new WSISopDescriptor();
-                            baseDescriptor.extractData(base.getAttributes());
-                            double scale = (descriptor.getTotalPixelMatrixRows() * 1.0) / baseDescriptor.getTotalPixelMatrixRows();
                             Point2D tl = annotation.getBoundingBox().get(0);
                             convertCoordinates(prediction, tl, scale);
                         }
@@ -308,9 +321,22 @@ public class InferServlet extends HttpServlet {
     private void convertCoordinates(MLInference prediction, Point2D tl, double scale){
         for(BulkAnnotation ann : prediction.getAnnotations()){
             for(Point2D p : ann.getPoints()){
-                p.setX((p.getX() + tl.getX())/scale);
-                p.setY((p.getY() + tl.getY())/scale);
+                p.setX((p.getX() + tl.getX()) * scale);
+                p.setY((p.getY() + tl.getY()) * scale);
             }
+        }
+    }
+
+    /**
+     * When working with WSI, it is convenient to have coordinates relative to the base of the pyramid.
+     * This method takes care of that.
+     * @param scale to transform coordinates
+     * @return the ml prediction with the converted coordinates.
+     */
+    private void scaleAnnotation(BulkAnnotation annotation, double scale){
+        for(Point2D p : annotation.getPoints()){
+            p.setX((p.getX()) * scale);
+            p.setY((p.getY()) * scale);
         }
     }
 }
