@@ -170,4 +170,11 @@ public class BulkAnnotation {
         return Arrays.asList(tl, tr, bl, br);
     }
 
+    public double getArea(){
+        List<Point2D> bbox = this.getBoundingBox();
+        double width = bbox.get(1).getX() - bbox.get(0).getX();
+        double height = bbox.get(0).getY() - bbox.get(2).getY();
+        return Math.abs(width * height);
+    }
+
 }
