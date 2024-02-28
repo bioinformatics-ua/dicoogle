@@ -3,6 +3,10 @@ This document intends to keep track of the changes performed on the various rele
 
 ## 3.3
 
+### 3.3.5 (2024-02-28)
+
+- Change DICOM storage stop behavior to soft stop by (#684)
+
 ### 3.3.4 (2023-12-15)
 
 - New (webui): Pass Web UI Plugin settings to webapp and expose identifiers in study view entries (#680)
