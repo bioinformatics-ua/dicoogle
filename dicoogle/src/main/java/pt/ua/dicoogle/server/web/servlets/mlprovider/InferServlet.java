@@ -48,10 +48,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class InferServlet extends HttpServlet {
@@ -150,8 +147,8 @@ public class InferServlet extends HttpServlet {
         ObjectMapper mapper = new ObjectMapper();
         MLInferenceRequest predictionRequest = new MLInferenceRequest(true, DimLevel.INSTANCE, uid, modelID);
         predictionRequest.setParameters(parameters);
-        BulkAnnotation annotation = new BulkAnnotation();
-        annotation.setPoints(roi);
+        BulkAnnotation annotation = new BulkAnnotation(roiType, BulkAnnotation.PixelOrigin.VOLUME);
+        annotation.setAnnotations(Collections.singletonList(roi));
         annotation.setAnnotationType(roiType);
 
         try {
@@ -171,11 +168,11 @@ public class InferServlet extends HttpServlet {
             }
 
             // Verify dimensions of annotation, reject if too big. In the future, adopt a sliding window strategy to process large processing windows.
-            double area = annotation.getArea();
+            double area = annotation.getArea(annotation.getAnnotations().get(0));
             if(area > 16000000) // This equates to a maximum of 4000x4000 which represents in RGB an image of 48MB
                 return null;
 
-            BufferedImage bi = roiExtractor.extractROI(dicomMetaData, annotation);
+            BufferedImage bi = roiExtractor.extractROI(dicomMetaData, annotation.getAnnotationType(), annotation.getAnnotations().get(0));
             predictionRequest.setRoi(bi);
             Task<MLInference> task = PluginController.getInstance().infer(provider, predictionRequest);
             if(task != null){
@@ -191,7 +188,7 @@ public class InferServlet extends HttpServlet {
 
                         // Coordinates need to be converted if we're working with WSI
                         if(!prediction.getAnnotations().isEmpty()){
-                            Point2D tl = annotation.getBoundingBox().get(0);
+                            Point2D tl = annotation.getBoundingBox(annotation.getAnnotations().get(0)).get(0);
                             convertCoordinates(prediction, tl, scale);
                         }
 
@@ -199,7 +196,6 @@ public class InferServlet extends HttpServlet {
                         PrintWriter out = response.getWriter();
                         mapper.writeValue(out, prediction);
                         out.close();
-                        out.flush();
                     } catch (InterruptedException | ExecutionException e) {
                         log.error("Could not make prediction", e);
                         try {
@@ -247,39 +243,36 @@ public class InferServlet extends HttpServlet {
                         String boundary = UUID.randomUUID().toString();
                         response.setContentType("multipart/form-data; boundary=" + boundary);
 
-                        ServletOutputStream out = response.getOutputStream();
+                        try (ServletOutputStream out = response.getOutputStream()){
+                            out.print("--" + boundary);
+                            out.println();
+                            out.print("Content-Disposition: form-data; name=\"params\"");
+                            out.println();
+                            out.print("Content-Type: application/json");
+                            out.println(); out.println();
+                            out.print(mapper.writeValueAsString(prediction));
+                            out.println();
+                            out.print("--" + boundary);
+                            out.println();
+                            out.print("Content-Disposition: form-data; name=\"dicomseg\"; filename=\"dicomseg.dcm\"");
+                            out.println();
+                            out.print("Content-Type: application/dicom");
+                            out.println(); out.println();
 
-                        out.print("--" + boundary);
-                        out.println();
-                        out.print("Content-Disposition: form-data; name=\"params\"");
-                        out.println();
-                        out.print("Content-Type: application/json");
-                        out.println(); out.println();
-                        out.print(mapper.writeValueAsString(prediction));
-                        out.println();
-                        out.print("--" + boundary);
-                        out.println();
-                        out.print("Content-Disposition: form-data; name=\"dicomseg\"; filename=\"dicomseg.dcm\"");
-                        out.println();
-                        out.print("Content-Type: application/dicom");
-                        out.println(); out.println();
+                            try (InputStream fi = Files.newInputStream(prediction.getDicomSEG())) {
+                                IOUtils.copy(fi, out);
+                                out.flush();
+                            }
 
-                        try (InputStream fi = Files.newInputStream(prediction.getDicomSEG())) {
-                            IOUtils.copy(fi, out);
-                            out.flush();
+                            out.println();
+                            out.print("--" + boundary + "--");
                         }
-
-                        out.println();
-                        out.print("--" + boundary + "--");
-                        out.flush();
-                        out.close();
 
                     } else {
                         response.setContentType("application/json");
                         PrintWriter out = response.getWriter();
                         mapper.writeValue(out, prediction);
                         out.close();
-                        out.flush();
                     }
 
                     try{
@@ -320,9 +313,11 @@ public class InferServlet extends HttpServlet {
      */
     private void convertCoordinates(MLInference prediction, Point2D tl, double scale){
         for(BulkAnnotation ann : prediction.getAnnotations()){
-            for(Point2D p : ann.getPoints()){
-                p.setX((p.getX() + tl.getX()) * scale);
-                p.setY((p.getY() + tl.getY()) * scale);
+            for(List<Point2D> points : ann.getAnnotations()){
+                for(Point2D p : points){
+                    p.setX((p.getX() + tl.getX()) * scale);
+                    p.setY((p.getY() + tl.getY()) * scale);
+                }
             }
         }
     }
@@ -334,9 +329,11 @@ public class InferServlet extends HttpServlet {
      * @return the ml prediction with the converted coordinates.
      */
     private void scaleAnnotation(BulkAnnotation annotation, double scale){
-        for(Point2D p : annotation.getPoints()){
-            p.setX((p.getX()) * scale);
-            p.setY((p.getY()) * scale);
+        for(List<Point2D> ann : annotation.getAnnotations()){
+            for(Point2D p : ann){
+                p.setX((p.getX()) * scale);
+                p.setY((p.getY()) * scale);
+            }
         }
     }
 }
