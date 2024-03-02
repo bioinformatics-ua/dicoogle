@@ -235,9 +235,6 @@ public class Session {
                 return new LoggedInStatus(null, LoggedInStatus.S_UNAUTHORIZEDACCESS);
             }
 
-            // add the login information to the session
-            HttpSession session = request.getSession(true); // force the creation of a new session if there is none
-            session.setAttribute("login", login);
             return new LoggedInStatus(login, LoggedInStatus.S_VALIDLOGIN);
         }
 
