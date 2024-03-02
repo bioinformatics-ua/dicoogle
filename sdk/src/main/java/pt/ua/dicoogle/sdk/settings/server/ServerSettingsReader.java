@@ -79,6 +79,9 @@ public interface ServerSettingsReader {
         @JsonGetter("watch-directory")
         String getWatchDirectory();
 
+        @JsonGetter("support-wsi")
+        boolean isSupportWSI();
+
         @JsonGetter("dim-provider")
         @JacksonXmlElementWrapper(localName = "dim-providers")
         List<String> getDIMProviders();
