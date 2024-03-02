@@ -22,7 +22,7 @@ import java.util.HashMap;
 
 /**
  * An ML dataset of image objects.
- * Optionally an array of labels can be given to create a labelled dataset.
+ * Images are defined by {@see ImageEntry} objects and must have a label associated.
  */
 public class MLImageDataset extends MLDataset {
 

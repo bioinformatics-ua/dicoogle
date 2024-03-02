@@ -24,7 +24,9 @@ import java.net.URI;
 import java.util.Objects;
 
 /**
- * Used to map the metadata of regions of interest.
+ * This object is used in {@see MLImageDataset} to map the image objects.
+ * Each entry is defined by a physical file and a set of DICOM metadata containing information such as
+ * the transfer syntax of the image, and other relevant information to process this image.
  */
 public class ImageEntry {
 

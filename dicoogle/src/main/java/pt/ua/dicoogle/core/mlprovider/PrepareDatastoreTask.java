@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.datastructs.dim.BulkAnnotation;
+import pt.ua.dicoogle.sdk.datastructs.dim.Point2D;
 import pt.ua.dicoogle.sdk.mlprovider.*;
 import pt.ua.dicoogle.server.web.dicom.ROIExtractor;
 import pt.ua.dicoogle.server.web.utils.cache.WSICache;
@@ -109,12 +110,14 @@ public class PrepareDatastoreTask implements Callable<MLDataset> {
                             dcm.putString(Tag.TransferSyntaxUID, VR.CS, "1.2.840.10008.1.2.4.50");
 
                             for(BulkAnnotation annotation: entry.getValue()){
-                                BufferedImage roi = roiExtractor.extractROI(image.get("SOPInstanceUID").toString(), annotation);
-                                String roiFileName = annotation.getLabel().getName() + c++;
-                                classes.add(annotation.getLabel().getName());
-                                File output = new File(path + File.separator + roiFileName + ".jpeg");
-                                ImageIO.write(roi, "jpeg", output);
-                                dataset.put(new ImageEntry(dcm, output.toURI()), annotation.getLabel());
+                                for(List<Point2D> points: annotation.getAnnotations()){
+                                    BufferedImage roi = roiExtractor.extractROI(image.get("SOPInstanceUID").toString(), annotation.getAnnotationType(), points);
+                                    String roiFileName = annotation.getLabel().getName() + c++;
+                                    classes.add(annotation.getLabel().getName());
+                                    File output = new File(path + File.separator + roiFileName + ".jpeg");
+                                    ImageIO.write(roi, "jpeg", output);
+                                    dataset.put(new ImageEntry(dcm, output.toURI()), annotation.getLabel());
+                                }
                             }
                         }
 

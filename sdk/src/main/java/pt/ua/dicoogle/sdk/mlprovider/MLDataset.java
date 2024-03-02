@@ -18,10 +18,14 @@
  */
 package pt.ua.dicoogle.sdk.mlprovider;
 
+/**
+ * ML dataset objects map a collection of labelled data, to be used in the training and generation of models.
+ * ML datasets have a type, defined by {@see MLDataType} and an identifier, to be used by the providers to internally manage this dataset.
+ * This data object is used in datastore requests to construct annotated datasets.
+ */
 public abstract class MLDataset {
 
     protected String name;
-
     protected MLDataType dataType;
 
     public MLDataset(String name, MLDataType dataType) {
