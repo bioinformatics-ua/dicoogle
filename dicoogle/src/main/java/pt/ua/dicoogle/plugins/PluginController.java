@@ -787,7 +787,16 @@ public class PluginController {
         if (indexer == null) {
             indexer = this.getIndexingPlugins(true).iterator().next();
         }
-        return indexer.unindex(items, progressCallback);
+        Task<UnindexReport> task = indexer.unindex(items, progressCallback);
+        if (task != null) {
+            final String taskUniqueID = UUID.randomUUID().toString();
+            task.setName(String.format("[%s]unindex", indexer.getName()));
+            task.onCompletion(() -> {
+                logger.info("Unindexing task [{}] complete", taskUniqueID);
+            });
+            taskManager.dispatch(task);
+        }
+        return task;
     }
 
     /** Issue an unindexing procedure to the given indexers.
