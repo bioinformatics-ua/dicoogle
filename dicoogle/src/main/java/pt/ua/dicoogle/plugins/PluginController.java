@@ -89,6 +89,9 @@ public class PluginController {
     private TaskManager taskManagerQueries =
             new TaskManager(Integer.parseInt(System.getProperty("dicoogle.taskManager.nQueryThreads", "4")));
 
+    /** Whether to shut down Dicoogle when a plugin is marked as dead */
+    private static boolean DEAD_PLUGIN_KILL_SWITCH =
+            System.getProperty("dicoogle.deadPluginKillSwitch", "false").equalsIgnoreCase("true");
 
     public PluginController(File pathToPluginDirectory) {
         logger.info("Creating PluginController Instance");
@@ -172,9 +175,14 @@ public class PluginController {
                     logger.warn("Plugin set name cannot be retrieved: {}", ex2.getMessage());
                     name = "UNKNOWN";
                 }
-                logger.error("Unexpected error while loading plugin set {}. Plugin set marked as dead.", name, e);
-                this.deadPluginSets.add(new DeadPlugin(name, e));
-                it.remove();
+                if (DEAD_PLUGIN_KILL_SWITCH) {
+                    logger.error("Unexpected error while loading plugin set {}. Dicoogle will shut down.", name, e);
+                    System.exit(-4);
+                } else {
+                    logger.error("Unexpected error while loading plugin set {}. Plugin set marked as dead.", name, e);
+                    this.deadPluginSets.add(new DeadPlugin(name, e));
+                    it.remove();
+                }
             }
         }
         logger.debug("Settings pushed to plugins");
