@@ -143,10 +143,10 @@ public interface IndexerInterface extends DicooglePlugin {
                         }
                     } else {
                         // failed to unindex, reason unknown
-                        failures.add(new FailedUnindex(uri, null));
+                        failures.add(new FailedUnindex(Collections.singleton(uri), null));
                     }
                 } catch (Exception ex) {
-                    failures.add(new FailedUnindex(uri, ex));
+                    failures.add(new FailedUnindex(Collections.singleton(uri), ex));
                 }
             }
             return UnindexReport.withFailures(failures);

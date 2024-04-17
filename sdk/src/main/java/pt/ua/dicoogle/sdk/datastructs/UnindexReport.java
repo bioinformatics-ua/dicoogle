@@ -28,15 +28,15 @@ import java.util.Objects;
  */
 public final class UnindexReport implements Serializable {
 
-    /** The description of a file which
-     * could not be unindexed due to an error.
-     * 
-     * When an error of this kind occurs,
-     * it is not specified whether the file remains indexed or not.
+    /** The description of an indexing error.
+     *
+     * Whether the file remains indexed or not
+     * when an error of this kind occurs
+     * is not specified.
      */
     public static final class FailedUnindex implements Serializable {
-        /** The URI to the item which failed to unindex. */
-        public final URI uri;
+        /** The URIs to the items which failed to unindex. */
+        public final Collection<URI> urisAffected;
 
         /** The exception describing the error which led to the failure.
          * This field can be <code>null</code>
@@ -50,10 +50,15 @@ public final class UnindexReport implements Serializable {
          * @param uri the URI of the file which could not be unindexed
          * @param cause the underlying exception, if any
          */
-        public FailedUnindex(URI uri, Exception cause) {
-            Objects.requireNonNull(uri);
-            this.uri = uri;
+        public FailedUnindex(Collection<URI> urisAffected, Exception cause) {
+            Objects.requireNonNull(urisAffected);
+            this.urisAffected = urisAffected;
             this.cause = cause;
+        }
+
+        @Override
+        public String toString() {
+            return "FailedUnindex{urisAffected=" + urisAffected + ", cause=" + cause + "}";
         }
     }
 
@@ -64,6 +69,8 @@ public final class UnindexReport implements Serializable {
     /** Creates a full report for a bulk unindexing operation.
      * All parameters are nullable,
      * in which case is equivalent to passing an empty collection.
+     * Once created, the report is final and immutable.
+     *
      * @param notFound the URIs of files which were not found
      * @param failures the error reports of files which could not be unindexed
      */
@@ -78,13 +85,13 @@ public final class UnindexReport implements Serializable {
         this.failures = failures;
     }
 
-    /** Creates a report that all files were successfully unindexed. */
+    /** Creates a report with no unindexing failures.
+     */
     public static UnindexReport ok() {
         return new UnindexReport(null, null);
     }
 
-    /** Creates a report with the files which failed to unindex
-     * due to some error.
+    /** Creates a report with the given failures.
      */
     public static UnindexReport withFailures(Collection<FailedUnindex> failures) {
         return new UnindexReport(null, failures);
@@ -110,7 +117,7 @@ public final class UnindexReport implements Serializable {
     }
 
     /** Obtains an immutable collection to
-     * the files which failed to unindex due to an error.
+     * the file batches which failed to unindex due to errors.
      */
     public Collection<FailedUnindex> getUnindexFailures() {
         return Collections.unmodifiableCollection(this.failures);
@@ -123,8 +130,8 @@ public final class UnindexReport implements Serializable {
         return Collections.unmodifiableCollection(this.notFound);
     }
 
-    /** Return the total count of files which were requested to be unindexed,
-     * but were either not found or failed to unindex.
+    /** Returns the total count of errors reported during unindexing
+     * due to either not having been found or other failures.
      */
     public long errorCount() {
         return this.failures.size() + this.notFound.size();
