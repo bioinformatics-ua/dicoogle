@@ -74,7 +74,7 @@ public class RunningIndexTasks {
     }
 
     public void addTask(Task<Report> task) {
-        taskRunningList.put(task.getUid(), task);
+        this.addTask(task.getUid(), task);
     }
 
     public boolean removeTask(String taskUid) {

@@ -3,9 +3,13 @@ This document intends to keep track of the changes performed on the various rele
 
 ## 3.3
 
+### 3.3.6 (2024-04-24)
+
+- Fix application of task cleaning hook in `RunningIndexTasks` (#687)
+
 ### 3.3.5 (2024-02-28)
 
-- Change DICOM storage stop behavior to soft stop by (#684)
+- Change DICOM storage stop behavior to soft stop (#684)
 
 ### 3.3.4 (2023-12-15)
 
