@@ -10,7 +10,7 @@ import { Endpoints } from "./constants/endpoints";
 import dicoogleClient from "dicoogle-client";
 import Webcore from "dicoogle-webcore";
 
-import { Router, Route, IndexRoute, hashHistory } from "react-router";
+import { HashRouter as Router, Route, Switch } from "react-router-dom";
 
 import { Search } from "./components/search/searchView";
 import { SearchResultView } from "./components/search/searchResultView";
@@ -70,7 +70,7 @@ class App extends React.Component {
   componentWillMount() {
     UserStore.listen(this.handleUserStoreUpdate);
 
-    let lastLocation = this.props.location.pathname.slice(1);
+    let lastLocation = (location.hash || "").slice(2);
     if (
       lastLocation !== "" &&
       lastLocation !== "login" &&
@@ -95,8 +95,8 @@ class App extends React.Component {
       UserStore.loadLocalStore();
     }
 
-    if (this.props.location.pathname === "/") {
-      this.props.router.push("login");
+    if (location.hash === "" || location.hash === "/") {
+      this.context.router.history.push("/login");
     }
   }
 
@@ -107,18 +107,19 @@ class App extends React.Component {
       this.setState(data);
     }
 
+    let history = this.context.router.history;
     if (!data.isLoggedIn) {
       if (!process.env.GUEST_USERNAME) {
-        this.props.router.replace("login");
+        history.replace("/login");
       } else {
         if (!data.loginFailed) {
-          this.props.router.push("loading");
+          history.push("/loading");
         } else {
-          this.props.router.push("login");
+          history.push("/login");
         }
       }
     } else {
-      this.props.router.replace(this.state.lastLocation);
+      history.replace("/" + this.state.lastLocation);
     }
   }
 
@@ -171,7 +172,7 @@ class App extends React.Component {
       lastLocation: "search"
     });
     this.needsPluginUpdate = true;
-    this.context.router.push("login");
+    this.context.router.history.push("/login");
   }
 
   render() {
@@ -234,21 +235,22 @@ function NotFoundView() {
 Webcore.init(Endpoints.base);
 
 ReactDOM.render(
-  <Router history={hashHistory}>
-    <Route path="/" component={App}>
-      <IndexRoute component={LoadingView} />
-      <Route path="search" component={Search} />
-      <Route path="management" component={ManagementView} />
-      <Route path="results" component={SearchResultView} />
-      <Route path="indexer" component={IndexStatusView} />
-      <Route path="about" component={AboutView} />
-      <Route path="login" component={LoginView} />
-      <Route path="loading" component={LoadingView} />
-      <Route path="image/:uid" component={DirectImageView} />
-      <Route path="dump/:uid" component={DirectDumpView} />
-      <Route path="ext/:plugin" component={PluginView} />
-      <Route path="*" component={NotFoundView} />
-    </Route>
+  <Router>
+    <App>
+      <Switch>
+        <Route path="/search" component={Search} />
+        <Route path="/management" component={ManagementView} />
+        <Route path="/results" component={SearchResultView} />
+        <Route path="/indexer" component={IndexStatusView} />
+        <Route path="/about" component={AboutView} />
+        <Route path="/login" component={LoginView} />
+        <Route path="/ext/:plugin" component={PluginView} />
+        <Route path="*" component={NotFoundView} />
+      </Switch>
+      <Route path="/loading" component={LoadingView} />
+      <Route path="/image/:uid" component={DirectImageView} />
+      <Route path="/dump/:uid" component={DirectDumpView} />
+    </App>
   </Router>,
   document.getElementById("react-container")
 );

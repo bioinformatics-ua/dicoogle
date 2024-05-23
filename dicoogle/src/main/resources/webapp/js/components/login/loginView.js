@@ -31,8 +31,8 @@ const LoginView = createReactClass({
       return;
     }
 
-    if (data.isLoggedIn) {
-      router.replace("search");
+    if (data.isLoggedIn && router.history.location.pathname === "/login") {
+      router.history.replace("/search");
     }
   },
 
