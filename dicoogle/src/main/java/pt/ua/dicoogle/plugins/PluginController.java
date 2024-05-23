@@ -454,7 +454,6 @@ public class PluginController {
         for (QueryInterface p : plugins) {
             names.add(p.getName());
         }
-        // logger.info("Query Providers: "+Arrays.toString(names.toArray()) );
         return names;
     }
 
@@ -462,7 +461,6 @@ public class PluginController {
         Collection<QueryInterface> plugins = getQueryPlugins(onlyEnabled);
         for (QueryInterface p : plugins) {
             if (p.getName().equalsIgnoreCase(name)) {
-                // logger.info("Retrived Query Provider: "+name);
                 return p;
             }
         }
@@ -494,7 +492,6 @@ public class PluginController {
         Collection<IndexerInterface> plugins = getIndexingPlugins(onlyEnabled);
         for (IndexerInterface p : plugins) {
             if (p.getName().equalsIgnoreCase(name)) {
-                // logger.info("Retrived Query Provider: "+name);
                 return p;
             }
         }
@@ -507,7 +504,6 @@ public class PluginController {
         Collection<JettyPluginInterface> plugins = getServletPlugins(onlyEnabled);
         for (JettyPluginInterface p : plugins) {
             if (p.getName().equalsIgnoreCase(name)) {
-                // logger.info("Retrived Query Provider: "+name);
                 return p;
             }
         }
@@ -519,7 +515,6 @@ public class PluginController {
         Collection<StorageInterface> plugins = getStoragePlugins(onlyEnabled);
         for (StorageInterface p : plugins) {
             if (p.getName().equalsIgnoreCase(name)) {
-                // logger.info("Retrived Query Provider: "+name);
                 return p;
             }
         }
@@ -535,7 +530,6 @@ public class PluginController {
 
     public JointQueryTask queryAll(JointQueryTask holder, final String query, final DimLevel level,
             final Object... parameters) {
-        // logger.info("Querying all providers");
         List<String> providers = this.getQueryProvidersName(true);
         return query(holder, providers, query, level, parameters);
     }
@@ -552,7 +546,6 @@ public class PluginController {
             final Object... parameters) {
         Task<Iterable<SearchResult>> t = getTaskForQueryDim(querySource, query, level, parameters);
         taskManagerQueries.dispatch(t);
-        // logger.info("Fired Query Task: "+querySource +" QueryString:"+query);
 
         return t;// returns the handler to obtain the computation results
     }
@@ -573,7 +566,6 @@ public class PluginController {
         for (Task<?> t : tasks)
             taskManagerQueries.dispatch(t);
 
-        // logger.info("Fired Query Tasks: "+Arrays.toString(querySources.toArray()) +" QueryString:"+query);
         return holder;// returns the handler to obtain the computation results
     }
 
@@ -593,7 +585,6 @@ public class PluginController {
         for (Task<?> t : tasks)
             taskManagerQueries.dispatch(t);
 
-        // logger.info("Fired Query Tasks: "+Arrays.toString(querySources.toArray()) +" QueryString:"+query);
         return holder;// returns the handler to obtain the computation results
     }
 
@@ -618,7 +609,6 @@ public class PluginController {
 
             }
         });
-        // logger.info("Prepared Query Task: QueryString");
         return queryTask;
     }
 
@@ -654,7 +644,6 @@ public class PluginController {
 
             }
         });
-        // logger.info("Prepared Query Task: QueryString");
         return queryTask;
     }
 
@@ -687,11 +676,8 @@ public class PluginController {
                     continue;
                 final String taskUniqueID = UUID.randomUUID().toString();
                 task.setName(String.format("[%s]index %s", indexer.getName(), path));
-                task.onCompletion(new Runnable() {
-                    @Override
-                    public void run() {
-                        logger.info("Task [{}] complete: {} is indexed", taskUniqueID, pathF);
-                    }
+                task.onCompletion(() -> {
+                    logger.info("Task [{}] complete on {}", taskUniqueID, pathF);
                 });
 
                 taskManager.dispatch(task);
@@ -701,7 +687,7 @@ public class PluginController {
                 logger.warn("Indexer {} failed unexpectedly", indexer.getName(), ex);
             }
         }
-        logger.info("Finished firing all indexing plugins for {}", path);
+        logger.debug("Finished firing all indexing plugins for {}", path);
 
         return rettasks;
     }
@@ -728,14 +714,14 @@ public class PluginController {
 
                     @Override
                     public void run() {
-                        logger.info("Task [{}] complete: {} is indexed", taskUniqueID, pathF);
+                        logger.info("Task [{}] complete on {}", taskUniqueID, pathF);
                     }
                 });
 
                 taskManager.dispatch(task);
 
                 rettasks.add(task);
-                logger.info("Fired indexer {} for URI {}", pluginName, path.toString());
+                logger.debug("Fired indexer {} for URI {}", pluginName, path.toString());
                 RunningIndexTasks.getInstance().addTask(task);
             }
         } catch (RuntimeException ex) {
@@ -790,7 +776,7 @@ public class PluginController {
     }
 
     public void doRemove(URI uri, StorageInterface si) {
-        if (si.handles(uri)) {
+        if (Objects.equals(si.getScheme(), uri.getScheme())) {
             si.remove(uri);
         } else {
             logger.warn("Storage Plugin does not handle URI: {},{}", uri, si);
