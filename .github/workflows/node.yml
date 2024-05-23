@@ -18,7 +18,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x, lts/*, latest]
+        node-version: [18.x, lts/*, latest]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
         # Recommended versions to include:
         # - minimum supported version
