@@ -6,7 +6,7 @@
 import React from "react";
 import createReactClass from "create-react-class";
 import * as PropTypes from "prop-types";
-import { Link } from "react-router";
+import { NavLink } from "react-router-dom";
 import UserStore from "../stores/userStore";
 
 const Sidebar = createReactClass({
@@ -49,9 +49,9 @@ const Sidebar = createReactClass({
             if (!e.admin || isAdmin)
               return (
                 <li key={e.value}>
-                  <Link activeClassName="active" to={to}>
+                  <NavLink activeClassName="active" to={to}>
                     <i className={e.icon} /> &nbsp; {e.caption}
-                  </Link>
+                  </NavLink>
                 </li>
               );
           })}
