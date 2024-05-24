@@ -95,7 +95,8 @@ class App extends React.Component {
       UserStore.loadLocalStore();
     }
 
-    if (location.hash === "" || location.hash === "/") {
+    let hash = location.hash;
+    if (hash === "#" || hash === "#/") {
       this.context.router.history.push("/login");
     }
   }
@@ -237,6 +238,8 @@ Webcore.init(Endpoints.base);
 ReactDOM.render(
   <Router>
     <App>
+      <Route exact path="/" component={LoadingView} />
+      <Route path="/loading" component={LoadingView} />
       <Switch>
         <Route path="/search" component={Search} />
         <Route path="/management" component={ManagementView} />
@@ -247,7 +250,6 @@ ReactDOM.render(
         <Route path="/ext/:plugin" component={PluginView} />
         <Route path="*" component={NotFoundView} />
       </Switch>
-      <Route path="/loading" component={LoadingView} />
       <Route path="/image/:uid" component={DirectImageView} />
       <Route path="/dump/:uid" component={DirectDumpView} />
     </App>
