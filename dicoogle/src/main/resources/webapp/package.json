@@ -37,7 +37,7 @@
     "index.html"
   ],
   "engines": {
-    "node": ">=16",
+    "node": ">=18",
     "npm": ">=7"
   },
   "dependencies": {
