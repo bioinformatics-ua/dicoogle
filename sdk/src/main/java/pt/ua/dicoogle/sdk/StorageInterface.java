@@ -61,7 +61,7 @@ public interface StorageInterface extends DicooglePlugin {
      * This method is particularly nice for use in for-each loops.
      * 
      * The provided scheme is not relevant at this point, but the developer must avoid calling this method
-     * with a path of a different schema.
+     * with a path of a different scheme.
      *
      * <pre>
      * URI uri = URI.create("file://dataset/");
@@ -82,7 +82,7 @@ public interface StorageInterface extends DicooglePlugin {
      *
      * The provided scheme is not relevant at this point,
      * but the developer must avoid calling this method
-     * with a path of a different schema.
+     * with a path of a different scheme.
      *
      * <pre>
      * URI uri = URI.create("file://dataset/CT/001.dcm");
