@@ -776,7 +776,7 @@ public class PluginController {
     }
 
     public void doRemove(URI uri, StorageInterface si) {
-        if (Objects.equals(si.getScheme(), uri.getScheme())) {
+        if (si.handles(uri)) {
             si.remove(uri);
         } else {
             logger.warn("Storage Plugin does not handle URI: {},{}", uri, si);
