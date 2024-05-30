@@ -43,7 +43,9 @@ import pt.ua.dicoogle.server.web.utils.DIM2JSONConverter;
  * 
  * @author Tiago Godinho.
  *
+ * @deprecated See {@link pt.ua.dicoogle.server.web.servlets.search.SearchServlet} instead
  */
+@Deprecated
 public class SearchHolderServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 

@@ -264,6 +264,9 @@ public class PluginController {
 
         DicoogleWeb jettyServer = ControlServices.getInstance().getWebServicePlatform();
         for (JettyPluginInterface resource : jettyInterfaces) {
+            if (resource == null) {
+                continue;
+            }
             jettyServer.addContextHandlers(resource.getJettyHandlers());
         }
     }
