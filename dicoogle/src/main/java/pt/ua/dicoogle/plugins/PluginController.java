@@ -28,6 +28,7 @@ import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
 import pt.ua.dicoogle.plugins.webui.WebUIPluginManager;
 import pt.ua.dicoogle.sdk.*;
 import pt.ua.dicoogle.sdk.datastructs.Report;
+import pt.ua.dicoogle.sdk.datastructs.UnindexReport;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.datastructs.dim.DimLevel;
 import pt.ua.dicoogle.sdk.settings.ConfigurationHolder;
@@ -45,6 +46,7 @@ import java.net.URI;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
@@ -755,7 +757,43 @@ public class PluginController {
         }
     }
 
-    /** Issue an unindexation procedure to the given indexers.
+    /** Issue the removal of indexed entries in bulk.
+     * 
+     * @param indexProvider the name of the indexer
+     * @param items a collections of item identifiers to unindex
+     * @param progressCallback an optional function (can be `null`),
+     *        called for every batch of items successfully unindexed
+     *        to indicate early progress
+     *        and inform consumers that
+     *        it is safe to remove or exclude the unindexed item
+     * @return an asynchronous task object returning
+     *         a report containing which files were not unindexed,
+     *         and whether some of them were not found in the database
+     * @throws IOException
+     */
+    public Task<UnindexReport> unindex(String indexProvider, Collection<URI> items, Consumer<Collection<URI>> progressCallback) throws IOException {
+        logger.info("Starting unindexing procedure for {} items", items.size());
+
+        IndexerInterface indexer = null;
+        if (indexProvider != null) {
+            indexer = this.getIndexerByName(indexProvider, true);
+        }
+        if (indexer == null) {
+            indexer = this.getIndexingPlugins(true).iterator().next();
+        }
+        Task<UnindexReport> task = indexer.unindex(items, progressCallback);
+        if (task != null) {
+            final String taskUniqueID = UUID.randomUUID().toString();
+            task.setName(String.format("[%s]unindex", indexer.getName()));
+            task.onCompletion(() -> {
+                logger.info("Unindexing task [{}] complete", taskUniqueID);
+            });
+            taskManager.dispatch(task);
+        }
+        return task;
+    }
+
+    /** Issue an unindexing procedure to the given indexers.
      * 
      * @param path the URI of the directory or file to unindex
      * @param indexers a collection of providers
@@ -776,7 +814,7 @@ public class PluginController {
     }
 
     public void doRemove(URI uri, StorageInterface si) {
-        if (si.handles(uri)) {
+        if (Objects.equals(uri.getScheme(), si.getScheme())) {
             si.remove(uri);
         } else {
             logger.warn("Storage Plugin does not handle URI: {},{}", uri, si);
