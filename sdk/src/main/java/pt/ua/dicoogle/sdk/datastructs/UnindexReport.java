@@ -130,10 +130,30 @@ public final class UnindexReport implements Serializable {
         return Collections.unmodifiableCollection(this.notFound);
     }
 
-    /** Returns the total count of errors reported during unindexing
-     * due to either not having been found or other failures.
+    /** Returns the total count of failures reported during unindexing.
+     *
+     * Note that this does not necessarily correspond to
+     * the number of files affected,
+     * and does not include files which were not found.
      */
-    public long errorCount() {
-        return this.failures.size() + this.notFound.size();
+    public long failureCount() {
+        return this.failures.size();
+    }
+
+    /** Returns the total count of files which were not unindexed,
+     * whether because they were not found
+     * or could not be unindexed for other reasons.
+     */
+    public long notUnindexedFileCount() {
+        return this.notFound.size() + failedFileCount();
+    }
+
+    /** Returns the total count of files which failed to unindexed
+     * for reasons other than the files not being found.
+     */
+    public long failedFileCount() {
+        return this.failures.stream()
+                .mapToLong(f -> f.urisAffected.size())
+                .sum();
     }
 }

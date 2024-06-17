@@ -121,8 +121,8 @@ public class UnindexServlet extends HttpServlet {
             for (Task<UnindexReport> task: tasks) {
                 try {
                     UnindexReport report = task.get();
-                    indexed = uris.size() - report.errorCount();
-                    failed = report.getUnindexFailures().size();
+                    indexed = uris.size() - report.notUnindexedFileCount();
+                    failed = report.failedFileCount();
                     notfound = report.getNotFound().size();
                 } catch (Exception ex) {
                     logger.error("Task to unindex items in {} failed", providers.get(i), ex);
