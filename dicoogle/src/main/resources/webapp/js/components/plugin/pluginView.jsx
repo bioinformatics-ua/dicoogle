@@ -33,7 +33,7 @@ export default class PluginView extends React.Component {
     if (component) {
       const node = component;
       node.addEventListener("plugin-load", e => {
-        //console.log('[plugin-load]', e);
+        console.debug('[plugin-load]', e);
         if (e && e.detail) {
           this.handleLoaded(e.detail);
         }
@@ -56,7 +56,7 @@ export default class PluginView extends React.Component {
   }
 
   getPluginName() {
-    return this.props.plugin || (this.props.params && this.props.params.plugin);
+    return this.props.plugin || (this.props.match?.params?.plugin);
   }
 
   render() {
