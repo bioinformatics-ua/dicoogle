@@ -158,8 +158,7 @@ public class DIMGeneric {
          * Get data to Series
          */
         String serieUID = toTrimmedString(extra.get("SeriesInstanceUID"), false);
-        String BodyPartThickness = (String) extra.get("BodyPartThickness");
-        // System.out.println("serieUID"+serieUID);
+        String BodyPartThickness = toTrimmedString(extra.get("BodyPartThickness"), true);
         String serieNumber = toTrimmedString(extra.get("SeriesNumber"), true);
         String serieDescription = toTrimmedString(extra.get("SeriesDescription"), false);
         String modality = toTrimmedString(extra.get("Modality"), false);
@@ -192,8 +191,6 @@ public class DIMGeneric {
         /**
          * Get data to Image
          */
-        // TODO:Error checking here... but according to standard, all images
-        // must have one of these...
         String sopInstUID = toTrimmedString(extra.get("SOPInstanceUID"), true);
 
         if (sopInstUID == null) {
