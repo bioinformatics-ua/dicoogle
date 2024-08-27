@@ -113,20 +113,17 @@ public class Information {
                 for (SearchResult r : itResults) {
                     if (uri == null)
                         uri = r.getURI();
-                    System.out.println("URI: " + uri.toString());
                 }
 
                 if (uri != null) {
                     StorageInterface str = PluginController.getInstance().getStorageForSchema(uri);
                     if (str != null) {
-                        Iterable<StorageInputStream> stream = str.at(uri);
-                        for (StorageInputStream r : stream) {
+                        StorageInputStream r = str.get(uri);
+                        if (r != null) {
                             ret = r;
 
                             stopAllTaks();
-
                             latch.countDown();
-
                             return;
                         }
                     }
