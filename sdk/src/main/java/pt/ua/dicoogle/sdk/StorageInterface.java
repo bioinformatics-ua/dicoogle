@@ -47,10 +47,12 @@ public interface StorageInterface extends DicooglePlugin {
     /**
      * Checks whether the file in the given path can be handled by this storage plugin.
      *
+     * The default implementation checks that the given location URI
+     * has the exact same scheme as the scheme returned by {@link #getScheme()}.
+     *
      * @param location a URI containing a scheme to be verified
      * @return true if this storage plugin is in charge of URIs in the given form 
      */
-    @Deprecated
     public default boolean handles(URI location) {
         return Objects.equals(this.getScheme(), location.getScheme());
     }
