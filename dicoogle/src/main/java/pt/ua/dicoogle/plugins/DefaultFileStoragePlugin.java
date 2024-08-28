@@ -75,13 +75,6 @@ public class DefaultFileStoragePlugin extends PluginBase implements StorageInter
         return defaultScheme;
     }
 
-    @Override
-    public boolean handles(URI location) {
-        if (location.getScheme() == null)
-            return true;
-        return location.getScheme().equals(defaultScheme);
-    }
-
     private Iterator<StorageInputStream> createIterator(URI location) {
         if (!handles(location)) {
             logger.error("Cannot Handle: " + location.toString());
@@ -122,7 +115,7 @@ public class DefaultFileStoragePlugin extends PluginBase implements StorageInter
 
     @Override
     public void remove(URI location) {
-        if (!location.getScheme().equals(defaultScheme)) {
+        if (!handles(location)) {
             return;
         }
 
@@ -135,7 +128,7 @@ public class DefaultFileStoragePlugin extends PluginBase implements StorageInter
 
     @Override
     public Stream<URI> list(URI location) throws IOException {
-        if (!location.getScheme().equals(defaultScheme)) {
+        if (!handles(location)) {
             return Stream.empty();
         }
 

@@ -28,6 +28,7 @@ import pt.ua.dicoogle.plugins.webui.WebUIPlugin;
 import pt.ua.dicoogle.plugins.webui.WebUIPluginManager;
 import pt.ua.dicoogle.sdk.*;
 import pt.ua.dicoogle.sdk.datastructs.Report;
+import pt.ua.dicoogle.sdk.datastructs.UnindexReport;
 import pt.ua.dicoogle.sdk.datastructs.SearchResult;
 import pt.ua.dicoogle.sdk.datastructs.dim.DimLevel;
 import pt.ua.dicoogle.sdk.settings.ConfigurationHolder;
@@ -45,6 +46,7 @@ import java.net.URI;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
@@ -89,6 +91,9 @@ public class PluginController {
     private TaskManager taskManagerQueries =
             new TaskManager(Integer.parseInt(System.getProperty("dicoogle.taskManager.nQueryThreads", "4")));
 
+    /** Whether to shut down Dicoogle when a plugin is marked as dead */
+    private static boolean DEAD_PLUGIN_KILL_SWITCH =
+            System.getProperty("dicoogle.deadPluginKillSwitch", "false").equalsIgnoreCase("true");
 
     public PluginController(File pathToPluginDirectory) {
         logger.info("Creating PluginController Instance");
@@ -172,9 +177,14 @@ public class PluginController {
                     logger.warn("Plugin set name cannot be retrieved: {}", ex2.getMessage());
                     name = "UNKNOWN";
                 }
-                logger.error("Unexpected error while loading plugin set {}. Plugin set marked as dead.", name, e);
-                this.deadPluginSets.add(new DeadPlugin(name, e));
-                it.remove();
+                if (DEAD_PLUGIN_KILL_SWITCH) {
+                    logger.error("Unexpected error while loading plugin set {}. Dicoogle will shut down.", name, e);
+                    System.exit(-4);
+                } else {
+                    logger.error("Unexpected error while loading plugin set {}. Plugin set marked as dead.", name, e);
+                    this.deadPluginSets.add(new DeadPlugin(name, e));
+                    it.remove();
+                }
             }
         }
         logger.debug("Settings pushed to plugins");
@@ -446,7 +456,6 @@ public class PluginController {
         for (QueryInterface p : plugins) {
             names.add(p.getName());
         }
-        // logger.info("Query Providers: "+Arrays.toString(names.toArray()) );
         return names;
     }
 
@@ -454,7 +463,6 @@ public class PluginController {
         Collection<QueryInterface> plugins = getQueryPlugins(onlyEnabled);
         for (QueryInterface p : plugins) {
             if (p.getName().equalsIgnoreCase(name)) {
-                // logger.info("Retrived Query Provider: "+name);
                 return p;
             }
         }
@@ -486,7 +494,6 @@ public class PluginController {
         Collection<IndexerInterface> plugins = getIndexingPlugins(onlyEnabled);
         for (IndexerInterface p : plugins) {
             if (p.getName().equalsIgnoreCase(name)) {
-                // logger.info("Retrived Query Provider: "+name);
                 return p;
             }
         }
@@ -499,7 +506,6 @@ public class PluginController {
         Collection<JettyPluginInterface> plugins = getServletPlugins(onlyEnabled);
         for (JettyPluginInterface p : plugins) {
             if (p.getName().equalsIgnoreCase(name)) {
-                // logger.info("Retrived Query Provider: "+name);
                 return p;
             }
         }
@@ -511,7 +517,6 @@ public class PluginController {
         Collection<StorageInterface> plugins = getStoragePlugins(onlyEnabled);
         for (StorageInterface p : plugins) {
             if (p.getName().equalsIgnoreCase(name)) {
-                // logger.info("Retrived Query Provider: "+name);
                 return p;
             }
         }
@@ -527,7 +532,6 @@ public class PluginController {
 
     public JointQueryTask queryAll(JointQueryTask holder, final String query, final DimLevel level,
             final Object... parameters) {
-        // logger.info("Querying all providers");
         List<String> providers = this.getQueryProvidersName(true);
         return query(holder, providers, query, level, parameters);
     }
@@ -544,7 +548,6 @@ public class PluginController {
             final Object... parameters) {
         Task<Iterable<SearchResult>> t = getTaskForQueryDim(querySource, query, level, parameters);
         taskManagerQueries.dispatch(t);
-        // logger.info("Fired Query Task: "+querySource +" QueryString:"+query);
 
         return t;// returns the handler to obtain the computation results
     }
@@ -565,7 +568,6 @@ public class PluginController {
         for (Task<?> t : tasks)
             taskManagerQueries.dispatch(t);
 
-        // logger.info("Fired Query Tasks: "+Arrays.toString(querySources.toArray()) +" QueryString:"+query);
         return holder;// returns the handler to obtain the computation results
     }
 
@@ -585,7 +587,6 @@ public class PluginController {
         for (Task<?> t : tasks)
             taskManagerQueries.dispatch(t);
 
-        // logger.info("Fired Query Tasks: "+Arrays.toString(querySources.toArray()) +" QueryString:"+query);
         return holder;// returns the handler to obtain the computation results
     }
 
@@ -610,7 +611,6 @@ public class PluginController {
 
             }
         });
-        // logger.info("Prepared Query Task: QueryString");
         return queryTask;
     }
 
@@ -646,7 +646,6 @@ public class PluginController {
 
             }
         });
-        // logger.info("Prepared Query Task: QueryString");
         return queryTask;
     }
 
@@ -679,11 +678,8 @@ public class PluginController {
                     continue;
                 final String taskUniqueID = UUID.randomUUID().toString();
                 task.setName(String.format("[%s]index %s", indexer.getName(), path));
-                task.onCompletion(new Runnable() {
-                    @Override
-                    public void run() {
-                        logger.info("Task [{}] complete: {} is indexed", taskUniqueID, pathF);
-                    }
+                task.onCompletion(() -> {
+                    logger.info("Task [{}] complete on {}", taskUniqueID, pathF);
                 });
 
                 taskManager.dispatch(task);
@@ -693,7 +689,7 @@ public class PluginController {
                 logger.warn("Indexer {} failed unexpectedly", indexer.getName(), ex);
             }
         }
-        logger.info("Finished firing all indexing plugins for {}", path);
+        logger.debug("Finished firing all indexing plugins for {}", path);
 
         return rettasks;
     }
@@ -720,14 +716,14 @@ public class PluginController {
 
                     @Override
                     public void run() {
-                        logger.info("Task [{}] complete: {} is indexed", taskUniqueID, pathF);
+                        logger.info("Task [{}] complete on {}", taskUniqueID, pathF);
                     }
                 });
 
                 taskManager.dispatch(task);
 
                 rettasks.add(task);
-                logger.info("Fired indexer {} for URI {}", pluginName, path.toString());
+                logger.debug("Fired indexer {} for URI {}", pluginName, path.toString());
                 RunningIndexTasks.getInstance().addTask(task);
             }
         } catch (RuntimeException ex) {
@@ -761,7 +757,43 @@ public class PluginController {
         }
     }
 
-    /** Issue an unindexation procedure to the given indexers.
+    /** Issue the removal of indexed entries in bulk.
+     * 
+     * @param indexProvider the name of the indexer
+     * @param items a collections of item identifiers to unindex
+     * @param progressCallback an optional function (can be `null`),
+     *        called for every batch of items successfully unindexed
+     *        to indicate early progress
+     *        and inform consumers that
+     *        it is safe to remove or exclude the unindexed item
+     * @return an asynchronous task object returning
+     *         a report containing which files were not unindexed,
+     *         and whether some of them were not found in the database
+     * @throws IOException
+     */
+    public Task<UnindexReport> unindex(String indexProvider, Collection<URI> items, Consumer<Collection<URI>> progressCallback) throws IOException {
+        logger.info("Starting unindexing procedure for {} items", items.size());
+
+        IndexerInterface indexer = null;
+        if (indexProvider != null) {
+            indexer = this.getIndexerByName(indexProvider, true);
+        }
+        if (indexer == null) {
+            indexer = this.getIndexingPlugins(true).iterator().next();
+        }
+        Task<UnindexReport> task = indexer.unindex(items, progressCallback);
+        if (task != null) {
+            final String taskUniqueID = UUID.randomUUID().toString();
+            task.setName(String.format("[%s]unindex", indexer.getName()));
+            task.onCompletion(() -> {
+                logger.info("Unindexing task [{}] complete", taskUniqueID);
+            });
+            taskManager.dispatch(task);
+        }
+        return task;
+    }
+
+    /** Issue an unindexing procedure to the given indexers.
      * 
      * @param path the URI of the directory or file to unindex
      * @param indexers a collection of providers
@@ -782,7 +814,7 @@ public class PluginController {
     }
 
     public void doRemove(URI uri, StorageInterface si) {
-        if (si.handles(uri)) {
+        if (Objects.equals(uri.getScheme(), si.getScheme())) {
             si.remove(uri);
         } else {
             logger.warn("Storage Plugin does not handle URI: {},{}", uri, si);

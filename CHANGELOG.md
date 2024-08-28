@@ -1,6 +1,17 @@
 # CHANGELOG
 This document intends to keep track of the changes performed on the various releases of Dicoogle.
 
+## 3.4
+
+### 3.4.0 (2024-08-27)
+
+* New: Introduced bulk unindexing functionality for IndexerInterface. (#598)
+* Enhancement: Added a kill switch for dead plugin sets in the core. (#686) 
+* Enhancement: Improved logging around indexing tasks. (#691)
+* Enhancement: Added robustness to DIMGeneric against BodyPartThickness. (#694) 
+* Enhancement: Improved StorageInterface by adding a `get` method. (#660)
+* Enhancement: Undeprecated StorageInterface#handles in the SDK. (#695)
+
 ## 3.3
 
 ### 3.3.6 (2024-04-24)
