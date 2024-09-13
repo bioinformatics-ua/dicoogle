@@ -771,8 +771,8 @@ public class PluginController {
      *         and whether some of them were not found in the database
      * @throws IOException
      */
-    public Task<UnindexReport> unindex(String indexProvider, Collection<URI> items, Consumer<Collection<URI>> progressCallback) throws IOException {
-        logger.info("Starting unindexing procedure for {} items", items.size());
+    public Task<UnindexReport> unindex(String indexProvider, Collection<URI> items,
+            Consumer<Collection<URI>> progressCallback) throws IOException {
 
         IndexerInterface indexer = null;
         if (indexProvider != null) {
@@ -781,6 +781,7 @@ public class PluginController {
         if (indexer == null) {
             indexer = this.getIndexingPlugins(true).iterator().next();
         }
+        logger.info("[{}] Starting unindexing procedure for {} items", indexer.getName(), items.size());
         Task<UnindexReport> task = indexer.unindex(items, progressCallback);
         if (task != null) {
             final String taskUniqueID = UUID.randomUUID().toString();
