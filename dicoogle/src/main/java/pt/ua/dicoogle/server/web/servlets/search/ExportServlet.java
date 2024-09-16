@@ -35,6 +35,10 @@ import pt.ua.dicoogle.core.query.ExportToCSVQueryTask;
 import pt.ua.dicoogle.plugins.PluginController;
 import pt.ua.dicoogle.sdk.utils.DictionaryAccess;
 
+/**
+ * @deprecated Use {@link pt.ua.dicoogle.server.web.servlets.ExportCSVToFILEServlet} instead.
+ */
+@Deprecated
 public class ExportServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(ExportServlet.class);
 
