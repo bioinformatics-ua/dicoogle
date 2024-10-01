@@ -1207,6 +1207,10 @@ public class LegacyServerSettings implements ServerSettings {
         }
 
         @Override
+        public void setSupportWSI(boolean supportWSI) {
+        }
+
+        @Override
         public void setDirectoryWatcherEnabled(boolean watch) {
             LegacyServerSettings.this.setDirectoryWatcherEnabled(watch);
         }
@@ -1265,6 +1269,12 @@ public class LegacyServerSettings implements ServerSettings {
         @Override
         public String getWatchDirectory() {
             return LegacyServerSettings.this.getWatchDirectory();
+        }
+
+        @JsonGetter("support-wsi")
+        @Override
+        public boolean isSupportWSI() {
+            return false;
         }
 
         @JsonGetter("dim-provider")
