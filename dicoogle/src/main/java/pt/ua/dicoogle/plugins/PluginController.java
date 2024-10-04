@@ -734,7 +734,7 @@ public class PluginController {
     }
 
     public List<Task<Report>> index(Collection<URI> paths) {
-        logger.info("Starting indexing procedure for {} items.", paths.size());
+        logger.info("Starting indexing procedure for {} items", paths.size());
 
         List<StorageInputStream> objectsToStore = new ArrayList<>();
         ArrayList<Task<Report>> rettasks = new ArrayList<>();

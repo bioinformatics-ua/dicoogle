@@ -208,7 +208,7 @@ public interface DicooglePlatformInterface {
     List<Task<Report>> index(URI path);
 
 
-    /** Easily performs indexation procedures over all active indexers. This operation is asynchronous
+    /** Easily performs indexing procedures over all active indexers. This operation is asynchronous
      * and returns immediately.
      *
      * @param paths the paths to index
@@ -245,6 +245,7 @@ public interface DicooglePlatformInterface {
      * 
      * @param path the path to index
      * @return a list of reports, one for each provider
+     * @deprecated Call {@linkplain #index} and get the result instead
      */
     @Deprecated
     List<Report> indexBlocking(URI path);
