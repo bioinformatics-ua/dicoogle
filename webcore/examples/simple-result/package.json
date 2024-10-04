@@ -29,8 +29,8 @@
     "babel-loader": "^8.2.5",
     "babel-minify-webpack-plugin": "^0.3.1",
     "file-loader": "^3.0.1",
-    "webpack": "^4.46.0",
-    "webpack-cli": "^3.3.12",
+    "webpack": "^5.92.0",
+    "webpack-cli": "^5.1.4",
     "webpack-merge": "^4.2.2"
   }
 }
