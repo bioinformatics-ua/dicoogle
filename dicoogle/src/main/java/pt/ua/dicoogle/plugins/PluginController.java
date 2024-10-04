@@ -758,7 +758,28 @@ public class PluginController {
     }
 
     /** Issue the removal of indexed entries in bulk.
-     * 
+     *
+     * @param items a collections of item identifiers to unindex
+     * @param progressCallback an optional function (can be `null`),
+     *        called for every batch of items successfully unindexed
+     *        to indicate early progress
+     *        and inform consumers that
+     *        it is safe to remove or exclude the unindexed item
+     * @return an asynchronous task object returning
+     *         a report containing which files were not unindexed,
+     *         and whether some of them were not found in the database
+     */
+    public List<Task<UnindexReport>> unindex(Collection<URI> items, Consumer<Collection<URI>> progressCallback) {
+
+        List<Task<UnindexReport>> tasks = new ArrayList<>();
+        for (IndexerInterface indexer : this.getIndexingPlugins(true))
+            tasks.add(createUnindexTask(items, progressCallback, indexer));
+
+        return tasks;
+    }
+
+    /** Issue the removal of indexed entries in bulk.
+     *
      * @param indexProvider the name of the indexer
      * @param items a collections of item identifiers to unindex
      * @param progressCallback an optional function (can be `null`),
@@ -769,10 +790,9 @@ public class PluginController {
      * @return an asynchronous task object returning
      *         a report containing which files were not unindexed,
      *         and whether some of them were not found in the database
-     * @throws IOException
      */
     public Task<UnindexReport> unindex(String indexProvider, Collection<URI> items,
-            Consumer<Collection<URI>> progressCallback) throws IOException {
+            Consumer<Collection<URI>> progressCallback) {
 
         IndexerInterface indexer = null;
         if (indexProvider != null) {
@@ -781,17 +801,7 @@ public class PluginController {
         if (indexer == null) {
             indexer = this.getIndexingPlugins(true).iterator().next();
         }
-        logger.info("[{}] Starting unindexing procedure for {} items", indexer.getName(), items.size());
-        Task<UnindexReport> task = indexer.unindex(items, progressCallback);
-        if (task != null) {
-            final String taskUniqueID = UUID.randomUUID().toString();
-            task.setName(String.format("[%s]unindex", indexer.getName()));
-            task.onCompletion(() -> {
-                logger.info("Unindexing task [{}] complete", taskUniqueID);
-            });
-            taskManager.dispatch(task);
-        }
-        return task;
+        return createUnindexTask(items, progressCallback, indexer);
     }
 
     /** Issue an unindexing procedure to the given indexers.
@@ -843,6 +853,37 @@ public class PluginController {
 
         return reports;
     }
+
+
+    /**
+     * Generate and dispatch an unindex task.
+     * @param items Collection of URIs to unindex
+     * @param progressCallback Callback raised when URIs are declared
+     * @param indexer
+     * @return
+     */
+    private Task<UnindexReport> createUnindexTask(Collection<URI> items, Consumer<Collection<URI>> progressCallback,
+            IndexerInterface indexer) {
+        logger.info("[{}] Starting unindexing procedure for {} items", indexer.getName(), items.size());
+
+        Task<UnindexReport> task = null;
+        try {
+            task = indexer.unindex(items, progressCallback);
+        } catch (IOException e) {
+            logger.error("IO exception ocurred while creating unindex task", e);
+        }
+
+        if (task != null) {
+            final String taskUniqueID = UUID.randomUUID().toString();
+            task.setName(String.format("[%s]unindex", indexer.getName()));
+            task.onCompletion(() -> {
+                logger.info("Unindexing task [{}] complete", taskUniqueID);
+            });
+            taskManager.dispatch(task);
+        }
+        return task;
+    }
+
 
     // Methods for Web UI
 
