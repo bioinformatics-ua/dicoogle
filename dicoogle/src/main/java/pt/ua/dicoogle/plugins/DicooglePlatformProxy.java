@@ -161,6 +161,12 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
     }
 
     @Override
+    public List<Task<Report>> index(Collection<URI> paths) {
+        return pluginController.index(paths);
+    }
+
+
+    @Override
     public void unindex(URI path) {
         pluginController.unindex(path);
     }
@@ -176,6 +182,7 @@ public class DicooglePlatformProxy implements DicooglePlatformInterface {
     }
 
     @Override
+    @Deprecated
     public List<Report> indexBlocking(URI path) {
         return pluginController.indexBlocking(path);
     }

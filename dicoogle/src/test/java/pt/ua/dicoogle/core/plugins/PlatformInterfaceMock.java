@@ -123,6 +123,11 @@ public class PlatformInterfaceMock implements DicooglePlatformInterface {
     }
 
     @Override
+    public List<Task<Report>> index(Collection<URI> paths) {
+        return null;
+    }
+
+    @Override
     public void unindex(URI path) {}
 
     @Override

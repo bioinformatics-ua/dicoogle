@@ -733,13 +733,54 @@ public class PluginController {
         return rettasks;
     }
 
+    public List<Task<Report>> index(Collection<URI> paths) {
+        logger.info("Starting indexing procedure for {} items.", paths.size());
+
+        List<StorageInputStream> objectsToStore = new ArrayList<>();
+        ArrayList<Task<Report>> rettasks = new ArrayList<>();
+        Collection<IndexerInterface> indexers = getIndexingPlugins(true);
+
+        for (URI path : paths) {
+            StorageInterface store = getStorageForSchema(path);
+
+            if (store == null) {
+                logger.error("Could not get storage schema for {}", path);
+                continue;
+            }
+
+            store.at(path).forEach(objectsToStore::add);
+        }
+
+        for (IndexerInterface indexer : indexers) {
+            try {
+                Task<Report> task = indexer.index(objectsToStore);
+                if (task == null)
+                    continue;
+                final String taskUniqueID = UUID.randomUUID().toString();
+                task.setName(String.format("[%s]index %d items", indexer.getName(), objectsToStore.size()));
+                task.onCompletion(() -> {
+                    logger.info("Task [{}] complete on {} items", taskUniqueID, objectsToStore.size());
+                });
+
+                taskManager.dispatch(task);
+                rettasks.add(task);
+                RunningIndexTasks.getInstance().addTask(task);
+            } catch (RuntimeException ex) {
+                logger.warn("Indexer {} failed unexpectedly", indexer.getName(), ex);
+            }
+
+        }
+
+        return rettasks;
+    }
+
     public void unindex(URI path) {
         logger.info("Starting unindexing procedure for {}", path.toString());
         this.doUnindex(path, this.getIndexingPlugins(true));
     }
 
     /** Issue the removal of indexed entries in a path from the given indexers.
-     * 
+     *
      * @param path the URI of the directory or file to unindex
      * @param indexProviders a collection of providers
      */
@@ -759,7 +800,7 @@ public class PluginController {
 
     /** Issue the removal of indexed entries in bulk.
      *
-     * @param items a collections of item identifiers to unindex
+     * @param paths a collections of item identifiers to unindex
      * @param progressCallback an optional function (can be `null`),
      *        called for every batch of items successfully unindexed
      *        to indicate early progress
@@ -769,11 +810,10 @@ public class PluginController {
      *         a report containing which files were not unindexed,
      *         and whether some of them were not found in the database
      */
-    public List<Task<UnindexReport>> unindex(Collection<URI> items, Consumer<Collection<URI>> progressCallback) {
-
+    public List<Task<UnindexReport>> unindex(Collection<URI> paths, Consumer<Collection<URI>> progressCallback) {
         List<Task<UnindexReport>> tasks = new ArrayList<>();
         for (IndexerInterface indexer : this.getIndexingPlugins(true))
-            tasks.add(createUnindexTask(items, progressCallback, indexer));
+            tasks.add(createUnindexTask(paths, progressCallback, indexer));
 
         return tasks;
     }
@@ -781,7 +821,7 @@ public class PluginController {
     /** Issue the removal of indexed entries in bulk.
      *
      * @param indexProvider the name of the indexer
-     * @param items a collections of item identifiers to unindex
+     * @param paths a collections of item identifiers to unindex
      * @param progressCallback an optional function (can be `null`),
      *        called for every batch of items successfully unindexed
      *        to indicate early progress
@@ -791,7 +831,7 @@ public class PluginController {
      *         a report containing which files were not unindexed,
      *         and whether some of them were not found in the database
      */
-    public Task<UnindexReport> unindex(String indexProvider, Collection<URI> items,
+    public Task<UnindexReport> unindex(String indexProvider, Collection<URI> paths,
             Consumer<Collection<URI>> progressCallback) {
 
         IndexerInterface indexer = null;
@@ -801,11 +841,11 @@ public class PluginController {
         if (indexer == null) {
             indexer = this.getIndexingPlugins(true).iterator().next();
         }
-        return createUnindexTask(items, progressCallback, indexer);
+        return createUnindexTask(paths, progressCallback, indexer);
     }
 
     /** Issue an unindexing procedure to the given indexers.
-     * 
+     *
      * @param path the URI of the directory or file to unindex
      * @param indexers a collection of providers
      */
@@ -888,7 +928,7 @@ public class PluginController {
     // Methods for Web UI
 
     /** Retrieve all web UI plugin descriptors for the given slot id.
-     * 
+     *
      * @param ids the slot id's for the plugin ("query", "result", "menu", ...), empty or null for any slot
      * @return a collection of web UI plugins.
      */
@@ -911,7 +951,7 @@ public class PluginController {
     }
 
     /** Retrieve the web UI plugin descriptor of the plugin with the given name.
-     * 
+     *
      * @param name the unique name of the plugin
      * @return a web UI plugin descriptor object, or null if no such plugin exists or is inactive
      */
@@ -922,7 +962,7 @@ public class PluginController {
     }
 
     /** Retrieve the web UI plugin descriptor package.json.
-     * 
+     *
      * @param name the unique name of the plugin
      * @return the full contents of the package.json, null if the plugin is not available
      */
@@ -938,7 +978,7 @@ public class PluginController {
     }
 
     /** Retrieve the web UI plugin module code.
-     * 
+     *
      * @param name the unique name of the plugin
      * @return the full contents of the module file, null if the plugin is not available
      */
