@@ -11,6 +11,8 @@ import Autosuggest from "react-autosuggest";
 import Select from "react-select";
 import PluginStore from "../../stores/pluginStore";
 
+const DEFAULT_MAX_TASKS_VISIBLE = 200;
+
 var refreshIntervalId;
 const IndexStatusView = createReactClass({
   getInitialState: function() {
@@ -78,13 +80,27 @@ const IndexStatusView = createReactClass({
     }
 
     let items;
+    let saturated = false;
     if (this.state.data.tasks.length === 0) {
       items = <div>No tasks</div>;
     } else {
       items = this.state.data.tasks.sort((item1, item2) => {
         // Sorts tasks from latest to first
-        return new Date(item2.taskTimeCreated).getTime() - new Date(item1.taskTimeCreated).getTime();
-      }).map(item => (
+        let c = new Date(item2.taskTimeCreated).getTime() - new Date(item1.taskTimeCreated).getTime();
+        if (c !== 0) {
+          return c;
+        }
+        // use task uid as second criterion
+        return item2.taskUid.localeCompare(item1.taskUid);
+      })
+
+      // restrain number of tasks visible to prevent memory saturation
+      if (items.length > DEFAULT_MAX_TASKS_VISIBLE) {
+        items = items.slice(0, DEFAULT_MAX_TASKS_VISIBLE);
+        saturated = true;
+      }
+
+      items = items.map(item => (
         <TaskStatus
           key={item.taskUid}
           index={item.taskUid}
@@ -97,6 +113,13 @@ const IndexStatusView = createReactClass({
           )}
         />
       ));
+    }
+
+    let taskCountNote;
+    if (saturated) {
+      taskCountNote = <div> (showing {DEFAULT_MAX_TASKS_VISIBLE} of {this.state.data.tasks.length} tasks)</div>
+    } else {
+      taskCountNote = <div> (showing {this.state.data.tasks.length} tasks)</div>
     }
 
     let providersList = this.state.providers.map(item => ({
@@ -165,6 +188,7 @@ const IndexStatusView = createReactClass({
                 ? "No tasks currently running"
                 : "Indexing Status (" + this.state.data.count + " running)"}
             </h3>
+            {taskCountNote}
           </div>
           <div className="panel-body">{items}</div>
         </div>
