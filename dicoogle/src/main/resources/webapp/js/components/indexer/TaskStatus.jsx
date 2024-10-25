@@ -56,7 +56,7 @@ class TaskStatus extends React.Component {
     }
 
     return (
-      <div key={item.taskUid} className="well well-sm">
+      <div key={item.taskUid} className="well well-sm task-status">
         <div className="row">
           <div className="col-sm-10">
             <div className="progress indexstatusprogress">
@@ -77,34 +77,34 @@ class TaskStatus extends React.Component {
             </button>
           </div>
         </div>
-        <div>
-          <p>
+        <ul>
+          <li>
             <b>Uid: </b> {item.taskUid}
-          </p>
-          <p>
+          </li>
+          <li>
             <b>Name: </b> {item.taskName}
-          </p>
-          <p>
+          </li>
+          <li>
             <b>Time created: </b> {dateTimeToHumanReadable(timeCreated)}
-          </p>
-          <div style={{ visibility: item.complete ? "" : "hidden" }}>
+          </li>
+          <li className="task-status-complete" style={{ visibility: item.complete ? "" : "hidden" }}>
             {typeof item.elapsedTime === "number" && (
-              <p>
+              <span>
                 <b>Elapsed Time: </b> {toHumanReadable(item.elapsedTime)}
-              </p>
+              </span>
             )}
             {typeof item.nIndexed === "number" && (
-              <p>
-                <b>Indexed: </b> {item.nIndexed}{" "}
-              </p>
+              <span>
+                <b>Indexed: </b> {item.nIndexed}
+              </span>
             )}
             {typeof item.nErrors === "number" && (
-              <p>
-                <b>Errors: </b> {item.nErrors}{" "}
-              </p>
+              <span>
+                <b>Errors: </b> {item.nErrors}
+              </span>
             )}
-          </div>
-        </div>
+          </li>
+        </ul>
       </div>
     );
   }
