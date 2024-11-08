@@ -58,8 +58,8 @@
     "react-bootstrap-table": "^4.3.1",
     "react-dom": "^15",
     "react-imageloader": "^3.0.0",
-    "react-router-bootstrap": "^0.25.0",
-    "react-router-dom": "^4.3.1",
+    "react-router": "^3.2.5",
+    "react-router-bootstrap": "^0.20.1",
     "react-select": "^v1.2.0",
     "react-transition-group": "^2.9.0",
     "reflux": "^5.0.4"

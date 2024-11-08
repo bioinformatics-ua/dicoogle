@@ -10,7 +10,7 @@ import { Endpoints } from "./constants/endpoints";
 import dicoogleClient from "dicoogle-client";
 import Webcore from "dicoogle-webcore";
 
-import { HashRouter as Router, Route, Switch } from "react-router-dom";
+import { Router, Route, IndexRoute, hashHistory } from "react-router";
 
 import { Search } from "./components/search/searchView";
 import { SearchResultView } from "./components/search/searchResultView";
@@ -235,22 +235,21 @@ function NotFoundView() {
 Webcore.init(Endpoints.base);
 
 ReactDOM.render(
-  <Router>
-    <App>
-      <Switch>
-        <Route path="/search" component={Search} />
-        <Route path="/management" component={ManagementView} />
-        <Route path="/results" component={SearchResultView} />
-        <Route path="/indexer" component={IndexStatusView} />
-        <Route path="/about" component={AboutView} />
-        <Route path="/login" component={LoginView} />
-        <Route path="/ext/:plugin" component={PluginView} />
-        <Route path="*" component={NotFoundView} />
-      </Switch>
+  <Router history={hashHistory}>
+    <Route path="/" component={App}>
+      <IndexRoute component={LoadingView} />
+      <Route path="/search" component={Search} />
+      <Route path="/management" component={ManagementView} />
+      <Route path="/results" component={SearchResultView} />
+      <Route path="/indexer" component={IndexStatusView} />
+      <Route path="/about" component={AboutView} />
+      <Route path="/login" component={LoginView} />
       <Route path="/loading" component={LoadingView} />
       <Route path="/image/:uid" component={DirectImageView} />
       <Route path="/dump/:uid" component={DirectDumpView} />
-    </App>
+      <Route path="/ext/:plugin" component={PluginView} />
+      <Route path="*" component={NotFoundView} />
+    </Route>
   </Router>,
   document.getElementById("react-container")
 );
