@@ -96,7 +96,7 @@ class App extends React.Component {
     }
 
     if (location.hash === "" || location.hash === "/") {
-      this.context.router.history.push("/login");
+      this.props.router.push("/login");
     }
   }
 
@@ -107,7 +107,7 @@ class App extends React.Component {
       this.setState(data);
     }
 
-    let history = this.context.router.history;
+    let history = this.props.router;
     if (!data.isLoggedIn) {
       if (!process.env.GUEST_USERNAME) {
         history.replace("/login");

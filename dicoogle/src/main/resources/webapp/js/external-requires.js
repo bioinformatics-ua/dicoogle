@@ -5,7 +5,7 @@
  */
 const EXTERNAL_MODULES = {
   react: require("react"),
-  "react-router-dom": require("react-router-dom"),
+  "react-router": require("react-router"),
   reflux: require("reflux"),
   "dicoogle-webcore": require("dicoogle-webcore"),
   "dicoogle-client": require("dicoogle-client"),

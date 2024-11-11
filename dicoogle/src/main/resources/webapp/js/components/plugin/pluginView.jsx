@@ -56,11 +56,12 @@ export default class PluginView extends React.Component {
   }
 
   getPluginName() {
-    return this.props.plugin || (this.props.match?.params?.plugin);
+    return this.props.plugin || (this.props.params?.plugin);
   }
 
   render() {
     const plugin = this.getPluginName();
+    console.debug("Trying to render plugin", plugin);
     return (
       <div className={this.props.className} style={this.props.style}>
         {this.state.elements[plugin] ? (
