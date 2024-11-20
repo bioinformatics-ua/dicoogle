@@ -8,7 +8,7 @@
     <name>dicoogle-all</name>
 
     <properties>
-        <jetty.version>9.4.52.v20230823</jetty.version>
+        <jetty.version>9.4.56.v20240826</jetty.version>
         <restlet.version>2.1.2</restlet.version>
         <dcm4che.version>2.0.29</dcm4che.version>
         <slf4j.version>1.7.36</slf4j.version>
