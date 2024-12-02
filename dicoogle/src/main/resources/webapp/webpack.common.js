@@ -3,7 +3,6 @@
 const path = require("path");
 const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -32,10 +31,7 @@ module.exports = {
     new webpack.ProvidePlugin({
       // required for Bootstrap to work
       jQuery: "jquery"
-    }),
-    new ESLintPlugin({
-      extensions: ['js', 'jsx'],
-    }),
+    })
   ],
   module: {
     rules: [
