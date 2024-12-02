@@ -90,7 +90,7 @@
     "webpack-merge": "^5.8.0"
   },
   "scripts": {
-    "check": "eslint js/**",
+    "check": "eslint -c eslint.config.js js/**",
     "build": "webpack --config webpack.prod.js",
     "start": "webpack-dev-server --open --config webpack.dev.js",
     "format": "prettier --write js/**/*.{js,jsx} *.js sass/**/*.scss",
