@@ -160,32 +160,45 @@ public class ServicesServlet extends HttpServlet {
 
         // update running
         if (updateRunning) {
-            switch (mType) {
-                case STORAGE:
-                    if (running) {
-                        controlServices.startStorage();
-                        obj.element("running", true);
-                    } else {
-                        controlServices.stopStorage();
-                        obj.element("running", false);
-                    }
-                    break;
+            try {
+                switch (mType) {
+                    case STORAGE:
+                        if (running) {
+                            boolean out = controlServices.startStorage();
+                            if (!out) {
+                                resp.addHeader("Warning", "Service was already running");
+                                obj.element("warning", "Service was already running");
+                            }
+                            obj.element("running", true);
+                        } else {
+                            controlServices.stopStorage();
+                            obj.element("running", false);
+                        }
+                        break;
 
-                case QUERY:
-                    if (running) {
-                        controlServices.startQueryRetrieve();
-                        obj.element("running", true);
+                    case QUERY:
+                        if (running) {
+                            controlServices.startQueryRetrieve();
+                            obj.element("running", true);
 
-                    } else {
-                        controlServices.stopQueryRetrieve();
-                        obj.element("running", false);
-                    }
-                    break;
+                        } else {
+                            controlServices.stopQueryRetrieve();
+                            obj.element("running", false);
+                        }
+                        break;
 
-                default:
-                    break;
+                    default:
+                        break;
+                }
+            } catch (Exception ex) {
+                obj.element("success", false);
+                obj.element("error", ex.getMessage());
+                reply(resp, 500, obj);
+                return;
             }
         }
+
+        // finalize
         ServerSettingsManager.saveSettings();
         obj.element("success", true);
         reply(resp, 200, obj);
