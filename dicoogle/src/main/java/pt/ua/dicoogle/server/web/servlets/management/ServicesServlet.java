@@ -34,25 +34,25 @@ import pt.ua.dicoogle.server.ControlServices;
 /** Servlet for reading and writing DICOM service configurations.
  * Modifying the "running" setting will trigger a start or a stop on the actual service.
  *
- * At the moment, applying settings to PLUGIN-type services is not implemented, resulting in a no-op.
- * 
  * @author Frederico Silva <fredericosilva@ua.pt>
  */
 public class ServicesServlet extends HttpServlet {
 
-    public final static int STORAGE = 0;
-    public final static int PLUGIN = 1;
-    public final static int QUERY = 2;
+    /** The type of DICOM service */
+    public enum ServiceType {
+        /** DICOM storage */
+        STORAGE,
+        /** DICOM query/retrieve */
+        QUERY
+    }
 
-    private final int mType;
+    private final ServiceType mType;
 
-    public ServicesServlet(int type) {
-        if (type < 0 || type > 2) {
-            throw new IllegalArgumentException("Bad service type, must be 0, 1 or 2");
-        }
+    public ServicesServlet(ServiceType type) {
         mType = type;
     }
 
+    /** Get the current status of a DICOM service */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -77,7 +77,7 @@ public class ServicesServlet extends HttpServlet {
                 autostart = base.isAutostart();
                 break;
             default:
-                break;
+                throw new IllegalStateException("Unexpected service type " + mType);
         }
 
         JSONObject obj = new JSONObject();
@@ -89,6 +89,7 @@ public class ServicesServlet extends HttpServlet {
         resp.getWriter().print(obj.toString());
     }
 
+    /** Start/stop a DICOM service or set whether the DICOM service should auto-start */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
