@@ -498,17 +498,27 @@ public class DicoogleDcmSend extends StorageCommitmentService {
             } catch (NoPresentationContextException e) {
                 LOGGER.warn("Cannot send {}: {}", info.item.getURI(), e.getMessage());
             } catch (IOException e) {
-                LOGGER.error("Failed to send {}", info.item.getURI(), e);
+                LOGGER.error("Fatal I/O error while sending {}", info.item.getURI(), e);
+                // since this exception can be thrown mid-transfer,
+                // the sending process cannot be recovered.
+                // Abort the association and return.
+                try {
+                    assoc.abort();
+                } catch (Exception ex) {
+                    // ignore
+                    LOGGER.warn("Association could not be aborted: {}", ex.getMessage());
+                }
+                return;
             } catch (InterruptedException e) {
                 // should not happen
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
         try {
             assoc.waitForDimseRSP();
         } catch (InterruptedException e) {
             // should not happen
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
