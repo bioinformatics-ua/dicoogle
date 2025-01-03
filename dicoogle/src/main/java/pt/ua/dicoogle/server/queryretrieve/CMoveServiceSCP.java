@@ -235,12 +235,14 @@ public class CMoveServiceSCP extends CMoveService {
                 } else {
                     rsp.putInt(Tag.Status, VR.US, 0xC000 | Status.ProcessingFailure);
                     rsp.putInt(Tag.ErrorID, VR.US, ERROR_ID_FILE_TRANSMISSION);
+                    rsp.putString(Tag.ErrorComment, VR.LO, "DICOM file transmission failed");
                 }
 
             } catch (Exception ex) {
                 logger.error("Failed to send files to DICOM node {}", destination, ex);
                 rsp.putInt(Tag.Status, VR.US, 0xC000 | Status.ProcessingFailure);
                 rsp.putInt(Tag.ErrorID, VR.US, ERROR_ID_GENERAL_FAILURE);
+                rsp.putString(Tag.ErrorComment, VR.LO, ex.getMessage());
             }
         }
 
