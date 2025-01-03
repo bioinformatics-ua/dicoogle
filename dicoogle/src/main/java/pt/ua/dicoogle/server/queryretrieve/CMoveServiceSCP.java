@@ -117,7 +117,7 @@ public class CMoveServiceSCP extends CMoveService {
 
         /** Verify if it have the field destination */
         if (destination == null) {
-            throw new DicomServiceException(cmd, Status.UnrecognizedOperation, "Missing Move Destination");
+            throw new DicomServiceException(cmd, 0xC000 | Status.UnrecognizedOperation, "Missing Move Destination");
         }
 
         String SOPUID = new String(data.get(Integer.parseInt("0020000D", 16)).getBytes());
@@ -233,13 +233,13 @@ public class CMoveServiceSCP extends CMoveService {
                     int code = totalErrors > 0 ? 0xB000 : Status.Success;
                     rsp.putInt(Tag.Status, VR.US, code);
                 } else {
-                    rsp.putInt(Tag.Status, VR.US, Status.ProcessingFailure);
+                    rsp.putInt(Tag.Status, VR.US, 0xC000 | Status.ProcessingFailure);
                     rsp.putInt(Tag.ErrorID, VR.US, ERROR_ID_FILE_TRANSMISSION);
                 }
 
             } catch (Exception ex) {
                 logger.error("Failed to send files to DICOM node {}", destination, ex);
-                rsp.putInt(Tag.Status, VR.US, Status.ProcessingFailure);
+                rsp.putInt(Tag.Status, VR.US, 0xC000 | Status.ProcessingFailure);
                 rsp.putInt(Tag.ErrorID, VR.US, ERROR_ID_GENERAL_FAILURE);
             }
         }
