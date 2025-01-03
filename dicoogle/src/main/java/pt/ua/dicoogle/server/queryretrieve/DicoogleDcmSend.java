@@ -129,7 +129,16 @@ public class DicoogleDcmSend extends StorageCommitmentService {
 
     private int transcoderBufferSize = 1024;
 
+    /** Number of files sent successfully */
     private int filesSent = 0;
+
+    /** Number of files skipped upon addition due to storage problems of the DICOM file
+     */
+    private int filesSkipped = 0;
+
+    /** Number of files which failed to be sent due to presentation context negotation issues
+     */
+    private int filesFailed = 0;
 
     private long totalSize = 0L;
 
@@ -344,6 +353,14 @@ public class DicoogleDcmSend extends StorageCommitmentService {
         return filesSent;
     }
 
+    public final int getNumberOfFilesSkipped() {
+        return filesSkipped;
+    }
+
+    public final int getNumberOfFilesFailed() {
+        return filesFailed;
+    }
+
     public final long getTotalSizeSent() {
         return totalSize;
     }
@@ -360,6 +377,7 @@ public class DicoogleDcmSend extends StorageCommitmentService {
             inStream = info.getInputStream();
         } catch (IOException e) {
             LOGGER.error("Failed to fetch file {} - skipped.", item.getURI(), e);
+            this.filesSkipped += 1;
             return;
         }
         DicomObject dcmObj = new BasicDicomObject();
@@ -372,6 +390,7 @@ public class DicoogleDcmSend extends StorageCommitmentService {
             info.fmiEndPos = in.getEndOfFileMetaInfoPosition();
         } catch (IOException e) {
             LOGGER.warn("Failed to parse file {} - skipped.", item.getURI(), e);
+            this.filesSkipped += 1;
             return;
         } finally {
             CloseUtils.safeClose(in);
@@ -380,11 +399,13 @@ public class DicoogleDcmSend extends StorageCommitmentService {
         info.cuid = dcmObj.getString(Tag.SOPClassUID);
         if (info.cuid == null) {
             LOGGER.warn("Missing SOP Class UID in {} - skipped.", item.getURI());
+            this.filesSkipped += 1;
             return;
         }
         info.iuid = dcmObj.getString(Tag.SOPInstanceUID);
         if (info.iuid == null) {
             LOGGER.warn("Missing SOP Instance UID in {} - skipped.", item.getURI());
+            this.filesSkipped += 1;
             return;
         }
 
@@ -454,7 +475,7 @@ public class DicoogleDcmSend extends StorageCommitmentService {
         assoc = ae.connect(remoteStgcmtAE, executor);
     }
 
-    public void send() {
+    public void send() throws IOException {
         for (int i = 0, n = files.size(); i < n; ++i) {
             FileInfo info = files.get(i);
             TransferCapability tc = assoc.getTransferCapabilityAsSCU(info.cuid);
@@ -491,24 +512,21 @@ public class DicoogleDcmSend extends StorageCommitmentService {
                     assoc.cstore(info.cuid, info.iuid, priority, new DataWriter(info), tsuid, rspHandler);
                 }
 
-
-
-                // assoc.cstore(info.cuid, info.iuid, priority, assoc.getCallingAET(), priority, new DataWriter(info), tsuid, rspHandler);
-
             } catch (NoPresentationContextException e) {
                 LOGGER.warn("Cannot send {}: {}", info.item.getURI(), e.getMessage());
+                filesFailed += 1;
             } catch (IOException e) {
                 LOGGER.error("Fatal I/O error while sending {}", info.item.getURI(), e);
                 // since this exception can be thrown mid-transfer,
                 // the sending process cannot be recovered.
-                // Abort the association and return.
+                // Try to abort the association and propagate exception
                 try {
                     assoc.abort();
                 } catch (Exception ex) {
                     // ignore
                     LOGGER.warn("Association could not be aborted: {}", ex.getMessage());
                 }
-                return;
+                throw e;
             } catch (InterruptedException e) {
                 // should not happen
                 throw new RuntimeException(e);
