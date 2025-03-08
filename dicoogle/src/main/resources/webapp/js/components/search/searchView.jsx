@@ -14,7 +14,6 @@ import Select from "react-select";
 
 const Search = createReactClass({
   propTypes: {
-    params: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired
   },
 
