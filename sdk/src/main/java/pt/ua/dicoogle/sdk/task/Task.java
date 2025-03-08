@@ -24,6 +24,8 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
+import org.slf4j.Logger;
+
 /** An entity for describing an asynchronous task in Dicoogle.
  *
  * @param <Type> the return type of the FutureTask
@@ -32,9 +34,11 @@ import java.util.concurrent.FutureTask;
  */
 public class Task<Type> extends FutureTask<Type> {
 
+    private static final Logger LOG = org.slf4j.LoggerFactory.getLogger(Task.class);
+
     private final String uid;
     private String taskName;
-    private Callable callable;
+    private Callable<Type> callable;
     private ArrayList<Runnable> toRunWhenComplete;
     private LocalDateTime timeCreated;
 
@@ -53,22 +57,31 @@ public class Task<Type> extends FutureTask<Type> {
         this.callable = c;
         this.uid = uid;
         taskName = name;
-        toRunWhenComplete = new ArrayList<>();
+        toRunWhenComplete = new ArrayList<>(2);
         this.timeCreated = LocalDateTime.now();
     }
 
+    /** When the task is done, run the runnables registered
+     * then clean up references to reduce footprint.
+     */
     @Override
-    protected void set(Type ret) {
-        super.set(ret);
-        for (Runnable r : toRunWhenComplete) {
-            r.run();
+    protected void done() {
+        for (Runnable r : this.toRunWhenComplete) {
+            try {
+                r.run();
+            } catch (Exception ex) {
+                LOG.warn("Error running task completion hook", ex);
+            }
         }
+        this.toRunWhenComplete.clear();
+        this.callable = null;
     }
 
     public String getUid() {
         return uid;
     }
 
+    /** Add a completion hook to this task. */
     public void onCompletion(Runnable r) {
         toRunWhenComplete.add(r);
     }
@@ -92,7 +105,7 @@ public class Task<Type> extends FutureTask<Type> {
      */
     public float getProgress() {
         if (callable instanceof ProgressCallable) {
-            return ((ProgressCallable) this.callable).getProgress();
+            return ((ProgressCallable<?>) this.callable).getProgress();
         }
         return -1;
     }
