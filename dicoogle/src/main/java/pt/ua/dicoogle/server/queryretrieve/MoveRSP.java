@@ -31,10 +31,9 @@ import org.dcm4che2.net.Association;
 import org.dcm4che2.net.DimseRSP;
 import org.dcm4che2.net.Status;
 
-
 import pt.ua.dicoogle.server.SearchDicomResult;
 
-/**
+/** Custom C-MOVE response for {@linkplain CMoveServiceSCP}
  *
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
@@ -52,30 +51,16 @@ public class MoveRSP implements DimseRSP {
         this.keys = keys;
         this.current = rsp;
 
-
-        // DebugManager.getInstance().debug("--> Creating MoveRSP");
-
-
-
-        /** Debug - show keys, rsp, index */
-        if (keys != null) {
-            // DebugManager.getInstance().debug("keys object: ");
-            // DebugManager.getInstance().debug(keys.toString());
+        if (!this.rsp.contains(Tag.Status)) {
+            this.rsp.putInt(Tag.Status, VR.US, Status.Success);
         }
-        if (rsp != null) {
-            // DebugManager.getInstance().debug("Rsp object");
-            // DebugManager.getInstance().debug(rsp.toString());
-        }
-
-        this.rsp.putInt(Tag.Status, VR.US, Status.Success);
-
     }
 
     @Override
     public boolean next() throws IOException, InterruptedException {
-
-        /** Sucess */
-        this.rsp.putInt(Tag.Status, VR.US, Status.Success);
+        if (this.current == null) {
+            return false;
+        }
         /** Clean pointers */
         this.current = null;
         return true;
