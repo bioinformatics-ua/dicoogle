@@ -3,6 +3,17 @@ This document intends to keep track of the changes performed on the various rele
 
 ## 3.4
 
+### 3.4.1 (2024-03-08)
+
+* Fix: Address error when providers are null. (#704)
+* Fix: Ensure ControlServices comply with autostart server settings. (#705)
+* Fix: Remove dangling `/management/plugins/` endpoint. (#709)
+* Enhancement: Optimize task memory usage after completion in SDK. (#712)
+* Enhancement: Improve task management page. (#702)
+* Enhancement: Extend Move SCP response and abort DcmSend associations on C-STORE I/O errors. (#710)
+* Enhancement: Tweak the way unindex task starts are logged. (#700)
+* Chore: Webapp maintenance (2024). (#690)
+
 ### 3.4.0 (2024-08-27)
 
 * New: Introduced bulk unindexing functionality for IndexerInterface. (#598)

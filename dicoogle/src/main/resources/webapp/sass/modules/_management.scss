@@ -40,6 +40,20 @@
   background: $main_color;
 }
 
+.task-status {
+  ul,li {
+    list-style-type: none;
+    padding-left: 0;
+    margin-bottom: 0.4em;
+  }
+}
+
+.task-status-complete {
+  display: flex;
+  flex-direction: row;
+  gap: 3em;
+}
+
 .list-group-item-management {
   border-color: $hover_color;
   border-right-color: white;

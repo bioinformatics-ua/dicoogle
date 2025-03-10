@@ -232,11 +232,16 @@ public class ImageServlet extends HttpServlet {
             if (providers == null) {
                 // use only DIM sources
                 providers = ServerSettingsManager.getSettings().getArchiveSettings().getDIMProviders();
-                // exclude unknown query providers
-                providers.removeIf(pName -> pc.getQueryProviderByName(pName, true) == null);
-                if (providers.isEmpty()) {
+                if (providers == null) {
                     // fallback to all query providers
                     providers = pc.getQueryProvidersName(true);
+                } else {
+                    // exclude unknown query providers
+                    providers.removeIf(pName -> pc.getQueryProviderByName(pName, true) == null);
+                    if (providers.isEmpty()) {
+                        // fallback to all query providers
+                        providers = pc.getQueryProvidersName(true);
+                    }
                 }
             }
             Iterator<SearchResult> it = pc

@@ -40,14 +40,13 @@ public class ControlServices {
     private static ControlServices instance = null;
     // Services vars
     private DicomStorage storage = null;
-    private boolean webServicesRunning = false;
     private boolean webServerRunning = false;
     private QueryRetrieve retrieve = null;
 
     private DicoogleWeb webServices;
 
     private ControlServices() {
-        startInicialServices();
+        autoStartServices();
     }
 
     public static synchronized ControlServices getInstance() {
@@ -60,30 +59,26 @@ public class ControlServices {
     }
 
 
-    /* Strats the inicial services based on ServerSettingsManager */
-    private void startInicialServices() {
+    /* Starts the initial services based on server settings. */
+    private void autoStartServices() {
         ServerSettings settings = ServerSettingsManager.getSettings();
 
-        try {
-            /*  if (settings.isP2P())
-            {
-                startP2P();
-            }*/
+        ServerSettings.DicomServices dicomSettings = settings.getDicomServicesSettings();
 
-            if (!this.storageIsRunning()) {
+        if (!this.storageIsRunning() && dicomSettings.getStorageSettings().isAutostart()) {
+            try {
                 startStorage();
+            } catch (IOException ex) {
+                logger.error("Failed to start the DICOM storage service", ex);
             }
+        }
 
-            if (!this.queryRetrieveIsRunning()) {
-                startQueryRetrieve();
-            }
+        if (!this.queryRetrieveIsRunning() && dicomSettings.getQueryRetrieveSettings().isAutostart()) {
+            startQueryRetrieve();
+        }
 
-            if (!this.webServerIsRunning()) {
-                startWebServer();
-            }
-
-        } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
+        if (!this.webServerIsRunning() && settings.getWebServerSettings().isAutostart()) {
+            startWebServer();
         }
     }
 
@@ -104,38 +99,33 @@ public class ControlServices {
     }
 
     /**
-     *
-     * @return   0 - if everything is fine and the service was started
-     *          -1 - if the server's storage path is not defined
-     *          -2 - service is already running
-     * 
-     * @throws IOException
+     * @return `true` if everything is fine and the service was started,
+     *         `false` if the service was already running
+     * @throws IOException if the storage service could not start
      */
-    public int startStorage() throws IOException {
+    public boolean startStorage() throws IOException {
         if (storage == null) {
             ServerSettings settings = ServerSettingsManager.getSettings();
-
 
             SOPList list = SOPList.getInstance();
             list.readFromSettings(settings);
 
-            int i;
-
-            List l = list.getKeys();
+            List<String> l = list.getKeys();
             String[] keys = new String[l.size()];
 
+            int i;
             for (i = 0; i < l.size(); i++) {
-                keys[i] = (String) l.get(i);
+                keys[i] = l.get(i);
             }
             storage = new DicomStorage(keys, list);
             storage.start();
 
             logger.info("Starting DICOM Storage SCP");
 
-            return 0;
+            return true;
         }
 
-        return -2;
+        return false;
     }
 
     public void stopStorage() {
@@ -175,7 +165,6 @@ public class ControlServices {
         return webServerRunning;
     }
 
-    // TODO: Review those below!
     public void startWebServer() {
         logger.info("Starting WebServer");
 
@@ -183,7 +172,6 @@ public class ControlServices {
             if (webServices == null) {
                 webServices = new DicoogleWeb(ServerSettingsManager.getSettings().getWebServerSettings().getPort());
                 webServerRunning = true;
-                webServicesRunning = true;
                 logger.info("Starting Dicoogle Web");
             }
         } catch (Exception ex) {
@@ -197,7 +185,6 @@ public class ControlServices {
 
         if (webServices != null) {
             try {
-                webServicesRunning = false;
                 webServerRunning = false;
 
                 webServices.stop();
