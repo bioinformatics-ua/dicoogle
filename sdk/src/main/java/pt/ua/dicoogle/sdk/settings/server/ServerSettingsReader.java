@@ -39,12 +39,22 @@ import java.util.List;
  */
 public interface ServerSettingsReader {
 
+    /** Base interface for reading service settings */
     interface ServiceBase {
+        /** Whether the service starts automatically when booting Dicoogle */
         @JacksonXmlProperty(isAttribute = true, localName = "autostart")
         boolean isAutostart();
 
+        /** The TCP port to bind the service to */
         @JacksonXmlProperty(isAttribute = true, localName = "port")
         int getPort();
+
+        /** Optional: The hostname or IP address to bind the service to.
+         *
+         * If not specified, the service will bind to all available interfaces.
+         */
+        @JacksonXmlProperty(isAttribute = true, localName = "hostname")
+        String getHostname();
     }
 
     interface WebServer extends ServiceBase {
