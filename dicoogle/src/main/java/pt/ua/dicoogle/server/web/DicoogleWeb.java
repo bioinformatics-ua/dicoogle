@@ -54,6 +54,8 @@ import pt.ua.dicoogle.server.web.servlets.management.TransferOptionsServlet;
 
 
 import java.io.File;
+import java.net.InetSocketAddress;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
@@ -76,6 +78,7 @@ import org.eclipse.jetty.server.handler.HandlerWrapper;
 
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlets.GzipFilter;
+import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,7 +115,6 @@ public class DicoogleWeb {
     public static final String CONTEXTPATH = "/";
     private LocalImageCache cache = null;
     private Server server = null;
-    private final int port;
 
     private final ContextHandlerCollection contextHandlers;
     private ServletContextHandler pluginHandler = null;
@@ -122,16 +124,13 @@ public class DicoogleWeb {
 
     /**
      * Initializes and starts the Dicoogle Web service.
-     * @param port the server port
+     * @param socketAddr the server binding socket address
      * @throws java.lang.Exception
      */
-    public DicoogleWeb(int port) throws Exception {
-        logger.info("Starting Web Services in DicoogleWeb. Port: {}", port);
+    public DicoogleWeb(InetSocketAddress socketAddr) throws Exception {
         System.setProperty("org.apache.jasper.compiler.disablejsr199", "true");
         // System.setProperty("org.mortbay.jetty.webapp.parentLoaderPriority", "true");
         // System.setProperty("production.mode", "true");
-
-        this.port = port;
 
         // "build" the input location, based on the www directory/.war chosen
         final URL warUrl = Thread.currentThread().getContextClassLoader().getResource(WEBAPPDIR);
@@ -224,11 +223,41 @@ public class DicoogleWeb {
                 createServletHandler(new ServerStorageServlet(), "/management/settings/storage/dicom"), webpages};
 
         // setup the server
-        server = new Server(port);
+        server = new Server(socketAddr);
         // register the handlers on the server
         this.contextHandlers = new ContextHandlerCollection();
         this.contextHandlers.setHandlers(handlers);
         server.setHandler(this.contextHandlers);
+
+        server.addLifeCycleListener(new LifeCycle.Listener() {
+            @Override
+            public void lifeCycleStarted(LifeCycle event) {
+                logger.info("Dicoogle Web Services available at {}",
+                        URI.create("http://" + socketAddr.getHostString() + ":" + socketAddr.getPort()));
+            }
+
+            @Override
+            public void lifeCycleStopped(LifeCycle event) {
+                logger.info("Dicoogle Web Services stopped");
+            }
+
+            @Override
+            public void lifeCycleFailure(LifeCycle event, Throwable cause) {
+                logger.error("Dicoogle Web Services failed to start", cause);
+            }
+
+            // remove the methods below once Jetty is updated to 9.4
+
+            @Override
+            public void lifeCycleStarting(LifeCycle event) {
+                // no-op
+            }
+
+            @Override
+            public void lifeCycleStopping(LifeCycle event) {
+                // no-op
+            }
+        });
 
         // Increase maxFormContentSize to avoid issues with big forms
         server.setAttribute("org.eclipse.jetty.server.Request.maxFormContentSize", 3325000);
