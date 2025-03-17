@@ -735,19 +735,25 @@ paths:
       parameters:
         - in: query
           name: running
-          description: whether the service runs or not
+          description: whether the service should be running or should be stopped
           required: false
           schema:
             type: boolean
         - in: query
           name: port
-          description: the port where the service is running
+          description: the port where the service should be running
           required: false
           schema:
             type: integer
         - in: query
+          name: hostname
+          description: the hostname or IP address that the service should be bound to 
+          required: false
+          schema:
+            type: string
+        - in: query
           name: autostart
-          description: whether the service autostarts or not
+          description: whether the service should start on boot or not
           required: false
           schema:
             type: boolean
@@ -779,19 +785,25 @@ paths:
       parameters:
         - in: query
           name: running
-          description: whether the service runs or not
+          description: whether the service should be running oshould be stopped
           required: false
           schema:
             type: boolean
         - in: query
           name: port
-          description: the port where the service is running
+          description: the port where the service should be running
           required: false
           schema:
             type: integer
         - in: query
+          name: hostname
+          description: the hostname or IP address that the service should be bound to 
+          required: false
+          schema:
+            type: string
+        - in: query
           name: autostart
-          description: whether the service autostarts or not
+          description: whether the service should start on boot or not
           required: false
           schema:
             type: boolean
@@ -1311,6 +1323,10 @@ components:
         $ref: "#/components/schemas/Task"
     ServiceStatus:
       type: object
+      required:
+        - isRunning
+        - port
+        - autostart
       properties:
         isRunning:
           description: Whether the service is running
@@ -1320,6 +1336,10 @@ components:
           description: TCP port that the service is listening to
           type: integer
           example: 6666
+        hostname:
+          description: Hostname or IP address that the service is bound to
+          type: string
+          example: 127.0.0.1
         autostart:
           description: Whether this service starts on boot
           type: boolean
