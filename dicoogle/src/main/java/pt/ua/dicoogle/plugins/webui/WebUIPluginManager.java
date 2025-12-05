@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -133,8 +134,10 @@ public class WebUIPluginManager {
     }
 
     public WebUIPlugin load(File directory) throws IOException, PluginFormatException {
-        assert directory != null;
-        assert directory.isDirectory();
+        Objects.requireNonNull(directory);
+        if (!directory.isDirectory()) {
+            throw new IllegalArgumentException("Web UI plugin base `" + directory + "` is not a directory");
+        }
         final String dirname = directory.getCanonicalPath();
         Path packageJSON = directory.toPath().resolve("package.json");
         String packageJSONTxt = IOUtils.toString(Files.newInputStream(packageJSON), StandardCharsets.UTF_8);

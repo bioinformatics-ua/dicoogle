@@ -43,9 +43,19 @@ public class WebUIPluginTest {
     public void testLoadPlugin1() throws IOException, PluginFormatException {
         WebUIPluginManager webui = new WebUIPluginManager();
 
+        // try to resolve the path to the test1 plugin directory
+        // in two different ways
         String test1Path =
                 WebUIPluginTest.class.getClassLoader().getResource("pt/ua/dicoogle/webui/WebPlugins/test1").getFile();
-        webui.load(new File(test1Path));
+        File test1Dir = new File(test1Path);
+        if (!test1Dir.isDirectory()) {
+            test1Dir = new File("./src/test/resources/pt/ua/dicoogle/webui/WebPlugins/test1");
+            if (!test1Dir.exists()) {
+                fail("Failed pre-condition: test plugin directory not found in " + test1Path);
+            }
+        }
+
+        webui.load(test1Dir);
 
         WebUIPlugin plugin = webui.get("test1");
         assertNotNull(plugin);
