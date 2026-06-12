@@ -44,6 +44,10 @@ import pt.ua.dicoogle.server.web.servlets.management.RemoveServlet;
 import pt.ua.dicoogle.server.web.servlets.management.RunningTasksServlet;
 import pt.ua.dicoogle.server.web.servlets.management.ServerStorageServlet;
 import pt.ua.dicoogle.server.web.servlets.management.ServicesServlet;
+import pt.ua.dicoogle.server.web.servlets.management.StorageGetServlet;
+import pt.ua.dicoogle.server.web.servlets.management.StorageListServlet;
+import pt.ua.dicoogle.server.web.servlets.management.StorageServlet;
+import pt.ua.dicoogle.server.web.servlets.management.StorageStoreServlet;
 import pt.ua.dicoogle.server.web.servlets.management.TransferOptionsServlet;
 
 import pt.ua.dicoogle.server.web.servlets.mlprovider.*;
@@ -146,21 +150,21 @@ public class DicoogleWeb {
         // setup the DICOM to PNG image servlet, with a local cache.
         // pooling rate of 12/hr and max un-used cache age of 15 minutes
         cache = new LocalImageCache("dic2png", 300, 900, new SimpleImageRetriever());
-        final ServletContextHandler dic2png = createServletHandler(new ImageServlet(cache), "/dic2png",
-                Needs.authenticated());
+        final ServletContextHandler dic2png =
+                createServletHandler(new ImageServlet(cache), "/dic2png", Needs.authenticated());
         cache.start(); // start the caching system
 
         // setup the ROI extractor
-        final ServletContextHandler roiExtractor = createServletHandler(new ROIServlet(), "/roi",
-                Needs.authenticated());
+        final ServletContextHandler roiExtractor =
+                createServletHandler(new ROIServlet(), "/roi", Needs.authenticated());
 
         // setup the DICOM to PNG image servlet
-        final ServletContextHandler dictags = createServletHandler(new TagsServlet(), "/dictags",
-                Needs.authenticated());
+        final ServletContextHandler dictags =
+                createServletHandler(new TagsServlet(), "/dictags", Needs.authenticated());
 
         // setup the Export to CSV Servlet
-        final ServletContextHandler csvServletHolder = createServletHandler(new ExportToCSVServlet(), "/export",
-                Needs.authenticated());
+        final ServletContextHandler csvServletHolder =
+                createServletHandler(new ExportToCSVServlet(), "/export", Needs.authenticated());
         File tempDir = Paths.get(System.getProperty("java.io.tmpdir")).toFile();
         csvServletHolder.addServlet(new ServletHolder(new ExportCSVToFILEServlet(tempDir)), "/exportFile");
 
@@ -172,7 +176,7 @@ public class DicoogleWeb {
         webpages.setInitParameter("cacheControl", "public, max-age=2592000"); // cache for 30 days
         webpages.setInitParameter("etags", "true"); // generate and handle weak entity validation tags
         webpages.setDisplayName("webapp");
-        webpages.setWelcomeFiles(new String[] { "index.html" });
+        webpages.setWelcomeFiles(new String[] {"index.html"});
         webpages.addServlet(new ServletHolder(new SearchHolderServlet()), "/search/holders");
         webpages.addFilter(GzipFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
 
@@ -180,8 +184,8 @@ public class DicoogleWeb {
         this.pluginHandler = createServletHandler(new RestletHttpServlet(this.pluginApp), "/ext/*", null);
 
         this.legacyApp = new LegacyRestletApplication();
-        this.legacyHandler = createServletHandler(new RestletHttpServlet(this.legacyApp), "/legacy/*",
-                Needs.authenticated());
+        this.legacyHandler =
+                createServletHandler(new RestletHttpServlet(this.legacyApp), "/legacy/*", Needs.authenticated());
 
         // Add Static RESTlet Plugins
         PluginRestletApplication.attachRestPlugin(new VersionResource());
@@ -236,6 +240,8 @@ public class DicoogleWeb {
                 createServletHandler(new ExportServlet(ExportType.EXPORT_CVS), "/export/cvs", Needs.authenticated()),
                 createServletHandler(new ExportServlet(ExportType.LIST), "/export/list", Needs.authenticated()),
                 createServletHandler(new ServerStorageServlet(), "/management/settings/storage/dicom", Needs.admin()),
+                createServletHandler(new StorageServlet(), "/storage", Needs.authenticated()),
+                createServletHandler(new StorageListServlet(), "/storage/list", Needs.authenticated()),
 
                 // ml provider servlets
                 createServletHandler(new DatastoreServlet(), "/ml/datastore", Needs.authenticated()),
@@ -246,7 +252,7 @@ public class DicoogleWeb {
                 createServletHandler(new ModelinfoServlet(), "/ml/model/info", Needs.authenticated()),
                 createServletHandler(new CacheServlet(), "/ml/cache", Needs.authenticated()),
                 createServletHandler(new ImplementedMethodsServlet(), "/ml/provider/methods", Needs.authenticated()),
-                webpages };
+                webpages};
 
         // setup the server
         server = new Server(socketAddr);
